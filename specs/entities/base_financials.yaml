@@ -1,0 +1,65 @@
+# ============================================================================
+# Base financials — the denominators
+# ============================================================================
+# Kept separate from the economics specs on purpose: STRUCTURE (intensities,
+# sourcing, mix) changes rarely, FINANCIALS change every quarter. Mixing them
+# means re-reviewing the structural assumptions every time an EBITDA print
+# lands, which is how specs rot.
+#
+# base_ebitda is the denominator for pct_of_ebitda — the materiality test that
+# decides whether an economics move is a trade at all. It does not need to be
+# precise, but it must be the right order of magnitude, because a wrong
+# denominator silently rescales every signal for that name.
+#
+# ALL verify: pending — set from sector knowledge, not from filings.
+# ============================================================================
+
+spec_version: 0.1.0
+currency: INR
+unit: crore
+period: FY26
+usdinr: 87.0                  # for converting USD-linked price moves
+verify: pending
+
+companies:
+
+  nalco:
+    base_ebitda: 6500
+    primary_output: aluminium_ingot
+    source_note: "Provisional; strong alumina cycle year"
+    verify: pending
+
+  hindalco:
+    base_ebitda: 32000
+    primary_output: aluminium_ingot
+    source_note: "Consolidated incl. Novelis and copper"
+    verify: pending
+    caveat: >
+      Consolidated denominator against India-only ASP/cost lines understates
+      Hindalco's sensitivity in pct terms. Either split India out or accept
+      that Hindalco's pct_of_ebitda is not comparable to a pure play's.
+      >> Flagged as a real inconsistency, not resolved. <<
+
+  vaml:
+    base_ebitda: 15000
+    primary_output: aluminium_ingot
+    source_note: "Provisional aluminium segment EBITDA pre-demerger run-rate"
+    verify: pending
+
+  hindustan_zinc:
+    base_ebitda: 16000
+    primary_output: refined_zinc
+    source_note: "Provisional"
+    verify: pending
+
+  vedanta:
+    base_ebitda: 12000
+    primary_output: refined_zinc
+    source_note: "Provisional; ~63.4% HZL look-through plus retained businesses"
+    verify: pending
+
+  novelis:
+    base_ebitda: 15000
+    primary_output: flat_rolled_products
+    source_note: "Provisional; reporting unit, not scored directly"
+    verify: pending
