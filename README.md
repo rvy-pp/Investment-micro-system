@@ -22,9 +22,10 @@ than direction.
 |---|---|---|
 | 1 | No number without a citation | `observations.quote` NOT NULL + non-empty CHECK |
 | 2 | Silence changes nothing | no decay column exists; staleness is derived in `v_factor_freshness` |
-| 3 | Scores are relative and gated | `score_runs.dispersion_ok`; "no trade" is a first-class outcome |
+| 3 | Output is gated, not always-on | `sector_regime.can_express`, `bridge_results.coverage_ok`; "no trade" and "cannot tell" are both first-class |
 | 4 | Every signal has a falsifier | `signals.falsifier` NOT NULL + non-empty CHECK |
-| 5 | Everything is replayable | `score_runs.spec_version` + `code_sha`; a spec change is a re-run |
+| 5 | Everything is replayable | `bridge_runs.spec_version` + `code_sha`; a spec change is a re-run |
+| 6 | No intensity without provenance | `economics.source_note` NOT NULL + non-empty CHECK |
 
 Verify all of these actually hold, rather than trusting this table:
 
@@ -58,18 +59,45 @@ Hindalco, NALCO and Vedanta Ltd are mutually rankable. Scoring keys on
 `peer_group`; `is_tradeable = 0` names carry observations but can never receive
 a score, because a score you cannot express in the book is not an output.
 
-## Alpha vs modifier
+## Three layers, each able to stop the process
 
-Broker mood and OI positioning are **not** summed into the composite. Summing
-them recommends the most crowded name — consensus bullishness looks like alpha
-when it is in fact the reason the move already happened. They adjust conviction
-and size, and can veto entry. Direction comes from fundamentals only.
+There is **no generic factor-weight model**. Companies do not share a factor
+structure; they share an arithmetic.
+
+| | Question | Determines |
+|---|---|---|
+| **L1** Economics | Did the economics actually change, and by how much? | direction + size |
+| **L2** Priced in | Is it already in the price? | conviction |
+| **L3** Regime | Can the sector express it at all — tezi or mandi? | permission |
+
+**L1** is arithmetic on each company's own cost stack (consumption intensity ×
+the price series driving it × how much is actually bought at market) and revenue
+stack (mix, volume, ASP vs benchmark), producing ₹ and basis points — not a
+score. The field doing the work is `market_pct`: a captive input contributes
+zero to cost however far its market price moves. That is why one alumina print
+moves three aluminium names in three directions, without anyone asserting a
+coefficient:
+
+| | alumina exposure | mechanism |
+|---|---|---|
+| NALCO | **revenue** | smelter alumina is captive (`market_pct` 0.00) *plus* a marked-to-market surplus output line |
+| VAML | **cost** | buys ~half its alumina (`market_pct` 0.50), no surplus line |
+| Hindalco | **~neutral** | broadly self-sufficient, small surplus |
+
+**L2** never sets direction. Summing consensus mood into a score is how a system
+ends up recommending the most crowded name — the bullishness *is* the reason the
+move already happened. It adjusts conviction and size, and can veto entry.
+
+**L3** is a permission layer, not another additive term. Good news into a sector
+with no investor interest does not move stocks. Gated signals are still computed
+and stored with `l3_gated = 1`, so the review layer can later test whether the
+gate cost money or saved it.
 
 ## Modularity test
 
-Adding a sector is **one YAML factor spec plus one entity list. Zero new code.**
+Adding a sector is **one economics spec plus one layer config. Zero new code.**
 Adding a sub-system is one package plus one tab. If a change requires touching
-the scoring engine, the spec format is wrong.
+the bridge engine, the spec format is wrong.
 
 ## Layout
 

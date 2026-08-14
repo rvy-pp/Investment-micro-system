@@ -10,13 +10,18 @@
 --   2. Silence changes nothing.  There is no decay column and no scheduled
 --      write path. Staleness is DERIVED (max(as_of) per entity+factor), so a
 --      quiet name simply shows as stale instead of manufacturing a delta.
---   3. Scores are relative and gated.  scores carries z / rank within
---      peer_group; score_runs carries the dispersion test result, so "no
---      trade" is a first-class outcome.
+--   3. Output is gated, not always-on.  sector_regime.can_express is the
+--      tezi/mandi permission layer and bridge_results.coverage_ok flags a
+--      bridge with too many unpriced lines, so "no trade" and "cannot tell"
+--      are both first-class outcomes rather than a weak lean.
 --   4. Every signal has a falsifier.  signals.falsifier is NOT NULL and
 --      CHECKed non-empty. This is what the review loop grades against later.
---   5. Everything is replayable.  score_runs stamps spec_version + code_sha.
---      A spec change is a re-run over history, never an in-place rewrite.
+--   5. Everything is replayable.  bridge_runs and signals stamp spec_version
+--      + code_sha. A spec change is a re-run over history, never a rewrite.
+--
+-- There is NO generic factor-weight model. Companies do not share a factor
+-- structure, they share an arithmetic: cost stack x intensity x sourcing,
+-- against product mix x volume x ASP. See the LAYER 1 section.
 --
 -- Append-only discipline: observations are never UPDATEd. A correction is a
 -- new row whose supersedes_id points at the row it replaces.
@@ -242,73 +247,206 @@ CREATE TABLE IF NOT EXISTS positions (
 CREATE INDEX IF NOT EXISTS ix_pos_date ON positions (snapshot_date);
 CREATE INDEX IF NOT EXISTS ix_pos_pair ON positions (pair_id, snapshot_date);
 
--- ---------------------------------------------------------------------------
--- L3: scoring. One score_run per (as_of, peer_group, spec_version).
+-- ===========================================================================
+-- LAYER 1 — COMPANY ECONOMICS
+-- ===========================================================================
+-- There is deliberately no generic factor-weight model here. Companies do not
+-- share a factor structure; they share an ARITHMETIC. What differs is each
+-- company's cost stack, product mix, and how much of each input it actually
+-- buys at market.
 --
--- dispersion_ok is the gate: when the cross-sectional spread is inside the
--- noise band the run is still recorded, but the correct read is "no trade"
--- rather than a ranking of near-identical numbers.
+-- `market_pct` is the load-bearing field. It is why one alumina print moves
+-- three aluminium names in three different directions:
+--
+--   NALCO  smelter alumina market_pct ~0.0  (own refinery, internal transfer)
+--          PLUS an alumina_surplus OUTPUT line marked to market
+--          => alumina up is REVENUE
+--   VAML   smelter alumina market_pct ~0.5  (bauxite-short, buys third-party)
+--          no surplus output line
+--          => alumina up is COST
+--   HNDL   broadly self-sufficient, small surplus line
+--          => alumina up is roughly NEUTRAL, slightly positive
+--
+-- None of that is asserted as a coefficient. It falls out of the structure.
 -- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS score_runs (
+CREATE TABLE IF NOT EXISTS economics (
     id             INTEGER PRIMARY KEY,
-    as_of          TEXT NOT NULL,
-    peer_group     TEXT NOT NULL,
+    entity_id      TEXT NOT NULL REFERENCES entities (id),
+    effective_from TEXT NOT NULL,            -- structure changes with capex/mix
+    effective_to   TEXT,                     -- NULL = current
+    line_kind      TEXT NOT NULL,            -- output|input
+    item           TEXT NOT NULL,            -- 'aluminium_ingot','alumina_surplus','power'
+    price_link     TEXT REFERENCES entities (id),   -- commodity entity driving this line
+
+    -- OUTPUT lines: what they sell
+    volume         REAL,                     -- annual volume in volume_unit
+    volume_unit    TEXT,                     -- 't', 'kt', 'kWh'
+    mix_pct        REAL,                     -- share of total output volume
+    asp_premium    REAL,                     -- premium/discount vs the linked benchmark
+    asp_premium_unit TEXT,                   -- 'USD/t', 'INR/t'
+
+    -- INPUT lines: what they consume
+    intensity      REAL,                     -- units of item per unit of basis_item
+    intensity_unit TEXT,                     -- 't/t', 'kWh/t', 'kg/t'
+    basis_item     TEXT,                     -- WHICH output the intensity is per unit of.
+                                             -- Required for multi-product companies: NALCO's
+                                             -- caustic soda scales with alumina tonnes while
+                                             -- its carbon anode scales with metal tonnes.
+                                             -- Getting this wrong misprices the whole line.
+    market_pct     REAL,                     -- 0 = fully captive, 1 = fully bought at market
+
+    currency       TEXT,
+    source_note    TEXT NOT NULL,            -- provenance of the number, incl. verification state
     spec_version   TEXT NOT NULL,
-    code_sha       TEXT NOT NULL,            -- git sha of the scoring engine
-    dispersion     REAL,                     -- realised cross-sectional spread
-    dispersion_min REAL,                     -- threshold from the spec
-    dispersion_ok  INTEGER NOT NULL,
-    n_scored       INTEGER NOT NULL,
-    created_at     TEXT NOT NULL,
-    UNIQUE (as_of, peer_group, spec_version),
-    CHECK (dispersion_ok IN (0,1)),
+    CHECK (line_kind IN ('output','input')),
+    CHECK (market_pct IS NULL OR (market_pct >= 0.0 AND market_pct <= 1.0)),
+    CHECK (mix_pct    IS NULL OR (mix_pct    >= 0.0 AND mix_pct    <= 1.0)),
+    CHECK (length(trim(source_note)) > 0),   -- an intensity with no provenance is a guess
+    CHECK (effective_from GLOB '____-__-__'),
+    -- an output line needs a volume or a mix; an input line needs an intensity
+    -- AND the basis that intensity is measured against
+    CHECK ((line_kind = 'output' AND (volume IS NOT NULL OR mix_pct IS NOT NULL))
+        OR (line_kind = 'input'  AND intensity IS NOT NULL AND basis_item IS NOT NULL))
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_econ_entity ON economics (entity_id, line_kind, effective_from);
+
+-- L1 output: the margin bridge. One run per (entity, as_of, window).
+CREATE TABLE IF NOT EXISTS bridge_runs (
+    id           INTEGER PRIMARY KEY,
+    entity_id    TEXT NOT NULL REFERENCES entities (id),
+    as_of        TEXT NOT NULL,
+    window_days  INTEGER NOT NULL,           -- price-change window the bridge is run over
+    spec_version TEXT NOT NULL,
+    code_sha     TEXT NOT NULL,
+    created_at   TEXT NOT NULL,
+    UNIQUE (entity_id, as_of, window_days, spec_version),
     CHECK (as_of GLOB '____-__-__')
 ) STRICT;
 
--- Per-entity, per-factor decomposition. Storing the factor level (not just
--- the composite) is what makes a score explainable instead of a verdict.
-CREATE TABLE IF NOT EXISTS scores (
-    id            INTEGER PRIMARY KEY,
-    run_id        INTEGER NOT NULL REFERENCES score_runs (id) ON DELETE CASCADE,
-    entity_id     TEXT NOT NULL REFERENCES entities (id),
-    factor        TEXT NOT NULL,             -- '_composite' for the roll-up
-    raw           REAL,                      -- factor level in native terms
-    z             REAL,                      -- z within peer_group at as_of
-    rank          INTEGER,                   -- 1 = best in peer_group
-    n_obs         INTEGER NOT NULL,          -- observations behind this number
-    stale_days    INTEGER,                   -- age of the newest supporting obs
-    weight        REAL,                      -- signed exposure from entity spec
-    UNIQUE (run_id, entity_id, factor)
+-- Per-line decomposition — so "why did margin move" is answerable by line item,
+-- not by a factor label. This is what makes the output directional.
+CREATE TABLE IF NOT EXISTS bridge_lines (
+    id                INTEGER PRIMARY KEY,
+    run_id            INTEGER NOT NULL REFERENCES bridge_runs (id) ON DELETE CASCADE,
+    line_kind         TEXT NOT NULL,
+    item              TEXT NOT NULL,
+    price_from        REAL,
+    price_to          REAL,
+    price_unit        TEXT,
+    delta_ebitda      REAL,                  -- absolute, reporting currency
+    delta_ebitda_per_t REAL,
+    priced            INTEGER NOT NULL,      -- 0 = no price series, line skipped
+    UNIQUE (run_id, line_kind, item),
+    CHECK (priced IN (0,1)),
+    CHECK (line_kind IN ('output','input'))
 ) STRICT;
 
-CREATE INDEX IF NOT EXISTS ix_scores_entity ON scores (entity_id, factor);
+CREATE TABLE IF NOT EXISTS bridge_results (
+    run_id             INTEGER PRIMARY KEY REFERENCES bridge_runs (id) ON DELETE CASCADE,
+    delta_revenue      REAL,
+    delta_cost         REAL,
+    delta_ebitda       REAL,
+    delta_ebitda_per_t REAL,
+    delta_margin_bps   REAL,
+    base_ebitda        REAL,
+    pct_of_ebitda      REAL,                 -- materiality; decides whether this matters at all
+    n_lines_priced     INTEGER NOT NULL,
+    n_lines_total      INTEGER NOT NULL,
+    coverage_ok        INTEGER NOT NULL,     -- 0 = too many unpriced lines to trust the bridge
+    CHECK (coverage_ok IN (0,1))
+) STRICT;
 
+-- ===========================================================================
+-- LAYER 2 — IS IT PRICED IN
+-- ===========================================================================
+-- Valuation, mood, consensus, flows. Never sets direction; it decides whether
+-- a Layer 1 move is already in the price, and therefore size and conviction.
 -- ---------------------------------------------------------------------------
--- Signals: the directional output. This is the layer the old system lacked —
--- it stopped at a score and never resolved to a position-relevant statement.
+CREATE TABLE IF NOT EXISTS market_layer (
+    entity_id           TEXT NOT NULL REFERENCES entities (id),
+    as_of               TEXT NOT NULL,
+    ev_ebitda           REAL,
+    pe                  REAL,
+    pb                  REAL,
+    ev_ebitda_pctile    REAL,                -- vs its OWN history, not vs peers
+    valuation_lookback_days INTEGER,
+    consensus_net_rating REAL,               -- +1 all buy .. -1 all sell
+    consensus_tp_gap_pct REAL,               -- upside to consensus TP
+    coverage_count      INTEGER,
+    oi_percentile       REAL,
+    oi_buildup          TEXT,
+    flow_fii            REAL,
+    flow_dii            REAL,
+    mood                TEXT,                -- derived label, never additive
+    PRIMARY KEY (entity_id, as_of),
+    CHECK (as_of GLOB '____-__-__'),
+    CHECK (ev_ebitda_pctile IS NULL OR (ev_ebitda_pctile >= 0.0 AND ev_ebitda_pctile <= 100.0))
+) STRICT;
+
+-- ===========================================================================
+-- LAYER 3 — SECTOR REGIME (tezi / mandi)
+-- ===========================================================================
+-- A permission layer, not another additive term. Positive news into a sector
+-- with no investor interest does not move stocks, so `can_express` gates
+-- whether a Layer 1+2 conclusion is allowed to become a position.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sector_regime (
+    sector           TEXT NOT NULL,
+    as_of            TEXT NOT NULL,
+    state            TEXT NOT NULL,          -- tezi|mandi|neutral|dead
+    breadth_pct      REAL,                   -- % of sector names above their 50dma
+    rel_strength     REAL,                   -- sector vs index, normalised
+    turnover_pctile  REAL,                   -- investor-interest proxy vs own history
+    flow_fii         REAL,
+    dispersion       REAL,                   -- intra-sector return dispersion
+    can_express      INTEGER NOT NULL,       -- the gate
+    note             TEXT,
+    PRIMARY KEY (sector, as_of),
+    CHECK (state IN ('tezi','mandi','neutral','dead')),
+    CHECK (can_express IN (0,1)),
+    CHECK (as_of GLOB '____-__-__')
+) STRICT;
+
+-- ===========================================================================
+-- OUTPUT — signals
+-- ===========================================================================
+-- The layer the old system lacked: it stopped at a score and never resolved
+-- to a position-relevant statement.
 --
--- falsifier is NOT NULL by design (commitment #4). A signal you cannot
--- disprove cannot be graded, and grading is what the review loop runs on.
+-- Every signal records which bridge produced it, whether Layer 2 said it was
+-- already priced, and what regime Layer 3 was in. falsifier is NOT NULL by
+-- design — a signal you cannot disprove cannot be graded, and grading is what
+-- the review loop runs on.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS signals (
-    id            INTEGER PRIMARY KEY,
-    run_id        INTEGER NOT NULL REFERENCES score_runs (id) ON DELETE CASCADE,
-    as_of         TEXT NOT NULL,
-    kind          TEXT NOT NULL,             -- single|pair
-    long_entity   TEXT REFERENCES entities (id),
-    short_entity  TEXT REFERENCES entities (id),
-    direction     TEXT NOT NULL,             -- long|short|spread|flat
-    conviction    TEXT NOT NULL,             -- low|medium|high
-    thesis        TEXT NOT NULL,             -- one sentence, cites the driving factor
-    falsifier     TEXT NOT NULL,             -- 'wrong if alumina holds above 340'
-    driving_factor TEXT,                     -- which factor moved it
-    created_at    TEXT NOT NULL,
+    id              INTEGER PRIMARY KEY,
+    as_of           TEXT NOT NULL,
+    kind            TEXT NOT NULL,           -- single|pair
+    long_entity     TEXT REFERENCES entities (id),
+    short_entity    TEXT REFERENCES entities (id),
+    direction       TEXT NOT NULL,           -- long|short|spread|flat
+    conviction      TEXT NOT NULL,           -- low|medium|high
+    thesis          TEXT NOT NULL,           -- one sentence, cites the driving LINE ITEM
+    falsifier       TEXT NOT NULL,           -- 'wrong if alumina holds above 340'
+    driving_item    TEXT,                    -- the economics line that moved it
+    l1_bridge_run   INTEGER REFERENCES bridge_runs (id),
+    l1_pct_of_ebitda REAL,                   -- materiality from Layer 1
+    l2_priced_in    TEXT,                    -- not_priced|partly|priced
+    l3_regime       TEXT,                    -- regime state at emission
+    l3_gated        INTEGER NOT NULL DEFAULT 0,  -- 1 = held back by the tezi/mandi gate
+    spec_version    TEXT NOT NULL,
+    code_sha        TEXT NOT NULL,
+    created_at      TEXT NOT NULL,
     CHECK (length(trim(falsifier)) > 0),
     CHECK (length(trim(thesis)) > 0),
     CHECK (kind IN ('single','pair')),
     CHECK (direction IN ('long','short','spread','flat')),
     CHECK (conviction IN ('low','medium','high')),
-    CHECK (kind = 'single' OR (long_entity IS NOT NULL AND short_entity IS NOT NULL))
+    CHECK (l2_priced_in IS NULL OR l2_priced_in IN ('not_priced','partly','priced')),
+    CHECK (l3_gated IN (0,1)),
+    CHECK (kind = 'single' OR (long_entity IS NOT NULL AND short_entity IS NOT NULL)),
+    CHECK (as_of GLOB '____-__-__')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_signals_asof ON signals (as_of);

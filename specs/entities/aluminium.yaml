@@ -1,127 +1,357 @@
 # ============================================================================
-# Entity spec — Aluminium coverage bucket
+# Aluminium — entity roster and Layer 1 economics
 # ============================================================================
-# STATUS: PROPOSAL. Every `exposure` number below needs your sign-off — they
-# are the analytical heart of the system and I have marked my reasoning so you
-# can argue with the specific number rather than the whole idea.
+# There is no factor-exposure table here any more. Each company is described by
+# what it SELLS and what it CONSUMES, and the directional answer is arithmetic.
 #
-# Note `sector` and `peer_group` diverge here on purpose. Your coverage bucket
-# holds five names; only three are rankable against each other.
-# ============================================================================
+# `market_pct` is the field that does the work:
+#   NALCO smelter alumina  market_pct 0.00  + an alumina_surplus OUTPUT line
+#                                           => alumina up is REVENUE
+#   VAML  smelter alumina  market_pct 0.50  + no surplus line
+#                                           => alumina up is COST
+#   HNDL  smelter alumina  market_pct 0.05  + a small surplus line
+#                                           => alumina up is near-NEUTRAL, mildly +
+#
+# ---------------------------------------------------------------------------
+# !! EVERY NUMBER BELOW CARRIES `verify:` STATUS. `verify: pending` means I set
+# !! it from sector knowledge, NOT from a filing. These are the numbers to
+# !! attack, and they must be confirmed against annual reports / your own
+# !! models before any signal is trusted. The schema refuses a line whose
+# !! source_note is empty, so provenance cannot be silently dropped.
+# ---------------------------------------------------------------------------
 
 sector: aluminium
+spec_version: 0.2.0
+currency: INR
 
-entities:
+# ============================================================================
+# PRICE SERIES these economics link to (non-tradeable reference entities)
+# ============================================================================
+reference_entities:
+  - {id: lme_aluminium,          kind: commodity, name: LME Aluminium 3M,        unit: USD/t}
+  - {id: alumina_index,          kind: commodity, name: Alumina FOB Australia,   unit: USD/t}
+  - {id: bauxite,                kind: commodity, name: Bauxite,                 unit: USD/t}
+  - {id: thermal_coal_eauction,  kind: commodity, name: Coal India e-auction,    unit: INR/t}
+  - {id: cp_coke,                kind: commodity, name: Calcined Petroleum Coke, unit: USD/t}
+  - {id: coal_tar_pitch,         kind: commodity, name: Coal Tar Pitch,          unit: USD/t}
+  - {id: caustic_soda,           kind: commodity, name: Caustic Soda,            unit: USD/t}
+  - {id: usdinr,                 kind: fx,        name: USDINR,                  unit: INR/USD}
+  - {id: al_scrap_midwest,       kind: commodity, name: US Midwest scrap discount, unit: USD/t}
+  - {id: can_sheet_spread,       kind: commodity, name: Can sheet conversion spread, unit: USD/t}
+  - {id: lme_zinc,               kind: commodity, name: LME Zinc 3M,             unit: USD/t}
+  - {id: silver,                 kind: commodity, name: Silver,                  unit: USD/oz}
 
-  # --------------------------------------------------------------------------
-  # peer_group: aluminium_primary — the three rankable names
-  # --------------------------------------------------------------------------
+# ============================================================================
+# NALCO — the alumina-surplus name
+# ============================================================================
+- id: nalco
+  kind: company
+  name: National Aluminium Company
+  sector: aluminium
+  peer_group: aluminium_primary
+  nse_symbol: NATIONALUM
+  effective_from: 2026-04-01
 
-  - id: hindalco
-    kind: company
-    name: Hindalco Industries
-    sector: aluminium
-    peer_group: aluminium_primary
-    nse_symbol: HINDALCO
-    exposures:
-      output_price:        +1.00   # full LME beta on India smelting
-      alumina:             +0.15   # integrated on bauxite+alumina: cost-neutral,
-                                   # small surplus sales. NOT a beneficiary like NALCO.
-      energy_cost:         -0.45   # captive coal blocks damp the e-auction spike
-      other_input_cost:    -0.30
-      volume_growth:       +0.60
-      downstream_mix:      +0.90   # Novelis. dominant swing factor, see novelis_* metrics
-      fx_usdinr:           +0.35   # muted vs peers: Novelis USD costs offset INR gain
-      balance_sheet:       +0.30
-      governance_overhang:  0.00
-    notes: >
-      Novelis is close to half the earnings and is driven by can spreads and
-      the US scrap discount, not by LME. Treating Hindalco as a pure LME proxy
-      is the single biggest error available in this peer group.
+  outputs:
+    - item: aluminium_ingot
+      price_link: lme_aluminium
+      volume: 460000
+      volume_unit: t
+      asp_premium: 120          # domestic premium over LME
+      asp_premium_unit: USD/t
+      source_note: "Angul smelter nameplate ~460kt"
+      verify: pending
 
-  - id: nalco
-    kind: company
-    name: National Aluminium Company
-    sector: aluminium
-    peer_group: aluminium_primary
-    nse_symbol: NATIONALUM
-    exposures:
-      output_price:        +1.00
-      alumina:             +0.95   # SELLS surplus alumina. sign is POSITIVE and large —
-                                   # this is why an Alunorte-type supply shock is a
-                                   # NALCO story and only faintly a Hindalco one.
-      energy_cost:         -0.75   # buys coal, high e-auction exposure, no Novelis buffer
-      other_input_cost:    -0.35
-      volume_growth:       +0.50
-      downstream_mix:      +0.05   # negligible value-added
-      fx_usdinr:           +0.80   # cleanest INR beneficiary: USD revenue, INR cost base
-      balance_sheet:       +0.20   # net cash, so leverage news barely moves it
-      governance_overhang: -0.15   # PSU: disinvestment / OFS headline risk
-    notes: >
-      The purest expression of both alumina and INR in the group. Highest
-      operating leverage to a coal cost spike.
+    - item: alumina_surplus
+      price_link: alumina_index
+      volume: 1250000
+      volume_unit: t
+      asp_premium: 0
+      source_note: "Damanjodi refinery ~2,275kt less smelter requirement ~890kt"
+      verify: pending           # THE most important number for NALCO. External
+                                # alumina tonnage sets the entire alumina beta.
 
-  - id: vedanta
-    kind: company
-    name: Vedanta Ltd
-    sector: aluminium
-    peer_group: aluminium_primary
-    nse_symbol: VEDL
-    dilution: 0.42                 # ~share of EBITDA from aluminium. scales EVERY
-                                   # aluminium factor below, so an alumina print
-                                   # moves VEDL ~0.42x what it moves a pure play.
-    exposures:
-      output_price:        +1.00
-      alumina:             -0.55   # NEGATIVE: Lanjigarh is bauxite-short, buys
-                                   # third-party alumina. opposite sign to NALCO.
-      energy_cost:         -0.55
-      other_input_cost:    -0.30
-      volume_growth:       +0.70
-      downstream_mix:      +0.10
-      fx_usdinr:           +0.55
-      balance_sheet:       -0.80   # holdco debt, brand-fee and dividend extraction
-      governance_overhang: -0.90   # demerger, promoter pledge, stake shuffle.
-                                   # largest single non-commodity driver here.
-    notes: >
-      A conglomerate, not an aluminium pure play — hence `dilution`. Zinc,
-      oil & gas and power all move it. Governance and balance sheet routinely
-      dominate the commodity read, which is why they carry weights this large.
+  inputs:
+    - item: alumina
+      price_link: alumina_index
+      intensity: 1.93
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 0.00          # own refinery: internal transfer, not a cash market cost
+      source_note: "Standard Hall-Heroult ratio; NALCO fully integrated on alumina"
+      verify: pending
 
-  # --------------------------------------------------------------------------
-  # peer_group: zinc — same coverage bucket, different factor basis
-  # --------------------------------------------------------------------------
+    - item: bauxite
+      price_link: bauxite
+      intensity: 2.85
+      intensity_unit: t/t
+      basis_item: alumina_surplus
+      market_pct: 0.00          # captive Panchpatmali
+      source_note: "Captive mine; insensitive to seaborne bauxite"
+      verify: pending
 
-  - id: hindustan_zinc
-    kind: company
-    name: Hindustan Zinc
-    sector: aluminium            # your coverage bucket
-    peer_group: zinc             # NOT rankable against the aluminium names
-    nse_symbol: HINDZINC
-    exposures:
-      output_price:        +1.00   # resolves to LME ZINC, not aluminium
-      byproduct_silver:    +0.35
-      energy_cost:         -0.40
-      volume_growth:       +0.55
-      fx_usdinr:           +0.70
-      balance_sheet:       +0.25
-      governance_overhang: -0.70   # parent dividend pull, GoI residual stake / OFS
-    notes: >
-      Kept in the aluminium coverage bucket because you cover it, but scored
-      in its own peer group. z-scoring it against Hindalco would compare an
-      LME-zinc name to an LME-aluminium name and call the difference signal.
+    - item: thermal_coal_eauction
+      price_link: thermal_coal_eauction
+      intensity: 9.90
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 1.00          # NO operational captive coal — full e-auction exposure.
+                                # This is why NALCO has the group's highest coal beta.
+      source_note: "~14,200 kWh/t at ~0.70 kg coal/kWh; Utkal blocks not yet contributing"
+      verify: pending
 
-  # --------------------------------------------------------------------------
-  # Not tradeable — a reporting unit, never scored
-  # --------------------------------------------------------------------------
+    - item: caustic_soda
+      price_link: caustic_soda
+      intensity: 0.07
+      intensity_unit: t/t
+      basis_item: alumina_surplus
+      market_pct: 1.00
+      source_note: "Refinery reagent consumption per tonne alumina"
+      verify: pending
 
-  - id: vedanta_aluminium
-    kind: reporting_unit
-    name: Vedanta Aluminium (division)
-    parent_id: vedanta
-    is_tradeable: false
-    peer_group: null             # schema CHECK forbids scoring an untradeable name
-    notes: >
-      Has no ticker. Carries observations — segment volumes, Jharsuguda cost
-      per tonne, Lanjigarh utilisation — which propagate to `vedanta` scaled by
-      its dilution. It must never receive a score of its own: the previous
-      matrix gave it one, which is a number you cannot express in the book.
+    - item: cp_coke
+      price_link: cp_coke
+      intensity: 0.40
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 1.00
+      source_note: "Anode consumption per tonne metal"
+      verify: pending
+
+  notes: >
+    Cleanest USDINR beneficiary in the group: USD-linked realisations on both
+    products against an almost entirely INR cost base. Also the highest
+    operating leverage to a coal cost spike, for the same reason.
+
+# ============================================================================
+# HINDALCO — integrated India, plus Novelis as a separate reporting unit
+# ============================================================================
+- id: hindalco
+  kind: company
+  name: Hindalco Industries
+  sector: aluminium
+  peer_group: aluminium_primary
+  nse_symbol: HINDALCO
+  effective_from: 2026-04-01
+
+  outputs:
+    - item: aluminium_ingot
+      price_link: lme_aluminium
+      volume: 1300000
+      volume_unit: t
+      asp_premium: 150
+      asp_premium_unit: USD/t
+      source_note: "India primary metal capacity"
+      verify: pending
+
+    - item: alumina_surplus
+      price_link: alumina_index
+      volume: 300000
+      volume_unit: t
+      source_note: "Modest external alumina sales after internal requirement"
+      verify: pending           # if Hindalco is a larger net alumina seller than
+                                # this, its alumina beta rises toward NALCO's
+
+  inputs:
+    - item: alumina
+      price_link: alumina_index
+      intensity: 1.93
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 0.05          # broadly self-sufficient => alumina spike is
+                                # near cost-neutral, unlike VAML
+      source_note: "Integrated bauxite and alumina; minimal third-party purchase"
+      verify: pending
+
+    - item: thermal_coal_eauction
+      price_link: thermal_coal_eauction
+      intensity: 9.60
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 0.45          # captive coal blocks damp e-auction exposure —
+                                # roughly half NALCO's coal beta
+      source_note: "Captive blocks (Dumri, Chakla etc.) cover a material share"
+      verify: pending
+
+    - item: cp_coke
+      price_link: cp_coke
+      intensity: 0.40
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 1.00
+      source_note: "Anode consumption per tonne metal"
+      verify: pending
+
+  notes: >
+    Do NOT treat Hindalco as an LME proxy. Novelis is close to half of
+    earnings and is driven by can-sheet conversion spreads and the US scrap
+    discount, with LME largely passed through. Modelled separately below.
+
+- id: novelis
+  kind: reporting_unit
+  name: Novelis (Hindalco downstream)
+  parent_id: hindalco
+  is_tradeable: false
+  peer_group: null
+  effective_from: 2026-04-01
+
+  outputs:
+    - item: flat_rolled_products
+      price_link: can_sheet_spread
+      volume: 3700000
+      volume_unit: t
+      source_note: "Annual shipments; economics are CONVERSION spread, not LME level"
+      verify: pending
+
+  inputs:
+    - item: aluminium_scrap
+      price_link: al_scrap_midwest
+      intensity: 0.62
+      intensity_unit: t/t
+      basis_item: flat_rolled_products
+      market_pct: 1.00
+      source_note: "Recycled content share of inputs; scrap DISCOUNT widening is margin-positive"
+      verify: pending
+
+    - item: aluminium_primary
+      price_link: lme_aluminium
+      intensity: 0.40
+      intensity_unit: t/t
+      basis_item: flat_rolled_products
+      market_pct: 1.00
+      source_note: "Primary metal top-up; largely passed through to customers"
+      verify: pending
+
+  notes: >
+    Structurally different from a smelter: a converter. LME moves both its
+    revenue and its cost and mostly nets out, which is exactly why lumping it
+    into Hindalco's LME beta overstates Hindalco's commodity sensitivity.
+
+# ============================================================================
+# VEDANTA — tradeable parent; aluminium economics live in VAML
+# ============================================================================
+- id: vedanta
+  kind: company
+  name: Vedanta Ltd
+  sector: aluminium
+  peer_group: aluminium_primary
+  nse_symbol: VEDL
+  effective_from: 2026-04-01
+  segment_weights:            # replaces the old blunt `dilution` scalar:
+    aluminium: 0.42           # aluminium economics reach VEDL scaled by this
+    zinc: 0.28
+    oil_gas: 0.12
+    power: 0.08
+    other: 0.10
+  verify: pending             # EBITDA mix; get this wrong and the whole VEDL
+                              # column is wrong by a constant
+  overhangs:                  # non-economic drivers, Layer 2, never in the bridge
+    - demerger_execution
+    - promoter_pledge
+    - brand_fee_and_dividend_extraction
+  notes: >
+    A conglomerate. Aluminium reaches it only through segment_weights, so an
+    alumina print should move VEDL materially less than it moves NALCO. In
+    practice governance and balance-sheet news often dominate the commodity
+    read entirely — handled in Layer 2, not by inflating a bridge coefficient.
+
+- id: vaml
+  kind: reporting_unit
+  name: Vedanta Aluminium (Jharsuguda + BALCO)
+  parent_id: vedanta
+  is_tradeable: false
+  peer_group: null
+  effective_from: 2026-04-01
+
+  outputs:
+    - item: aluminium_ingot
+      price_link: lme_aluminium
+      volume: 2400000
+      volume_unit: t
+      asp_premium: 130
+      asp_premium_unit: USD/t
+      source_note: "Jharsuguda ~1,800kt + BALCO ~570kt"
+      verify: pending
+    # NOTE: no alumina_surplus line. This absence, not a negative coefficient,
+    # is what makes VAML lose on an alumina spike.
+
+  inputs:
+    - item: alumina
+      price_link: alumina_index
+      intensity: 1.93
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 0.50          # Lanjigarh is bauxite-short; buys third-party alumina.
+                                # THE single most important number in this file —
+                                # it sets the sign and size of VAML's alumina hit.
+      source_note: "Lanjigarh covers roughly half of smelter alumina requirement"
+      verify: pending
+
+    - item: thermal_coal_eauction
+      price_link: thermal_coal_eauction
+      intensity: 9.80
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 0.70
+      source_note: "Partial captive coal; majority still linkage/e-auction"
+      verify: pending
+
+    - item: cp_coke
+      price_link: cp_coke
+      intensity: 0.40
+      intensity_unit: t/t
+      basis_item: aluminium_ingot
+      market_pct: 1.00
+      source_note: "Anode consumption per tonne metal"
+      verify: pending
+
+  notes: >
+    Highest volume in the group and the most alumina-exposed on the cost side,
+    so it is the natural short leg against NALCO on an alumina squeeze. Not
+    directly tradeable — the expression is VEDL, scaled by segment_weights,
+    which dilutes the trade and is a real cost of using it as the short.
+    Watch the demerger: if VAML lists separately this becomes tradeable and
+    the peer group changes.
+
+# ============================================================================
+# HINDUSTAN ZINC — your coverage bucket, different peer group
+# ============================================================================
+- id: hindustan_zinc
+  kind: company
+  name: Hindustan Zinc
+  sector: aluminium            # coverage bucket
+  peer_group: zinc             # NOT rankable against the aluminium names
+  nse_symbol: HINDZINC
+  effective_from: 2026-04-01
+
+  outputs:
+    - item: refined_zinc
+      price_link: lme_zinc
+      volume: 820000
+      volume_unit: t
+      source_note: "Refined zinc production"
+      verify: pending
+    - item: silver_byproduct
+      price_link: silver
+      volume: 22000000
+      volume_unit: oz
+      source_note: "Silver is a material earnings contributor, not a rounding item"
+      verify: pending
+
+  inputs:
+    - item: thermal_coal_eauction
+      price_link: thermal_coal_eauction
+      intensity: 4.20
+      intensity_unit: t/t
+      basis_item: refined_zinc
+      market_pct: 0.60
+      source_note: "Smelting and captive power coal"
+      verify: pending
+
+  overhangs:
+    - parent_dividend_pull
+    - goi_residual_stake_ofs
+  notes: >
+    Kept in the aluminium coverage bucket because you cover it, scored in its
+    own peer group. Ranking it against Hindalco would compare an LME-zinc name
+    to an LME-aluminium name and call the difference signal.

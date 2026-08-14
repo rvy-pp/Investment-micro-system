@@ -1,187 +1,189 @@
 # ============================================================================
-# Factor spec — peer_group: aluminium_primary
+# aluminium_primary — three-layer config
 # ============================================================================
-# STATUS: PROPOSAL, v0.1.0. This is the "scoring regime" you wanted to discuss
-# in detail. Weights are my starting estimates, flagged so you can attack the
-# numbers individually.
+# Replaces the factor-weight/z-score spec entirely. There are no factor weights
+# and no normalisation method, because there is no longer a factor model:
+# Layer 1 is arithmetic on each company's own cost and revenue structure, in
+# rupees and basis points.
 #
-# Two structural choices differ from the old matrix and matter more than any
-# weight:
-#
-#   A. ALPHA vs MODIFIER. Broker mood and positioning are NOT summed into the
-#      composite. Summing them is how a system ends up recommending the most
-#      crowded name — consensus bullishness reads as alpha when it is actually
-#      the reason the move has already happened. Here they only adjust
-#      conviction and size, and can veto. Direction comes from fundamentals.
-#
-#   B. TIME-SERIES normalisation, not cross-sectional z. This peer group has
-#      three tradeable names. A z-score over n=3 is arithmetic, not statistics:
-#      one name is mechanically ~+1.2 and one ~-1.2 regardless of whether
-#      anything happened. So each factor is normalised against ITS OWN history
-#      for that name ("how unusual is this level for Hindalco?"), and names are
-#      then compared on those normalised moves plus the pair spread.
-#      >> This is the item I most want your view on. <<
+# The layers answer three different questions, in order, and each can stop the
+# process:
+#   L1  Did the economics actually change, and by how much?      -> DIRECTION + SIZE
+#   L2  Is that already in the price?                             -> CONVICTION
+#   L3  Can the sector express it at all (tezi / mandi)?          -> PERMISSION
 # ============================================================================
 
 peer_group: aluminium_primary
-spec_version: 0.1.0
-members: [hindalco, nalco, vedanta]
-
-normalisation:
-  method: timeseries_z          # per entity, per factor, against own history
-  lookback_days: 252
-  min_history_days: 60          # below this, factor emits no score (not a zero)
-  winsorise_pct: 2.5            # clip tails so one bad print cannot dominate
-  cross_sectional_z: false      # deliberately OFF at n=3 — see note B above
+spec_version: 0.2.0
+members: [nalco, hindalco, vedanta]     # vedanta via segment_weights
+reporting_units: [vaml, novelis]        # carry economics, never scored directly
 
 # ----------------------------------------------------------------------------
-# ALPHA FACTORS — summed, signed by each entity's exposure, into the composite
+# LAYER 1 — the margin bridge
 # ----------------------------------------------------------------------------
-alpha_factors:
+layer1:
+  windows_days: [1, 5, 20]        # run the bridge over each; 1d is noise, 20d is thesis
 
-  output_price:
-    weight: 0.22
-    metrics: [lme_aluminium_3m, lme_aluminium_cash, japan_premium, domestic_premium]
-    horizon_days: 5
-    notes: Shared across the group; contributes little to RELATIVE ranking by design.
+  formula: |
+    For each output line:  d_revenue += volume * d_price(price_link, window)
+    For each input line:   d_cost    += basis_volume * intensity * market_pct
+                                        * d_price(price_link, window)
+    d_ebitda      = d_revenue - d_cost
+    pct_of_ebitda = d_ebitda / base_ebitda        <- the materiality test
 
-  alumina:
-    weight: 0.20                # high, because it is the main differentiator here
-    metrics: [alumina_fob_australia, alumina_spot_index, lanjigarh_utilisation]
-    horizon_days: 5
-    notes: >
-      The one factor whose SIGN flips across the group (+0.95 NALCO, -0.55 VEDL,
-      +0.15 HNDL). This is where relative signal actually comes from, and it is
-      exactly what an absolute per-company score cannot express.
+    market_pct is what makes this per-company rather than per-sector. A captive
+    input contributes ZERO to d_cost regardless of how far its market price
+    moves, which is the whole reason NALCO and VAML respond oppositely to
+    alumina.
 
-  energy_cost:
-    weight: 0.14
-    metrics: [coal_eauction_premium, thermal_coal_import, power_cost_per_t, cil_supply]
-    horizon_days: 10
+  materiality:
+    min_pct_of_ebitda: 0.015      # below 1.5% of EBITDA, an economics move is
+                                  # not a trade. Directly targets the old failure
+                                  # of reporting a lean on every name every day.
+    on_fail: emit_nothing
 
-  other_input_cost:
-    weight: 0.07
-    metrics: [caustic_soda, cp_coke, coal_tar_pitch, carbon_anode]
-    horizon_days: 10
+  coverage:
+    min_lines_priced_pct: 0.70    # if under 70% of weighted lines have a fresh
+                                  # price, the bridge says "cannot tell"
+    on_fail: emit_no_bridge       # NOT a zero, and NOT a decay toward neutral
 
-  volume_growth:
-    weight: 0.11
-    metrics: [monthly_production, capacity_ramp, smelter_utilisation, expansion_milestone]
-    horizon_days: 30
-
-  downstream_mix:
-    weight: 0.10
-    metrics: [novelis_can_spread, novelis_scrap_spread, novelis_shipments,
-              value_added_share, vap_realisation]
-    horizon_days: 20
-    notes: Effectively a Hindalco-only factor (exposure +0.90 vs +0.05 NALCO).
-
-  fx_usdinr:
-    weight: 0.06
-    metrics: [usdinr_spot]
-    horizon_days: 5
-
-  balance_sheet:
-    weight: 0.05
-    metrics: [net_debt_ebitda, capex_guidance, refinancing, credit_rating]
-    horizon_days: 60
-
-  governance_overhang:
-    weight: 0.05
-    metrics: [promoter_stake_change, demerger_step, dividend_policy, pledge,
-              disinvestment_headline, related_party]
-    horizon_days: 30
-    notes: Small weight but large VEDL exposure (-0.90), so it lands mostly there.
-
-# weights above must sum to 1.0 — asserted by the loader, not trusted here.
+  currency: INR
+  fx_handling: |
+    Convert USD-linked lines at spot USDINR, and treat USDINR itself as a price
+    input rather than a separate factor. A weaker INR then shows up naturally as
+    a revenue tailwind on USD-linked outputs against an INR cost base, sized
+    correctly per company instead of via a guessed sensitivity.
 
 # ----------------------------------------------------------------------------
-# MODIFIERS — never change direction. Adjust conviction, size, or veto.
+# LAYER 2 — is it priced in
 # ----------------------------------------------------------------------------
-modifiers:
+# Never sets direction. Only conviction and size. This is the guard against
+# recommending the most crowded name because everyone is bullish on it.
+layer2:
+  valuation:
+    metric: ev_ebitda
+    reference: own_history          # vs its OWN percentile, not vs peers
+    lookback_days: 1260             # ~5y
+    rules:
+      - if: pctile > 80 and direction == long
+        then: priced_in = priced;  downgrade_conviction
+      - if: pctile < 20 and direction == long
+        then: priced_in = not_priced; upgrade_conviction
+      - if: pctile < 20 and direction == short
+        then: priced_in = priced;  downgrade_conviction
 
-  estimate_revision:
-    role: conviction
-    metrics: [ebitda_revision_breadth, ebitda_per_t_revision, tp_revision_breadth]
-    effect: >
-      Confirms or contradicts the fundamental read. Agreement raises conviction
-      one notch; contradiction lowers it one notch. Cannot flip direction.
-
-  broker_consensus:
+  consensus:
     role: crowding
-    metrics: [rating_dispersion, net_rating_change, coverage_count, consensus_tp_gap]
-    effect: >
-      A crowded long is a SMALLER position, not a stronger signal. When our
-      direction matches near-unanimous consensus AND consensus_tp_gap is thin,
-      cut size. When we disagree with consensus, keep direction and flag it for
-      review — that is a thesis to defend, not to suppress.
+    rules:
+      - if: net_rating > 0.7 and consensus_tp_gap_pct < 10 and direction == long
+        then: cut_size
+        note: unanimous and no upside left to consensus TP — the move has happened
+      - if: sign(net_rating) != sign(direction)
+        then: flag_for_review
+        note: >
+          Disagreeing with consensus is a thesis to defend, not to suppress.
+          Keep direction, surface it, and let the review layer grade it.
 
   positioning:
     role: timing_veto
-    metrics: [oi_percentile, oi_buildup, futures_basis, rollover_pct]
-    effect: >
-      Extreme OI percentile against our direction (>85th on the opposite side)
-      downgrades conviction to `low` and sets a wait flag. It never inverts the
-      fundamental call — it says the entry is poor, which is a different claim.
+    rules:
+      - if: oi_percentile > 85 and oi_buildup opposes direction
+        then: conviction = low; wait_flag = true
+        note: a poor entry is a different claim from a wrong call — never inverts L1
 
 # ----------------------------------------------------------------------------
-# GATES — when the answer must be "no trade"
+# LAYER 3 — sector regime (tezi / mandi)
 # ----------------------------------------------------------------------------
-gates:
+# The permission layer. Your own framing: if the sector lacks investor
+# interest, positive news does not make stocks run up.
+layer3:
+  scope: aluminium                # regime is measured on the coverage bucket
+  inputs:
+    breadth_pct:     {source: pct_of_sector_above_50dma}
+    rel_strength:    {source: sector_index_vs_nifty, lookback_days: 60}
+    turnover_pctile: {source: sector_turnover_vs_own_history, lookback_days: 252}
+    flow_fii:        {source: fii_sector_flow, lookback_days: 20}
+    dispersion:      {source: intra_sector_return_dispersion, lookback_days: 20}
 
-  dispersion:
-    metric: composite_spread          # best composite minus worst, in normalised units
-    min: 0.40
-    on_fail: emit_flat
-    notes: >
-      Directly targets the old failure where 44 names sat inside a 1.0 band and
-      every one got a lean. Below this spread the honest output is "nothing to
-      do in aluminium today" — recorded as a run, with dispersion_ok = 0.
+  states:
+    tezi:
+      when: rel_strength > 0 and breadth_pct > 60 and turnover_pctile > 50
+      can_express: true
+      note: longs work, good news is rewarded
+    mandi:
+      when: rel_strength < 0 and breadth_pct < 40 and turnover_pctile > 50
+      can_express: true
+      note: shorts work; a positive L1 on a long may still be ignored
+    neutral:
+      when: otherwise
+      can_express: true
+      size_multiplier: 0.6
+    dead:
+      when: turnover_pctile < 25
+      can_express: false
+      note: >
+        No investor interest. Signals are still COMPUTED AND RECORDED with
+        l3_gated = 1, so the review layer can later ask whether the gate cost
+        money or saved it. Suppressing them silently would destroy that test.
 
-  staleness:
-    max_stale_days: 15
-    scope: any_factor_above_weight
-    weight_threshold: 0.15
-    on_fail: downgrade_conviction
-    notes: >
-      If a factor carrying >15% weight has no confirmation in 15 days, the
-      composite is not trustworthy at full conviction. Says so instead of
-      silently decaying toward a mean.
-
-  coverage:
-    min_factors_scored: 5
-    on_fail: emit_no_score
-    notes: A name with fewer than 5 of 9 alpha factors observed gets NO score at all.
+  pair_exception: |
+    A market-neutral pair inside a dead sector is far less regime-dependent
+    than an outright, because it needs relative rather than absolute interest.
+    Pairs are permitted in `dead` at reduced size; outrights are not.
 
 # ----------------------------------------------------------------------------
-# OUTPUT — what a run must produce. The old system stopped at the score.
+# OUTPUT
 # ----------------------------------------------------------------------------
 output:
   emit_singles: true
   emit_pairs: true
   pair_candidates:
-    - [nalco, vedanta]        # cleanest alumina-sign expression: +0.95 vs -0.55
-    - [nalco, hindalco]       # alumina and INR vs Novelis
-    - [hindalco, vedanta]     # quality/governance spread, low commodity content
-  require_falsifier: true     # schema enforces this too
+    - pair: [nalco, vedanta]
+      rationale: >
+        The cleanest alumina expression available. NALCO sells surplus alumina;
+        VAML buys ~half its requirement. Same print, opposite sign, and the
+        long leg additionally wins on INR. Cost: the short is VEDL, so only
+        ~42% of the move is aluminium.
+    - pair: [nalco, hindalco]
+      rationale: >
+        Alumina and INR against Novelis. Works when alumina leads and can
+        spreads are soft; fails when Novelis is the driver.
+    - pair: [hindalco, vedanta]
+      rationale: >
+        Governance and balance-sheet quality spread, deliberately low commodity
+        content. Mostly a Layer 2 trade, and should be labelled as such.
+
+  require_falsifier: true         # also enforced by a schema CHECK
   conviction_rules:
-    high:   composite_spread >= 0.80 and no_gate_failures
-    medium: composite_spread >= 0.40
+    high:   pct_of_ebitda >= 0.05 and priced_in == not_priced and no_veto
+    medium: pct_of_ebitda >= 0.03
     low:    otherwise
 
 # ----------------------------------------------------------------------------
-# VALIDATION — the go/no-go before any of this is trusted or extended
+# VALIDATION — the gate before any second sector or any front-end work
 # ----------------------------------------------------------------------------
 validation:
-  backfill_from: 2026-06-17        # earliest dated broker digest available
+  backfill_from: 2026-06-17        # earliest dated broker digest on hand
   backfill_to:   2026-08-14
-  test: >
-    Does the pair ranking, computed on data available at date D only, predict
-    the sign of the realised 5- and 10-day relative move for each pair? Report
-    hit rate, and hit rate conditioned on conviction. If high-conviction calls
-    are not better than low-conviction ones, the weights are decoration and
-    must be refitted before any second sector or any front-end work.
+
+  test_1_economics: >
+    Sanity-check the bridge before testing prediction. On a known alumina move,
+    does it produce the ordering you already believe — NALCO positive, VAML
+    negative, Hindalco small positive? If not, the intensities or market_pct
+    values are wrong, and no amount of validation downstream will fix that.
+
+  test_2_direction: >
+    Using only data available at date D, does the sign of pct_of_ebitda predict
+    the sign of the realised 5- and 20-day RELATIVE move for each pair? Report
+    hit rate overall and conditioned on conviction.
+
+  test_3_layers_earn_their_place: >
+    Does each layer add anything? Compare hit rate for L1 alone, L1+L2, and
+    L1+L2+L3. A layer that does not improve the hit rate is decoration and
+    should be cut rather than kept for narrative completeness.
+
   minimum_bar: >
-    Directional hit rate above 55% on high-conviction pairs, AND monotonic
-    improvement from low to high conviction. Below that, do not proceed —
-    revise the spec.
+    Directional hit rate above 55% on high-conviction pairs, monotonic
+    improvement from low to high conviction, and L2 must beat L1 alone.
+    Below that, revise the spec — do not proceed to a second sector or to the
+    front-end.

@@ -48,14 +48,26 @@ def main() -> int:
         ),
         (
             "signals rejects a signal with no falsifier",
-            "INSERT INTO signals (run_id,as_of,kind,direction,conviction,thesis,"
-            "falsifier,created_at) "
-            "VALUES (1,'2026-08-15','single','long','high','t','','now')",
+            "INSERT INTO signals (as_of,kind,direction,conviction,thesis,"
+            "falsifier,spec_version,code_sha,created_at) "
+            "VALUES ('2026-08-15','single','long','high','t','','v1','sha','now')",
         ),
         (
             "entities rejects a scoreable but untradeable name",
             "INSERT INTO entities (id,kind,name,peer_group,is_tradeable,parent_id) "
             "VALUES ('x','reporting_unit','X','aluminium_primary',0,'hindalco')",
+        ),
+        (
+            "economics rejects an intensity with no provenance",
+            "INSERT INTO economics (entity_id,effective_from,line_kind,item,"
+            "intensity,intensity_unit,market_pct,source_note,spec_version) "
+            "VALUES ('nalco','2026-01-01','input','alumina',1.93,'t/t',0.0,'  ','v1')",
+        ),
+        (
+            "economics rejects an input line with no intensity",
+            "INSERT INTO economics (entity_id,effective_from,line_kind,item,"
+            "source_note,spec_version) "
+            "VALUES ('nalco','2026-01-01','input','alumina','ar-fy26','v1')",
         ),
     ]
     print("\nintegrity checks (each must be REJECTED):")
