@@ -64,6 +64,17 @@ def main() -> int:
             "VALUES ('nalco','2026-01-01','input','alumina',1.93,'t/t',0.0,'  ','v1')",
         ),
         (
+            "entities rejects a scoreable name that declares no L1 structure",
+            "INSERT INTO entities (id,kind,name,peer_group,structure) "
+            "VALUES ('y','company','Y','zinc',NULL)",
+        ),
+        (
+            "holdco_components rejects a listed stake with no stake size",
+            "INSERT INTO holdco_components (entity_id,effective_from,component_kind,"
+            "component_entity,label,source_note,spec_version) "
+            "VALUES ('vedanta','2026-04-01','listed_stake','hindustan_zinc','HZL','ar','v1')",
+        ),
+        (
             "economics rejects an input line with no intensity",
             "INSERT INTO economics (entity_id,effective_from,line_kind,item,"
             "source_note,spec_version) "

@@ -72,6 +72,15 @@ CREATE INDEX IF NOT EXISTS ix_sources_kind ON sources (kind, source_date);
 CREATE TABLE IF NOT EXISTS entities (
     id            TEXT PRIMARY KEY,          -- stable slug: 'hindalco', 'lme_aluminium'
     kind          TEXT NOT NULL,             -- company|reporting_unit|commodity|macro|fx|index
+    -- structure SELECTS WHICH LAYER 1 MODEL RUNS. Not cosmetic:
+    --   operating -> margin bridge (cost stack x intensity x market_pct)
+    --   converter -> spread bridge; input and output both move with the same
+    --                benchmark and largely net out (Novelis: LME passes through,
+    --                the economics are conversion spread and scrap discount)
+    --   holdco    -> NAV / sum-of-parts vs holdco discount. A cost stack does
+    --                not exist, so running the margin bridge returns ~zero and
+    --                reports "no trade" for the wrong reason.
+    structure     TEXT,
     name          TEXT NOT NULL,
     sector        TEXT,                      -- coverage bucket; NULL for commodity/macro
     peer_group    TEXT,                      -- scoring universe; NULL = not scored
@@ -83,6 +92,9 @@ CREATE TABLE IF NOT EXISTS entities (
     active        INTEGER NOT NULL DEFAULT 1,
     meta          TEXT,                      -- JSON
     CHECK (kind IN ('company','reporting_unit','commodity','macro','fx','index')),
+    CHECK (structure IS NULL OR structure IN ('operating','converter','holdco')),
+    -- anything scoreable must declare which L1 model applies to it
+    CHECK (peer_group IS NULL OR structure IS NOT NULL),
     CHECK (is_tradeable IN (0,1)),
     CHECK (active IN (0,1)),
     -- a scoreable name must be tradeable; an untradeable unit must have a parent
@@ -355,6 +367,65 @@ CREATE TABLE IF NOT EXISTS bridge_results (
     n_lines_total      INTEGER NOT NULL,
     coverage_ok        INTEGER NOT NULL,     -- 0 = too many unpriced lines to trust the bridge
     CHECK (coverage_ok IN (0,1))
+) STRICT;
+
+-- ---------------------------------------------------------------------------
+-- LAYER 1, holdco variant — sum-of-parts and the discount.
+--
+-- For structure = 'holdco' there is no cost stack, so the margin bridge does
+-- not apply. The economics are: what are the stakes worth, what is the
+-- holdco-level debt, and where does the resulting discount sit against its own
+-- history.
+--
+-- This matters for a pair like Hindustan Zinc vs its holdco: both legs carry
+-- the SAME underlying commodity exposure, so zinc largely cancels in the
+-- spread. What is left is the discount and the catalysts that move it. A
+-- commodity bridge on that pair returns ~zero and would report "no trade"
+-- every day for the wrong reason.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS holdco_components (
+    id             INTEGER PRIMARY KEY,
+    entity_id      TEXT NOT NULL REFERENCES entities (id),   -- the holdco
+    effective_from TEXT NOT NULL,
+    effective_to   TEXT,
+    component_kind TEXT NOT NULL,            -- listed_stake|unlisted_asset|net_debt|other
+    component_entity TEXT REFERENCES entities (id),  -- set for listed_stake
+    label          TEXT NOT NULL,
+    stake_pct      REAL,                     -- for listed_stake
+    valuation      REAL,                     -- for unlisted/other, in currency
+    valuation_basis TEXT,                    -- 'ev_ebitda 5x', 'book', 'transaction'
+    currency       TEXT,
+    source_note    TEXT NOT NULL,
+    spec_version   TEXT NOT NULL,
+    CHECK (component_kind IN ('listed_stake','unlisted_asset','net_debt','other')),
+    CHECK (length(trim(source_note)) > 0),
+    CHECK (stake_pct IS NULL OR (stake_pct >= 0.0 AND stake_pct <= 1.0)),
+    -- a listed stake needs both the stake size and the entity it is a stake in
+    CHECK (component_kind <> 'listed_stake'
+           OR (component_entity IS NOT NULL AND stake_pct IS NOT NULL)),
+    CHECK (effective_from GLOB '____-__-__')
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_holdco_entity ON holdco_components (entity_id, effective_from);
+
+CREATE TABLE IF NOT EXISTS holdco_nav (
+    entity_id       TEXT NOT NULL REFERENCES entities (id),
+    as_of           TEXT NOT NULL,
+    gross_nav       REAL,                    -- sum of stakes + unlisted assets
+    net_debt        REAL,
+    nav             REAL,                    -- gross_nav - net_debt
+    market_cap      REAL,
+    discount_pct    REAL,                    -- 1 - market_cap/nav; the tradeable variable
+    discount_pctile REAL,                    -- vs its OWN history
+    lookback_days   INTEGER,
+    n_components_priced INTEGER NOT NULL,
+    n_components_total  INTEGER NOT NULL,
+    coverage_ok     INTEGER NOT NULL,
+    spec_version    TEXT NOT NULL,
+    code_sha        TEXT NOT NULL,
+    PRIMARY KEY (entity_id, as_of),
+    CHECK (coverage_ok IN (0,1)),
+    CHECK (as_of GLOB '____-__-__')
 ) STRICT;
 
 -- ===========================================================================

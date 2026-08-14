@@ -14,9 +14,10 @@
 # ============================================================================
 
 peer_group: aluminium_primary
-spec_version: 0.2.0
-members: [nalco, hindalco, vedanta]     # vedanta via segment_weights
-reporting_units: [vaml, novelis]        # carry economics, never scored directly
+spec_version: 0.3.0
+members: [nalco, hindalco, vaml]        # all three directly tradeable post-demerger
+reporting_units: [novelis]              # carries economics, never scored directly
+structures: {nalco: operating, hindalco: operating, vaml: operating, novelis: converter}
 
 # ----------------------------------------------------------------------------
 # LAYER 1 — the margin bridge
@@ -138,20 +139,23 @@ output:
   emit_singles: true
   emit_pairs: true
   pair_candidates:
-    - pair: [nalco, vedanta]
+    - pair: [nalco, vaml]
       rationale: >
-        The cleanest alumina expression available. NALCO sells surplus alumina;
-        VAML buys ~half its requirement. Same print, opposite sign, and the
-        long leg additionally wins on INR. Cost: the short is VEDL, so only
-        ~42% of the move is aluminium.
+        The cleanest alumina expression available, and undiluted now that VAML
+        is separately listed. NALCO's smelter alumina is captive and it sells
+        surplus at market; VAML buys a large share of its requirement. Same
+        print, opposite sign, both legs pure aluminium. The long leg wins on
+        INR as well. This is the flagship pair for the peer group.
     - pair: [nalco, hindalco]
       rationale: >
         Alumina and INR against Novelis. Works when alumina leads and can
-        spreads are soft; fails when Novelis is the driver.
-    - pair: [hindalco, vedanta]
+        spreads are soft; fails when Novelis is the driver — so check the
+        converter bridge on Novelis before putting this on.
+    - pair: [hindalco, vaml]
       rationale: >
-        Governance and balance-sheet quality spread, deliberately low commodity
-        content. Mostly a Layer 2 trade, and should be labelled as such.
+        Balance-sheet and integration quality against volume and cost leverage.
+        Lower alumina content than the flagship pair, since Hindalco is near
+        alumina-neutral rather than a seller. Watch VAML's post-demerger debt.
 
   require_falsifier: true         # also enforced by a schema CHECK
   conviction_rules:
