@@ -1,0 +1,127 @@
+# ============================================================================
+# Entity spec — Aluminium coverage bucket
+# ============================================================================
+# STATUS: PROPOSAL. Every `exposure` number below needs your sign-off — they
+# are the analytical heart of the system and I have marked my reasoning so you
+# can argue with the specific number rather than the whole idea.
+#
+# Note `sector` and `peer_group` diverge here on purpose. Your coverage bucket
+# holds five names; only three are rankable against each other.
+# ============================================================================
+
+sector: aluminium
+
+entities:
+
+  # --------------------------------------------------------------------------
+  # peer_group: aluminium_primary — the three rankable names
+  # --------------------------------------------------------------------------
+
+  - id: hindalco
+    kind: company
+    name: Hindalco Industries
+    sector: aluminium
+    peer_group: aluminium_primary
+    nse_symbol: HINDALCO
+    exposures:
+      output_price:        +1.00   # full LME beta on India smelting
+      alumina:             +0.15   # integrated on bauxite+alumina: cost-neutral,
+                                   # small surplus sales. NOT a beneficiary like NALCO.
+      energy_cost:         -0.45   # captive coal blocks damp the e-auction spike
+      other_input_cost:    -0.30
+      volume_growth:       +0.60
+      downstream_mix:      +0.90   # Novelis. dominant swing factor, see novelis_* metrics
+      fx_usdinr:           +0.35   # muted vs peers: Novelis USD costs offset INR gain
+      balance_sheet:       +0.30
+      governance_overhang:  0.00
+    notes: >
+      Novelis is close to half the earnings and is driven by can spreads and
+      the US scrap discount, not by LME. Treating Hindalco as a pure LME proxy
+      is the single biggest error available in this peer group.
+
+  - id: nalco
+    kind: company
+    name: National Aluminium Company
+    sector: aluminium
+    peer_group: aluminium_primary
+    nse_symbol: NATIONALUM
+    exposures:
+      output_price:        +1.00
+      alumina:             +0.95   # SELLS surplus alumina. sign is POSITIVE and large —
+                                   # this is why an Alunorte-type supply shock is a
+                                   # NALCO story and only faintly a Hindalco one.
+      energy_cost:         -0.75   # buys coal, high e-auction exposure, no Novelis buffer
+      other_input_cost:    -0.35
+      volume_growth:       +0.50
+      downstream_mix:      +0.05   # negligible value-added
+      fx_usdinr:           +0.80   # cleanest INR beneficiary: USD revenue, INR cost base
+      balance_sheet:       +0.20   # net cash, so leverage news barely moves it
+      governance_overhang: -0.15   # PSU: disinvestment / OFS headline risk
+    notes: >
+      The purest expression of both alumina and INR in the group. Highest
+      operating leverage to a coal cost spike.
+
+  - id: vedanta
+    kind: company
+    name: Vedanta Ltd
+    sector: aluminium
+    peer_group: aluminium_primary
+    nse_symbol: VEDL
+    dilution: 0.42                 # ~share of EBITDA from aluminium. scales EVERY
+                                   # aluminium factor below, so an alumina print
+                                   # moves VEDL ~0.42x what it moves a pure play.
+    exposures:
+      output_price:        +1.00
+      alumina:             -0.55   # NEGATIVE: Lanjigarh is bauxite-short, buys
+                                   # third-party alumina. opposite sign to NALCO.
+      energy_cost:         -0.55
+      other_input_cost:    -0.30
+      volume_growth:       +0.70
+      downstream_mix:      +0.10
+      fx_usdinr:           +0.55
+      balance_sheet:       -0.80   # holdco debt, brand-fee and dividend extraction
+      governance_overhang: -0.90   # demerger, promoter pledge, stake shuffle.
+                                   # largest single non-commodity driver here.
+    notes: >
+      A conglomerate, not an aluminium pure play — hence `dilution`. Zinc,
+      oil & gas and power all move it. Governance and balance sheet routinely
+      dominate the commodity read, which is why they carry weights this large.
+
+  # --------------------------------------------------------------------------
+  # peer_group: zinc — same coverage bucket, different factor basis
+  # --------------------------------------------------------------------------
+
+  - id: hindustan_zinc
+    kind: company
+    name: Hindustan Zinc
+    sector: aluminium            # your coverage bucket
+    peer_group: zinc             # NOT rankable against the aluminium names
+    nse_symbol: HINDZINC
+    exposures:
+      output_price:        +1.00   # resolves to LME ZINC, not aluminium
+      byproduct_silver:    +0.35
+      energy_cost:         -0.40
+      volume_growth:       +0.55
+      fx_usdinr:           +0.70
+      balance_sheet:       +0.25
+      governance_overhang: -0.70   # parent dividend pull, GoI residual stake / OFS
+    notes: >
+      Kept in the aluminium coverage bucket because you cover it, but scored
+      in its own peer group. z-scoring it against Hindalco would compare an
+      LME-zinc name to an LME-aluminium name and call the difference signal.
+
+  # --------------------------------------------------------------------------
+  # Not tradeable — a reporting unit, never scored
+  # --------------------------------------------------------------------------
+
+  - id: vedanta_aluminium
+    kind: reporting_unit
+    name: Vedanta Aluminium (division)
+    parent_id: vedanta
+    is_tradeable: false
+    peer_group: null             # schema CHECK forbids scoring an untradeable name
+    notes: >
+      Has no ticker. Carries observations — segment volumes, Jharsuguda cost
+      per tonne, Lanjigarh utilisation — which propagate to `vedanta` scaled by
+      its dilution. It must never receive a score of its own: the previous
+      matrix gave it one, which is a number you cannot express in the book.

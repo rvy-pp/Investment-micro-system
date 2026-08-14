@@ -1,0 +1,31 @@
+# Data and captures are NOT in git — they are large, binary-ish and regenerable.
+# Fallback for these is the dated snapshot in snapshots/, plus the git remote
+# for everything that defines behaviour (schema, specs, code).
+data/
+snapshots/
+!snapshots/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node / front-end
+node_modules/
+packages/web/dist/
+.vite/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets — never commit credentials. See docs/ for what belongs here.
+.env
+.env.*
+!.env.example
