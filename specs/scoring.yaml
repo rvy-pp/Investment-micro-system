@@ -1,0 +1,64 @@
+# ============================================================================
+# Score calibration — EBITDA impact -> the firm's 1-5 scale
+# ============================================================================
+# One file, desk-wide. Changing the anchor here re-scores all history on the
+# next run; it does not rewrite anything, because scores are stamped with
+# spec_version.
+#
+# TUNE THESE TWO SEPARATELY. That separation is the point of the hill form:
+#
+#   anchor  = "what does a material move read as"   -> WHERE the curve sits
+#   p       = "how much noise do I want ignored"    -> the SHAPE of the curve
+#
+# At the anchor, k = anchor.x_ref exactly for any p, so moving p does NOT move
+# the anchor. You can argue about the two decisions independently.
+# ============================================================================
+
+spec_version: 0.1.0
+
+scale:
+  min: 1.0
+  neutral: 3.0          # firm convention: 3 = nothing is happening
+  max: 5.0
+
+form: hill              # hill | tanh | linear  (see packages/score/scoring.py)
+
+anchor:
+  x_ref: 0.05           # a 5% EBITDA impact...
+  score_ref: 4.0        # ...reads as a 4
+  rationale: >
+    5% of EBITDA is the desk's high-conviction threshold, and 4 is the first
+    score that means "act". Aligning those two makes the number mean something
+    operationally rather than being a normalised abstraction.
+
+p: 1.5
+p_rationale: >
+  p > 1 makes the derivative at zero equal to ZERO, which is what stops daily
+  price noise from moving the score. At p = 1.5 a 0.2% EBITDA wobble reads 3.02
+  against tanh's 3.04, and local sensitivity at zero is 0.04 score points per
+  1% of EBITDA versus tanh's 0.22 — five times less twitchy.
+  Raise p toward 2.0 for more noise rejection and a sharper decision zone;
+  lower toward 1.2 if the score feels too slow to respond.
+
+accumulation:
+  method: ewma
+  half_life_days: 10
+  rationale: >
+    NOT a trailing fixed window. A 20-day sum changes every day purely because
+    the oldest day rolls out — a score move with no new information, which is
+    precisely what makes a daily score untrustworthy. An EWMA has no cliff.
+
+symmetry:
+  mode: symmetric
+  note: >
+    +5% and -5% currently map to 4.00 and 2.00. Worth revisiting: operating
+    leverage is asymmetric near breakeven, so a cost shock can hurt more than
+    the mirror-image benefit helps. Left symmetric until there is evidence from
+    the outcome loop rather than guessed at now.
+
+reporting:
+  decimals: 2
+  always_report_spread: true
+  note: >
+    For a long/short book the SPREAD in score points between two names is the
+    tradeable quantity. A single absolute score is context, not a decision.

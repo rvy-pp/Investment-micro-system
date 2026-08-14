@@ -24,8 +24,21 @@ import sys
 
 import yaml
 
+# so the script runs from any cwd, not just packages/score/
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from scoring import score as to_score, solve_k  # noqa: E402
+
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 SPECS = REPO / "specs" / "entities"
+SCORING_SPEC = REPO / "specs" / "scoring.yaml"
+
+
+def load_scoring() -> tuple[str, float, float]:
+    """Return (form, k, p) from the desk-wide scoring spec."""
+    s = yaml.safe_load(SCORING_SPEC.read_text(encoding="utf-8"))
+    form, p = s["form"], s["p"]
+    k = solve_k(form, s["anchor"]["x_ref"], s["anchor"]["score_ref"], p)
+    return form, k, p
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +197,11 @@ def main() -> int:
           f"   (USDINR {usdinr})")
     print(f"materiality threshold: {args.materiality:.1%} of EBITDA\n")
 
-    header = f"{'entity':16} {'d_rev':>9} {'d_cost':>9} {'d_EBITDA':>10} {'/t':>9} {'%EBITDA':>9}  verdict"
+    form, k, p = load_scoring()
+    print(f"score: {form} form, k={k:.4f}, p={p}  (from specs/scoring.yaml)\n")
+
+    header = (f"{'entity':16} {'d_rev':>9} {'d_cost':>9} {'d_EBITDA':>10} {'/t':>9} "
+              f"{'%EBITDA':>9} {'SCORE':>6}  verdict")
     print(header)
     print("-" * len(header))
 
@@ -192,9 +209,12 @@ def main() -> int:
     for ent in sorted(targets, key=lambda e: e["id"]):
         f = fins.get(ent["id"], {})
         r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr)
-        rows.append((ent, r))
 
         pct = r["pct_of_ebitda"]
+        # A score with no trustworthy bridge behind it would be worse than none.
+        r["score"] = to_score(pct, k, form, p) if (pct is not None and r["coverage_ok"]) else None
+        rows.append((ent, r))
+
         if not r["coverage_ok"]:
             verdict = f"NO BRIDGE ({r['n_priced']}/{r['n_total']} lines priced)"
         elif pct is None:
@@ -206,8 +226,9 @@ def main() -> int:
 
         per_t = f"{r['d_ebitda_per_t']:,.0f}" if r["d_ebitda_per_t"] else "-"
         pct_s = f"{pct:+.2%}" if pct is not None else "-"
+        sc_s = f"{r['score']:.2f}" if r["score"] is not None else "-"
         print(f"{ent['id']:16} {r['d_revenue_cr']:>9,.0f} {r['d_cost_cr']:>9,.0f} "
-              f"{r['d_ebitda_cr']:>+10,.0f} {per_t:>9} {pct_s:>9}  {verdict}")
+              f"{r['d_ebitda_cr']:>+10,.0f} {per_t:>9} {pct_s:>9} {sc_s:>6}  {verdict}")
 
     if units_only:
         print("\nreporting units (carry economics, never scored):")
@@ -236,16 +257,22 @@ def main() -> int:
 
     # spread view — a long/short desk trades the difference
     if len(rows) >= 2:
-        print("\npair spreads (difference in %EBITDA impact):")
+        print("\npair spreads — the tradeable quantity for a long/short book:")
+        pairs = []
         for i in range(len(rows)):
             for j in range(i + 1, len(rows)):
                 a, b = rows[i], rows[j]
-                if a[1]["pct_of_ebitda"] is None or b[1]["pct_of_ebitda"] is None:
+                if a[1]["score"] is None or b[1]["score"] is None:
                     continue
-                spread = a[1]["pct_of_ebitda"] - b[1]["pct_of_ebitda"]
-                lng, sht = (a, b) if spread > 0 else (b, a)
-                print(f"  long {lng[0]['id']:14} / short {sht[0]['id']:14} "
-                      f"spread {abs(spread):.2%}")
+                d_pct = a[1]["pct_of_ebitda"] - b[1]["pct_of_ebitda"]
+                lng, sht = (a, b) if d_pct > 0 else (b, a)
+                pairs.append((abs(lng[1]["score"] - sht[1]["score"]), lng, sht,
+                              abs(d_pct)))
+        for sc_spread, lng, sht, pct_spread in sorted(pairs, reverse=True,
+                                                      key=lambda t: t[0]):
+            print(f"  long {lng[0]['id']:14} ({lng[1]['score']:.2f}) / "
+                  f"short {sht[0]['id']:14} ({sht[1]['score']:.2f})   "
+                  f"score spread {sc_spread:.2f}   ({pct_spread:.2%} EBITDA)")
 
     return 0
 
