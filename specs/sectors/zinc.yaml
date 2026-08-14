@@ -1,113 +1,74 @@
 # ============================================================================
-# zinc — Hindustan Zinc (opco) vs Vedanta Ltd (holdco)
+# zinc — Hindustan Zinc vs Vedanta Ltd
 # ============================================================================
-# A two-name peer group with mixed structures, which is the whole point of
-# putting `structure` on the entity: the same peer group runs TWO DIFFERENT
-# Layer 1 models.
+# Rewritten in v0.2.0. The previous version built a sum-of-parts NAV model with
+# a catalyst table for VEDL. That was over-engineering: the holdco discount is
+# just a valuation metric (P3), and both names are modelled with the same four
+# pillars as everything else.
 #
-#   hindustan_zinc  structure: operating  -> margin bridge (zinc, silver, coal)
-#   vedanta         structure: holdco     -> NAV / discount model
+# The desk's thumb rule, which this spec exists to express:
+#   HZL  moves MORE, on zinc AND silver
+#   VEDL is stable, and moves with zinc
 #
-# THE CENTRAL FACT ABOUT THIS PAIR: both legs carry the same underlying zinc
-# exposure, so zinc largely cancels in the spread. It is a STRUCTURE trade, not
-# a commodity trade. A commodity bridge run on the spread returns ~zero and
-# would report "no trade" every day — correct arithmetic, wrong question.
+# VEDL's zinc exposure is HZL's, scaled by its ~63.4% stake and diluted by the
+# other businesses it retained. That is why it moves less, and it falls out of
+# the ASP arithmetic rather than being asserted.
 # ============================================================================
 
 peer_group: zinc
-spec_version: 0.1.0
+spec_version: 0.2.0
 members: [hindustan_zinc, vedanta]
-structures: {hindustan_zinc: operating, vedanta: holdco}
 
 # ----------------------------------------------------------------------------
-# LAYER 1 — two models, one peer group
+# P1 ASP + P2 COSTS — same margin bridge as every other peer group
 # ----------------------------------------------------------------------------
-layer1:
+pillars_1_2:
   windows_days: [1, 5, 20]
-
-  hindustan_zinc:
-    model: margin_bridge
-    note: >
-      Standard cost-stack bridge. Silver is a material earnings contributor
-      rather than a rounding item, so it gets its own output line — a zinc-only
-      read of HZL is wrong whenever silver is moving.
-
-  vedanta:
-    model: holdco_nav
-    formula: |
-      gross_nav = stake_pct * mcap(hindustan_zinc) + other_assets
-      nav       = gross_nav - holdco_net_debt
-      discount_pct = 1 - market_cap / nav
-      signal    = discount_pctile vs own history + catalyst state
-    note: >
-      `discount_pct` is the primary variable and belongs in Layer 1 for this
-      entity even though it looks like a valuation metric. That is exactly what
-      `structure: holdco` selects.
-
-  residual_zinc_beta: |
-    Zinc does NOT fully cancel in the pair. VEDL owns a FRACTION of HZL, so a
-    zinc move changes VEDL's NAV proportionally while HZL moves one-for-one.
-    Net residual zinc exposure of a 1:1 pair is therefore roughly
-
-        (1 - stake_pct * nav_sensitivity)
-
-    which is why stake_pct must be confirmed rather than estimated: it sets the
-    hedge ratio. Sizing the pair 1:1 by value leaves an unintended zinc
-    position whose size nobody chose.
-    >> The engine must REPORT the implied residual zinc beta on every signal
-    >> for this pair, so the pair is never mistaken for market-neutral. <<
-
   materiality:
-    min_discount_move_pctile: 15    # discount must move ~15 percentile points
+    min_pct_of_ebitda: 0.015
     on_fail: emit_nothing
-    note: >
-      A holdco discount is mean-reverting but slowly. Small wiggles are not
-      trades, and treating them as such is how this pair generates noise.
 
-# ----------------------------------------------------------------------------
-# LAYER 2 — for this pair, the overhangs ARE the thesis
-# ----------------------------------------------------------------------------
-layer2:
-  valuation:
-    metric: holdco_discount         # not ev_ebitda for the holdco leg
-    reference: own_history
-    lookback_days: 1260
-
-  catalysts:                        # each is a discrete, checkable event
-    - id: further_demerger_steps
-      effect: discount_narrows
-    - id: promoter_pledge_change
-      effect: discount_widens_if_up
-    - id: hzl_dividend_declaration
-      effect: cash_up_to_holdco
-      note: raises holdco cash, mechanically narrows discount
-    - id: goi_residual_stake_ofs
-      effect: overhang_on_hzl_leg
-      note: >
-        Asymmetric — it hits the HZL leg, not the holdco, so it moves the
-        SPREAD rather than both legs. Easy to misread as sector-wide.
-    - id: brand_fee_or_related_party
-      effect: discount_widens
-
-  consensus:
-    role: crowding
-    note: >
-      Holdco-discount trades are crowded by construction — the discount is
-      visible to everyone. Persistent wide discount is usually information, not
-      opportunity. Require a catalyst, not just a percentile.
-
-# ----------------------------------------------------------------------------
-# LAYER 3 — regime
-# ----------------------------------------------------------------------------
-layer3:
-  scope: aluminium                  # coverage bucket; zinc names sit inside it
-  pair_exception: true
   note: >
-    Per the aluminium_primary spec, a market-neutral pair needs relative rather
-    than absolute investor interest, so this pair is permitted in a `dead`
-    regime at reduced size. It is nonetheless the pair MOST sensitive to
-    liquidity, because a discount only re-rates when someone is paying
-    attention. Treat `dead` as a real headwind here rather than a formality.
+    Silver is a real output line for HZL, not a footnote — a zinc-only read is
+    wrong whenever silver is moving, and silver is the main reason HZL and VEDL
+    diverge. VEDL carries the same zinc and silver lines at ~63.4%, plus copper,
+    ferro chrome and nickel.
+
+  residual_beta: >
+    Because both legs carry zinc, a long/short pair here is NOT commodity-neutral
+    by default — it is long the difference in exposure, which is mostly SILVER
+    plus VEDL's non-zinc businesses. The engine must report the implied residual
+    zinc and silver beta on every pair signal, so a 1:1 sizing never leaves a
+    commodity position nobody chose.
+
+# ----------------------------------------------------------------------------
+# P3 VALUATION — where the holdco discount lives
+# ----------------------------------------------------------------------------
+pillar_3:
+  metrics: [ev_ebitda, holdco_discount_pct]
+  reference: own_history
+  lookback_days: 1260
+  note: >
+    `holdco_discount_pct` is a column in market_layer alongside EV/EBITDA. It is
+    read the same way as any other valuation metric: where does it sit against
+    its own history. It gets no special model, no NAV build, no catalyst engine.
+
+# ----------------------------------------------------------------------------
+# P4 GUIDANCE — will they hit the quarter
+# ----------------------------------------------------------------------------
+pillar_4:
+  track_metrics: [volume, cost_per_t, silver_volume, capex]
+  note: >
+    HZL guides explicitly on volumes and cost of production, which makes it a
+    good test case for the guidance pillar: commitments are dated, numeric and
+    resolve every quarter, so the track record accumulates quickly.
+
+# ----------------------------------------------------------------------------
+# GATE — sector regime
+# ----------------------------------------------------------------------------
+gate:
+  scope: aluminium              # coverage bucket
+  pair_exception: true          # market-neutral pairs permitted in a dead regime
 
 # ----------------------------------------------------------------------------
 # OUTPUT
@@ -118,30 +79,27 @@ output:
   pair_candidates:
     - pair: [hindustan_zinc, vedanta]
       rationale: >
-        Opco vs holdco. Long the opco / short the holdco when the discount is
-        narrow and a widening catalyst is live; reverse when the discount is at
-        a historic extreme AND a narrowing catalyst is dated. Never put it on
-        for the discount percentile alone.
+        Long HZL / short VEDL is, in economic substance, long silver and long
+        zinc beta against VEDL's non-zinc businesses and its discount. Put it on
+        when silver is the driver; it is a poor expression of a pure zinc view,
+        because zinc largely cancels.
   require_falsifier: true
-  report_residual_beta: true        # mandatory for this pair, see layer1 above
+  report_residual_beta: true
 
 # ----------------------------------------------------------------------------
 # VALIDATION
 # ----------------------------------------------------------------------------
 validation:
-  test_1_cancellation: >
-    Confirm the arithmetic before trusting anything: regress the realised pair
-    spread on LME zinc. If the beta is materially non-zero, the hedge ratio
-    implied by stake_pct is wrong, or VEDL retains more than the HZL stake.
-    Fix that before testing prediction.
+  test_1_thumb_rule: >
+    Before anything else, confirm the arithmetic reproduces the desk's own read:
+    regress both names on LME zinc and on silver. HZL should show the higher
+    beta to both. If VEDL comes out more sensitive than HZL, the stake or the
+    segment mix is wrong and nothing downstream is worth running.
 
-  test_2_discount: >
-    Does discount_pctile at date D predict the sign of the 20-day spread move?
-    Report hit rate separately for signals WITH a dated catalyst and WITHOUT.
-    Expect the no-catalyst set to be near coin-flip; if it is not, the catalyst
-    requirement is over-restrictive and should be relaxed.
+  test_2_direction: >
+    Does the sign of pct_of_ebitda at date D predict the sign of the 5- and
+    20-day relative move? Report hit rate conditioned on conviction.
 
   blocked_on: >
-    Cannot run at all until stake_pct, the VEDL/VAML debt split, and VEDL's
-    residual assets are confirmed. Every number in the holdco component list is
-    NEEDS_CONFIRMATION — this spec is a structure, not yet a model.
+    VEDL's HZL stake (~63.4%, to confirm) and the split of the retained
+    businesses. Everything else can run on public zinc and silver prices.

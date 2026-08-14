@@ -64,15 +64,17 @@ def main() -> int:
             "VALUES ('nalco','2026-01-01','input','alumina',1.93,'t/t',0.0,'  ','v1')",
         ),
         (
-            "entities rejects a scoreable name that declares no L1 structure",
-            "INSERT INTO entities (id,kind,name,peer_group,structure) "
-            "VALUES ('y','company','Y','zinc',NULL)",
+            "guidance rejects a commitment with no stated target",
+            "INSERT INTO guidance (entity_id,source_id,issued_date,period,metric,"
+            "target_type,quote,created_at) "
+            "VALUES ('vaml','s','2026-08-01','Q2FY27','volume','point','we expect',"
+            "'now')",
         ),
         (
-            "holdco_components rejects a listed stake with no stake size",
-            "INSERT INTO holdco_components (entity_id,effective_from,component_kind,"
-            "component_entity,label,source_note,spec_version) "
-            "VALUES ('vedanta','2026-04-01','listed_stake','hindustan_zinc','HZL','ar','v1')",
+            "guidance_evidence rejects neutral evidence",
+            "INSERT INTO guidance_evidence (guidance_id,source_id,as_of,direction,"
+            "weight,quote,created_at) "
+            "VALUES (1,'s','2026-08-01',0,0.5,'nothing happened','now')",
         ),
         (
             "economics rejects an input line with no intensity",

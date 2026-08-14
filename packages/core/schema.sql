@@ -19,9 +19,22 @@
 --   5. Everything is replayable.  bridge_runs and signals stamp spec_version
 --      + code_sha. A spec change is a re-run over history, never a rewrite.
 --
--- There is NO generic factor-weight model. Companies do not share a factor
--- structure, they share an arithmetic: cost stack x intensity x sourcing,
--- against product mix x volume x ASP. See the LAYER 1 section.
+-- FOUR PILLARS, deliberately not more. A ten-factor model overfits and goes
+-- rigid; these four are what actually move a stock:
+--
+--   P1  ASP        what they realise: product mix x volume x price vs benchmark
+--   P2  COSTS      what they consume: dominant input lines x intensity x sourcing
+--   P3  VALUATION  where it trades vs its own history (a holdco discount is
+--                  just one more metric here, not its own model)
+--   P4  GUIDANCE   will management hit next quarter? own track record as the
+--                  prior, daily events as evidence
+--
+-- P1 and P2 together are the margin bridge and give DIRECTION and SIZE.
+-- P3 gives CONVICTION. P4 gives the FORWARD view. Sector regime (tezi/mandi)
+-- gates whether any of it can express.
+--
+-- Keep only the input lines that move the needle. For a smelter that is
+-- alumina and power; adding six more reagents adds parameters, not accuracy.
 --
 -- Append-only discipline: observations are never UPDATEd. A correction is a
 -- new row whose supersedes_id points at the row it replaces.
@@ -72,15 +85,6 @@ CREATE INDEX IF NOT EXISTS ix_sources_kind ON sources (kind, source_date);
 CREATE TABLE IF NOT EXISTS entities (
     id            TEXT PRIMARY KEY,          -- stable slug: 'hindalco', 'lme_aluminium'
     kind          TEXT NOT NULL,             -- company|reporting_unit|commodity|macro|fx|index
-    -- structure SELECTS WHICH LAYER 1 MODEL RUNS. Not cosmetic:
-    --   operating -> margin bridge (cost stack x intensity x market_pct)
-    --   converter -> spread bridge; input and output both move with the same
-    --                benchmark and largely net out (Novelis: LME passes through,
-    --                the economics are conversion spread and scrap discount)
-    --   holdco    -> NAV / sum-of-parts vs holdco discount. A cost stack does
-    --                not exist, so running the margin bridge returns ~zero and
-    --                reports "no trade" for the wrong reason.
-    structure     TEXT,
     name          TEXT NOT NULL,
     sector        TEXT,                      -- coverage bucket; NULL for commodity/macro
     peer_group    TEXT,                      -- scoring universe; NULL = not scored
@@ -92,9 +96,6 @@ CREATE TABLE IF NOT EXISTS entities (
     active        INTEGER NOT NULL DEFAULT 1,
     meta          TEXT,                      -- JSON
     CHECK (kind IN ('company','reporting_unit','commodity','macro','fx','index')),
-    CHECK (structure IS NULL OR structure IN ('operating','converter','holdco')),
-    -- anything scoreable must declare which L1 model applies to it
-    CHECK (peer_group IS NULL OR structure IS NOT NULL),
     CHECK (is_tradeable IN (0,1)),
     CHECK (active IN (0,1)),
     -- a scoreable name must be tradeable; an untradeable unit must have a parent
@@ -369,70 +370,15 @@ CREATE TABLE IF NOT EXISTS bridge_results (
     CHECK (coverage_ok IN (0,1))
 ) STRICT;
 
--- ---------------------------------------------------------------------------
--- LAYER 1, holdco variant — sum-of-parts and the discount.
---
--- For structure = 'holdco' there is no cost stack, so the margin bridge does
--- not apply. The economics are: what are the stakes worth, what is the
--- holdco-level debt, and where does the resulting discount sit against its own
--- history.
---
--- This matters for a pair like Hindustan Zinc vs its holdco: both legs carry
--- the SAME underlying commodity exposure, so zinc largely cancels in the
--- spread. What is left is the discount and the catalysts that move it. A
--- commodity bridge on that pair returns ~zero and would report "no trade"
--- every day for the wrong reason.
--- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS holdco_components (
-    id             INTEGER PRIMARY KEY,
-    entity_id      TEXT NOT NULL REFERENCES entities (id),   -- the holdco
-    effective_from TEXT NOT NULL,
-    effective_to   TEXT,
-    component_kind TEXT NOT NULL,            -- listed_stake|unlisted_asset|net_debt|other
-    component_entity TEXT REFERENCES entities (id),  -- set for listed_stake
-    label          TEXT NOT NULL,
-    stake_pct      REAL,                     -- for listed_stake
-    valuation      REAL,                     -- for unlisted/other, in currency
-    valuation_basis TEXT,                    -- 'ev_ebitda 5x', 'book', 'transaction'
-    currency       TEXT,
-    source_note    TEXT NOT NULL,
-    spec_version   TEXT NOT NULL,
-    CHECK (component_kind IN ('listed_stake','unlisted_asset','net_debt','other')),
-    CHECK (length(trim(source_note)) > 0),
-    CHECK (stake_pct IS NULL OR (stake_pct >= 0.0 AND stake_pct <= 1.0)),
-    -- a listed stake needs both the stake size and the entity it is a stake in
-    CHECK (component_kind <> 'listed_stake'
-           OR (component_entity IS NOT NULL AND stake_pct IS NOT NULL)),
-    CHECK (effective_from GLOB '____-__-__')
-) STRICT;
-
-CREATE INDEX IF NOT EXISTS ix_holdco_entity ON holdco_components (entity_id, effective_from);
-
-CREATE TABLE IF NOT EXISTS holdco_nav (
-    entity_id       TEXT NOT NULL REFERENCES entities (id),
-    as_of           TEXT NOT NULL,
-    gross_nav       REAL,                    -- sum of stakes + unlisted assets
-    net_debt        REAL,
-    nav             REAL,                    -- gross_nav - net_debt
-    market_cap      REAL,
-    discount_pct    REAL,                    -- 1 - market_cap/nav; the tradeable variable
-    discount_pctile REAL,                    -- vs its OWN history
-    lookback_days   INTEGER,
-    n_components_priced INTEGER NOT NULL,
-    n_components_total  INTEGER NOT NULL,
-    coverage_ok     INTEGER NOT NULL,
-    spec_version    TEXT NOT NULL,
-    code_sha        TEXT NOT NULL,
-    PRIMARY KEY (entity_id, as_of),
-    CHECK (coverage_ok IN (0,1)),
-    CHECK (as_of GLOB '____-__-__')
-) STRICT;
-
 -- ===========================================================================
--- LAYER 2 — IS IT PRICED IN
+-- PILLAR 3 — VALUATION (where it trades)
 -- ===========================================================================
 -- Valuation, mood, consensus, flows. Never sets direction; it decides whether
--- a Layer 1 move is already in the price, and therefore size and conviction.
+-- an ASP/cost move is already in the price, and therefore size and conviction.
+--
+-- A holdco discount is just another valuation metric here. It does not get its
+-- own model — an earlier draft built a whole sum-of-parts NAV layer for it,
+-- which was complexity the desk did not ask for.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS market_layer (
     entity_id           TEXT NOT NULL REFERENCES entities (id),
@@ -441,6 +387,8 @@ CREATE TABLE IF NOT EXISTS market_layer (
     pe                  REAL,
     pb                  REAL,
     ev_ebitda_pctile    REAL,                -- vs its OWN history, not vs peers
+    holdco_discount_pct REAL,                -- only meaningful for holdcos; just a metric
+    holdco_discount_pctile REAL,
     valuation_lookback_days INTEGER,
     consensus_net_rating REAL,               -- +1 all buy .. -1 all sell
     consensus_tp_gap_pct REAL,               -- upside to consensus TP
@@ -456,7 +404,97 @@ CREATE TABLE IF NOT EXISTS market_layer (
 ) STRICT;
 
 -- ===========================================================================
--- LAYER 3 — SECTOR REGIME (tezi / mandi)
+-- PILLAR 4 — GUIDANCE CONFIDENCE (what next quarter looks like)
+-- ===========================================================================
+-- "Is management going to hit what they said?" — answered from two things:
+--   a PRIOR  : this company's own history of meeting or missing its guidance
+--   EVIDENCE : daily events that support or undermine the current commitment
+--
+-- This is what makes the system forward-looking rather than a description of
+-- what already happened. It is also the only pillar where being early is the
+-- point: by the time a miss is reported it is in the price.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS guidance (
+    id            INTEGER PRIMARY KEY,
+    entity_id     TEXT NOT NULL REFERENCES entities (id),
+    source_id     TEXT NOT NULL REFERENCES sources (id),
+    issued_date   TEXT NOT NULL,             -- when management said it
+    period        TEXT NOT NULL,             -- 'Q2FY27', 'FY27'
+    metric        TEXT NOT NULL,             -- volume|ebitda_per_t|cost_per_t|capex|margin
+    target_type   TEXT NOT NULL,             -- point|range|direction
+    target_value  REAL,                      -- for point
+    target_low    REAL,                      -- for range
+    target_high   REAL,
+    target_dir    TEXT,                      -- for direction: up|down|flat
+    unit          TEXT,
+    quote         TEXT NOT NULL,             -- verbatim management statement
+    status        TEXT NOT NULL DEFAULT 'open',   -- open|met|missed|withdrawn
+    resolved_date TEXT,
+    actual_value  REAL,
+    created_at    TEXT NOT NULL,
+    CHECK (length(trim(quote)) > 0),
+    CHECK (target_type IN ('point','range','direction')),
+    CHECK (status IN ('open','met','missed','withdrawn')),
+    CHECK (target_dir IS NULL OR target_dir IN ('up','down','flat')),
+    -- a target must actually state something
+    CHECK ((target_type = 'point'     AND target_value IS NOT NULL)
+        OR (target_type = 'range'     AND target_low IS NOT NULL AND target_high IS NOT NULL)
+        OR (target_type = 'direction' AND target_dir IS NOT NULL)),
+    CHECK (issued_date GLOB '____-__-__')
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_guid_entity ON guidance (entity_id, period, status);
+
+-- Daily events that move confidence in an open commitment. Cited, like
+-- everything else the model extracts.
+CREATE TABLE IF NOT EXISTS guidance_evidence (
+    id          INTEGER PRIMARY KEY,
+    guidance_id INTEGER NOT NULL REFERENCES guidance (id) ON DELETE CASCADE,
+    source_id   TEXT NOT NULL REFERENCES sources (id),
+    as_of       TEXT NOT NULL,
+    direction   INTEGER NOT NULL,            -- +1 supports, -1 undermines
+    weight      REAL NOT NULL,               -- 0..1, how much it should move confidence
+    quote       TEXT NOT NULL,
+    created_at  TEXT NOT NULL,
+    CHECK (length(trim(quote)) > 0),
+    CHECK (direction IN (-1, 1)),            -- neutral evidence is not evidence
+    CHECK (weight > 0.0 AND weight <= 1.0),
+    CHECK (as_of GLOB '____-__-__')
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_gev_guidance ON guidance_evidence (guidance_id, as_of);
+
+-- Computed: probability this commitment is met, and the track record behind it.
+CREATE TABLE IF NOT EXISTS guidance_confidence (
+    entity_id         TEXT NOT NULL REFERENCES entities (id),
+    period            TEXT NOT NULL,
+    as_of             TEXT NOT NULL,
+    confidence        REAL NOT NULL,         -- 0..1
+    track_record_rate REAL,                  -- own historical hit rate = the prior
+    track_record_n    INTEGER,               -- how many resolved commitments back it
+    n_evidence_for    INTEGER NOT NULL,
+    n_evidence_against INTEGER NOT NULL,
+    spec_version      TEXT NOT NULL,
+    code_sha          TEXT NOT NULL,
+    PRIMARY KEY (entity_id, period, as_of),
+    CHECK (confidence >= 0.0 AND confidence <= 1.0),
+    CHECK (as_of GLOB '____-__-__')
+) STRICT;
+
+-- Track record, derived rather than stored: a company that habitually misses
+-- should not get the benefit of the doubt on its next commitment.
+CREATE VIEW IF NOT EXISTS v_guidance_track_record AS
+SELECT entity_id,
+       COUNT(*)                                                   AS n_resolved,
+       SUM(CASE WHEN status = 'met' THEN 1 ELSE 0 END)            AS n_met,
+       CAST(SUM(CASE WHEN status = 'met' THEN 1 ELSE 0 END) AS REAL)
+           / NULLIF(COUNT(*), 0)                                  AS hit_rate
+FROM guidance
+WHERE status IN ('met', 'missed')
+GROUP BY entity_id;
+
+-- ===========================================================================
+-- GATE — SECTOR REGIME (tezi / mandi)
 -- ===========================================================================
 -- A permission layer, not another additive term. Positive news into a sector
 -- with no investor interest does not move stocks, so `can_express` gates
@@ -503,7 +541,8 @@ CREATE TABLE IF NOT EXISTS signals (
     driving_item    TEXT,                    -- the economics line that moved it
     l1_bridge_run   INTEGER REFERENCES bridge_runs (id),
     l1_pct_of_ebitda REAL,                   -- materiality from Layer 1
-    l2_priced_in    TEXT,                    -- not_priced|partly|priced
+    l2_priced_in    TEXT,                    -- P3 valuation: not_priced|partly|priced
+    p4_guidance_conf REAL,                   -- P4: confidence management hits the quarter
     l3_regime       TEXT,                    -- regime state at emission
     l3_gated        INTEGER NOT NULL DEFAULT 0,  -- 1 = held back by the tezi/mandi gate
     spec_version    TEXT NOT NULL,

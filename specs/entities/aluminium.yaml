@@ -1,32 +1,38 @@
+﻿# ============================================================================
+# Aluminium — entity roster, pillars 1 and 2 (ASP and costs)
 # ============================================================================
-# Aluminium — entity roster and Layer 1 economics
-# ============================================================================
-# There is no factor-exposure table here any more. Each company is described by
-# what it SELLS and what it CONSUMES, and the directional answer is arithmetic.
+# Each company is described by what it SELLS (P1 ASP) and what it CONSUMES
+# (P2 costs). Direction is arithmetic, not a coefficient.
+#
+# Only the input lines that move the needle are modelled — alumina, power/coal
+# and anode are ~85% of a smelter's cash cost. Bauxite, caustic soda and pitch
+# were dropped in v0.4.0: they added parameters, not accuracy, and every extra
+# `verify: pending` intensity is a place for the model to be quietly wrong.
 #
 # `market_pct` is the field that does the work:
 #   NALCO smelter alumina  market_pct 0.00  + an alumina_surplus OUTPUT line
 #                                           => alumina up is REVENUE
-#   VAML  smelter alumina  market_pct 0.50  + no surplus line
+#   VAML  smelter alumina  market_pct 0.25  + no surplus line
 #                                           => alumina up is COST
 #   HNDL  smelter alumina  market_pct 0.05  + a small surplus line
 #                                           => alumina up is near-NEUTRAL, mildly +
 #
 # ---------------------------------------------------------------------------
-# !! EVERY NUMBER BELOW CARRIES `verify:` STATUS. `verify: pending` means I set
-# !! it from sector knowledge, NOT from a filing. These are the numbers to
-# !! attack, and they must be confirmed against annual reports / your own
-# !! models before any signal is trusted. The schema refuses a line whose
+# !! `verify: pending` means the number came from sector knowledge, NOT from a
+# !! filing. These are the numbers to attack. The schema refuses any line whose
 # !! source_note is empty, so provenance cannot be silently dropped.
 # ---------------------------------------------------------------------------
 
-# POST-DEMERGER (v0.3.0). VAML is separately listed and directly tradeable, so
-# aluminium_primary is nalco / hindalco / vaml. VEDL is now a holdco whose main
-# product is zinc, and moves to the `zinc` peer group paired against HZL. That
-# pair needs a different Layer 1 model entirely — see specs/sectors/zinc.yaml.
+# POST-DEMERGER. Record date 1 May 2026; four entities listed June 2026.
+# VAML (Vedanta Aluminium Metal Ltd) is separately listed and directly
+# tradeable, so aluminium_primary is nalco / hindalco / vaml — and the flagship
+# NALCO/VAML alumina pair is now undiluted.
+# VEDL is the residual holding ~63.4% of Hindustan Zinc plus Zinc International,
+# Copper, Ferro Chrome and Nickel. It moves to the `zinc` peer group. Its holdco
+# discount is handled as a valuation metric in P3, NOT as a separate model.
 
 sector: aluminium
-spec_version: 0.3.0
+spec_version: 0.4.0
 currency: INR
 
 # ============================================================================
@@ -52,7 +58,6 @@ entities:
   # ============================================================================
   - id: nalco
     kind: company
-    structure: operating
     name: National Aluminium Company
     sector: aluminium
     peer_group: aluminium_primary
@@ -88,15 +93,6 @@ entities:
         source_note: "Standard Hall-Heroult ratio; NALCO fully integrated on alumina"
         verify: pending
 
-      - item: bauxite
-        price_link: bauxite
-        intensity: 2.85
-        intensity_unit: t/t
-        basis_item: alumina_surplus
-        market_pct: 0.00          # captive Panchpatmali
-        source_note: "Captive mine; insensitive to seaborne bauxite"
-        verify: pending
-
       - item: thermal_coal_eauction
         price_link: thermal_coal_eauction
         intensity: 9.90
@@ -105,15 +101,6 @@ entities:
         market_pct: 1.00          # NO operational captive coal — full e-auction exposure.
                                   # This is why NALCO has the group's highest coal beta.
         source_note: "~14,200 kWh/t at ~0.70 kg coal/kWh; Utkal blocks not yet contributing"
-        verify: pending
-
-      - item: caustic_soda
-        price_link: caustic_soda
-        intensity: 0.07
-        intensity_unit: t/t
-        basis_item: alumina_surplus
-        market_pct: 1.00
-        source_note: "Refinery reagent consumption per tonne alumina"
         verify: pending
 
       - item: cp_coke
@@ -135,7 +122,6 @@ entities:
   # ============================================================================
   - id: hindalco
     kind: company
-    structure: operating
     name: Hindalco Industries
     sector: aluminium
     peer_group: aluminium_primary
@@ -197,7 +183,6 @@ entities:
 
   - id: novelis
     kind: reporting_unit
-    structure: converter
     name: Novelis (Hindalco downstream)
     parent_id: hindalco
     is_tradeable: false
@@ -246,7 +231,6 @@ entities:
   # ============================================================================
   - id: vaml
     kind: company
-    structure: operating
     name: Vedanta Aluminium
     sector: aluminium
     peer_group: aluminium_primary
@@ -271,11 +255,23 @@ entities:
         intensity: 1.93
         intensity_unit: t/t
         basis_item: aluminium_ingot
-        market_pct: 0.50          # Lanjigarh is bauxite-short; buys third-party alumina.
-                                  # THE single most important number in this file —
-                                  # it sets the sign and size of VAML's alumina hit.
-        source_note: "Lanjigarh covers roughly half of smelter alumina requirement"
-        verify: pending
+        market_pct: 0.25          # REVISED DOWN from 0.50 on evidence, 2026-08-15.
+                                  # Lanjigarh (3.5 mtpa, expanding to 5.0) came across
+                                  # WITH the demerged entity. Metal ~2.4 mtpa needs
+                                  # ~4.6 mt alumina, so self-sufficiency is ~76%, not
+                                  # ~50%. Still a net BUYER, so the sign of the NALCO
+                                  # pair is unchanged — but the size roughly halves.
+        source_note: >
+          Derived: Lanjigarh 3.5 mtpa capacity vs 2.4 mtpa metal x 1.93 t/t = 4.63 mt
+          requirement. Source: lightmetalage.com demerger coverage, 2026.
+        verify: pending           # CAPACITY, not output. Lanjigarh has historically
+                                  # run below nameplate on bauxite availability, so
+                                  # true market_pct may be higher. Confirm actual
+                                  # alumina production from the Information Memorandum.
+        watch: >
+          Lanjigarh 3.5 -> 5.0 mtpa would take VAML past self-sufficiency and could
+          flip its alumina sign from cost to revenue, which would invert the flagship
+          NALCO/VAML pair. This is a guidance-pillar item, not a static assumption.
 
       - item: thermal_coal_eauction
         price_link: thermal_coal_eauction
@@ -318,7 +314,6 @@ entities:
   # ============================================================================
   - id: hindustan_zinc
     kind: company
-    structure: operating
     name: Hindustan Zinc
     sector: aluminium            # coverage bucket
     peer_group: zinc             # NOT rankable against the aluminium names
@@ -370,29 +365,39 @@ entities:
     nse_symbol: VEDL
     effective_from: 2026-04-01
 
-    # No `outputs` / `inputs` block, deliberately. A holdco has no cost stack.
-    # Its Layer 1 is the sum of the parts against its own market cap.
-    components:
-      - component_kind: listed_stake
-        label: Hindustan Zinc
-        component_entity: hindustan_zinc
-        stake_pct: NEEDS_CONFIRMATION   # post-demerger holding; the dominant term
-        source_note: "Principal asset post-demerger"
+    # Modelled with the SAME four pillars as everything else. The earlier draft
+    # gave it a bespoke sum-of-parts NAV model; that was over-engineering. Its
+    # zinc and silver exposure is HZL's, scaled by the stake — which is exactly
+    # why it "moves with zinc but is stable" relative to HZL.
+    stake_in:
+      hindustan_zinc: 0.634
+    verify: pending               # ~63.4% per demerger coverage; confirm
+
+    outputs:
+      - item: refined_zinc
+        price_link: lme_zinc
+        volume: 520000            # = HZL volume x 63.4% look-through
+        volume_unit: t
+        source_note: "Look-through of ~63.4% HZL stake"
         verify: pending
 
-      - component_kind: net_debt
-        label: Holdco net debt
-        valuation: NEEDS_CONFIRMATION
-        valuation_basis: reported
-        source_note: "Post-demerger holdco debt after any push-down to VAML"
-        verify: pending             # the split of debt between VEDL and VAML is
-                                    # a first-order input to BOTH legs
+      - item: silver_byproduct
+        price_link: silver
+        volume: 13900000          # = HZL silver x 63.4%
+        volume_unit: oz
+        source_note: "Look-through of ~63.4% HZL stake"
+        verify: pending           # the KEY divergence vs HZL: VEDL gets less
+                                  # silver per rupee of market cap, which is why
+                                  # HZL outperforms when silver leads
 
-      - component_kind: other
-        label: Residual businesses
-        valuation: NEEDS_CONFIRMATION
-        valuation_basis: NEEDS_CONFIRMATION
-        source_note: "Whatever VEDL retained besides the HZL stake — to confirm"
+      - item: other_metals
+        price_link: null          # copper / ferro chrome / nickel — no single benchmark
+        volume: null
+        mix_pct: 0.20
+        source_note: >
+          Zinc International, Copper, Ferro Chrome, Nickel retained post-demerger.
+          Left unpriced deliberately: no clean benchmark, and forcing one would
+          fabricate precision. Shows up as an unpriced line in coverage_ok.
         verify: pending
 
     overhangs:                    # Layer 2. For this pair they ARE the thesis.
