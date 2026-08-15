@@ -1,8 +1,14 @@
 ﻿# Data and captures are NOT in git — they are large, binary-ish and regenerable.
 # Fallback for these is the dated snapshot in snapshots/, plus the git remote
 # for everything that defines behaviour (schema, specs, code).
-data/
+# NOTE: must be `data/*` not `data/`. Git will not descend into an excluded
+# DIRECTORY, so a negation under `data/` can never re-include anything.
+data/*
+# Staging files ARE tracked: they are the dated record of exactly what an MCP
+# returned, and the Wind fetch cannot be re-run by a script. That provenance is
+# the point.
 !data/staging/
+data/staging/*
 !data/staging/*.csv
 snapshots/
 !snapshots/.gitkeep
