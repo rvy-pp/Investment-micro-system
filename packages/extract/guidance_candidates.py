@@ -1,4 +1,4 @@
-"""Find management commitments and their supporting/undermining evidence.
+﻿"""Find management commitments and their supporting/undermining evidence.
 
 P4 asks "will management hit what they said". That needs two kinds of sentence:
 
@@ -62,7 +62,7 @@ def scan(kind: str, entity: str | None):
     """
     pats = COMMITMENT if kind == "commitment" else EVIDENCE
     out = []
-    for path in sorted(VAULT.glob("*.md")):
+    for path in sorted(VAULT.glob("*.md"), key=lambda p: iso_date(p.name) if re.match(r"\d{2}-\d{2}-\d{4}\.md", p.name) else ""):
         if not re.match(r"\d{2}-\d{2}-\d{4}\.md", path.name):
             continue
         date = iso_date(path.name)

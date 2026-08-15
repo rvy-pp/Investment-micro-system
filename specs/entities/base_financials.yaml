@@ -31,42 +31,71 @@ usdinr: 95.43
 usdinr_as_of: 2026-08-15
 verify: sourced               # from USDINR=X, live
 
+# CORRECTED 2026-08-15 from CITED 1QFY27 prints in the digests. The previous
+# values were sector-knowledge guesses and were wrong by up to 2.8x. Since
+# base_ebitda is the denominator of pct_of_ebitda, a wrong one silently
+# rescales every signal for that name — VAML was reading -21% on a 30-day move
+# that is really about -7.5%.
+#
+# Quarterly prints annualised x4. Crude — it ignores seasonality and assumes
+# the quarter is representative — but an order of magnitude better than a guess,
+# and each carries the quote it came from.
+
 companies:
 
   nalco:
-    base_ebitda: 6500
+    base_ebitda: 10840
     primary_output: aluminium_ingot
-    source_note: "Provisional; strong alumina cycle year"
-    verify: pending
+    source_note: >
+      1QFY27 standalone EBITDA Rs27.1bn x4. Quote: "1QFY27 standalone Ebitda
+      Rs27.1bn (+81% yoy, +15% qoq) beat on aluminium margins" (Kotak,
+      digest 2026-08-05).
+    verify: sourced
+    caveat: "+81% yoy — a peak-cycle quarter, so annualising overstates a mid-cycle base."
 
   hindalco:
     base_ebitda: 32000
     primary_output: aluminium_ingot
-    source_note: "Consolidated incl. Novelis and copper"
+    source_note: "Consolidated incl. Novelis and copper — NOT yet sourced from a print"
     verify: pending
     caveat: >
       Consolidated denominator against India-only ASP/cost lines understates
       Hindalco's sensitivity in pct terms. Either split India out or accept
       that Hindalco's pct_of_ebitda is not comparable to a pure play's.
-      >> Flagged as a real inconsistency, not resolved. <<
+      >> Still unresolved, and now the only unsourced denominator in the group. <<
 
   vaml:
-    base_ebitda: 15000
+    base_ebitda: 42000
     primary_output: aluminium_ingot
-    source_note: "Provisional aluminium segment EBITDA pre-demerger run-rate"
-    verify: pending
+    source_note: >
+      Record 1QFY27 EBITDA Rs105bn x4. Quote: "Vedanta Aluminium (VAML) BUY
+      TP 550 — record 1QFY27 EBITDA Rs105bn, EBITDA/t $1,797" (Emkay,
+      digest 2026-08-06). Cross-checks: $1,797/t x 2.4mt x 95.43 ~ Rs41,000cr.
+    verify: sourced
+    caveat: "Described as a RECORD quarter; annualising a record overstates the base."
 
   hindustan_zinc:
-    base_ebitda: 16000
+    base_ebitda: 32000
     primary_output: refined_zinc
-    source_note: "Provisional"
-    verify: pending
+    source_note: >
+      1Q EBITDA INR80bn x4. Quote: "1Q EBITDA INR80bn (+109% YoY) in line"
+      (BofA, digest 2026-07-27).
+    verify: sourced
 
   vedanta:
-    base_ebitda: 12000
+    base_ebitda: 22000
     primary_output: refined_zinc
-    source_note: "Provisional; ~63.4% HZL look-through plus retained businesses"
-    verify: pending
+    source_note: >
+      ATTRIBUTABLE, not consolidated. Consol 1Q EBITDA Rs84.7bn x4 = Rs33,880cr,
+      of which HZL is 96%. Quote: "Vedanta Ltd BUY TP 350 — 1Q EBITDA Rs84.7bn
+      (+9% qoq), HZL 96% of consol EBITDA" (Emkay, digest 2026-08-06).
+      Attributable = 0.634 x 32,525 + 1,355 other ~ 22,000cr.
+    verify: sourced
+    caveat: >
+      ATTRIBUTABLE is the right basis because the bridge carries VEDL's zinc
+      volumes at the 63.4% economic interest. Pairing 63.4% volumes with a
+      CONSOLIDATED denominator would understate sensitivity by ~35%. Numerator
+      and denominator must sit on the same basis.
 
   novelis:
     base_ebitda: 15000

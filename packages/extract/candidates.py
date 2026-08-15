@@ -1,4 +1,4 @@
-"""Deterministic pre-filter: find sentences in the digests that could carry a
+﻿"""Deterministic pre-filter: find sentences in the digests that could carry a
 price level for a research-sourced series.
 
 WHY A REGEX PASS BEFORE THE MODEL. The model's job is extraction, but sending
@@ -58,7 +58,7 @@ def sentences(text: str) -> list[str]:
 
 def scan() -> dict[str, list[tuple[str, str]]]:
     found: dict[str, list[tuple[str, str]]] = {k: [] for k in SERIES}
-    for path in sorted(VAULT.glob("*.md")):
+    for path in sorted(VAULT.glob("*.md"), key=lambda p: iso_date(p.name) if re.match(r"\d{2}-\d{2}-\d{4}\.md", p.name) else ""):
         if not re.match(r"\d{2}-\d{2}-\d{4}\.md", path.name):
             continue
         date = iso_date(path.name)
