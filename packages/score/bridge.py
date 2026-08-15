@@ -1,4 +1,4 @@
-"""P1+P2 margin bridge — the arithmetic that turns a price move into a margin move.
+﻿"""P1+P2 margin bridge — the arithmetic that turns a price move into a margin move.
 
 Deterministic. No model, no weights, no normalisation. For each company:
 
@@ -87,6 +87,7 @@ def run_bridge(
     units: dict[str, str],
     base_ebitda_cr: float,
     usdinr: float,
+    available: set[str] | None = None,
 ) -> dict:
     """Bridge one entity. Returns per-line detail plus the roll-up, in INR crore."""
     CR = 1e7  # 1 crore
@@ -98,10 +99,17 @@ def run_bridge(
     # apply it to. Whether that series actually MOVED is a separate question:
     # in a scenario run an unshocked line is deliberately flat, not missing.
     # Conflating the two makes the coverage gate fire on every scenario.
+    # A price_link that EXISTS is not a price_link that has DATA. Checking only
+    # for the field let novelis report 3/3 priced while its entire revenue side
+    # (can_sheet_spread) had no series — a one-sided bridge presented as a
+    # complete one, which is the most dangerous kind of wrong number.
+    def has_data(link: str | None) -> bool:
+        return bool(link) and (available is None or link in available)
+
     for out in entity.get("outputs") or []:
         n_total += 1
         link, vol = out.get("price_link"), out.get("volume")
-        priceable = bool(link) and vol is not None
+        priceable = has_data(link) and vol is not None
         if not priceable:
             lines.append({"kind": "output", "item": out["item"], "priced": False,
                           "moved": False})
@@ -120,7 +128,7 @@ def run_bridge(
         n_total += 1
         link = inp.get("price_link")
         bvol = basis_volume(entity, inp.get("basis_item", ""))
-        priceable = bool(link) and bvol is not None
+        priceable = has_data(link) and bvol is not None
         if not priceable:
             lines.append({"kind": "input", "item": inp["item"], "priced": False,
                           "moved": False})
@@ -169,22 +177,94 @@ def parse_shock(s: str) -> tuple[str, float]:
     return key.strip(), float(val)
 
 
+def _series_in_store() -> set[str]:
+    """Which series actually HAVE price data. Drives coverage_ok."""
+    import sqlite3
+
+    db = REPO / "data" / "ims.db"
+    if not db.exists():
+        return set()
+    conn = sqlite3.connect(db)
+    out = {r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")}
+    conn.close()
+    return out
+
+
+def shocks_from_store(window: int, as_of: str | None = None
+                      ) -> tuple[dict[str, float], dict[str, tuple], str, float]:
+    """Real price deltas over `window` sessions, read from the store.
+
+    Sessions, not calendar days — a 5-session delta is comparable across series
+    with different holiday calendars, whereas 'five days ago' silently spans a
+    long weekend for one series and not another.
+    """
+    import sqlite3
+
+    conn = sqlite3.connect(REPO / "data" / "ims.db")
+    shocks: dict[str, float] = {}
+    detail: dict[str, tuple] = {}
+
+    ents = [r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")]
+    latest = conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
+    as_of = as_of or latest
+
+    for eid in ents:
+        rows = conn.execute(
+            "SELECT date, close FROM prices WHERE entity_id=? AND date<=? "
+            "ORDER BY date DESC LIMIT ?", (eid, as_of, window + 1)
+        ).fetchall()
+        if len(rows) < 2:
+            continue
+        (d_new, c_new), (d_old, c_old) = rows[0], rows[-1]
+        shocks[eid] = c_new - c_old
+        detail[eid] = (d_old, c_old, d_new, c_new, (c_new / c_old - 1) * 100)
+
+    fx_row = conn.execute(
+        "SELECT close FROM prices WHERE entity_id='usdinr' AND date<=? "
+        "ORDER BY date DESC LIMIT 1", (as_of,)
+    ).fetchone()
+    conn.close()
+    # usdinr is a conversion rate, not a cost line — remove it from the shocks
+    shocks.pop("usdinr", None)
+    return shocks, detail, as_of, (fx_row[0] if fx_row else 0.0)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--shock", action="append", default=[],
                     help="series=delta, e.g. alumina_index=+40")
     ap.add_argument("--peer-group", default=None)
     ap.add_argument("--materiality", type=float, default=0.015)
+    ap.add_argument("--from-store", type=int, metavar="SESSIONS",
+                    help="use real price deltas over N sessions instead of --shock")
+    ap.add_argument("--as-of", default=None)
     args = ap.parse_args()
 
-    if not args.shock:
-        print("no --shock given; nothing to compute", file=sys.stderr)
-        return 2
-
-    shocks = dict(parse_shock(s) for s in args.shock)
     entities, units, fin = load_specs()
     usdinr = fin["usdinr"]
     fins = fin["companies"]
+    detail: dict[str, tuple] = {}
+
+    if args.from_store:
+        shocks, detail, as_of, fx = shocks_from_store(args.from_store, args.as_of)
+        if fx:
+            usdinr = fx          # live rate beats the spec fallback
+        if not shocks:
+            print("no prices in the store — run the yahoo adapter first",
+                  file=sys.stderr)
+            return 2
+        print(f"REAL {args.from_store}-session move to {as_of}   (USDINR {usdinr:.2f} live)")
+        for eid, (d0, c0, d1, c1, pct) in sorted(detail.items()):
+            if eid in shocks:
+                print(f"   {eid:18} {c0:>10,.2f} ({d0}) -> {c1:>10,.2f} ({d1})  {pct:+6.2f}%")
+        print()
+    elif args.shock:
+        shocks = dict(parse_shock(s) for s in args.shock)
+        print(f"SHOCK: {', '.join(f'{k} {v:+g}' for k, v in shocks.items())}"
+              f"   (USDINR {usdinr})")
+    else:
+        print("give --shock or --from-store", file=sys.stderr)
+        return 2
 
     targets = [
         e for e in entities.values()
@@ -193,10 +273,9 @@ def main() -> int:
     # reporting units carry economics but are not scored; include them for visibility
     units_only = [e for e in entities.values() if not e.get("peer_group") and e.get("outputs")]
 
-    print(f"SHOCK: {', '.join(f'{k} {v:+g}' for k, v in shocks.items())}"
-          f"   (USDINR {usdinr})")
-    print(f"materiality threshold: {args.materiality:.1%} of EBITDA\n")
+    print(f"materiality threshold: {args.materiality:.1%} of EBITDA")
 
+    available = set(shocks) | _series_in_store()
     form, k, p = load_scoring()
     print(f"score: {form} form, k={k:.4f}, p={p}  (from specs/scoring.yaml)\n")
 
@@ -208,7 +287,7 @@ def main() -> int:
     rows = []
     for ent in sorted(targets, key=lambda e: e["id"]):
         f = fins.get(ent["id"], {})
-        r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr)
+        r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr, available)
 
         pct = r["pct_of_ebitda"]
         # A score with no trustworthy bridge behind it would be worse than none.
@@ -234,7 +313,7 @@ def main() -> int:
         print("\nreporting units (carry economics, never scored):")
         for ent in sorted(units_only, key=lambda e: e["id"]):
             f = fins.get(ent["id"], {})
-            r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr)
+            r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr, available)
             pct = r["pct_of_ebitda"]
             pct_s = f"{pct:+.2%}" if pct is not None else "-"
             print(f"  {ent['id']:14} {r['d_ebitda_cr']:>+10,.0f} cr {pct_s:>9}"

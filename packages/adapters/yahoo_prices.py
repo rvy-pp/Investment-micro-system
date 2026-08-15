@@ -1,4 +1,4 @@
-"""L0 adapter — daily closes from Yahoo, into the `prices` table.
+﻿"""L0 adapter — daily closes from Yahoo, into the `prices` table.
 
 Dependency-free (stdlib urllib only), so it runs anywhere without a pip install.
 
@@ -34,6 +34,7 @@ import json
 import pathlib
 import sqlite3
 import sys
+import re
 import urllib.error
 import urllib.request
 
@@ -45,25 +46,39 @@ CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?range={rng}&int
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 
-# entity_id -> candidate Yahoo symbols, best first. Probed, not assumed.
-CANDIDATES: dict[str, list[str]] = {
+# entity_id -> [(symbol, name_must_match)], best first.
+#
+# THE NAME PATTERN IS THE REAL GUARD. Instrument type does not discriminate:
+# ALA=F reports ALTSYMBOL and is a perfectly live alumina series, while ZN=F
+# reports FUTURE and is the 10-Year T-Note. Only the name catches that — a
+# series whose name does not mention the thing you think you are buying is the
+# wrong series, whatever else it reports.
+CANDIDATES: dict[str, list[tuple[str, str]]] = {
     # --- equities (the book) ---
-    "hindalco":       ["HINDALCO.NS"],
-    "nalco":          ["NATIONALUM.NS"],
-    "hindustan_zinc": ["HINDZINC.NS"],
-    "vedanta":        ["VEDL.NS"],
-    "vaml":           ["VEDANTAALUMINIUM.NS", "VEDALUM.NS", "VDLALUM.NS"],
+    "hindalco":       [("HINDALCO.NS", r"hindalco")],
+    "nalco":          [("NATIONALUM.NS", r"national|nalco")],
+    "hindustan_zinc": [("HINDZINC.NS", r"hindustan\s*zinc")],
+    "vedanta":        [("VEDL.NS", r"vedanta")],
+    "vaml":           [("VEDANTAALUMINIUM.NS", r"vedanta"),
+                       ("VEDALUM.NS", r"vedanta"),
+                       ("VDLALUM.NS", r"vedanta")],
     # --- fx ---
-    "usdinr":         ["USDINR=X", "INR=X"],
-    # --- exchange-traded metals ---
-    "lme_aluminium":  ["ALI=F"],     # CME Aluminum, USD/t. A PROXY for LME:
-                                     # tracks it with a Midwest premium basis.
-    "silver":         ["SI=F"],
-    # NO ZINC CANDIDATE. Probed and rejected, see REJECTED below — this is a
-    # real coverage gap for the zinc peer group, not an oversight.
+    "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
+    # --- exchange-traded ---
+    "alumina_index":  [("ALA=F", r"alumina")],      # Alumina FOB Australia (Platts).
+                                                    # Platts-settled, not Fastmarkets MB,
+                                                    # but both assess the same physical
+                                                    # market and track closely.
+    "lme_aluminium":  [("ALI=F", r"alumin")],       # CME Aluminum. PROXY for LME —
+                                                    # carries a Midwest premium basis,
+                                                    # read 3,355.50 vs the digest's
+                                                    # LME 3,310.50 on the same day.
+    "midwest_premium": [("AUP=F", r"aluminum\s*mw|midwest")],   # USD/lb, not /t
+    "silver":         [("SI=F", r"silver")],
+    # NO ZINC CANDIDATE. Probed and rejected — see REJECTED. A real coverage
+    # gap for the zinc peer group, not an oversight.
     "lme_zinc":             [],
     # --- assessed prices, no public feed ---
-    "alumina_index":        [],
     "thermal_coal_eauction": [],
     "cp_coke":              [],
     "can_sheet_spread":     [],
@@ -94,10 +109,13 @@ RESEARCH_SOURCED = {
 # --- validation thresholds -------------------------------------------------
 MAX_STALE_DAYS = 5          # a live series prints at least weekly
 MIN_DISTINCT_RATIO = 0.5    # a live series moves; a dead contract repeats
-OK_INSTRUMENT_TYPES = {"FUTURE", "CURRENCY", "EQUITY", "INDEX", "ETF"}
+# instrumentType is recorded but NOT used to reject: ALTSYMBOL covers both a
+# dead 2019 contract (ZNC=F) and a live alumina series (ALA=F). Liveness and
+# the name pattern do the discriminating.
 
 
-def fetch(symbol: str, rng: str = "3mo") -> list[tuple[str, float]]:
+def fetch(symbol: str, rng: str = "3mo",
+          name_pattern: str | None = None) -> list[tuple[str, float]]:
     """Return [(iso_date, close)] ascending. Raises if the series fails validation.
 
     Validation is not optional. A symbol returning a plausible NUMBER is not the
@@ -127,10 +145,13 @@ def fetch(symbol: str, rng: str = "3mo") -> list[tuple[str, float]]:
     if not out:
         raise ValueError("no closes")
 
-    itype = (meta.get("instrumentType") or "?").upper()
-    if itype not in OK_INSTRUMENT_TYPES:
-        raise ValueError(f"instrumentType {itype} (name={meta.get('shortName')!r}) "
-                         f"— not a tradeable series")
+    # IDENTITY: the series must be named like the thing we think we are buying.
+    # This, not instrumentType, is what stops ZN=F (10-Year T-Note) being loaded
+    # as zinc.
+    name = str(meta.get("shortName") or meta.get("longName") or "")
+    if name_pattern and not re.search(name_pattern, name, re.I):
+        raise ValueError(f"name {name!r} does not match /{name_pattern}/ "
+                         f"— wrong instrument")
 
     stale = (dt.date.today() - dt.date.fromisoformat(out[-1][0])).days
     if stale > MAX_STALE_DAYS:
@@ -150,9 +171,9 @@ def probe(rng: str = "1mo") -> dict[str, dict]:
         if not syms:
             findings[eid] = {"status": "no_candidate"}
             continue
-        for sym in syms:
+        for sym, pat in syms:
             try:
-                series = fetch(sym, rng)
+                series = fetch(sym, rng, pat)
                 last_d, last_c = series[-1]
                 chg = None
                 if len(series) >= 2:
@@ -172,9 +193,9 @@ def load(rng: str = "3mo") -> int:
     conn.execute("PRAGMA foreign_keys = ON")
     n_rows = 0
     for eid, syms in CANDIDATES.items():
-        for sym in syms:
+        for sym, pat in syms:
             try:
-                series = fetch(sym, rng)
+                series = fetch(sym, rng, pat)
             except Exception:
                 continue
             conn.execute(
