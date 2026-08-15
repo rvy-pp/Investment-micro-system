@@ -59,6 +59,20 @@ symmetry:
 reporting:
   decimals: 2
   always_report_spread: true
-  note: >
-    For a long/short book the SPREAD in score points between two names is the
-    tradeable quantity. A single absolute score is context, not a decision.
+
+pairs:
+  rule: score_the_spread          # NOT spread_the_scores
+  formula: pair_score = score(pct_long - pct_short)
+  rationale: >
+    The curve is deliberately flat in the tails, so subtracting two scores that
+    both sit at 9-11% of EBITDA compresses a real 1.75pp gap into 0.09 score
+    points — understating the trade by ~3.5x. Observed on the HZL/VEDL zinc run:
+    the naive difference read 0.09 while the spread run through the same curve
+    reads 3.34.
+
+    Feeding the SPREAD through the same curve keeps the pair on the same
+    readable 1-5 scale while preserving its magnitude. A pair is its own
+    instrument and deserves its own score, not the difference of two others.
+
+    This is a general property of ANY bounded score, not a quirk of the hill
+    form — it will apply to the P3 and P4 scores too, so do the same there.

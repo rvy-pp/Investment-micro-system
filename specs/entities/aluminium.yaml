@@ -390,15 +390,25 @@ entities:
                                   # silver per rupee of market cap, which is why
                                   # HZL outperforms when silver leads
 
-      - item: other_metals
-        price_link: null          # copper / ferro chrome / nickel — no single benchmark
-        volume: null
-        mix_pct: 0.20
-        source_note: >
-          Zinc International, Copper, Ferro Chrome, Nickel retained post-demerger.
-          Left unpriced deliberately: no clean benchmark, and forcing one would
-          fabricate precision. Shows up as an unpriced line in coverage_ok.
-        verify: pending
+    # Copper / ferro chrome / nickel are NOT bridge lines. They have no clean
+    # daily benchmark, they do not move the stock day to day, and carrying them
+    # as a permanently-unpriced line was suppressing VEDL's score entirely.
+    # They belong in P3 as event-driven catalysts — see event_drivers below.
+    event_drivers:
+      - id: copper
+        layer: P3
+        note: Smelter restart, custom TC/RC swings, expansion news
+      - id: ferro_chrome
+        layer: P3
+        note: Contract pricing rounds, ban or duty headlines
+      - id: nickel
+        layer: P3
+        note: Rarely material; include only on a discrete event
+    event_driver_rule: >
+      These enter as a mood/interest input ONLY when a dated event exists. They
+      never contribute a continuous margin delta, so they cannot quietly drift
+      the score in the absence of news — which is the same discipline as the
+      rest of the system: silence changes nothing.
 
     overhangs:                    # Layer 2. For this pair they ARE the thesis.
       - holdco_discount_rerate
@@ -407,15 +417,19 @@ entities:
       - further_demerger_steps
 
     notes: >
-      Paired against HZL, so the zinc exposure is common to both legs and largely
-      cancels. The spread is therefore driven by the holdco discount, the pledge,
-      the cash-extraction policy and any further restructuring — not by LME zinc.
-      Two consequences worth stating plainly:
+      VEDL is, in substance, a LOW-BETA HINDUSTAN ZINC. Same zinc and silver
+      exposure, damped — and the damping is arithmetic, not an assumption:
 
-      1. `discount_pct` vs its own history is the primary signal, and it belongs
-         in Layer 1 for this entity even though it looks like a valuation metric.
-         That is what `structure: holdco` selects.
-      2. Zinc does NOT fully cancel. VEDL owns a fraction of HZL, so a zinc move
-         changes NAV proportionally while HZL moves one-for-one. The residual
-         zinc beta of the pair depends on stake_pct and the hedge ratio, which is
-         exactly why stake_pct must be confirmed rather than estimated.
+        zinc EBITDA share of VEDL = (HZL EBITDA x 63.4%) / VEDL EBITDA
+                                  = (16,000 x 0.634) / 12,000 = 84.5%
+
+      so VEDL should move ~0.85x HZL on a zinc or silver print. The engine
+      reports this beta on every zinc run so the claim stays checkable.
+
+      >> base_ebitda IS THE BETA. If VEDL's non-zinc EBITDA is larger than
+      >> assumed, the beta falls; if smaller, it approaches 1.0 and the pair
+      >> stops working. Tune the beta by correcting base_ebitda, never by
+      >> inserting a fudge factor. <<
+
+      Two things deliberately NOT in the bridge: the holdco discount (a P3
+      valuation metric) and copper / ferro chrome / nickel (P3 event drivers).

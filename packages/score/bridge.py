@@ -257,7 +257,15 @@ def main() -> int:
 
     # spread view — a long/short desk trades the difference
     if len(rows) >= 2:
-        print("\npair spreads — the tradeable quantity for a long/short book:")
+        # SCORE THE SPREAD, DO NOT SPREAD THE SCORES.
+        #
+        # The curve is deliberately flat in the tails, so subtracting two scores
+        # that both sit at 9-11% of EBITDA compresses a real 1.75pp gap into
+        # 0.09 score points — understating the trade by ~3.5x. Feeding the
+        # SPREAD through the same curve puts the pair on the same readable 1-5
+        # scale while preserving its true magnitude. A pair is its own instrument
+        # and deserves its own score, not the difference of two others.
+        print("\npair scores — the spread run through the SAME curve:")
         pairs = []
         for i in range(len(rows)):
             for j in range(i + 1, len(rows)):
@@ -266,13 +274,28 @@ def main() -> int:
                     continue
                 d_pct = a[1]["pct_of_ebitda"] - b[1]["pct_of_ebitda"]
                 lng, sht = (a, b) if d_pct > 0 else (b, a)
-                pairs.append((abs(lng[1]["score"] - sht[1]["score"]), lng, sht,
+                pairs.append((to_score(abs(d_pct), k, form, p), lng, sht,
                               abs(d_pct)))
-        for sc_spread, lng, sht, pct_spread in sorted(pairs, reverse=True,
-                                                      key=lambda t: t[0]):
-            print(f"  long {lng[0]['id']:14} ({lng[1]['score']:.2f}) / "
-                  f"short {sht[0]['id']:14} ({sht[1]['score']:.2f})   "
-                  f"score spread {sc_spread:.2f}   ({pct_spread:.2%} EBITDA)")
+        for pair_score, lng, sht, pct_spread in sorted(pairs, reverse=True,
+                                                       key=lambda t: t[0]):
+            naive = abs(lng[1]["score"] - sht[1]["score"])
+            print(f"  long {lng[0]['id']:14} / short {sht[0]['id']:14} "
+                  f"PAIR {pair_score:.2f}   ({pct_spread:.2%} EBITDA)"
+                  f"   [naive score-difference would read {naive:.2f}]")
+
+    # Implied beta — relative EBITDA sensitivity to THIS shock, vs the most
+    # exposed name. Makes a claim like "VEDL is a low-beta HZL" checkable
+    # rather than asserted, and shows what a hedge ratio should actually be.
+    scored = [(e, r) for e, r in rows if r["score"] is not None
+              and r["pct_of_ebitda"] is not None]
+    if len(scored) >= 2:
+        ref_e, ref_r = max(scored, key=lambda t: abs(t[1]["pct_of_ebitda"]))
+        ref = ref_r["pct_of_ebitda"]
+        print(f"\nimplied beta to this shock (vs {ref_e['id']} = 1.00):")
+        for e, r in sorted(scored, key=lambda t: -abs(t[1]["pct_of_ebitda"])):
+            print(f"  {e['id']:16} {r['pct_of_ebitda'] / ref:>6.2f}x")
+        print("  note: beta is set by base_ebitda and volumes — correct those,"
+              " never add a fudge factor")
 
     return 0
 
