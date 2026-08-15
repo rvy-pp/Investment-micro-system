@@ -1,0 +1,121 @@
+{
+  "_note": [
+    "Extracted from the broker digests 2026-07-25 to 2026-08-06.",
+    "Every quote is VERBATIM from the source line; the schema rejects an empty one.",
+    "Attribution is to hindustan_zinc only. Two of these bullets are tagged",
+    "#HZ #Vedanta, but the COMMITMENT is HZL management's. VEDL inherits the",
+    "economics through its ~63.4% stake, not the promise — putting the same",
+    "commitment under both entities would double-count it in the track record.",
+    "The 'Reiterates BUY, TP Rs722' line is deliberately OMITTED: the fragment",
+    "does not name the broker, and broker_actions.broker is required. Inventing",
+    "an attribution to fill a NOT NULL column is exactly the failure mode the",
+    "citation rule exists to prevent."
+  ],
+
+  "sources": [
+    {"id": "digest-2026-07-25", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 25-07-2026", "source_date": "2026-07-25",
+     "raw_path": "Broker Mails/25-07-2026.md"},
+    {"id": "digest-2026-07-26", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 26-07-2026", "source_date": "2026-07-26",
+     "raw_path": "Broker Mails/26-07-2026.md"},
+    {"id": "digest-2026-07-27", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 27-07-2026", "source_date": "2026-07-27",
+     "raw_path": "Broker Mails/27-07-2026.md"},
+    {"id": "digest-2026-07-30", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 30-07-2026", "source_date": "2026-07-30",
+     "raw_path": "Broker Mails/30-07-2026.md"},
+    {"id": "digest-2026-08-06", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 06-08-2026", "source_date": "2026-08-06",
+     "raw_path": "Broker Mails/06-08-2026.md"}
+  ],
+
+  "guidance": [
+    {
+      "entity_id": "hindustan_zinc",
+      "source_id": "digest-2026-07-25",
+      "source_actor": "management",
+      "issued_date": "2026-07-25",
+      "period": "FY27",
+      "metric": "volume",
+      "target_type": "point",
+      "target_value": 1100000,
+      "unit": "t refined metal",
+      "quote": "Guidance reiterated: 1.1mt refined metal, 680t silver, zinc cost $975-1,000/t.",
+      "evidence": [
+        {"source_id": "digest-2026-07-26", "as_of": "2026-07-26",
+         "direction": 1, "weight": 0.4,
+         "quote": "FY27 refined metal guidance maintained at 1.1mt (no further shutdowns); capex $500-600m."},
+        {"source_id": "digest-2026-07-30", "as_of": "2026-07-30",
+         "direction": 1, "weight": 0.3,
+         "quote": "Reiterates 1.1mt metal + 680t silver guide; zinc cost $975-1,000/t."}
+      ]
+    },
+    {
+      "entity_id": "hindustan_zinc",
+      "source_id": "digest-2026-07-25",
+      "source_actor": "management",
+      "issued_date": "2026-07-25",
+      "period": "FY27",
+      "metric": "silver_volume",
+      "target_type": "point",
+      "target_value": 680,
+      "unit": "t silver",
+      "quote": "Guidance reiterated: 1.1mt refined metal, 680t silver, zinc cost $975-1,000/t.",
+      "evidence": [
+        {"source_id": "digest-2026-07-30", "as_of": "2026-07-30",
+         "direction": 1, "weight": 0.3,
+         "quote": "Reiterates 1.1mt metal + 680t silver guide; zinc cost $975-1,000/t."}
+      ]
+    },
+    {
+      "entity_id": "hindustan_zinc",
+      "source_id": "digest-2026-07-25",
+      "source_actor": "management",
+      "issued_date": "2026-07-25",
+      "period": "FY27",
+      "metric": "cost_per_t",
+      "target_type": "range",
+      "target_low": 975,
+      "target_high": 1000,
+      "unit": "USD/t",
+      "quote": "Guidance reiterated: 1.1mt refined metal, 680t silver, zinc cost $975-1,000/t.",
+      "evidence": [
+        {"source_id": "digest-2026-07-26", "as_of": "2026-07-26",
+         "direction": 1, "weight": 0.8,
+         "quote": "Zinc COP ex-royalty -6% qoq to $851/t on stronger by-product realizations despite power/fuel +11% qoq (lower linkage coal, 36% vs 64%)."},
+        {"source_id": "digest-2026-07-27", "as_of": "2026-07-27",
+         "direction": 1, "weight": 0.5,
+         "quote": "1Q EBITDA INR80bn (+109% YoY) in line; zinc CoP fell to $851/t on better grades/by-products."}
+      ],
+      "_evidence_note": "Running at $851/t against a $975-1,000/t guide is a BEAT on a cost line — lower is better, so direction is +1. Weight 0.8 because this is an actual print against the target, not a restatement of intent."
+    },
+    {
+      "entity_id": "hindustan_zinc",
+      "source_id": "digest-2026-08-06",
+      "source_actor": "management",
+      "issued_date": "2026-08-06",
+      "period": "FY27",
+      "metric": "capex",
+      "target_type": "direction",
+      "target_dir": "flat",
+      "unit": "Gamsberg Phase-II commissioning",
+      "quote": "Gamsberg Phase-II on track for Aug-26.",
+      "evidence": []
+    }
+  ],
+
+  "broker_actions": [
+    {
+      "source_id": "digest-2026-07-27",
+      "entity_id": "hindustan_zinc",
+      "broker": "BofA",
+      "action_date": "2026-07-27",
+      "action": "reiterate",
+      "rating_to": "Underperform",
+      "tp_to": 515,
+      "currency": "INR",
+      "quote": "#HZ BofA (Bharat Subramanian) reiterates Underperform, PO Rs515."
+    }
+  ]
+}
