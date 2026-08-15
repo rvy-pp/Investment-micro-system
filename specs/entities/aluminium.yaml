@@ -56,7 +56,13 @@ reference_entities:
   - {id: usdinr,                 kind: fx,        name: USDINR,                  unit: INR/USD}
   - {id: al_scrap_midwest,       kind: commodity, name: US Midwest scrap discount, unit: USD/t}
   - {id: can_sheet_spread,       kind: commodity, name: Can sheet conversion spread, unit: USD/t}
-  - {id: lme_zinc,               kind: commodity, name: LME Zinc 3M,             unit: USD/t}
+  - {id: zinc_shfe,              kind: commodity, name: Zinc SHFE ex-VAT (Wind ZN.SHF), unit: USD/t}
+  # ^ PROXY for LME zinc. Wind ZN.SHF, converted CNY->USD at daily USDCNY and
+  #   divided by 1.13 to strip Chinese VAT, which LME prices do not carry.
+  #   Residual basis NOT adjusted and not hidden: SHFE is a Chinese DOMESTIC
+  #   contract carrying import-arb and local supply/demand that LME does not,
+  #   so the two can diverge for weeks. Good for direction and rough magnitude.
+  #   Never aliased to lme_zinc so nothing can mistake it for the benchmark.
   - {id: silver,                 kind: commodity, name: Silver,                  unit: USD/oz}
 entities:
 
@@ -332,7 +338,7 @@ entities:
 
     outputs:
       - item: refined_zinc
-        price_link: lme_zinc
+        price_link: zinc_shfe
         volume: 820000
         volume_unit: t
         source_note: "Refined zinc production"
@@ -386,7 +392,7 @@ entities:
 
     outputs:
       - item: refined_zinc
-        price_link: lme_zinc
+        price_link: zinc_shfe
         volume: 520000            # = HZL volume x 63.4% look-through
         volume_unit: t
         source_note: "Look-through of ~63.4% HZL stake"

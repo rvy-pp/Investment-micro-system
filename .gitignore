@@ -1,7 +1,9 @@
-# Data and captures are NOT in git — they are large, binary-ish and regenerable.
+﻿# Data and captures are NOT in git — they are large, binary-ish and regenerable.
 # Fallback for these is the dated snapshot in snapshots/, plus the git remote
 # for everything that defines behaviour (schema, specs, code).
 data/
+!data/staging/
+!data/staging/*.csv
 snapshots/
 !snapshots/.gitkeep
 

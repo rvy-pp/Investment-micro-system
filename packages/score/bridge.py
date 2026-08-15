@@ -246,8 +246,11 @@ def shocks_from_store(window: int, as_of: str | None = None
         "ORDER BY date DESC LIMIT 1", (as_of,)
     ).fetchone()
     conn.close()
-    # usdinr is a conversion rate, not a cost line — remove it from the shocks
-    shocks.pop("usdinr", None)
+    # FX rates are conversion factors, not cost lines. They are applied inside
+    # to_inr() and by the zinc adapter; feeding them in as shocks as well would
+    # double-count the currency leg.
+    for fx_id in ("usdinr", "usdcny"):
+        shocks.pop(fx_id, None)
     return shocks, detail, as_of, (fx_row[0] if fx_row else 0.0)
 
 

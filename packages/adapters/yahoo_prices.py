@@ -59,11 +59,13 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "nalco":          [("NATIONALUM.NS", r"national|nalco")],
     "hindustan_zinc": [("HINDZINC.NS", r"hindustan\s*zinc")],
     "vedanta":        [("VEDL.NS", r"vedanta")],
-    "vaml":           [("VEDANTAALUMINIUM.NS", r"vedanta"),
-                       ("VEDALUM.NS", r"vedanta"),
-                       ("VDLALUM.NS", r"vedanta")],
+    # Resolved with yahoo_search.py, not guessed. Three invented variants
+    # (VEDANTAALUMINIUM.NS / VEDALUM.NS / VDLALUM.NS) all 404'd while the real
+    # ticker was the obvious one. Use the search endpoint first, always.
+    "vaml":           [("VAML.NS", r"vedanta\s*aluminium")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
+    "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
     # --- exchange-traded ---
     "alumina_index":  [("ALA=F", r"alumina")],      # Alumina FOB Australia (Platts).
                                                     # Platts-settled, not Fastmarkets MB,
@@ -75,8 +77,10 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
                                                     # LME 3,310.50 on the same day.
     "midwest_premium": [("AUP=F", r"aluminum\s*mw|midwest")],   # USD/lb, not /t
     "silver":         [("SI=F", r"silver")],
-    # NO ZINC CANDIDATE. Probed and rejected — see REJECTED. A real coverage
-    # gap for the zinc peer group, not an oversight.
+    # NO FREE ZINC ON YAHOO — see REJECTED. Zinc now comes from Wind ZN.SHF via
+    # packages/adapters/wind_zinc.py, loaded as `zinc_shfe` (ex-VAT, USD/t).
+    # Deliberately NOT loaded as `lme_zinc`: it is a Chinese domestic contract
+    # and must not be mistaken for the LME benchmark.
     "lme_zinc":             [],
     # --- assessed prices, no public feed ---
     "thermal_coal_eauction": [],
