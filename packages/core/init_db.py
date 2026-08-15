@@ -97,6 +97,41 @@ def main() -> int:
             print(f"  FAIL  {type(exc).__name__}: {exc} — {label}")
             ok = False
 
+    # Rejection tests alone are not enough. A constraint that rejects EVERYTHING
+    # passes every rejection test — which is exactly what happened: the date
+    # CHECKs used GLOB '____-__-__', but in GLOB `_` is a literal underscore
+    # (it is LIKE that treats it as a wildcard), so no real date could ever be
+    # inserted. Caught only when the price loader tried to write actual data.
+    # Every guard now needs a matching ACCEPTANCE test.
+    accepts = [
+        (
+            "prices accepts a well-formed date",
+            "INSERT INTO entities (id,kind,name) VALUES ('_t','commodity','t')",
+            "INSERT INTO prices (entity_id,date,close) VALUES ('_t','2026-08-15',1.0)",
+        ),
+        (
+            "observations accepts a properly cited row",
+            # each case rolls back, so it must create its own prerequisites
+            "INSERT INTO entities (id,kind,name) VALUES ('_t','commodity','t')",
+            "INSERT INTO sources (id,kind,source_date,captured_at,raw_path) "
+            "VALUES ('_s','manual','2026-08-15','now','x')",
+            "INSERT INTO observations (source_id,entity_id,as_of,factor,metric,"
+            "value_num,confidence,quote,extractor_version,created_at) "
+            "VALUES ('_s','_t','2026-08-15','f','m',1.0,0.9,'cited text','v1','now')",
+        ),
+    ]
+    print("\nacceptance checks (each must be ACCEPTED):")
+    for label, *sqls in accepts:
+        try:
+            for s in sqls:
+                conn.execute(s)
+            print(f"  ok    accepted  — {label}")
+        except sqlite3.Error as exc:
+            print(f"  FAIL  {type(exc).__name__}: {exc} — {label}")
+            ok = False
+        finally:
+            conn.rollback()
+
     conn.close()
     return 0 if ok else 1
 

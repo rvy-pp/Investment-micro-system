@@ -18,8 +18,18 @@ spec_version: 0.1.0
 currency: INR
 unit: crore
 period: FY26
-usdinr: 87.0                  # for converting USD-linked price moves
-verify: pending
+# FALLBACK ONLY. The live rate is loaded from Yahoo (USDINR=X) into `prices`
+# and should be read from there; this constant is what the bridge uses when the
+# store has no rate for the date.
+#
+# Corrected 2026-08-15: was 87.0, actual 95.43 — a 9.7% error that scaled EVERY
+# USD-linked line, i.e. every alumina, LME and silver impact in the system.
+# A hardcoded FX rate is a slow leak: it is never obviously wrong, it just
+# quietly understates everything. Treat this number as a bug waiting to happen
+# and prefer the series.
+usdinr: 95.43
+usdinr_as_of: 2026-08-15
+verify: sourced               # from USDINR=X, live
 
 companies:
 

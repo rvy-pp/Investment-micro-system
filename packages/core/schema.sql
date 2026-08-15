@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS sources (
     captured_at   TEXT NOT NULL,             -- ISO8601 UTC when we pulled it
     raw_path      TEXT NOT NULL,             -- data/raw/<kind>/<source_date>/<id>.<ext>
     meta          TEXT,                      -- JSON
-    CHECK (source_date GLOB '____-__-__'),
+    CHECK (source_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
     CHECK (length(trim(raw_path)) > 0)
 ) STRICT;
 
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS observations (
     CHECK (value_num IS NOT NULL OR value_text IS NOT NULL),
     CHECK (confidence >= 0.0 AND confidence <= 1.0),
     CHECK (direction IS NULL OR direction IN (-1, 0, 1)),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_obs_entity_asof ON observations (entity_id, as_of);
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS prices (
     volume     REAL,
     currency   TEXT,
     PRIMARY KEY (entity_id, date),
-    CHECK (date GLOB '____-__-__')
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE TABLE IF NOT EXISTS oi (
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS broker_actions (
     created_at   TEXT NOT NULL,
     CHECK (length(trim(quote)) > 0),
     CHECK (action IN ('initiate','upgrade','downgrade','reiterate','tp_change','drop')),
-    CHECK (action_date GLOB '____-__-__')
+    CHECK (action_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_broker_entity ON broker_actions (entity_id, action_date);
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS estimates (
     quote       TEXT NOT NULL,
     created_at  TEXT NOT NULL,
     CHECK (length(trim(quote)) > 0),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_est_entity ON estimates (entity_id, period, metric, as_of);
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS positions (
     created_at     TEXT NOT NULL,
     CHECK (instrument IN ('future','cash','option')),
     CHECK (side IS NULL OR side IN ('LONG','SHORT')),
-    CHECK (snapshot_date GLOB '____-__-__')
+    CHECK (snapshot_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_pos_date ON positions (snapshot_date);
@@ -315,7 +315,7 @@ CREATE TABLE IF NOT EXISTS economics (
     CHECK (market_pct IS NULL OR (market_pct >= 0.0 AND market_pct <= 1.0)),
     CHECK (mix_pct    IS NULL OR (mix_pct    >= 0.0 AND mix_pct    <= 1.0)),
     CHECK (length(trim(source_note)) > 0),   -- an intensity with no provenance is a guess
-    CHECK (effective_from GLOB '____-__-__'),
+    CHECK (effective_from GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
     -- an output line needs a volume or a mix; an input line needs an intensity
     -- AND the basis that intensity is measured against
     CHECK ((line_kind = 'output' AND (volume IS NOT NULL OR mix_pct IS NOT NULL))
@@ -334,7 +334,7 @@ CREATE TABLE IF NOT EXISTS bridge_runs (
     code_sha     TEXT NOT NULL,
     created_at   TEXT NOT NULL,
     UNIQUE (entity_id, as_of, window_days, spec_version),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 -- Per-line decomposition — so "why did margin move" is answerable by line item,
@@ -399,7 +399,7 @@ CREATE TABLE IF NOT EXISTS market_layer (
     flow_dii            REAL,
     mood                TEXT,                -- derived label, never additive
     PRIMARY KEY (entity_id, as_of),
-    CHECK (as_of GLOB '____-__-__'),
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
     CHECK (ev_ebitda_pctile IS NULL OR (ev_ebitda_pctile >= 0.0 AND ev_ebitda_pctile <= 100.0))
 ) STRICT;
 
@@ -440,7 +440,7 @@ CREATE TABLE IF NOT EXISTS guidance (
     CHECK ((target_type = 'point'     AND target_value IS NOT NULL)
         OR (target_type = 'range'     AND target_low IS NOT NULL AND target_high IS NOT NULL)
         OR (target_type = 'direction' AND target_dir IS NOT NULL)),
-    CHECK (issued_date GLOB '____-__-__')
+    CHECK (issued_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_guid_entity ON guidance (entity_id, period, status);
@@ -459,7 +459,7 @@ CREATE TABLE IF NOT EXISTS guidance_evidence (
     CHECK (length(trim(quote)) > 0),
     CHECK (direction IN (-1, 1)),            -- neutral evidence is not evidence
     CHECK (weight > 0.0 AND weight <= 1.0),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_gev_guidance ON guidance_evidence (guidance_id, as_of);
@@ -478,7 +478,7 @@ CREATE TABLE IF NOT EXISTS guidance_confidence (
     code_sha          TEXT NOT NULL,
     PRIMARY KEY (entity_id, period, as_of),
     CHECK (confidence >= 0.0 AND confidence <= 1.0),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 -- Track record, derived rather than stored: a company that habitually misses
@@ -514,7 +514,7 @@ CREATE TABLE IF NOT EXISTS sector_regime (
     PRIMARY KEY (sector, as_of),
     CHECK (state IN ('tezi','mandi','neutral','dead')),
     CHECK (can_express IN (0,1)),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 -- ===========================================================================
@@ -556,7 +556,7 @@ CREATE TABLE IF NOT EXISTS signals (
     CHECK (l2_priced_in IS NULL OR l2_priced_in IN ('not_priced','partly','priced')),
     CHECK (l3_gated IN (0,1)),
     CHECK (kind = 'single' OR (long_entity IS NOT NULL AND short_entity IS NOT NULL)),
-    CHECK (as_of GLOB '____-__-__')
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
 CREATE INDEX IF NOT EXISTS ix_signals_asof ON signals (as_of);
