@@ -184,7 +184,9 @@ def parse_shock(s: str) -> tuple[str, float]:
 
 
 def _series_in_store() -> set[str]:
-    """Which series actually HAVE price data. Drives coverage_ok."""
+    """Which series have a resolvable level — from a FEED or from cited
+    observations. Both count toward coverage_ok: a level carried forward from
+    research is a real level, just an older one."""
     import sqlite3
 
     db = REPO / "data" / "ims.db"
@@ -192,6 +194,8 @@ def _series_in_store() -> set[str]:
         return set()
     conn = sqlite3.connect(db)
     out = {r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")}
+    out |= {r[0] for r in conn.execute(
+        "SELECT DISTINCT metric FROM observations WHERE factor='price'")}
     conn.close()
     return out
 
@@ -217,29 +221,29 @@ def shocks_from_store(window: int, as_of: str | None = None
     shocks: dict[str, float] = {}
     detail: dict[str, tuple] = {}
 
-    ents = [r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")]
+    # Resolve through packages/core/series.py so feeds and cited observations
+    # share one interface. A cp_coke level carried forward from research is a
+    # real level; it is simply older, and its age travels with it.
+    sys.path.insert(0, str(REPO / "packages" / "core"))
+    from series import resolve, delta_over  # noqa: E402
+
     latest = conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
     as_of = as_of or latest
-    target_old = (_dt.date.fromisoformat(as_of)
-                  - _dt.timedelta(days=window)).isoformat()
 
-    def last_on_or_before(eid: str, d: str):
-        return conn.execute(
-            "SELECT date, close FROM prices WHERE entity_id=? AND date<=? "
-            "ORDER BY date DESC LIMIT 1", (eid, d)
-        ).fetchone()
+    ents = [r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")]
+    ents += [r[0] for r in conn.execute(
+        "SELECT DISTINCT metric FROM observations WHERE factor='price'")]
 
-    for eid in ents:
-        new = last_on_or_before(eid, as_of)
-        old = last_on_or_before(eid, target_old)
-        if not new or not old or new[0] == old[0]:
-            continue          # no move observable in the window
-        (d_new, c_new), (d_old, c_old) = new, old
-        shocks[eid] = c_new - c_old
-        stale = (_dt.date.fromisoformat(as_of)
-                 - _dt.date.fromisoformat(d_new)).days
-        detail[eid] = (d_old, c_old, d_new, c_new,
-                       (c_new / c_old - 1) * 100, stale)
+    for eid in dict.fromkeys(ents):
+        pts = resolve(conn, eid)
+        got = delta_over(pts, as_of, window)
+        if not got:
+            continue          # no move OBSERVED in the window — not a zero move
+        d, new, old = got
+        shocks[eid] = d
+        detail[eid] = (old.date, old.value, new.date, new.value,
+                       (new.value / old.value - 1) * 100, new.stale_days,
+                       new.origin)
 
     fx_row = conn.execute(
         "SELECT close FROM prices WHERE entity_id='usdinr' AND date<=? "
@@ -280,20 +284,21 @@ def main() -> int:
             return 2
         print(f"REAL {args.from_store}-calendar-day move to {as_of}"
               f"   (USDINR {usdinr:.2f} live)")
-        for eid, (d0, c0, d1, c1, pct, stale) in sorted(detail.items()):
+        for eid, (d0, c0, d1, c1, pct, stale, origin) in sorted(detail.items()):
             if eid not in shocks:
                 continue
             # a series whose newest print is far from as_of is contributing an
             # old move to a current signal — say so on the line itself
+            src = "cited" if origin == "cited" else "     "
             warn = f"  <- STALE {stale}d" if stale > 7 else ""
             print(f"   {eid:22} {c0:>10,.2f} ({d0}) -> {c1:>10,.2f} ({d1})"
-                  f"  {pct:+6.2f}%{warn}")
+                  f"  {pct:+6.2f}% {src}{warn}")
 
         # Series present in the store but with NO new print inside the window
         # are treated as flat. That is correct, but silently omitting them
         # hides how old the underlying data is — a monthly series can sit
         # 75 days stale and contribute a confident zero.
-        quiet = sorted(set(_series_in_store()) - set(shocks) - {"usdinr"})
+        quiet = sorted(set(_series_in_store()) - set(shocks) - {"usdinr", "usdcny"})
         if quiet:
             print("   no new print in window (treated as flat):")
             import sqlite3 as _s

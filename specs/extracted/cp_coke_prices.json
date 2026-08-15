@@ -1,0 +1,65 @@
+{
+  "_note": [
+    "Cited price observations for cp_coke. Verbatim quotes only.",
+    "Rows 2 and 3 are the SAME fact reported by two brokers on consecutive days —",
+    "both are stored, because both were genuinely said and each refreshes",
+    "staleness, but the resolver must count the -7% ONCE. That is rule 2 in",
+    "packages/core/series.py, and this pair is the live test of it.",
+    "",
+    "PERIOD MATTERS: these are QUARTERLY AVERAGE import prices, not spot. The",
+    "as_of is when it was reported; the value describes the quarter named in",
+    "`period`. A quarterly average moving into a daily bridge is coarse — it is",
+    "the right level of precision for a contracted input, not for a traded one."
+  ],
+
+  "sources": [
+    {"id": "digest-2026-07-07", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 07-07-2026", "source_date": "2026-07-07",
+     "raw_path": "Broker Mails/07-07-2026.md"},
+    {"id": "digest-2026-08-05", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 05-08-2026", "source_date": "2026-08-05",
+     "raw_path": "Broker Mails/05-08-2026.md"},
+    {"id": "digest-2026-08-06b", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 06-08-2026", "source_date": "2026-08-06",
+     "raw_path": "Broker Mails/06-08-2026.md"}
+  ],
+
+  "observations": [
+    {
+      "source_id": "digest-2026-07-07",
+      "entity_id": "cp_coke",
+      "as_of": "2026-07-07",
+      "factor": "price",
+      "metric": "cp_coke",
+      "value_num": 147.0,
+      "unit": "USD/t",
+      "period": "1QFY27",
+      "confidence": 0.9,
+      "quote": "Imported pet coke +12% QoQ to USD147/t, thermal coal +17% QoQ."
+    },
+    {
+      "source_id": "digest-2026-08-05",
+      "entity_id": "cp_coke",
+      "as_of": "2026-08-05",
+      "factor": "price",
+      "metric": "cp_coke",
+      "value_num": -7.0,
+      "unit": "%",
+      "period": "2QFY27",
+      "confidence": 0.85,
+      "quote": "2QFY27 imported petcoke -7% qoq, thermal coal -3% qoq, but input costs still >10% above 4QFY26."
+    },
+    {
+      "source_id": "digest-2026-08-06b",
+      "entity_id": "cp_coke",
+      "as_of": "2026-08-06",
+      "factor": "price",
+      "metric": "cp_coke",
+      "value_num": -7.0,
+      "unit": "%",
+      "period": "2QFY27",
+      "confidence": 0.85,
+      "quote": "Imported pet coke -7% q/q, thermal coal -3% q/q, but input costs still >10% above 4QFY26."
+    }
+  ]
+}
