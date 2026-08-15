@@ -42,7 +42,14 @@ reference_entities:
   - {id: lme_aluminium,          kind: commodity, name: LME Aluminium 3M,        unit: USD/t}
   - {id: alumina_index,          kind: commodity, name: Alumina FOB Australia,   unit: USD/t}
   - {id: bauxite,                kind: commodity, name: Bauxite,                 unit: USD/t}
-  - {id: thermal_coal_eauction,  kind: commodity, name: Coal India e-auction,    unit: INR/t}
+  - {id: thermal_coal_seaborne,  kind: commodity, name: Coal Australian thermal (IMF), unit: USD/t}
+  # ^ PROXY, and the basis matters. Indian smelters buy Coal India e-auction coal
+  #   domestically at administered prices far below seaborne, and those prices do
+  #   NOT move one-for-one with the seaborne benchmark. Applying a seaborne delta
+  #   at face value overstates the coal hit several-fold. Every coal line
+  #   therefore carries `basis_pass_through` — the fraction of a seaborne move
+  #   that actually reaches Indian cost. Monthly series, so it also updates far
+  #   less often than the daily lines.
   - {id: cp_coke,                kind: commodity, name: Calcined Petroleum Coke, unit: USD/t}
   - {id: coal_tar_pitch,         kind: commodity, name: Coal Tar Pitch,          unit: USD/t}
   - {id: caustic_soda,           kind: commodity, name: Caustic Soda,            unit: USD/t}
@@ -93,13 +100,14 @@ entities:
         source_note: "Standard Hall-Heroult ratio; NALCO fully integrated on alumina"
         verify: pending
 
-      - item: thermal_coal_eauction
-        price_link: thermal_coal_eauction
+      - item: thermal_coal_seaborne
+        price_link: thermal_coal_seaborne
         intensity: 9.90
         intensity_unit: t/t
         basis_item: aluminium_ingot
         market_pct: 1.00          # NO operational captive coal — full e-auction exposure.
                                   # This is why NALCO has the group's highest coal beta.
+        basis_pass_through: 0.35   # seaborne -> Indian domestic coal cost
         source_note: "~14,200 kWh/t at ~0.70 kg coal/kWh; Utkal blocks not yet contributing"
         verify: pending
 
@@ -157,13 +165,14 @@ entities:
         source_note: "Integrated bauxite and alumina; minimal third-party purchase"
         verify: pending
 
-      - item: thermal_coal_eauction
-        price_link: thermal_coal_eauction
+      - item: thermal_coal_seaborne
+        price_link: thermal_coal_seaborne
         intensity: 9.60
         intensity_unit: t/t
         basis_item: aluminium_ingot
         market_pct: 0.45          # captive coal blocks damp e-auction exposure —
                                   # roughly half NALCO's coal beta
+        basis_pass_through: 0.35   # seaborne -> Indian domestic coal cost
         source_note: "Captive blocks (Dumri, Chakla etc.) cover a material share"
         verify: pending
 
@@ -273,12 +282,13 @@ entities:
           flip its alumina sign from cost to revenue, which would invert the flagship
           NALCO/VAML pair. This is a guidance-pillar item, not a static assumption.
 
-      - item: thermal_coal_eauction
-        price_link: thermal_coal_eauction
+      - item: thermal_coal_seaborne
+        price_link: thermal_coal_seaborne
         intensity: 9.80
         intensity_unit: t/t
         basis_item: aluminium_ingot
         market_pct: 0.70
+        basis_pass_through: 0.35   # seaborne -> Indian domestic coal cost
         source_note: "Partial captive coal; majority still linkage/e-auction"
         verify: pending
 
@@ -335,12 +345,13 @@ entities:
         verify: pending
 
     inputs:
-      - item: thermal_coal_eauction
-        price_link: thermal_coal_eauction
+      - item: thermal_coal_seaborne
+        price_link: thermal_coal_seaborne
         intensity: 4.20
         intensity_unit: t/t
         basis_item: refined_zinc
         market_pct: 0.60
+        basis_pass_through: 0.35   # seaborne -> Indian domestic coal cost
         source_note: "Smelting and captive power coal"
         verify: pending
 

@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sys
+from datetime import date as _dt_date
 
 import yaml
 
@@ -135,8 +136,13 @@ def run_bridge(
             continue
         n_priced += 1
         delta = shocks.get(link, 0.0)
-        # market_pct is the whole point: captive supply contributes nothing
+        # Two separate haircuts, and conflating them would be a modelling error:
+        #   market_pct         how much of the input is BOUGHT vs captive
+        #   basis_pass_through how much of a PROXY benchmark's move reaches this
+        #                      company's actual cost (seaborne coal -> Indian
+        #                      administered domestic coal is ~0.35, not 1.0)
         impact = (bvol * inp["intensity"] * inp.get("market_pct", 1.0)
+                  * inp.get("basis_pass_through", 1.0)
                   * to_inr(delta, units.get(link, ""), usdinr) / CR)
         d_cost += impact
         lines.append(
@@ -192,12 +198,19 @@ def _series_in_store() -> set[str]:
 
 def shocks_from_store(window: int, as_of: str | None = None
                       ) -> tuple[dict[str, float], dict[str, tuple], str, float]:
-    """Real price deltas over `window` sessions, read from the store.
+    """Real price deltas over `window` CALENDAR DAYS, read from the store.
 
-    Sessions, not calendar days — a 5-session delta is comparable across series
-    with different holiday calendars, whereas 'five days ago' silently spans a
-    long weekend for one series and not another.
+    Calendar days, not row counts. An earlier version took N rows back, which
+    silently spans N *months* on a monthly series: asking for 20 "sessions" of
+    coal returned Oct-2024 -> Jun-2026, a 20-month move presented as a 20-day
+    one. Row counting only works if every series shares a frequency, and this
+    store deliberately mixes daily equities with monthly IMF assessments.
+
+    For each series independently: the last print on or before as_of, against
+    the last print on or before (as_of - window). Series report their own
+    effective dates so a stale or coarse one is visible rather than assumed.
     """
+    import datetime as _dt
     import sqlite3
 
     conn = sqlite3.connect(REPO / "data" / "ims.db")
@@ -207,17 +220,26 @@ def shocks_from_store(window: int, as_of: str | None = None
     ents = [r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")]
     latest = conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
     as_of = as_of or latest
+    target_old = (_dt.date.fromisoformat(as_of)
+                  - _dt.timedelta(days=window)).isoformat()
+
+    def last_on_or_before(eid: str, d: str):
+        return conn.execute(
+            "SELECT date, close FROM prices WHERE entity_id=? AND date<=? "
+            "ORDER BY date DESC LIMIT 1", (eid, d)
+        ).fetchone()
 
     for eid in ents:
-        rows = conn.execute(
-            "SELECT date, close FROM prices WHERE entity_id=? AND date<=? "
-            "ORDER BY date DESC LIMIT ?", (eid, as_of, window + 1)
-        ).fetchall()
-        if len(rows) < 2:
-            continue
-        (d_new, c_new), (d_old, c_old) = rows[0], rows[-1]
+        new = last_on_or_before(eid, as_of)
+        old = last_on_or_before(eid, target_old)
+        if not new or not old or new[0] == old[0]:
+            continue          # no move observable in the window
+        (d_new, c_new), (d_old, c_old) = new, old
         shocks[eid] = c_new - c_old
-        detail[eid] = (d_old, c_old, d_new, c_new, (c_new / c_old - 1) * 100)
+        stale = (_dt.date.fromisoformat(as_of)
+                 - _dt.date.fromisoformat(d_new)).days
+        detail[eid] = (d_old, c_old, d_new, c_new,
+                       (c_new / c_old - 1) * 100, stale)
 
     fx_row = conn.execute(
         "SELECT close FROM prices WHERE entity_id='usdinr' AND date<=? "
@@ -253,10 +275,34 @@ def main() -> int:
             print("no prices in the store — run the yahoo adapter first",
                   file=sys.stderr)
             return 2
-        print(f"REAL {args.from_store}-session move to {as_of}   (USDINR {usdinr:.2f} live)")
-        for eid, (d0, c0, d1, c1, pct) in sorted(detail.items()):
-            if eid in shocks:
-                print(f"   {eid:18} {c0:>10,.2f} ({d0}) -> {c1:>10,.2f} ({d1})  {pct:+6.2f}%")
+        print(f"REAL {args.from_store}-calendar-day move to {as_of}"
+              f"   (USDINR {usdinr:.2f} live)")
+        for eid, (d0, c0, d1, c1, pct, stale) in sorted(detail.items()):
+            if eid not in shocks:
+                continue
+            # a series whose newest print is far from as_of is contributing an
+            # old move to a current signal — say so on the line itself
+            warn = f"  <- STALE {stale}d" if stale > 7 else ""
+            print(f"   {eid:22} {c0:>10,.2f} ({d0}) -> {c1:>10,.2f} ({d1})"
+                  f"  {pct:+6.2f}%{warn}")
+
+        # Series present in the store but with NO new print inside the window
+        # are treated as flat. That is correct, but silently omitting them
+        # hides how old the underlying data is — a monthly series can sit
+        # 75 days stale and contribute a confident zero.
+        quiet = sorted(set(_series_in_store()) - set(shocks) - {"usdinr"})
+        if quiet:
+            print("   no new print in window (treated as flat):")
+            import sqlite3 as _s
+            _c = _s.connect(REPO / "data" / "ims.db")
+            for eid in quiet:
+                row = _c.execute("SELECT MAX(date) FROM prices WHERE entity_id=?",
+                                 (eid,)).fetchone()
+                last = row[0] if row else "?"
+                age = ((_dt_date.fromisoformat(as_of) - _dt_date.fromisoformat(last)).days
+                       if last else None)
+                print(f"     {eid:22} last print {last}  ({age}d old)")
+            _c.close()
         print()
     elif args.shock:
         shocks = dict(parse_shock(s) for s in args.shock)
