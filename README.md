@@ -44,7 +44,7 @@ must be rejected.
 | **L1** `extract/` | raw → typed **cited** observations | LLM, its only contact with data |
 | **L2** `core/` | SQLite store, append-only observations | code |
 | **L3** `score/` | factor specs → normalised factors, composites, pairs, signals | deterministic code |
-| **L4** `api/` + `web/` | FastAPI over SQLite, serving a Vite-built SPA | code |
+| **L4** `api/` + `web/` | stdlib `http.server` over SQLite, serving one static page | code |
 | **L5** review | joins signals to outcomes, grades decisions, promotes priors | LLM, built last |
 
 ## Two ideas the schema keeps separate
@@ -116,15 +116,40 @@ data/         gitignored — ims.db + raw captures
 snapshots/    gitignored — dated db backups
 ```
 
+## Run it
+
+```bash
+python packages/core/init_db.py       # apply schema, run the guard tests
+python packages/daily.py              # dry run of the whole sequence; --run to execute
+python packages/api/serve.py          # -> http://127.0.0.1:8770
+```
+
+Port 8770, not 8765 — the vault's node dashboard already owns 8765.
+
 ## Status
 
-Aluminium is the proving ground: 3 tradeable names, the cleanest external
-driver, and a factor whose sign flips across the group (alumina is revenue for
-NALCO, cost for Vedanta), which is precisely what an absolute per-company score
-cannot express.
+Two peer groups score on live data: `aluminium_primary` (nalco / hindalco /
+vaml) and `zinc` (hindustan_zinc / vedanta). Aluminium is the proving ground —
+alumina's sign flips across the group, which is exactly what an absolute
+per-company score cannot express.
 
-**The front-end is deliberately last.** The gate is in
-`specs/sectors/aluminium_primary.yaml` under `validation`: the ranking must
-predict realised relative moves on a 30-day backfill, with high-conviction
-calls beating low-conviction ones. A dashboard over an unvalidated scoring
-engine is how the last attempt produced output nobody could trade.
+**Built:** schema + guards, Yahoo / FRED / Wind / vault-OI adapters, the
+P1+P2 bridge, the scoring curve, P4 guidance, and a local four-tab front-end
+with an editable override path.
+
+**Not built:** the P3 scorer, the regime gate, signal emission, and the
+review loop.
+
+**The gate still standing:** the bridge does not persist, so there is no score
+history and nothing can be backtested. `specs/sectors/aluminium_primary.yaml`
+under `validation` sets the bar — the ranking must predict realised relative
+moves, with high-conviction calls beating low-conviction ones — and that has to
+clear before a second sector. A dashboard over an unvalidated scoring engine is
+how the last attempt produced output nobody could trade.
+
+## Working on this
+
+Read **`CLAUDE.md`** first, then `git log`. Commit messages are written as a
+findings record: what was found, what was fixed, what was deliberately left
+alone and why. Several design choices look arbitrary until you see the bug they
+prevent.
