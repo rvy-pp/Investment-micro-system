@@ -119,6 +119,21 @@ bounded probability — squashing it again would distort it.
 - **Write commit messages with the Write tool to a file, then `git commit -F`.**
   PowerShell here-strings mangle quotes and `-Encoding utf8` adds a BOM.
 
+## Where valuation inputs come from
+
+| Input | Source | Note |
+|---|---|---|
+| price | Yahoo `.NS` | daily |
+| shares outstanding | Wind `total_shares`, **BSE numeric codes** (`500440.BO`) | validated: computed mcap matches screener to the rupee for all five names |
+| net debt | **screener.in**, Borrowings − Investments | agent-fetched, like Wind |
+| EBITDA base | cited 1QFY27 prints ×4 | annualises a peak quarter, so runs high |
+
+Wind covers Indian **prices and share counts only** — `pe_ttm`, `pb_lf`,
+`mkt_cap_ard` and every balance-sheet field return empty for `.BO` tickers
+while a Chinese control works normally. And Wind's `ev` field for Indian names
+is **market cap with no debt** — a plausible number that is not what it claims.
+Do not use it.
+
 ## Wind MCP
 
 The Wind MCP is callable by the **agent**, not by a Python process. So fetch

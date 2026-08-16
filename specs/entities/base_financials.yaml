@@ -67,8 +67,12 @@ companies:
     base_ebitda: 10840
     shares_outstanding: 1836630000     # Wind total_shares, 532234.BO
     shares_verify: sourced
-    net_debt: 0                        # historically net cash
-    net_debt_verify: pending
+    net_debt: -473                     # NET CASH. screener.in Mar 2026:
+                                       # Borrowings 60 less Investments 533.
+                                       # Negative net debt lowers EV below mcap,
+                                       # which is correct and was being lost
+                                       # while this sat at 0.
+    net_debt_verify: sourced
     valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: >
@@ -82,14 +86,15 @@ companies:
     base_ebitda: 32000
     shares_outstanding: 2247230000     # Wind total_shares, 500440.BO
     shares_verify: sourced
-    net_debt: 75390                    # Novelis $7.9bn x 95.43. A FLOOR, not the
-                                       # consolidated figure — India-standalone
-                                       # debt is additional and uncited, so the
-                                       # true EV is HIGHER and the multiple
-                                       # dearer than shown.
-                                       # Quote: "net debt $7.9bn vs $6.7bn Mar'26"
-                                       # (Avendus Spark, digest 2026-08-06)
-    net_debt_verify: partial
+    net_debt: 74207                    # screener.in consolidated, Mar 2026:
+                                       # Borrowings 99,165 less Investments 24,958.
+                                       # Cross-check: the digest cited Novelis
+                                       # alone at $7.9bn = ~75,390cr, so the
+                                       # consolidated figure landing at 74,207
+                                       # implies India standalone is near net
+                                       # cash. Two independent sources agreeing
+                                       # within 2%.
+    net_debt_verify: sourced
     valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: "Consolidated incl. Novelis and copper — NOT yet sourced from a print"
@@ -132,10 +137,11 @@ companies:
     base_ebitda: 32000
     shares_outstanding: 4225320000     # Wind total_shares, 500188.BO
     shares_verify: sourced
-    net_debt: 0                        # Quote: "Net cash maintained" (digest
-                                       # 2026-08-11). Net cash means EV is
-                                       # slightly BELOW mcap, so 0 is mildly
-                                       # conservative rather than wrong.
+    net_debt: -5740                    # NET CASH. screener.in Mar 2026:
+                                       # Borrowings 8,728 less Investments 14,468.
+                                       # Corroborated by the digest: "Net cash
+                                       # maintained" (2026-08-11). Two sources,
+                                       # same conclusion.
     net_debt_verify: sourced
     valuation_metric: ev_ebitda
     primary_output: refined_zinc
@@ -148,9 +154,19 @@ companies:
     base_ebitda: 22000
     shares_outstanding: 3910390000     # Wind total_shares, 500295.BO
     shares_verify: sourced
-    net_debt: 0                        # holdco debt is real and material — the
-                                       # single most valuable number to fill in
-    net_debt_verify: pending
+    net_debt: 17529                    # !! PRE-DEMERGER, USE WITH CAUTION !!
+                                       # screener.in Mar 2026: Borrowings 32,947
+                                       # less Investments 15,418. That balance
+                                       # sheet is dated BEFORE the 1 May 2026
+                                       # record date, so it still consolidates
+                                       # Aluminium, Power, Oil & Gas and Steel —
+                                       # businesses that have since left, taking
+                                       # debt with them. Post-demerger holdco net
+                                       # debt is almost certainly LOWER, which
+                                       # means VEDL currently reads DEARER than
+                                       # it is. Replace from the first
+                                       # post-demerger balance sheet.
+    net_debt_verify: stale_pre_demerger
     valuation_metric: ev_ebitda
     primary_output: refined_zinc
     source_note: >
