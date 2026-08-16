@@ -1,4 +1,4 @@
-# PinPOINT IMS — read this first
+﻿# PinPOINT IMS — read this first
 
 Investment micro-system for a long/short book. Built from scratch starting
 2026-08-15 for the PM (Rajvaibhav Yadav, PinPOINT Fund). Localhost only, no
@@ -52,7 +52,7 @@ A ten-factor model overfits and goes rigid. The PM was explicit about this.
 | **P2** Costs | What do they consume? | direction + size | scoring |
 | **P3** Valuation | Is it already priced? | conviction | **scorer NOT built** |
 | **P4** Guidance | Will they hit the quarter? | forward view | scoring |
-| Gate | Tezi/mandi — can it express? | permission | schema only |
+| Gate | In flavour / out of flavour — can it express? | permission | schema only |
 
 P1+P2 is the margin bridge. `market_pct` is the field that does the work: a
 captive input contributes ZERO to cost however far its market price moves.

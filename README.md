@@ -1,4 +1,4 @@
-# PinPOINT IMS
+﻿# PinPOINT IMS
 
 Investment micro-system for a long/short book across Steel, Cement, Aluminium,
 Mining, EMS, IT and Autos (later: Power, Oil & Gas, Defence, Capital Goods).
@@ -68,7 +68,7 @@ structure; they share an arithmetic.
 |---|---|---|
 | **L1** Economics | Did the economics actually change, and by how much? | direction + size |
 | **L2** Priced in | Is it already in the price? | conviction |
-| **L3** Regime | Can the sector express it at all — tezi or mandi? | permission |
+| **L3** Regime | Can the sector express it at all — in or out of flavour? | permission |
 
 **L1** is arithmetic on each company's own cost stack (consumption intensity ×
 the price series driving it × how much is actually bought at market) and revenue

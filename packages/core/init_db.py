@@ -39,6 +39,22 @@ def main() -> int:
         conn.execute("DROP TABLE oi")
         print(f"migrated: rebuilt `oi` for new columns (dropped {n} regenerable rows)")
 
+    # A CHECK constraint is equally invisible to CREATE IF NOT EXISTS. The
+    # regime states were renamed tezi/mandi/dead -> in_flavour/out_of_flavour/
+    # ignored; without this the old CHECK survives and every new state is
+    # rejected at write time, long after the rename looked successful.
+    sql = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='sector_regime'"
+    ).fetchone()
+    if sql and "in_flavour" not in (sql[0] or ""):
+        n = conn.execute("SELECT count(*) FROM sector_regime").fetchone()[0]
+        if n:
+            raise SystemExit(
+                f"sector_regime holds {n} rows under the old state vocabulary. "
+                f"Migrate them before rebuilding — refusing to drop authored data.")
+        conn.execute("DROP TABLE sector_regime")
+        print("migrated: rebuilt `sector_regime` for the renamed states")
+
     conn.executescript(SCHEMA.read_text(encoding="utf-8"))
     conn.commit()
 

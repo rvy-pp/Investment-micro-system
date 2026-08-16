@@ -11,7 +11,7 @@
 --      write path. Staleness is DERIVED (max(as_of) per entity+factor), so a
 --      quiet name simply shows as stale instead of manufacturing a delta.
 --   3. Output is gated, not always-on.  sector_regime.can_express is the
---      tezi/mandi permission layer and bridge_results.coverage_ok flags a
+--      in-flavour/out-of-flavour permission layer and coverage_ok flags a
 --      bridge with too many unpriced lines, so "no trade" and "cannot tell"
 --      are both first-class outcomes rather than a weak lean.
 --   4. Every signal has a falsifier.  signals.falsifier is NOT NULL and
@@ -30,8 +30,8 @@
 --                  prior, daily events as evidence
 --
 -- P1 and P2 together are the margin bridge and give DIRECTION and SIZE.
--- P3 gives CONVICTION. P4 gives the FORWARD view. Sector regime (tezi/mandi)
--- gates whether any of it can express.
+-- P3 gives CONVICTION. P4 gives the FORWARD view. Sector regime (in flavour /
+-- out of flavour) gates whether any of it can express.
 --
 -- Keep only the input lines that move the needle. For a smelter that is
 -- alumina and power; adding six more reagents adds parameters, not accuracy.
@@ -536,16 +536,27 @@ WHERE status IN ('met', 'missed')
 GROUP BY entity_id;
 
 -- ===========================================================================
--- GATE — SECTOR REGIME (tezi / mandi)
+-- GATE — SECTOR REGIME (in flavour / out of flavour)
 -- ===========================================================================
 -- A permission layer, not another additive term. Positive news into a sector
 -- with no investor interest does not move stocks, so `can_express` gates
 -- whether a Layer 1+2 conclusion is allowed to become a position.
+--
+-- FOUR STATES, and `out_of_flavour` vs `ignored` is a real distinction rather
+-- than a gradation:
+--   in_flavour      bid. good news is rewarded, longs work
+--   out_of_flavour  actively sold. shorts work — there IS interest, it is
+--                   just negative
+--   neutral         no strong pull either way
+--   ignored         NO interest at all. Nothing expresses, in either
+--                   direction, however good the economics
+-- A sector being sold and a sector being ignored need opposite handling, so
+-- they must not collapse into one "bad" state.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sector_regime (
     sector           TEXT NOT NULL,
     as_of            TEXT NOT NULL,
-    state            TEXT NOT NULL,          -- tezi|mandi|neutral|dead
+    state            TEXT NOT NULL,          -- in_flavour|out_of_flavour|neutral|ignored
     breadth_pct      REAL,                   -- % of sector names above their 50dma
     rel_strength     REAL,                   -- sector vs index, normalised
     turnover_pctile  REAL,                   -- investor-interest proxy vs own history
@@ -554,7 +565,7 @@ CREATE TABLE IF NOT EXISTS sector_regime (
     can_express      INTEGER NOT NULL,       -- the gate
     note             TEXT,
     PRIMARY KEY (sector, as_of),
-    CHECK (state IN ('tezi','mandi','neutral','dead')),
+    CHECK (state IN ('in_flavour','out_of_flavour','neutral','ignored')),
     CHECK (can_express IN (0,1)),
     CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
@@ -586,7 +597,7 @@ CREATE TABLE IF NOT EXISTS signals (
     l2_priced_in    TEXT,                    -- P3 valuation: not_priced|partly|priced
     p4_guidance_conf REAL,                   -- P4: confidence management hits the quarter
     l3_regime       TEXT,                    -- regime state at emission
-    l3_gated        INTEGER NOT NULL DEFAULT 0,  -- 1 = held back by the tezi/mandi gate
+    l3_gated        INTEGER NOT NULL DEFAULT 0,  -- 1 = held back by the flavour gate
     spec_version    TEXT NOT NULL,
     code_sha        TEXT NOT NULL,
     created_at      TEXT NOT NULL,
