@@ -19,7 +19,8 @@ DB = REPO / "data" / "ims.db"
 sys.path.insert(0, str(REPO / "packages" / "score"))
 
 from bridge import (  # noqa: E402
-    load_specs, load_scoring, run_bridge, shocks_from_store, _series_in_store,
+    load_specs, load_scoring, load_accumulation, run_bridge, shocks_from_store,
+    _series_in_store,
 )
 from scoring import score as to_score  # noqa: E402
 
@@ -62,7 +63,8 @@ def compute(peer_group: str, window: int = 30, materiality: float = 0.015) -> di
     conn = connect()
     applied = apply_overrides(entities, fins, conn)
 
-    shocks, detail, as_of, fx = shocks_from_store(window)
+    acc, hl = load_accumulation()
+    shocks, detail, as_of, fx = shocks_from_store(window, None, acc, hl)
     usdinr = fx or fin["usdinr"]
     available = set(shocks) | _series_in_store()
     form, k, p = load_scoring()

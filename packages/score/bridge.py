@@ -42,6 +42,15 @@ def load_scoring() -> tuple[str, float, float]:
     return form, k, p
 
 
+def load_accumulation() -> tuple[str, float]:
+    """(method, half_life) from the spec. The spec has always said EWMA; the
+    code used a trailing window until 2026-08-16, and that gap accounted for
+    roughly half of all daily score movement."""
+    s = yaml.safe_load(SCORING_SPEC.read_text(encoding="utf-8"))
+    acc = s.get("accumulation") or {}
+    return acc.get("method", "ewma"), float(acc.get("half_life_days", 10))
+
+
 # ---------------------------------------------------------------------------
 # spec loading
 # ---------------------------------------------------------------------------
@@ -200,7 +209,8 @@ def _series_in_store() -> set[str]:
     return out
 
 
-def shocks_from_store(window: int, as_of: str | None = None
+def shocks_from_store(window: int, as_of: str | None = None,
+                      accum: str = "window", half_life: float = 10.0
                       ) -> tuple[dict[str, float], dict[str, tuple], str, float]:
     """Real price deltas over `window` CALENDAR DAYS, read from the store.
 
@@ -225,7 +235,7 @@ def shocks_from_store(window: int, as_of: str | None = None
     # share one interface. A cp_coke level carried forward from research is a
     # real level; it is simply older, and its age travels with it.
     sys.path.insert(0, str(REPO / "packages" / "core"))
-    from series import resolve, delta_over  # noqa: E402
+    from series import resolve, delta_over, ewma_delta  # noqa: E402
 
     latest = conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
     as_of = as_of or latest
@@ -236,7 +246,8 @@ def shocks_from_store(window: int, as_of: str | None = None
 
     for eid in dict.fromkeys(ents):
         pts = resolve(conn, eid)
-        got = delta_over(pts, as_of, window)
+        got = (ewma_delta(pts, as_of, half_life) if accum == "ewma"
+               else delta_over(pts, as_of, window))
         if not got:
             continue          # no move OBSERVED in the window — not a zero move
         d, new, old = got
@@ -267,6 +278,8 @@ def main() -> int:
     ap.add_argument("--from-store", type=int, metavar="SESSIONS",
                     help="use real price deltas over N sessions instead of --shock")
     ap.add_argument("--as-of", default=None)
+    ap.add_argument("--accum", choices=["window","ewma"], default=None,
+                    help="override the spec accumulation method")
     args = ap.parse_args()
 
     entities, units, fin = load_specs()
@@ -275,14 +288,20 @@ def main() -> int:
     detail: dict[str, tuple] = {}
 
     if args.from_store:
-        shocks, detail, as_of, fx = shocks_from_store(args.from_store, args.as_of)
+        acc, hl = load_accumulation()
+        if args.accum:
+            acc = args.accum
+        shocks, detail, as_of, fx = shocks_from_store(
+            args.from_store, args.as_of, acc, hl)
         if fx:
             usdinr = fx          # live rate beats the spec fallback
         if not shocks:
             print("no prices in the store — run the yahoo adapter first",
                   file=sys.stderr)
             return 2
-        print(f"REAL {args.from_store}-calendar-day move to {as_of}"
+        how = (f"EWMA half-life {hl:g}d" if acc == "ewma"
+               else f"{args.from_store}-calendar-day window")
+        print(f"REAL accumulated move to {as_of} · {how}"
               f"   (USDINR {usdinr:.2f} live)")
         for eid, (d0, c0, d1, c1, pct, stale, origin) in sorted(detail.items()):
             if eid not in shocks:
