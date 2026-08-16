@@ -169,17 +169,59 @@ CREATE TABLE IF NOT EXISTS oi (
     entity_id      TEXT NOT NULL REFERENCES entities (id),
     date           TEXT NOT NULL,
     expiry         TEXT,
-    oi             REAL,
+    oi             REAL,                     -- futures OI in LOTS
+    oi_chg_lots    REAL,                     -- as published; pct is derived, not assumed
     oi_chg_pct     REAL,
+    price          REAL,
     price_chg_pct  REAL,
-    buildup        TEXT,                     -- long_buildup|short_buildup|short_covering|long_unwinding
-    oi_percentile  REAL,                     -- position of today's OI in its own history
-    lookback_days  INTEGER,                  -- window the percentile was computed over
+    lot_size       INTEGER,
+    -- Two horizons, because they routinely disagree and the disagreement is the
+    -- signal: a name can be short-covering over 15d inside a 3m short build.
+    buildup        TEXT,                     -- 3-month read
+    buildup_15d    TEXT,
+    oi_percentile  REAL,                     -- 3-month percentile
+    oi_percentile_15d REAL,
+    z_score_3m     REAL,
+    pct_vs_median_3m REAL,
+    lookback_days  INTEGER,
+    source         TEXT,                     -- provenance: 'vault_oi_history'
     PRIMARY KEY (entity_id, date),
+    CHECK (buildup_15d IS NULL OR buildup_15d IN
+        ('long_buildup','short_buildup','short_covering','long_unwinding','neutral')),
     CHECK (buildup IS NULL OR buildup IN
         ('long_buildup','short_buildup','short_covering','long_unwinding','neutral')),
     CHECK (oi_percentile IS NULL OR (oi_percentile >= 0.0 AND oi_percentile <= 100.0))
 ) STRICT;
+
+-- ---------------------------------------------------------------------------
+-- PM overrides — the front-end's write path.
+--
+-- The YAML specs are the checked-in BASELINE and stay in git. Desk corrections
+-- land here instead of rewriting YAML from a web form, for three reasons:
+-- a form-driven file rewrite can corrupt a spec, the DB keeps who/when/why,
+-- and the baseline stays diffable so it is always clear what was changed from
+-- the analyst's original and by whom.
+--
+-- The bridge reads YAML, then applies any override on top. Deleting a row
+-- reverts cleanly to the spec.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS overrides (
+    id          INTEGER PRIMARY KEY,
+    entity_id   TEXT NOT NULL,
+    scope       TEXT NOT NULL,        -- 'output' | 'input' | 'financial'
+    item        TEXT,                 -- line item; NULL for entity-level financials
+    field       TEXT NOT NULL,        -- 'volume','market_pct','intensity','base_ebitda',...
+    value_num   REAL NOT NULL,
+    prev_value  REAL,                 -- what the spec said, so the delta is visible
+    note        TEXT,                 -- why. optional but strongly encouraged
+    author      TEXT NOT NULL DEFAULT 'pm',
+    created_at  TEXT NOT NULL,
+    active      INTEGER NOT NULL DEFAULT 1,
+    CHECK (scope IN ('output','input','financial')),
+    CHECK (active IN (0,1))
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_ovr ON overrides (entity_id, scope, item, field, active);
 
 -- ---------------------------------------------------------------------------
 -- Broker behaviour — for the consensus / crowding read.

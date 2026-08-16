@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PinPOINT IMS</title>
+<style>
+  :root{
+    --ground:#F6F7F8; --surface:#fff; --alt:#EFF1F3;
+    --ink:#15181C; --soft:#4B535E; --faint:#7A838F;
+    --rule:#DCE0E5; --rule2:#E9ECEF;
+    --accent:#24507F; --accent-soft:#E2EAF3;
+    --up:#1B6A57; --up-soft:#DDEDE7;
+    --warn:#8A5716; --warn-soft:#F4E9D8;
+    --down:#93332D; --down-soft:#F5E1DF;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#121519; --surface:#191D22; --alt:#21262C;
+      --ink:#E3E7EB; --soft:#A6B0BB; --faint:#7C868F;
+      --rule:#2C333A; --rule2:#232930;
+      --accent:#7FA8D6; --accent-soft:#1D2A3A;
+      --up:#6BC0A5; --up-soft:#16302A;
+      --warn:#D8A55E; --warn-soft:#33280F;
+      --down:#DE8079; --down-soft:#36211F;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+       font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 20px 80px}
+
+  header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+         padding:20px 0 14px;border-bottom:2px solid var(--ink)}
+  h1{font-size:19px;font-weight:660;letter-spacing:-.02em;margin:0}
+  .meta{font-family:var(--mono);font-size:11.5px;color:var(--faint);
+        display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;align-items:center}
+  select,button,input{font:inherit;color:inherit}
+  select,input[type=number],input[type=text]{background:var(--surface);
+        border:1px solid var(--rule);border-radius:3px;padding:4px 7px}
+  button{background:var(--accent);color:#fff;border:0;border-radius:3px;
+         padding:5px 11px;cursor:pointer;font-size:13px}
+  button.ghost{background:transparent;color:var(--accent);
+               border:1px solid var(--rule)}
+  button:disabled{opacity:.45;cursor:default}
+  button:focus-visible,select:focus-visible,input:focus-visible,
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  nav{display:flex;gap:2px;margin:16px 0 0;border-bottom:1px solid var(--rule)}
+  .tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--soft);
+       padding:8px 14px;cursor:pointer;font-size:13px;font-weight:560;border-radius:0}
+  .tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+
+  section{display:none;padding-top:22px}
+  section.on{display:block}
+  h2{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+     text-transform:uppercase;color:var(--accent);font-weight:600;
+     margin:26px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+  h2:first-child{margin-top:0}
+
+  .scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;
+          background:var(--surface);margin-bottom:6px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+     color:var(--faint);text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);
+     white-space:nowrap;font-weight:600;position:sticky;top:0;background:var(--surface)}
+  td{padding:8px 12px;border-bottom:1px solid var(--rule2);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  td.k{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+  tbody tr:hover{background:var(--alt)}
+
+  .chip{display:inline-block;font-family:var(--mono);font-size:10px;
+        letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;
+        border-radius:2px;font-weight:600;white-space:nowrap}
+  .c-up{background:var(--up-soft);color:var(--up)}
+  .c-warn{background:var(--warn-soft);color:var(--warn)}
+  .c-down{background:var(--down-soft);color:var(--down)}
+  .c-flat{background:var(--alt);color:var(--faint)}
+
+  .score{font-family:var(--mono);font-weight:660;font-size:15px;
+         font-variant-numeric:tabular-nums}
+  .bar{height:5px;border-radius:3px;background:var(--alt);position:relative;
+       min-width:70px;overflow:hidden}
+  .bar i{position:absolute;top:0;bottom:0;left:50%;background:var(--accent)}
+
+  .drivers{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .drv{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+       padding:7px 10px;font-family:var(--mono);font-size:11.5px;min-width:150px}
+  .drv b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
+  .drv span{color:var(--faint);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+
+  .note{font-size:12.5px;color:var(--soft);margin:2px 0 16px}
+  .hint{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .ent{font-weight:640;background:var(--alt)}
+  .quote{font-size:12px;color:var(--soft);font-style:italic;max-width:60ch}
+  .err{background:var(--down-soft);color:var(--down);padding:10px 14px;
+       border-radius:3px;margin:14px 0;font-family:var(--mono);font-size:12.5px}
+  .ok-flash{background:var(--up-soft);color:var(--up)}
+  .loading{color:var(--faint);padding:30px 0;font-family:var(--mono);font-size:12px}
+  input.ovr{width:96px;text-align:right;font-family:var(--mono)}
+  input.nt{width:100%;min-width:140px;font-size:12.5px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>PinPOINT IMS</h1>
+    <div class="meta">
+      <span>window
+        <select id="win">
+          <option value="5">5d</option>
+          <option value="10">10d</option>
+          <option value="30" selected>30d</option>
+          <option value="60">60d</option>
+        </select>
+      </span>
+      <span id="asof">—</span>
+      <span id="fx">—</span>
+      <span id="ovr">—</span>
+      <button class="ghost" id="reload">Refresh</button>
+    </div>
+  </header>
+
+  <nav role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-t="scores">Scores</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="inputs">Inputs</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="pos">Positioning</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="guid">Guidance</button>
+  </nav>
+
+  <div id="err"></div>
+
+  <section id="s-scores" class="on"><div class="loading">loading…</div></section>
+  <section id="s-inputs"><div class="loading">loading…</div></section>
+  <section id="s-pos"><div class="loading">loading…</div></section>
+  <section id="s-guid"><div class="loading">loading…</div></section>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct = v => v == null ? '—' : (v*100).toFixed(2) + '%';
+const num = (v, d=0) => v == null ? '—' :
+  v.toLocaleString('en-IN', {minimumFractionDigits:d, maximumFractionDigits:d});
+
+function showErr(m){ $('#err').innerHTML = m ? `<div class="err">${esc(m)}</div>` : ''; }
+
+// score 1–5 with 3 neutral: bar grows from the centre, coloured by side
+function bar(s){
+  if (s == null) return '<div class="bar"></div>';
+  const d = (s - 3) / 2, w = Math.abs(d) * 50;
+  const col = d > 0 ? 'var(--up)' : 'var(--down)';
+  const left = d > 0 ? 50 : 50 - w;
+  return `<div class="bar"><i style="left:${left}%;width:${w}%;background:${col}"></i></div>`;
+}
+function verdictChip(v){
+  if (!v) return '';
+  if (v.startsWith('no bridge')) return `<span class="chip c-warn">${esc(v)}</span>`;
+  if (v === 'immaterial') return '<span class="chip c-flat">immaterial</span>';
+  if (v === 'positive') return '<span class="chip c-up">positive</span>';
+  if (v === 'negative') return '<span class="chip c-down">negative</span>';
+  return `<span class="chip c-flat">${esc(v)}</span>`;
+}
+
+function renderGroup(g){
+  const drv = g.drivers.map(d => `
+    <div class="drv">
+      <span>${esc(d.series)}${d.origin==='cited'?' · cited':''}</span>
+      <b style="color:${d.pct>=0?'var(--up)':'var(--down)'}">${d.pct>=0?'+':''}${d.pct.toFixed(2)}%</b>
+      ${num(d.from,2)} → ${num(d.to,2)}
+      ${d.stale_days>7?`<span style="color:var(--warn)">stale ${d.stale_days}d</span>`:''}
+    </div>`).join('');
+
+  const rows = g.rows.map(r => `
+    <tr>
+      <td class="k">${esc(r.entity)}</td>
+      <td class="n">${num(r.d_revenue_cr)}</td>
+      <td class="n">${num(r.d_cost_cr)}</td>
+      <td class="n" style="color:${r.d_ebitda_cr>=0?'var(--up)':'var(--down)'}">${num(r.d_ebitda_cr)}</td>
+      <td class="n">${r.d_ebitda_per_t==null?'—':num(r.d_ebitda_per_t)}</td>
+      <td class="n">${pct(r.pct_of_ebitda)}</td>
+      <td class="n"><span class="score">${r.score==null?'—':r.score.toFixed(2)}</span></td>
+      <td style="width:90px">${bar(r.score)}</td>
+      <td>${verdictChip(r.verdict)}</td>
+    </tr>`).join('');
+
+  const pairs = g.pairs.map(p => `
+    <tr>
+      <td class="k">long <b>${esc(p.long)}</b> / short <b>${esc(p.short)}</b></td>
+      <td class="n"><span class="score">${p.pair_score.toFixed(2)}</span></td>
+      <td style="width:90px">${bar(p.pair_score)}</td>
+      <td class="n">${pct(p.pct_spread)}</td>
+      <td class="n hint">${p.naive_diff.toFixed(2)}</td>
+    </tr>`).join('');
+
+  return `
+    <h2>${esc(g.peer_group)}</h2>
+    <div class="drivers">${drv || '<span class="hint">no series moved in this window</span>'}</div>
+    <div class="scroll"><table>
+      <thead><tr><th>Entity</th><th class="n">Δrev cr</th><th class="n">Δcost cr</th>
+        <th class="n">ΔEBITDA cr</th><th class="n">₹/t</th><th class="n">%EBITDA</th>
+        <th class="n">Score</th><th></th><th>Verdict</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Pair</th><th class="n">Pair score</th><th></th>
+        <th class="n">%EBITDA spread</th><th class="n">naive diff</th></tr></thead>
+      <tbody>${pairs || '<tr><td colspan="5" class="hint">no scoreable pair</td></tr>'}</tbody>
+    </table></div>
+    <p class="note">Pair score is the <b>spread run through the same curve</b>, not the
+      difference of two scores — the last column shows what the naive difference would
+      have read, which understates badly in the tails.</p>`;
+}
+
+async function loadScores(){
+  const w = $('#win').value;
+  const r = await fetch(`/api/scores?window=${w}`);
+  const d = await r.json();
+  if (d.error) return showErr(d.error);
+  const g = d.aluminium_primary;
+  $('#asof').textContent = 'as of ' + g.as_of;
+  $('#fx').textContent = 'USDINR ' + g.usdinr.toFixed(2);
+  $('#ovr').textContent = g.overrides_applied + ' override' +
+    (g.overrides_applied === 1 ? '' : 's');
+  $('#s-scores').innerHTML = renderGroup(g) + renderGroup(d.zinc);
+}
+
+async function loadInputs(){
+  const r = await fetch('/api/inputs');
+  const rows = await r.json();
+  if (rows.error) return showErr(rows.error);
+  let html = `<h2>Editable inputs</h2>
+    <p class="note">The YAML specs are the checked-in baseline; edits are stored as
+    overrides and applied on top, so nothing rewrites a spec file and
+    <b>Revert</b> restores the original. <b>verify: pending</b> means the number
+    came from sector knowledge, not a filing — those are the ones worth attacking.</p>
+    <div class="scroll"><table><thead><tr>
+      <th>Entity / field</th><th class="n">Spec</th><th class="n">Your value</th>
+      <th>Why</th><th></th><th>Provenance</th></tr></thead><tbody>`;
+  let cur = null;
+  for (const x of rows){
+    if (x.entity_id !== cur){
+      cur = x.entity_id;
+      html += `<tr><td class="ent k" colspan="6">${esc(cur)}</td></tr>`;
+    }
+    const vchip = x.verify === 'sourced'
+      ? '<span class="chip c-up">sourced</span>'
+      : '<span class="chip c-warn">pending</span>';
+    const id = `${x.entity_id}|${x.scope}|${x.item ?? ''}|${x.field}`;
+    html += `<tr data-id="${esc(id)}">
+      <td class="k">${esc(x.label)} ${vchip}</td>
+      <td class="n">${x.spec_value}</td>
+      <td class="n"><input class="ovr" type="number" step="any"
+           value="${x.override ?? ''}" placeholder="${x.spec_value}"></td>
+      <td><input class="nt" type="text" placeholder="reason (optional)"
+           value="${esc(x.note ?? '')}"></td>
+      <td><button class="save">Save</button>
+          ${x.override_id ? `<button class="ghost rev" data-oid="${x.override_id}">Revert</button>` : ''}</td>
+      <td class="quote">${esc(x.source_note || '')}</td>
+    </tr>`;
+  }
+  $('#s-inputs').innerHTML = html + '</tbody></table></div>';
+
+  $('#s-inputs').addEventListener('click', async e => {
+    const tr = e.target.closest('tr');
+    if (!tr) return;
+    if (e.target.classList.contains('save')){
+      const [entity_id, scope, item, field] = tr.dataset.id.split('|');
+      const v = tr.querySelector('.ovr').value;
+      if (v === '') return showErr('Enter a value, or press Revert to drop the override.');
+      const res = await fetch('/api/override', {method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({entity_id, scope, item: item || null, field,
+          value: parseFloat(v), note: tr.querySelector('.nt').value,
+          prev: parseFloat(tr.children[1].textContent)})});
+      const d = await res.json();
+      if (d.error) return showErr(d.error);
+      showErr(''); await loadInputs(); await loadScores();
+    }
+    if (e.target.classList.contains('rev')){
+      await fetch('/api/override/clear', {method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({id: parseInt(e.target.dataset.oid,10)})});
+      await loadInputs(); await loadScores();
+    }
+  }, {once:true});
+}
+
+function spark(vals){
+  if (!vals || vals.length < 2) return '';
+  const w = 110, h = 22, lo = Math.min(...vals), hi = Math.max(...vals);
+  const rng = (hi - lo) || 1;
+  const pts = vals.map((v,i) =>
+    `${(i/(vals.length-1)*w).toFixed(1)},${(h - (v-lo)/rng*h).toFixed(1)}`).join(' ');
+  const last = vals[vals.length-1], up = last >= vals[0];
+  const col = up ? 'var(--up)' : 'var(--down)';
+  return `<svg width="${w}" height="${h}" aria-hidden="true">
+    <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.4"/>
+    <circle cx="${w}" cy="${(h-(last-lo)/rng*h).toFixed(1)}" r="2" fill="${col}"/></svg>`;
+}
+const buChip = b => !b ? '<span class="chip c-flat">—</span>' :
+  b === 'long_buildup'   ? '<span class="chip c-up">long buildup</span>' :
+  b === 'short_covering' ? '<span class="chip c-up">short covering</span>' :
+  b === 'short_buildup'  ? '<span class="chip c-down">short buildup</span>' :
+  b === 'long_unwinding' ? '<span class="chip c-down">long unwinding</span>' :
+  `<span class="chip c-flat">${esc(b)}</span>`;
+
+async function loadPos(){
+  const rows = await (await fetch('/api/oi')).json();
+  if (rows.error) return showErr(rows.error);
+  const body = rows.map(r => `
+    <tr>
+      <td class="k">${esc(r.entity_id)}</td>
+      <td class="n">${num(r.oi)}</td>
+      <td class="n" style="color:${(r.oi_chg_pct??0)>=0?'var(--up)':'var(--down)'}">
+        ${r.oi_chg_pct==null?'—':(r.oi_chg_pct>=0?'+':'')+r.oi_chg_pct.toFixed(2)+'%'}</td>
+      <td>${spark(r.spark)}</td>
+      <td>${buChip(r.buildup)}</td>
+      <td>${buChip(r.buildup_15d)}</td>
+      <td class="n">${r.oi_percentile==null?'—':r.oi_percentile.toFixed(0)}</td>
+      <td class="n">${r.z_score_3m==null?'—':r.z_score_3m.toFixed(2)}</td>
+      <td class="n">${num(r.price,2)}</td>
+    </tr>`).join('');
+  $('#s-pos').innerHTML = `<h2>Futures positioning</h2>
+    <p class="note">From the existing vault OI pipeline. The two horizons are shown
+      separately <b>because they routinely disagree</b> — a name can be short-covering
+      over 15 days inside a 3-month short build, and that disagreement is the state
+      worth seeing. Positioning is a <b>timing veto</b>: it never flips a fundamental
+      call, it says the entry is poor, which is a different claim.
+      Names not in F&amp;O are absent rather than shown as zero.</p>
+    <div class="scroll"><table><thead><tr>
+      <th>Entity</th><th class="n">OI (lots)</th><th class="n">OI chg</th><th>60d</th>
+      <th>Buildup 3m</th><th>Buildup 15d</th><th class="n">%ile</th>
+      <th class="n">z 3m</th><th class="n">Price</th></tr></thead>
+      <tbody>${body || '<tr><td colspan="9" class="hint">no OI loaded</td></tr>'}</tbody>
+    </table></div>`;
+}
+
+async function loadGuid(){
+  const rows = await (await fetch('/api/guidance')).json();
+  if (rows.error) return showErr(rows.error);
+  const body = rows.map(r => `
+    <tr>
+      <td class="k">${esc(r.entity_id)}</td>
+      <td class="k">${esc(r.period)}</td>
+      <td class="k">${esc(r.metric)}</td>
+      <td class="n">${esc(r.target)}</td>
+      <td class="hint">${esc(r.unit ?? '')}</td>
+      <td class="n" style="color:var(--up)">${r.n_for}</td>
+      <td class="n" style="color:var(--down)">${r.n_against}</td>
+      <td class="n">${r.confidence.toFixed(2)}</td>
+      <td class="n"><span class="score">${r.p4.toFixed(2)}</span></td>
+      <td style="width:90px">${bar(r.p4)}</td>
+      <td class="quote">“${esc(r.quote)}”</td>
+    </tr>`).join('');
+  $('#s-guid').innerHTML = `<h2>Guidance confidence (P4)</h2>
+    <p class="note">Will management hit what they said. Scored <b>linearly</b>,
+      unlike P1+P2 — a confidence is already a probability in [0,1], and squashing it
+      again would distort a number already in the right units.
+      <b>No commitment has resolved yet</b>, so every prior is the neutral 0.5 and this
+      currently reflects evidence only; the track record accrues as periods close.</p>
+    <div class="scroll"><table><thead><tr>
+      <th>Entity</th><th>Period</th><th>Metric</th><th class="n">Target</th><th>Unit</th>
+      <th class="n">For</th><th class="n">Against</th><th class="n">Conf</th>
+      <th class="n">P4</th><th></th><th>Cited</th></tr></thead>
+      <tbody>${body || '<tr><td colspan="11" class="hint">no open guidance</td></tr>'}</tbody>
+    </table></div>`;
+}
+
+const loaders = {scores:loadScores, inputs:loadInputs, pos:loadPos, guid:loadGuid};
+const loaded = {};
+function tab(name){
+  document.querySelectorAll('.tab').forEach(b =>
+    b.setAttribute('aria-selected', String(b.dataset.t === name)));
+  document.querySelectorAll('section').forEach(s =>
+    s.classList.toggle('on', s.id === 's-' + name));
+  if (!loaded[name]){ loaded[name] = 1; loaders[name]().catch(e => showErr(e.message)); }
+}
+document.querySelectorAll('.tab').forEach(b =>
+  b.addEventListener('click', () => tab(b.dataset.t)));
+$('#win').addEventListener('change', () => loadScores().catch(e => showErr(e.message)));
+$('#reload').addEventListener('click', () => {
+  for (const k in loaded) delete loaded[k];
+  const cur = document.querySelector('.tab[aria-selected=true]').dataset.t;
+  loaded[cur] = 1; loaders[cur]().catch(e => showErr(e.message));
+});
+loadScores().catch(e => showErr(e.message));
+loaded.scores = 1;
+</script>
+</body>
+</html>

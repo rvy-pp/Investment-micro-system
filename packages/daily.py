@@ -68,6 +68,7 @@ def main() -> int:
     print("=" * 70)
     run([PY, "packages/adapters/yahoo_prices.py", "--load", "--range", "3mo"], dry)
     run([PY, "packages/adapters/wind_zinc.py", "--load"], dry)
+    run([PY, "packages/adapters/vault_oi.py", "--load"], dry)
     print("\n  NOTE: wind_zinc.py reads data/staging/zn_shf_close.csv. Refreshing")
     print("  that file needs an agent to call the Wind MCP — a script cannot.")
 

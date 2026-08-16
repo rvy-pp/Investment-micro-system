@@ -27,6 +27,18 @@ def main() -> int:
         return 1
 
     conn = sqlite3.connect(db_path)
+
+    # CREATE TABLE IF NOT EXISTS will NOT add columns to a table that already
+    # exists, so a schema change lands silently as "no error, no effect".
+    # `oi` gained columns after first creation; it is safe to rebuild because
+    # it is populated purely from the vault adapter and holds no authored data.
+    # Anything holding authored data must get a real migration, never a drop.
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(oi)")}
+    if cols and "buildup_15d" not in cols:
+        n = conn.execute("SELECT count(*) FROM oi").fetchone()[0]
+        conn.execute("DROP TABLE oi")
+        print(f"migrated: rebuilt `oi` for new columns (dropped {n} regenerable rows)")
+
     conn.executescript(SCHEMA.read_text(encoding="utf-8"))
     conn.commit()
 
