@@ -1,33 +1,42 @@
-"""P3 valuation — where a name trades against its OWN history.
+"""P3 valuation — SPOT EV/EBITDA against the name's own history.
 
-    commodities        EV/EBITDA = (price x shares + net_debt) / base_ebitda
-    IT / EMS / autos   P/E       = price / eps
-The metric is a per-company spec choice (`valuation_metric`), because the right
-multiple differs by sector and forcing one on all of them would be wrong for
-half the book.
+    EV            = market cap + net debt
+    spot EBITDA   = the base quarter's EBITDA, RE-MARKED at today's commodity
+                    prices, annualised
+    multiple      = EV / spot EBITDA
+    score         = how far that sits from the name's own usual level
 
-WHY COMPUTED RATHER THAN FETCHED. Wind carries Indian prices and share counts
-but no fundamentals — pe_ttm, pb_lf and every balance-sheet field come back
-empty for .BO tickers while working normally for a Chinese control, and Yahoo's
-fundamentals endpoint now 401s. So the multiple is built from price x shares,
-which has a genuine advantage: it moves DAILY, so it has a history to take a
-percentile against. A broker-quoted multiple is episodic and cannot.
+WHY SPOT AND NOT REPORTED. Reported EBITDA describes a quarter that is already
+over. For a commodity name where alumina moved 5% and LME moved -4% since that
+quarter closed, last quarter's EBITDA is not what you are buying. Spot-marking
+answers the question actually being asked: at today's prices, what am I paying?
 
-SCORED LINEARLY, NOT THROUGH THE HILL CURVE. The rule across the system: an
-UNBOUNDED quantity (EBITDA impact) goes through the hill squash; an ALREADY
-BOUNDED one (a probability, a percentile) maps linearly, because squashing a
-number that is already in the right units distorts it. Same reasoning as P4.
+HOW THE RE-MARK WORKS — it reuses the bridge, so there is one arithmetic in the
+system, not two:
 
-    cheap vs own history  -> HIGH score (attractive to own)
-    expensive             -> LOW score
-    score = 3 + 2 * (50 - percentile) / 50
+    spot_ebitda(d) = base_ebitda + bridge(prices at d  vs  base-quarter average)
 
-CAVEAT ON HISTORY LENGTH: the percentile is only as meaningful as the price
-history behind it. Six months is thin — it says "cheap for this year", not
-"cheap for this cycle". Reported alongside the score, never hidden.
+The base quarter's AVERAGE price is the reference, not its closing price: the
+reported EBITDA was earned across the quarter, so the average is what produced
+it.
+
+THE HISTORY IS SPOT-MARKED TOO, and this is the part that is easy to get wrong.
+Comparing today's SPOT multiple to a history of REPORTED multiples compares two
+different measures and the percentile is meaningless. Every historical date is
+re-marked with the same arithmetic, so the comparison is like with like.
+
+SCORED ON Z, NOT PERCENTILE. The PM's test is "drastically different from usual"
+— that is a question about MAGNITUDE of deviation, which a percentile cannot
+express: the 5th percentile is the same rank whether it is half a standard
+deviation cheap or three. z is unbounded, so it goes through the hill curve,
+consistent with the rule used everywhere: unbounded quantities get squashed,
+already-bounded ones (probabilities, percentiles) map linearly.
+
+    cheap vs own history (negative z) -> HIGH score
 
 Usage:
     python packages/score/valuation.py --peer-group aluminium_primary
+    python packages/score/valuation.py --peer-group aluminium_primary --detail
 """
 
 from __future__ import annotations
@@ -35,116 +44,154 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sqlite3
+import statistics
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from bridge import load_specs  # noqa: E402
+from bridge import load_specs, run_bridge, _series_in_store  # noqa: E402
+from scoring import score as to_score, solve_k  # noqa: E402
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 DB = REPO / "data" / "ims.db"
 CR = 1e7
+JUMP = 0.15                 # single-session move that means a corporate action
+
+# "one standard deviation cheap reads as a 4" — the same anchor idea as the
+# EBITDA curve, stated in the desk's own terms rather than as a constant.
+Z_ANCHOR, SCORE_ANCHOR, P = 1.0, 4.0, 1.5
+
+MIN_SPOT_EBITDA_FRAC = 0.25  # below this the multiple explodes and is not a
+                             # valuation signal, it is a distress signal
 
 
-JUMP = 0.15   # a single-session move this large is a corporate action
+def price_series(conn, eid: str) -> list[tuple[str, float]]:
+    return conn.execute(
+        "SELECT date, close FROM prices WHERE entity_id=? ORDER BY date",
+        (eid,)).fetchall()
 
 
-def history_start(rows: list[tuple[str, float]]) -> tuple[str | None, float | None]:
-    """First date AFTER the most recent corporate action, if any.
-
-    A valuation percentile against contaminated history is worse than no
-    percentile: VEDL's raw multiple range came out 4.50-14.00 because the
-    pre-demerger price sits in the same series as the post-demerger one, on the
-    same EBITDA base. That put it at the 10th percentile — "historically very
-    cheap" — when the comparison was simply to a different, four-businesses-
-    larger company. Percentiles must run only on the current entity.
-    """
+def after_corporate_action(rows):
+    """Drop history before the last step change — a percentile or z against a
+    pre-demerger series compares two different companies."""
     for (d0, c0), (d1, c1) in zip(reversed(rows[:-1]), reversed(rows[1:])):
         if c0 and abs(c1 / c0 - 1) >= JUMP:
             return d1, (c1 / c0 - 1) * 100
     return None, None
 
 
-def multiple_series(conn, eid: str, fin: dict):
-    """Daily valuation multiple, truncated at the last corporate action.
+def quarter_average(conn, link: str, start: str, end: str) -> float | None:
+    r = conn.execute(
+        "SELECT AVG(close) FROM prices WHERE entity_id=? AND date BETWEEN ? AND ?",
+        (link, start, end)).fetchone()
+    return r[0] if r and r[0] is not None else None
 
-    Returns (series, cut_date, cut_pct).
-    """
-    shares = fin.get("shares_outstanding")
-    ebitda = fin.get("base_ebitda")
-    metric = fin.get("valuation_metric", "ev_ebitda")
-    if not shares or not ebitda:
-        return [], None, None
+
+def spot_multiple_series(conn, ent: dict, fin: dict, units: dict,
+                         qstart: str, qend: str, usdinr: float):
+    """[(date, multiple, spot_ebitda)] — EV / spot-marked EBITDA, daily."""
+    shares, base = fin.get("shares_outstanding"), fin.get("base_ebitda")
+    if not shares or not base:
+        return [], None, None, "no shares_outstanding or base_ebitda"
+
     net_debt = fin.get("net_debt") or 0.0
-
-    rows = conn.execute(
-        "SELECT date, close FROM prices WHERE entity_id=? ORDER BY date",
-        (eid,)).fetchall()
-    cut, cut_pct = history_start(rows)
+    px = price_series(conn, ent["id"])
+    cut, cut_pct = after_corporate_action(px)
     if cut:
-        rows = [r for r in rows if r[0] >= cut]
+        px = [r for r in px if r[0] >= cut]
+    if len(px) < 20:
+        return [], cut, cut_pct, "too little clean history"
+
+    links = {ln["price_link"] for ln in
+             (ent.get("outputs") or []) + (ent.get("inputs") or [])
+             if ln.get("price_link")}
+    qavg = {l: quarter_average(conn, l, qstart, qend) for l in links}
+    available = _series_in_store()
+
+    # driver prices by date, carried forward so a monthly series does not blank
+    drv: dict[str, dict[str, float]] = {}
+    for l in links:
+        drv[l] = dict(price_series(conn, l))
+
+    def price_at(link: str, d: str):
+        s = drv.get(link) or {}
+        ks = [k for k in s if k <= d]
+        return s[max(ks)] if ks else None
+
     out = []
-    for d, px in rows:
-        mcap_cr = px * shares / CR
-        if metric == "ev_ebitda":
-            out.append((d, (mcap_cr + net_debt) / ebitda))
-        elif metric == "pe":
-            eps = fin.get("eps")
-            if eps:
-                out.append((d, px / eps))
-    return out, cut, cut_pct
-
-
-def percentile(series: list[float], value: float) -> float:
-    if not series:
-        return 50.0
-    below = sum(1 for s in series if s < value)
-    return 100.0 * below / len(series)
+    for d, close in px:
+        shocks = {}
+        for l in links:
+            p_now, p_ref = price_at(l, d), qavg.get(l)
+            if p_now is not None and p_ref:
+                shocks[l] = p_now - p_ref
+        r = run_bridge(ent, shocks, units, base, usdinr, available | set(shocks))
+        spot = base + r["d_ebitda_cr"]
+        if spot < base * MIN_SPOT_EBITDA_FRAC:
+            continue                      # distress, not a valuation reading
+        ev = close * shares / CR + net_debt
+        out.append((d, ev / spot, spot))
+    return out, cut, cut_pct, None
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--peer-group", default="aluminium_primary")
+    ap.add_argument("--qstart", default="2026-04-01", help="base quarter start")
+    ap.add_argument("--qend", default="2026-06-30")
+    ap.add_argument("--detail", action="store_true")
     a = ap.parse_args()
 
-    entities, _units, fin = load_specs()
+    entities, units, fin = load_specs()
     fins = fin["companies"]
+    usdinr = fin["usdinr"]
     conn = sqlite3.connect(DB)
+    k = solve_k("hill", Z_ANCHOR, SCORE_ANCHOR, P)
 
-    print(f"{a.peer_group}\n")
-    print(f"{'entity':16}{'metric':>11}{'now':>9}{'min':>8}{'max':>8}"
-          f"{'%ile':>7}{'P3':>7}  basis")
-    print("-" * 88)
+    print(f"{a.peer_group} · spot EV/EBITDA · base quarter {a.qstart}..{a.qend}\n")
+    print(f"{'entity':16}{'spot EBITDA':>12}{'vs base':>9}{'EV':>10}"
+          f"{'mult':>7}{'mean':>7}{'sd':>6}{'z':>7}{'P3':>7}  basis")
+    print("-" * 104)
 
-    any_row = False
     for ent in sorted(entities.values(), key=lambda e: e["id"]):
         if ent.get("peer_group") != a.peer_group:
             continue
         eid = ent["id"]
         f = fins.get(eid, {})
-        ser, cut, cut_pct = multiple_series(conn, eid, f)
-        if not ser:
-            why = ("no shares_outstanding" if not f.get("shares_outstanding")
-                   else "no base_ebitda")
-            print(f"{eid:16}{f.get('valuation_metric','—'):>11}"
-                  f"{'—':>9}{'—':>8}{'—':>8}{'—':>7}{'—':>7}  WITHHELD: {why}")
+        ser, cut, cut_pct, err = spot_multiple_series(
+            conn, ent, f, units, a.qstart, a.qend, usdinr)
+        if err or not ser:
+            print(f"{eid:16}{'—':>12}{'—':>9}{'—':>10}{'—':>7}{'—':>7}"
+                  f"{'—':>6}{'—':>7}{'—':>7}  WITHHELD: {err or 'no series'}")
             continue
-        any_row = True
-        vals = [v for _, v in ser]
-        now = vals[-1]
-        pct = percentile(vals, now)
-        score = 3.0 + 2.0 * (50.0 - pct) / 50.0
-        approx = "" if f.get("net_debt") else "  EV~mcap (net_debt unset)"
-        cutnote = (f"  from {cut} after {cut_pct:+.0f}% corp action" if cut else "")
-        print(f"{eid:16}{f.get('valuation_metric','—'):>11}{now:>9.2f}"
-              f"{min(vals):>8.2f}{max(vals):>8.2f}{pct:>7.0f}{score:>7.2f}"
-              f"  {len(vals)}d{cutnote}{approx}")
 
-    if any_row:
-        print("\nCheap vs own history scores HIGH. Linear, not the hill curve —")
-        print("a percentile is already bounded, so squashing it again distorts it.")
-        print("History is ~6 months: this says 'cheap for this year', not 'cheap")
-        print("for this cycle'. Net debt at 0 understates EV, so a levered name's")
-        print("multiple reads too cheap until it is filled in on the Inputs tab.")
+        mults = [m for _, m, _ in ser]
+        d_now, m_now, spot_now = ser[-1]
+        mean = statistics.fmean(mults)
+        sd = statistics.pstdev(mults) or 1e-9
+        z = (m_now - mean) / sd
+        score = to_score(-z, k, "hill", P)     # cheap (negative z) scores HIGH
+        base = f.get("base_ebitda", 0)
+        ev_now = m_now * spot_now
+        note = []
+        if cut:
+            note.append(f"from {cut} ({cut_pct:+.0f}% corp action)")
+        if not f.get("net_debt"):
+            note.append("EV~mcap")
+        print(f"{eid:16}{spot_now:>12,.0f}{spot_now/base-1:>8.0%}"
+              f"{ev_now:>10,.0f}{m_now:>7.2f}{mean:>7.2f}{sd:>6.2f}"
+              f"{z:>+7.2f}{score:>7.2f}  {len(ser)}d"
+              + ("  " + ", ".join(note) if note else ""))
+
+        if a.detail:
+            lo, hi = min(mults), max(mults)
+            print(f"{'':16}range {lo:.2f}–{hi:.2f}; spot EBITDA is "
+                  f"{spot_now/base-1:+.0%} vs the reported base of {base:,.0f}cr")
+
+    print(f"\nz measured against each name's OWN spot-marked history, so today and")
+    print(f"history are the same measure. Anchor: z = -{Z_ANCHOR:g} (one sd cheap)"
+          f" reads {SCORE_ANCHOR:.1f}.")
+    print("Hill curve because z is unbounded — 'drastically different' is a")
+    print("question about magnitude, which a percentile cannot express.")
     conn.close()
     return 0
 

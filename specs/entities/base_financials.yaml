@@ -82,9 +82,14 @@ companies:
     base_ebitda: 32000
     shares_outstanding: 2247230000     # Wind total_shares, 500440.BO
     shares_verify: sourced
-    net_debt: 0                        # WRONG at 0 — Novelis alone carried
-                                       # $7.9bn at Q1 (digest 2026-08-06)
-    net_debt_verify: pending
+    net_debt: 75390                    # Novelis $7.9bn x 95.43. A FLOOR, not the
+                                       # consolidated figure — India-standalone
+                                       # debt is additional and uncited, so the
+                                       # true EV is HIGHER and the multiple
+                                       # dearer than shown.
+                                       # Quote: "net debt $7.9bn vs $6.7bn Mar'26"
+                                       # (Avendus Spark, digest 2026-08-06)
+    net_debt_verify: partial
     valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: "Consolidated incl. Novelis and copper — NOT yet sourced from a print"
@@ -97,12 +102,23 @@ companies:
 
   vaml:
     base_ebitda: 42000
-    shares_outstanding: null           # newly listed; not in Wind total_shares.
-                                       # No shares => no multiple => P3 withheld,
-                                       # rather than guessed.
-    shares_verify: pending
-    net_debt: 0
-    net_debt_verify: pending
+    shares_outstanding: 3910390000     # DERIVED from the demerger scheme, not
+                                       # fetched: shareholders received 1 VAML
+                                       # share for every 1 VEDL share held on the
+                                       # record date, so the counts are equal.
+                                       # Wind has no total_shares for VAML yet.
+                                       # Confirm against the first filing — if
+                                       # any shares were issued post-scheme this
+                                       # understates.
+    shares_verify: derived
+    net_debt: 37800                    # DERIVED from a cited ratio, not a cited
+                                       # level: 0.9 x base_ebitda 42,000.
+                                       # Quote: "Net debt/EBITDA 0.9x (from
+                                       # 1.38x)" (digest 2026-08-06). Inherits
+                                       # any error in base_ebitda, which
+                                       # annualises a record quarter — so if the
+                                       # base is too high, so is this.
+    net_debt_verify: derived
     valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: >
@@ -116,8 +132,11 @@ companies:
     base_ebitda: 32000
     shares_outstanding: 4225320000     # Wind total_shares, 500188.BO
     shares_verify: sourced
-    net_debt: 0                        # low debt historically
-    net_debt_verify: pending
+    net_debt: 0                        # Quote: "Net cash maintained" (digest
+                                       # 2026-08-11). Net cash means EV is
+                                       # slightly BELOW mcap, so 0 is mildly
+                                       # conservative rather than wrong.
+    net_debt_verify: sourced
     valuation_metric: ev_ebitda
     primary_output: refined_zinc
     source_note: >
