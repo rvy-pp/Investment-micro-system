@@ -264,10 +264,17 @@ async function loadInputs(){
     </tr>`;
   }
   $('#s-inputs').innerHTML = html + '</tbody></table></div>';
+}
 
-  $('#s-inputs').addEventListener('click', async e => {
+// Delegated ONCE, on the stable section element — not inside loadInputs and
+// NOT with {once:true}. The previous version used {once:true}, so any stray
+// click inside the table consumed the listener and every later Save/Revert
+// silently did nothing: you would type a correction, press Save, and get no
+// action and no error. Delegation survives innerHTML re-renders, so attaching
+// here once is both correct and sufficient.
+$('#s-inputs').addEventListener('click', async e => {
     const tr = e.target.closest('tr');
-    if (!tr) return;
+    if (!tr || !tr.dataset.id) return;
     if (e.target.classList.contains('save')){
       const [entity_id, scope, item, field] = tr.dataset.id.split('|');
       const v = tr.querySelector('.ovr').value;
@@ -287,8 +294,7 @@ async function loadInputs(){
         body: JSON.stringify({id: parseInt(e.target.dataset.oid,10)})});
       await loadInputs(); await loadScores();
     }
-  }, {once:true});
-}
+});
 
 function spark(vals){
   if (!vals || vals.length < 2) return '';
