@@ -41,10 +41,35 @@ verify: sourced               # from USDINR=X, live
 # the quarter is representative — but an order of magnitude better than a guess,
 # and each carries the quote it came from.
 
+# P3 VALUATION INPUTS
+# -------------------
+# shares_outstanding is SOURCED from Wind (total_shares, BSE codes). Wind
+# carries Indian prices and share counts but NOT fundamentals — pe_ttm, pb_lf,
+# mkt_cap_ard and every balance-sheet field come back empty for .BO tickers
+# while working normally for a Chinese control. So the multiple is COMPUTED:
+#
+#     EV/EBITDA = (price x shares_outstanding + net_debt) / base_ebitda
+#
+# net_debt is the one input with no automated source. Set it on the Inputs tab.
+# Left at 0 it means EV is approximated by market cap, which is roughly right
+# for a net-cash name and materially wrong for a levered one — so the computed
+# multiple is labelled approximate until net_debt is filled in.
+#
+# CROSS-CHECK, and it is a good one: brokers quote the TRADING multiple in the
+# digests. If our computed number disagrees with theirs, one of shares, net
+# debt or base_ebitda is wrong. Example already visible — a broker called HZL
+# "rich 8.1x EV/EBITDA" while our inputs give ~6.9x. The likely culprit is our
+# base_ebitda, which annualises a +109% yoy quarter and so runs too high.
+
 companies:
 
   nalco:
     base_ebitda: 10840
+    shares_outstanding: 1836630000     # Wind total_shares, 532234.BO
+    shares_verify: sourced
+    net_debt: 0                        # historically net cash
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: >
       1QFY27 standalone EBITDA Rs27.1bn x4. Quote: "1QFY27 standalone Ebitda
@@ -55,6 +80,12 @@ companies:
 
   hindalco:
     base_ebitda: 32000
+    shares_outstanding: 2247230000     # Wind total_shares, 500440.BO
+    shares_verify: sourced
+    net_debt: 0                        # WRONG at 0 — Novelis alone carried
+                                       # $7.9bn at Q1 (digest 2026-08-06)
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: "Consolidated incl. Novelis and copper — NOT yet sourced from a print"
     verify: pending
@@ -66,6 +97,13 @@ companies:
 
   vaml:
     base_ebitda: 42000
+    shares_outstanding: null           # newly listed; not in Wind total_shares.
+                                       # No shares => no multiple => P3 withheld,
+                                       # rather than guessed.
+    shares_verify: pending
+    net_debt: 0
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
     source_note: >
       Record 1QFY27 EBITDA Rs105bn x4. Quote: "Vedanta Aluminium (VAML) BUY
@@ -76,6 +114,11 @@ companies:
 
   hindustan_zinc:
     base_ebitda: 32000
+    shares_outstanding: 4225320000     # Wind total_shares, 500188.BO
+    shares_verify: sourced
+    net_debt: 0                        # low debt historically
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
     primary_output: refined_zinc
     source_note: >
       1Q EBITDA INR80bn x4. Quote: "1Q EBITDA INR80bn (+109% YoY) in line"
@@ -84,6 +127,12 @@ companies:
 
   vedanta:
     base_ebitda: 22000
+    shares_outstanding: 3910390000     # Wind total_shares, 500295.BO
+    shares_verify: sourced
+    net_debt: 0                        # holdco debt is real and material — the
+                                       # single most valuable number to fill in
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
     primary_output: refined_zinc
     source_note: >
       ATTRIBUTABLE, not consolidated. Consol 1Q EBITDA Rs84.7bn x4 = Rs33,880cr,
