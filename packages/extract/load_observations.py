@@ -38,6 +38,13 @@ def load(path: pathlib.Path) -> int:
             (s["id"], s["kind"], s.get("origin"), s.get("title"),
              s["source_date"], now(), s["raw_path"]))
 
+    # explicit entities first, so a sector pseudo-entity gets kind 'macro'
+    # rather than the 'commodity' default below
+    for e in doc.get("entities", []):
+        conn.execute(
+            "INSERT OR IGNORE INTO entities (id,kind,name) VALUES (?,?,?)",
+            (e["id"], e["kind"], e["name"]))
+
     n = 0
     for o in doc.get("observations", []):
         conn.execute(
@@ -45,10 +52,11 @@ def load(path: pathlib.Path) -> int:
             (o["entity_id"], "commodity", o["entity_id"]))
         conn.execute(
             "INSERT INTO observations (source_id,entity_id,as_of,factor,metric,"
-            "value_num,unit,period,confidence,quote,extractor_version,created_at)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "value_num,unit,period,direction,confidence,quote,extractor_version,"
+            "created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (o["source_id"], o["entity_id"], o["as_of"], o["factor"], o["metric"],
              o.get("value_num"), o.get("unit"), o.get("period"),
+             o.get("direction"),
              o["confidence"], o["quote"], EXTRACTOR, now()))
         n += 1
 

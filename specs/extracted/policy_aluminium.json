@@ -1,0 +1,62 @@
+{
+  "_note": [
+    "Policy / macro mood events. Verbatim quotes only.",
+    "",
+    "THE RULE THAT DECIDES WHAT BELONGS HERE: mood must NOT double-count what",
+    "the bridge already prices. The Alunorte alumina shock is the tempting",
+    "counter-example — it was the loudest aluminium story in the window and",
+    "explicitly named NALCO the beneficiary. It is deliberately EXCLUDED,",
+    "because alumina_index is a P1 driver and the bridge already pays NALCO for",
+    "that move. Counting it again as mood would score one event twice and make",
+    "the combined score look like two independent confirmations.",
+    "",
+    "What belongs here is what the bridge CANNOT see: regulation, taxes, supply",
+    "structure, competitive entry.",
+    "",
+    "`direction` is the sign for the sector. `value_num` is magnitude 0-1 —",
+    "how much this actually matters, which is separate from how loudly it was",
+    "reported."
+  ],
+
+  "sources": [
+    {"id": "digest-2026-07-03", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 03-07-2026", "source_date": "2026-07-03",
+     "raw_path": "Broker Mails/03-07-2026.md"},
+    {"id": "digest-2026-08-14", "kind": "broker_note", "origin": "digest",
+     "title": "Broker Mail Digest 14-08-2026", "source_date": "2026-08-14",
+     "raw_path": "Broker Mails/14-08-2026.md"}
+  ],
+
+  "entities": [
+    {"id": "sector_aluminium", "kind": "macro", "name": "Aluminium sector policy"}
+  ],
+
+  "observations": [
+    {
+      "source_id": "digest-2026-08-14",
+      "entity_id": "sector_aluminium",
+      "as_of": "2026-08-14",
+      "factor": "policy",
+      "metric": "mmdr_levy_repeal",
+      "direction": 1,
+      "value_num": 0.3,
+      "unit": "magnitude",
+      "confidence": 0.8,
+      "quote": "Once effective, Jharkhand's state mineral levies — ~Rs100/t on coal and iron ore, Rs70/t bauxite, Rs50/t manganese — cease prospectively.",
+      "_magnitude_note": "Direction is clearly positive but magnitude is LOW for aluminium specifically: NALCO mines Panchpatmali in Odisha and Hindalco's bauxite is Odisha/Chhattisgarh, so JHARKHAND levy relief barely touches them. This is largely a steel and mining story. Scoring it 1.0 because the headline was big would import a steel event into aluminium's mood."
+    },
+    {
+      "source_id": "digest-2026-07-03",
+      "entity_id": "sector_aluminium",
+      "as_of": "2026-07-03",
+      "factor": "policy",
+      "metric": "new_capacity_entry",
+      "direction": -1,
+      "value_num": 0.6,
+      "unit": "magnitude",
+      "confidence": 0.75,
+      "quote": "Adani-IHC plan $11.5bn integrated greenfield aluminium JV in Odisha — 4 MMTPA alumina refinery, 2 MMTPA smelter, 4 GW captive power. Could boost India aluminium production by ~50%.",
+      "_magnitude_note": "Negative for incumbents and invisible to the bridge — no price series carries 'a competitor announced 50% more domestic capacity'. Magnitude 0.6 rather than 1.0 because it is a multi-year build, not a supply change in this cycle. Its effect on sentiment is immediate; its effect on tonnes is not."
+    }
+  ]
+}
