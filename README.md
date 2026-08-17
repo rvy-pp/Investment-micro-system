@@ -53,9 +53,9 @@ must be rejected.
 - `peer_group` — the scoring universe: names that share a factor basis and are
   therefore rankable against one another.
 
-They genuinely differ. The Aluminium bucket holds Hindustan Zinc (an LME-zinc
-name) and Vedanta Aluminium (an unlisted division with no ticker). Only
-Hindalco, NALCO and Vedanta Ltd are mutually rankable. Scoring keys on
+They genuinely differ. The Aluminium bucket holds Hindustan Zinc (an LME-zinc name), which is scored in
+the `zinc` peer group instead. Post-demerger the aluminium peer group is
+Hindalco, NALCO and VAML — all three directly tradeable. Scoring keys on
 `peer_group`; `is_tradeable = 0` names carry observations but can never receive
 a score, because a score you cannot express in the book is not an output.
 
@@ -81,7 +81,7 @@ coefficient:
 | | alumina exposure | mechanism |
 |---|---|---|
 | NALCO | **revenue** | smelter alumina is captive (`market_pct` 0.00) *plus* a marked-to-market surplus output line |
-| VAML | **cost** | buys ~half its alumina (`market_pct` 0.50), no surplus line |
+| VAML | **cost** | buys ~25% of its alumina (`market_pct` 0.25), no surplus line |
 | Hindalco | **~neutral** | broadly self-sufficient, small surplus |
 
 **L2** never sets direction. Summing consensus mood into a score is how a system
@@ -107,11 +107,12 @@ packages/
   adapters/   L0: broker mail, prices, NSE OI, commodities, IMS paste
   extract/    L1: extraction prompts + the validator that rejects uncited rows
   score/      L3: engine (generic) — all sector knowledge lives in specs/
-  api/        L4: read-only FastAPI over SQLite
-  web/        L4: Vite SPA, built to static, served by api/
+  api/        L4: read-only stdlib http.server over SQLite
+  web/        L4: one static page, served by api/
 specs/
-  sectors/    factor specs, one per peer_group
-  entities/   rosters with per-entity signed factor exposures
+  sectors/    layer config, one per peer_group
+  entities/   rosters with per-company cost and revenue structure
+  extracted/  cited facts: guidance, policy, prices, PM overrides
 data/         gitignored — ims.db + raw captures
 snapshots/    gitignored — dated db backups
 ```
@@ -133,19 +134,26 @@ vaml) and `zinc` (hindustan_zinc / vedanta). Aluminium is the proving ground —
 alumina's sign flips across the group, which is exactly what an absolute
 per-company score cannot express.
 
-**Built:** schema + guards, Yahoo / FRED / Wind / vault-OI adapters, the
-P1+P2 bridge, the scoring curve, P4 guidance, and a local four-tab front-end
-with an editable override path.
+**All four pillars score and persist.** `pillar_scores` holds 1,000 rows across
+40 dates. Composite as of 2026-08-14: vedanta 3.90 > hindustan_zinc 3.62 >
+nalco 2.73 > vaml 2.37 ≈ hindalco 2.37.
 
-**Not built:** the P3 scorer, the regime gate, signal emission, and the
-review loop.
+VAML carries the widest pillar spread — mood 3.77 against valuation 2.03 — and
+lands on the *same* composite as Hindalco, whose pillars broadly agree. That is
+why `combined.py` reports spread and not just the average: an average alone
+makes those two look identical.
 
-**The gate still standing:** the bridge does not persist, so there is no score
-history and nothing can be backtested. `specs/sectors/aluminium_primary.yaml`
-under `validation` sets the bar — the ranking must predict realised relative
-moves, with high-conviction calls beating low-conviction ones — and that has to
-clear before a second sector. A dashboard over an unvalidated scoring engine is
-how the last attempt produced output nobody could trade.
+**Not built:** `signals` (no directional call with a falsifier is emitted),
+`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate, OI
+as a conviction modifier, book ingestion, and every sector beyond these two.
+
+**The gate still standing:** 40 days of stored scores now exist, so the backtest
+is finally *possible* — but it has not been run. `specs/sectors/aluminium_primary.yaml`
+under `validation` sets the bar: the ranking must predict realised relative
+moves, with high-conviction calls beating low-conviction ones. Nothing should be
+extended to a third sector before that is answered. A dashboard over an
+unvalidated scoring engine is how the last attempt produced output nobody could
+trade.
 
 ## Working on this
 
