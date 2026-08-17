@@ -7,9 +7,18 @@ hosting cost, no cloud.
 ```bash
 cd C:\Users\rajvaibhav.yadav\pinpoint-ims
 python packages/api/serve.py          # -> http://127.0.0.1:8770
-python packages/daily.py              # dry run; --run to execute
-python packages/score/bridge.py --peer-group aluminium_primary --from-store 30
+python packages/pipeline.py           # dry run; --run to execute
+python packages/score/run_scores.py   # compute + PERSIST all pillars
+python packages/score/combined.py     # composite + pillar disagreement
+python packages/core/db_state.py      # what is actually in the store
 ```
+
+Remote: **https://github.com/rvy-pp/Investment-micro-system** (private).
+Push after any spec or override change — `data/` and `snapshots/` are ignored.
+
+**There is no `daily.py` and there must not be.** The deprecated vault system
+has a `/daily` skill that ran for about a month; sharing that word would get the
+two confused. The runner here is `pipeline.py`.
 
 ---
 
@@ -156,22 +165,34 @@ git log --format='%h %s' | head -30
 git log -1 --format=%B <sha>       # full reasoning for one change
 ```
 
-## Current state (as of 2026-08-16, 17 commits)
+## Current state (2026-08-17, 29 commits)
 
-Built and running: schema + guards, Yahoo/FRED/Wind/vault-OI adapters, P1+P2
-bridge, scoring curve, P4 guidance, local API + 4-tab front-end with an
-editable override path.
+**All four pillars score and PERSIST.** `pillar_scores` holds 1,000 rows over 40
+dates (2026-06-18 .. 2026-08-14), each stamped with spec_version + code_sha.
 
-**Not built:** P3 scorer, regime gate, signal emission with falsifiers, the
-review/outcome loop (L5), OI as a conviction modifier, book ingestion.
+| pillar | what | state |
+|---|---|---|
+| P1+P2 economics | margin bridge, EWMA half-life 10d | live |
+| P3 valuation | **spot** EV/EBITDA re-marked at current prices, scored on z | live |
+| P3 mood | broker actions + policy, gated by breadth | live |
+| P4 guidance | commitments + evidence, linear score | live, one entity only |
+| composite | 0.45 / 0.25 / 0.15 / 0.15, renormalised over what scored | live |
 
-**Two spec/implementation gaps:** `scoring.yaml` specifies EWMA accumulation
-(half-life 10d) but the bridge uses a plain window delta; and the bridge does
-NOT persist — `economics`, `bridge_runs`, `signals` are all empty, so there is
-no score history and nothing can be backtested yet. That backtest is the gate
-standing before any second sector.
+Latest composite: vedanta 3.90 > hzl 3.62 > nalco 2.73 > vaml 2.37 ≈ hindalco 2.37.
+VAML carries the widest pillar spread (mood 3.77 vs valuation 2.03) — which is
+why `combined.py` reports spread and not just the average.
 
-**Numbers still provisional** (`verify: pending` in the specs): all
-intensities, NALCO's alumina surplus tonnage, VAML's alumina `market_pct`,
-the coal `basis_pass_through` of 0.35, and Hindalco's `base_ebitda` — the only
-denominator not sourced from a cited print.
+**Not built:** `signals` (no directional call with a falsifier is emitted),
+`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate,
+OI as a conviction modifier, book ingestion, steel and the other sectors.
+
+**The gate that still stands:** 40 days of stored scores now exist, so the
+backtest is finally *possible* — does the composite predict realised relative
+moves, and do high-spread names behave differently? Nothing should be extended
+to a second sector before that is answered.
+
+**Numbers still provisional** (`verify:` in the specs): all intensities, NALCO's
+alumina surplus tonnage, VAML's alumina `market_pct`, the coal
+`basis_pass_through` of 0.35, Hindalco's `base_ebitda` (the only unsourced
+denominator), VAML's derived share count, and VEDL's **pre-demerger** net debt —
+which makes VEDL read dearer than it is, so its cheapness survives its own bias.

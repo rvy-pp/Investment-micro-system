@@ -120,7 +120,7 @@ snapshots/    gitignored — dated db backups
 
 ```bash
 python packages/core/init_db.py       # apply schema, run the guard tests
-python packages/daily.py              # dry run of the whole sequence; --run to execute
+python packages/pipeline.py              # dry run of the whole sequence; --run to execute
 python packages/api/serve.py          # -> http://127.0.0.1:8770
 ```
 

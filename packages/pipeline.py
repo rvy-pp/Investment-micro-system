@@ -1,7 +1,14 @@
-﻿"""The daily run: refresh feeds, look for new cited values, then score.
+﻿"""The scoring run: refresh feeds, look for new cited values, then score.
 
-    python packages/daily.py                 # dry — reports what it would do
-    python packages/daily.py --run
+NAMED `pipeline.py`, NOT `daily.py`, ON PURPOSE. The deprecated Obsidian vault
+system has a `/daily` skill that ran for about a month and wrote Broker Mails,
+Scoring/ and Coverage Daily Summary notes. It is NOT this, it is not included
+anywhere here, and it is not to be run. Sharing the word "daily" between the two
+would eventually get them confused for each other, so this file does not.
+
+
+    python packages/pipeline.py                 # dry — reports what it would do
+    python packages/pipeline.py --run
 
 ORDER MATTERS. Feeds first so FX is current before the zinc conversion; then
 the episodic scan, so a value cited in today's digest is in the store before
