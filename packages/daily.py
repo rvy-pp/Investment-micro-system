@@ -1,4 +1,4 @@
-"""The daily run: refresh feeds, look for new cited values, then score.
+﻿"""The daily run: refresh feeds, look for new cited values, then score.
 
     python packages/daily.py                 # dry — reports what it would do
     python packages/daily.py --run
@@ -96,6 +96,11 @@ def main() -> int:
     # The write. Everything above this line is input; this is what persists.
     run([PY, "packages/score/run_scores.py"], dry)
     run([PY, "packages/score/combined.py"], dry)
+
+    print("\n" + "=" * 70)
+    print("STEP 5  snapshot + export authored data")
+    print("=" * 70)
+    run([PY, "packages/core/snapshot.py"], dry)
 
     if dry:
         print("\n" + "-" * 70)
