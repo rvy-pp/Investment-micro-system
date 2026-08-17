@@ -140,7 +140,10 @@ def fwd_relative(cal: list[str], closes: dict, t: int, h: int,
     if t + h >= len(cal):
         return None
     d0, d1 = cal[t], cal[t + h]
-    if d0 < VEDL_DEMERGER <= d1:
+    # Only meaningful if VEDL is actually in the book being measured — the guard
+    # is about one name's tape, not about the date. Firing it universe-blind
+    # killed a P1 run over a universe that excluded vedanta entirely.
+    if "vedanta" in (universe or UNIVERSE) and d0 < VEDL_DEMERGER <= d1:
         raise SystemExit(f"window {d0}..{d1} crosses the VEDL demerger "
                          f"({VEDL_DEMERGER}) — returns would be meaningless.")
     rets = {}
