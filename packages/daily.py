@@ -100,7 +100,7 @@ def main() -> int:
     print("\n" + "=" * 70)
     print("STEP 5  snapshot + export authored data")
     print("=" * 70)
-    run([PY, "packages/core/snapshot.py"], dry)
+    run([PY, "packages/core/snapshot.py", "--mirror"], dry)
 
     if dry:
         print("\n" + "-" * 70)

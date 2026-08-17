@@ -1,4 +1,4 @@
-"""Back up the store, and export the parts that CANNOT be regenerated into git.
+﻿"""Back up the store, and export the parts that CANNOT be regenerated into git.
 
 MOST OF THE DATABASE IS REPRODUCIBLE, which bounds the loss if the disk dies:
 
@@ -35,10 +35,31 @@ DB = REPO / "data" / "ims.db"
 SNAP = REPO / "snapshots"
 EXPORT = REPO / "specs" / "extracted" / "overrides.json"
 
+# Off-machine copy. A SNAPSHOT is safe on OneDrive because it is closed,
+# complete and write-once — nothing holds it open.
+#
+# THE LIVE REPO AND LIVE DATABASE ARE NOT, and must stay off OneDrive:
+#   .git      writes many small objects plus index.lock on every operation;
+#             sync grabbing one mid-write gives lock contention and corrupt
+#             packfiles
+#   ims.db    WAL mode keeps ims.db, -wal and -shm mutually consistent.
+#             OneDrive syncs them as three independent files on its own
+#             schedule, so a restore can yield a database that OPENS and is
+#             silently wrong — the worst failure mode available.
+# Evidence the sync layer rewrites aggressively: 31 vault files shared one
+# mtime to the second, having not been individually edited.
+#
+# OUTSIDE the vault deliberately: the vault is Obsidian-indexed and the
+# dashboard's serve.js recursively watches its directories, rebuilding on any
+# filesystem event. A daily binary drop there would trigger spurious rebuilds.
+MIRROR = pathlib.Path(r"C:\Users\rajvaibhav.yadav\OneDrive - PinPOINT\ims-backups")
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", type=int, default=30)
+    ap.add_argument("--mirror", action="store_true",
+                    help="also copy the snapshot to OneDrive (safe: closed file)")
     a = ap.parse_args()
 
     if not DB.exists():
@@ -77,8 +98,21 @@ def main() -> int:
     print(f"exported  {len(rows)} override(s) -> {EXPORT.relative_to(REPO)} (git-tracked)")
     print(f"retained  {min(len(snaps), a.keep)} snapshot(s)"
           + (f", pruned {pruned}" if pruned else ""))
+
+    if a.mirror:
+        MIRROR.mkdir(parents=True, exist_ok=True)
+        target = MIRROR / dest.name
+        shutil.copy2(dest, target)
+        # keep the mirror shallow — OneDrive charges for every version it keeps
+        for old in sorted(MIRROR.glob("ims-*.db"))[:-7]:
+            old.unlink()
+        print(f"mirrored  {target}")
+        print("          OneDrive adds cloud redundancy and ~30d version history")
+
     print("\nsnapshots/ is gitignored — local insurance against a bad write.")
-    print("Off-machine safety still needs a git remote; none is configured.")
+    if not a.mirror:
+        print("Nothing is off this machine. --mirror copies to OneDrive; code and")
+        print("authored data still want a git remote, which is not configured.")
     return 0
 
 
