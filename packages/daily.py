@@ -90,10 +90,12 @@ def main() -> int:
     print("\n" + "=" * 70)
     print("STEP 4  score")
     print("=" * 70)
-    for pg in ("aluminium_primary", "zinc"):
-        run([PY, "packages/score/bridge.py", "--peer-group", pg,
-             "--from-store", str(a.window)], dry)
-    run([PY, "packages/extract/load_guidance.py", "--score"], dry)
+    # Refresh auto-extracted broker actions BEFORE scoring, or today's mood
+    # would be computed from yesterday's broker posture.
+    run([PY, "packages/extract/extract_broker_actions.py", "--load"], dry)
+    # The write. Everything above this line is input; this is what persists.
+    run([PY, "packages/score/run_scores.py"], dry)
+    run([PY, "packages/score/combined.py"], dry)
 
     if dry:
         print("\n" + "-" * 70)

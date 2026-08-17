@@ -571,6 +571,57 @@ CREATE TABLE IF NOT EXISTS sector_regime (
 ) STRICT;
 
 -- ===========================================================================
+-- PILLAR SCORES — the system's actual output, persisted
+-- ===========================================================================
+-- Without this the pillars computed in memory and printed, so there was no
+-- score history: nothing to backtest, nothing for the review layer to grade,
+-- and no way to ask whether the pillars DISAGREED yesterday. A system that
+-- cannot see its own past cannot be told whether it works.
+--
+-- One row per (as_of, entity, pillar). The composite is stored as its own
+-- pillar row rather than a separate table, so adding a fifth pillar later
+-- needs no schema change.
+--
+-- `raw` keeps the pre-squash quantity (pct_of_ebitda, z, effective mood) —
+-- without it a recalibration of the curve could not be replayed over history.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pillar_scores (
+    as_of        TEXT NOT NULL,
+    entity_id    TEXT NOT NULL REFERENCES entities (id),
+    pillar       TEXT NOT NULL,     -- economics|valuation|mood|guidance|composite
+    score        REAL,              -- 1..5, NULL when deliberately withheld
+    raw          REAL,              -- pre-squash input, so a re-anchor is replayable
+    detail       TEXT,              -- JSON: the decomposition behind the number
+    withheld     TEXT,              -- why there is no score, when there is none
+    spec_version TEXT NOT NULL,
+    code_sha     TEXT NOT NULL,
+    created_at   TEXT NOT NULL,
+    PRIMARY KEY (as_of, entity_id, pillar),
+    CHECK (pillar IN ('economics','valuation','mood','guidance','composite')),
+    CHECK (score IS NULL OR (score >= 1.0 AND score <= 5.0)),
+    -- a missing score must say why; silence is not an explanation
+    CHECK (score IS NOT NULL OR withheld IS NOT NULL),
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_ps_entity ON pillar_scores (entity_id, pillar, as_of);
+CREATE INDEX IF NOT EXISTS ix_ps_asof   ON pillar_scores (as_of, pillar);
+
+-- Pillar disagreement, derived rather than stored. Two names averaging 3.2
+-- are a different proposition when one is 3.2 across the board and the other
+-- is economics 4.4 against valuation 1.9 — the spread is the interesting part.
+CREATE VIEW IF NOT EXISTS v_pillar_spread AS
+SELECT as_of, entity_id,
+       COUNT(*)                      AS n_pillars,
+       MIN(score)                    AS lo,
+       MAX(score)                    AS hi,
+       MAX(score) - MIN(score)       AS spread,
+       AVG(score)                    AS mean
+FROM pillar_scores
+WHERE pillar <> 'composite' AND score IS NOT NULL
+GROUP BY as_of, entity_id;
+
+-- ===========================================================================
 -- OUTPUT — signals
 -- ===========================================================================
 -- The layer the old system lacked: it stopped at a score and never resolved
