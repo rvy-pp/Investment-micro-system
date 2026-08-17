@@ -147,13 +147,18 @@ makes those two look identical.
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate, OI
 as a conviction modifier, book ingestion, and every sector beyond these two.
 
-**The gate still standing:** 40 days of stored scores now exist, so the backtest
-is finally *possible* — but it has not been run. `specs/sectors/aluminium_primary.yaml`
-under `validation` sets the bar: the ranking must predict realised relative
-moves, with high-conviction calls beating low-conviction ones. Nothing should be
-extended to a third sector before that is answered. A dashboard over an
-unvalidated scoring engine is how the last attempt produced output nobody could
-trade.
+**The gate still standing:** the backtest has now been RUN
+(`packages/review/backtest.py`) and the honest answer is *not yet decidable*.
+Composite IC over the 40 stored dates is −0.17 at a 5-day horizon, but with
+roughly 7 non-overlapping windows over 5 correlated names nothing approaches
+significance, and leave-one-out shows the entire negative sign is one name:
+drop Vedanta and every horizon turns positive. So the gate is not passed and not
+failed — the sample cannot answer it. It needs more dates, not more pillars.
+`specs/sectors/aluminium_primary.yaml` under `validation` sets the bar: the
+ranking must predict realised relative moves, with high-conviction calls beating
+low-conviction ones. Nothing should be extended to a third sector before that is
+answered. A dashboard over an unvalidated scoring engine is how the last attempt
+produced output nobody could trade.
 
 ## Working on this
 

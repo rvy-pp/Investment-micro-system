@@ -186,10 +186,29 @@ why `combined.py` reports spread and not just the average.
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate,
 OI as a conviction modifier, book ingestion, steel and the other sectors.
 
-**The gate that still stands:** 40 days of stored scores now exist, so the
-backtest is finally *possible* — does the composite predict realised relative
-moves, and do high-spread names behave differently? Nothing should be extended
-to a second sector before that is answered.
+**The gate that still stands.** The backtest exists now
+(`python packages/review/backtest.py`) and has been run. It does NOT pass the
+gate and does not fail it either — the sample cannot answer the question:
+
+- composite IC vs forward 5-day RELATIVE move: **−0.17**, |t_adj| < 1
+- ~7 non-overlapping windows over 5 names in one correlated complex
+- leave-one-out: dropping **vedanta** flips every horizon positive
+  (h=1/3/5/10 → +0.04 / +0.01 / +0.07 / +0.35); dropping any other name leaves
+  it negative
+
+So the negative headline is one name over one two-month window, not a broken
+model. Read the CONCENTRATION table before the IC table — that ordering is
+enforced in the output because the IC alone reads as a wholesale sign error.
+
+The live hypothesis it produced, which is falsifiable and worth carrying:
+**VEDL's valuation pillar may be scoring a holdco discount as cheapness.** It is
+the highest valuation score (3.84 mean) while being a holdco whose principal
+asset is a 63.4% HZL stake; `holdco_discount_pct` is specified in `zinc.yaml`
+as a `market_layer` column that nothing computes. Do not "fix" this on 40 days
+of data — it is a hypothesis, not a finding.
+
+**More dates, not more pillars.** The gate stays shut on extending to a second
+sector, and the binding constraint is now sample size, which only time supplies.
 
 **Numbers still provisional** (`verify:` in the specs): all intensities, NALCO's
 alumina surplus tonnage, VAML's alumina `market_pct`, the coal
