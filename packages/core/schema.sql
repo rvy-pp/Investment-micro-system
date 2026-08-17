@@ -1,5 +1,5 @@
 -- ============================================================================
--- PinPOINT IMS — core schema v1
+-- Investment Micro-System — core schema v1
 -- ============================================================================
 -- Design commitments enforced here rather than by convention, because the
 -- previous system failed on exactly these points:

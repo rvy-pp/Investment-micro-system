@@ -1,4 +1,4 @@
-﻿# PinPOINT IMS
+# Investment Micro-System
 
 Investment micro-system for a long/short book across Steel, Cement, Aluminium,
 Mining, EMS, IT and Autos (later: Power, Oil & Gas, Defence, Capital Goods).

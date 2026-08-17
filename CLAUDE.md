@@ -1,11 +1,11 @@
-﻿# PinPOINT IMS — read this first
+# Investment Micro-System — read this first
 
 Investment micro-system for a long/short book. Built from scratch starting
 2026-08-15 for the PM (Rajvaibhav Yadav, PinPOINT Fund). Localhost only, no
 hosting cost, no cloud.
 
 ```bash
-cd C:\Users\rajvaibhav.yadav\pinpoint-ims
+cd C:\Users\rajvaibhav.yadav\Investment-micro-system
 python packages/api/serve.py          # -> http://127.0.0.1:8770
 python packages/pipeline.py           # dry run; --run to execute
 python packages/score/run_scores.py   # compute + PERSIST all pillars

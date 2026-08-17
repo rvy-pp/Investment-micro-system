@@ -52,7 +52,10 @@ EXPORT = REPO / "specs" / "extracted" / "overrides.json"
 # OUTSIDE the vault deliberately: the vault is Obsidian-indexed and the
 # dashboard's serve.js recursively watches its directories, rebuilding on any
 # filesystem event. A daily binary drop there would trigger spurious rebuilds.
-MIRROR = pathlib.Path(r"C:\Users\rajvaibhav.yadav\OneDrive - PinPOINT\ims-backups")
+# "OneDrive - PinPOINT" is the firm's actual OneDrive folder name and must stay
+# as-is; only the project-owned subfolder was renamed.
+MIRROR = pathlib.Path(r"C:\Users\rajvaibhav.yadav\OneDrive - PinPOINT"
+                      r"\Investment-micro-system-backups")
 
 
 def main() -> int:

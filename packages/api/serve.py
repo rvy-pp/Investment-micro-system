@@ -116,7 +116,7 @@ if __name__ == "__main__":
               f"then re-run with --port <free port>.", file=sys.stderr)
         raise SystemExit(1)
 
-    print(f"PinPOINT IMS  ->  http://{HOST}:{args.port}")
+    print(f"Investment Micro-System  ->  http://{HOST}:{args.port}")
     print("ctrl-c to stop")
     try:
         srv.serve_forever()
