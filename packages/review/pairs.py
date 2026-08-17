@@ -219,6 +219,29 @@ def report(name, closes, scores, cal, universe, hold, ratios: dict[str, float]):
           + ", ".join(f"{l}/{s} x{n}" for (l, s), n in mix.most_common()))
 
 
+def sensitivity(closes, scores, cal, universe, hold, band):
+    """One FLAT ratio across every trade, swept over the plausible band.
+
+    THIS EXISTS BECAUSE THE PER-LEG ROW IS NOT COMPARABLE TO THE 1:1 ROW, and
+    reading them against each other produced a wrong conclusion once already.
+    Per-leg sizing changes the ratio AND re-sizes the handful of trades where the
+    score picked an unusual pair (long hindalco/short nalco carries beta 0.40).
+    So a fall from the 1:1 total to the per-leg total mixes the hedge effect with
+    two outlier trades, and reads as "the hedge destroys the return" when the
+    hedge on the DOMINANT pair costs far less than that.
+
+    Sweeping one flat ratio isolates the hedge effect. Compare rows here, not
+    per-leg against 1:1.
+    """
+    print(f"\n  RATIO SENSITIVITY — one flat w on all trades")
+    print(f"    {'w':>6}{'win%':>7}{'avg':>8}{'sd':>7}{'total':>9}")
+    for w in band:
+        s = summarise(trades(closes, scores, cal, universe, hold, w))
+        if s["n"]:
+            print(f"    {w:>6.2f}{s['win']*100:>7.0f}{s['avg']:>+8.2f}"
+                  f"{s['sd']:>7.2f}{s['total']:>+9.1f}")
+
+
 def borrow_cost(closes, scores, cal, universe, hold, betas):
     """What the no-borrow constraint costs, by lifting it and re-running.
 
@@ -288,6 +311,12 @@ def main() -> int:
            a.hold, {"equal notional 1:1": 1.00,
                     "beta-neutral (direction-aware)": abeta,
                     "half-hedged": 0.50})
+    # Band from beta_stability.py: rolling 60d beta of nalco on hindalco over the
+    # two-year tape runs 0.54 .. 1.36, median 1.00. The 45-day fit of 1.34 sits at
+    # the TOP of that band, so it is quoted here as one candidate, not as the
+    # answer.
+    sensitivity(closes, scores, acal, ALUMINIUM, a.hold,
+                [0.80, 1.00, 1.10, 1.27, 1.34])
     borrow_cost(closes, scores, acal, ALUMINIUM, a.hold, abeta)
 
     print(f"""
