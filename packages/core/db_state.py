@@ -31,11 +31,19 @@ SUPERSEDED = {   # computed, but not persisted HERE — the result reaches pilla
     "bridge_runs":         "bridge.py runs the margin bridge in memory, unjournalled",
     "bridge_lines":        "per-line detail is NOT kept — rerun bridge.py to see it",
     "bridge_results":      "only the aggregate reaches pillar_scores.detail",
-    "economics":           "intensities are authored in specs/entities/*.yaml",
     "market_layer":        "valuation.py re-marks EV/EBITDA at spot each run",
     "guidance_confidence": "-> pillar_scores (guidance)",
 }
 NOT_BUILT = {    # nothing computes these yet — genuine gaps, in project order
+    # MOVED OUT OF SUPERSEDED 2026-08-18, because that label was wrong and would
+    # have sent someone to delete the table. It is correct only for STATIC
+    # intensities, which do live in specs/entities/*.yaml. The moment a parameter
+    # becomes time-varying and sourced — a captive share shifting when a coal
+    # block commissions, a quarterly production volume — the YAML is the wrong
+    # home and this table is the right one: it already has effective_from,
+    # source_note NOT NULL, and a CHECK that rejects an intensity with no
+    # provenance. The schema anticipated dated parameters; nothing reads them yet.
+    "economics":     "the home for DATED, sourced intensities — static ones live in specs/",
     "estimates":     "no consensus source ingested",
     "sector_regime": "the in flavour / out of flavour gate",
     "signals":       "no directional call with a falsifier is emitted",

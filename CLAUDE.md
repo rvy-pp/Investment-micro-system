@@ -210,6 +210,90 @@ of data — it is a hypothesis, not a finding.
 **More dates, not more pillars.** The gate stays shut on extending to a second
 sector, and the binding constraint is now sample size, which only time supplies.
 
+## What P1 is — settled 2026-08-18
+
+**P1 is an isolated SHORT-TERM score. It is not a forecast and must not be
+presented as one.** The PM's decision after the test below. Treat it as the
+standing definition, not an open question.
+
+Tested per company against its OWN price — no pairs, no ranking — weekly over
+268 observations, 2021-2026:
+
+| | corr. with move ALREADY PAST | corr. with move STILL AHEAD |
+|---|---|---|
+| nalco | +0.40 | +0.14 |
+| hindalco | +0.50 | +0.16 |
+| hindustan_zinc | +0.39 | +0.11 |
+
+Forward correlation decays to ~0 by 13 weeks (hindalco +0.006). Bucketing
+forward 13-week returns by score level is non-monotonic: the TOP bucket is never
+the best of four for any name, and for hindustan_zinc it was the worst.
+
+**Nothing in the bridge needs fixing.** P1 is built from PUBLISHED commodity
+prices; the shares are priced off the same prices and react within days. A score
+derived from public data can be faithful but never early. **Do not try to lift
+P1's predictive power by retuning the curve, the EWMA, the anchor or the
+weights** — the ceiling is informational, not parametric.
+
+Two fixes that made the score MORE CORRECT without making it more predictive
+(which is itself the evidence): repricing zinc off LME, and pricing cp_coke at
+all. HZL's score dispersion doubled, sd 0.293 -> 0.588, and its lead/lag ratio
+did not move.
+
+### Where a forecast could come from instead
+
+The part of the model that is genuinely private is the part that never varies:
+tonnage volumes, contracted realisations against spot, when cost positions were
+locked, captive-supply share shifting. All four sit in the specs as fixed
+`verify: pending` constants.
+
+They are one change, not four: **turn a static parameter into a dated, sourced
+series and have the bridge read it as-of.** `effective_from` is written in every
+spec and read by NO scoring code today.
+
+**The data does not arrive as a feed.** Every automated source here is a price
+feed; these four come from disclosures — quarterly production filings, concalls,
+capex announcements — at quarterly cadence, event-driven. That is the extraction
+layer doing the job it was designed for, not a new adapter.
+
+**They belong in the `economics` table, not in YAML.** It already has
+`effective_from`, `source_note NOT NULL`, and a CHECK rejecting an intensity with
+no provenance. `db_state.py` labelled it "superseded" — that was wrong and is now
+corrected; the label held only for STATIC intensities. YAML keeps the structure
+that never changes (which lines exist, what each is priced off); the DB holds
+what the value was, when, and who said so.
+
+**The rule that decides whether any of it is honest: a dated value carries the
+date the market COULD HAVE KNOWN it, not the date it physically happened.** Q2
+production is about July-September and knowable in October. Utkal starting in
+October but announced in July dates from July. Get this backwards and the
+backtest improves beautifully and means nothing. `source_note NOT NULL` is what
+forces it to be written down.
+
+### Testing decisions, so they are not relitigated
+
+- **Weekly beats monthly, and take the week's CLOSING print, not its average.**
+  Averaging lost on every row (13w hold, 1:1 MV: 53% / +0.86% vs 55% / +1.29%) —
+  a weekly mean is centred on Wednesday, adding lag to a signal already built
+  from a difference of levels.
+- **13 weeks is the horizon.** 2-week holds are below a coin flip (48% at 1:1);
+  the edge peaks at 13w and decays past 18w.
+- **Always report 1:1 market value beside 2:1.** A 2:1 book is 33% NET LONG. In
+  a rising tape it flatters everything: across every cut, 2:1 lands 60-65% and
+  1:1 lands 52-56%. The gap is market exposure, not skill.
+- **Only 2021+ is testable.** Every spec is `effective_from: 2026-04-01`.
+  Hindalco's Mahan/Aditya smelters ramped 2013-16 and tripled its Indian
+  capacity; nalco-on-hindalco beta ran 0.28 (2015) to 1.14 (2026), r2 0.10 to
+  0.60. Earlier tests measure a structure that did not exist.
+- **The vault's four-regime model does not survive.** 74% came from testing
+  inside one aluminium bull market; over 170 months it is 52% at 2:1, ~50% at
+  1:1. Ported as `packages/review/regime_pairs.py`.
+- **The zinc pair has no P1 signal by construction.** hindustan_zinc and vedanta
+  score within 0.001 of each other (sd 0.041) — same two revenue lines, VEDL's
+  scaled by the 63.4% stake, which `pct_of_ebitda` divides straight back out.
+  What separates them is holdco discount, i.e. P3. Do not rank them on
+  economics.
+
 **Numbers still provisional** (`verify:` in the specs): all intensities, NALCO's
 alumina surplus tonnage, VAML's alumina `market_pct`, the coal
 `basis_pass_through` of 0.35, Hindalco's `base_ebitda` (the only unsourced
