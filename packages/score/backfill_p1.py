@@ -41,9 +41,19 @@ LOOKBACK = 30        # matches run_scores' shock window
 
 # From check_corporate_actions.py on the two-year tape. Front-month futures
 # rolls, NOT price moves. VEDL's demerger is handled separately as a hard wall.
-ROLLS = [("alumina_index", "2025-02-03"), ("midwest_premium", "2025-02-03"),
-         ("midwest_premium", "2025-06-02"), ("midwest_premium", "2025-06-03"),
-         ("silver", "2026-01-30")]
+ROLLS = []
+# EMPTIED 2026-08-18, and this is a real change rather than a loosening. The
+# rolls listed here (alumina -21.3% 2025-02-03, midwest premium, silver) were
+# artefacts of the YAHOO FRONT-MONTH FUTURES the repo used as proxies. The Daily
+# Metals Pack supplies ASSESSED and CASH prices instead: LME aluminium and zinc
+# show zero >=15% daily jumps across 16 years, and the alumina assessment has no
+# roll. Alumina's remaining jumps are real events -- Rusal sanctions 2018-04-19,
+# Guinea coup 2021-09-09 -- and must NOT be excluded.
+#
+# Silver's -26.4% on 2026-01-30 appears in BOTH the pack's spot assessment and
+# Yahoo's futures, so it was never a roll; classifying it as one here was wrong
+# and cost 63 date-entity pairs of real data.
+
 VEDL_DEMERGER = "2026-04-30"
 # VAML listed 2026-06-15. P1 is commodity prices x intensities and needs no
 # stock price, so the bridge will happily score a company that did not trade --

@@ -37,3 +37,11 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Generated review intermediates — rebuilt by the build_*.py scripts from the
+# store, so versioning them would version a copy of data/ which is ignored.
+packages/review/_*.json
+packages/review/_*head.html
+packages/review/*.html
+Investment_Micro_System_Audit.xlsx
+~$*.xlsx
