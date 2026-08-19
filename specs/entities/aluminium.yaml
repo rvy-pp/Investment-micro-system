@@ -56,6 +56,12 @@ reference_entities:
   - {id: usdinr,                 kind: fx,        name: USDINR,                  unit: INR/USD}
   - {id: al_scrap_midwest,       kind: commodity, name: US Midwest scrap discount, unit: USD/t}
   - {id: can_sheet_spread,       kind: commodity, name: Can sheet conversion spread, unit: USD/t}
+  - {id: lme_zinc,               kind: commodity, name: LME Zinc cash,               unit: USD/t}
+  # ^ THE BENCHMARK, and the unit entry is load-bearing. `to_inr` converts only
+  #   when the unit string starts with "USD"; an unregistered series falls
+  #   through with NO FX leg and is silently understated by the USDINR rate.
+  #   Repointing refined_zinc here without this line read a +10% zinc move as
+  #   Rs32 cr instead of Rs3,014 cr — a 95x error that raised no warning.
   - {id: zinc_shfe,              kind: commodity, name: Zinc SHFE ex-VAT (Wind ZN.SHF), unit: USD/t}
   # ^ PROXY for LME zinc. Wind ZN.SHF, converted CNY->USD at daily USDCNY and
   #   divided by 1.13 to strip Chinese VAT, which LME prices do not carry.
@@ -338,7 +344,11 @@ entities:
 
     outputs:
       - item: refined_zinc
-        price_link: zinc_shfe
+        price_link: lme_zinc      # was zinc_shfe (Chinese domestic PROXY, 119 days).
+                                  # LME cash has 4,722 days from 2010 and is the
+                                  # benchmark the spec always said SHFE stood in for.
+                                  # Invariant 6 is unaffected: the proxy keeps its own
+                                  # id, it is simply no longer what we price off.
         volume: 820000
         volume_unit: t
         source_note: "Refined zinc production"
@@ -392,7 +402,11 @@ entities:
 
     outputs:
       - item: refined_zinc
-        price_link: zinc_shfe
+        price_link: lme_zinc      # was zinc_shfe (Chinese domestic PROXY, 119 days).
+                                  # LME cash has 4,722 days from 2010 and is the
+                                  # benchmark the spec always said SHFE stood in for.
+                                  # Invariant 6 is unaffected: the proxy keeps its own
+                                  # id, it is simply no longer what we price off.
         volume: 520000            # = HZL volume x 63.4% look-through
         volume_unit: t
         source_note: "Look-through of ~63.4% HZL stake"
