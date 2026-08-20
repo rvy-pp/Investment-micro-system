@@ -16,10 +16,15 @@ Here the number does the work: an actual, cited, against a target, cited.
 
 THE ARITHMETIC
 
-    required   = target / periods_in_period_set
-    achieved   = actual_to_date / periods_elapsed
-    gap        = (achieved / required - 1) * polarity
+    achieved   = (sum of REPORTED periods / count of REPORTED periods) * n_periods
+    gap        = (achieved / target - 1) * polarity
     confidence = sigmoid(gap * elapsed_fraction * SHARPNESS)
+
+TWO DIFFERENT NOTIONS OF "HOW FAR IN" AND THEY MUST NOT BE CONFLATED. The
+annualisation divides by periods REPORTED — a statement about the data in hand.
+The confidence weight uses time ELAPSED — a statement about how much of the year
+is left to fix a gap. The first version used elapsed time for both and halved
+HZL's single reported quarter, turning a -5.5% shortfall into -52.7%.
 
 `polarity` is +1 where more is better (volume) and -1 where less is better (cost,
 capex). Without it a cost beat scores as a miss.
@@ -153,12 +158,32 @@ def main() -> int:
         elapsed_days = (min(as_of, end) - start).days
         total_days = (end - start).days
         frac = max(0.0, min(1.0, elapsed_days / total_days))
-        n_elapsed = max(1, round(frac * nper))
 
-        # A rate metric (cost per tonne) is an average, not a cumulative total.
-        cumulative = pol > 0 and g["metric"].endswith("volume") or g["metric"] == "volume"
-        vals = [r["value_num"] for r in acts]
-        achieved = (sum(vals) / n_elapsed) * nper if cumulative else sum(vals) / len(vals)
+        # ANNUALISE BY PERIODS REPORTED, NOT BY TIME ELAPSED. These are two
+        # different quantities and conflating them is a large silent error: the
+        # first version divided one reported quarter by round(0.39*4)=2 because
+        # 39% of the year had passed, halving HZL's 260 KT to a 520 KT
+        # annualised figure and reporting -52.7% against the 1.1 Mt target. The
+        # concall's own arithmetic — "Q1 260 KT annualises ~1.04 Mt" — says
+        # -5.5%. It produced a confident 1.32 score for a company 5% behind.
+        #
+        # Time elapsed still governs CONFIDENCE (how much of the year is left to
+        # fix a gap). It must never govern the annualisation, which is a
+        # statement about the data in hand.
+        #
+        # Distinct PERIODS, not row count: two brokers citing the same Q1 must
+        # not read as two quarters of output.
+        by_period: dict[str, float] = {}
+        for r in acts:
+            by_period[r["period"]] = r["value_num"]
+        n_reported = len(by_period)
+        vals = list(by_period.values())
+
+        # A rate metric (cost per tonne) is an average across reported periods;
+        # a volume is a cumulative total to be scaled to the full period set.
+        cumulative = g["metric"] == "volume" or g["metric"].endswith("_volume")
+        achieved = ((sum(vals) / n_reported) * nper if cumulative
+                    else sum(vals) / n_reported)
         required = tgt
         gap = (achieved / required - 1.0) * pol
         conf = 1.0 / (1.0 + math.exp(-gap * frac * SHARPNESS))
@@ -167,8 +192,8 @@ def main() -> int:
 
         print(f"  {label}")
         print(f"    target      {required:>12,.2f}   ({how})")
-        print(f"    achieved    {achieved:>12,.2f}   from {len(acts)} cited actual(s), "
-              f"{'annualised' if cumulative else 'averaged'}")
+        print(f"    achieved    {achieved:>12,.2f}   from {n_reported} reported "
+              f"period(s), {'annualised x' + str(nper) if cumulative else 'averaged'}")
         print(f"    gap         {gap*100:>+11.1f}%   ({'ahead' if gap>0 else 'behind'}, "
               f"polarity {pol:+d})")
         print(f"    period      {start} .. {end}   {frac*100:.0f}% elapsed")
