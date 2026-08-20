@@ -18,6 +18,30 @@ spec_version: 0.1.0
 currency: INR
 unit: crore
 period: FY26
+
+# THE BASE QUARTER — the single definition, and it must stay single.
+# ============================================================================
+# `base_ebitda` below is this quarter's print, annualised x4. P3 valuation
+# re-marks it from THIS quarter's AVERAGE prices to today:
+#
+#     spot_ebitda(d) = base_ebitda + bridge(prices at d  vs  base-quarter average)
+#
+# So the EBITDA figure and the price reference window describe the SAME quarter
+# and have to move together. They previously did not: base_ebitda lived here
+# while the window was a literal "2026-04-01","2026-06-30" in run_scores.py, and
+# nothing coupled them. Updating one and not the other marks one quarter's
+# earnings against another quarter's prices — arithmetically silent, plausible
+# output, wrong answer. Now there is one definition and the literal is gone.
+#
+# WHEN A NEW QUARTER PRINTS, change both fields here and the base_ebitda values
+# together, in one edit. Leaving it stale is SAFE, not broken: the bridge simply
+# re-marks over a longer window, which costs a little accuracy and no
+# correctness. Splitting them is what breaks.
+base_quarter:
+  label: 1QFY27
+  start: 2026-04-01
+  end: 2026-06-30
+  verify: sourced             # cited 1QFY27 prints in the digests
 # FALLBACK ONLY. The live rate is loaded from Yahoo (USDINR=X) into `prices`
 # and should be read from there; this constant is what the bridge uses when the
 # store has no rate for the date.

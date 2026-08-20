@@ -61,6 +61,31 @@ def main() -> int:
         if eid not in priced:
             warns.append(f"{eid}: scoreable but has no price series")
 
+    # 3. The base quarter must exist and be coherent. base_ebitda is THIS
+    # quarter's print and P3 re-marks from THIS quarter's average prices; if the
+    # block is missing or reversed, valuation marks earnings against the wrong
+    # window and says nothing about it.
+    import datetime as _dt
+    bq = fin.get("base_quarter") or {}
+    if not (bq.get("start") and bq.get("end")):
+        fails.append("base_financials.yaml has no base_quarter{start,end} — "
+                     "P3 valuation cannot re-mark")
+    else:
+        try:
+            s_, e_ = (_dt.date.fromisoformat(str(bq["start"])),
+                      _dt.date.fromisoformat(str(bq["end"])))
+            if e_ <= s_:
+                fails.append(f"base_quarter end {e_} is not after start {s_}")
+            elif e_ > _dt.date.today():
+                warns.append(f"base_quarter ends {e_}, in the future — the "
+                             f"re-mark reference has not finished yet")
+            elif (_dt.date.today() - e_).days > 200:
+                warns.append(f"base_quarter ended {e_}, {(_dt.date.today()-e_).days}d "
+                             f"ago — safe but the re-mark window is long; consider "
+                             f"rolling base_ebitda AND base_quarter together")
+        except ValueError:
+            fails.append(f"base_quarter dates do not parse: {bq}")
+
     conn.close()
     print(f"preflight — {len(ents)} entities, {len(units)} priced units\n")
     for f in fails:

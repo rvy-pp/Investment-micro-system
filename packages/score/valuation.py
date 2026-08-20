@@ -136,8 +136,13 @@ def spot_multiple_series(conn, ent: dict, fin: dict, units: dict,
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--peer-group", default="aluminium_primary")
-    ap.add_argument("--qstart", default="2026-04-01", help="base quarter start")
-    ap.add_argument("--qend", default="2026-06-30")
+    # Defaults come from base_financials.yaml, never from a literal here — the
+    # EBITDA print and its price reference window describe the same quarter and
+    # must not be settable independently by accident.
+    _bq = (load_specs()[2].get("base_quarter") or {})
+    ap.add_argument("--qstart", default=_bq.get("start"),
+                    help=f"base quarter start (spec: {_bq.get('label','?')})")
+    ap.add_argument("--qend", default=_bq.get("end"))
     ap.add_argument("--detail", action="store_true")
     a = ap.parse_args()
 

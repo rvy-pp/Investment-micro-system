@@ -71,6 +71,14 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
     form, k, p = load_scoring()
     acc, hl = load_accumulation()
     available = _series_in_store()
+    # One definition of the base quarter, from base_financials.yaml. It used to
+    # be a literal here while base_ebitda lived in the spec, so the two could
+    # drift apart silently and mark one quarter's earnings against another
+    # quarter's prices.
+    bq = fin.get("base_quarter") or {}
+    if not (bq.get("start") and bq.get("end")):
+        raise SystemExit("base_financials.yaml has no base_quarter{start,end}; "
+                         "P3 valuation cannot re-mark without it.")
     n = 0
 
     shocks, _detail, _resolved, fx = shocks_from_store(30, as_of, acc, hl)
@@ -103,7 +111,7 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
 
         # --- valuation (P3a) ---
         ser, cut, _cp, err = val_mod.spot_multiple_series(
-            conn, ent, f, units, "2026-04-01", "2026-06-30", usdinr)
+            conn, ent, f, units, bq["start"], bq["end"], usdinr)
         ser = [x for x in ser if x[0] <= as_of]
         if len(ser) >= 20:
             import statistics
