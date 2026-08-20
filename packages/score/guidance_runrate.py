@@ -63,7 +63,8 @@ SHARPNESS = 12.0     # how hard a given gap bites once the period is fully elaps
 # More is better (+1) or less is better (-1). A metric absent here is REFUSED
 # rather than assumed: guessing the sign of a cost target inverts the score.
 POLARITY = {
-    "volume": +1, "silver_volume": +1, "alumina_volume": +1, "ebitda": +1,
+    "volume": +1, "silver_volume": +1, "alumina_volume": +1,
+    "coal_volume": +1, "ebitda": +1,
     "ebitda_per_t": +1, "margin": +1, "realisation": +1,
     "cost_per_t": -1, "capex": -1, "net_debt": -1,
 }
