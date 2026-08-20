@@ -33,8 +33,16 @@ def main() -> int:
     a = ap.parse_args()
 
     conn = sqlite3.connect(DB)
+    # The latest date with a COMPOSITE, not the latest date in the table.
+    # backfill_p1.py writes the economics pillar alone over a long history, so
+    # MAX(as_of) is an economics-only date with no composite on it — which made
+    # this command crash rather than show the last full cross-section.
     as_of = a.as_of or conn.execute(
-        "SELECT MAX(as_of) FROM pillar_scores").fetchone()[0]
+        "SELECT MAX(as_of) FROM pillar_scores WHERE pillar='composite' "
+        "AND score IS NOT NULL").fetchone()[0]
+    if as_of is None:
+        print("no composite has ever been written — run run_scores.py first")
+        return 1
 
     if a.history:
         print(f"{a.history} — composite history\n")
@@ -85,9 +93,12 @@ def main() -> int:
             flag = f"WIDE — {hi} {max(got):.1f} vs {lo} {min(got):.1f}"
         elif spread is not None and spread >= 0.8:
             flag = "moderate"
-        print(f"{eid:16}{cells}"
-              f"{comp if comp is None else f'{comp:>8.2f}':>8}"
-              f"{spread if spread is None else f'{spread:>8.2f}':>8}  {flag}")
+        # A withheld composite prints as a dash. The previous expression
+        # evaluated to the bare None and then applied :>8 to it, so any date
+        # with an unscored name raised TypeError instead of showing the row.
+        c_txt = f"{comp:>8.2f}" if comp is not None else f"{'—':>8}"
+        s_txt = f"{spread:>8.2f}" if spread is not None else f"{'—':>8}"
+        print(f"{eid:16}{cells}{c_txt}{s_txt}  {flag}")
         if comp is not None:
             rows.append((eid, comp))
 

@@ -63,8 +63,8 @@ SHARPNESS = 12.0     # how hard a given gap bites once the period is fully elaps
 # More is better (+1) or less is better (-1). A metric absent here is REFUSED
 # rather than assumed: guessing the sign of a cost target inverts the score.
 POLARITY = {
-    "volume": +1, "silver_volume": +1, "ebitda": +1, "ebitda_per_t": +1,
-    "margin": +1, "realisation": +1,
+    "volume": +1, "silver_volume": +1, "alumina_volume": +1, "ebitda": +1,
+    "ebitda_per_t": +1, "margin": +1, "realisation": +1,
     "cost_per_t": -1, "capex": -1, "net_debt": -1,
 }
 
@@ -101,14 +101,109 @@ def fy_window(period: str) -> tuple[dt.date, dt.date, int] | None:
     return start, dt.date(end_cal, 3, 31), 4
 
 
-def target_of(g: dict) -> tuple[float | None, str]:
-    """A single comparable number, plus how it was derived."""
+def gap_of(g: dict, achieved: float, pol: int) -> tuple[float | None, str]:
+    """Signed gap against the target, positive = better than promised.
+
+    A RANGE IS A BAND, NOT A MIDPOINT, and this distinction is not cosmetic.
+    VAML guided aluminium COP $1,650-1,700/t and delivered $1,698 — the concall
+    grades that "Delivered (in band)". Measuring against the $1,675 midpoint
+    scores it 1.4% BEHIND, penalising a company for landing in the upper half of
+    its own stated range. Management committed to the band, so anywhere inside it
+    is the commitment met: gap 0, confidence 0.5, score 3.0 = "did what they
+    said". Outside the band, distance is measured to the NEAREST EDGE, because
+    that is the promise that was broken.
+
+    A point target has no band, so it is a plain ratio.
+    """
     if g["target_type"] == "point":
-        return g["target_value"], "point"
+        t = g["target_value"]
+        if not t:
+            return None, "point target with no value"
+        return (achieved / t - 1.0) * pol, f"point {t:g}"
     if g["target_type"] == "range":
         lo, hi = g["target_low"], g["target_high"]
-        return (lo + hi) / 2.0, f"range midpoint of {lo:g}-{hi:g}"
+        if lo is None or hi is None:
+            return None, "range target missing an edge"
+        if lo <= achieved <= hi:
+            return 0.0, f"IN BAND {lo:g}-{hi:g} — commitment met"
+        edge = lo if achieved < lo else hi
+        return (achieved / edge - 1.0) * pol, f"outside band {lo:g}-{hi:g}, vs edge {edge:g}"
     return None, "direction target — no number to run-rate against"
+
+
+# ---------------------------------------------------------------------------
+# callable form, used by run_scores.py so there is ONE P4 arithmetic
+# ---------------------------------------------------------------------------
+
+# Guidance whose target embeds a mid-year capacity ramp. Annualising a quarter
+# from BEFORE the ramp starts assumes a flat run-rate the company never promised
+# and reports a large false miss: vedanta's Gamsberg FY27 280-300kt depends on
+# Phase 2 starting August 2026, so Q1's 45kt (Phase 1 only) annualises to 180kt
+# and scores -35.7% — while the concall grades Phase 1 "Delivered". Withheld
+# until the ramp has been running long enough for an annualisation to mean
+# something. Keyed (entity, metric) -> the date the ramp begins.
+RAMP_DEPENDENT = {
+    ("vedanta", "volume"): "2026-08-01",   # Gamsberg Phase 2
+}
+RAMP_GRACE_DAYS = 120      # ~one full quarter of the ramp before annualising
+
+
+def score_entity(conn, entity_id: str, as_of: str) -> tuple:
+    """(score, mean_confidence, detail, withheld_reason) for one entity+date."""
+    as_of_d = dt.date.fromisoformat(as_of)
+    gs = conn.execute(
+        "SELECT * FROM guidance WHERE entity_id=? AND status='open' "
+        "AND issued_date<=? ORDER BY id", (entity_id, as_of)).fetchall()
+    if not gs:
+        return None, None, None, "no open guidance"
+
+    confs, detail, skipped = [], {}, []
+    for g in gs:
+        g = dict(zip([c[0] for c in conn.execute(
+            "SELECT * FROM guidance LIMIT 0").description], g)) if not isinstance(
+            g, dict) and not hasattr(g, "keys") else dict(g)
+        label = f"{g['metric']}:{g['period']}"
+        if g["target_type"] == "direction":
+            skipped.append(f"{label} direction")
+            continue
+        win = fy_window(g["period"])
+        pol = POLARITY.get(g["metric"])
+        if win is None or pol is None:
+            skipped.append(f"{label} unmappable")
+            continue
+        ramp = RAMP_DEPENDENT.get((entity_id, g["metric"]))
+        if ramp and (as_of_d - dt.date.fromisoformat(ramp)).days < RAMP_GRACE_DAYS:
+            skipped.append(f"{label} ramp-dependent")
+            continue
+        acts = conn.execute(
+            "SELECT value_num, period FROM observations WHERE entity_id=? "
+            "AND factor='actual' AND metric=? AND as_of<=?",
+            (entity_id, g["metric"], as_of)).fetchall()
+        acts = [r for r in acts if r[1] and g["period"][-4:] in r[1]]
+        if not acts:
+            skipped.append(f"{label} no actual")
+            continue
+        start, end, nper = win
+        frac = max(0.0, min(1.0, (min(as_of_d, end) - start).days /
+                            (end - start).days))
+        by_period = {r[1]: r[0] for r in acts}
+        vals = list(by_period.values())
+        cumulative = g["metric"] == "volume" or g["metric"].endswith("_volume")
+        achieved = ((sum(vals) / len(vals)) * nper if cumulative
+                    else sum(vals) / len(vals))
+        gap, _how = gap_of(g, achieved, pol)
+        if gap is None:
+            skipped.append(f"{label} no target")
+            continue
+        c = 1.0 / (1.0 + math.exp(-gap * frac * SHARPNESS))
+        confs.append(c)
+        detail[label] = round(gap, 4)
+
+    if not confs:
+        return None, None, None, "; ".join(skipped) or "nothing computable"
+    conf = sum(confs) / len(confs)
+    return (1.0 + 4.0 * conf, conf,
+            {"gaps": detail, "n": len(confs), "skipped": skipped}, None)
 
 
 def main() -> int:
@@ -130,13 +225,13 @@ def main() -> int:
     print(f"{a.entity}   as of {a.as_of}\n")
     scored, withheld = [], []
     for g in gs:
-        tgt, how = target_of(dict(g))
         win = fy_window(g["period"])
         label = f"{g['metric']} {g['period']}"
-
-        if tgt is None or win is None:
-            withheld.append((label, how if tgt is None else
-                             f"cannot parse period {g['period']!r}"))
+        if g["target_type"] == "direction":
+            withheld.append((label, "direction target — no number to run-rate against"))
+            continue
+        if win is None:
+            withheld.append((label, f"cannot parse period {g['period']!r}"))
             continue
         pol = POLARITY.get(g["metric"])
         if pol is None:
@@ -184,14 +279,16 @@ def main() -> int:
         cumulative = g["metric"] == "volume" or g["metric"].endswith("_volume")
         achieved = ((sum(vals) / n_reported) * nper if cumulative
                     else sum(vals) / n_reported)
-        required = tgt
-        gap = (achieved / required - 1.0) * pol
+        gap, how = gap_of(dict(g), achieved, pol)
+        if gap is None:
+            withheld.append((label, how))
+            continue
         conf = 1.0 / (1.0 + math.exp(-gap * frac * SHARPNESS))
         score = 1.0 + 4.0 * conf
-        scored.append((label, achieved, required, gap, frac, conf, score, acts))
+        scored.append((label, achieved, gap, frac, conf, score, acts))
 
         print(f"  {label}")
-        print(f"    target      {required:>12,.2f}   ({how})")
+        print(f"    target                   ({how})")
         print(f"    achieved    {achieved:>12,.2f}   from {n_reported} reported "
               f"period(s), {'annualised x' + str(nper) if cumulative else 'averaged'}")
         print(f"    gap         {gap*100:>+11.1f}%   ({'ahead' if gap>0 else 'behind'}, "
@@ -210,13 +307,13 @@ def main() -> int:
         print()
 
     if scored:
-        conf = sum(s[5] for s in scored) / len(scored)
+        conf = sum(s[4] for s in scored) / len(scored)
         print(f"  P4 = {1+4*conf:.2f}   mean confidence {conf:.3f} over "
               f"{len(scored)} computable commitment(s), {len(withheld)} withheld")
-        print(f"\n  Note the elapsed weighting: at {scored[0][4]*100:.0f}% through the "
-              f"period a\n  {scored[0][3]*100:+.1f}% gap moves confidence only to "
-              f"{scored[0][5]:.3f}. The same gap at\n  100% elapsed would give "
-              f"{1/(1+math.exp(-scored[0][3]*SHARPNESS)):.3f}.")
+        print(f"\n  Note the elapsed weighting: at {scored[0][3]*100:.0f}% through the "
+              f"period a\n  {scored[0][2]*100:+.1f}% gap moves confidence only to "
+              f"{scored[0][4]:.3f}. The same gap at\n  100% elapsed would give "
+              f"{1/(1+math.exp(-scored[0][2]*SHARPNESS)):.3f}.")
     else:
         print("  P4 WITHHELD — no commitment has a cited actual to measure against.")
     conn.close()

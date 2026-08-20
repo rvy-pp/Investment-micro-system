@@ -36,6 +36,7 @@ from bridge import (load_specs, load_scoring, load_accumulation, run_bridge,  # 
 from scoring import score as to_score, solve_k  # noqa: E402
 import mood as mood_mod  # noqa: E402
 import valuation as val_mod  # noqa: E402
+import guidance_runrate as gr  # noqa: E402
 
 SPEC_VERSION = "0.5.0"
 # Pillar weights for the composite. Economics leads because it is the only
@@ -142,30 +143,25 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
         n += 1
 
         # --- guidance (P4) ---
-        g = conn.execute(
-            "SELECT COUNT(*) FROM guidance WHERE entity_id=? AND status='open' "
-            "AND issued_date<=?", (eid, as_of)).fetchone()[0]
-        if g:
-            import math
-            tot, cnt = 0.0, 0
-            for (gid,) in conn.execute(
-                    "SELECT id FROM guidance WHERE entity_id=? AND status='open' "
-                    "AND issued_date<=?", (eid, as_of)):
-                lo = 0.0
-                for d, w in conn.execute(
-                        "SELECT direction, weight FROM guidance_evidence "
-                        "WHERE guidance_id=? AND as_of<=?", (gid, as_of)):
-                    lo += d * w * 1.2
-                tot += 1 / (1 + math.exp(-lo))
-                cnt += 1
-            conf = tot / cnt
-            s = 1 + 4 * conf
-            parts["guidance"] = s
-            put(conn, as_of, eid, "guidance", s, conf,
-                {"commitments": cnt}, None, sha)
+        # RUN-RATE ARITHMETIC, replacing the hand-weighted evidence vote that was
+        # here until 2026-08-20. The old version summed guidance_evidence
+        # direction x weight through a sigmoid and never read target_value at
+        # all, so HZL's committed 1.1mt / 680t / $975-1,000 played no part in
+        # scoring HZL's own guidance. Worse, three of its five evidence rows were
+        # "guidance reiterated" — management repeating itself drifting confidence
+        # UPWARD, the inverse of invariant 3. It scored HZL 3.61 while the company
+        # was behind on both volume commitments.
+        #
+        # Now: actual vs target, cited both ends, weighted by how much of the
+        # period has elapsed. guidance_evidence is no longer read here; it is for
+        # facts arithmetic cannot reach (a regulatory clearance), not for numbers
+        # it can.
+        gscore, gconf, gdetail, gwithheld = gr.score_entity(conn, eid, as_of)
+        if gscore is not None:
+            parts["guidance"] = gscore
+            put(conn, as_of, eid, "guidance", gscore, gconf, gdetail, None, sha)
         else:
-            put(conn, as_of, eid, "guidance", None, None, None,
-                "no open guidance", sha)
+            put(conn, as_of, eid, "guidance", None, None, None, gwithheld, sha)
         n += 1
 
         # --- composite: re-weighted over the pillars that ACTUALLY scored ---
