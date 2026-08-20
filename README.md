@@ -47,6 +47,10 @@ must be rejected.
 | **L4** `api/` + `web/` | stdlib `http.server` over SQLite, serving one static page | code |
 | **L5** review | joins signals to outcomes, grades decisions, promotes priors | LLM, built last |
 
+**Flows** (`docs/FLOWS.md`) is the section that computes L3 — investor
+sentiment, sector activity, risk on / risk off, crowding. Scoped 2026-08-19,
+largely open, nothing built.
+
 ## Two ideas the schema keeps separate
 
 - `sector` — your coverage bucket. Organisational.
@@ -144,8 +148,9 @@ why `combined.py` reports spread and not just the average: an average alone
 makes those two look identical.
 
 **Not built:** `signals` (no directional call with a falsifier is emitted),
-`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate, OI
-as a conviction modifier, book ingestion, and every sector beyond these two.
+`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
+(scoped as Flows — see `docs/FLOWS.md`), OI as a conviction modifier, book
+ingestion, and every sector beyond these two.
 
 **The gate still standing:** the backtest has now been RUN
 (`packages/review/backtest.py`) and the honest answer is *not yet decidable*.
