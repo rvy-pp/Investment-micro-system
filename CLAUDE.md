@@ -63,6 +63,12 @@ A ten-factor model overfits and goes rigid. The PM was explicit about this.
 | **P4** Guidance | Will they hit the quarter? | forward view | scoring |
 | Gate | In flavour / out of flavour — can it express? | permission | schema only |
 
+**Flows** is the fifth section, opened 2026-08-19 and scoped only — investor
+sentiment, which sectors are active, risk on / risk off, crowding. It is NOT a
+fifth pillar: it computes the L3 gate's five specified-but-uncomputed inputs and
+never sets direction. Read `docs/FLOWS.md` before touching `sector_regime`; most
+of it is still open questions for the PM.
+
 P1+P2 is the margin bridge. `market_pct` is the field that does the work: a
 captive input contributes ZERO to cost however far its market price moves.
 That, not a coefficient, is why one alumina print moves NALCO up, VAML down and
@@ -99,6 +105,28 @@ P4 scores **linearly** (`1 + 4*confidence`) because a confidence is already a
 bounded probability — squashing it again would distort it.
 
 ---
+
+## The silent-arithmetic bug class — read `docs/SILENT_BUGS.md`
+
+**One failure shape has produced every serious bug here.** Not a crash: a lookup
+or a divisor quietly wrong, returning a PLAUSIBLE number, raising nothing,
+`coverage_ok` still true. Five entries so far — the GLOB date guard that rejected
+every valid date, a hardcoded FX rate 9.7% off, an unregistered unit that dropped
+an FX leg (95x), an annualisation by elapsed time that read -52.7% for -5.5%, and
+a real price move misclassified as a contract roll.
+
+**Nothing in the test suite caught any of them.** Four of five were caught by a
+person thinking "that magnitude is not plausible".
+
+**THE STANDING RULE: fix it AND leave a disclaimer at the site** — a comment
+naming the wrong value, the right value, and how it was caught. This class needs
+it because the corrected code looks identical to the broken code: nothing about
+`n_reported` reads as more correct than `n_elapsed`, so without the note the fix
+is invisible and any tidy-up can revert it.
+
+Before shipping new arithmetic, the one question that matters: **if this divisor
+were wrong by 2x, would anything complain?** For entries 3 and 4 the answer was
+no.
 
 ## Gotchas that already cost time
 
@@ -183,8 +211,8 @@ VAML carries the widest pillar spread (mood 3.77 vs valuation 2.03) — which is
 why `combined.py` reports spread and not just the average.
 
 **Not built:** `signals` (no directional call with a falsifier is emitted),
-`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate,
-OI as a conviction modifier, book ingestion, steel and the other sectors.
+`outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
+(scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion, steel and the other sectors.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
