@@ -571,16 +571,26 @@ function showRefresh(tp){
     cls = 'c-down'; txt = 'refresh FAILED ' + (r.day || '');
     tip = 'failed steps: ' + (r.failed_steps || []).join(', ');
   } else if (age !== null && age >= 2){
-    // The scores being old matters even when the last run "succeeded" — the
-    // run can succeed against a feed that has itself gone stale.
     cls = 'c-warn'; txt = 'scores ' + age + ' trading days old';
     tip = 'last refresh ' + (r.day || '?') + ', store as of ' + tp.as_of_max;
+  } else if (r.feeds_ok === false){
+    // THE CASE THE LIGHT USED TO MISS. Every step succeeded and the scores
+    // carry today's date, but they were computed on inputs that stopped
+    // printing days ago. "The run worked" and "the inputs are current" are
+    // different claims; only the first was ever being made.
+    const s = r.stale_feeds || [];
+    cls = 'c-warn';
+    txt = s.length + ' feed' + (s.length === 1 ? '' : 's') + ' stale';
+    tip = s.map(f => `${f.series} (${f.feed}) ${f.age}, limit ${f.limit}`).join(' · ');
   } else {
     txt = 'refreshed ' + (r.day || '?');
     tip = 'store as of ' + tp.as_of_max + '; not covered by an unattended run: '
         + (r.manual || []).map(m => m.name).join(', ');
   }
-  el.innerHTML = `<span class="chip ${cls}" title="${esc(tip)}">${esc(txt)}</span>`;
+  const extra = (r.stale_feeds || []).length && r.feeds_ok === false
+    ? '' : ((r.stale_feeds || []).length
+        ? ' · stale: ' + r.stale_feeds.map(f => f.series).join(', ') : '');
+  el.innerHTML = `<span class="chip ${cls}" title="${esc(tip + extra)}">${esc(txt)}</span>`;
 }
 
 function pairControls(tp){

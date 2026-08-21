@@ -46,9 +46,41 @@ STEPS = [
     ("preflight",         ["packages/core/preflight.py"],                     True),
     ("equity closes",     ["packages/adapters/yahoo_prices.py", "--load",
                            "--range", "3mo"],                                 False),
+    # OI was missing from this list until 2026-08-21 and had gone 5 trading days
+    # stale unnoticed, because nothing checked a table outside `prices`.
+    # pipeline.py STEP 1 always ran it; this file simply forgot to.
+    ("open interest",     ["packages/adapters/vault_oi.py", "--load"],        False),
     ("corporate actions", ["packages/adapters/check_corporate_actions.py"],   False),
     ("score + persist",   ["packages/score/run_scores.py"],                   True),
 ]
+
+# Steps to skip when the store already holds today's data. The launcher runs
+# refresh on EVERY double-click, so without this a busy morning re-pulls the
+# same OI several times. Keyed by step label -> a callable saying "already done".
+#
+# Only OI is guarded. The equity load is deliberately NOT: Yahoo revises intraday
+# and the same call late in the day returns a better close than it did at 08:00,
+# so re-pulling is the point rather than waste. run_scores.py is not guarded
+# either — it rewrites today's rows in place, and re-running it after a fresher
+# price IS the update.
+# THE TEST IS "DID THE PULL RUN TODAY", NOT "DOES THE STORE HOLD TODAY'S DATA".
+# My first version asked the second question, and it can never be true: OI comes
+# from the vault's own pipeline, which publishes T-1 at best — the store held
+# 2026-08-17 on 2026-08-21 — so a data-date guard skips nothing and re-pulls on
+# every launch, the exact opposite of the intent. A run marker is the only thing
+# that answers the question actually being asked.
+#
+# Trade-off accepted: if the vault publishes new OI after the day's first
+# refresh, it is not picked up until tomorrow. `--force` is the escape hatch.
+SKIP_IF_DONE = {"open interest"}
+MARKER = OUT / "steps_done.json"
+
+
+def _marker_read() -> dict:
+    try:
+        return json.loads(MARKER.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 # Named in the status so the dashboard can say what is NOT covered by an
 # unattended run. Silence about these would imply a completeness the run does
@@ -65,6 +97,8 @@ MANUAL = [
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="re-pull even steps whose data is already there for today")
     a = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
@@ -72,6 +106,7 @@ def main() -> int:
     day = started.astimezone().strftime("%Y-%m-%d")
     log_path = OUT / f"{day}.log"
     lines, results, ok = [], [], True
+    marker = _marker_read()
 
     def say(s: str = "") -> None:
         print(s)
@@ -85,6 +120,14 @@ def main() -> int:
         if a.dry:
             say("  (dry — not executed)")
             results.append({"step": label, "status": "dry"})
+            continue
+        if label in SKIP_IF_DONE and not a.force and marker.get(label) == day:
+            # Reported as a step with its own status, never omitted. A silently
+            # absent step is indistinguishable from one that ran and found
+            # nothing, which is the ambiguity run_scores.py's withheld rows
+            # exist to avoid.
+            say(f"  skipped — already pulled today ({day}); --force to re-pull")
+            results.append({"step": label, "status": "skipped"})
             continue
         r = subprocess.run([PY, *argv], cwd=REPO, capture_output=True, text=True)
         body = (r.stdout or "").strip()
@@ -101,11 +144,44 @@ def main() -> int:
                 break
         else:
             results.append({"step": label, "status": "ok"})
+            # Marked only on SUCCESS, so a failed pull is retried on the next
+            # launch instead of being skipped for the rest of the day.
+            if label in SKIP_IF_DONE:
+                marker[label] = day
+                MARKER.write_text(json.dumps(marker, indent=2), encoding="utf-8")
+
+    # ---- feed freshness, AFTER the loads ---------------------------------
+    # THE CHECK THIS FILE WAS MISSING. Every step above can succeed against a
+    # feed that has itself stopped printing: "the run worked" and "the inputs
+    # are current" are different claims and only the first was being made.
+    # A stale feed does NOT fail the run — it is a data condition, not a code
+    # failure — but it lands in status.json so the dashboard light goes amber
+    # over a green run.
+    fresh = None
+    if not a.dry:
+        try:
+            sys.path.insert(0, str(REPO / "packages" / "core"))
+            import freshness
+            fresh = freshness.check()
+        except Exception as exc:                      # never let it break a run
+            say(f"\n! freshness check failed: {type(exc).__name__}: {exc}")
 
     finished = datetime.now(timezone.utc)
     say("\n" + "=" * 70)
     say(f"{'OK' if ok else 'FAILED'}  in "
         f"{(finished - started).total_seconds():.1f}s")
+
+    if fresh:
+        if fresh["ok"]:
+            say("feeds: all within threshold")
+        else:
+            say(f"feeds: {fresh['n_stale']} STALE — scores above were computed "
+                f"on these:")
+            for x in fresh["stale"]:
+                say(f"   {x['series']:24}{x['feed']:22}{x['age_txt']}"
+                    f"   (limit {x['limit']})")
+            say("   docs/DAILY_MONITORING.md: a stale price is not a flat price.")
+
     say("\nNOT refreshed by an unattended run (see docs/DAILY_MONITORING.md):")
     for name, why in MANUAL:
         say(f"   {name:22} {why}")
@@ -118,6 +194,14 @@ def main() -> int:
             "finished": finished.isoformat(timespec="seconds"),
             "ok": ok,
             "steps": results,
+            # Separate from `ok` on purpose. A run can succeed against stale
+            # inputs; the dashboard must be able to tell those two apart rather
+            # than collapsing them into one green light.
+            "feeds_ok": (fresh["ok"] if fresh else None),
+            "stale_feeds": ([{"series": x["series"], "feed": x["feed"],
+                              "age": x["age_txt"], "limit": x["limit"]}
+                             for x in fresh["stale"]] if fresh else []),
+            "worst_feed_age": (fresh["worst_age"] if fresh else None),
             "manual": [{"name": n, "why": w} for n, w in MANUAL],
             "log": str(log_path.relative_to(REPO)),
         }, indent=2), encoding="utf-8")

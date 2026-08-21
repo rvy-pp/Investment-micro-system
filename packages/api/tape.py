@@ -190,11 +190,21 @@ def refresh_status() -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         return {"state": "unreadable", "why": f"{type(exc).__name__}: {exc}"}
     failed = [x["step"] for x in s.get("steps", []) if x.get("status") == "fail"]
+    # feeds_ok is reported SEPARATELY from state, never folded into it. A run
+    # can succeed against inputs that stopped printing days ago, and collapsing
+    # the two into one green light is precisely the failure this whole function
+    # exists to prevent — found 2026-08-21 with the light green over zinc_shfe
+    # and OI both 5 trading days stale.
     return {
         "state": "ok" if s.get("ok") else "failed",
         "day": s.get("day"),
         "finished": s.get("finished"),
         "failed_steps": failed,
+        "feeds_ok": s.get("feeds_ok"),
+        "stale_feeds": s.get("stale_feeds", []),
+        "worst_feed_age": s.get("worst_feed_age"),
+        "skipped_steps": [x["step"] for x in s.get("steps", [])
+                          if x.get("status") == "skipped"],
         "manual": s.get("manual", []),
     }
 
