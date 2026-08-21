@@ -46,6 +46,11 @@ STEPS = [
     ("preflight",         ["packages/core/preflight.py"],                     True),
     ("equity closes",     ["packages/adapters/yahoo_prices.py", "--load",
                            "--range", "3mo"],                                 False),
+    # LME cash. Promoted from the manual list 2026-08-21 once it turned out
+    # westmetall answers plain urllib with HTTP 200 — the earlier
+    # "needs an agent" was inferred from lme.com's 403 without testing the
+    # mirror. This is an ordinary cron adapter.
+    ("LME cash",          ["packages/adapters/westmetall.py", "--load"],      False),
     # OI was missing from this list until 2026-08-21 and had gone 5 trading days
     # stale unnoticed, because nothing checked a table outside `prices`.
     # pipeline.py STEP 1 always ran it; this file simply forgot to.
@@ -88,10 +93,6 @@ MANUAL = [
     ("Wind zinc (ZN.SHF)", "Wind MCP is agent-callable only"),
     ("broker mail",        "Microsoft 365 MCP is agent-callable only"),
     ("Daily Metals Pack",  "manual workbook drop"),
-    ("LME cash (westmetall)",
-                           "needs an agent: lme.com 403s automated fetching, so the "
-                           "table is captured with WebFetch into data/staging/ and "
-                           "loaded by adapters/westmetall.py"),
     ("extraction",         "deliberately never automated — a wrong extraction "
                            "enters the store as a fact"),
 ]

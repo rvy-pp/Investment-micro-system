@@ -287,11 +287,29 @@ westmetall's 3M column), so they are NOT loaded. No Wind cash code resolves
 **SHFE/DCE are Chinese domestic, not seaborne.** Per invariant 6 they would be
 `alumina_shfe` and `iron_ore_dce`, never `alumina_index` or `iron_ore`.
 
-**The fetch needs an agent, not a cron.** Search and `WebFetch` are agent-callable
-— the same constraint as Wind and M365 — so this is the two-step the repo already
-uses twice: agent captures to `data/staging/westmetall_<date>.json`,
-`adapters/westmetall.py` validates and loads. Staging files are version-controlled
-as the dated record of what the source said.
+**It does NOT need an agent — corrected 2026-08-21, same day.** The line above
+originally said it did. That was inferred from lme.com's 403 without testing the
+mirror: **westmetall answers plain stdlib `urllib` with HTTP 200 in ~1.5s.**
+`adapters/westmetall.py` fetches and parses directly and is an ordinary cron
+step, now in `refresh.py`.
+
+The distinction that was blurred: Wind and M365 are **interactively-authenticated
+MCP servers** and genuinely can fail unattended — the vault's own
+`daily-morning-orchestrator` carries a KNOWN CAVEAT saying exactly that about
+`/mail-read`. `WebSearch`/`WebFetch` are built-in and need no login, and
+westmetall needs neither. Three different things.
+
+It also removed a real hazard: the agent version had a model transcribe 161 rows
+per metal out of a rendered table. Nothing in the validator catches 3,182 read as
+3,812 — in range, weekday, not future. (Cross-checked afterwards: that capture
+was byte-accurate on 322/322 rows. The risk was real, the instance was clean.)
+
+**The column guard is the load-bearing part.** Cash vs 3-month is a genuine
+instrument difference — westmetall's own zinc basis averages +84 USD/t — so the
+cash column is found by matching its header text AND asserting its position.
+Tested against four page mutations; the header check alone caught three, and a
+header/data desync silently returned the 3-month, which is why the position pin
+exists. All four now refuse.
 
 **Day-delayed, and the date must not be moved.** The newest LME row is T-1.
 Dating it T would be a look-ahead bug of exactly the kind the `effective_from`
