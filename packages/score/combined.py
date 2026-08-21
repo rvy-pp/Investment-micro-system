@@ -102,6 +102,46 @@ def main() -> int:
         if comp is not None:
             rows.append((eid, comp))
 
+    # ---- the second rule, shown alongside rather than instead ----------------
+    # TWO COMBINATION RULES ARE REPORTED ON PURPOSE, undecided as of 2026-08-21.
+    # COMP is the weighted average. SIZE is conviction sizing, which the repo's
+    # own architecture argues for (README:91 "L2 never sets direction",
+    # README:95 "L3 is a permission layer, not another additive term") and which
+    # the average violates: at a 0.15 weight, mood alone can decide the sign.
+    # Neither is validated — 7 independent windows cannot separate them — so
+    # both are printed and the choice is deferred rather than guessed.
+    import conviction as cv
+    print("")
+    print(f"{'entity':16}{'SIZE':>8}{'vs COMP':>9}   conviction sizing "
+          f"(economics sets the sign; val/guid scale it)")
+    print("-" * 86)
+    szs = []
+    for eid in ents:
+        pil = {p_: sc for p_, sc in conn.execute(
+            "SELECT pillar, score FROM pillar_scores WHERE as_of=? AND entity_id=? "
+            "AND score IS NOT NULL", (as_of, eid))}
+        c = cv.conviction(pil)
+        if c["size"] is None:
+            print(f"{eid:16}{'—':>8}            {c['why']}")
+            continue
+        comp = pil.get("composite")
+        # 1.00 = a 5% EBITDA move at neutral valuation and guidance (the
+        # specs/scoring.yaml anchor). 0.28 = the 1.5% min_pct_of_ebitda
+        # materiality floor. Neither number is new.
+        verdict = ("FULL" if c["size"] >= 1.0 else
+                   f"{c['size']*100:.0f}%" if c["size"] >= 0.28 else "no trade")
+        ctxt = f'{comp:>9.2f}' if comp is not None else f"{'—':>9}"
+        print(f"{eid:16}{c['size']:>+8.3f}{ctxt}   {verdict:9}"
+              f"  econ {pil['economics']:.2f} x val {c['f_val']:.2f}"
+              f" x guid {c['f_guid']:.2f}")
+        szs.append((eid, c["size"]))
+    if szs:
+        szs.sort(key=lambda r: -r[1])
+        print("")
+        print("  by SIZE: " + "  >  ".join(f'{e} {v:+.2f}' for e, v in szs))
+        print(f"  size 1.00 = full position (5% of EBITDA, neutral qualifiers); "
+              f"below 0.28 = below the desk materiality floor")
+
     if len(rows) > 1:
         rows.sort(key=lambda r: -r[1])
         print(f"\nranked: " + "  >  ".join(f"{e} {c:.2f}" for e, c in rows))
