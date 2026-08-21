@@ -25,6 +25,7 @@ import pathlib
 import sqlite3
 import subprocess
 import sys
+import datetime as dt
 from datetime import datetime, timezone
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
@@ -66,7 +67,8 @@ def put(conn, as_of, eid, pillar, score, raw, detail, withheld, sha):
          SPEC_VERSION, sha, now()))
 
 
-def score_one_date(conn, as_of: str, sha: str) -> int:
+def score_one_date(conn, as_of: str, sha: str,
+                   skip_gate: bool = False) -> int:
     entities, units, fin = load_specs()
     fins = fin["companies"]
     form, k, p = load_scoring()
@@ -84,6 +86,48 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
 
     shocks, _detail, _resolved, fx = shocks_from_store(30, as_of, acc, hl)
     usdinr = fx or fin["usdinr"]
+
+    # ---- THE STALENESS GATE ------------------------------------------------
+    # docs/DAILY_MONITORING.md, Tier 1: "On any staleness breach: report it, and
+    # withhold the affected scores. Invariant 7 — withhold rather than guess. A
+    # stale price is not a flat price."
+    #
+    # That was written 2026-08-18 and never implemented. On 2026-08-21 this file
+    # produced five economics scores on inputs 4 to 81 days stale, with ZERO
+    # withheld rows, while freshness.py printed a warning nobody was required to
+    # read. On a cron nobody reads it at all.
+    #
+    # Withholding is not a cost here — it is the product. A recorded withholding
+    # says "we could not tell", which the review layer can grade. A score
+    # computed on a dead feed says "nothing is happening", which is a claim, and
+    # a false one: carry-forward means a broken source and a quiet market are
+    # byte-identical in the store (cp_coke has 3 distinct closes in 30 rows).
+    #
+    # PER ENTITY, not global. A stale coal print must not withhold a zinc name
+    # that never consumes coal, so the gate resolves each entity's own
+    # price_links and only fires on the ones it actually reads.
+    stale_series: dict[str, str] = {}
+    if not skip_gate:
+        sys.path.insert(0, str(REPO / "packages" / "core"))
+        import freshness
+        fr = freshness.check(dt.date.fromisoformat(as_of))
+        stale_series = {x["series"]: x["age_txt"] for x in fr["stale"]
+                        if x["series"] != "oi"}   # OI is not a bridge input
+        if stale_series:
+            print(f"staleness gate: {len(stale_series)} series over threshold — "
+                  + ", ".join(f"{k} ({v})" for k, v in sorted(stale_series.items())))
+
+
+    def consumed_by(ent: dict) -> set[str]:
+        """price_links this entity reads, including through its reporting units."""
+        out = set()
+        for e in [ent] + [x for x in entities.values()
+                          if x.get("parent_id") == ent["id"]]:
+            for ln in (e.get("outputs") or []) + (e.get("inputs") or []):
+                if ln.get("price_link"):
+                    out.add(ln["price_link"])
+        return out
+
     val_k = solve_k("hill", val_mod.Z_ANCHOR, val_mod.SCORE_ANCHOR, val_mod.P)
     mood_k = solve_k("hill", mood_mod.MOOD_ANCHOR, mood_mod.SCORE_ANCHOR, mood_mod.P)
 
@@ -96,10 +140,18 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
         parts: dict[str, float] = {}
 
         # --- economics (P1+P2) ---
+        # Gate first: a stale INPUT invalidates the bridge before coverage does.
+        # coverage_ok asks "is every line priced at all", which a carried-forward
+        # dead feed answers yes to.
+        bad = sorted(consumed_by(ent) & set(stale_series))
         r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr,
                        available | set(shocks))
         pct = r["pct_of_ebitda"]
-        if pct is not None and r["coverage_ok"]:
+        if bad:
+            put(conn, as_of, eid, "economics", None, pct, None,
+                "stale inputs: " + "; ".join(f"{s} {stale_series[s]}" for s in bad),
+                sha)
+        elif pct is not None and r["coverage_ok"]:
             s = to_score(pct, k, form, p)
             parts["economics"] = s
             put(conn, as_of, eid, "economics", s, pct,
@@ -114,7 +166,12 @@ def score_one_date(conn, as_of: str, sha: str) -> int:
         ser, cut, _cp, err = val_mod.spot_multiple_series(
             conn, ent, f, units, bq["start"], bq["end"], usdinr)
         ser = [x for x in ser if x[0] <= as_of]
-        if len(ser) >= 20:
+        # P3 re-marks EV/EBITDA at the CURRENT price, so a stale equity close
+        # means it is re-marking at an old price and calling it spot.
+        if eid in stale_series:
+            put(conn, as_of, eid, "valuation", None, None, None,
+                f"stale price: {eid} {stale_series[eid]}", sha)
+        elif len(ser) >= 20:
             import statistics
             mults = [m for _, m, _ in ser]
             z = (mults[-1] - statistics.fmean(mults)) / (statistics.pstdev(mults) or 1e-9)
@@ -185,6 +242,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of")
     ap.add_argument("--backfill", type=int, default=0)
+    # A BACKFILL MUST SKIP THE GATE. freshness.check() measures age against the
+    # date being scored, so every historical date is "stale" by construction —
+    # scoring 2021 would withhold all of it. The gate is about TODAY's feeds
+    # being alive, which is only a meaningful question for a current run.
+    ap.add_argument("--skip-gate", action="store_true",
+                    help="score even on stale feeds (implied by --backfill)")
     a = ap.parse_args()
 
     conn = sqlite3.connect(DB)
@@ -202,7 +265,7 @@ def main() -> int:
 
     total = 0
     for d in dates:
-        total += score_one_date(conn, d, sha)
+        total += score_one_date(conn, d, sha, skip_gate=a.skip_gate or bool(a.backfill))
         conn.commit()
     print(f"wrote {total} pillar_scores rows across {len(dates)} dates "
           f"({dates[0]} .. {dates[-1]}) at spec {SPEC_VERSION} / {sha}")

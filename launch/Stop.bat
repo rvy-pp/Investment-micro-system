@@ -28,5 +28,10 @@ if not defined FOUND (
     echo Stopped.
 )
 
-"%SystemRoot%\System32	imeout.exe" /t 2 /nobreak >nul
+REM A ping, not `timeout`, purely to hold the window open for a moment.
+REM timeout.exe needs a real console and dies with "Input redirection is not
+REM supported" whenever stdin is redirected, which is every automated test of
+REM this script. ping has no such requirement. (git-bash's /usr/bin/timeout
+REM also shadows the Windows one, so the bare name was wrong twice over.)
+ping -n 3 127.0.0.1 >nul
 exit /b 0

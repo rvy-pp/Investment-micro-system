@@ -15,12 +15,21 @@ echo Repo: %CD%
 echo.
 python packages\refresh.py
 echo.
-if errorlevel 1 (
+REM Checked HIGH to LOW: `if errorlevel N` is true for anything >= N, so
+REM testing 1 first would swallow 2 and report a stale feed as a failure.
+if errorlevel 2 (
+    echo ------------------------------------------------------------
+    echo RAN OK, but one or more FEEDS ARE STALE - see the list above.
+    echo Scores for the affected names are WITHHELD, not guessed.
+    echo Fix by supplying the input: drop the metals pack, pull Wind
+    echo zinc, or have an agent capture the westmetall LME table.
+    echo ------------------------------------------------------------
+) else if errorlevel 1 (
     echo ------------------------------------------------------------
     echo REFRESH FAILED - see the output above and data\refresh\
     echo ------------------------------------------------------------
 ) else (
-    echo Refresh OK.
+    echo Refresh OK, all feeds current.
 )
 echo.
 pause

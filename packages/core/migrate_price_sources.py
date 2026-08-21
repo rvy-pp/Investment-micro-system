@@ -51,11 +51,51 @@ sys.path.insert(0, str(REPO / "packages" / "core"))
 import prices_io  # noqa: E402
 
 # series -> (source, why). Add a row only when ONE writer is possible.
+#
+# EXTENDED 2026-08-21, second pass. The first pass stamped lme_zinc alone, which
+# left the collision it was meant to stop still live: usdinr, usdcny, silver,
+# alumina_index and midwest_premium all had thousands of NULL rows, and NULL
+# ranks 0, so the very next Yahoo cron would overwrite pack-written cells exactly
+# as it did on 2026-08-15 (usdinr 95.4300 -> 95.6470).
+#
+# The rule is unchanged and still the important part: stamp only where ONE writer
+# is possible. A wrong stamp permanently protects a bad cell, which is worse than
+# no stamp at all.
 CLAIMS = {
     "lme_zinc": ("metals_pack",
                  "sole possible writer: Yahoo has no zinc candidate, Wind writes "
                  "zinc_shfe, FRED writes coal. Matches westmetall CASH to 21.89 "
                  "mean abs over 159 dates"),
+    "brent": ("metals_pack",
+              "pack column 16. No Yahoo candidate (BZ=F is not in CANDIDATES), "
+              "no Wind or FRED writer"),
+    "cp_coke": ("metals_pack",
+                "pack column 24. yahoo_prices lists it under RESEARCH_SOURCED "
+                "with CANDIDATES['cp_coke'] = []"),
+    "thermal_coal_seaborne": ("metals_pack",
+                              "pack column 11. FRED can also write this one, but "
+                              "only as a monthly fallback and it has not run since "
+                              "the pack took over — see fred_prices.SERIES"),
+}
+
+# Series where more than one writer is genuinely possible, so NOTHING is claimed.
+# Recorded explicitly rather than by omission, because "not in CLAIMS" otherwise
+# reads as "nobody thought about it".
+#
+# These self-heal: the next metals-pack drop stamps its own rows at rank 40 and
+# they become protected from then on. Until that drop, Yahoo can still take them,
+# and the damage is bounded — both writers are the same measure for FX and
+# silver, and ALA=F genuinely IS the Platts alumina assessment rather than a
+# proxy for it.
+CONTESTED = {
+    "usdinr":          "pack column 15 AND Yahoo USDINR=X",
+    "usdcny":          "pack column 32 AND Yahoo CNY=X",
+    "silver":          "pack column 13 AND Yahoo SI=F",
+    "alumina_index":   "pack column 20 AND Yahoo ALA=F (both Platts-based)",
+    "midwest_premium": "Yahoo AUP=F only, but USD/lb vs USD/t is unresolved — do "
+                       "not protect a cell whose UNIT is in question",
+    "lme_aluminium":   "the CME/LME mixture — deliberately replaceable so "
+                       "westmetall can own it",
 }
 
 
@@ -92,7 +132,8 @@ def main() -> int:
         % ",".join("?" * len(CLAIMS)), tuple(CLAIMS)).fetchall()
     print(f"\nleft NULL on purpose (rank 0, any source may replace):")
     for eid, n in left:
-        print(f"   {eid:22}{n:>8,}")
+        why = CONTESTED.get(eid, "")
+        print(f"   {eid:22}{n:>8,}  {why}")
 
     if not a.apply:
         print("\nreport only — pass --apply to write")

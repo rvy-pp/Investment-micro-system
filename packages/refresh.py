@@ -210,7 +210,24 @@ def main() -> int:
         }, indent=2), encoding="utf-8")
         say(f"\nstatus -> {(OUT / 'status.json').relative_to(REPO)}")
 
-    return 0 if ok else 1
+    # THREE EXIT CODES, because "it broke" and "it ran on stale data" need
+    # different responses and a cron can only see the number.
+    #
+    #   0  ran clean, feeds current
+    #   1  a step FAILED — code or connectivity; someone must look
+    #   2  ran fine, but a feed is over its threshold. Scores for the affected
+    #      entities are WITHHELD by run_scores.py rather than computed, so the
+    #      output is honest; what is missing is the input, and only a person can
+    #      supply it (a metals-pack drop, a Wind pull, a westmetall capture).
+    #
+    # Distinct rather than collapsed into 1: a stale feed is the NORMAL state of
+    # this system between manual drops, and if it shared an exit code with a real
+    # failure the red would stop meaning anything within a week.
+    if not ok:
+        return 1
+    if fresh and not fresh["ok"]:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
