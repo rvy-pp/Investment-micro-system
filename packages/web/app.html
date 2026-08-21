@@ -94,14 +94,9 @@
 
   .note{font-size:12.5px;color:var(--soft);margin:2px 0 16px}
   .hint{font-family:var(--mono);font-size:11px;color:var(--faint)}
-  .ent{font-weight:640;background:var(--alt)}
-  .quote{font-size:12px;color:var(--soft);font-style:italic;max-width:60ch}
   .err{background:var(--down-soft);color:var(--down);padding:10px 14px;
        border-radius:3px;margin:14px 0;font-family:var(--mono);font-size:12.5px}
-  .ok-flash{background:var(--up-soft);color:var(--up)}
   .loading{color:var(--faint);padding:30px 0;font-family:var(--mono);font-size:12px}
-  input.ovr{width:96px;text-align:right;font-family:var(--mono)}
-  input.nt{width:100%;min-width:140px;font-size:12.5px}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ---- pair view ---- */
@@ -183,18 +178,14 @@
   <nav role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-t="pair">Pair</button>
     <button class="tab" role="tab" aria-selected="false" data-t="scores">Bridge</button>
-    <button class="tab" role="tab" aria-selected="false" data-t="inputs">Inputs</button>
     <button class="tab" role="tab" aria-selected="false" data-t="pos">Positioning</button>
-    <button class="tab" role="tab" aria-selected="false" data-t="guid">Guidance</button>
   </nav>
 
   <div id="err"></div>
 
   <section id="s-pair" class="on"><div class="loading">loading…</div></section>
   <section id="s-scores"><div class="loading">loading…</div></section>
-  <section id="s-inputs"><div class="loading">loading…</div></section>
   <section id="s-pos"><div class="loading">loading…</div></section>
-  <section id="s-guid"><div class="loading">loading…</div></section>
 </div>
 
 <script>
@@ -286,73 +277,6 @@ async function loadScores(){
   $('#s-scores').innerHTML = renderGroup(g) + renderGroup(d.zinc);
 }
 
-async function loadInputs(){
-  const r = await fetch('/api/inputs');
-  const rows = await r.json();
-  if (rows.error) return showErr(rows.error);
-  let html = `<h2>Editable inputs</h2>
-    <p class="note">The YAML specs are the checked-in baseline; edits are stored as
-    overrides and applied on top, so nothing rewrites a spec file and
-    <b>Revert</b> restores the original. <b>verify: pending</b> means the number
-    came from sector knowledge, not a filing — those are the ones worth attacking.</p>
-    <div class="scroll"><table><thead><tr>
-      <th>Entity / field</th><th class="n">Spec</th><th class="n">Your value</th>
-      <th>Why</th><th></th><th>Provenance</th></tr></thead><tbody>`;
-  let cur = null;
-  for (const x of rows){
-    if (x.entity_id !== cur){
-      cur = x.entity_id;
-      html += `<tr><td class="ent k" colspan="6">${esc(cur)}</td></tr>`;
-    }
-    const vchip = x.verify === 'sourced'
-      ? '<span class="chip c-up">sourced</span>'
-      : '<span class="chip c-warn">pending</span>';
-    const id = `${x.entity_id}|${x.scope}|${x.item ?? ''}|${x.field}`;
-    html += `<tr data-id="${esc(id)}">
-      <td class="k">${esc(x.label)} ${vchip}</td>
-      <td class="n">${x.spec_value}</td>
-      <td class="n"><input class="ovr" type="number" step="any"
-           value="${x.override ?? ''}" placeholder="${x.spec_value}"></td>
-      <td><input class="nt" type="text" placeholder="reason (optional)"
-           value="${esc(x.note ?? '')}"></td>
-      <td><button class="save">Save</button>
-          ${x.override_id ? `<button class="ghost rev" data-oid="${x.override_id}">Revert</button>` : ''}</td>
-      <td class="quote">${esc(x.source_note || '')}</td>
-    </tr>`;
-  }
-  $('#s-inputs').innerHTML = html + '</tbody></table></div>';
-}
-
-// Delegated ONCE, on the stable section element — not inside loadInputs and
-// NOT with {once:true}. The previous version used {once:true}, so any stray
-// click inside the table consumed the listener and every later Save/Revert
-// silently did nothing: you would type a correction, press Save, and get no
-// action and no error. Delegation survives innerHTML re-renders, so attaching
-// here once is both correct and sufficient.
-$('#s-inputs').addEventListener('click', async e => {
-    const tr = e.target.closest('tr');
-    if (!tr || !tr.dataset.id) return;
-    if (e.target.classList.contains('save')){
-      const [entity_id, scope, item, field] = tr.dataset.id.split('|');
-      const v = tr.querySelector('.ovr').value;
-      if (v === '') return showErr('Enter a value, or press Revert to drop the override.');
-      const res = await fetch('/api/override', {method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({entity_id, scope, item: item || null, field,
-          value: parseFloat(v), note: tr.querySelector('.nt').value,
-          prev: parseFloat(tr.children[1].textContent)})});
-      const d = await res.json();
-      if (d.error) return showErr(d.error);
-      showErr(''); await loadInputs(); await loadScores();
-    }
-    if (e.target.classList.contains('rev')){
-      await fetch('/api/override/clear', {method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({id: parseInt(e.target.dataset.oid,10)})});
-      await loadInputs(); await loadScores();
-    }
-});
-
 function spark(vals){
   if (!vals || vals.length < 2) return '';
   const w = 110, h = 22, lo = Math.min(...vals), hi = Math.max(...vals);
@@ -400,37 +324,6 @@ async function loadPos(){
       <th>Buildup 3m</th><th>Buildup 15d</th><th class="n">%ile</th>
       <th class="n">z 3m</th><th class="n">Price</th></tr></thead>
       <tbody>${body || '<tr><td colspan="9" class="hint">no OI loaded</td></tr>'}</tbody>
-    </table></div>`;
-}
-
-async function loadGuid(){
-  const rows = await (await fetch('/api/guidance')).json();
-  if (rows.error) return showErr(rows.error);
-  const body = rows.map(r => `
-    <tr>
-      <td class="k">${esc(r.entity_id)}</td>
-      <td class="k">${esc(r.period)}</td>
-      <td class="k">${esc(r.metric)}</td>
-      <td class="n">${esc(r.target)}</td>
-      <td class="hint">${esc(r.unit ?? '')}</td>
-      <td class="n" style="color:var(--up)">${r.n_for}</td>
-      <td class="n" style="color:var(--down)">${r.n_against}</td>
-      <td class="n">${r.confidence.toFixed(2)}</td>
-      <td class="n"><span class="score">${r.p4.toFixed(2)}</span></td>
-      <td style="width:90px">${bar(r.p4)}</td>
-      <td class="quote">“${esc(r.quote)}”</td>
-    </tr>`).join('');
-  $('#s-guid').innerHTML = `<h2>Guidance confidence (P4)</h2>
-    <p class="note">Will management hit what they said. Scored <b>linearly</b>,
-      unlike P1+P2 — a confidence is already a probability in [0,1], and squashing it
-      again would distort a number already in the right units.
-      <b>No commitment has resolved yet</b>, so every prior is the neutral 0.5 and this
-      currently reflects evidence only; the track record accrues as periods close.</p>
-    <div class="scroll"><table><thead><tr>
-      <th>Entity</th><th>Period</th><th>Metric</th><th class="n">Target</th><th>Unit</th>
-      <th class="n">For</th><th class="n">Against</th><th class="n">Conf</th>
-      <th class="n">P4</th><th></th><th>Cited</th></tr></thead>
-      <tbody>${body || '<tr><td colspan="11" class="hint">no open guidance</td></tr>'}</tbody>
     </table></div>`;
 }
 
@@ -916,8 +809,7 @@ function wirePair(){
   });
 }
 
-const loaders = {pair:loadPair, scores:loadScores, inputs:loadInputs,
-                 pos:loadPos, guid:loadGuid};
+const loaders = {pair:loadPair, scores:loadScores, pos:loadPos};
 const loaded = {};
 function tab(name){
   document.querySelectorAll('.tab').forEach(b =>
@@ -928,7 +820,7 @@ function tab(name){
   // Pair tab would imply it moves the persisted tape, which it cannot.
   // The window selector, FX and the override count all describe the LIVE
   // bridge. Showing them over the persisted tape would imply they move it.
-  const live = (name === 'scores' || name === 'inputs');
+  const live = (name === 'scores');
   $('#winwrap').hidden = !live;
   $('#fxwrap').hidden = !live;
   if (!loaded[name]){ loaded[name] = 1; loaders[name]().catch(e => showErr(e.message)); }
