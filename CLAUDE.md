@@ -106,6 +106,103 @@ bounded probability — squashing it again would distort it.
 
 ---
 
+## The front end — built 2026-08-21, non-ferrous first
+
+Double-click **`launch\Investment Micro-System.vbs`** (a Desktop shortcut points
+at it). It refreshes the scores, starts the server on 8770 and opens the page —
+about 18s cold. `launch\Stop.bat` frees the port; `launch\Update Now.bat` runs
+the refresh where you can read it.
+
+**No scheduled task is registered, by the PM's choice 2026-08-21.** The launcher
+refreshes on every double-click, so the scores are current whenever the page is
+open and nothing runs when it is not. `launch\Install Daily Task.bat` is written
+and unrun if that changes.
+
+### Two halves of the API that must not be merged
+
+| | reads | serves |
+|---|---|---|
+| `api/engine.py` | re-runs `bridge.py` in memory, **overrides applied** | Bridge, Inputs |
+| `api/tape.py` | `pillar_scores` **as stored**, never recomputed | Pair |
+
+They disagree whenever an override is active or `run_scores.py` is stale, and
+that is correct rather than a bug: the pair chart must show numbers that were
+actually persisted, or the chart and the backtest describe different systems.
+The Inputs what-if loop needs the opposite, hence both.
+
+### The pair chart scores the spread, and now so can P3
+
+`specs/scoring.yaml` says the pair rule "will apply to the P3 and P4 scores too,
+so do the same there." Nothing did until now. It needs each pillar's OWN k,
+because each anchors on a different quantity — economics on 0.05 of EBITDA,
+valuation on z = 1.0, mood on 2.0. Reusing k = 0.05 on a z-score would read a
+1.4sd gap as a 28×-anchor move and pin the pair at 5.0. `tape.curves()` returns
+them per pillar for exactly this reason.
+
+Two pillars cannot be spread-scored, for different reasons the UI states
+separately: **guidance** is linear (1 + 4·confidence) so the plain difference is
+already exact, and **composite** stores `raw = NULL` so there is no single x to
+difference at all.
+
+**A correction to how invariant 4 is usually stated.** "The naive difference
+understates" is true in the tails and false elsewhere — the relationship is not
+one-directional:
+
+| both legs at | naive | spread | |
+|---|---|---|---|
+| 11.0% / 9.25% | 0.100 | 0.343 | naive understates **3.4×** — the documented case |
+| 5.0% / 3.25% | 0.312 | 0.343 | roughly agree |
+| 3.0% / 1.25% | 0.412 | 0.343 | naive **overstates** |
+| 4.65% / 4.33% | 0.053 | 0.032 | naive overstates 1.7× — hzl/vedl, today |
+
+They agree exactly only when one leg sits at neutral. The honest statement is
+the one the chart makes: **the naive difference depends on where the pair sits
+on the curve; the pair score depends only on the gap.** That is the reason for
+the rule, and it is stronger than "it understates". Both lines are drawn — solid
+and faint-dashed — so the divergence is visible rather than asserted.
+
+### What the chart refuses to draw through
+
+A confirmed corporate action **breaks the price line**; each segment rebases to
+its own start. Only VEDL 2026-04-30 is confirmed. The 15% jump scan finds eleven
+more across the five names since 2011 and **all of them are real market moves** —
+the COVID crash, the 2024 election result, the failed VEDL delisting. Those are
+marked and drawn *through*. Auto-excluding them would erase exactly the relative
+performance a pair chart exists to show; `CONFIRMED_ACTIONS` in `tape.py` is a
+hand-verified allow-list and must stay one.
+
+The break path **cannot fire on real data** — vedanta's scores begin 2026-05-01,
+the day after the demerger — so it was verified by injecting a synthetic action
+into a live window and checking the marker, the two segments and the rebase. Per
+the GLOB lesson: a guard needs an acceptance test, not only a rejection test.
+
+### Three things the UI says that the numbers cannot
+
+- **Cross peer-group pairs are flagged.** `peer_group` is the scoring universe;
+  the default pair is picked inside one group. Opening on hindalco/hindustan_zinc
+  would have led with the comparison the schema exists to prevent.
+- **hzl/vedanta on economics is flagged as degenerate**, per the standing finding
+  that `pct_of_ebitda` divides the 63.4% stake straight back out. A flat line
+  there is the arithmetic, not the absence of news.
+- **The pair span shows which leg binds it.** economics advertises 1374 dates but
+  a pair gets the intersection, and vedanta starts 2026-05-01 (post-demerger) and
+  vaml at its 2026-06-15 listing. Without the note a five-year chart silently
+  collapsing to three months reads as a broken query.
+
+### The refresh light
+
+`packages/refresh.py` writes `data/refresh/status.json`; the header renders it.
+**A scheduled task that silently stops looks exactly like a quiet market** —
+there is no decay here by design (invariant 3), so old scores and unchanged
+scores are indistinguishable on the page. Staleness is counted in **trading
+days**, or every Monday reads as two days old and the light gets ignored, which
+is the only way an indicator can fail.
+
+`refresh.py` is a strict subset of `pipeline.py`, and the subset is the point: it
+does equity closes, corporate actions, preflight and score-and-persist, and it
+**names the four things it did not do** on every run — Wind zinc, broker mail,
+the metals pack and extraction, three of which no unattended process can do.
+
 ## The silent-arithmetic bug class — read `docs/SILENT_BUGS.md`
 
 **One failure shape has produced every serious bug here.** Not a crash: a lookup
@@ -155,6 +252,15 @@ no.
   excluded directory, so a negation can never re-include the staging file.
 - **Write commit messages with the Write tool to a file, then `git commit -F`.**
   PowerShell here-strings mangle quotes and `-Encoding utf8` adds a BOM.
+- **`.bat` files need CRLF.** Written with LF they fail as `'M' is not
+  recognized as an internal or external command` — cmd mis-tokenises `REM`.
+  `.vbs` tolerates LF; batch does not. Convert before testing.
+- **An unescaped `)` inside a batch `do ( ... )` block closes it early.**
+  `echo Stopping (PID %%p)...` dies with `... was unexpected at this time.`
+  The vault's `Stop Dashboard.bat` carries this bug. Use `^(` `^)` or no brackets.
+- **git-bash's `/usr/bin/timeout` shadows Windows `timeout.exe`** when cmd
+  inherits a POSIX PATH, so a `.bat` that works on a double-click throws a usage
+  error when tested from bash. The launch scripts call it by absolute path.
 
 ## Where valuation inputs come from
 

@@ -103,6 +103,61 @@
   input.ovr{width:96px;text-align:right;font-family:var(--mono)}
   input.nt{width:100%;min-width:140px;font-size:12.5px}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ---- pair view ---- */
+  .ctl{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
+       background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+       padding:12px 14px;margin-bottom:14px}
+  .ctl label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);
+       font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+       font-weight:600}
+  .ctl select{min-width:150px}
+  .ctl .sidebar-l{border-left:3px solid var(--up);padding-left:8px}
+  .ctl .sidebar-s{border-left:3px solid var(--down);padding-left:8px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+         gap:10px;margin-bottom:14px}
+  .stat{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+        padding:11px 13px}
+  .stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.09em;
+        text-transform:uppercase;color:var(--faint);font-weight:600}
+  .stat .v{font-family:var(--mono);font-size:22px;font-weight:660;line-height:1.25;
+        font-variant-numeric:tabular-nums}
+  .stat .s{font-size:11.5px;color:var(--faint)}
+
+  .chart{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+         padding:10px 12px 4px}
+  .chart svg{display:block;width:100%;height:auto}
+  .ax{fill:var(--faint);font-family:var(--mono);font-size:11px}
+  .axl{fill:var(--faint);font-family:var(--mono);font-size:10px;
+       letter-spacing:.09em;text-transform:uppercase;font-weight:600}
+  .grid{stroke:var(--rule2);stroke-width:1}
+  .zero{stroke:var(--rule);stroke-width:1;stroke-dasharray:3 3}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;
+          font-size:12px;color:var(--soft);align-items:center}
+  .legend i{display:inline-block;width:20px;height:0;border-top-width:2.5px;
+            margin-right:6px;vertical-align:middle}
+
+  .banner{background:var(--warn-soft);color:var(--warn);border-radius:3px;
+          padding:9px 13px;margin:0 0 14px;font-size:12.5px;
+          border-left:3px solid var(--warn)}
+  .banner b{font-family:var(--mono)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+         gap:10px;max-height:560px;overflow-y:auto;padding:2px;
+         border:1px solid var(--rule);border-radius:3px;background:var(--alt)}
+  .cd{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+      padding:10px 12px 6px}
+  .cd h3{margin:0 0 2px;font-size:13.5px;font-weight:640;display:flex;
+         align-items:baseline;gap:8px}
+  .cd h3 .g{font-family:var(--mono);font-size:10px;letter-spacing:.07em;
+            text-transform:uppercase;color:var(--faint);font-weight:600}
+  .cd .row{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;
+           color:var(--faint);margin-bottom:5px;font-variant-numeric:tabular-nums}
+  .cd .row b{color:var(--ink);font-size:13px}
+  .cd.pick-l{border-color:var(--up);box-shadow:inset 3px 0 0 var(--up)}
+  .cd.pick-s{border-color:var(--down);box-shadow:inset 3px 0 0 var(--down)}
 </style>
 </head>
 <body>
@@ -110,7 +165,7 @@
   <header>
     <h1>Investment Micro-System</h1>
     <div class="meta">
-      <span>window
+      <span id="winwrap">window
         <select id="win">
           <option value="5">5d</option>
           <option value="10">10d</option>
@@ -118,15 +173,16 @@
           <option value="60">60d</option>
         </select>
       </span>
+      <span id="refresh"></span>
       <span id="asof">—</span>
-      <span id="fx">—</span>
-      <span id="ovr">—</span>
+      <span id="fxwrap"><span id="fx">—</span> <span id="ovr">—</span></span>
       <button class="ghost" id="reload">Refresh</button>
     </div>
   </header>
 
   <nav role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-t="scores">Scores</button>
+    <button class="tab" role="tab" aria-selected="true" data-t="pair">Pair</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="scores">Bridge</button>
     <button class="tab" role="tab" aria-selected="false" data-t="inputs">Inputs</button>
     <button class="tab" role="tab" aria-selected="false" data-t="pos">Positioning</button>
     <button class="tab" role="tab" aria-selected="false" data-t="guid">Guidance</button>
@@ -134,7 +190,8 @@
 
   <div id="err"></div>
 
-  <section id="s-scores" class="on"><div class="loading">loading…</div></section>
+  <section id="s-pair" class="on"><div class="loading">loading…</div></section>
+  <section id="s-scores"><div class="loading">loading…</div></section>
   <section id="s-inputs"><div class="loading">loading…</div></section>
   <section id="s-pos"><div class="loading">loading…</div></section>
   <section id="s-guid"><div class="loading">loading…</div></section>
@@ -377,13 +434,503 @@ async function loadGuid(){
     </table></div>`;
 }
 
-const loaders = {scores:loadScores, inputs:loadInputs, pos:loadPos, guid:loadGuid};
+/* ====================================================================
+   PAIR VIEW — the persisted tape, not the live bridge
+   ==================================================================== */
+
+// Mirror of packages/score/scoring.py. It lives in JS so switching the pair
+// re-scores instantly with no server round trip. k / p / form / sign all come
+// FROM the server (tape.curves), so specs/scoring.yaml remains the single
+// source of calibration — only the arithmetic is duplicated here, never the
+// constants. If the curve form ever changes, this must be updated with it.
+const NEUTRAL = 3.0, HALF = 2.0;
+const fhill = (x, k, p) => {
+  if (x === 0) return 0;
+  const u = Math.pow(Math.abs(x / k), p);
+  return Math.sign(x) * u / (1 + u);
+};
+function curveScore(x, c){
+  if (c.form === 'hill')   return NEUTRAL + HALF * fhill(x, c.k, c.p);
+  if (c.form === 'tanh')   return NEUTRAL + HALF * Math.tanh(x / c.k);
+  if (c.form === 'linear') return NEUTRAL + HALF * Math.max(-1, Math.min(1, x / c.k));
+  return null;
+}
+
+const TAPE = {};
+const P = {pillar: 'composite', long: null, short: null, span: 'all'};
+const SPANS = {'1m':30, '3m':91, '6m':182, '1y':365, '3y':1095, 'all':null};
+
+async function getTape(pillar){
+  if (!TAPE[pillar]){
+    const d = await (await fetch('/api/tape?pillar=' + encodeURIComponent(pillar))).json();
+    if (d.error) throw new Error(d.error);
+    TAPE[pillar] = d;
+  }
+  return TAPE[pillar];
+}
+
+function spanCut(tp){
+  const days = SPANS[P.span];
+  if (!days || !tp.as_of_max) return null;
+  const d = new Date(Date.parse(tp.as_of_max) - days * 864e5);
+  return d.toISOString().slice(0, 10);
+}
+
+// Rows aligned on the score date, both legs present.
+function buildPair(tp, longId, shortId){
+  const L = tp.series[longId], S = tp.series[shortId];
+  if (!L || !S) return [];
+  const cur = tp.curves[tp.pillar];
+  const cut = spanCut(tp);
+  const sMap = new Map(S.points.map(p => [p.d, p]));
+  const out = [];
+  for (const a of L.points){
+    if (cut && a.d < cut) continue;
+    const b = sMap.get(a.d);
+    if (!b) continue;
+    // THE PAIR IS ITS OWN INSTRUMENT — score the spread, do not spread the
+    // scores. specs/scoring.yaml pairs.rule. The naive difference is computed
+    // too, and drawn faint, so the understatement is visible rather than
+    // asserted: on the HZL/VEDL zinc run the naive read 0.09 where the spread
+    // through the same curve reads 3.34.
+    const naive = (a.score != null && b.score != null) ? a.score - b.score : null;
+    let spread = null;
+    if (cur.spreadable && a.raw != null && b.raw != null)
+      spread = curveScore(cur.sign * (a.raw - b.raw), cur) - NEUTRAL;
+    out.push({d: a.d, lp: a.close, sp: b.close, naive, spread, a, b});
+  }
+  return out;
+}
+
+// 1:1 MARKET VALUE, rebased to each segment's start.
+// CLAUDE.md: "Always report 1:1 market value beside 2:1. A 2:1 book is 33% NET
+// LONG. In a rising tape it flatters everything ... The gap is market exposure,
+// not skill." Drawing this pair at 2:1 would read that exposure as performance.
+function relSegments(rows, breaks){
+  const segs = [];
+  let cur = [];
+  for (const r of rows){
+    if (breaks.has(r.d) && cur.length){ segs.push(cur); cur = []; }
+    if (r.lp != null && r.sp != null) cur.push(r);
+  }
+  if (cur.length) segs.push(cur);
+  return segs.map(seg => {
+    const l0 = seg[0].lp, s0 = seg[0].sp;
+    return seg.map(r => ({d: r.d, v: ((r.lp / l0) / (r.sp / s0) - 1) * 100}));
+  });
+}
+
+function niceCeil(v){
+  if (!(v > 0)) return 1;
+  const e = Math.pow(10, Math.floor(Math.log10(v)));
+  for (const m of [1, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10]) if (v <= m * e) return m * e;
+  return 10 * e;
+}
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// Over a multi-year span the day of month is noise and the year is the thing
+// you need; inside a few months it is the other way round.
+const dtick = (d, wide) => wide
+  ? MON[+d.slice(5, 7) - 1] + " '" + d.slice(2, 4)
+  : d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1];
+
+function pathOf(pts, X, Y){
+  let out = '', pen = false;
+  for (const p of pts){
+    if (p.v == null){ pen = false; continue; }
+    out += (pen ? 'L' : 'M') + X(p.d).toFixed(1) + ' ' + Y(p.v).toFixed(1) + ' ';
+    pen = true;
+  }
+  return out.trim();
+}
+
+function pairChart(rows, segs, cur, breaks){
+  const W = 1000, H = 380, ML = 56, MR = 66, MT = 14, MB = 30;
+  const iw = W - ML - MR, ih = H - MT - MB, mid = MT + ih / 2;
+  const t = d => Date.parse(d);
+  const x0 = t(rows[0].d), x1 = t(rows[rows.length - 1].d);
+  const X = d => ML + (x1 === x0 ? iw / 2 : (t(d) - x0) / (x1 - x0) * iw);
+
+  const sv = rows.flatMap(r => [r.spread, r.naive]).filter(v => v != null);
+  const sTop = niceCeil(Math.max(...sv.map(Math.abs), 0.25));
+  const YS = v => mid - (v / sTop) * (ih / 2);
+
+  const rv = segs.flat().map(p => p.v);
+  const rTop = niceCeil(Math.max(...rv.map(Math.abs), 0.5));
+  const YR = v => mid - (v / rTop) * (ih / 2);
+
+  let g = '';
+  for (let i = -2; i <= 2; i++){
+    const y = mid - (i / 2) * (ih / 2);
+    g += `<line class="${i === 0 ? 'zero' : 'grid'}" x1="${ML}" x2="${W - MR}"
+           y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    // Labelled as an ABSOLUTE pair score on the firm's 1-5 scale, 3 = neutral —
+    // the same vocabulary as the Bridge tab's pair table and scoring.yaml, where
+    // the worked example reads "3.34" rather than "+0.34". The axis stays
+    // adaptive around 3 because a fixed 1..5 would flatten a 0.05 pair to a
+    // straight line.
+    g += `<text class="ax" x="${ML - 8}" y="${(y + 3.5).toFixed(1)}"
+           text-anchor="end">${(NEUTRAL + i / 2 * sTop).toFixed(2)}</text>`;
+    g += `<text class="ax" x="${W - MR + 8}" y="${(y + 3.5).toFixed(1)}">${
+           (i / 2 * rTop >= 0 ? '+' : '')}${(i / 2 * rTop).toFixed(1)}%</text>`;
+  }
+
+  const wide = (x1 - x0) > 400 * 864e5;
+  const nT = Math.min(7, rows.length);
+  for (let i = 0; i < nT; i++){
+    const r = rows[Math.round(i * (rows.length - 1) / (nT - 1 || 1))];
+    g += `<text class="ax" x="${X(r.d).toFixed(1)}" y="${H - 10}"
+           text-anchor="middle">${dtick(r.d, wide)}</text>`;
+  }
+
+  for (const d of breaks){
+    if (t(d) < x0 || t(d) > x1) continue;
+    g += `<line x1="${X(d).toFixed(1)}" x2="${X(d).toFixed(1)}" y1="${MT}"
+           y2="${MT + ih}" stroke="var(--warn)" stroke-width="1.5"
+           stroke-dasharray="2 3"/>`;
+  }
+
+  // Price first so the score lines read on top — the score is the subject.
+  let lines = '';
+  for (const seg of segs)
+    lines += `<path d="${pathOf(seg, X, YR)}" fill="none" stroke="var(--faint)"
+               stroke-width="1.8" stroke-linejoin="round"/>`;
+  if (cur.spreadable)
+    lines += `<path d="${pathOf(rows.map(r => ({d: r.d, v: r.naive})), X, YS)}"
+               fill="none" stroke="var(--accent)" stroke-width="1.4"
+               stroke-dasharray="3 3" opacity=".5"/>`;
+  const main = rows.map(r => ({d: r.d, v: cur.spreadable ? r.spread : r.naive}));
+  lines += `<path d="${pathOf(main, X, YS)}" fill="none" stroke="var(--accent)"
+             stroke-width="2.4" stroke-linejoin="round"/>`;
+
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="pair score and relative price over time">
+    <text class="axl" x="${ML}" y="${MT - 2}">pair score · 3 = neutral</text>
+    <text class="axl" x="${W - MR}" y="${MT - 2}" text-anchor="end">long vs short, 1:1</text>
+    ${g}${lines}</svg></div>`;
+}
+
+function miniChart(pts, breaks){
+  const W = 300, H = 74, ML = 4, MR = 4, MT = 6, MB = 6;
+  const ok = pts.filter(p => p.score != null && p.close != null);
+  if (ok.length < 2) return '<div class="hint">not enough points</div>';
+  const t = d => Date.parse(d);
+  const x0 = t(ok[0].d), x1 = t(ok[ok.length - 1].d);
+  const X = d => ML + (x1 === x0 ? 0 : (t(d) - x0) / (x1 - x0) * (W - ML - MR));
+  const sc = ok.map(p => p.score), pr = ok.map(p => p.close);
+  const sLo = Math.min(...sc), sHi = Math.max(...sc);
+  const pLo = Math.min(...pr), pHi = Math.max(...pr);
+  const YS = v => MT + (1 - (v - sLo) / ((sHi - sLo) || 1)) * (H - MT - MB);
+  const YP = v => MT + (1 - (v - pLo) / ((pHi - pLo) || 1)) * (H - MT - MB);
+  // The price line is SEGMENTED at a confirmed corporate action for the same
+  // reason the pair chart breaks: the two sides are different companies.
+  let pp = '', pen = false;
+  for (const p of ok){
+    if (breaks.has(p.d)) pen = false;
+    pp += (pen ? 'L' : 'M') + X(p.d).toFixed(1) + ' ' + YP(p.close).toFixed(1) + ' ';
+    pen = true;
+  }
+  const ss = ok.map(p => `${X(p.d).toFixed(1)},${YS(p.score).toFixed(1)}`).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" aria-hidden="true">
+    <path d="${pp.trim()}" fill="none" stroke="var(--faint)" stroke-width="1.5"/>
+    <polyline points="${ss}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  </svg>`;
+}
+
+// WHICH LEG IS THE BINDING CONSTRAINT. The pillar selector advertises economics
+// as 1374 dates, but a pair only gets the INTERSECTION, and two names here start
+// late for real reasons: vedanta's economics begins 2026-05-01 because
+// pre-demerger VEDL is a different company, and vaml begins at its 2026-06-15
+// listing. Without this line the chart silently collapses from five years to
+// three months and reads as a broken query rather than as the honest overlap.
+function limitNote(tp, rows){
+  const pillarFirst = tp.coverage[tp.pillar].first;
+  if (!pillarFirst || rows[0].d <= pillarFirst) return '';
+  const late = [P.long, P.short]
+    .map(e => ({e, f: tp.series[e].first}))
+    .filter(x => x.f && x.f > pillarFirst)
+    .sort((a, b) => b.f.localeCompare(a.f));
+  if (!late.length) return '';
+  return ` · limited by ${late[0].e}, which starts ${late[0].f}`
+       + ` (${tp.pillar} runs from ${pillarFirst})`;
+}
+
+// THE REFRESH LIGHT. Reported in TRADING DAYS, not calendar days, or every
+// Monday reads as two days stale and the indicator gets ignored — which is the
+// only way an indicator can fail. Weekends are skipped; Indian market holidays
+// are not, so a Diwali gap will read one day stale. Understating staleness would
+// be the dangerous direction; this errs the safe way.
+function tradingDaysSince(iso){
+  let n = 0;
+  const d = new Date(iso + 'T00:00:00'), now = new Date();
+  now.setHours(0, 0, 0, 0);
+  while (d < now){ d.setDate(d.getDate() + 1);
+    const w = d.getDay(); if (w !== 0 && w !== 6) n++; }
+  return n;
+}
+function showRefresh(tp){
+  const r = tp.refresh || {}, el = $('#refresh');
+  const age = tp.as_of_max ? tradingDaysSince(tp.as_of_max) : null;
+  let cls = 'c-up', txt, tip;
+  if (r.state === 'never'){
+    cls = 'c-warn'; txt = 'never refreshed';
+    tip = r.why + ' — run: python packages/refresh.py';
+  } else if (r.state === 'failed'){
+    cls = 'c-down'; txt = 'refresh FAILED ' + (r.day || '');
+    tip = 'failed steps: ' + (r.failed_steps || []).join(', ');
+  } else if (age !== null && age >= 2){
+    // The scores being old matters even when the last run "succeeded" — the
+    // run can succeed against a feed that has itself gone stale.
+    cls = 'c-warn'; txt = 'scores ' + age + ' trading days old';
+    tip = 'last refresh ' + (r.day || '?') + ', store as of ' + tp.as_of_max;
+  } else {
+    txt = 'refreshed ' + (r.day || '?');
+    tip = 'store as of ' + tp.as_of_max + '; not covered by an unattended run: '
+        + (r.manual || []).map(m => m.name).join(', ');
+  }
+  el.innerHTML = `<span class="chip ${cls}" title="${esc(tip)}">${esc(txt)}</span>`;
+}
+
+function pairControls(tp){
+  const opt = (sel) => tp.order.map(e =>
+    `<option value="${esc(e)}"${e === sel ? ' selected' : ''}>${esc(e)}` +
+    ` · ${esc(tp.series[e].peer_group || '—')}</option>`).join('');
+  const pills = ['composite','economics','valuation','mood','guidance'].map(p => {
+    const c = tp.coverage[p];
+    return `<option value="${p}"${p === P.pillar ? ' selected' : ''}>${p}` +
+           ` (${c.dates}d)</option>`;
+  }).join('');
+  const spans = Object.keys(SPANS).map(s =>
+    `<option value="${s}"${s === P.span ? ' selected' : ''}>${s}</option>`).join('');
+  return `<div class="ctl">
+    <label class="sidebar-l">long<select id="pl">${opt(P.long)}</select></label>
+    <label class="sidebar-s">short<select id="ps">${opt(P.short)}</select></label>
+    <label>&nbsp;<button class="ghost" id="pswap" title="swap the legs">⇄ swap</button></label>
+    <label>pillar<select id="pp">${pills}</select></label>
+    <label>span<select id="pspan">${spans}</select></label>
+  </div>`;
+}
+
+async function loadPair(){
+  const tp = await getTape(P.pillar);
+  // Default to two names in the SAME peer_group. README: peer_group is "the
+  // scoring universe: names that share a factor basis and are therefore
+  // rankable against one another" — sector is only the coverage bucket. The
+  // first default here was hindalco/hindustan_zinc, which straddles aluminium
+  // and zinc and so opens on the one comparison the schema exists to prevent.
+  if (!P.long || !tp.series[P.long]){
+    const g = {};
+    for (const e of tp.order) (g[tp.series[e].peer_group] ||= []).push(e);
+    const pick = Object.values(g).find(v => v.length > 1) || tp.order;
+    P.long = pick[0];
+    P.short = pick[1] || tp.order.find(e => e !== P.long);
+  }
+  if (!P.short || !tp.series[P.short] || P.short === P.long)
+    P.short = tp.order.find(e => e !== P.long);
+  $('#asof').textContent = 'store ' + tp.as_of_max;
+  showRefresh(tp);
+
+  const cur = tp.curves[tp.pillar];
+  const rows = buildPair(tp, P.long, P.short);
+
+  // A confirmed action on EITHER leg breaks the pair — the relative return
+  // spans both.
+  const conf = [];
+  for (const leg of [P.long, P.short])
+    for (const c of (tp.corporate_actions[leg]?.confirmed || []))
+      conf.push({leg, ...c});
+  const breaks = new Set(conf.map(c => c.date));
+
+  let head = pairControls(tp);
+
+  if (P.long === P.short){
+    $('#s-pair').innerHTML = head +
+      '<div class="banner">Pick two different names.</div>';
+    return wirePair();
+  }
+  if (rows.length < 2){
+    $('#s-pair').innerHTML = head + `<div class="banner">No overlapping
+      <b>${esc(P.pillar)}</b> dates for these two in this span.</div>`;
+    return wirePair();
+  }
+
+  const segs = relSegments(rows, breaks);
+
+  // Two warnings the repo's own findings demand, both about pairs that LOOK
+  // fine and are not. Neither is a UI nicety: each is a documented conclusion
+  // that is invisible from the chart alone.
+  const gl = tp.series[P.long].peer_group, gs = tp.series[P.short].peer_group;
+  if (gl !== gs) head += `<div class="banner"><b>Cross peer-group pair.</b>
+    ${esc(P.long)} is ${esc(gl)}, ${esc(P.short)} is ${esc(gs)}. peer_group is
+    the scoring universe — names that share a factor basis and are therefore
+    rankable against one another — so these two are not scored off the same
+    drivers. As a book trade it is perfectly legitimate; as a <i>ranking</i> the
+    pair score is weaker evidence than it looks.</div>`;
+
+  // CLAUDE.md, under "Testing decisions, so they are not relitigated":
+  // "The zinc pair has no P1 signal by construction. hindustan_zinc and vedanta
+  // score within 0.001 of each other (sd 0.041) — same two revenue lines,
+  // VEDL's scaled by the 63.4% stake, which pct_of_ebitda divides straight back
+  // out. What separates them is holdco discount, i.e. P3. Do not rank them on
+  // economics." Without this the flat line reads as "no news", not "this
+  // comparison cannot carry information".
+  const legs = new Set([P.long, P.short]);
+  if (P.pillar === 'economics' && legs.has('hindustan_zinc') && legs.has('vedanta'))
+    head += `<div class="banner"><b>This pair has no economics signal by
+      construction.</b> HZL and VEDL run the same two revenue lines, VEDL's
+      scaled by its 63.4% stake — and <code>pct_of_ebitda</code> divides that
+      scaling straight back out, so the two scores track within ~0.001. A flat
+      line here is the arithmetic, not the absence of news. What separates these
+      two is the holdco discount, which is a <b>valuation</b> question: switch
+      the pillar.</div>`;
+
+  const inWin = conf.filter(c => c.date >= rows[0].d && c.date <= rows[rows.length-1].d);
+  if (inWin.length) head += `<div class="banner">
+    <b>Price line broken</b> at ${inWin.map(c =>
+      `${esc(c.date)} — ${esc(c.leg)} ${c.pct.toFixed(1)}%, ${esc(c.why)}`).join('; ')}.
+    The quoted price steps mechanically, so the two sides are different companies
+    and <b>relative performance cannot be read across the line</b>. Each segment is
+    rebased to its own start. The score line is not broken — those are the values
+    that were actually stored.</div>`;
+
+  const last = rows[rows.length - 1];
+  const val = cur.spreadable ? last.spread : last.naive;
+  const rel = segs.length ? segs[segs.length - 1].slice(-1)[0].v : null;
+  const nSeg = segs.length ? segs[segs.length - 1].length : 0;
+  const side = val == null ? '—' : val > 0 ? 'favours ' + P.long
+             : val < 0 ? 'favours ' + P.short : 'neutral';
+
+  const stats = `<div class="stats">
+    <div class="stat"><div class="k">pair score</div>
+      <div class="v" style="color:${val > 0 ? 'var(--up)' : val < 0 ? 'var(--down)' : 'var(--faint)'}">
+        ${val == null ? '—' : (NEUTRAL + val).toFixed(2)}</div>
+      <div class="s">${esc(side)}${val == null ? '' :
+        ' · ' + (val >= 0 ? '+' : '') + val.toFixed(2) + ' vs neutral'}</div></div>
+    <div class="stat"><div class="k">relative, 1:1</div>
+      <div class="v" style="color:${rel > 0 ? 'var(--up)' : rel < 0 ? 'var(--down)' : 'var(--faint)'}">
+        ${rel == null ? '—' : (rel >= 0 ? '+' : '') + rel.toFixed(1) + '%'}</div>
+      <div class="s">over ${nSeg} obs of this segment</div></div>
+    <div class="stat"><div class="k">span</div>
+      <div class="v" style="font-size:15px">${esc(rows[0].d)}<br>${esc(last.d)}</div>
+      <div class="s">${rows.length} paired dates${esc(limitNote(tp, rows))}</div></div>
+    <div class="stat"><div class="k">pair rule</div>
+      <div class="v" style="font-size:15px">${cur.spreadable
+        ? 'score the spread' : 'plain difference'}</div>
+      <div class="s">${esc(cur.spreadable
+        ? 'k = ' + cur.k.toPrecision(3) + ' · ' + cur.unit
+        : cur.form === 'linear_exact' ? 'exact — P4 is linear'
+        : 'no raw to difference')}</div></div>
+  </div>`;
+
+  const legend = `<div class="legend">
+    <span><i style="border-top:2.4px solid var(--accent)"></i>pair score${
+      cur.spreadable ? ' — spread through the curve' : ''}</span>
+    ${cur.spreadable ? `<span><i style="border-top:2px dashed var(--accent);opacity:.6"></i>
+      plain difference of the two scores</span>` : ''}
+    <span><i style="border-top:2px solid var(--faint)"></i>relative price, 1:1 MV</span>
+    ${breaks.size ? '<span><i style="border-top:2px dashed var(--warn)"></i>corporate action</span>' : ''}
+  </div>`;
+
+  const why = cur.spreadable
+    ? `<p class="note"><b>Both lines are drawn on purpose.</b> The solid line is
+       the pair score — the spread run through ${esc(P.pillar)}'s own curve
+       (k = ${cur.k.toPrecision(3)}, ${esc(cur.unit)}). The dashed line is what
+       subtracting the two scores would have read. <b>The gap between them is not
+       one-directional</b>: where both names sit far out in the flat tails the
+       dashed line collapses (a 1.75pp spread at 9–11% of EBITDA reads 0.10
+       against the pair score's 0.34), and where both sit inside the decision
+       zone it overshoots instead. They agree only when one leg is at neutral.
+       That is the whole point of the rule — the dashed line depends on
+       <b>where</b> the pair sits on the curve, the solid line depends only on
+       the <b>gap</b>.</p>`
+    : cur.form === 'linear_exact'
+    ? `<p class="note">P4 scores <b>linearly</b> (1 + 4·confidence), so there is
+       no tail compression to undo — the plain difference is already exact. This
+       is the one pillar where spreading the scores is correct.</p>`
+    : `<p class="note"><b>This line is a plain difference of two composites, not
+       a pair score.</b> The composite is a blend of four scores and stores no
+       single raw value, so there is nothing to run back through a curve —
+       scoring.yaml's pair rule cannot be applied to it at all. Read it as a
+       ranking gap rather than as a calibrated 1–5 pair score; switch to
+       economics, valuation or mood for a properly spread-scored pair.</p>`;
+
+  const cards = tp.order.map(e => {
+    const s = tp.series[e];
+    const cut = spanCut(tp);
+    const pts = s.points.filter(p => !cut || p.d >= cut);
+    const scored = pts.filter(p => p.score != null);
+    const lastS = scored.length ? scored[scored.length - 1].score : null;
+    const firstS = scored.length ? scored[0].score : null;
+    const withPx = pts.filter(p => p.close != null);
+    const pxChg = withPx.length > 1
+      ? (withPx[withPx.length - 1].close / withPx[0].close - 1) * 100 : null;
+    const bk = new Set((tp.corporate_actions[e]?.confirmed || []).map(c => c.date));
+    const cls = e === P.long ? ' pick-l' : e === P.short ? ' pick-s' : '';
+    return `<div class="cd${cls}">
+      <h3>${esc(e)} <span class="g">${esc(s.peer_group || '—')}</span>
+        <span style="margin-left:auto;display:flex;gap:3px">
+          <button class="ghost setleg" data-e="${esc(e)}" data-leg="long"
+            style="padding:1px 7px;font-size:11px">L</button>
+          <button class="ghost setleg" data-e="${esc(e)}" data-leg="short"
+            style="padding:1px 7px;font-size:11px">S</button></span></h3>
+      <div class="row">
+        <span><b style="color:${lastS > 3 ? 'var(--up)' : lastS < 3 ? 'var(--down)' : 'var(--ink)'}">${
+          lastS == null ? '—' : lastS.toFixed(2)}</b> ${esc(P.pillar)}</span>
+        <span>${firstS == null || lastS == null ? '' :
+          (lastS - firstS >= 0 ? '+' : '') + (lastS - firstS).toFixed(2) + ' in span'}</span>
+        <span style="margin-left:auto;color:${pxChg > 0 ? 'var(--up)' : pxChg < 0 ? 'var(--down)' : 'var(--faint)'}">${
+          pxChg == null ? '—' : (pxChg >= 0 ? '+' : '') + pxChg.toFixed(1) + '% px'}</span>
+      </div>
+      ${miniChart(pts, bk)}</div>`;
+  }).join('');
+
+  $('#s-pair').innerHTML = head + stats + pairChart(rows, segs, cur, breaks) +
+    legend + why +
+    `<h2>Every name · ${esc(P.pillar)} score and price</h2>
+     <p class="note">Score in <b style="color:var(--accent)">blue</b>, price in grey,
+       each on its own scale — the shapes are comparable, the levels are not.
+       <b>L</b> / <b>S</b> set the pair above.</p>
+     <div class="cards">${cards}</div>
+     <p class="note hint">Persisted <code>pillar_scores</code>, as of
+       ${esc(tp.as_of_max)} — not recomputed, and not affected by overrides.
+       The Bridge and Inputs tabs recompute live and will differ whenever an
+       override is active or <code>run_scores.py</code> has not been re-run.</p>`;
+  wirePair();
+}
+
+function wirePair(){
+  const go = () => loadPair().catch(e => showErr(e.message));
+  const pl = $('#pl'), ps = $('#ps');
+  if (pl) pl.onchange = () => { P.long  = pl.value; go(); };
+  if (ps) ps.onchange = () => { P.short = ps.value; go(); };
+  const sw = $('#pswap');
+  if (sw) sw.onclick = () => { [P.long, P.short] = [P.short, P.long]; go(); };
+  const pp = $('#pp');
+  if (pp) pp.onchange = () => { P.pillar = pp.value; go(); };
+  const sp = $('#pspan');
+  if (sp) sp.onchange = () => { P.span = sp.value; go(); };
+  document.querySelectorAll('#s-pair .setleg').forEach(b => b.onclick = () => {
+    const e = b.dataset.e;
+    if (b.dataset.leg === 'long'){ if (P.short === e) P.short = P.long; P.long = e; }
+    else { if (P.long === e) P.long = P.short; P.short = e; }
+    go();
+  });
+}
+
+const loaders = {pair:loadPair, scores:loadScores, inputs:loadInputs,
+                 pos:loadPos, guid:loadGuid};
 const loaded = {};
 function tab(name){
   document.querySelectorAll('.tab').forEach(b =>
     b.setAttribute('aria-selected', String(b.dataset.t === name)));
   document.querySelectorAll('section').forEach(s =>
     s.classList.toggle('on', s.id === 's-' + name));
+  // The window selector drives the LIVE bridge only. Leaving it visible on the
+  // Pair tab would imply it moves the persisted tape, which it cannot.
+  // The window selector, FX and the override count all describe the LIVE
+  // bridge. Showing them over the persisted tape would imply they move it.
+  const live = (name === 'scores' || name === 'inputs');
+  $('#winwrap').hidden = !live;
+  $('#fxwrap').hidden = !live;
   if (!loaded[name]){ loaded[name] = 1; loaders[name]().catch(e => showErr(e.message)); }
 }
 document.querySelectorAll('.tab').forEach(b =>
@@ -391,11 +938,14 @@ document.querySelectorAll('.tab').forEach(b =>
 $('#win').addEventListener('change', () => loadScores().catch(e => showErr(e.message)));
 $('#reload').addEventListener('click', () => {
   for (const k in loaded) delete loaded[k];
+  for (const k in TAPE) delete TAPE[k];      // else Refresh cannot see a new run
   const cur = document.querySelector('.tab[aria-selected=true]').dataset.t;
   loaded[cur] = 1; loaders[cur]().catch(e => showErr(e.message));
 });
-loadScores().catch(e => showErr(e.message));
-loaded.scores = 1;
+$('#winwrap').hidden = true;
+$('#fxwrap').hidden = true;
+loadPair().catch(e => showErr(e.message));
+loaded.pair = 1;
 </script>
 </body>
 </html>

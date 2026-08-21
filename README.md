@@ -123,13 +123,22 @@ snapshots/    gitignored — dated db backups
 
 ## Run it
 
+Double-click **`launch\Investment Micro-System.vbs`**, or point a Desktop
+shortcut at it. It refreshes the scores, starts the server and opens the page.
+
 ```bash
 python packages/core/init_db.py       # apply schema, run the guard tests
-python packages/pipeline.py              # dry run of the whole sequence; --run to execute
+python packages/refresh.py            # the daily refresh: feeds, gates, score, persist
+python packages/pipeline.py           # dry run of the whole sequence; --run to execute
 python packages/api/serve.py          # -> http://127.0.0.1:8770
 ```
 
 Port 8770, not 8765 — the vault's node dashboard already owns 8765.
+
+`refresh.py` is what an unattended run is allowed to do: equity closes,
+corporate-action scan, preflight, score-and-persist. It cannot do Wind zinc,
+broker mail or the metals pack — two need an agent, one needs a person — and it
+prints that list every run rather than implying completeness it does not have.
 
 ## Status
 
@@ -146,6 +155,14 @@ VAML carries the widest pillar spread — mood 3.77 against valuation 2.03 — a
 lands on the *same* composite as Hindalco, whose pillars broadly agree. That is
 why `combined.py` reports spread and not just the average: an average alone
 makes those two look identical.
+
+**The front end covers non-ferrous as of 2026-08-21.** The Pair tab reads the
+persisted tape: pick a long and a short, and the pair score is charted against
+the pair's 1:1 relative price, with every name's score and price below it. The
+pair score is the **spread run through that pillar's own curve** — extended to
+valuation and mood, which `scoring.yaml` always asked for and nothing did. The
+Bridge, Inputs, Positioning and Guidance tabs are unchanged and still recompute
+live.
 
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate

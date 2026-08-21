@@ -20,6 +20,7 @@ WEB = REPO / "packages" / "web"
 sys.path.insert(0, str(REPO / "packages" / "api"))
 
 import engine  # noqa: E402
+import tape as tape_mod  # noqa: E402
 
 # 8765 is taken by the vault's existing node dashboard. Sharing a port does not
 # error visibly — the other server just answers, and every request 404s as if
@@ -58,6 +59,20 @@ class Handler(BaseHTTPRequestHandler):
                     "aluminium_primary": engine.compute("aluminium_primary", w),
                     "zinc": engine.compute("zinc", w),
                 })
+            if u.path == "/api/tape":
+                # The PERSISTED tape. /api/scores recomputes the bridge live with
+                # overrides applied; this one reads pillar_scores untouched. They
+                # will disagree whenever an override is active or run_scores.py is
+                # stale, and that is correct — the pair chart must show numbers
+                # that were actually stored, or it describes a different system
+                # from the one the review layer grades.
+                p = q.get("pillar", ["composite"])[0]
+                since = (q.get("since", [""])[0] or None)
+                if p not in tape_mod.PILLARS:
+                    return self._json(
+                        {"error": f"unknown pillar {p!r}; "
+                                  f"expected one of {tape_mod.PILLARS}"}, 400)
+                return self._json(tape_mod.tape(p, since))
             if u.path == "/api/inputs":
                 return self._json(engine.inputs_for_ui())
             if u.path == "/api/oi":
