@@ -9,7 +9,14 @@ data/*
 # the point.
 !data/staging/
 data/staging/*
+# Staging captures are the DATED RECORD of what a source returned that morning,
+# which is what lets a price be audited later without trusting anyone's memory.
+# Both extensions are needed: Wind arrives as CSV, the westmetall/LME captures
+# as JSON. A new capture format must be added here or it is silently untracked —
+# westmetall_2026-08-21.json was missed on its first commit for exactly that
+# reason, while the adapter's docstring claimed it was version-controlled.
 !data/staging/*.csv
+!data/staging/*.json
 snapshots/
 !snapshots/.gitkeep
 
