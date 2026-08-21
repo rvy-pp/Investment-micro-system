@@ -203,6 +203,101 @@ does equity closes, corporate actions, preflight and score-and-persist, and it
 **names the four things it did not do** on every run — Wind zinc, broker mail,
 the metals pack and extraction, three of which no unattended process can do.
 
+## Price sources have a precedence order — read before adding a feed
+
+Added 2026-08-21. Four adapters wrote `prices` with `INSERT OR REPLACE` and no
+`source` column, so the last one to run owned every overlapping date and nothing
+recorded who that was. `prices.source` now exists and every adapter writes
+through **`packages/core/prices_io.py`**:
+
+| rank | source | |
+|---|---|---|
+| 40 | `metals_pack` | licensed, hand-dropped, the desk's own reference |
+| 30 | `westmetall` | real LME cash-settlement, free, day-delayed |
+| 20 | `wind` | Wind terminal |
+| 10 | `fred` | monthly fallback |
+| 5 | `yahoo` | equities and exchange proxies |
+
+A write is **refused** when a higher-ranked source already holds that cell, and
+the refusal is reported. Equal rank overwrites, so Yahoo can still improve its
+own close intraday. A legacy row with `source IS NULL` ranks 0 — anything may
+replace it, which is right, because those are the rows of unknown provenance.
+
+**`lme_aluminium` was CME, not LME, and had been for months.** `yahoo_prices.py`
+loaded `ALI=F` — a documented proxy that embeds a Midwest premium — into a series
+named for the LME. That is invariant 6 exactly, the rule the same file honours
+for zinc (`zinc_shfe`, never `lme_zinc`). The gap is not cosmetic: **+142 USD/t,
++4.5%** against real LME cash on 2026-08-20, and across 161 overlapping dates the
+store was a **bimodal mixture** — 70 dates within 30 USD/t of LME cash, 65 beyond
+80 — depending on whether Yahoo or the pack wrote last. `ALI=F` is now removed
+from `CANDIDATES`; do not re-add it.
+
+**Correcting it moved the aluminium scores hard.** The 30-day shock went
+−10.09% (CME) to **−15.35%** (LME cash), and economics fell hindalco 3.82→2.51,
+nalco 3.97→2.65, vaml 4.03→2.23. The zinc names did not move, which is the
+control that says the change is real rather than a bug.
+
+### The correction was invisible until the endpoints were cleaned
+
+Loading 161 rows of LME cash changed **nothing** at first, and looked like it
+had worked. The bridge's window resolved to two leftover CME rows:
+
+```
+start 2026-05-23  3,720.28  source NULL   <- a SATURDAY
+end   2026-08-21  3,344.75  source NULL   <- Yahoo CME, written that morning
+```
+
+**A partially-corrected series is worse than an uncorrected one, because it looks
+fixed.** `packages/core/clean_lme_aluminium.py` removed 71 rows: 66 weekends (the
+LME does not settle on a Saturday, and score dates DO land on them — `as_of` runs
+on calendar days) and 5 orphaned CME weekdays. Only aluminium. `lme_zinc` has 66
+weekend rows too and they are deliberately kept: those came from the pack, which
+carries a full calendar and forward-fills its own LME cash, so its weekends are
+the *same measure* as its weekdays. Aluminium's were a different one.
+
+**Still mixed, and known:** `lme_zinc`'s window spans `metals_pack` → `westmetall`
+(both LME cash, ~22 USD/t apart) and `alumina_index` spans NULL → `yahoo`. Both
+are one measure, so neither is urgent; a shock whose endpoints have different
+`source` values is worth checking before trusting it.
+
+**Pre-2026 aluminium is untouched** — ~4,493 rows, still a pack/CME mixture. No
+LME cash source reaches back that far, so removing them would leave a hole
+rather than a correction.
+
+## Getting LME, alumina and iron ore — search first, then a fetchable mirror
+
+`lme.com` returns **HTTP 403** to automated fetching and its prices are licensed,
+which is why `yahoo_prices.RESEARCH_SOURCED` concluded "no live free feed found".
+That conclusion was reached by trying `WebFetch` on lme.com alone. **Search finds
+both the price and a fetchable mirror**, and `WebFetch` itself works fine here.
+
+| want | route | note |
+|---|---|---|
+| LME Al/Zn **cash** + 3-month | `westmetall.com/en/markdaten.php?action=table&field=LME_Al_cash` | dated table, ~161 rows, free, **T-1** |
+| LME 3-month | Wind `AH.LME`, `ZS.LME` | agrees with westmetall's 3M to ~3 USD/t |
+| SHFE aluminium / alumina | Wind `AL.SHF`, `AO.SHF` | current to **T**, CNY/t, VAT-inclusive |
+| Dalian iron ore | Wind `I.DCE` | current to **T**, CNY/t |
+
+**Cash and 3-month are different instruments and the gap is not small** —
+westmetall's own zinc basis averaged **+84 USD/t** backwardation. The specs price
+off cash. Wind's `AH.LME`/`ZS.LME` are the **3-month** (identified by matching
+westmetall's 3M column), so they are NOT loaded. No Wind cash code resolves
+(`AHC/ZSC/AHS/ZSS` all empty).
+
+**SHFE/DCE are Chinese domestic, not seaborne.** Per invariant 6 they would be
+`alumina_shfe` and `iron_ore_dce`, never `alumina_index` or `iron_ore`.
+
+**The fetch needs an agent, not a cron.** Search and `WebFetch` are agent-callable
+— the same constraint as Wind and M365 — so this is the two-step the repo already
+uses twice: agent captures to `data/staging/westmetall_<date>.json`,
+`adapters/westmetall.py` validates and loads. Staging files are version-controlled
+as the dated record of what the source said.
+
+**Day-delayed, and the date must not be moved.** The newest LME row is T-1.
+Dating it T would be a look-ahead bug of exactly the kind the `effective_from`
+rule warns about. `westmetall.py` validates and refuses a future date, a weekend,
+or a value outside 500–20,000 USD/t.
+
 ## The silent-arithmetic bug class — read `docs/SILENT_BUGS.md`
 
 **One failure shape has produced every serious bug here.** Not a crash: a lookup

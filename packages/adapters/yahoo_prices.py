@@ -39,6 +39,9 @@ import urllib.error
 import urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "packages" / "core"))
+
+import prices_io  # noqa: E402
 DB = REPO / "data" / "ims.db"
 
 CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?range={rng}&interval=1d"
@@ -71,10 +74,20 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
                                                     # Platts-settled, not Fastmarkets MB,
                                                     # but both assess the same physical
                                                     # market and track closely.
-    "lme_aluminium":  [("ALI=F", r"alumin")],       # CME Aluminum. PROXY for LME —
-                                                    # carries a Midwest premium basis,
-                                                    # read 3,355.50 vs the digest's
-                                                    # LME 3,310.50 on the same day.
+    # lme_aluminium: REMOVED 2026-08-21. It was ("ALI=F", r"alumin") — CME
+    # Aluminum, used as a proxy for LME. That is invariant 6 exactly: "a proxy is
+    # never aliased to the thing it proxies", the rule this same file honours for
+    # zinc (zinc_shfe, never lme_zinc). The gap is not cosmetic — ALI=F embeds a
+    # Midwest premium and read 3,324.25 against real LME cash of 3,182.00 on
+    # 2026-08-20, +142 USD/t or +4.5%, and across 161 overlapping dates the store
+    # was a BIMODAL MIXTURE of the two: 70 dates within 30 USD/t of LME cash and
+    # 65 beyond 80, depending on whether Yahoo or the pack wrote last.
+    #
+    # Real LME cash now comes from packages/adapters/westmetall.py, day-delayed.
+    # Do not re-add ALI=F here. If a CME series is ever wanted it must be its own
+    # entity_id (cme_aluminium_midwest), and per the note in metals_pack.py an
+    # unused series should not be loaded at all.
+    "lme_aluminium":  [],
     "midwest_premium": [("AUP=F", r"aluminum\s*mw|midwest")],   # USD/lb, not /t
     "silver":         [("SI=F", r"silver")],
     # NO FREE ZINC ON YAHOO — see REJECTED. Zinc now comes from Wind ZN.SHF via
@@ -208,11 +221,16 @@ def load(rng: str = "3mo") -> int:
                 (eid, _kind_of(eid), eid, 1 if eid in ("hindalco", "nalco",
                  "hindustan_zinc", "vedanta", "vaml") else 1),
             )
-            conn.executemany(
-                "INSERT OR REPLACE INTO prices (entity_id,date,close) VALUES (?,?,?)",
-                [(eid, d, c) for d, c in series],
-            )
-            n_rows += len(series)
+            # Through prices_io, not INSERT OR REPLACE. Yahoo is the LOWEST-ranked
+            # source, so it can fill a cell nobody owns but can never overwrite the
+            # metals pack or westmetall. It used to silently win every race by
+            # running last — it overwrote the pack's usdinr on 2026-08-15,
+            # 95.4300 -> 95.6470.
+            res = prices_io.upsert(conn, [(eid, d, c) for d, c in series], "yahoo")
+            if res["refused"]:
+                print(f"   {eid}: {res['refused']} rows kept from a higher-ranked "
+                      f"source, {res['wrote']} written")
+            n_rows += res["wrote"]
             break
     conn.commit()
     conn.close()

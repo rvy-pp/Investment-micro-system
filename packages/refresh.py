@@ -54,15 +54,14 @@ STEPS = [
     ("score + persist",   ["packages/score/run_scores.py"],                   True),
 ]
 
-# Steps to skip when the store already holds today's data. The launcher runs
-# refresh on EVERY double-click, so without this a busy morning re-pulls the
-# same OI several times. Keyed by step label -> a callable saying "already done".
+# Steps that run AT MOST ONCE A DAY. The launcher refreshes on every
+# double-click, so without this a busy morning re-pulls the same OI repeatedly.
 #
-# Only OI is guarded. The equity load is deliberately NOT: Yahoo revises intraday
-# and the same call late in the day returns a better close than it did at 08:00,
-# so re-pulling is the point rather than waste. run_scores.py is not guarded
-# either — it rewrites today's rows in place, and re-running it after a fresher
-# price IS the update.
+# Only OI is guarded. The equity load deliberately is NOT: Yahoo revises through
+# the session, so the same call at 15:00 returns a better close than at 08:00 and
+# re-pulling is the point. run_scores.py is not guarded either — it rewrites
+# today's rows in place, so re-running it against a fresher price IS the update.
+#
 # THE TEST IS "DID THE PULL RUN TODAY", NOT "DOES THE STORE HOLD TODAY'S DATA".
 # My first version asked the second question, and it can never be true: OI comes
 # from the vault's own pipeline, which publishes T-1 at best — the store held
@@ -89,6 +88,10 @@ MANUAL = [
     ("Wind zinc (ZN.SHF)", "Wind MCP is agent-callable only"),
     ("broker mail",        "Microsoft 365 MCP is agent-callable only"),
     ("Daily Metals Pack",  "manual workbook drop"),
+    ("LME cash (westmetall)",
+                           "needs an agent: lme.com 403s automated fetching, so the "
+                           "table is captured with WebFetch into data/staging/ and "
+                           "loaded by adapters/westmetall.py"),
     ("extraction",         "deliberately never automated — a wrong extraction "
                            "enters the store as a fact"),
 ]

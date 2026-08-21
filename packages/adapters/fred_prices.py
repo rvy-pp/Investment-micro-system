@@ -33,6 +33,9 @@ import sys
 import urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "packages" / "core"))
+
+import prices_io  # noqa: E402
 DB = REPO / "data" / "ims.db"
 
 CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
@@ -123,11 +126,8 @@ def main() -> int:
                 (eid, "commodity", SERIES[eid][1]),
             )
             keep = [(eid, d, v) for d, v in rows if d >= a.since]
-            conn.executemany(
-                "INSERT OR REPLACE INTO prices (entity_id,date,close,currency) "
-                "VALUES (?,?,?,'USD')", keep,
-            )
-            n += len(keep)
+            res = prices_io.upsert(conn, keep, "fred", currency="USD")
+            n += res["wrote"]
         conn.commit()
         conn.close()
         print(f"\nloaded {n} rows since {a.since}")

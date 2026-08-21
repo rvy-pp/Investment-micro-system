@@ -44,6 +44,9 @@ import sqlite3
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "packages" / "core"))
+
+import prices_io  # noqa: E402
 DB = REPO / "data" / "ims.db"
 SHEET = "Daily prices "          # NOTE the trailing space; it is in the file
 HEADER_ROW = 18                  # data starts at 19
@@ -112,9 +115,10 @@ def main() -> int:
         conn.execute("INSERT OR IGNORE INTO entities (id,kind,name,is_tradeable,active) "
                      "VALUES (?,?,?,1,1)", (eid, kind, eid))
         rows = [(eid, d, c) for d, c in sorted(series[eid].items())]
-        conn.executemany("INSERT OR REPLACE INTO prices (entity_id,date,close) "
-                         "VALUES (?,?,?)", rows)
-        n += len(rows)
+        # metals_pack is the HIGHEST-ranked source: licensed, hand-dropped, the
+        # desk's own reference. Nothing may overwrite a cell it owns.
+        res = prices_io.upsert(conn, rows, "metals_pack")
+        n += res["wrote"]
     conn.commit()
     conn.close()
     print(f"\nloaded {n:,} price rows into {DB}")

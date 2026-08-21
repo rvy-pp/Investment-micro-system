@@ -40,6 +40,9 @@ import sqlite3
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "packages" / "core"))
+
+import prices_io  # noqa: E402
 DB = REPO / "data" / "ims.db"
 STAGING = REPO / "data" / "staging" / "zn_shf_close.csv"
 
@@ -97,9 +100,8 @@ def main() -> int:
     conn.execute(
         "INSERT OR IGNORE INTO entities (id,kind,name) VALUES (?,?,?)",
         (ENTITY, "commodity", "Zinc SHFE, ex-VAT, USD/t (Wind ZN.SHF)"))
-    conn.executemany(
-        "INSERT OR REPLACE INTO prices (entity_id,date,close,currency) "
-        "VALUES (?,?,?,'USD')", rows)
+    prices_io.upsert(conn, [(r[0], r[1], r[2]) for r in rows], "wind",
+                     currency="USD")
     conn.commit()
 
     first, last = rows[0], rows[-1]
