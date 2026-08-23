@@ -69,6 +69,60 @@ COLS = {
 }
 
 
+EPOCH = dt.date(1899, 12, 30)      # Excel's serial-date origin
+
+
+def read_tsv(path: pathlib.Path) -> dict[str, dict[str, float]]:
+    """Read the MCP's text extraction of the same workbook.
+
+    WHY A SECOND READER. The pack arrives as an email attachment, and the
+    Microsoft 365 MCP returns attachments as TAB-SEPARATED TEXT, not as bytes —
+    so there is no .xlsx on disk to hand to openpyxl. The column indices are
+    identical to the workbook (verified: col1 LME aluminium, col2 zinc, col11
+    Richards Bay, col13 silver, col15 INR, col20 alumina, col24 pet coke,
+    col32 USDCNY), so COLS is shared and only the parsing differs.
+
+    DATES COME BACK AS EXCEL SERIALS. 40182 is 2010-01-04, counted from
+    1899-12-30 — the 1900 leap-year bug means the origin is the 30th, not the
+    31st. Reading them as ISO or off-by-one shifts the entire series by a day,
+    which would look like nothing at all on a chart.
+
+    TRUNCATION IS EXPECTED AND MATTERS. The MCP caps a read at ~200k characters,
+    which is ~830 of the pack's ~4,760 rows, and it keeps the OLDEST rows. So a
+    single extraction cannot rebuild history — it is for the daily increment,
+    where only the last row is needed. `--load` on a truncated file is still
+    safe because prices are INSERT OR REPLACE keyed on (entity_id, date), but
+    the caller should know it is topping up, not backfilling.
+    """
+    import csv
+    out: dict[str, dict[str, float]] = {v[0]: {} for v in COLS.values()}
+    with open(path, encoding="utf-8") as f:
+        rows = list(csv.reader(f, delimiter="	"))
+    for row in rows:
+        if not row or not row[0].strip():
+            continue
+        try:                                  # a data row starts with a serial
+            serial = int(float(row[0]))
+        except ValueError:
+            continue                          # sheet banner or header line
+        if not 20000 < serial < 60000:        # ~1954..2064, rejects stray ints
+            continue
+        iso = (EPOCH + dt.timedelta(days=serial)).isoformat()
+        for j, (eid, _k, _n) in COLS.items():
+            if j >= len(row):
+                continue
+            raw = row[j].strip()
+            if not raw or raw.startswith("#"):     # '#N/A' is a gap, not a price
+                continue
+            try:
+                v = float(raw)
+            except ValueError:
+                continue
+            if v > 0:
+                out[eid][iso] = v
+    return out
+
+
 def read(path: pathlib.Path) -> dict[str, dict[str, float]]:
     import openpyxl
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
@@ -90,18 +144,24 @@ def read(path: pathlib.Path) -> dict[str, dict[str, float]]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--file", required=True)
+    ap.add_argument("--file", required=True,
+                    help=".xlsx from disk, or .tsv/.txt from the MCP extraction")
     ap.add_argument("--probe", action="store_true")
     ap.add_argument("--load", action="store_true")
     a = ap.parse_args()
 
-    series = read(pathlib.Path(a.file))
+    f = pathlib.Path(a.file)
+    series = read_tsv(f) if f.suffix.lower() in (".tsv", ".txt") else read(f)
 
     if a.probe or not a.load:
         print(f"{'entity':24}{'rows':>7}  span")
         for j, (eid, _k, note) in sorted(COLS.items()):
             ks = sorted(series[eid])
-            print(f"{eid:24}{len(ks):>7}  {ks[0]} .. {ks[-1]}   {note}")
+            # A series can legitimately be EMPTY in a given extraction: cp_coke
+            # starts 2018, so a truncated read covering 2010-2013 has none of
+            # it. Report the gap rather than indexing into nothing.
+            span = f"{ks[0]} .. {ks[-1]}" if ks else "— no rows in this file —"
+            print(f"{eid:24}{len(ks):>7}  {span}   {note}")
         if not a.load:
             print("\nprobe only — pass --load to write")
             return 0
