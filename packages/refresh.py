@@ -55,6 +55,17 @@ STEPS = [
     # stale unnoticed, because nothing checked a table outside `prices`.
     # pipeline.py STEP 1 always ran it; this file simply forgot to.
     ("open interest",     ["packages/adapters/vault_oi.py", "--load"],        False),
+    # Monthly series, but pulled daily because the cost is one request and the
+    # failure mode of forgetting is a coal price that silently ages for weeks.
+    ("FRED coal",         ["packages/adapters/fred_prices.py", "--load"],     False),
+    # --- steps that consume what the AGENT staged, if it staged anything ------
+    # These are no-ops when no staging file exists for today, which is the
+    # correct behaviour for a Python-only run: the MCP steps genuinely cannot
+    # run here. They are listed so a full agent-driven run has ONE sequence
+    # rather than two, per the PM's instruction that every fetch happens in one
+    # run. `--if-staged` makes each a skip, never a failure, when absent.
+    ("metals pack (staged)", ["packages/refresh.py", "--consume", "metals"],  False),
+    ("mail watch (staged)",  ["packages/refresh.py", "--consume", "mail"],    False),
     ("corporate actions", ["packages/adapters/check_corporate_actions.py"],   False),
     ("score + persist",   ["packages/score/run_scores.py"],                   True),
 ]
@@ -98,12 +109,50 @@ MANUAL = [
 ]
 
 
+def consume(what: str) -> int:
+    """Load a staging file the agent wrote earlier in the same run.
+
+    SKIP IS NOT FAILURE. A Python-only invocation has no MCP and therefore no
+    staging file, and that must exit 0 — otherwise every unattended run reports
+    a red step for something it was never able to do. A run that DID stage a
+    file and then fails to load it is a real error and exits nonzero.
+    """
+    import datetime as _dt
+    today = _dt.date.today().isoformat()
+    stage = REPO / "data" / "staging"
+    if what == "metals":
+        f = stage / f"metals_pack_{today}.tsv"
+        if not f.exists():
+            print(f"no metals staging for {today} — skipped (agent step did not run)")
+            return 0
+        r = subprocess.run([PY, "packages/adapters/metals_pack.py",
+                            "--file", str(f), "--load"], cwd=REPO,
+                           capture_output=True, text=True)
+        print(r.stdout.strip() or r.stderr.strip())
+        return r.returncode
+    if what == "mail":
+        f = stage / f"mail_{today}.json"
+        if not f.exists():
+            print(f"no mail staging for {today} — skipped (agent step did not run)")
+            return 0
+        r = subprocess.run([PY, "packages/adapters/mail_watch.py"], cwd=REPO,
+                           capture_output=True, text=True)
+        print(r.stdout.strip() or r.stderr.strip())
+        return r.returncode
+    print(f"unknown --consume target {what!r}")
+    return 2
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--consume", choices=["metals", "mail"],
+                    help="load a staging file the agent wrote (internal)")
     ap.add_argument("--force", action="store_true",
                     help="re-pull even steps whose data is already there for today")
     a = ap.parse_args()
+    if a.consume:
+        return consume(a.consume)
 
     OUT.mkdir(parents=True, exist_ok=True)
     started = datetime.now(timezone.utc)
