@@ -68,9 +68,28 @@ FEEDS = {
     "lme_zinc":              ("pack / westmetall LME cash", 3, "feed"),
     "brent":                 ("Daily Metals Pack", 3, "feed"),
     "zinc_shfe":             ("Wind ZN.SHF",      3, "feed"),
-    "cp_coke":               ("Daily Metals Pack", 3, "assessed"),
-    "thermal_coal_seaborne": ("Daily Metals Pack", 3, "assessed"),
-    "iron_ore":              ("IMF monthly",     45, "monthly"),
+    # THRESHOLD MUST MATCH THE SOURCE YOU CAN RELY ON, not the best case.
+    # Both of these were ("Daily Metals Pack", 3, "assessed") and reported STALE
+    # on essentially every run, for two different reasons:
+    #
+    #  thermal_coal_seaborne  the pack carries it daily, but the pack is a manual
+    #                         drop. The source that ALWAYS arrives is FRED
+    #                         PCOALAUUSDM, which is MONTHLY — so a 3-trading-day
+    #                         rule could never be satisfied and the warning
+    #                         carried no information. Now judged as monthly.
+    #                         When the pack IS loaded it sits far inside 45 days
+    #                         anyway, so nothing is lost.
+    #
+    #  cp_coke                has NO automated source at all. Yahoo has no feed,
+    #                         FRED retired nothing that covers it, and only the
+    #                         pack supplies it. Reporting it as STALE implies a
+    #                         broken feed; the truth is there is no feed. `kind`
+    #                         is now "manual", which reports the age without
+    #                         crying wolf — the same distinction the store makes
+    #                         between a withheld score and a missing one.
+    "cp_coke":               ("Daily Metals Pack — NO automated source", 3, "manual"),
+    "thermal_coal_seaborne": ("FRED PCOALAUUSDM monthly / pack", 70, "monthly"),
+    "iron_ore":              ("IMF monthly",     70, "monthly"),
 }
 DEFAULT = ("unmapped", 3, "feed")
 
@@ -111,9 +130,22 @@ def check(today: dt.date | None = None) -> dict:
             changed_on = d
         value_age = trading_days(dt.date.fromisoformat(changed_on), today)
 
-        # A monthly series is never judged on trading days — 45 CALENDAR days is
-        # the documented bar, and applying a 3-day rule would flag it forever.
-        if kind == "monthly":
+        # A monthly series is never judged on trading days. 70 CALENDAR days,
+        # not 45: an IMF series is DATED to the first of the month it describes
+        # and PUBLISHED around the middle of the following one, so the July print
+        # is stamped 2026-07-01 and appears ~2026-08-15. On 2026-08-24 that is 54
+        # days old and perfectly current, which a 45-day bar called STALE. The
+        # limit has to cover one month of data lag plus one of publication lag,
+        # or it flags a healthy feed every single month.
+        if kind == "manual":
+            # No automated source exists. Age is reported so it cannot be
+            # forgotten, but it is never counted as a staleness breach — a feed
+            # that was never wired is not a feed that broke, and conflating the
+            # two trains the reader to ignore the column.
+            cal = (today - dt.date.fromisoformat(last_d)).days
+            stale = False
+            age_txt = f"{cal}d — no auto source"
+        elif kind == "monthly":
             cal = (today - dt.date.fromisoformat(last_d)).days
             stale = cal > limit
             age_txt = f"{cal} calendar days"

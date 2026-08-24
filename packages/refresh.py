@@ -109,6 +109,34 @@ MANUAL = [
 ]
 
 
+
+# Tables a SKIP_IF_DONE step feeds, so a skipped step can still report whether
+# the source is alive. Keyed by the step label.
+_STEP_TABLE = {
+    "open interest": ("oi", "date"),
+}
+
+
+def _data_age(label: str) -> str | None:
+    """How old is the newest row the step is responsible for."""
+    spec = _STEP_TABLE.get(label)
+    if not spec:
+        return None
+    table, col = spec
+    try:
+        import sqlite3
+        conn = sqlite3.connect(REPO / "data" / "ims.db")
+        last = conn.execute(f"SELECT MAX({col}) FROM {table}").fetchone()[0]
+        conn.close()
+        if not last:
+            return "table EMPTY"
+        import datetime as _dt
+        days = (_dt.date.today() - _dt.date.fromisoformat(last)).days
+        flag = "  <-- SOURCE MAY BE DEAD" if days > 4 else ""
+        return f"{last} ({days}d){flag}"
+    except Exception as exc:
+        return f"unknown ({type(exc).__name__})"
+
 def consume(what: str) -> int:
     """Load a staging file the agent wrote earlier in the same run.
 
@@ -179,8 +207,17 @@ def main() -> int:
             # absent step is indistinguishable from one that ran and found
             # nothing, which is the ambiguity run_scores.py's withheld rows
             # exist to avoid.
-            say(f"  skipped — already pulled today ({day}); --force to re-pull")
-            results.append({"step": label, "status": "skipped"})
+            # REPORT THE DATA AGE, NOT THE PULL AGE. The marker records that a
+            # pull HAPPENED today; it says nothing about whether the pull
+            # brought anything new. On 2026-08-24 this printed "already pulled
+            # today" while the newest OI row was 5 trading days old, because the
+            # vault stopped being updated when that pipeline was retired. A
+            # dead source and a healthy one looked identical.
+            age = _data_age(label)
+            extra = "" if age is None else f" — newest data {age}"
+            say(f"  skipped — already pulled today ({day}){extra}; --force to re-pull")
+            results.append({"step": label, "status": "skipped",
+                            "data_age": age})
             continue
         r = subprocess.run([PY, *argv], cwd=REPO, capture_output=True, text=True)
         body = (r.stdout or "").strip()

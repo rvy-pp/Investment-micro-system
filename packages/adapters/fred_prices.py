@@ -42,6 +42,26 @@ CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
 # NOT a browser UA — see gotcha 1.
 FRED_UA = "curl/8.0"
 
+# REMOVED 2026-08-24 — both return HTTP 404 and the IMF has retired them:
+#
+#   thermal_coal_sa   PCOALSAUSDM    South African thermal
+#   coking_coal       PCOKEUSDM      coking coal — WANTED for the steel group
+#
+# They had been failing on every single refresh run since the adapter was
+# written, and nothing acted on it: a FAIL line scrolled past in a report nobody
+# diffed. That is the operational form of the silent-failure shape in
+# docs/SILENT_BUGS.md — a step that reports an error which is never read is not
+# meaningfully different from a step that fails silently.
+#
+# Four replacements were probed before deleting: PCOKEUSDM, PHCCUSDM,
+# PCOALSAFUSDM and PCOALAUUSDQ. Only the quarterly Australian series resolves,
+# and a quarterly print is not a substitute for a monthly one.
+#
+# CONSEQUENCE, and it is not cosmetic: THE STEEL PEER GROUP HAS NO COKING COAL
+# PRICE. Do not build steel assuming FRED covers it — the Daily Metals Pack has
+# two coking coal columns (9 = quarterly contract, 10 = Australian spot) and
+# that is currently the only route.
+#
 # entity_id -> (fred_series_id, description, unit, basis_note)
 SERIES = {
     "thermal_coal_seaborne": (
@@ -51,19 +71,6 @@ SERIES = {
         "SEABORNE Australian thermal. Indian smelters buy Coal India e-auction "
         "coal domestically; this is a correlated substitute at the margin, not "
         "the same price. Basis risk is real — flag signals that lean on it.",
-    ),
-    "thermal_coal_sa": (
-        "PCOALSAUSDM",
-        "Coal, South African thermal, IMF (monthly)",
-        "USD/t",
-        "Alternative seaborne benchmark; South African cargoes are a common "
-        "Indian import source, so arguably a closer basis than Australian.",
-    ),
-    "coking_coal": (
-        "PCOKEUSDM",
-        "Coking coal, IMF (monthly)",
-        "USD/t",
-        "For the steel peer group when it is built; not used by aluminium.",
     ),
     "iron_ore": (
         "PIORECRUSDM",
