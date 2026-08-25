@@ -52,20 +52,108 @@ SHEET = "Daily prices "          # NOTE the trailing space; it is in the file
 HEADER_ROW = 18                  # data starts at 19
 
 # workbook column index -> (entity_id, kind, note)
-# Only series the specs actually reference are loaded. The pack also carries
-# steel, iron ore, copper, nickel and rebar, deliberately left out: nothing in
-# the aluminium or zinc specs links to them, and loading unused series makes
-# `_series_in_store()` claim coverage the bridge cannot use.
+#
+# ALL 36 PRICE COLUMNS, as of 2026-08-24. Was nine. The earlier note here said
+# steel, iron ore, copper, nickel and rebar were "deliberately left out: nothing
+# in the aluminium or zinc specs links to them, and loading unused series makes
+# _series_in_store() claim coverage the bridge cannot use." The second half of
+# that is still true and is handled instead by NOT price_link-ing them in any
+# spec — an unlinked series cannot be claimed as coverage. The first half stopped
+# being a reason once the pack became a daily automated feed: the steel group is
+# being built next and a series you are not capturing today is history you cannot
+# recover, because the connector route can never backfill (it truncates to the
+# OLDEST rows) and only the live mail carries the file.
+#
+# NAMING OBEYS INVARIANT 6 — a proxy is never aliased to the thing it proxies.
+# Four collisions were available to walk into here and all four are avoided:
+#
+#   iron_ore            already exists as FRED PIORECRUSDM, IMF MONTHLY. The
+#                       pack's three iron ore columns are daily and on three
+#                       different bases, so they get three distinct ids and
+#                       `iron_ore` is left alone.
+#   zinc_shfe           already exists as Wind ZN.SHF in USD/t EX-VAT. Column 22
+#                       is the CNY contract inc-VAT -> zinc_shfe_cny.
+#   alumina_index       is Australia FOB assessed. Columns 30/31 are the SHFE
+#                       futures -> alumina_shfe_cny / alumina_shfe_usd.
+#   lme_aluminium       is LME cash. Column 21 is the SHFE contract ->
+#                       aluminium_shfe_cny.
+#
+# Columns 5 and 27 are BOTH "China import iron ore fines 62%" and are NOT the
+# same number — 100.00 vs 91.79 on 2026-08-24. Two ids, headers kept verbatim in
+# the note so the basis is auditable rather than guessed at later.
+#
+# Column 37 is blank; 38-43 are Month / Qtr-FY / Fiscal year / Calendar Year /
+# FY / CY labels, not prices. Not mapped, by inspection not assumption.
 COLS = {
     1:  ("lme_aluminium", "commodity", "LME Aluminium cash US$/t"),
     2:  ("lme_zinc", "commodity", "LME Zinc cash US$/t — was UNPRICED"),
+    3:  ("lme_lead", "commodity", "LME Lead US$/t"),
+    4:  ("lme_copper", "commodity", "LME Copper US$/t"),
+    5:  ("iron_ore_china_cfr62", "commodity",
+         "China import Iron ore fines 62% Fe CFR US$/t"),
+    6:  ("hrc_china_export_fob", "commodity",
+         "Steel China Export HR Coil fob US$/t"),
+    7:  ("hrc_china_domestic", "commodity", "China domestic HRC US$/t"),
+    8:  ("scrap_turkey", "commodity", "Turkey scrap US$/t"),
+    9:  ("coking_coal_contract_qtr", "commodity",
+         "Hard Coking Coal FOB Australia — QUARTERLY contract US$/t. Blank on "
+         "recent rows; column 10 is the only live coking coal number"),
+    10: ("coking_coal_spot_aus", "commodity",
+         "Hard Coking Coal spot, Australia US$/t — the steel group's ONLY "
+         "coking coal source. FRED PCOKEUSDM is a dead 404 and four "
+         "replacements were probed without success"),
     11: ("thermal_coal_seaborne", "commodity", "Richards Bay thermal US$/t"),
+    12: ("thermal_coal_indonesia_6322", "commodity",
+         "Indonesia Coal reference 6322 kcal US$/t"),
     13: ("silver", "commodity", "Silver spot US$/toz"),
+    14: ("gold", "commodity", "Gold spot US$/toz"),
     15: ("usdinr", "fx", "INR:USD"),
     16: ("brent", "commodity", "Brent US$/bbl"),
+    17: ("iron_ore_futures_china_cny", "commodity",
+         "Iron ore futures China CNY/t"),
+    18: ("rebar_china_cny", "commodity", "Rebar spot China CNY/t"),
+    19: ("dxy", "index", "Dollar Index (DXY)"),
     20: ("alumina_index", "commodity", "Alumina Australia FOB US$/t — assessed"),
+    21: ("aluminium_shfe_cny", "commodity",
+         "China aluminium futures SHFE CNY/t — NOT lme_aluminium"),
+    22: ("zinc_shfe_cny", "commodity",
+         "China zinc futures SHFE CNY/t — NOT lme_zinc, and NOT zinc_shfe "
+         "(that id is Wind ZN.SHF in USD/t ex-VAT)"),
+    23: ("hrc_cis_fob", "commodity", "CIS Steel HR Coil fob US$/t"),
     24: ("cp_coke", "commodity", "Pet coke US$/t — was UNPRICED"),
+    25: ("hrc_india_inr", "commodity", "HRC 2.5mm India Rs/t"),
+    26: ("hrc_india_usd", "commodity", "HRC 2.5mm India US$/t"),
+    27: ("iron_ore_china_import62", "commodity",
+         "China import iron ore fines 62% US$/t — a DIFFERENT print from "
+         "column 5 (91.79 vs 100.00 on 2026-08-24)"),
+    28: ("iron_ore_sgx_tsi62", "commodity",
+         "SGX TSI Iron ore CFR China 62% fines US$/t"),
+    29: ("lme_nickel", "commodity", "LME Nickel US$/t"),
+    30: ("alumina_shfe_cny", "commodity",
+         "SHFE Alumina 1M futures CNY/t — NOT alumina_index"),
+    31: ("alumina_shfe_usd", "commodity",
+         "SHFE Alumina 1M futures US$/t — NOT alumina_index"),
     32: ("usdcny", "fx", "USDCNY"),
+    33: ("hrc_uk", "commodity", "UK HRC US$/t"),
+    34: ("hrc_germany", "commodity", "Germany HRC US$/t"),
+    35: ("rebar_india_primary_inr", "commodity", "Primary rebar 12mm Rs/t"),
+    36: ("rebar_india_secondary_inr", "commodity", "Secondary rebar 12mm Rs/t"),
+}
+
+# Loaded so the history exists, but NOT price_link-ed from any spec yet — the
+# steel group is not built. Listed explicitly so "captured" is never mistaken for
+# "modelled": a series in here contributes to no cost bridge and no score.
+PARKED = {
+    "lme_lead", "lme_copper", "lme_nickel", "gold", "dxy",
+    "iron_ore_china_cfr62", "iron_ore_china_import62", "iron_ore_sgx_tsi62",
+    "iron_ore_futures_china_cny",
+    "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",
+    "hrc_india_inr", "hrc_india_usd", "hrc_uk", "hrc_germany",
+    "rebar_china_cny", "rebar_india_primary_inr", "rebar_india_secondary_inr",
+    "scrap_turkey", "coking_coal_contract_qtr", "coking_coal_spot_aus",
+    "thermal_coal_indonesia_6322",
+    "aluminium_shfe_cny", "zinc_shfe_cny", "alumina_shfe_cny",
+    "alumina_shfe_usd",
 }
 
 

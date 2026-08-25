@@ -1,116 +1,127 @@
 ---
 name: metals-pack-fetch
-description: Pull today's Daily Metals Pack out of the Kotak basic-materials email and load its prices. Replaces the manual save-the-attachment step. Use for the daily price refresh, when commodity prices look stale, or when asked to update the metals pack.
+description: Pull the latest Daily Metals Pack out of Outlook as a real .xlsx and load all 36 commodity columns as the primary price source. Use for the daily price refresh, when commodity prices look stale, or when asked to update the metals pack.
 ---
 
-# metals-pack-fetch — the pack, without saving an attachment
+# metals-pack-fetch — the real workbook, out of Outlook
 
-The Daily Metals Pack is the best price data in this system — LME cash, assessed
-alumina, LME zinc and pet coke, none of which Yahoo supplies correctly — and it
-arrives as an email attachment. It used to require a human saving a file. It does
-not any more.
-
-This is **step A** of a two-step split, forced by the same constraint as Wind and
-mail-fetch: **the Microsoft 365 MCP is callable by the agent, never by a Python
-process.**
-
-## 1. Find today's mail
-
-```
-outlook_email_search
-  sender:        sumangal.nevatia@kotak.com
-  query:         Basic materials
-  afterDateTime: yesterday
-  limit:         5
-```
-
-Subject is **"Basic materials - daily news and prices"**, sent daily around
-**03:30 UTC** (09:00 IST). `hasAttachments` must be true.
-
-Weekly sector wraps from the same sender also match `sender` alone — that is why
-`query: Basic materials` is there. If the only hit is a "Weekly wrap", today's
-pack has not arrived; say so and stop rather than loading a stale file.
-
-## 2. Read the message to get the attachment URI
-
-```
-read_resource  uri: mail:///messages/<messageId>
-```
-
-The response carries an `attachments` array with **two** xlsx files:
-
-```
-Daily Metals Pack, <Month DD, YYYY>.xlsx     ~1.9 MB   <- this one
-Daily Cement Pack, <Month DD , YYYY>.xlsx    ~0.6 MB   <- ignore until cement is modelled
-```
-
-Match on the **name**, not on position or size. Note the cement file has a stray
-space before the comma in its name; do not let a loose pattern catch it.
-
-## 3. Read the attachment
-
-```
-read_resource  uri: <the metals pack attachment uri>
-```
-
-It comes back as **tab-separated text, not bytes** — the MCP converts it. The
-first line is `=== Sheet: Daily prices ===`, then the header, then the grid.
-
-**Expect a truncation notice.** The read caps at ~200k characters, roughly 830 of
-the pack's ~4,760 rows, and it keeps the **oldest** rows. When the result is
-saved to a file, read the **tail** of that file — that is where today's prices
-are. Do not re-read the resource hoping for more.
-
-## 4. Write it to staging
-
-```
-data/staging/metals_pack_YYYY-MM-DD.tsv
-```
-
-Version-controlled on purpose, like the Wind capture: it is the dated record of
-what the broker actually sent that morning, which is what lets a price be audited
-later without trusting anyone's memory.
-
-## 5. Load
+The Daily Metals Pack is the best price data in this system and now the
+**primary** source for every commodity it carries: LME cash, assessed alumina,
+pet coke, coking coal, and the whole steel complex. It arrives as an email
+attachment each morning, and as of **2026-08-24** nothing here is agent-only.
 
 ```bash
 cd C:\Users\rajvaibhav.yadav\Investment-micro-system
-python packages/adapters/metals_pack.py --file data/staging/metals_pack_<date>.tsv --probe
-python packages/adapters/metals_pack.py --file data/staging/metals_pack_<date>.tsv --load
+python packages/adapters/outlook_pack.py --save     # find + save the .xlsx
+python packages/refresh.py --consume metals         # probe-free load
 ```
 
-`--probe` first, every time. It prints rows and span per series. **Check the span
-ends today** — if it ends three years ago you have the truncated head and not the
-tail, which is the one way this can silently load nothing useful.
+Both run inside `python packages/refresh.py`. **You do not normally invoke this
+skill at all** — it is documentation for the two steps the refresh already does.
 
-`cp_coke` showing `0 rows` on a truncated read is normal: that series only starts
-in 2018.
+---
 
-Prices are `INSERT OR REPLACE` on `(entity_id, date)`, so re-loading the same day
-is harmless and a partial file tops up rather than overwriting history.
+## Why this stopped being an MCP step
 
-## 6. Confirm it landed
+The Microsoft 365 connector is a **text service**. It hands back an attachment
+converted to text, capped at ~200k characters, keeping the **OLDEST** rows. On a
+4,760-row workbook that is 2010 to about 2013, at any hour, awake or asleep. The
+old version of this file told you to read the *tail* of what came back because
+today's prices are there — they are at the tail of the **file**, not the tail of
+the **extract**, and the difference is thirteen years. `startPage` does not
+rescue it: the tool schema documents it for `file:///` reads only and says
+outright it is ignored for every other URI scheme.
+
+Outlook has the actual bytes. Classic Outlook 16 with a live MAPI profile is
+installed, so `outlook_pack.py` shells to PowerShell, saves the attachment, and
+hands the path to the openpyxl reader that was always in `metals_pack.py` for a
+hand-dropped file. Measured 2026-08-24: **1,934,986 bytes, 4,728 rows, span
+ending the same day, ~0 tokens** because no model ever sees the grid.
+
+It needs the machine **awake and logged in** — locked is fine, asleep is not. A
+scheduled run could not have fired through sleep either, so this costs nothing
+that was previously working.
+
+## Two constants the old skill got wrong, both silently
+
+**Sender.** It searched `sumangal.nevatia@kotak.com`. The pack comes from
+**`Samriddhi.Choudhury@kotak.com`**. Sumangal Nevatia is a real Kotak metals
+analyst who sends other notes, which is presumably how the address got in. A
+search on the wrong address returns zero hits, and the documented response to
+zero hits was *"say the pack has not arrived and stop"* — so a wrong constant
+read as a quiet morning. **`outlook_pack.py` matches on no sender at all.**
+
+**Filename.** It said the cement pack is distinguished by a stray space before
+the comma. Not stable — on 2026-08-18 **both** files had it (`August 18 , 2026`);
+on 2026-08-24 metals had `August 24, 2026` and cement had `August 24 , 2026`.
+Match the prefix `Daily Metals Pack`, which is what the code does.
+
+## The last row is dated today and does NOT hold today's prices
+
+Read this before quoting a number off the bottom of the file.
+
+The mail leaves around **08:39 IST**. LME cash settles at London midday, roughly
+16:30 IST. So the row dated today exists but is **unfilled**, carrying the
+previous session's values until tomorrow's file backfills it. Verified against
+westmetall's own cash settlements date by date: the pack's date column is the
+**trade date**, and 775 of 842 historical Mondays differ from the preceding
+Friday precisely because by the time you see a Monday row in a *later* pack it
+has been filled in.
+
+This needs no handling. Prices are `INSERT OR REPLACE` on `(entity_id, date)`,
+so tomorrow's pack overwrites today's placeholder with the real print. What it
+does mean: **never read the last row as a live quote.** `freshness.py` separates
+`row_age` from `value_age` for exactly this, and a carried-forward row shows up
+as value_age > row_age.
+
+## What gets loaded
+
+All **36** price columns, up from nine. Columns 37–43 are date labels, not
+prices, and are not mapped. Nine feed the aluminium and zinc bridges; the other
+27 are **parked** — captured so the history exists for the steel group, but
+`price_link`-ed from no spec, so nothing reads them and nothing can be scored
+wrong by them. `metals_pack.PARKED` is the list; move a series out of it the
+moment a spec links it.
+
+Capturing them now is not tidiness. The connector route can never backfill, so a
+column you do not capture today is history you cannot recover.
+
+**Four naming collisions were available here and all four are avoided**, per
+invariant 6 — a proxy is never aliased to the thing it proxies:
+
+| pack column | gets | because `…` already means |
+|---|---|---|
+| 21 SHFE aluminium CNY | `aluminium_shfe_cny` | `lme_aluminium` is LME cash |
+| 22 SHFE zinc CNY | `zinc_shfe_cny` | `zinc_shfe` is Wind ZN.SHF, USD/t **ex-VAT** |
+| 30/31 SHFE alumina | `alumina_shfe_cny/_usd` | `alumina_index` is Australia FOB assessed |
+| 5/27/17/28 iron ore | four distinct ids | `iron_ore` is FRED PIORECRUSDM, **monthly** |
+
+Columns 5 and 27 are both "China import iron ore fines 62%" and are **not the
+same number** — 100.00 against 91.79 on 2026-08-24. Two ids, headers kept
+verbatim in the notes so the basis stays auditable.
+
+**Three columns the broker stopped maintaining.** Turkey scrap ends 2020-12-03,
+the quarterly coking coal contract 2022-06-27, SHFE zinc CNY 2021-04-01. They
+load as history and `freshness.py` marks them `DISCONTINUED` rather than STALE —
+a broker's editorial decision is not a pipeline fault. Column 10
+(`coking_coal_spot_aus`) is the **only live coking coal number**, and the only
+coking coal source this system has at all: FRED `PCOKEUSDM` is a dead 404 and
+four replacements were probed without success.
+
+## Confirm it landed
 
 ```bash
-python packages/core/freshness.py            # or:
-python -c "import sqlite3;c=sqlite3.connect('data/ims.db');print(c.execute(
-  \"select entity_id,max(date) from prices where entity_id in
-   ('lme_aluminium','lme_zinc','alumina_index') group by entity_id\").fetchall())"
+python packages/core/freshness.py
 ```
 
-All three should read today (or the last trading day). If they do not, the load
-did not take and **saying nothing is the failure mode** — the scores will
-recompute happily on yesterday's prices and look entirely normal.
-
-## Cost
-
-One search plus two reads. The attachment read is the expensive part at roughly
-50k tokens. Do not read both attachments; the cement pack doubles the cost and
-nothing consumes it yet.
+Every pack series should read `2026-08-24` (or the last trading day) with row age
+0. If they do not, the load did not take, and **saying nothing is the failure
+mode** — the scores recompute happily on yesterday's prices and look entirely
+normal.
 
 ## Full-history rebuild
 
-**This skill cannot do it.** Truncation keeps the oldest ~830 rows, so no single
-extraction covers 2010-2026. For a rebuild you need the real `.xlsx` saved to
-disk and `--file <path>.xlsx`, which uses the openpyxl reader instead. See
-`docs/REPLICATE.md` §4.3.
+This route **does** rebuild history, which the connector route never could. One
+`--save` and one `--load` writes all 4,728 rows per series back to 2010. That is
+why `docs/REPLICATE.md` §4.3's "a person saves the workbook" step is no longer
+required.
