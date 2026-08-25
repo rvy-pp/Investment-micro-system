@@ -103,6 +103,29 @@ Adding a sector is **one economics spec plus one layer config. Zero new code.**
 Adding a sub-system is one package plus one tab. If a change requires touching
 the bridge engine, the spec format is wrong.
 
+**Tested for real on 2026-08-25, when steel was added, and it very nearly held.**
+Seven companies across four peer groups needed `specs/entities/steel.yaml` and
+`specs/sectors/steel.yaml` and **nothing whatsoever in `packages/score/`** — the
+bridge, the scorer and the persist step all picked them up from disk, and the run
+went from 26 to 61 `pillar_scores` rows the moment the two YAML files landed.
+
+Two exceptions, both in L4 rather than in the engine, and both were hardcoded
+lists rather than logic:
+
+- `api/engine.py` `SECTORS` — the nav is a data edit by design, so this one is
+  the intended cost, not a violation.
+- `api/serve.py` `/api/scores` named `aluminium_primary` and `zinc` as literals.
+  This is the one that mattered: adding steel to `SECTORS` made the tab appear in
+  the nav and stay **absent from `/api/scores`**, so the tab would render with an
+  empty Bridge view and nothing would say why. Now derived from `SECTORS`.
+
+A third near-miss worth recording, because it was silent rather than visible:
+`adapters/yahoo_prices.py` held the equity roster as a literal tuple in **two**
+places, and adding a name to `CANDIDATES` without editing both inserted it into
+`entities` with `kind='commodity'`. No error, a plausible row, and
+`_series_in_store()` would then count an equity as a priceable input series. One
+`EQUITIES` set now.
+
 ## Layout
 
 ```
@@ -142,14 +165,44 @@ prints that list every run rather than implying completeness it does not have.
 
 ## Status
 
-Two peer groups score on live data: `aluminium_primary` (nalco / hindalco /
-vaml) and `zinc` (hindustan_zinc / vedanta). Aluminium is the proving ground —
-alumina's sign flips across the group, which is exactly what an absolute
-per-company score cannot express.
+**Six peer groups score on live data across two sectors**, 13 entities, as of
+2026-08-25.
 
-**All four pillars score and persist.** `pillar_scores` holds 1,000 rows across
-40 dates. Composite as of 2026-08-14: vedanta 3.90 > hindustan_zinc 3.62 >
-nalco 2.73 > vaml 2.37 ≈ hindalco 2.37.
+| sector | peer group | names |
+|---|---|---|
+| Non-Ferrous | `aluminium_primary` | nalco, hindalco, vaml |
+| | `zinc` | hindustan_zinc, vedanta |
+| Steel | `steel_integrated` | tata_steel, jsw_steel, jindal_steel, sail |
+| | `steel_converter` | apl_apollo |
+| | `steel_stainless` | jindal_stainless — economics **withheld** |
+| | `steel_secondary` | shyam_metalics — economics **withheld** |
+
+Aluminium is still the proving ground: alumina's sign flips across the group,
+which is exactly what an absolute per-company score cannot express. **Steel is
+the second instance of the same structure and the reason to believe it
+generalises** — iron ore is captive for Tata and SAIL and bought by JSW and
+Jindal Steel, so one ore print separates them by ~18x, while coking coal (which
+nobody in India holds captive) hits all four and differentiates only by EBITDA/t.
+APL Apollo inverts the *output* line, which nothing in non-ferrous does: it buys
+hot-rolled coil, so rising HRC is a cost to it and revenue to every mill.
+
+The last two steel groups score valuation and mood but emit **no economics at
+all**, deliberately. Stainless needs ferrochrome and stainless scrap and the pack
+carries neither; Shyam is four segments including aluminium on a sponge-iron cost
+route. A bridge missing most of its cost stack while reporting `coverage_ok` is
+the exact failure this project spends the most effort avoiding, so those two
+withhold — and the withhold is *recorded* as a row, not left as a gap.
+
+**All four pillars score and persist.** `pillar_scores` holds 5,618 rows across
+1,377 dates. Composite as of 2026-08-25: vedanta 3.85 > hindustan_zinc 3.77 >
+sail 3.19 > vaml 2.79 > tata_steel 2.68 > nalco 2.62 > apl_apollo 2.58 >
+jindal_steel 2.57 > jindal_stainless 2.56 > hindalco 2.55 > jsw_steel 2.43 >
+shyam_metalics 2.16.
+
+**Guidance is withheld on all seven steel names** — nothing loaded yet. Steel
+looks like the best P4 candidate in the book, better than HZL: the guidance is
+numeric, dated, per-tonne and resolves every quarter, and the digests already
+carry both the commitment and the outcome.
 
 VAML carries the widest pillar spread — mood 3.77 against valuation 2.03 — and
 lands on the *same* composite as Hindalco, whose pillars broadly agree. That is
@@ -167,7 +220,8 @@ live.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — see `docs/FLOWS.md`), OI as a conviction modifier, book
-ingestion, and every sector beyond these two.
+ingestion, Cement (its own daily pack arrives in the same mail and is not read
+yet), and Mining, EMS, IT and Autos.
 
 **The gate still standing:** the backtest has now been RUN
 (`packages/review/backtest.py`) and the honest answer is *not yet decidable*.
@@ -178,9 +232,34 @@ drop Vedanta and every horizon turns positive. So the gate is not passed and not
 failed — the sample cannot answer it. It needs more dates, not more pillars.
 `specs/sectors/aluminium_primary.yaml` under `validation` sets the bar: the
 ranking must predict realised relative moves, with high-conviction calls beating
-low-conviction ones. Nothing should be extended to a third sector before that is
-answered. A dashboard over an unvalidated scoring engine is how the last attempt
-produced output nobody could trade.
+low-conviction ones. A dashboard over an unvalidated scoring engine is how the
+last attempt produced output nobody could trade.
+
+**That gate was not cleared before steel was added, and the extension was made
+anyway — the PM's call, 2026-08-25.** The caution above is kept rather than
+softened, because it is still the honest statement of what is and is not known.
+Two things make the decision defensible, and one does not:
+
+- Steel does not *depend* on the aluminium result. It is a second, structurally
+  independent instance of the same arithmetic, and if the approach works it
+  should reproduce there — so it is closer to a replication than to a bet on an
+  unvalidated model.
+- The binding constraint on the original gate is **sample size, which only time
+  supplies.** Steel adds seven names in a second, less-correlated complex, which
+  is the one thing that actually shortens the wait for an answerable backtest.
+- Against that: **nothing about steel makes the aluminium IC decidable**, and
+  there are now two sectors' worth of scores that no backtest has graded. Do not
+  read a steel composite as validated. It is not.
+
+**Steel's own gate is narrower and sharper**, and it is a data gap rather than a
+statistical one. `market_pct` on the iron ore lines produces the entire result,
+and only **one of four** captive shares is cited anywhere in the 48 digests —
+Jindal Steel's "captive iron ore targeted ~40% by FY27-end", which is a forward
+target rather than today's share. JSW has a 2030 target. Tata and SAIL have
+nothing but sector knowledge. So the structural tests in
+`specs/sectors/steel.yaml` confirm the **arithmetic** works, not that the
+**inputs** are right. Confirm all four against annual reports before sizing
+anything off that group.
 
 ## Working on this
 

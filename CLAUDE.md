@@ -431,7 +431,9 @@ why `combined.py` reports spread and not just the average.
 
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
-(scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion, steel and the other sectors.
+(scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion,
+Cement, and Mining / EMS / IT / Autos. **Steel IS built as of 2026-08-25** — see
+the section below.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
@@ -454,8 +456,108 @@ asset is a 63.4% HZL stake; `holdco_discount_pct` is specified in `zinc.yaml`
 as a `market_layer` column that nothing computes. Do not "fix" this on 40 days
 of data — it is a hypothesis, not a finding.
 
-**More dates, not more pillars.** The gate stays shut on extending to a second
-sector, and the binding constraint is now sample size, which only time supplies.
+**More dates, not more pillars.** The binding constraint is sample size, which
+only time supplies.
+
+**This line used to read "the gate stays shut on extending to a second sector".
+It was opened by the PM on 2026-08-25 and steel was built.** The sentence is
+corrected rather than deleted, because the gate is still UNANSWERED and a reader
+needs to know the extension happened without it being cleared. Steel is a
+structurally independent replication rather than a bet on an unvalidated model,
+and it adds seven names in a less-correlated complex — which is the only thing
+that actually shortens the wait for a decidable backtest. But nothing about steel
+makes the aluminium IC decidable. **Do not read any composite in this system as
+validated.**
+
+## Steel — built 2026-08-25, and what is load-bearing in it
+
+Seven names from the vault's `Coverage/Steel` roster, four peer groups. The split
+is per-cost-stack, not per-label, and it was the PM's call:
+
+| peer group | names | economics |
+|---|---|---|
+| `steel_integrated` | tata_steel, jsw_steel, jindal_steel, sail | live |
+| `steel_converter` | apl_apollo | live but uninformative, see below |
+| `steel_stainless` | jindal_stainless | **withheld** |
+| `steel_secondary` | shyam_metalics | **withheld** |
+
+**THE STRUCTURAL CLAIM, and it is tested rather than asserted.** Iron ore
+captivity sets the DISPERSION; coking coal sets the LEVEL. Nobody in India holds
+captive coking coal of steel grade, so a seaborne coal move hits all four mills
+and separates them only by EBITDA/t — the thin-margin name takes the bigger
+percentage hit. Iron ore is the opposite. Run the three shocks in
+`specs/sectors/steel.yaml` `validation.test_1_result`:
+
+    iron ore +$20/t   jindal_steel -9.44%  jsw_steel -7.58%   <- material
+                      sail         -0.77%  tata_steel -0.42%  <- immaterial
+    coking coal +$20  all four material and negative, ordered by EBITDA/t alone
+    HRC +Rs2,000/t    mills all positive; SAIL +0.00%, correctly — it is
+                      priced off REBAR, not HRC
+
+**THE GATE ON ALL OF IT IS `market_pct` ON THE ORE LINES, AND IT IS MOSTLY
+UNSOURCED.** Those numbers produce the entire test_1 result and only ONE of four
+is cited in the 48 digests — Jindal Steel's "captive iron ore targeted ~40% by
+FY27-end", a forward target rather than today's share. JSW has a 2030 target.
+Tata and SAIL have nothing but sector knowledge. **test_1 confirms the arithmetic,
+not the inputs.** `tata 0.05` vs `jsw 0.75` IS the flagship pair; if the true gap
+is narrower the pair has far less ore content than the spec claims.
+
+**Iron ore carries a `basis_pass_through`, and it must.** Indian mills buy
+domestic ore from NMDC at administered prices, not seaborne. The digests show the
+two diverging inside one quarter — "costlier iron ore (NMDC hikes +18% QoQ)"
+against "Iron ore 62% Fe stable ~$93/t" in the same fortnight. Applying a CFR
+China delta at face value would have read ~nothing in a quarter when domestic ore
+rose sharply. Currently 0.50 and provisional, like aluminium's coal 0.35.
+
+**THE FX ASYMMETRY RUNS OPPOSITE TO ALUMINIUM.** Steel revenue is quoted in
+RUPEES (`hrc_india_inr`, `rebar_india_primary_inr`) while the two biggest cost
+lines are in DOLLARS, so in this bridge a weaker INR is pure cost inflation with
+no offsetting revenue leg. That OVERSTATES the real exposure — Indian HRC is
+priced off import parity and does lift with a weak rupee, with a lag. Do NOT
+"fix" it by repointing the output at `hrc_india_usd`; that creates the opposite
+error, a full instant pass-through. Handle it on the input side.
+
+**Two things left deliberately broken, both named in the specs rather than
+patched:**
+
+- **APL Apollo nets to -0.73% on an HRC shock.** Output and input are both linked
+  to `hrc_india_inr` at ~1:1, so the bridge calls it HRC-neutral when the digests
+  plainly say rising coil hurt it. That is the correct output of a wrong
+  structure: a converter earns the tube/coil SPREAD and no tube price series
+  exists. Same gap that put Novelis on a placeholder. Its valuation and mood are
+  real.
+- **SAIL's whole 16.64mt sits on one rebar line**, making it the highest-beta name
+  by construction (+35.6% of EBITDA on the live window). SAIL is roughly half
+  flat product. Fix by SPLITTING the line at the true flat/long ratio, both legs
+  summing to 16.64mt — cutting the tonnage instead breaks the volume/base_ebitda
+  basis rule. The ratio is a PM number; no digest gives it.
+
+**The denominators are more trustworthy here than in non-ferrous**, because steel
+brokers quote EBITDA/t against a disclosed tonnage, so the absolute print is
+independently checkable. It reconciles on all five names where both were cited
+(e.g. SAIL 4.16mt x Rs9,974 = Rs4,149 cr vs cited Rs41.5bn). The computed
+multiple also lands on the sell-side's own: SAIL 6.26x against Avendus quoting
+"6x EV/EBITDA".
+
+**VOLUME AND `base_ebitda` MUST STAY ON THE SAME BASIS.** Every steel volume is
+the cited quarterly tonnage x4, matching its x4 denominator. SAIL is the trap:
+the digests cite an "FY27 volume guide 22-22.5mt" which is 34% above its
+Q1-annualised 16.64mt and is probably crude steel PRODUCTION rather than saleable
+SALES. Swapping the guide into the volume field while leaving the denominator at
+Q1-annualised inflates every `pct_of_ebitda` by 1.34x with nothing raising.
+
+**net_debt does NOT use the screener convention here.** See `SILENT_BUGS.md`
+entry 7 — `Borrowings - Investments` overstates it on every steel name with a
+cited figure and flips the sign on APL Apollo. Steel uses digest-cited 1QFY27
+figures. SAIL is the exception with no cross-check, flagged
+`convention_upper_bound`; read its 6.26x as a ceiling.
+
+**Two dead columns in the metals pack, both visible on the Steel tab.**
+`scrap_turkey` last printed 2020-12-03 and `coking_coal_contract_qtr` 2022-06-27.
+Neither is an adapter bug — `read()` correctly drops `#N/A` strings and
+non-positive values, so the zeros that follow never loaded. They are columns the
+broker stopped populating. `scrap_turkey` is why a stainless bridge is not
+possible. `coking_coal_spot_aus` (col 10) is live and is the one that matters.
 
 ## What P1 is — settled 2026-08-18
 
