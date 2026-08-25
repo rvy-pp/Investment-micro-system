@@ -102,7 +102,28 @@ layer2:
 # flavour means actively sold — there IS interest, it is just negative, and
 # shorts work. Ignored means nobody is looking at all, and nothing expresses in
 # either direction however good the economics. They need opposite handling.
+# ============================================================================
+# RECLASSIFIED 2026-08-24: this block is FLOWS' INPUT CONTRACT, not a scoring
+# term. The PM removed the gate from scoring, and `conviction.py` no longer
+# carries a gate multiplier.
+#
+# It is kept rather than deleted because Flows still has to compute exactly these
+# five inputs and honour exactly these state definitions — deleting the block
+# would throw away the specification and leave the Flows tab describing inputs
+# with no written contract. What changed is what consumes it: a human reading the
+# Flows tab, not a coefficient multiplying a score.
+#
+# NOTHING IN packages/score/ READS THIS BLOCK, and nothing should. If a future
+# change wants to reintroduce a permission term, that is a decision to make
+# explicitly, not something to reach for because the YAML still says `states`.
+# The reason it was cut is that it sat at a constant 1.0 and printed as though a
+# check had been performed.
+#
+# `can_express` and `size_multiplier` below therefore currently affect NOTHING.
+# They are the recorded intent, retained for whoever builds F2.
+# ============================================================================
 layer3:
+  consumed_by: flows              # NOT by scoring. See the note above.
   scope: aluminium                # regime is measured on the coverage bucket
   inputs:
     breadth_pct:     {source: pct_of_sector_above_50dma}
@@ -132,10 +153,15 @@ layer3:
       can_express: false
       note: >
         No investor interest at all — distinct from out_of_flavour, where there
-        is interest and it is negative. Signals are still COMPUTED AND RECORDED
-        with l3_gated = 1, so the review layer can later ask whether the gate
-        cost money or saved it. Suppressing them silently would destroy that
-        test.
+        is interest and it is negative.
+
+        The old text here said signals would be recorded with `l3_gated = 1` so
+        the review layer could ask whether the gate cost money or saved it. That
+        column was only ever written as the constant 0 and has been dropped from
+        whatif.py; the gate never suppressed anything, so there was never a
+        decision to grade. If F2 is built, the test it describes is still the
+        right one — record the state alongside the signal and grade it later,
+        rather than suppressing anything silently.
 
   pair_exception: |
     A market-neutral pair inside an ignored sector is far less regime-dependent

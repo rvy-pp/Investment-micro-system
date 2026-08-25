@@ -14,20 +14,38 @@ direction, which the spec forbids.
 
 It is also a category error. CLAUDE.md's own table says the pillars determine
 different KINDS of thing — economics gives direction + size, valuation gives
-conviction, guidance gives a forward view, the gate gives permission. Averaging a
-direction with a conviction is arithmetically fine and means nothing. The tell
+conviction, guidance gives a forward view. Averaging a direction with a
+conviction is arithmetically fine and means nothing. (CLAUDE.md's table lists a
+fourth row, the in-flavour/out-of-flavour gate, as "permission". That is now
+Flows' business and not a scoring term at all — see below.) The tell
 that something is wrong is that `combined.py` has to report `spread` separately
 to warn you the average lost information.
 
 THE FORM
 
-    size = (economics - 3) x f(valuation) x g(guidance) x gate
+    size = (economics - 3) x f(valuation) x g(guidance)
 
   economics - 3   the ONLY term carrying a sign. Positive = the economics
                   improved, negative = worsened, zero = nothing happened.
   f(valuation)    conviction multiplier. Cheap amplifies, expensive shrinks.
   g(guidance)     forward-view multiplier. Delivering amplifies, missing shrinks.
-  gate            permission, 0 or 1. Not built yet, so 1 with a note.
+
+THE L3 REGIME GATE IS GONE, removed 2026-08-24 at the PM's instruction. It used
+to sit here as a fourth term, permanently 1.0 with a "not built yet" note.
+
+Removing it is not a loss of function, because it never had any: a term fixed at
+1.0 for the life of the file multiplied nothing. What it did do was misdescribe
+the model. Every printed SIZE carried a `gate` column of 1, which reads as "checked
+and permitted" rather than "never computed" — and the docstring promised a
+permission layer the code did not have. A placeholder that looks like a measurement
+is the failure shape this repo keeps finding, and this was one sitting in the
+sizing formula itself.
+
+Flows keeps its own section (docs/FLOWS.md, the Flows tab) and stays OUT of
+scoring by design. Its whole argument for existing is that a flow reading added as
+a weighted term makes the system recommend whatever is most crowded. So Flows
+answers "can this be expressed" for a human reading the tab; it does not multiply
+into a number.
 
 Properties this has and the average does not:
 
@@ -36,7 +54,10 @@ Properties this has and the average does not:
   - Positive economics into an expensive stock is a SMALL position by
     construction, not a mid-range score needing a spread column to explain it.
   - A withheld pillar is a multiplier of 1.0 — neutral by construction rather
-    than by renormalising a denominator.
+    than by renormalising a denominator. NOTE this is the honest use of a 1.0:
+    it is a real answer to "we do not know about a scaling term". The old `gate`
+    was a 1.0 standing in for a computation that had never been written, which
+    is a different thing and is why it is gone.
   - "Nothing is happening" maps to ~zero size instead of a confident-looking 3.
 
 MULTIPLIER SHAPE, and why it is bounded. A multiplier is capped in [MIN, MAX] so
@@ -94,11 +115,14 @@ def conviction(pillars: dict) -> dict:
     # can veto, but this repo has no veto mechanism yet, and folding it in as a
     # multiplier would let sentiment amplify a call — which is the failure the
     # line warns about. Reported, unused.
-    gate = 1.0                             # regime gate not built (docs/FLOWS.md)
-    size = base * fv * fg * gate
+    #
+    # No `gate` term. See the docstring: it was a permanent 1.0 that made an
+    # uncomputed permission layer look like a checked one. Flows is a section,
+    # not a coefficient.
+    size = base * fv * fg
     return {"size": size, "base": base, "f_val": fv, "f_guid": fg,
-            "gate": gate, "s_val": sv, "s_guid": sg,
-            "why": "economics x valuation x guidance x gate"}
+            "s_val": sv, "s_guid": sg,
+            "why": "economics x valuation x guidance"}
 
 
 def main() -> int:
@@ -127,14 +151,14 @@ def main() -> int:
 
     print(f"conviction sizing vs weighted average — {as_of}\n")
     print(f"{'entity':16}{'econ':>7}{'base':>7}{'x val':>8}{'x guid':>8}"
-          f"{'gate':>6}{'SIZE':>9}   {'avg':>6}{'cov':>6}")
+          f"{'SIZE':>9}   {'avg':>6}{'cov':>6}")
     print("-" * 80)
     for eid, p, c, avg, wsum in sorted(rows, key=lambda r: -(r[2]["size"] or -99)):
         if c["size"] is None:
             print(f"{eid:16}{'—':>7}   {c['why']}")
             continue
         print(f"{eid:16}{p['economics']:>7.2f}{c['base']:>+7.2f}"
-              f"{c['f_val']:>8.2f}{c['f_guid']:>8.2f}{c['gate']:>6.0f}"
+              f"{c['f_val']:>8.2f}{c['f_guid']:>8.2f}"
               f"{c['size']:>+9.3f}   {avg:>6.2f}{wsum:>6.2f}")
 
     print(f"""
@@ -153,8 +177,10 @@ amplify a signal, which is the exact failure that line warns about. It is
 computed and shown elsewhere; it does not enter sizing until there is a veto
 mechanism to attach it to.
 
-THE GATE IS 1 EVERYWHERE because the regime layer is not built (docs/FLOWS.md).
-That is a placeholder, not a judgement that permission is always granted.""")
+THERE IS NO GATE TERM. It was removed 2026-08-24: it had been a permanent 1.0,
+which printed as though permission had been checked when it had never been
+computed. Flows (docs/FLOWS.md, and its own tab) answers whether a call can be
+expressed, for a human — it never multiplies into SIZE.""")
 
     if a.compare:
         print("\nRANK AGREEMENT")

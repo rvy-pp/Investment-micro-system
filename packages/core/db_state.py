@@ -45,7 +45,8 @@ NOT_BUILT = {    # nothing computes these yet — genuine gaps, in project order
     # provenance. The schema anticipated dated parameters; nothing reads them yet.
     "economics":     "the home for DATED, sourced intensities — static ones live in specs/",
     "estimates":     "no consensus source ingested",
-    "sector_regime": "the in flavour / out of flavour gate",
+    "sector_regime": "Flows F2 — in flavour / out of flavour. NOT a scoring "
+                     "term; the gate was removed from conviction 2026-08-24",
     "signals":       "no directional call with a falsifier is emitted",
     "outcomes":      "nothing grades signals — needs `signals` first",
     "positions":     "no book ingestion",

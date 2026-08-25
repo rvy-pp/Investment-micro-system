@@ -216,9 +216,15 @@ def main() -> int:
               f" | {a.because}")
     conn.execute(
         "INSERT INTO signals (as_of,kind,long_entity,short_entity,direction,"
-        "conviction,thesis,falsifier,driving_item,l1_pct_of_ebitda,l3_gated,"
+        # l3_gated dropped from this INSERT 2026-08-24 with the gate itself. It
+        # was always written as the literal 0, so the column carried no
+        # information while implying a check had happened. The column stays in
+        # `signals` (INTEGER NOT NULL DEFAULT 0) rather than being migrated away
+        # — dropping a column from a live table to delete a constant is not
+        # worth the migration, and the default now supplies it.
+        "conviction,thesis,falsifier,driving_item,l1_pct_of_ebitda,"
         "spec_version,code_sha,created_at) "
-        "VALUES (?,'single',?,NULL,?,?,?,?,?,?,0,?,?,?)",
+        "VALUES (?,'single',?,NULL,?,?,?,?,?,?,?,?,?)",
         (a.from_date or as_of, a.entity if direction == "long" else None,
          direction, a.conviction, thesis[:900], a.falsifier.strip(),
          changed[0][0], worst, SPEC_VERSION, code_sha(),
