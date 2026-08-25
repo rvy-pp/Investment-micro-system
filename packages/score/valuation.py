@@ -50,6 +50,8 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from bridge import load_specs, run_bridge, _series_in_store  # noqa: E402
 from scoring import score as to_score, solve_k  # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "core"))
+from corporate_actions import confirmed_cut  # noqa: E402
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 DB = REPO / "data" / "ims.db"
@@ -70,13 +72,83 @@ def price_series(conn, eid: str) -> list[tuple[str, float]]:
         (eid,)).fetchall()
 
 
-def after_corporate_action(rows):
-    """Drop history before the last step change — a percentile or z against a
-    pre-demerger series compares two different companies."""
-    for (d0, c0), (d1, c1) in zip(reversed(rows[:-1]), reversed(rows[1:])):
-        if c0 and abs(c1 / c0 - 1) >= JUMP:
-            return d1, (c1 / c0 - 1) * 100
-    return None, None
+def after_corporate_action(rows, eid: str):
+    """Drop history before the last CONFIRMED action — a z against a pre-demerger
+    series compares two different companies.
+
+    CONFIRMED, not "any 15% step". This truncated on the latest jump of any kind
+    until 2026-08-25, which cut five of nine names' valuation history at a REAL
+    market move: sail and nalco at the 2024-06-04 election selloff, jindal_steel
+    at the 2022-05-21 steel export duty, jsw_steel and hindalco at the COVID
+    crash and its bounce. sail was scoring a z over 511 days against a spec that
+    says lookback_days: 1260.
+
+    api/tape.py already had this right and said why in its own comment. The two
+    files answered the same question opposite ways on the same data; the
+    allow-list now lives in ONE place, core/corporate_actions.py, and both import
+    it.
+    """
+    return confirmed_cut(eid, rows, JUMP)
+
+
+def spec_lookback(peer_group: str, default: int = 1260) -> int:
+    """`pillar_3.lookback_days` for a peer group, from specs/sectors/*.yaml.
+
+    Read from the spec rather than hardcoded, because it was hardcoded nowhere
+    and read nowhere — the value sat in three sector specs and no code consulted
+    any of them.
+
+    !! THE UNIT IS AMBIGUOUS IN THE SPEC AND THIS IS NOT RESOLVED SILENTLY.
+    !! aluminium_primary.yaml annotates it `lookback_days: 1260  # ~5y`, and 1260
+    !! is exactly 5 years of TRADING days (252 x 5). As CALENDAR days it is 3.45
+    !! years. Those are different reference windows and the comment only fits one
+    !! of them.
+    !!
+    !! Calendar days is used, because CLAUDE.md's standing gotcha is explicit —
+    !! "Windows are CALENDAR DAYS, not row counts" — and taking 1260 ROWS off a
+    !! series is exactly the row-count bug that rule exists to stop. The cost is
+    !! that the delivered window is ~3.45y against a comment claiming ~5y.
+    !!
+    !! So either the 1260 or the `# ~5y` is wrong, and it is a PM call which. To
+    !! get a genuine 5 years, set lookback_days: 1825. Do NOT "fix" this by
+    !! switching to row counts.
+    """
+    f = REPO / "specs" / "sectors"
+    try:
+        import yaml
+        for path in sorted(f.glob("*.yaml")):
+            doc = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            groups = doc.get("peer_groups") or [doc.get("peer_group")]
+            if peer_group in (groups or []):
+                v = ((doc.get("pillar_3") or doc.get("layer2", {}).get("valuation")
+                      or {}).get("lookback_days"))
+                if v:
+                    return int(v)
+    except Exception:
+        pass
+    return default
+
+
+def apply_lookback(rows, lookback_days: int | None):
+    """Keep the most recent `lookback_days` CALENDAR days.
+
+    `lookback_days: 1260` is written in every sector spec's pillar_3 block and
+    was read by NOTHING — the same shape as `effective_from`, which CLAUDE.md
+    flags as written everywhere and read nowhere. So the reference window was
+    "all clean history", which is not what the spec says and differs per name by
+    however far back its listing goes: tata_steel was measured over 1,767 days
+    and hindustan_zinc over 566, with no rule choosing either.
+
+    Calendar days, not row counts, per the CLAUDE.md gotcha: the store mixes
+    daily equities with monthly series, so N rows back is N months on a monthly
+    one.
+    """
+    if not lookback_days or not rows:
+        return rows
+    import datetime as _dt
+    last = _dt.date.fromisoformat(rows[-1][0])
+    floor = (last - _dt.timedelta(days=int(lookback_days))).isoformat()
+    return [r for r in rows if r[0] >= floor]
 
 
 def quarter_average(conn, link: str, start: str, end: str) -> float | None:
@@ -87,7 +159,9 @@ def quarter_average(conn, link: str, start: str, end: str) -> float | None:
 
 
 def spot_multiple_series(conn, ent: dict, fin: dict, units: dict,
-                         qstart: str, qend: str, usdinr: float):
+                         qstart: str, qend: str, usdinr: float,
+                         lookback_days: int | None = 1260,
+                         as_of: str | None = None):
     """[(date, multiple, spot_ebitda)] — EV / spot-marked EBITDA, daily."""
     # TWO DENOMINATORS, NOT ONE, and the distinction is load-bearing.
     #
@@ -113,9 +187,19 @@ def spot_multiple_series(conn, ent: dict, fin: dict, units: dict,
 
     net_debt = fin.get("net_debt") or 0.0
     px = price_series(conn, ent["id"])
-    cut, cut_pct = after_corporate_action(px)
+    # AS-OF FIRST, THEN THE LOOKBACK. Order matters and getting it backwards is a
+    # backfill-only bug that would never show on a single date. apply_lookback
+    # anchors on the LAST row it is given, so trimming to as_of afterwards (which
+    # is what run_scores did) anchored every historical window on TODAY and then
+    # filtered it down — leaving a 2-year-old as_of with a nearly empty series and
+    # a z computed off a handful of rows. Trim to as_of here and the window is the
+    # lookback ending at as_of, which is what it must be.
+    if as_of:
+        px = [r for r in px if r[0] <= as_of]
+    cut, cut_pct = after_corporate_action(px, ent["id"])
     if cut:
         px = [r for r in px if r[0] >= cut]
+    px = apply_lookback(px, lookback_days)
     if len(px) < 20:
         return [], cut, cut_pct, "too little clean history"
 
@@ -181,7 +265,8 @@ def main() -> int:
         eid = ent["id"]
         f = fins.get(eid, {})
         ser, cut, cut_pct, err = spot_multiple_series(
-            conn, ent, f, units, a.qstart, a.qend, usdinr)
+            conn, ent, f, units, a.qstart, a.qend, usdinr,
+            lookback_days=spec_lookback(a.peer_group))
         if err or not ser:
             print(f"{eid:16}{'—':>12}{'—':>9}{'—':>10}{'—':>7}{'—':>7}"
                   f"{'—':>6}{'—':>7}{'—':>7}  WITHHELD: {err or 'no series'}")

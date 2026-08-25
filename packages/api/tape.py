@@ -52,9 +52,13 @@ JUMP = 0.15
 #
 # Add to this list only when the action is verified against a filing. A wrong
 # entry here silently deletes a real return from the chart.
-CONFIRMED_ACTIONS = {
-    "vedanta": {"2026-04-30": "1:1 demerger of four entities, record date 1 May 2026"},
-}
+# MOVED 2026-08-25 to packages/core/corporate_actions.py, so this file and
+# score/valuation.py cannot disagree about whether a 15% step is an action or a
+# market move. They did: this file drew through unverified jumps (correctly)
+# while valuation.py truncated its history at any of them, cutting five of nine
+# names' valuation z at a real selloff.
+sys.path.insert(0, str(REPO / "packages" / "core"))
+from corporate_actions import CONFIRMED_ACTIONS  # noqa: E402,F401
 
 
 def connect() -> sqlite3.Connection:

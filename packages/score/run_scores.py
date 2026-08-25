@@ -229,8 +229,8 @@ def score_one_date(conn, as_of: str, sha: str,
 
         # --- valuation (P3a) ---
         ser, cut, _cp, err = val_mod.spot_multiple_series(
-            conn, ent, f, units, bq["start"], bq["end"], usdinr)
-        ser = [x for x in ser if x[0] <= as_of]
+            conn, ent, f, units, bq["start"], bq["end"], usdinr,
+            lookback_days=val_mod.spec_lookback(pg), as_of=as_of)
         # P3 re-marks EV/EBITDA at the CURRENT price, so a stale equity close
         # means it is re-marking at an old price and calling it spot.
         if eid in stale_series:
