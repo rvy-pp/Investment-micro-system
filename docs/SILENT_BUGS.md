@@ -30,6 +30,8 @@ tidying up. Every entry below is commented in place; keep it that way.
 | 6 | NALCO Q1 actuals, 2026-08-20 | loaded metal 119,000 t and alumina 575,000 t as `factor='actual'` — **both DERIVED from run-rate statements; the transcript states neither** | remove them; those commitments withhold | re-reading the transcript to confirm the quote actually contained the number |
 | 5 | `beta_stability` silver "roll" | classified a **real −26.4% move** as a contract roll and excluded a 30-day window, discarding 63 date-entity pairs | it appears in **both** the spot assessment and the futures, so it was never a roll | a second, independent price source |
 
+| 7 | `base_financials.net_debt`, steel | screener.in `Borrowings - Investments` as a net-debt proxy. screener's "Investments" is **non-current investments only** — no cash, no current investments — so it overstated net debt on **every** steel name with a cited figure, worst JSW **+65%** (89,092 vs 53,900), and **flipped the sign** on APL Apollo (+449 vs **-1,410 net cash**) | the digest-cited 1QFY27 figure, with the screener number kept beside it as the recorded disagreement | cross-checking a *derived* figure against a *cited* one. Three brokers independently quote Tata at Rs842bn, and JSW's own "net debt down to Rs462bn" cannot be reconciled with Rs99,310 cr of gross borrowings unless ~Rs45,000 cr of liquidity sits outside the subtracted line |
+
 ### Entry 6 is a different mechanism with the same consequence, and it exposes a gap
 
 The other five are wrong arithmetic. This one is a **fabricated fact wearing a
@@ -54,6 +56,45 @@ rather than *stating* it. Entry 6's quotes read "taken as one quarter of the
 run-rate management states it is operating at" — which is reasoning, and
 reasoning in a `quote` field means the number is derived.
 
+### Entry 7 is the first one where measuring the impact CHANGED THE CONCLUSION
+
+Recorded because the mistake is instructive and it was mine, in the first draft of
+the note now sitting in `base_financials.yaml`. That draft said the uneven bias
+"corrupts the cross-sectional ranking that P3 exists to produce". It was written
+from the rupee table, which is genuinely alarming — a 65% error and a sign flip.
+
+Then it was measured, and it is not true. **Market cap dominates EV for all seven
+names, so a 65% error in net debt is 11.6% in the multiple:**
+
+| name | EV/EBITDA cited | convention | delta |
+|---|---|---|---|
+| tata_steel | 8.47x | 8.50x | +0.3% |
+| jindal_steel | 12.51x | 12.84x | +2.7% |
+| apl_apollo | 35.27x | 36.40x | +3.2% |
+| jindal_stainless | 11.42x | 11.98x | +4.9% |
+| jsw_steel | 9.84x | 10.98x | **+11.6%** |
+
+On the prices of the day it was found, the convention changes **no name's rank**
+in the group — JSW sits between shyam and jindal_stainless either way. So the real
+finding is narrower and more useful than the draft: **JSW is the one material
+distortion, and APL Apollo's is wrong in KIND rather than in size** (a net-cash
+company recorded as levered). Both worth fixing; neither is a ranking disaster.
+
+**The lesson generalises past this entry.** An input error and its output error
+are different magnitudes, and for a bug class defined by *plausible* numbers the
+temptation runs the other way once you find one — to state the scariest true
+number rather than the relevant one. A ratio whose denominator is dominated by a
+correct term absorbs a lot of error in the other term. Size the consequence in the
+units the decision is actually made in, and do it before writing the note, not
+after.
+
+**What is NOT settled, and is deliberately left open.** The five non-ferrous names
+still use the convention. Hindalco's figure was cross-checked to within 2% of a
+cited Novelis number and HZL/NALCO are net cash, so the failure may be specific to
+levered names holding large cash balances — but nobody has checked
+hindalco/vaml/vedanta against a cited level. That check is worth running on its
+own; it must not ride along inside an unrelated commit.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:
@@ -63,8 +104,9 @@ Worth being honest, because it is thin and it is not the code:
 - **4** — the source document happening to contain an independent calculation
 - **5** — a second data source disagreeing
 - **6** — re-reading the source to check the quote contained the figure
+- **7** — cross-checking a derived figure against a cited one, in a sector where the sell-side happens to quote the same quantity
 
-**Nothing in the test suite caught any of them.** Five of six were caught by
+**Nothing in the test suite caught any of them.** Six of seven were caught by
 somebody eyeballing a number and finding it implausible, or re-reading a source.
 That is not a process.
 
