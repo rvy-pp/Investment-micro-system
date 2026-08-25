@@ -67,7 +67,14 @@ FEEDS = {
     "silver":                ("Yahoo SI=F / pack", 3, "feed"),
     "lme_zinc":              ("pack / westmetall LME cash", 3, "feed"),
     "brent":                 ("Daily Metals Pack", 3, "feed"),
-    "zinc_shfe":             ("Wind ZN.SHF",      3, "feed"),
+    # PARKED 2026-08-24. Wind ZN.SHF, USD/t ex-VAT, and NOTHING price_links it:
+    # aluminium.yaml moved both zinc lines to lme_zinc once the pack supplied the
+    # real benchmark ("was zinc_shfe (Chinese domestic PROXY)"). It stayed on a
+    # 3-day feed limit, so every run raised a staleness gate and a STALE line for
+    # a series that cannot move a score. Kept and reported — it is a real capture
+    # and may be wanted again as a China-domestic signal — but not as a fault.
+    # Re-promote it to "feed" the moment a spec price_links it.
+    "zinc_shfe":             ("Wind ZN.SHF — parked, unlinked", 3, "parked"),
     # THRESHOLD MUST MATCH THE SOURCE YOU CAN RELY ON, not the best case.
     # Both of these were ("Daily Metals Pack", 3, "assessed") and reported STALE
     # on essentially every run, for two different reasons:
@@ -87,10 +94,69 @@ FEEDS = {
     #                         is now "manual", which reports the age without
     #                         crying wolf — the same distinction the store makes
     #                         between a withheld score and a missing one.
-    "cp_coke":               ("Daily Metals Pack — NO automated source", 3, "manual"),
-    "thermal_coal_seaborne": ("FRED PCOALAUUSDM monthly / pack", 70, "monthly"),
-    "iron_ore":              ("IMF monthly",     70, "monthly"),
+    #
+    # BOTH OF THESE WERE WRONG, and both were corrected 2026-08-24 when the pack
+    # became a daily automated feed via Outlook rather than a manual drop.
+    #
+    #  cp_coke                was "NO automated source" / kind manual. There is
+    #                         one now, so a stale cp_coke is once again a real
+    #                         fault worth reporting. Kept as `assessed` because
+    #                         it is an episodic cited level carried forward daily
+    #                         — 3 distinct closes in its last 30 rows — so
+    #                         value_age is the number that means something.
+    #
+    #  thermal_coal_seaborne  was ("FRED PCOALAUUSDM monthly / pack", 70,
+    #                         "monthly"), justified in a comment as "the source
+    #                         that ALWAYS arrives is FRED". FRED HAS NEVER
+    #                         WRITTEN A SINGLE ROW OF IT. Verified: `fred`
+    #                         appears 31 times in `prices`, all iron_ore. The
+    #                         pack holds a daily row on every month-first FRED
+    #                         would write, and prices_io ranks metals_pack 40
+    #                         against fred 10, so every FRED coal write is
+    #                         refused and always will be. The two are not even
+    #                         the same benchmark — FRED is Australian thermal at
+    #                         140.40 for 2026-07-01, the pack is Richards Bay at
+    #                         103.00, a 36% gap under one entity_id. So this is a
+    #                         pack-only DAILY series that had been given the
+    #                         loosest threshold in the file (70 calendar days) on
+    #                         the strength of a fallback that does not function.
+    "cp_coke":               ("Daily Metals Pack",  3, "assessed"),
+    "thermal_coal_seaborne": ("Daily Metals Pack — Richards Bay", 3, "assessed"),
+    "iron_ore":              ("FRED PIORECRUSDM monthly", 70, "monthly"),
 }
+
+# CAPTURED BUT NOT MODELLED. Loaded from the pack so the history exists for the
+# steel group, but price_link-ed from no spec, so nothing reads them and nothing
+# can be scored wrong by them. kind 'parked' reports the age and never counts as
+# a breach — 27 red lines for series no bridge consumes is exactly how a reader
+# is trained to ignore this report, which is the only way it can fail.
+# Move a series OUT of here the moment a spec price_links it.
+PARKED_FEEDS = [
+    "lme_lead", "lme_copper", "lme_nickel", "gold", "dxy",
+    "iron_ore_china_cfr62", "iron_ore_china_import62", "iron_ore_sgx_tsi62",
+    "iron_ore_futures_china_cny",
+    "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",
+    "hrc_india_inr", "hrc_india_usd", "hrc_uk", "hrc_germany",
+    "rebar_china_cny", "rebar_india_primary_inr", "rebar_india_secondary_inr",
+    "coking_coal_spot_aus", "thermal_coal_indonesia_6322",
+    "aluminium_shfe_cny", "alumina_shfe_cny", "alumina_shfe_usd",
+]
+for _e in PARKED_FEEDS:
+    FEEDS[_e] = ("Daily Metals Pack — parked", 3, "parked")
+
+# THE BROKER STOPPED MAINTAINING THESE COLUMNS. Not a fetch failure and not
+# something to chase: the column is still in the workbook and still empty. Their
+# age is genuine history, so it is reported, but calling them STALE would be
+# reporting a broker's editorial decision as a pipeline fault.
+DISCONTINUED = {
+    "scrap_turkey":             "pack col 8 — last print 2020-12-03",
+    "coking_coal_contract_qtr": "pack col 9 — last print 2022-06-27; col 10 "
+                                "(coking_coal_spot_aus) is the live one",
+    "zinc_shfe_cny":            "pack col 22 — last print 2021-04-01; #N/A since",
+}
+for _e in DISCONTINUED:
+    FEEDS[_e] = ("Daily Metals Pack — DISCONTINUED", 3, "parked")
+
 DEFAULT = ("unmapped", 3, "feed")
 
 # OI is not in `prices`, so it is checked separately rather than being missed.
@@ -137,7 +203,13 @@ def check(today: dt.date | None = None) -> dict:
         # days old and perfectly current, which a 45-day bar called STALE. The
         # limit has to cover one month of data lag plus one of publication lag,
         # or it flags a healthy feed every single month.
-        if kind == "manual":
+        if kind == "parked":
+            # Age reported, never a breach. See PARKED_FEEDS / DISCONTINUED.
+            cal = (today - dt.date.fromisoformat(last_d)).days
+            stale = False
+            why = DISCONTINUED.get(eid)
+            age_txt = f"{cal}d — " + ("discontinued" if why else "not modelled")
+        elif kind == "manual":
             # No automated source exists. Age is reported so it cannot be
             # forgotten, but it is never counted as a staleness breach — a feed
             # that was never wired is not a feed that broke, and conflating the
@@ -197,19 +269,21 @@ def main() -> int:
         return 0 if r["ok"] else 1
 
     print(f"feed freshness as of {r['as_of']}\n")
-    print(f"{'series':24}{'feed':22}{'last':>12}{'row':>6}{'value':>7}  note")
-    print("-" * 88)
+    print(f"{'series':30}{'feed':36}{'last':>12}{'row':>6}{'value':>7}  note")
+    print("-" * 104)
     for x in sorted(r["series"], key=lambda x: (-x["row_age"], x["series"])):
         note = ""
         if x["stale"]:
             note = f"STALE — limit {x['limit']}"
+        elif x["kind"] == "parked":
+            note = DISCONTINUED.get(x["series"], "captured, not modelled")
         elif x["kind"] == "assessed" and x["value_age"] > x["row_age"] + 2:
             note = f"assessed — unchanged {x['value_age']}d, carried forward"
-        print(f"{x['series']:24}{x['feed']:22}{x['last_date']:>12}"
+        print(f"{x['series']:30}{x['feed']:36}{x['last_date']:>12}"
               f"{x['row_age']:>6}{x['value_age']:>7}  {note}")
     if r["oi"]:
         o = r["oi"]
-        print(f"{'oi':24}{o['feed']:22}{o['last_date']:>12}{o['row_age']:>6}"
+        print(f"{'oi':30}{o['feed']:36}{o['last_date']:>12}{o['row_age']:>6}"
               f"{'':>7}  {'STALE — limit ' + str(o['limit']) if o['stale'] else ''}")
 
     print()
@@ -218,7 +292,7 @@ def main() -> int:
     else:
         print(f"{r['n_stale']} feed(s) STALE, worst {r['worst_age']} trading days:")
         for x in r["stale"]:
-            print(f"   {x['series']:24}{x['feed']:22}{x['age_txt']}")
+            print(f"   {x['series']:30}{x['feed']:36}{x['age_txt']}")
         print("\ndocs/DAILY_MONITORING.md: report it, and withhold the affected")
         print("scores. A stale price is not a flat price.")
     return 0 if r["ok"] else 1

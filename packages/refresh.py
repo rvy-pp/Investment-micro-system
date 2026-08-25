@@ -51,6 +51,13 @@ STEPS = [
     # "needs an agent" was inferred from lme.com's 403 without testing the
     # mirror. This is an ordinary cron adapter.
     ("LME cash",          ["packages/adapters/westmetall.py", "--load"],      False),
+    # THE FETCH, added 2026-08-24. `vault_oi.py` only READS OI History.md; the
+    # /oi pipeline in the vault writes them, and nothing here had ever called it.
+    # So this file re-read files nobody was updating and reported OI as "already
+    # pulled today" while the newest row aged — 7 days by the time it was noticed.
+    # One incremental run moved 31 names from 2026-08-17 to 2026-08-24. Must come
+    # BEFORE the load, and shares the once-a-day guard with it.
+    ("NSE OI fetch",      ["packages/adapters/nse_oi.py", "--fetch"],         False),
     # OI was missing from this list until 2026-08-21 and had gone 5 trading days
     # stale unnoticed, because nothing checked a table outside `prices`.
     # pipeline.py STEP 1 always ran it; this file simply forgot to.
@@ -58,7 +65,15 @@ STEPS = [
     # Monthly series, but pulled daily because the cost is one request and the
     # failure mode of forgetting is a coal price that silently ages for weeks.
     ("FRED coal",         ["packages/adapters/fred_prices.py", "--load"],     False),
-    # --- steps that consume what the AGENT staged, if it staged anything ------
+    # THE PACK IS NO LONGER AN AGENT-ONLY STEP. Promoted 2026-08-24, same shape
+    # as westmetall's promotion: the "needs an agent" was inferred from the M365
+    # connector's limits and never tested against Outlook itself. Outlook has the
+    # real .xlsx bytes and PowerShell can reach MAPI, so this is now an ordinary
+    # unattended step that costs no tokens. Exit 1 means Outlook was unreachable
+    # (a red step); exit 0 with no mail means a quiet day (fallbacks supply).
+    ("metals pack (Outlook)", ["packages/adapters/outlook_pack.py", "--save"],
+                                                                       False),
+    # --- steps that consume what was staged, if anything was staged -----------
     # These are no-ops when no staging file exists for today, which is the
     # correct behaviour for a Python-only run: the MCP steps genuinely cannot
     # run here. They are listed so a full agent-driven run has ONE sequence
@@ -66,8 +81,24 @@ STEPS = [
     # run. `--if-staged` makes each a skip, never a failure, when absent.
     ("metals pack (staged)", ["packages/refresh.py", "--consume", "metals"],  False),
     ("mail watch (staged)",  ["packages/refresh.py", "--consume", "mail"],    False),
+    # ADVISORY, NEVER WRITES. Hindalco's and Novelis' base numbers are static by
+    # the PM's instruction and change once a quarter from the public release.
+    # This says whether that quarter has turned. Two HTTP requests; it cannot
+    # alter a score, so it is safe on every run and its only job is to stop a
+    # stale base_quarter going unnoticed for three months.
+    ("concall check",     ["packages/adapters/concall_check.py"],             False),
+    # Also advisory. No-ops with a one-line message when data/models/ is empty,
+    # so it is safe on a machine that has no model.
+    ("desk model check",  ["packages/adapters/hindalco_model.py"],            False),
     ("corporate actions", ["packages/adapters/check_corporate_actions.py"],   False),
     ("score + persist",   ["packages/score/run_scores.py"],                   True),
+    # LAST, and after scoring on purpose: it checks what the PAGE will render,
+    # so it has to run against the scores this refresh just persisted. Nothing
+    # is compiled — app.html is served live out of the DB — so this verifies
+    # every route the page calls instead, in-process, no socket needed. A blank
+    # tab is indistinguishable from a loading tab, which is why it is a step
+    # rather than something you notice by opening the page.
+    ("front end",         ["packages/review/build_frontend.py"],             False),
 ]
 
 # Steps that run AT MOST ONCE A DAY. The launcher refreshes on every
@@ -87,7 +118,7 @@ STEPS = [
 #
 # Trade-off accepted: if the vault publishes new OI after the day's first
 # refresh, it is not picked up until tomorrow. `--force` is the escape hatch.
-SKIP_IF_DONE = {"open interest"}
+SKIP_IF_DONE = {"NSE OI fetch", "open interest"}
 MARKER = OUT / "steps_done.json"
 
 
@@ -103,7 +134,6 @@ def _marker_read() -> dict:
 MANUAL = [
     ("Wind zinc (ZN.SHF)", "Wind MCP is agent-callable only"),
     ("broker mail",        "Microsoft 365 MCP is agent-callable only"),
-    ("Daily Metals Pack",  "manual workbook drop"),
     ("extraction",         "deliberately never automated — a wrong extraction "
                            "enters the store as a fact"),
 ]
@@ -113,6 +143,7 @@ MANUAL = [
 # Tables a SKIP_IF_DONE step feeds, so a skipped step can still report whether
 # the source is alive. Keyed by the step label.
 _STEP_TABLE = {
+    "NSE OI fetch":  ("oi", "date"),
     "open interest": ("oi", "date"),
 }
 
@@ -149,10 +180,45 @@ def consume(what: str) -> int:
     today = _dt.date.today().isoformat()
     stage = REPO / "data" / "staging"
     if what == "metals":
-        f = stage / f"metals_pack_{today}.tsv"
-        if not f.exists():
-            print(f"no metals staging for {today} — skipped (agent step did not run)")
+        # .xlsx FIRST, and it is not a cosmetic preference. The .tsv is the M365
+        # connector's text conversion, truncated to the ~830 OLDEST rows, so it
+        # can only ever carry 2010-2013. The .xlsx is the real workbook and
+        # carries today. Before 2026-08-24 this looked only for the .tsv, so
+        # dropping a genuine workbook into staging was invisible to the run.
+        f = None
+        for ext in (".xlsx", ".tsv"):
+            cand = stage / f"metals_pack_{today}{ext}"
+            if cand.exists():
+                f = cand
+                break
+        # No pack dated today: fall back to the newest staged pack inside a week.
+        # It cannot contain today's price, but it carries FULL history, so it
+        # still tops up every day the store is behind — which on 2026-08-24 was
+        # four trading days. Loud about which file it used; a silent substitution
+        # is how a stale number gets read as a fresh one.
+        stale_note = ""
+        if f is None:
+            import datetime as _d
+            cands = sorted(stage.glob("metals_pack_*.xlsx")) +                     sorted(stage.glob("metals_pack_*.tsv"))
+            recent = []
+            for c in cands:
+                try:
+                    d = _d.date.fromisoformat(c.stem.replace("metals_pack_", ""))
+                except ValueError:
+                    continue
+                if 0 < (_d.date.today() - d).days <= 7:
+                    recent.append((d, c))
+            if recent:
+                d, f = max(recent)
+                stale_note = (f"no pack dated {today}; using the {d.isoformat()} "
+                              f"pack for its history — it holds NO price for today")
+        if f is None:
+            print(f"no metals staging for {today} and none within 7 days — "
+                  f"skipped. Lower-ranked sources supply what they cover; "
+                  f"anything they do not keeps its last stored price.")
             return 0
+        if stale_note:
+            print(stale_note)
         r = subprocess.run([PY, "packages/adapters/metals_pack.py",
                             "--file", str(f), "--load"], cwd=REPO,
                            capture_output=True, text=True)

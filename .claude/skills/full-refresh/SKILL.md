@@ -26,26 +26,39 @@ Follow the `mail-fetch` skill. It writes `data/staging/mail_<today>.json`.
 the watch ran and the day was quiet; a missing file means it did not run.
 `refresh.py --consume mail` distinguishes them and so must you.
 
-## Step 2 — metals pack (MCP, agent only)
+## Step 2 — metals pack (now ordinary Python, run it every day)
 
-Follow the `metals-pack-fetch` skill → `data/staging/metals_pack_<today>.tsv`.
+```bash
+python packages/adapters/outlook_pack.py --save
+```
 
-**Known limitation, do not fight it.** The MCP truncates the attachment at ~200k
-characters and keeps the OLDEST rows, so a fetch returns 2010-2013 and never
-today. `startPage` is ignored on mail attachments — tested, byte-identical
-output. Until that changes this step is expected to contribute nothing current.
+**Rewritten 2026-08-24. Everything the old version of this step said is obsolete.**
+It said the MCP truncates the attachment and returns 2013 data, that the step was
+expensive at ~50k tokens, and to **SKIP IT** unless the PM asked. All true of the
+MCP route and none of it true any more.
 
-**SKIP THIS STEP unless the PM asks for it.** It is NOT cheap — an earlier
-version of this file said it was, wrongly. The attachment read costs ~50k tokens
-and returns 2013 data, so on a nightly schedule that is ~1.5M tokens a month for
-nothing. Note the mail exists and move on.
+The pack now comes out of **Outlook itself** — real `.xlsx` bytes, full history,
+span ending the same day, ~0 tokens because no model reads the grid. It is a
+plain unattended step like westmetall, and `refresh.py` runs it. See the
+`metals-pack-fetch` skill for why the MCP could never do this, and for the two
+wrong constants (sender, filename) that used to make a miss look like a quiet
+morning.
 
-Run it only when someone wants the dated capture, and then `--probe` and check
-the span ends today before claiming the pack refreshed anything.
+**The pack is the PRIMARY price source** for everything it carries — it already
+outranks every other source in `prices_io.PRECEDENCE` (40 against westmetall 30,
+fred 10, yahoo 5), so nothing needed changing to make that true. All **36**
+columns load, up from nine; the 27 new ones are steel-complex series captured for
+a group not yet built and `price_link`-ed from no spec.
 
-The prices the pack uniquely supplies are covered elsewhere now: LME aluminium
-and zinc come from `westmetall.py` in step 3. Only `alumina_index` and `cp_coke`
-have no automated source, and `freshness.py` in step 5 will say so.
+Two exit codes, and the distinction is the point:
+
+- **no mail today** -> exit 0. A quiet day. The fallbacks below supply what they
+  cover, and anything they do not **keeps its last stored price**.
+- **Outlook unreachable** -> exit 1, a red step. A broken capability must not read
+  as a missing mail, and a missing mail must not read as a broken fetcher.
+
+Needs the machine **awake and logged in**. Locked is fine; asleep was already
+fatal to the whole run.
 
 ## Step 3 — everything Python
 
@@ -59,24 +72,155 @@ Runs in order, and the order is load-bearing:
 preflight              HALT on failure — everything downstream is untrustworthy
 equity closes          Yahoo, 3mo
 LME cash               westmetall — plain urllib, no agent, no auth
-open interest          the vault. Reports NEWEST DATA AGE when skipped, so a
-                       dead source is visible rather than reading as "pulled"
-FRED coal              2 series. Two more were removed 2026-08-24 as dead 404s
-metals pack (staged)   consumes step 2, skips cleanly if absent
+NSE OI fetch           the /oi pipeline. WRITES the vault OI History.md files
+open interest          reads them into the store. Reports NEWEST DATA AGE when
+                       skipped, so a dead source is visible, not "pulled"
+FRED coal              iron_ore only in practice; see the note below
+metals pack (Outlook)  step 2, an ordinary step since 2026-08-24
+metals pack (staged)   loads it. .xlsx first, .tsv only as a legacy fallback
 mail watch (staged)    consumes step 1, skips cleanly if absent
 corporate actions
 score + persist        HALT on failure
 ```
 
-The two `(staged)` steps are why the MCP work happens first. They are no-ops
-without a staging file and never fail for its absence — so this same command is
-still correct if a human runs it with no agent.
+**THE FALLBACK IS THE PRECEDENCE RULE, NOT A BRANCH.** Nothing checks whether the
+pack arrived before deciding what else to run. Every source runs every day, and
+`prices_io` refuses a write only where a **higher-ranked source already holds that
+(entity_id, date)**. So on a pack day the pack wins each cell it covers; on a
+no-pack day westmetall, Yahoo and FRED are simply the highest bidder and write
+normally. There is no mode to get wrong.
 
-## Step 4 — rebuild the page
+**Where nothing at all covers a series, the gap stays empty.** No synthetic
+carried-forward row is ever written. The last real print remains the newest row,
+so it is still what every score reads — and `freshness.py` keeps reporting the
+true age instead of showing row age 0 for a series that has not printed in a
+week. That is invariant 3 (*a quiet name shows rising stale_days and an unchanged
+score*), and it is the same reason no expired-futures proxy is substituted.
+
+**The `/oi` skill is now part of this run, and it had to be.** `vault_oi.py` only
+*reads* `Coverage/<sector>/<name>/OI History.md` — the vault's
+`options-dashboard/oi_to_vault.py` writes them, and **nothing here had ever called
+it**. So the refresh faithfully re-read files nobody was updating and reported OI
+as "already pulled today" while the newest row aged. It reached seven days before
+anyone looked.
+
+I diagnosed that wrong the first time and the correction matters: I said the vault
+pipeline had been *retired*. It had not — it had never been **called**. One
+incremental run took seconds and moved all 31 F&O names from 2026-08-17 to
+2026-08-24, four new trading days each. **A dead source and an uncalled source
+look identical from inside the store**, which is why the fetch is now a step with
+its own name instead of an assumption.
+
+`packages/adapters/nse_oi.py --fetch` wraps it. Three things about it:
+
+- **Incremental only.** It recovers the prior ~90 days from the existing files and
+  downloads only trading days since the last stored date — typically one, a few
+  seconds, and a clean no-op when current (`31 already current`). The `--full`
+  90-day re-download takes **~50 minutes** and stays a weekly manual job to catch
+  NSE back-revisions. This wrapper never passes `--full`.
+- **OI is T-1 by design.** `futures.py` walks back from *today − 1*, and NSE does
+  not publish the day's F&O bhavcopy until well after the close. On a morning run
+  the newest row is **yesterday, and that is correct** — not a failed write, and
+  not a reason to re-run.
+- **It shares the once-a-day marker with `open interest`.** Both are in
+  `SKIP_IF_DONE`. Guarding only one would let them disagree: a fetch that ran with
+  a skipped load leaves new rows in the vault and nothing in the store. `--force`
+  re-runs the pair.
+
+It is the one place this repo **writes** to the vault. Deliberately narrow —
+`OI History.md` is data the vault pipeline owns and the same files `vault_oi.py`
+already reads. Nothing else in the vault is touched. If `oi_to_vault.py` is
+missing the step exits **0**, not 1: the fetcher lives outside this repo, so its
+absence is a missing capability rather than a broken refresh, and the load still
+ingests whatever the files hold.
+
+`FRED coal` is kept for `iron_ore` and is **dead weight for coal**. It has never
+written a single row of `thermal_coal_seaborne`: the pack holds a daily row on
+every month-first FRED would write, and pack 40 beats fred 10, so every coal
+write is refused and always will be. They are not the same benchmark anyway —
+FRED is Australian thermal at 140.40 for 2026-07-01, the pack is Richards Bay at
+103.00, a 36% gap that had been sitting under one `entity_id`.
+
+The `(staged)` steps are no-ops without a staging file and never fail for its
+absence, so this command is still correct run by hand.
+
+## Step 4 — the front end
 
 ```bash
-python packages/review/build_pillars_page.py
+python packages/review/build_frontend.py
 ```
+
+**Nothing is compiled.** `packages/web/app.html` is served live by
+`packages/api/serve.py` straight out of `data/ims.db`, so the page is current the
+instant step 3 finishes — OI, the pair charts and the bridge all read the store
+directly. Step 3 already runs this as its last step; the command is here for when
+you want to read it on its own.
+
+What it does instead is call every route the page calls, **in-process** so it
+needs no listening socket, and report what each tab will actually render:
+
+```
+/api/sectors                      ok  3 sectors, 1 live: non_ferrous
+/api/sector?id=steel              ok  20/20 priced, 17 dated today
+/api/scores[aluminium_primary]    ok  3 name(s), as_of 2026-08-24
+/api/oi                           ok  4 name(s), newest 2026-08-17 (7d)  <-- SOURCE MAY BE DEAD
+/api/tape[composite]              ok  5 name(s), 40 point(s)
+```
+
+A blank tab and a loading tab look identical, which is the whole reason this is a
+step and not something you spot by opening the page. It separates two things
+deliberately: a **problem** (a route errors, or a live tab would render nothing)
+fails the step; a **warning** (the route answers but the data is old, e.g. OI)
+does not, because `freshness.py` already reports that and failing twice daily for
+one known-dead source is how a red light stops meaning anything.
+
+> **`build_pillars_page.py` was the old step 4 and is deliberately NOT run.**
+> It renders `packages/review/pillars.html` from `packages/review/_pillars.json`,
+> and **nothing in the repo writes that JSON** — it has been frozen since
+> 2026-08-21. So the step called "rebuild the page" was regenerating a page from
+> a stale snapshot on every run and could never show that day's numbers. Keeping
+> it scheduled would make a stale page look freshly built. Give it a data builder
+> or retire it; do not put it back in the sequence.
+
+### The tabs
+
+Top-level navigation is by **sector**, driven by `engine.SECTORS` — adding one is
+a Python data edit and needs no front-end change:
+
+| tab | state |
+|---|---|
+| **Daily Overview** | the landing tab. Did the run work, what is stale, where the book landed |
+| **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
+| **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |
+| **Steel** | prices landing (20 series), no spec |
+| **Cement** | shares 5 input series, no spec, and the Daily **Cement** Pack in the same mail is still unread |
+
+**Daily Overview** is assembled from what the run *wrote* — `status.json`,
+`frontend.json`, `freshness.check()`, `pillar_scores`, the `oi` table — and never
+recomputed. A recomputed overview would drift from the persisted tape the moment
+an override was active, and then the first screen of the app would be the one
+telling a different story. It carries a step-chip row, the stale-feed list, the
+book with SIZE, today's moves on **modelled inputs only** (the 27 parked steel
+series drive nothing, so they are not there), and futures OI. If `status.json` is
+from a previous day it says so at the top rather than showing a green tile over
+yesterday's run.
+
+**Flows** probes `data/ims.db` on every request instead of restating
+`docs/FLOWS.md`, whose blocker table was hand-verified once on 2026-08-19. A
+hard-coded table would go stale silently the first time a blocker cleared — the
+failure mode the doc itself warns about. Current read: `dispersion` ready,
+`breadth_pct` thin (5 names, so a percentage moves in 20pp steps), and
+`rel_strength` / `turnover_pctile` / `flow_fii` blocked — no benchmark index,
+`prices.volume` NULL on all 155,401 rows, and no FII source. `sector_regime` holds
+0 rows. F4 crowding has its data (96 dates x 4 names) and nothing in `score/`
+reads it.
+
+A sector with no `peer_groups` is not an empty tab. It lists the commodity inputs
+already arriving for it, dated and sourced, plus the three steps needed to make it
+live — so the tab shows what a build would have to work with rather than a
+placeholder. Its change column measures against the last close that actually
+**differed**, not the previous row, because the pack pre-creates the current day
+and carries the prior session forward until the next file backfills it.
 
 ## Step 5 — report, and be specific about what did NOT land
 
@@ -85,10 +229,14 @@ python packages/core/freshness.py
 python packages/score/combined.py
 ```
 
+`data/refresh/frontend.json` holds step 4's per-route result if you need to say
+which tab is affected rather than only which series is stale.
+
 State plainly:
 
 - which series are stale and by how many days
-- whether the metals pack contributed anything current (it probably did not)
+- whether the metals pack arrived, and its date — if the newest pack is not
+  today's, `--consume metals` says so and loads it for history only
 - whether mail staging was written, and how many structural hits it produced
 - the composite and SIZE for all five names
 - **any step that failed, quoted, not summarised**
@@ -114,13 +262,18 @@ pack contributed nothing, say the pack contributed nothing. Do not write
 - **Concall ingestion** — quarterly, `concall-ingest`, needs a human read
 - **Extraction into the store** — deliberately never automated; a wrong
   extraction enters as a fact
-- **`alumina_index` and `cp_coke`** — no automated source exists. `cp_coke` is
-  marked `kind="manual"` in `freshness.py`, so it reports its age WITHOUT being
-  called stale: a feed that was never wired is not a feed that broke, and
-  conflating the two teaches the reader to ignore the column
-- **Coking coal has no source at all.** `PCOKEUSDM` is a dead 404 and four
-  replacements were probed without success. Do not build the steel group
-  assuming FRED covers it — the pack's columns 9 and 10 are the only route
+- **Nothing is unsourced any more.** The old text here named `alumina_index` and
+  `cp_coke` as having no automated source. Both were wrong: `alumina_index` had
+  Yahoo `ALA=F` all along, and `cp_coke` now has the pack, so its
+  `kind="manual"` exemption in `freshness.py` has been removed and a stale
+  `cp_coke` is a real fault again. The one genuinely unsourced series was
+  **`brent`**, which nothing outside the pack has ever supplied and which this
+  list never mentioned. It is on the pack now too
+- **Coking coal is sourced, from one column only.** `PCOKEUSDM` is a dead 404 and
+  four replacements were probed without success, so the pack is the only route —
+  but it is **column 10** (`coking_coal_spot_aus`), not "columns 9 and 10".
+  Column 9 is the quarterly contract and the broker stopped publishing it in June
+  2022. It loads as history and reports as `DISCONTINUED`, not STALE
 
 ## Reading the freshness report
 
@@ -142,8 +295,14 @@ Screen lock is fine; **sleep is not**. On AC this machine is set to never sleep
 (`AC index 0x0`), so a locked overnight session survives. On battery it sleeps
 after 15 minutes and the run dies with it.
 
-The likeliest overnight failure is **M365 auth lapsing** — steps 1 and 2 need an
-interactively-authenticated MCP, and CLAUDE.md notes those can be absent in
-headless runs. If they fail, step 3 still refreshes prices and rescores, and
-step 5 reports mail as stale. That degradation is intentional: one failure, not
-a dead pipeline.
+The likeliest overnight failure is **M365 auth lapsing**, and it now costs less
+than it used to: only **step 1** needs the interactively-authenticated MCP. Step 2
+moved to Outlook COM precisely because that dependency was fragile, so a lapsed
+token loses the mail digest and no longer touches prices. Step 3 still refreshes
+everything and rescores, and step 5 reports mail as stale. One failure, not a dead
+pipeline.
+
+The new failure mode to know is **Outlook COM**: it needs a logged-in desktop
+session, so it works locked and idle but not asleep and not as a service.
+`outlook_pack.py` exits 1 in that case so the step shows red, rather than printing
+the quiet-day message and letting prices silently age.

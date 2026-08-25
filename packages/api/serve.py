@@ -55,9 +55,14 @@ class Handler(BaseHTTPRequestHandler):
 
             if u.path == "/api/scores":
                 w = int(q.get("window", ["30"])[0])
+                # Driven off engine.SECTORS rather than a literal pair of
+                # groups. The two were hardcoded here, so adding steel to
+                # SECTORS made it appear in the nav and stay absent from
+                # /api/scores — the tab would render, the Bridge view would be
+                # empty, and nothing would say why.
                 return self._json({
-                    "aluminium_primary": engine.compute("aluminium_primary", w),
-                    "zinc": engine.compute("zinc", w),
+                    pg: engine.compute(pg, w)
+                    for s in engine.SECTORS for pg in s["peer_groups"]
                 })
             if u.path == "/api/tape":
                 # The PERSISTED tape. /api/scores recomputes the bridge live with
@@ -77,6 +82,18 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.inputs_for_ui())
             if u.path == "/api/oi":
                 return self._json(engine.oi_snapshot())
+            if u.path == "/api/sectors":
+                return self._json(engine.sector_list())
+            if u.path == "/api/nav":
+                return self._json(engine.nav_list())
+            if u.path == "/api/overview":
+                return self._json(engine.overview())
+            if u.path == "/api/flows":
+                return self._json(engine.flows())
+            if u.path == "/api/sector":
+                sid = q.get("id", [""])[0]
+                d = engine.sector_detail(sid)
+                return self._json(d, 404 if d.get("error") else 200)
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             return self._json({"error": "not found"}, 404)
