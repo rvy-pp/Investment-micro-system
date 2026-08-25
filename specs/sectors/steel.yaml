@@ -1,0 +1,220 @@
+# ============================================================================
+# steel — four peer groups, one sector
+# ============================================================================
+# Added 2026-08-25. Peer-group split set by the PM the same day. It is FOUR
+# groups rather than one because a peer group is a scoring universe, and these
+# four sets of names do not share a cost stack:
+#
+#   steel_integrated   tata_steel, jsw_steel, jindal_steel, sail
+#                      Blast-furnace mills. HRC or rebar out, iron ore and
+#                      coking coal in. The only group where pairs are
+#                      like-for-like.
+#   steel_converter    apl_apollo
+#                      Buys HRC, sells tubes. Opposite sign on the same series.
+#   steel_stainless    jindal_stainless      economics WITHHELD, see below
+#   steel_secondary    shyam_metalics        economics WITHHELD, see below
+#
+# The last two are carried, not bridged: they score on valuation and mood and
+# emit no economics. The reasons are per-name in specs/entities/steel.yaml; the
+# short version is that stainless has no ferrochrome or stainless-scrap series
+# in the pack and Shyam is a four-segment company including aluminium.
+
+sector: steel
+spec_version: 0.1.0
+peer_groups: [steel_integrated, steel_converter, steel_stainless, steel_secondary]
+
+# ----------------------------------------------------------------------------
+# P1 ASP + P2 COSTS
+# ----------------------------------------------------------------------------
+pillars_1_2:
+  windows_days: [1, 5, 20]
+  materiality:
+    min_pct_of_ebitda: 0.015
+    on_fail: emit_nothing
+
+  # THE STRUCTURAL CLAIM, and it is testable rather than asserted — see
+  # validation.test_1 below, which has been RUN.
+  dispersion_note: >
+    Coking coal sets the sector's LEVEL; iron ore captivity sets its DISPERSION.
+    Nobody in India has captive coking coal of steel grade, so a seaborne coking
+    coal move hits all four mills and differentiates them only by EBITDA/t — the
+    thin-margin name takes the larger percentage hit. Iron ore is the opposite:
+    Tata and SAIL are ~fully captive and JSW and Jindal Steel largely buy, so the
+    same ore print separates them by an order of magnitude. Trade ore, not coal.
+
+  margin_note: >
+    EBITDA/t IS THE BETA HERE, and it is disclosed every quarter, which steel has
+    and aluminium does not. SAIL earns Rs9,974/t against Tata's Rs18,199/t, so the
+    same rupee-per-tonne cost move is ~1.8x more material to SAIL. That is
+    invariant 5 working as intended: it comes out of base_ebitda and the volumes,
+    and must never be adjusted with a coefficient.
+
+# ----------------------------------------------------------------------------
+# P3 VALUATION
+# ----------------------------------------------------------------------------
+pillar_3:
+  metrics: [ev_ebitda]
+  reference: own_history
+  lookback_days: 1260
+  note: >
+    Computed the same way as every other name: (price x shares + net_debt) /
+    base_ebitda. What is DIFFERENT for steel is where net_debt comes from — the
+    `Borrowings - Investments` convention used for the non-ferrous names
+    overstates it on every steel name where a cited figure exists, and flips the
+    sign on APL Apollo. These use the digest-cited 1QFY27 figure instead. The
+    measured effect and the reason are in specs/entities/base_financials.yaml;
+    SAIL is the one name with no cited cross-check and its multiple should be
+    read as a ceiling.
+
+# ----------------------------------------------------------------------------
+# P4 GUIDANCE
+# ----------------------------------------------------------------------------
+pillar_4:
+  track_metrics: [volume, ebitda_per_t, coking_coal_cost, capex]
+  note: >
+    Steel is the best P4 candidate in the book so far, better than HZL. The
+    guidance is numeric, dated, per-tonne and resolves every quarter, and the
+    digests already carry both sides of it — the commitment and the outcome. Live
+    examples from this quarter alone: SAIL "FY27 volume guide 22-22.5mt held",
+    Jindal Steel "expects 2Q EBITDA/t to give back ~Rs2,700/t", Jindal Stainless
+    "1H guidance Rs18-20k/t" against Rs22,884 realised, APL Apollo "15-20% volume
+    growth expected to be cut to single digits", Tata "India 2Q realisation
+    -Rs1,500/t".
+  caution: >
+    A GUIDE AND A PRINT MUST BE THE SAME QUANTITY. SAIL's "22-22.5mt" is almost
+    certainly crude steel PRODUCTION while its cited 4.16mt quarter is saleable
+    SALES — 34% apart. Grading a sales print against a production guide would
+    manufacture a miss every quarter. Confirm the quantity before scoring any
+    volume commitment.
+
+# ----------------------------------------------------------------------------
+# GATE
+# ----------------------------------------------------------------------------
+gate:
+  scope: steel
+  consumed_by: flows           # NOT by scoring, per the reclassification in
+                               # aluminium_primary.yaml. Nothing in
+                               # packages/score/ reads this.
+  pair_exception: true
+
+# ----------------------------------------------------------------------------
+# OUTPUT
+# ----------------------------------------------------------------------------
+output:
+  emit_singles: true
+  emit_pairs: true
+  pair_candidates:
+    - pair: [tata_steel, jsw_steel]
+      rationale: >
+        THE FLAGSHIP. Captive ore against bought ore, both flat-product mills of
+        similar scale, both priced off the same HRC series — so HRC largely
+        cancels and what is left is the iron ore differential plus Tata's Europe
+        exposure. The direct analogue of nalco/vaml on alumina. On a +USD20/t ore
+        shock the bridge reads Tata -0.42% against JSW -7.58%, a 7.16pp spread.
+      residual_exposure: >
+        NOT commodity-neutral: the long leg carries Tata Steel Europe, which is
+        loss-making and moves on European HRC and CBAM rather than on Indian ore.
+        Report it — a 1:1 sizing here leaves a European steel position nobody
+        chose, the same warning zinc.yaml makes about silver.
+
+    - pair: [tata_steel, jindal_steel]
+      rationale: >
+        The widest ore spread in the group (-0.42% vs -9.44% on the same shock,
+        a 9.02pp gap) because Jindal Steel is both largely ore-buying AND the
+        thinnest-covered on volume. But the legs are LESS alike: Jindal Steel is
+        66% value-added long product and Tata is flat. Use when ore is the
+        driver and the flat/long spread is not moving.
+
+    - pair: [sail, jsw_steel]
+      rationale: >
+        Captive ore and long product against bought ore and flat product. The
+        cleanest expression of "ore up, rebar holding, HRC soft" — SAIL is the
+        only name in the group priced off rebar, so it is the only leg that does
+        NOT respond to an HRC move at all. Note SAIL's Rs9,974/t margin makes it
+        the most sensitive name in the group to any per-tonne cost, so a coking
+        coal rally works against this pair even while ore works for it.
+
+    - pair: [tata_steel, apl_apollo]
+      cross_peer_group: true
+      rationale: >
+        THE HRC MIRROR. A mill against a converter of the same coil: rising HRC
+        is revenue to Tata and cost to APL Apollo. Structurally the sharpest
+        pair available in the sector.
+      blocked: conversion_spread_unpriced
+      blocked_note: >
+        NOT TRADEABLE ON THIS MODEL TODAY, and the spec says so rather than
+        offering it. APL Apollo's output and input are both linked to
+        hrc_india_inr at ~1:1, so the bridge nets it to -0.73% on a +Rs2,000/t
+        HRC shock — i.e. it reports the name as HRC-neutral when the digests
+        plainly say rising coil hurt it ("Domestic demand soft as HRC prices rose
+        3% QoQ"). A converter earns the tube/coil SPREAD, and no tube price
+        series exists in the pack. Same gap that blocks Novelis, where
+        can_sheet_spread has no public series and the pillar runs on a PM
+        placeholder. Unblocks on a tube price series or a granted placeholder.
+
+  require_falsifier: true
+  report_residual_beta: true
+
+  conviction_rules:
+    high:   pct_of_ebitda >= 0.05 and priced_in == not_priced and no_veto
+    medium: pct_of_ebitda >= 0.03
+    low:    otherwise
+
+# ----------------------------------------------------------------------------
+# VALIDATION
+# ----------------------------------------------------------------------------
+validation:
+  test_1_economics: RUN 2026-08-25, PASSED
+  test_1_result: >
+    The sanity check aluminium_primary.yaml demands before any prediction
+    testing — does the bridge produce the ordering the desk already believes.
+    Three shocks, all four mills:
+
+      iron_ore_china_cfr62 +20 USD/t
+        jindal_steel  -9.44%   jsw_steel  -7.58%     <- material, NEGATIVE
+        sail          -0.77%   tata_steel -0.42%     <- immaterial, no trade
+        Captivity separates them by ~18x. This is the intended result.
+
+      coking_coal_spot_aus +20 USD/t
+        sail         -11.38%   jindal_steel -11.01%
+        jsw_steel     -8.85%   tata_steel    -5.87%
+        All four material and all negative — no captivity dispersion, and the
+        ordering is set purely by EBITDA/t (SAIL thinnest, Tata fattest).
+        Confirms the dispersion_note above.
+
+      hrc_india_inr +2000 INR/t
+        jindal_steel +16.48%   jsw_steel +13.24%   tata_steel +10.99%
+        sail          +0.00%
+        SAIL correctly does not respond — it is priced off rebar, not HRC.
+
+  test_2_direction: >
+    NOT RUN, and it cannot be run yet. Does the sign of pct_of_ebitda at date D
+    predict the sign of the 5- and 20-day RELATIVE move for each pair? Report hit
+    rate overall and conditioned on conviction. Needs a score backfill first.
+
+  test_3_captive_shares: >
+    THE REAL GATE ON THIS SPEC, and it is a data gap rather than a test.
+    `market_pct` on the iron ore lines is what produces the entire result of
+    test_1, and only ONE of the four is cited anywhere in the 48 digests —
+    Jindal Steel's "captive iron ore targeted ~40% by FY27-end", which is a
+    forward target rather than today's share. JSW has a 2030 target. Tata and
+    SAIL have nothing but sector knowledge.
+    So test_1 currently confirms that the ARITHMETIC works, not that the INPUTS
+    are right. Confirm all four captive shares against annual reports before
+    sizing anything off this group.
+
+  minimum_bar: >
+    Directional hit rate above 55% on high-conviction pairs, monotonic
+    improvement from low to high conviction, and L2 must beat L1 alone. Same bar
+    as aluminium_primary, deliberately unchanged — and note that group has still
+    not cleared it, on sample size rather than on signal.
+
+  known_discontinuities: >
+    Three, all of which break a long regression rather than a daily score:
+      jsw_steel 1QFY27      BPSL/JFE JV changes the consolidation perimeter for
+                            both debt and volumes ("+3% YoY, flat QoQ EX-BPSL").
+      jindal_stainless      -60.9% on 2015-11-19 in the price series is the JSL
+                            restructuring. A CANDIDATE, not confirmed against a
+                            filing, and NOT in tape.CONFIRMED_ACTIONS.
+      all four, 2022-05-21  the 15% steel export duty. A REAL market move, not a
+                            corporate action — draw through it.

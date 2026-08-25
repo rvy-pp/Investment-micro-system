@@ -46,6 +46,31 @@ TAGS = {
     "#Hindalco": "hindalco",
     "#VAML": "vaml",
     "#Vedanta": "vedanta",
+    # --- steel, added 2026-08-25 ---
+    # Taken from a frequency count of every hashtag in the 48 digests, not
+    # guessed: #TataSteel 73, #JSWSteel 72, #JindalSteel 64, #SAIL 33,
+    # #APLApollo 23, #ShyamMetalics 15, #JindalStainless 9.
+    #
+    # DO NOT ADD THE SECTOR TAGS (#Steel 42, #Mining 25, #Aluminium 36).
+    # Matching is `t in line` substring containment, so "#Steel" would match
+    # inside "#TataSteel", "#JSWSteel" and "#JindalSteel" and silently tag
+    # three companies' bullets with a fourth entity. The company tags are safe
+    # under containment in both directions — in particular "#JindalSteel" does
+    # not appear inside "#JindalStainless".
+    "#TataSteel": "tata_steel",
+    "#JSWSteel": "jsw_steel",
+    "#JindalSteel": "jindal_steel",
+    "#SAIL": "sail",
+    "#JindalStainless": "jindal_stainless",
+    "#ShyamMetalics": "shyam_metalics",
+    "#APLApollo": "apl_apollo",
+    # NOT MAPPED, deliberately, pending a scope decision: #NMDC 37,
+    # #CoalIndia 30, #LloydsMetals 9. All three are steel INPUT suppliers and
+    # appear constantly in the steel bullets — NMDC sets the domestic iron ore
+    # price the mills pay. They are in the vault's Mining coverage, not Steel,
+    # and mapping a tag to an entity_id that does not exist in `entities` would
+    # produce extraction candidates that cannot be loaded. Add the entity first
+    # if the peer group is widened to include the ore leg.
 }
 
 NUM = r"\d"

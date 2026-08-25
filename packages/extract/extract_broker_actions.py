@@ -64,6 +64,31 @@ NAME_PATTERNS = [
     ("vedanta",        r"\bVedanta Ltd\b|\bVEDL\b|\bVedanta\b"),
     ("hindalco",       r"\bHindalco\b"),
     ("nalco",          r"\bNALCO\b|\bNational Alumini?um\b"),
+    # --- steel, added 2026-08-25 ---
+    # Every shorthand here was CONFIRMED IN CONTEXT in the 48 digests before
+    # being written, not inferred from the ticker. TSL -> Tata Steel ("TSL India
+    # +Rs2,500/t EBITDA/t expansion"), JSL -> Jindal Stainless ("BUY: JSL >
+    # Shyam"), JSPL -> Jindal Steel (the pre-rename Jindal Steel & Power, still
+    # the shorthand brokers use), JSTL -> JSW Steel.
+    #
+    # THERE IS DELIBERATELY NO BARE `\bJSW\b` PATTERN, and it costs real
+    # attributions — "SELL: JSW > Tata Steel > JSPL > NMDC > Hindalco" names JSW
+    # Steel and will not be picked up. JSW CEMENT is also in the vault's coverage
+    # and appears ~29 times in these same digests, so a bare JSW would hand
+    # cement calls to the steel entity. The `targets` intersection below does NOT
+    # protect against this: on a #JSWCement bullet `jsw_steel` is not in `tags`,
+    # so the intersection is empty and the `or named` fallback keeps the wrong
+    # entity anyway. A miss is the correct trade here.
+    #
+    # NO BARE `\bTata\b` EITHER — #TataElxsi is in the IT coverage and in these
+    # same digests.
+    ("tata_steel",       r"\bTata Steel\b|\bTSL\b|#TataSteel\b"),
+    ("jsw_steel",        r"\bJSW Steel\b|\bJSTL\b|#JSWSteel\b"),
+    ("jindal_stainless", r"\bJindal Stainless\b|\bJSL\b|#JindalStainless\b"),
+    ("jindal_steel",     r"\bJindal Steel\b|\bJSPL\b|#JindalSteel\b"),
+    ("sail",             r"\bSAIL\b|#SAIL\b"),
+    ("shyam_metalics",   r"\bShyam\b|#ShyamMetalics\b"),
+    ("apl_apollo",       r"\bAPL ?Apollo\b|#APLApollo\b"),
 ]
 
 

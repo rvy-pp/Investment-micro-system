@@ -1,0 +1,516 @@
+# ============================================================================
+# Steel — entity roster, pillars 1 and 2 (ASP and costs)
+# ============================================================================
+# Added 2026-08-25. Seven names, the vault's Coverage/Steel roster. Same shape
+# as aluminium.yaml: each company is described by what it SELLS and what it
+# CONSUMES, and direction falls out of arithmetic rather than a coefficient.
+#
+# ---------------------------------------------------------------------------
+# THE ONE THING THIS SPEC EXISTS TO EXPRESS
+# ---------------------------------------------------------------------------
+# Iron ore is CAPTIVE for Tata and SAIL and BOUGHT by JSW. Coking coal is
+# imported by everyone. So the same iron ore print moves the four mills
+# differently while the same coking coal print moves them all the same way —
+# which means coking coal sets the sector's level and IRON ORE CAPTIVITY sets
+# the dispersion. That is `market_pct` doing exactly the job it does on alumina,
+# where NALCO's captive refinery makes an alumina rally revenue and VAML's
+# purchases make it cost.
+#
+# And APL Apollo inverts the OUTPUT line, which nothing in aluminium does: it
+# BUYS hot-rolled coil and sells tubes, so a rising HRC price is a cost to it
+# and revenue to every mill. That is the cleanest mirror pair in the sector.
+#
+# ---------------------------------------------------------------------------
+# !! `verify: pending` MEANS SECTOR KNOWLEDGE, NOT A FILING. Those are the
+# !! numbers to attack. In this file the pending values are the INTENSITIES and
+# !! most of the CAPTIVE SHARES, and the captive shares are the ones that matter
+# !! — they are what separates the four mills from each other. Only two are
+# !! cited anywhere in the 48 digests, both for Jindal Steel and JSW, both
+# !! FORWARD-looking. See the market_pct note on each line.
+# ---------------------------------------------------------------------------
+
+sector: steel
+spec_version: 0.1.0
+currency: INR
+
+# ============================================================================
+# PRICE SERIES these economics link to
+# ============================================================================
+# THE UNIT STRING IS LOAD-BEARING. `bridge.to_inr()` applies the USDINR leg only
+# when the unit starts with "USD"; an unregistered series falls through with NO
+# FX leg and is silently understated by ~95x. That cost a 95x error on zinc once
+# already (see aluminium.yaml's lme_zinc note), so every series used below is
+# registered here with its unit spelled out.
+reference_entities:
+  # --- outputs, and note these are QUOTED IN RUPEES ---
+  - {id: hrc_india_inr,             kind: commodity, name: HRC 2.5mm India,            unit: INR/t}
+  - {id: rebar_india_primary_inr,   kind: commodity, name: Primary rebar 12mm India,   unit: INR/t}
+  # --- inputs, quoted in dollars, so each carries the FX leg ---
+  - {id: iron_ore_china_cfr62,      kind: commodity, name: Iron ore fines 62% CFR China, unit: USD/t}
+  - {id: coking_coal_spot_aus,      kind: commodity, name: Hard coking coal spot FOB Australia, unit: USD/t}
+  - {id: thermal_coal_seaborne,     kind: commodity, name: Richards Bay thermal coal,  unit: USD/t}
+  - {id: usdinr,                    kind: fx,        name: USDINR,                     unit: INR/USD}
+
+# ============================================================================
+# THE FX ASYMMETRY, and it runs the OPPOSITE WAY TO ALUMINIUM
+# ============================================================================
+# aluminium.yaml's fx_handling note says a weaker INR is "a revenue tailwind on
+# USD-linked outputs against an INR cost base". Steel is the mirror image:
+# revenue is quoted in RUPEES (hrc_india_inr, rebar_india_primary_inr) while the
+# two largest cost lines are quoted in DOLLARS. So in this bridge a weaker INR
+# is pure cost inflation with no offsetting revenue leg.
+#
+# THAT IS AN OVERSTATEMENT OF THE REAL EXPOSURE, and it is recorded rather than
+# hidden. Indian HRC is priced off import parity, so a weaker rupee does lift the
+# rupee HRC print — with a lag, and incompletely. The bridge cannot see that,
+# because it reads the INR series directly and only registers the move once the
+# print actually moves.
+#
+# DO NOT "FIX" THIS BY REPOINTING THE OUTPUT AT hrc_india_usd. That would create
+# the opposite error — a full, instant FX pass-through — and it would also change
+# what the series measures. The honest handling is the one used for coal:
+# an explicit pass-through fraction on the input side, which is what
+# `basis_pass_through` below is for. Setting it is a PM decision, not a guess.
+
+# ============================================================================
+# WHY IRON ORE CARRIES A basis_pass_through AT ALL
+# ============================================================================
+# Same reason thermal coal does in aluminium.yaml. Indian mills do not buy
+# seaborne ore — they buy DOMESTIC ore, largely from NMDC at administered prices,
+# and those do not move one-for-one with CFR China. The digests show the two
+# diverging inside a single quarter:
+#
+#   "costlier iron ore (NMDC hikes +18% QoQ)"        Morgan Stanley, 2026-07-08
+#   "Iron ore 62% Fe stable ~$93/t"                  Nomura, week to 2026-07-10
+#
+# An 18% domestic hike against a flat benchmark. Applying a CFR China delta at
+# face value would therefore have read roughly nothing in a quarter when domestic
+# ore cost rose sharply — a plausible number, no warning, wrong answer. Every ore
+# line below carries the fraction explicitly.
+#
+# 0.50 is a PLACEHOLDER and is flagged `verify: pending` on every line. The
+# aluminium coal analogue sits at 0.35 and is itself still provisional.
+
+entities:
+
+  # ==========================================================================
+  # TATA STEEL — the captive-ore name. India only.
+  # ==========================================================================
+  # The spec lines are India upstream: India HRC/long volumes, India iron ore,
+  # imported coking coal. Europe is NOT modelled and has no lines, exactly as
+  # Novelis is excluded from Hindalco's upstream spec. base_financials carries a
+  # separate `valuation_ebitda` for P3 because EV is whole-company.
+  - id: tata_steel
+    kind: company
+    name: Tata Steel
+    sector: steel
+    peer_group: steel_integrated
+    nse_symbol: TATASTEEL
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: hrc
+        price_link: hrc_india_inr
+        volume: 20680000          # 5.17 mnt Q1FY27 India SALES x 4.
+        volume_unit: t
+        asp_premium: 0
+        source_note: >
+          "India crude steel 5.82mnt +11% YoY (-6% QoQ), India sales 5.17mnt
+          +9% YoY (-16% QoQ)" (Morgan Stanley, Rahul Gupta, digest 2026-07-08).
+          SALES not production — the realised tonne is what carries a price.
+        verify: sourced
+        # !! THIS VOLUME AND base_ebitda MUST STAY ON THE SAME BASIS. base_ebitda
+        # is 5.17mt x Rs18,199/t x 4. Using an FY27 GUIDANCE tonnage here against
+        # a Q1-annualised denominator would inflate pct_of_ebitda by the ratio of
+        # the two — the same numerator/denominator basis error VEDL's caveat
+        # warns about. If one changes, change both.
+
+    inputs:
+      - item: iron_ore
+        price_link: iron_ore_china_cfr62
+        intensity: 1.60
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.05          # ~FULLY CAPTIVE. Tata's Noamundi/Joda mines
+                                  # cover essentially all of India's requirement,
+                                  # which is the single most important structural
+                                  # fact about the name and the reason it is the
+                                  # long leg of an ore-driven pair.
+        basis_pass_through: 0.50
+        source_note: >
+          Captivity is corroborated only indirectly: "Competition intensifies
+          from Tata Steel/JSW captive mines, Lloyds Metals" (Ambit on NMDC), and
+          Avendus flags "Captive iron-ore lease expiry CY30 a cost risk" — a
+          lease that would not be a risk if it were not supplying the plants.
+          No digest states the SHARE.
+        verify: pending           # ATTACK THIS FIRST. 0.05 vs 0.00 barely
+                                  # matters; 0.05 vs 0.40 changes the sign of
+                                  # Tata's ore sensitivity.
+
+      - item: coking_coal
+        price_link: coking_coal_spot_aus
+        intensity: 0.70
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.80          # Jharia / West Bokaro cover a minority; the
+                                  # balance is imported at seaborne prices.
+        basis_pass_through: 1.00  # 1.00, NOT a fraction, and deliberately unlike
+                                  # the ore and thermal lines. Imported coking
+                                  # coal IS bought at the seaborne benchmark, so
+                                  # there is no domestic administered basis to
+                                  # discount. Do not "harmonise" these to one
+                                  # number.
+        source_note: >
+          Sensitivity is independently cited and is a good check on
+          intensity x market_pct: "Every USD10/t increase = USD7-9/t EBITDA
+          impact — JSW Steel and Tata Steel most exposed" (Nomura). 0.70 x 0.80
+          = 0.56 t/t implies USD5.6/t per USD10/t, below Nomura's 7-9 — so the
+          intensity, the captive share, or both are conservative here.
+        verify: pending
+
+  # ==========================================================================
+  # JSW STEEL — the ore-BUYING name. The short leg of the flagship ore pair.
+  # ==========================================================================
+  - id: jsw_steel
+    kind: company
+    name: JSW Steel
+    sector: steel
+    peer_group: steel_integrated
+    nse_symbol: JSWSTEEL
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: hrc
+        price_link: hrc_india_inr
+        volume: 24840000          # DERIVED, not cited: India EBITDA/t Rs15,110
+        volume_unit: t            # against ~Rs93.8bn of quarterly EBITDA implies
+        asp_premium: 0            # 6.21 mt/qtr, x4 = 24.84 mt.
+        source_note: >
+          DERIVED the same way VAML's share count is derived — from a cited ratio
+          rather than a cited level, because no digest gives JSW's absolute India
+          tonnage. Rs93,800 cr-equivalent quarterly EBITDA / Rs15,110 per tonne
+          = 6.21 mt, x4. Cross-check: consistent with JSW's ~28 mtpa India
+          capacity at high utilisation, and with "JSW +10% YoY" volume growth
+          (Morgan Stanley). It assumes India EBITDA ~ consolidated EBITDA, which
+          holds only while the overseas plates/pipes operations are near
+          breakeven.
+        verify: derived
+
+    inputs:
+      - item: iron_ore
+        price_link: iron_ore_china_cfr62
+        intensity: 1.60
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.75          # LARGELY BOUGHT — from NMDC and from Odisha /
+                                  # Karnataka auction blocks. This is the number
+                                  # that makes nalco/vaml's analogue work here.
+        basis_pass_through: 0.50
+        source_note: >
+          The only citation is forward: "Value-over-volume strategy, ~50% captive
+          iron ore post-2030" (digest). A 50% captive TARGET four years out
+          implies materially less than 50% today, which is what 0.75 encodes —
+          but the digest does not say today's number, so this is an inference
+          from a target, not a measurement.
+        verify: pending           # THE MOST IMPORTANT PENDING NUMBER IN THE FILE.
+                                  # tata 0.05 vs jsw 0.75 IS the flagship pair.
+                                  # If the true gap is narrower, the pair has
+                                  # much less ore content than this spec claims.
+
+      - item: coking_coal
+        price_link: coking_coal_spot_aus
+        intensity: 0.70
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 1.00          # NO captive coking coal. India has essentially
+                                  # no coking-coal resource of steel grade, so
+                                  # this is 1.00 for every mill without a
+                                  # specific asset — and it is why coking coal
+                                  # differentiates nobody.
+        basis_pass_through: 1.00
+        source_note: >
+          "coking coal cost inflation of $12-15/t guided" (Elara) and "+$20/t
+          coking coal" in the 2Q preview (Nomura) — both stated as a direct
+          seaborne pass-through, with no domestic basis mentioned.
+        verify: pending
+
+  # ==========================================================================
+  # JINDAL STEEL — long-product mix, partly captive on ore, half captive on coal
+  # ==========================================================================
+  - id: jindal_steel
+    kind: company
+    name: Jindal Steel
+    sector: steel
+    peer_group: steel_integrated
+    nse_symbol: JINDALSTEL
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: hrc
+        price_link: hrc_india_inr
+        volume: 8800000           # 2.2 MMT Q1FY27 sales x 4.
+        volume_unit: t
+        asp_premium: 0
+        source_note: >
+          "Sales +17% yoy at 2.2MMT, VA-steel mix up to 66%" (Avendus Spark,
+          Somaiah V). Realisation cited at Rs69k/t against an HRC print of
+          Rs58.8k/t, which is the 66% value-added mix — so the ASP LEVEL is
+          well above the price_link's level.
+        verify: sourced
+        # PRICE_LINK CAVEAT: the bridge uses the CHANGE in hrc_india_inr, not its
+        # level, so a higher absolute realisation does not by itself break this.
+        # What would break it is value-added prices moving by a different
+        # PERCENTAGE from commodity HRC, which they do. Consider splitting the
+        # line 66/34 against a VA proxy once one exists — there is none in the
+        # pack today.
+
+    inputs:
+      - item: iron_ore
+        price_link: iron_ore_china_cfr62
+        intensity: 1.60
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.75
+        basis_pass_through: 0.50
+        source_note: >
+          "Captive coal share ~50%, captive iron ore targeted ~40% by FY27-end"
+          (IIFL, Prateek Singh) — the ONLY dated captive-ore citation in the
+          corpus, and it is a TARGET for the end of FY27, so today's share is
+          below 40%. 0.75 market_pct encodes ~25% captive now.
+        verify: pending
+
+      - item: coking_coal
+        price_link: coking_coal_spot_aus
+        intensity: 0.70
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 1.00          # The cited "captive coal share ~50%" is
+                                  # THERMAL and PCI coal, not coking coal — a
+                                  # distinction worth keeping, because reading it
+                                  # as coking coal would halve this name's coal
+                                  # sensitivity on a misattribution.
+        basis_pass_through: 1.00
+        source_note: >
+          Guided give-back is cited and is a check on the whole line: "expects 2Q
+          EBITDA/t to give back ~Rs2,700/t on weaker rebar pricing and higher
+          coking coal costs" (digest).
+        verify: pending
+
+      - item: thermal_coal
+        price_link: thermal_coal_seaborne
+        intensity: 0.60
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.50          # HALF CAPTIVE — the cited figure, applied to
+                                  # the line it actually belongs to.
+        basis_pass_through: 0.35  # Same fraction aluminium.yaml uses, and for
+                                  # the same reason: Indian domestic coal is
+                                  # bought at administered/e-auction prices well
+                                  # below seaborne and does not track it.
+        source_note: >
+          "Captive coal share ~50%" (IIFL). basis_pass_through inherited from
+          aluminium.yaml's coal lines, where it is also provisional.
+        verify: pending
+
+  # ==========================================================================
+  # SAIL — captive ore, long-product mix, the thinnest margin in the group
+  # ==========================================================================
+  - id: sail
+    kind: company
+    name: Steel Authority of India
+    sector: steel
+    peer_group: steel_integrated
+    nse_symbol: SAIL
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: rebar
+        price_link: rebar_india_primary_inr
+        volume: 16640000          # 4.16 mt Q1FY27 x 4.
+        volume_unit: t
+        asp_premium: 0
+        source_note: >
+          "adj EBITDA Rs41.5bn, 9.1% below Emkay est on weak volumes (4.16mt)"
+          (Emkay, Akhilesh Kumar). Priced off REBAR rather than HRC because the
+          long-product mix is what the sell-side flags as the exposure: "SAIL
+          flagged as key downside risk on higher rebar mix exposure" (Emkay),
+          "higher semi-finished exposure" on realisations.
+        verify: sourced
+        # !! ALL 16.64mt SITS ON ONE REBAR LINE, AND THAT OVERSTATES THE BETA.
+        # SAIL is roughly half flat product and half long, not all long. Pricing
+        # the whole book off primary rebar makes it the highest-beta name in the
+        # group by construction: run the live 30-session bridge and it reads
+        # +35.6% of EBITDA, because rebar rose 10.68% (48,700 -> 53,900) while HRC
+        # rose 1.7%, and 16.64mt against a Rs16,600 cr denominator means every
+        # Rs166/t is 1% of EBITDA.
+        #
+        # THE MOVE IS REAL — checked, because a 10.7% monthly move is exactly the
+        # shape a data artefact takes. It is a dozen small steps from 48,000 on
+        # 14-Jul to 53,900 on 21-Aug with no single jump above 2.7%, and the
+        # digests independently call the bottom: "Rebar (~Rs48,000/t) near bottom"
+        # (Emkay, late July). So the ARITHMETIC and the PRICE are both right and
+        # the MIX is wrong.
+        #
+        # FIX BY SPLITTING THE LINE, not by trimming the volume: one rebar line
+        # and one hrc_india_inr line at the true flat/long split, both summing to
+        # 16.64mt. Cutting the tonnage instead would break the volume/base_ebitda
+        # basis rule below. The split ratio is a PM number — no digest gives it.
+        #
+        # !! DO NOT REPLACE THIS WITH THE FY27 GUIDANCE TONNAGE. The digests cite
+        # "FY27 volume guide 22-22.5mt held" (ICICI), which is 34% above this
+        # 16.64mt. base_ebitda is 4.16mt x Rs9,974 x 4, so swapping in 22.25mt
+        # here while leaving the denominator at Q1-annualised would inflate every
+        # pct_of_ebitda for SAIL by 1.34x with nothing raising. The guide is also
+        # probably crude steel production rather than saleable sales, so it is not
+        # even the same quantity. Same basis on both sides, or neither.
+
+    inputs:
+      - item: iron_ore
+        price_link: iron_ore_china_cfr62
+        intensity: 1.60
+        intensity_unit: t/t
+        basis_item: rebar
+        market_pct: 0.05          # ~FULLY CAPTIVE, like Tata — SAIL's own mines
+                                  # in Jharkhand and Odisha.
+        basis_pass_through: 0.50
+        source_note: >
+          Not cited in the corpus. Sector knowledge only.
+        verify: pending
+
+      - item: coking_coal
+        price_link: coking_coal_spot_aus
+        intensity: 0.70
+        intensity_unit: t/t
+        basis_item: rebar
+        market_pct: 0.85          # Mostly imported today. Tasra changes this.
+        basis_pass_through: 1.00
+        source_note: >
+          Dated and directional: "Coking coal costs to fall Rs1,000-1,500/t in
+          Q2; Tasra captive coal mine (Dec-26) to drive structural savings"
+          (ICICI Securities). Tasra starting Dec-2026 means market_pct should
+          STEP DOWN then, with a new `effective_from` row rather than an edit in
+          place — which is exactly the dated-parameter mechanism CLAUDE.md
+          describes as the route to a genuine forecast.
+        verify: pending
+
+  # ==========================================================================
+  # APL APOLLO — the converter. HRC is a COST here, the mirror of every mill.
+  # ==========================================================================
+  # Its own peer group, so a long-mill / short-APL-Apollo pair is CROSS-GROUP and
+  # gets flagged in the UI the way hindalco/hindustan_zinc is. That flag is the
+  # point rather than an obstacle: the two legs sit on opposite sides of one HRC
+  # print, which is a real trade and a comparison the schema should force you to
+  # look at twice.
+  - id: apl_apollo
+    kind: company
+    name: APL Apollo Tubes
+    sector: steel
+    peer_group: steel_converter
+    nse_symbol: APLAPOLLO
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: steel_tubes
+        price_link: hrc_india_inr
+        volume: 2980000           # 745 kt Q1FY27 x 4.
+        volume_unit: t
+        asp_premium: 0
+        source_note: >
+          "volumes -6% yoy at 745kt as APL preserved margins over volume" (IIFL,
+          Prateek Singh). Tube prices have no series in the pack, so the output
+          is linked to HRC as a proxy for the tube price level.
+        verify: sourced
+
+    inputs:
+      - item: hrc
+        price_link: hrc_india_inr
+        intensity: 1.02
+        intensity_unit: t/t
+        basis_item: steel_tubes
+        market_pct: 1.00          # 100% BOUGHT. No captive steelmaking at all —
+                                  # this is the whole reason the name is here.
+        basis_pass_through: 1.00
+        source_note: >
+          Mechanism stated directly in the digests: "Domestic demand soft as HRC
+          prices rose 3% QoQ" (Nuvama), and the stated key monitorable is "the
+          widening HRC-Patra gap". Intensity 1.02 is one tonne of coil per tonne
+          of tube plus ~2% process yield loss.
+        verify: pending
+
+    # !! THIS ENTITY IS A SPREAD, AND THE SPEC AS WRITTEN NETS TO NEARLY ZERO.
+    # Output volume 2.98mt at 1.00x HRC against input 2.98mt at 1.02x HRC, both
+    # linked to the SAME series, so a 10% HRC move produces a d_ebitda of about
+    # -2% of one tonne's price — i.e. the spec says APL Apollo is almost
+    # HRC-NEUTRAL, when the digests plainly say rising HRC hurt it.
+    #
+    # THAT IS NOT A BUG TO PATCH WITH A COEFFICIENT. It is the correct output of
+    # a wrong structure, and naming it is more useful than hiding it. A converter
+    # earns a CONVERSION SPREAD, so what moves its EBITDA is the tube-price /
+    # coil-price gap, not either leg. Modelling that needs a tube price series,
+    # which the pack does not carry — the same gap that blocks Novelis, where
+    # `can_sheet_spread` has "no public series" and the pillar sits on a PM
+    # placeholder for exactly this reason.
+    #
+    # SO: expect economics to be uninformative for this name until either a tube
+    # price series exists or the PM grants a placeholder. Its VALUATION and MOOD
+    # pillars are unaffected and are real — it has 8 broker actions, all
+    # positive, and sits at the 97th percentile of a long buildup.
+    modelling_gap: conversion_spread_unpriced
+
+  # ==========================================================================
+  # JINDAL STAINLESS — carried, NOT bridged. PM decision 2026-08-25.
+  # ==========================================================================
+  # Deliberately NO outputs and NO inputs. `run_bridge` will find no priced
+  # lines, coverage will fail, and economics will be WITHHELD — which is the
+  # correct outcome and is recorded rather than being a gap in the history
+  # (run_scores writes a withheld row).
+  #
+  # WHY: stainless is priced off LME nickel, ferrochrome and stainless scrap.
+  # The pack carries lme_nickel and NOTHING for ferrochrome or stainless scrap,
+  # and `scrap_turkey` — the nearest available proxy — has not printed since
+  # 2020-12-03 (the column went to #N/A and then to zeros; the adapter correctly
+  # drops both). A bridge on nickel alone would be missing most of the cost
+  # stack while reporting coverage_ok, which is the failure this project spends
+  # the most effort avoiding.
+  #
+  # Its valuation and mood pillars DO score, from base_financials and its 8
+  # broker actions. That is the honest half.
+  - id: jindal_stainless
+    kind: company
+    name: Jindal Stainless
+    sector: steel
+    peer_group: steel_stainless
+    nse_symbol: JSL
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    withhold_reason: >
+      Economics withheld: no ferrochrome and no stainless-scrap series exists in
+      the metals pack, and scrap_turkey is dead after 2020-12-03. Unblocks if a
+      ferrochrome or stainless-scrap assessment is added to the daily pack.
+
+  # ==========================================================================
+  # SHYAM METALICS — carried, NOT bridged. PM decision 2026-08-25.
+  # ==========================================================================
+  # Same treatment, different reason. It is not a steel pure-play: the segments
+  # are Metallics, Carbon Steel, Stainless (~22%) and ALUMINIUM, and this quarter
+  # "Aluminium segment saw the sharpest margin expansion". Its cost stack is
+  # sponge-iron and pellet based rather than blast-furnace, so the intensities
+  # above do not describe it either.
+  #
+  # A four-segment company modelled on one segment's economics would produce a
+  # score that looks like the others and means something different. Withhold.
+  - id: shyam_metalics
+    kind: company
+    name: Shyam Metalics and Energy
+    sector: steel
+    peer_group: steel_secondary
+    nse_symbol: SHYAMMETL
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    withhold_reason: >
+      Economics withheld: four reporting segments (Metallics, Carbon Steel,
+      Stainless ~22%, Aluminium), a sponge-iron/pellet cost route rather than
+      blast-furnace, and no segment-level tonnage disclosed in the digests.
+      Unblocks on a segment split with volumes.

@@ -66,6 +66,19 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     # (VEDANTAALUMINIUM.NS / VEDALUM.NS / VDLALUM.NS) all 404'd while the real
     # ticker was the obvious one. Use the search endpoint first, always.
     "vaml":           [("VAML.NS", r"vedanta\s*aluminium")],
+    # --- equities: steel, added 2026-08-25 ---
+    # All seven resolved with yahoo_search.py before being written here, per the
+    # VAML lesson. Two are worth noting because a guess would have missed them:
+    # Jindal Stainless is JSL.NS (not JINDALSTNLS), and Jindal Steel renamed from
+    # Jindal Steel & Power — JINDALSTEL.NS still resolves and Yahoo now returns
+    # the name "JINDAL STEEL LIMITED", so the pattern must not require "power".
+    "tata_steel":       [("TATASTEEL.NS", r"tata\s*steel")],
+    "jsw_steel":        [("JSWSTEEL.NS", r"jsw\s*steel")],
+    "jindal_steel":     [("JINDALSTEL.NS", r"jindal\s*steel")],
+    "sail":             [("SAIL.NS", r"steel\s*authority")],
+    "jindal_stainless": [("JSL.NS", r"jindal\s*stainless")],
+    "shyam_metalics":   [("SHYAMMETL.NS", r"shyam\s*metalics|shyam\s*metal")],
+    "apl_apollo":       [("APLAPOLLO.NS", r"apl\s*apollo")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -100,6 +113,17 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "cp_coke":              [],
     "can_sheet_spread":     [],
     "al_scrap_midwest":     [],
+}
+
+# THE EQUITY ROSTER — one definition. It was written out twice as a literal
+# tuple, in load() and in _kind_of(), and adding a name to CANDIDATES without
+# editing BOTH inserted it into `entities` with kind='commodity'. That is the
+# silent-arithmetic shape again: no error, a plausible-looking row, and
+# _series_in_store() then counts an equity as a priceable input series.
+EQUITIES = {
+    "hindalco", "nalco", "hindustan_zinc", "vedanta", "vaml",
+    "tata_steel", "jsw_steel", "jindal_steel", "sail",
+    "jindal_stainless", "shyam_metalics", "apl_apollo",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.
@@ -218,8 +242,7 @@ def load(rng: str = "3mo") -> int:
             conn.execute(
                 "INSERT OR IGNORE INTO entities (id,kind,name,is_tradeable,active) "
                 "VALUES (?,?,?,?,1)",
-                (eid, _kind_of(eid), eid, 1 if eid in ("hindalco", "nalco",
-                 "hindustan_zinc", "vedanta", "vaml") else 1),
+                (eid, _kind_of(eid), eid, 1),
             )
             # Through prices_io, not INSERT OR REPLACE. Yahoo is the LOWEST-ranked
             # source, so it can fill a cell nobody owns but can never overwrite the
@@ -238,7 +261,7 @@ def load(rng: str = "3mo") -> int:
 
 
 def _kind_of(eid: str) -> str:
-    if eid in ("hindalco", "nalco", "hindustan_zinc", "vedanta", "vaml"):
+    if eid in EQUITIES:
         return "company"
     if eid == "usdinr":
         return "fx"
