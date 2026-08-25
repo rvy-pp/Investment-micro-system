@@ -45,6 +45,66 @@ SPEC_VERSION = "0.5.0"
 WEIGHTS = {"economics": 0.45, "valuation": 0.25, "mood": 0.15, "guidance": 0.15}
 
 
+# --------------------------------------------------------------------------
+# PLACEHOLDER PILLAR SCORES. See specs/placeholders.yaml for why this exists at
+# all and why it is deliberately awkward. Loaded per run so revoking one is a
+# file edit plus a re-run, with nothing to unwind.
+#
+# A placeholder is written as a REAL score with `detail.placeholder = true` and
+# the original withhold reason carried alongside it. `withheld` stays NULL,
+# because the column means "why there is no score" and here there is one — the
+# fact that it was manufactured belongs in the decomposition, which is what
+# `detail` is for. Every consumer that distinguishes withheld from scored keys
+# on `score IS NULL`, so this does not silently reclassify anything.
+# --------------------------------------------------------------------------
+def load_placeholders() -> dict:
+    import datetime as _dt
+    f = REPO / "specs" / "placeholders.yaml"
+    if not f.exists():
+        return {}
+    try:
+        import yaml
+        doc = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+    except Exception as exc:
+        # A malformed placeholder file must not take the whole run down, but it
+        # must not pass silently either — silence here means scores quietly stop
+        # carrying a placeholder the desk believes is in force.
+        print(f"  WARNING: specs/placeholders.yaml unreadable ({exc}); "
+              f"no placeholders applied — affected pillars will be WITHHELD")
+        return {}
+    out = {}
+    today = _dt.date.today()
+    for pillar, ents in (doc or {}).items():
+        if pillar in ("spec_version",) or not isinstance(ents, dict):
+            continue
+        for eid, cfg in ents.items():
+            if not isinstance(cfg, dict) or cfg.get("score") is None:
+                continue
+            age = None
+            granted = cfg.get("granted")
+            if granted:
+                try:
+                    age = (today - _dt.date.fromisoformat(str(granted))).days
+                except ValueError:
+                    age = None
+            lim = cfg.get("escalate_after_days")
+            out[(pillar, eid)] = {
+                "pillar": pillar,
+                "score": float(cfg["score"]),
+                # str(): PyYAML turns an unquoted 2026-08-24 into datetime.date,
+                # and `detail` is persisted as JSON.
+
+                "reason": (cfg.get("reason") or "").strip(),
+                "granted": (str(granted) if granted is not None else None),
+                "granted_by": cfg.get("granted_by"),
+                "review_trigger": cfg.get("review_trigger"),
+                "age_days": age,
+                "overdue": bool(lim and age is not None and age > lim),
+                "escalate_after_days": lim,
+            }
+    return out
+
+
 def code_sha() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO,
@@ -65,6 +125,11 @@ def put(conn, as_of, eid, pillar, score, raw, detail, withheld, sha):
         (as_of, eid, pillar, score, raw,
          json.dumps(detail) if detail else None, withheld,
          SPEC_VERSION, sha, now()))
+
+
+PLACEHOLDERS = load_placeholders()
+PH_APPLIED: list = []
+PH_SUPERSEDED: list = []
 
 
 def score_one_date(conn, as_of: str, sha: str,
@@ -214,9 +279,27 @@ def score_one_date(conn, as_of: str, sha: str,
         # facts arithmetic cannot reach (a regulatory clearance), not for numbers
         # it can.
         gscore, gconf, gdetail, gwithheld = gr.score_entity(conn, eid, as_of)
+        ph = PLACEHOLDERS.get(("guidance", eid))
         if gscore is not None:
             parts["guidance"] = gscore
             put(conn, as_of, eid, "guidance", gscore, gconf, gdetail, None, sha)
+            if ph:
+                # The measurement caught up. Do not quietly keep the placeholder
+                # in the file: a stale grant that no longer applies is a lie the
+                # next reader has to discover.
+                PH_SUPERSEDED.append(eid)
+        elif ph:
+            parts["guidance"] = ph["score"]
+            put(conn, as_of, eid, "guidance", ph["score"], None,
+                {"placeholder": True, "value": ph["score"],
+                 "withheld_reason": gwithheld,
+                 "reason": ph["reason"], "granted": ph["granted"],
+                 "granted_by": ph["granted_by"],
+                 "review_trigger": ph["review_trigger"],
+                 "age_days": ph["age_days"], "overdue": ph["overdue"],
+                 "source": "specs/placeholders.yaml"},
+                None, sha)
+            PH_APPLIED.append((eid, ph))
         else:
             put(conn, as_of, eid, "guidance", None, None, None, gwithheld, sha)
         n += 1
@@ -235,6 +318,46 @@ def score_one_date(conn, as_of: str, sha: str,
             put(conn, as_of, eid, "composite", None, None, None,
                 "no pillar scored", sha)
         n += 1
+
+    # ---- second pass: placeholder-only entities ----------------------------
+    # The loop above skips anything with no peer_group, which is correct — an
+    # untradeable reporting unit is not ranked against listed names, and the
+    # schema forbids giving it one (CHECK peer_group IS NULL OR is_tradeable=1).
+    # But a unit CAN still carry a placeholder, and Novelis does: its economics
+    # cannot be computed because al_scrap_midwest has no source anywhere, so the
+    # PM set it flat at 3.0 rather than leaving it absent.
+    #
+    # These rows are written from placeholders ONLY. Nothing is computed here and
+    # nothing may be: the moment this pass starts deriving a number it stops being
+    # a recorded decision and becomes an unreviewed model.
+    for ent in sorted(entities.values(), key=lambda e: e["id"]):
+        eid = ent["id"]
+        if ent.get("peer_group"):
+            continue
+        mine = {p_: ph for (p_, e_), ph in PLACEHOLDERS.items() if e_ == eid}
+        if not mine:
+            continue
+        parts = {}
+        for pillar, ph in sorted(mine.items()):
+            parts[pillar] = ph["score"]
+            put(conn, as_of, eid, pillar, ph["score"], None,
+                {"placeholder": True, "value": ph["score"],
+                 "withheld_reason": "not computed — placeholder-only entity",
+                 "reason": ph["reason"], "granted": ph["granted"],
+                 "granted_by": ph["granted_by"],
+                 "review_trigger": ph["review_trigger"],
+                 "age_days": ph["age_days"], "overdue": ph["overdue"],
+                 "source": "specs/placeholders.yaml"}, None, sha)
+            PH_APPLIED.append((eid, ph))
+        wsum = sum(WEIGHTS[k_] for k_ in parts if k_ in WEIGHTS)
+        comp = (sum(parts[k_] * WEIGHTS[k_] for k_ in parts if k_ in WEIGHTS)
+                / wsum) if wsum else None
+        put(conn, as_of, eid, "composite", comp, None,
+            {"pillars": {k_: round(v, 2) for k_, v in parts.items()},
+             "covered": round(wsum, 2), "placeholder": True,
+             "reason": "every pillar is a placeholder; nothing here is measured",
+             "source": "specs/placeholders.yaml"}, None, sha)
+        n += 1
     return n
 
 
@@ -242,6 +365,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of")
     ap.add_argument("--backfill", type=int, default=0)
+    ap.add_argument("--no-placeholders", action="store_true",
+                    help="ignore specs/placeholders.yaml — the affected pillars "
+                         "go back to withheld, for checking what a placeholder "
+                         "is actually doing to the book")
     # A BACKFILL MUST SKIP THE GATE. freshness.check() measures age against the
     # date being scored, so every historical date is "stale" by construction —
     # scoring 2021 would withhold all of it. The gate is about TODAY's feeds
@@ -249,6 +376,14 @@ def main() -> int:
     ap.add_argument("--skip-gate", action="store_true",
                     help="score even on stale feeds (implied by --backfill)")
     a = ap.parse_args()
+
+    # --no-placeholders wipes the loaded table rather than threading a flag
+    # through score_one_date. Same effect, one place to reason about.
+    global PLACEHOLDERS
+    if a.no_placeholders and PLACEHOLDERS:
+        print(f"  --no-placeholders: ignoring {len(PLACEHOLDERS)} placeholder(s); "
+              f"those pillars will be WITHHELD")
+        PLACEHOLDERS = {}
 
     conn = sqlite3.connect(DB)
     conn.execute("PRAGMA foreign_keys = ON")
@@ -269,6 +404,32 @@ def main() -> int:
         conn.commit()
     print(f"wrote {total} pillar_scores rows across {len(dates)} dates "
           f"({dates[0]} .. {dates[-1]}) at spec {SPEC_VERSION} / {sha}")
+
+    # REPORTED EVERY RUN, ON PURPOSE. A placeholder that stops being mentioned
+    # stops being a placeholder and becomes a number nobody questions. Deduped
+    # across backfill dates so a 60-date run prints it once, not sixty times.
+    if PH_APPLIED:
+        seen = {}
+        for eid, ph in PH_APPLIED:
+            seen[(eid, ph.get("pillar"))] = ph
+        print("")
+        print(f"PLACEHOLDER pillar score(s) in force — specs/placeholders.yaml:")
+        for (eid, pillar), ph in sorted(seen.items(),
+                                        key=lambda kv: (kv[0][0], kv[0][1] or "")):
+            age = "" if ph["age_days"] is None else f", {ph['age_days']}d old"
+            flag = "  <-- OVERDUE, REVIEW IT" if ph["overdue"] else ""
+            print(f"   {(pillar or '?'):10}{eid:16}{ph['score']:.2f}  "
+                  f"granted {ph['granted']} by {ph['granted_by']}{age}{flag}")
+            print(f"             ends on: {ph['review_trigger']}")
+            print(f"             reason: {ph['reason'][:92]}")
+        print("   These are DECISIONS, not measurements. `--no-placeholders` "
+              "re-runs without them.")
+    if PH_SUPERSEDED:
+        print("")
+        print(f"PLACEHOLDER NO LONGER NEEDED — the scorer now produces a real "
+              f"number for: {', '.join(sorted(set(PH_SUPERSEDED)))}")
+        print("   Remove the block from specs/placeholders.yaml; it is being "
+              "ignored, and a stale grant misleads the next reader.")
     conn.close()
     return 0
 

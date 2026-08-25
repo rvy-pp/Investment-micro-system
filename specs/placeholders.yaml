@@ -1,0 +1,146 @@
+# ============================================================================
+# Placeholder pillar scores — the desk's explicit stand-ins for what cannot yet
+# be measured. Every entry here is a DECISION, not a computation.
+# ============================================================================
+# THIS FILE EXISTS AGAINST THE GRAIN OF THE SYSTEM AND THAT IS THE POINT.
+#
+# CLAUDE.md invariant 7 is "withhold rather than guess", and combined.py says
+# outright: "A withheld pillar is NOT scored 3.0 — the composite renormalises
+# over the pillars that exist, so missing data cannot masquerade as neutral."
+# A placeholder is exactly the thing those two rules forbid.
+#
+# So it is confined here, where it is:
+#   - per entity and per pillar, never a global default
+#   - git-tracked and diffable, so granting one shows up in a commit
+#   - stamped with who granted it, when, and what ends it
+#   - reported on EVERY run, and reported louder once overdue
+#   - visible in the page, so a placeholder score is never read as a measured one
+#
+# What it must never become: a way to fill gaps generally. If this file grows a
+# third entry, that is a signal the measurement layer is behind, not that the
+# convention is working. Nothing reads this file except run_scores.py.
+#
+# HOW TO REVOKE ONE. Delete the block and re-run
+# `python packages/score/run_scores.py`. The pillar returns to withheld and the
+# composite renormalises over the rest, as if the placeholder had never existed.
+# Nothing else has to be undone — placeholders are recomputed on every run, not
+# accumulated.
+# ============================================================================
+
+spec_version: 0.1.0
+
+guidance:
+
+  # ------------------------------------------------------------------------
+  # Vedanta — granted by the PM on 2026-08-24.
+  # ------------------------------------------------------------------------
+  # WHY IT IS WITHHELD. guidance_runrate.py scores actual against a cited target
+  # weighted by how much of the period has elapsed. All three of Vedanta's FY27
+  # volume commitments are marked `ramp-dependent`, so there is no fixed target
+  # to measure a run rate against and the scorer correctly declines. This is not
+  # a missing-data problem that a fetch would fix; it is a guidance that does not
+  # take a measurable form until the ramp is disclosed.
+  #
+  # WHAT THE 3.0 ACTUALLY CHANGES — checked, not assumed:
+  #
+  #   SIZE           NOTHING. conviction.multiplier() maps a withheld pillar to
+  #                  exactly 1.0, and 3.0 maps to 1.0 as well
+  #                  (1 + (3-3)/2 * 0.30 * 2 = 1.0). Vedanta's SIZE is +1.70
+  #                  either way. The number the desk trades on is untouched.
+  #
+  #   composite      4.05 -> 3.89. The average renormalises over present
+  #                  pillars, so today it divides by 0.85 and excludes guidance.
+  #                  Adding a 4th pillar at 3.0 divides by 1.00 instead.
+  #
+  # NOTE THE DIRECTION: this makes Vedanta LOWER, not higher. Its other three
+  # pillars are all above 3.0, so renormalising had been FLATTERING it — the
+  # placeholder is the conservative choice here, not a thumb on the scale. It
+  # stays top of the book but its lead over Hindustan Zinc narrows from 0.24 to
+  # 0.08, which is inside the noise of any of these pillars.
+  vedanta:
+    score: 3.0
+    reason: >
+      FY27 volume commitments are all ramp-dependent, so the run-rate scorer has
+      no fixed target to measure against and withholds. Neutral placeholder until
+      the ramp is quantified.
+    granted: 2026-08-24
+    granted_by: PM
+    review_trigger: next Vedanta concall
+    # Not an auto-expiry. Silently dropping a placeholder would move a composite
+    # with no cause anyone could see in the transcript, which is the same class
+    # of failure as silently adding one. Past this many days the run escalates
+    # from a note to an OVERDUE warning and keeps applying it, so the decision
+    # to revoke stays a human one.
+    escalate_after_days: 120
+
+  # Novelis. Kept in THIS block, not a second `guidance:` — a duplicate
+  # top-level key is silent and last-wins, and when this file briefly had two it
+  # deleted Vedanta's entry above without a word. One block per pillar.
+  novelis:
+    score: 3.0
+    reason: >
+      Novelis guides on EBITDA/t, which guidance_runrate.py does not model — it
+      measures volume and per-unit targets against cited commitments.
+    granted: 2026-08-25
+    granted_by: PM
+    review_trigger: next Novelis quarterly
+    escalate_after_days: 120
+
+
+# ============================================================================
+# NOVELIS — neutral across the board. Granted by the PM 2026-08-25.
+# ============================================================================
+# Novelis has a complete economics spec and cannot be scored from it, because
+# `al_scrap_midwest` has no source in the company's disclosure, in any free feed,
+# or in the desk's BofA model — the model prices its raw material at LME. Three
+# independent places, so this is a settled negative, not a pending fetch.
+#
+# Rather than leave it absent, it scores a flat 3.0. Consequences, stated so they
+# are not discovered later:
+#
+#   SIZE      exactly 0. conviction() is (economics - 3) x ..., so a neutral
+#             economics gives no position, which is the correct reading of "we
+#             cannot price this yet" — not a small long, not a small short.
+#   composite 3.0, and it is a PLACEHOLDER, rendered amber with a P in the page.
+#             It must never be read as "the analysis says neutral".
+#
+# Novelis is is_tradeable: 0 with peer_group: null, so run_scores' main loop
+# skips it. A second pass writes placeholder-only entities; see run_scores.py.
+# It is a reporting unit, so it is not ranked against the tradeable names.
+#
+# WHAT ENDS THIS: the roll-up decision plus a re-spec onto the conversion spread
+# (BofA's "Premium over LME": FY26 $2,417/t, FY27E $3,026/t, in
+# specs/extracted/hindalco_bofa_model.json). At that point delete this block.
+economics:
+  novelis:
+    score: 3.0
+    reason: >
+      al_scrap_midwest is unsourceable — absent from company disclosure, from
+      every free feed, and from the BofA model, which prices raw material at LME.
+      Neutral until the spec is moved onto the conversion spread.
+    granted: 2026-08-25
+    granted_by: PM
+    review_trigger: re-spec onto can_sheet_spread / conversion spread
+    escalate_after_days: 120
+
+valuation:
+  novelis:
+    score: 3.0
+    reason: >
+      Not applicable — is_tradeable: 0, so there is no price and no EV. Neutral
+      by construction rather than by measurement.
+    granted: 2026-08-25
+    granted_by: PM
+    review_trigger: never — a reporting unit has no equity to value
+    escalate_after_days: 3650
+
+mood:
+  novelis:
+    score: 3.0
+    reason: >
+      No broker actions are recorded against a reporting unit; the sell-side
+      rates Hindalco, not Novelis.
+    granted: 2026-08-25
+    granted_by: PM
+    review_trigger: never
+    escalate_after_days: 3650

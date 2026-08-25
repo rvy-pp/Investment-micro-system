@@ -45,24 +45,50 @@ def load(path: pathlib.Path) -> int:
             "INSERT OR IGNORE INTO entities (id,kind,name) VALUES (?,?,?)",
             (e["id"], e["kind"], e["name"]))
 
-    n = 0
+    n = skipped = 0
     for o in doc.get("observations", []):
+        # kind='commodity' is the right default for a price series and WRONG for
+        # a company or a reporting unit. It only applies to ids not already in
+        # `entities` and not declared in doc["entities"], so declare those there.
         conn.execute(
             "INSERT OR IGNORE INTO entities (id,kind,name) VALUES (?,?,?)",
             (o["entity_id"], "commodity", o["entity_id"]))
+        # IDEMPOTENCY. This was a plain INSERT, so re-running the same file
+        # duplicated every row in it — which is easy to do while iterating on an
+        # extraction and leaves the store double-counting facts. Worse, the
+        # obvious cleanup is a GROUP BY that drops `factor` and `quote`, and that
+        # destroys real data: six groups in this table are three legitimate rows
+        # sharing (source, entity, as_of, metric, period) and differing only in
+        # factor and value — a concall reporting three things about one metric.
+        #
+        # `quote` is the identity, because it is verbatim and NOT NULL: two
+        # genuinely different facts from one source cannot have the same quote.
+        # Skipping rather than replacing keeps the earliest created_at, so
+        # provenance is not silently restamped by a re-run.
+        dup = conn.execute(
+            "SELECT 1 FROM observations WHERE source_id=? AND entity_id=? "
+            "AND as_of=? AND factor=? AND metric=? AND IFNULL(period,'')=? "
+            "AND quote=? LIMIT 1",
+            (o["source_id"], o["entity_id"], o["as_of"], o["factor"],
+             o["metric"], o.get("period") or "", o["quote"])).fetchone()
+        if dup:
+            skipped += 1
+            continue
         conn.execute(
             "INSERT INTO observations (source_id,entity_id,as_of,factor,metric,"
-            "value_num,unit,period,direction,confidence,quote,extractor_version,"
-            "created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "value_num,value_text,unit,period,direction,confidence,quote,"
+            "extractor_version,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (o["source_id"], o["entity_id"], o["as_of"], o["factor"], o["metric"],
-             o.get("value_num"), o.get("unit"), o.get("period"),
+             o.get("value_num"), o.get("value_text"),
+             o.get("unit"), o.get("period"),
              o.get("direction"),
              o["confidence"], o["quote"], EXTRACTOR, now()))
         n += 1
 
     conn.commit()
     conn.close()
-    print(f"loaded {n} observations from {path.name}")
+    print(f"loaded {n} observations from {path.name}"
+          + (f"; skipped {skipped} already present" if skipped else ""))
     return 0
 
 
