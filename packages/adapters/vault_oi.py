@@ -45,6 +45,19 @@ NAMES = {
     "Hindustan Zinc": "hindustan_zinc",
     "Vedanta Ltd": "vedanta",
     "Vedanta Aluminium": "vaml",
+    # --- steel, added 2026-08-25 ---
+    # The glob is `*/<folder>/OI History.md`, so these resolve under
+    # Coverage/Steel/ without naming the sector. Checked for collisions across
+    # all six coverage sectors first: none of these folder names appears twice,
+    # which matters because collect() takes hits[0] and would silently bind to
+    # whichever sector the glob walked first.
+    "Tata Steel": "tata_steel",
+    "JSW Steel": "jsw_steel",
+    "Jindal Steel": "jindal_steel",
+    "SAIL": "sail",
+    "Jindal Stainless": "jindal_stainless",
+    "Shyam Metalics": "shyam_metalics",
+    "APL Apollo Tubes": "apl_apollo",
 }
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",
