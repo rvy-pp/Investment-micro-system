@@ -1,0 +1,262 @@
+{
+  "_note": [
+    "Steel P4 guidance, extracted from the broker digests 2026-07-18 to 2026-08-06.",
+    "",
+    "WHY THIS FILE DID NOT EXIST UNTIL 2026-08-25, which is the whole answer to",
+    "'why is guidance withheld': nothing was wrong and no data was missing. The",
+    "steel #tags were added to extract/guidance_candidates.py the same day the",
+    "sector was built, and the candidate scan finds 7 / 2 / 3 / 3 commitment",
+    "sentences for tata / jsw / jindal / sail. The L1 extraction step was simply",
+    "never run, so `guidance` had no steel rows and run_scores correctly wrote",
+    "'no open guidance' for all four. A withheld pillar because nobody ran the",
+    "loader looks identical, from inside the store, to a withheld pillar because",
+    "the source is silent.",
+    "",
+    "ONLY MANAGEMENT COMMITMENTS ARE HERE. load_guidance.py rejects any row whose",
+    "source_actor is not 'management', and it is right to: a broker restating a",
+    "rating says nothing about whether management hits its numbers. Several",
+    "candidate sentences were DROPPED for exactly this reason, and they are the",
+    "ones that read most like guidance:",
+    "  'FY27-29 EBITDA +4-13% on better India NSR/coal guidance'  -> Emkay's",
+    "      ESTIMATE revision, not a company commitment.",
+    "  'Cautious on FY27 volume guidance execution'               -> Emkay's",
+    "      opinion ABOUT a guide. Kept as EVIDENCE against SAIL's volume",
+    "      commitment, which is what it actually is.",
+    "  'Tata Steel aims to raise value-added ferro alloys share to 70-80%'",
+    "      -> management, but NO PERIOD and no baseline, so it can never resolve.",
+    "      A commitment that cannot be graded is not a commitment.",
+    "",
+    "THE JSW ROW IS ALREADY RESOLVED AND IT IS A MISS. Management guided coking",
+    "coal cost inflation of $12-15/t and the print came in at +$17/t, which the",
+    "digest itself flags as 'above $12-15 guide'. That is the first resolved",
+    "commitment in the steel book and the only reason P4 can start accumulating a",
+    "track record rather than sitting on the NEUTRAL_PRIOR of 0.5.",
+    "",
+    "TWO QUOTES WERE MIS-ATTRIBUTED IN THE FIRST DRAFT AND A VERIFIER CAUGHT THEM, which is worth recording because neither would have shown up downstream: the schema only enforces that a quote is NON-EMPTY, not that it appears in the source it names (SILENT_BUGS entry 6, the same gap). Jindal's '14% volume CAGR' evidence was dated 30-07 and is in 26-07; SAIL's Tasra evidence said 'Coking coal cost to fall' where the digest says 'costs'. Both now pass a substring check of every quote against the digest it cites. Run that check before loading any hand-built extraction."
+  ],
+  "sources": [
+    {
+      "id": "digest-2026-07-18",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 18-07-2026",
+      "source_date": "2026-07-18",
+      "raw_path": "Broker Mails/18-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-21",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 21-07-2026",
+      "source_date": "2026-07-21",
+      "raw_path": "Broker Mails/21-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-26",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 26-07-2026",
+      "source_date": "2026-07-26",
+      "raw_path": "Broker Mails/26-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-27",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 27-07-2026",
+      "source_date": "2026-07-27",
+      "raw_path": "Broker Mails/27-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-29",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 29-07-2026",
+      "source_date": "2026-07-29",
+      "raw_path": "Broker Mails/29-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-30",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 30-07-2026",
+      "source_date": "2026-07-30",
+      "raw_path": "Broker Mails/30-07-2026.md"
+    },
+    {
+      "id": "digest-2026-08-03",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 03-08-2026",
+      "source_date": "2026-08-03",
+      "raw_path": "Broker Mails/03-08-2026.md"
+    },
+    {
+      "id": "digest-2026-08-06",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 06-08-2026",
+      "source_date": "2026-08-06",
+      "raw_path": "Broker Mails/06-08-2026.md"
+    }
+  ],
+  "guidance": [
+    {
+      "entity_id": "jsw_steel",
+      "source_id": "digest-2026-07-18",
+      "source_actor": "management",
+      "issued_date": "2026-07-18",
+      "period": "FY27",
+      "metric": "cost_per_t",
+      "target_type": "range",
+      "target_low": 12.0,
+      "target_high": 15.0,
+      "unit": "USD/t coking coal cost inflation",
+      "quote": "coking coal cost inflation of $12-15/t guided",
+      "status": "missed",
+      "resolved_date": "2026-07-21",
+      "actual_value": 17.0,
+      "evidence": [
+        {
+          "source_id": "digest-2026-07-21",
+          "as_of": "2026-07-21",
+          "direction": -1,
+          "weight": 0.9,
+          "quote": "SA EBITDA/t Rs12,750 (+~1,600 qoq); coking coal +US$17/t (above $12-15 guide)."
+        }
+      ]
+    },
+    {
+      "entity_id": "tata_steel",
+      "source_id": "digest-2026-08-06",
+      "source_actor": "management",
+      "issued_date": "2026-08-06",
+      "period": "Q2FY27",
+      "metric": "margin",
+      "target_type": "point",
+      "target_value": -1500.0,
+      "unit": "INR/t India realisation, qoq",
+      "quote": "Mgmt guides ~Rs1,500/t qoq India realisation decline + $5/t coking coal rise in 2Q; still sees qoq EBITDA improvement on higher volumes.",
+      "status": "open",
+      "evidence": [
+        {
+          "source_id": "digest-2026-08-03",
+          "as_of": "2026-08-03",
+          "direction": 1,
+          "weight": 0.4,
+          "quote": "2Q guidance: India NSR -Rs1,500/t QoQ but volumes lift absolute EBITDA; coking coal +US$5/t;"
+        }
+      ]
+    },
+    {
+      "entity_id": "tata_steel",
+      "source_id": "digest-2026-08-06",
+      "source_actor": "management",
+      "issued_date": "2026-08-06",
+      "period": "Q2FY27",
+      "metric": "cost_per_t",
+      "target_type": "point",
+      "target_value": 5.0,
+      "unit": "USD/t coking coal, qoq",
+      "quote": "Mgmt guides ~Rs1,500/t qoq India realisation decline + $5/t coking coal rise in 2Q; still sees qoq EBITDA improvement on higher volumes.",
+      "status": "open",
+      "evidence": [
+        {
+          "source_id": "digest-2026-07-21",
+          "as_of": "2026-07-21",
+          "direction": -1,
+          "weight": 0.3,
+          "quote": "SA EBITDA/t Rs12,750 (+~1,600 qoq); coking coal +US$17/t (above $12-15 guide)."
+        }
+      ]
+    },
+    {
+      "entity_id": "tata_steel",
+      "source_id": "digest-2026-08-03",
+      "source_actor": "management",
+      "issued_date": "2026-08-03",
+      "period": "FY30",
+      "metric": "capex",
+      "target_type": "point",
+      "target_value": 339000000000.0,
+      "unit": "INR, NINL 4.8mtpa expansion",
+      "quote": "Board approved **NINL 4.8mtpa expansion, Rs339bn capex, ~48-month commissioning (FY30)** — long-products, taking NINL to 6.2mt.",
+      "status": "open"
+    },
+    {
+      "entity_id": "jindal_steel",
+      "source_id": "digest-2026-07-27",
+      "source_actor": "management",
+      "issued_date": "2026-07-27",
+      "period": "FY27",
+      "metric": "volume",
+      "target_type": "range",
+      "target_low": 10500000.0,
+      "target_high": 11000000.0,
+      "unit": "t sales",
+      "quote": "FY27 volume guidance of 10.5-11mt looks tough to achieve given sharp reduction (~20%) in long-product prices over past 3 months.",
+      "status": "open",
+      "evidence": [
+        {
+          "source_id": "digest-2026-07-27",
+          "as_of": "2026-07-27",
+          "direction": -1,
+          "weight": 0.5,
+          "quote": "FY27 volume guidance of 10.5-11mt looks tough to achieve given sharp reduction (~20%) in long-product prices over past 3 months."
+        }
+      ]
+    },
+    {
+      "entity_id": "jindal_steel",
+      "source_id": "digest-2026-07-30",
+      "source_actor": "management",
+      "issued_date": "2026-07-30",
+      "period": "FY28",
+      "metric": "ebitda_per_t",
+      "target_type": "point",
+      "target_value": 14000.0,
+      "unit": "INR/t",
+      "quote": "Targets EBITDA/t Rs14,000 by FY28, ~14% volume CAGR FY27-29, 26% EBITDA CAGR.",
+      "status": "open",
+      "evidence": [
+        {
+          "source_id": "digest-2026-07-26",
+          "as_of": "2026-07-26",
+          "direction": 1,
+          "weight": 0.3,
+          "quote": "Sees 14% volume CAGR FY27-29, EBITDA/t to Rs14,000 by FY28."
+        }
+      ]
+    },
+    {
+      "entity_id": "sail",
+      "source_id": "digest-2026-07-29",
+      "source_actor": "management",
+      "issued_date": "2026-07-29",
+      "period": "FY27",
+      "metric": "volume",
+      "target_type": "range",
+      "target_low": 22000000.0,
+      "target_high": 22500000.0,
+      "unit": "mt — BASIS UNCONFIRMED, production vs saleable sales",
+      "quote": "FY27 volume guide 22-22.5mt held; Tasra captive coal mine (Dec-26) to drive structural savings.",
+      "status": "open",
+      "evidence": [
+        {
+          "source_id": "digest-2026-07-26",
+          "as_of": "2026-07-26",
+          "direction": -1,
+          "weight": 0.4,
+          "quote": "Cautious on FY27 volume guidance execution."
+        },
+        {
+          "source_id": "digest-2026-07-30",
+          "as_of": "2026-07-30",
+          "direction": 1,
+          "weight": 0.3,
+          "quote": "Coking coal costs to fall Rs1,000-1,500/t in Q2; Tasra captive coal from Dec-26 a structural cost lever; FY27 volume guide 22-22.5mt."
+        }
+      ]
+    }
+  ]
+}

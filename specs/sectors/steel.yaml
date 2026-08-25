@@ -81,11 +81,27 @@ pillar_4:
     growth expected to be cut to single digits", Tata "India 2Q realisation
     -Rs1,500/t".
   caution: >
-    A GUIDE AND A PRINT MUST BE THE SAME QUANTITY. SAIL's "22-22.5mt" is almost
-    certainly crude steel PRODUCTION while its cited 4.16mt quarter is saleable
-    SALES — 34% apart. Grading a sales print against a production guide would
-    manufacture a miss every quarter. Confirm the quantity before scoring any
-    volume commitment.
+    A GUIDE AND A PRINT MUST BE THE SAME QUANTITY, AND THIS IS NO LONGER
+    HYPOTHETICAL — IT IS LIVE AND IT IS MOVING A SCORE.
+
+    P4 went live for steel on 2026-08-25 and SAIL scored 1.95 on a single gap:
+    volume FY27 at -24.4%. That gap is 16.64mt (4.16mt Q1 annualised, SALEABLE
+    SALES) against the 22-22.5mt guide, and the guide is almost certainly CRUDE
+    STEEL PRODUCTION. 16.64 / 22.0 = 0.756, i.e. the -24.4% is very close to
+    being the basis difference itself rather than a shortfall.
+
+    SO DO NOT TRADE SAIL'S P4 UNTIL THE BASIS IS CONFIRMED. It is left live and
+    flagged rather than withdrawn, because the commitment is real and dated and
+    hiding it would be worse — but the score is not yet evidence of a miss.
+    Resolve by finding SAIL's saleable-steel guide, or its production actual, so
+    both sides sit on one basis.
+
+    Jindal Steel's -16.2% on the same metric is LESS suspect: its guide
+    ("FY27 volume guidance of 10.5-11mt") and its actual ("Sales +17% yoy at
+    2.2MMT") are both stated as sales. 8.8mt annualised against 10.5mt is a
+    genuine Q1 run-rate shortfall, and management itself is on record that the
+    guide "looks tough to achieve given sharp reduction (~20%) in long-product
+    prices".
 
 # ----------------------------------------------------------------------------
 # GATE
@@ -104,63 +120,95 @@ output:
   emit_singles: true
   emit_pairs: true
   pair_candidates:
+    # ========================================================================
+    # REWRITTEN 2026-08-25, after every captive share was sourced. The v0.1.0
+    # rationales were built on the assumption that JSW *and* Jindal Steel bought
+    # their ore while Tata and SAIL were captive — a 2-vs-2 split. It is not:
+    #
+    #   tata_steel      captive 1.00   ore shock -1.78%
+    #   sail            captive 1.00   ore shock -3.25%
+    #   jindal_steel    captive 0.92   ore shock -3.48%   <- WAS assumed ~0.25
+    #   jsw_steel       captive 0.37   ore shock -7.52%
+    #
+    # JSW IS THE ONLY ORE-EXPOSED NAME IN THE GROUP. Every ore pair is therefore
+    # something-vs-JSW, and the intra-captive pairs carry almost no ore content.
+    # ========================================================================
     - pair: [tata_steel, jsw_steel]
       rationale: >
-        THE FLAGSHIP. Captive ore against bought ore, both flat-product mills of
-        similar scale, both priced off the same HRC series — so HRC largely
-        cancels and what is left is the iron ore differential plus Tata's Europe
-        exposure. The direct analogue of nalco/vaml on alumina. On a +USD20/t ore
-        shock the bridge reads Tata -0.42% against JSW -7.58%, a 7.16pp spread.
+        THE FLAGSHIP, and now the only clean ore expression in the group. Captive
+        ore against 37%-bought ore, both flat-product mills of similar scale, both
+        priced off the same HRC series — so HRC largely cancels and what is left is
+        the ore differential plus Tata's Europe exposure. On a +USD20/t ore shock
+        the bridge reads Tata -1.78% against JSW -7.52%, a 5.74pp spread scoring
+        4.10.
+
+        NOTE THE SPREAD HAS NARROWED TWICE as the inputs got sourced: 7.16pp in
+        v0.1.0 on guessed captive shares, 6.81pp once the ad valorem royalty put
+        captive miners at 0.20 rather than 0.05, and 5.74pp once JSW turned out to
+        be 37% captive rather than the assumed 25%. Each step made the pair
+        weaker and better founded. That direction is worth noticing: the guessed
+        version flattered the trade.
       residual_exposure: >
         NOT commodity-neutral: the long leg carries Tata Steel Europe, which is
         loss-making and moves on European HRC and CBAM rather than on Indian ore.
         Report it — a 1:1 sizing here leaves a European steel position nobody
         chose, the same warning zinc.yaml makes about silver.
 
-    - pair: [tata_steel, jindal_steel]
-      rationale: >
-        The widest ore spread in the group (-0.42% vs -9.44% on the same shock,
-        a 9.02pp gap) because Jindal Steel is both largely ore-buying AND the
-        thinnest-covered on volume. But the legs are LESS alike: Jindal Steel is
-        66% value-added long product and Tata is flat. Use when ore is the
-        driver and the flat/long spread is not moving.
-
     - pair: [sail, jsw_steel]
       rationale: >
-        Captive ore against bought ore, with a flat/long mix difference on top.
-        The cleanest expression of "ore up, rebar holding, HRC soft".
+        The second-best ore expression, 4.27pp scoring 3.88. Fully captive ore and
+        a 50/50 flat/long book against 37%-captive ore and a flat book.
 
-        REVISED 2026-08-25 when SAIL went to a 50/50 flat/long split. The earlier
-        text said SAIL "is the only name in the group priced off rebar, so it is
-        the only leg that does NOT respond to an HRC move at all". That was true
-        of the all-rebar version and is now FALSE — SAIL responds +10.02% to a
-        +Rs2,000/t HRC shock, against JSW's +13.24%. So HRC no longer cancels
-        cleanly in this pair; it is now a partial hedge with SAIL carrying ~half
-        the flat exposure JSW does. What still separates the legs is ore
-        captivity (-0.77% vs -7.58%) and the rebar half, which JSW does not
-        carry at all (+10.02% vs +0.00% on a rebar shock).
+        BUT CHECK COKING COAL BEFORE PUTTING IT ON, because it works against you:
+        SAIL imports ~95% of its coking coal against JSW's 100%, and SAIL earns
+        Rs9,974/t against JSW's Rs15,110/t, so on a coal rally SAIL takes -12.86%
+        to JSW's -8.85%. Ore and coal pull this pair in opposite directions, and
+        coal is the bigger line for both.
 
-        SAIL's Rs9,974/t margin still makes it the most cost-sensitive name in
-        the group, so a coking coal rally works against this pair even while ore
-        works for it: -11.38% against JSW's -8.85%.
+    - pair: [jindal_steel, jsw_steel]
+      rationale: >
+        NEW, and it exists because Jindal Steel turned out to be 92% captive on
+        ore. 4.04pp scoring 3.84, i.e. nearly as good an ore expression as
+        sail/jsw, and with better-matched legs: both are growth-capex names, both
+        largely flat-and-VAP, neither carries a foreign loss-making division.
+      caveat: >
+        JINDAL'S CAPTIVE SHARE IS SCHEDULED TO FALL. CARE expects it to decline to
+        ~40-50% "after the ramp-up of JSOL operations", because new Angul capacity
+        grows the denominator faster than the mines grow. When that lands this
+        pair loses most of its ore content, so it is a pair with a KNOWN
+        expiry rather than a structural one. Date it via `effective_from`.
+
+    - pair: [tata_steel, jindal_steel]
+      rationale: >
+        DEMOTED, and kept only to record why. v0.1.0 called this "the widest ore
+        spread in the group" at 9.02pp, which was an artefact of reading the
+        digest's "captive iron ore targeted ~40% by FY27-end" as a rise toward 40%
+        rather than a decline from 92%. With Jindal at 0.92 captive the spread is
+        1.69pp and the pair score 3.33 — it is now one captive miner against
+        another. Do not use it for an ore view.
+
+        What still separates the legs is product mix: Jindal is 66% value-added
+        long-weighted, Tata is flat. That is a mix trade, not an ore trade, and
+        the spec has no VAP price series to express it with.
 
     - pair: [tata_steel, apl_apollo]
       cross_peer_group: true
       rationale: >
-        THE HRC MIRROR. A mill against a converter of the same coil: rising HRC
-        is revenue to Tata and cost to APL Apollo. Structurally the sharpest
-        pair available in the sector.
+        THE HRC MIRROR. A mill against a converter of the same coil: rising HRC is
+        revenue to Tata and cost to APL Apollo. Structurally the sharpest pair
+        available in the sector, and the only one whose legs sit on opposite sides
+        of a single price series.
       blocked: conversion_spread_unpriced
       blocked_note: >
         NOT TRADEABLE ON THIS MODEL TODAY, and the spec says so rather than
         offering it. APL Apollo's output and input are both linked to
-        hrc_india_inr at ~1:1, so the bridge nets it to -0.73% on a +Rs2,000/t
-        HRC shock — i.e. it reports the name as HRC-neutral when the digests
-        plainly say rising coil hurt it ("Domestic demand soft as HRC prices rose
-        3% QoQ"). A converter earns the tube/coil SPREAD, and no tube price
-        series exists in the pack. Same gap that blocks Novelis, where
-        can_sheet_spread has no public series and the pillar runs on a PM
-        placeholder. Unblocks on a tube price series or a granted placeholder.
+        hrc_india_inr at ~1:1, so the bridge nets it to -0.73% on a +Rs2,000/t HRC
+        shock — it reports the name as HRC-NEUTRAL when the digests plainly say
+        rising coil hurt it ("Domestic demand soft as HRC prices rose 3% QoQ",
+        Nuvama; the stated key monitorable is "the widening HRC-Patra gap"). A
+        converter earns the tube/coil SPREAD, and no tube price series exists in
+        the pack. Same gap that put Novelis on a placeholder. Unblocks on a tube
+        price series or a granted placeholder.
 
   require_falsifier: true
   report_residual_beta: true
@@ -181,8 +229,13 @@ validation:
     Three shocks, all four mills:
 
       iron_ore_china_cfr62 +20 USD/t
-        jindal_steel  -9.09%   jsw_steel  -7.52%     <- material, NEGATIVE
-        sail          -3.25%   tata_steel -1.78%     <- ALSO material now
+        jsw_steel     -7.52%                         <- the ONLY ore-exposed name
+        jindal_steel  -3.48%   sail       -3.25%   tata_steel -1.78%
+        FINAL after every captive share was sourced. All four are material, but
+        the shape is 1-vs-3 rather than the 2-vs-2 this spec was built on:
+        captive 0.37 (JSW) against 0.92 / 1.00 / 1.00. Jindal Steel moved from
+        -9.09% to -3.48% when CARE Ratings put its captive share at ~92% for
+        FY26 — see the misreading note on that entity's ore line.
         RE-RUN 2026-08-25 after the ore intensity went 1.60 -> 1.70 (desk model)
         and the captive names' market_pct went 0.05 -> 0.20 (ad valorem royalty).
         Previously read jindal -9.44% / jsw -7.58% / sail -0.77% / tata -0.42%,

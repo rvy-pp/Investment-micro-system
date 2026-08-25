@@ -383,25 +383,38 @@ entities:
         intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.68          # captive_share 0.40 -> 0.40 x 0.20 + 0.60 = 0.68
+        market_pct: 0.26          # captive_share 0.92 -> 0.92 x 0.20 + 0.08 = 0.264
         basis_pass_through: 0.50
         source_note: >
-          "Captive coal share ~50%, captive iron ore targeted ~40% by FY27-end"
-          (IIFL, Prateek Singh) — dated, attributed, and in the digest corpus.
-          Taken at 0.40 because we are now inside FY27.
+          SOURCED from CARE Ratings, Jindal Steel Limited press release, 2026-07-07,
+          verbatim: "Currently as per FY26, ~92% of iron ore and 0% of coking coal
+          requirement was met captively (100% assuming the promoters coking coal
+          mining assets)." Captive mining capacity rose to 13.61 MTPA in FY26 from
+          4.61 MTPA in FY25.
 
-          !! UNRECONCILED SECONDARY READING, recorded rather than averaged away.
-          A public source states Jindal's captive:outside iron ore mix was about
-          60:40 in FY26, i.e. captive 0.60, which would give market_pct 0.52. That
-          DIRECTLY CONTRADICTS the digest — you do not target 40% if you are
-          already at 60%. The digest is used because it is dated, attributed to a
-          named analyst and inside the corpus, while the 60:40 came from a search
-          snippet with no primary document behind it. Settle it against the
-          FY26 annual report or the Q4FY26 earnings presentation
-          (docs.jindalsteel.in) — a WebFetch of that PDF returned binary and could
-          not be read here. The spread between the two readings is 0.68 vs 0.52,
-          which is material to the tata/jindal pair.
-        verify: pending
+          !! THIS CORRECTS A MISREADING OF THE DIGEST, NOT A DATA CONFLICT, AND
+          !! THE MISREADING INVERTED THE NAME'S STRUCTURE. The digest line was
+          !! "captive iron ore targeted ~40% by FY27-end" (IIFL) and it was read
+          !! here as a target to RISE to 40%, implying ~25% today, giving
+          !! market_pct 0.75 then 0.80 then 0.68. CARE states the opposite
+          !! direction: captive is ~92% now and "is expected to DECLINE to ~40 to
+          !! 50% after the ramp-up of JSOL operations" — because new capacity at
+          !! Angul grows the DENOMINATOR faster than the mines grow. Same 40%
+          !! number, opposite sign of change.
+          !!
+          !! Consequence: Jindal Steel is NOT an ore-buying name. It is nearly as
+          !! captive as Tata and SAIL, and market_pct falls 0.68 -> 0.26. The
+          !! "widest ore spread in the group" rationale for the tata/jindal pair
+          !! in specs/sectors/steel.yaml was built on the inverted reading and has
+          !! been rewritten.
+
+          FORWARD, AND DATED: the decline to ~40-50% captive on JSOL ramp-up is a
+          real future step in market_pct (0.26 -> ~0.60), and belongs in a new
+          `effective_from` row when the ramp date is known rather than an edit in
+          place. It is the clearest example in this spec of the dated-parameter
+          mechanism CLAUDE.md calls the route to a genuine forecast: a structural
+          cost change that is knowable now and dated later.
+        verify: sourced
 
       - item: coking_coal
         price_link: coking_coal_spot_aus
@@ -425,16 +438,30 @@ entities:
         intensity: 0.60
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.50          # HALF CAPTIVE — the cited figure, applied to
-                                  # the line it actually belongs to.
+        market_pct: 0.19          # captive_share 1.00, at the NON-COKING coal
+                                  # royalty rate: 14% ad valorem x 1.32 for
+                                  # DMF+NMET = ~18.5%. Deliberately NOT the 0.20
+                                  # used on the ore lines — iron ore is 15% under
+                                  # the MMDR 2nd Schedule, coal is 14%. Keep them
+                                  # distinct; they are different schedule entries.
         basis_pass_through: 0.35  # Same fraction aluminium.yaml uses, and for
                                   # the same reason: Indian domestic coal is
                                   # bought at administered/e-auction prices well
                                   # below seaborne and does not track it.
+                                  # COMPOSES with market_pct rather than
+                                  # duplicating it: 0.35 is seaborne -> domestic
+                                  # basis, 0.19 is the royalty share of that
+                                  # domestic price. Net 0.066, which is genuinely
+                                  # how insulated a self-sufficient miner is.
         source_note: >
-          "Captive coal share ~50%" (IIFL). basis_pass_through inherited from
-          aluminium.yaml's coal lines, where it is also provisional.
-        verify: pending
+          SOURCED from CARE Ratings 2026-07-07: Jindal Steel "has now achieved
+          self-sufficiency in its thermal coal requirements for both power
+          generation and upcoming DRI operations", with total thermal coal mining
+          capacity expanded to 15.37 MTPA in FY26 from 2.83 MTPA in FY25.
+
+          The digest's "Captive coal share ~50%" (IIFL) was the earlier state and
+          is now stale — this is the FY25 -> FY26 ramp, not a disagreement.
+        verify: sourced
 
   # ==========================================================================
   # SAIL — captive ore, long-product mix, the thinnest margin in the group

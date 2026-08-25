@@ -1,0 +1,192 @@
+{
+  "_note": [
+    "Q1FY27 ACTUALS for the four integrated steel mills, so P4 can grade the",
+    "commitments in steel_guidance.json rather than withhold on 'no actual'.",
+    "",
+    "WHY THIS IS A SECOND FILE. Loading the commitments alone left guidance still",
+    "withheld, with the reason changing from 'no open guidance' to 'no actual' —",
+    "because run_scores does NOT use load_guidance's confidence model. It uses",
+    "guidance_runrate.score_entity, which is run-rate arithmetic: actual versus",
+    "target, weighted by how much of the period has elapsed. That replaced a",
+    "hand-weighted evidence vote on 2026-08-20 precisely because the old version",
+    "never read target_value and let 'guidance reiterated' drift confidence upward.",
+    "So P4 needs BOTH sides cited: the commitment AND the print.",
+    "",
+    "EVERY NUMBER HERE IS ALREADY IN base_financials.yaml, where it built each",
+    "name's base_ebitda, and every one reconciles on the volume x EBITDA/t",
+    "identity against the cited absolute print — the cross-check steel has and",
+    "aluminium does not:",
+    "    sail          4.16 mt x  9,974 = Rs 4,149 cr  vs cited Rs 41.5 bn",
+    "    jindal_steel  2.20 mt x 12,000 = Rs 2,640 cr  vs cited Rs 26.7 bn",
+    "    tata_steel    5.17 mt x 18,199 = Rs 9,409 cr  vs consol Rs 93.7 bn",
+    "",
+    "JSW'S VOLUME IS DELIBERATELY ABSENT. Its 24.84 mt in steel.yaml is DERIVED",
+    "from EBITDA/t against absolute EBITDA, not cited — and an `actual` that P4",
+    "grades a commitment against must be a number someone actually said. This is",
+    "SILENT_BUGS entry 6 exactly: a quote that explains HOW a figure was arrived",
+    "at rather than stating it means the figure is derived, and a derived actual",
+    "wearing a citation is the failure that entry records. JSW's EBITDA/t IS",
+    "cited, so that one is here and the volume is not.",
+    "",
+    "WHAT WILL STILL WITHHOLD AFTER THIS, AND CORRECTLY:",
+    "  tata_steel  margin:Q2FY27, cost_per_t:Q2FY27  — Q2 has not happened. A",
+    "              guide issued for a future quarter SHOULD have no actual.",
+    "  tata_steel  capex:FY30                        — four years out.",
+    "  jindal      ebitda_per_t:FY28                 — two years out.",
+    "  jsw_steel   its only commitment is status='missed', so it is not OPEN and",
+    "              does not score the pillar. It still builds the track record,",
+    "              which is the point of resolving it.",
+    "",
+    "FIVE OF SIX QUOTES WERE MIS-ATTRIBUTED IN THE FIRST DRAFT — the dates were taken from the candidate scan's grouping rather than checked against the file, and one failed on CHARACTER not date: the Tata line uses the rupee SIGN (₹2,950/t, ₹18,200/t) where the draft wrote 'Rs'. A substring check against each cited digest caught all five; the schema would not have, because it only enforces that a quote is non-empty. Same gap as SILENT_BUGS entry 6. The bad rows were DELETED from `observations` and reloaded rather than left beside the corrected ones, because the loader's idempotency key is the quote text, so a corrected quote inserts a second row instead of replacing the first."
+  ],
+  "sources": [
+    {
+      "id": "digest-2026-07-08",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 08-07-2026",
+      "source_date": "2026-07-08",
+      "raw_path": "Broker Mails/08-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-26",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 26-07-2026",
+      "source_date": "2026-07-26",
+      "raw_path": "Broker Mails/26-07-2026.md"
+    },
+    {
+      "id": "digest-2026-07-29",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 29-07-2026",
+      "source_date": "2026-07-29",
+      "raw_path": "Broker Mails/29-07-2026.md"
+    },
+    {
+      "id": "digest-2026-08-01",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 01-08-2026",
+      "source_date": "2026-08-01",
+      "raw_path": "Broker Mails/01-08-2026.md"
+    },
+    {
+      "id": "digest-2026-07-25",
+      "kind": "broker_note",
+      "origin": "digest",
+      "title": "Broker Mail Digest 25-07-2026",
+      "source_date": "2026-07-25",
+      "raw_path": "Broker Mails/25-07-2026.md"
+    }
+  ],
+  "entities": [
+    {
+      "id": "tata_steel",
+      "kind": "company",
+      "name": "Tata Steel"
+    },
+    {
+      "id": "jsw_steel",
+      "kind": "company",
+      "name": "JSW Steel"
+    },
+    {
+      "id": "jindal_steel",
+      "kind": "company",
+      "name": "Jindal Steel"
+    },
+    {
+      "id": "sail",
+      "kind": "company",
+      "name": "Steel Authority of India"
+    }
+  ],
+  "observations": [
+    {
+      "source_id": "digest-2026-07-26",
+      "entity_id": "sail",
+      "as_of": "2026-07-26",
+      "factor": "actual",
+      "metric": "volume",
+      "value_num": 4160000.0,
+      "unit": "t",
+      "period": "Q1FY27",
+      "direction": -1,
+      "confidence": 0.9,
+      "quote": "Q1FY27 adj EBITDA Rs41.5bn, 9.1% below Emkay est on weak volumes (4.16mt), in-line vs street.",
+      "extractor_version": "manual-v1"
+    },
+    {
+      "source_id": "digest-2026-07-26",
+      "entity_id": "sail",
+      "as_of": "2026-07-26",
+      "factor": "actual",
+      "metric": "ebitda_per_t",
+      "value_num": 9974.0,
+      "unit": "INR/t",
+      "period": "Q1FY27",
+      "direction": 1,
+      "confidence": 0.9,
+      "quote": "NSR +~Rs4,600/t qoq; EBITDA/t Rs9,974.",
+      "extractor_version": "manual-v1"
+    },
+    {
+      "source_id": "digest-2026-07-25",
+      "entity_id": "jindal_steel",
+      "as_of": "2026-07-25",
+      "factor": "actual",
+      "metric": "volume",
+      "value_num": 2200000.0,
+      "unit": "t",
+      "period": "Q1FY27",
+      "direction": 1,
+      "confidence": 0.9,
+      "quote": "Sales +17% yoy at 2.2MMT, VA-steel mix up to 66%.",
+      "extractor_version": "manual-v1"
+    },
+    {
+      "source_id": "digest-2026-07-25",
+      "entity_id": "jindal_steel",
+      "as_of": "2026-07-25",
+      "factor": "actual",
+      "metric": "ebitda_per_t",
+      "value_num": 12000.0,
+      "unit": "INR/t",
+      "period": "Q1FY27",
+      "direction": 1,
+      "confidence": 0.9,
+      "quote": "adj EBITDA/t Rs12.0k vs Rs10.1k in Q4 on higher realisation (Rs69k/t).",
+      "extractor_version": "manual-v1"
+    },
+    {
+      "source_id": "digest-2026-07-08",
+      "entity_id": "tata_steel",
+      "as_of": "2026-07-08",
+      "factor": "actual",
+      "metric": "volume",
+      "value_num": 5170000.0,
+      "unit": "t India sales",
+      "period": "Q1FY27",
+      "direction": 1,
+      "confidence": 0.9,
+      "quote": "India crude steel 5.82mnt +11% YoY (-6% QoQ), India sales 5.17mnt +9% YoY (-16% QoQ).",
+      "extractor_version": "manual-v1"
+    },
+    {
+      "source_id": "digest-2026-08-01",
+      "entity_id": "tata_steel",
+      "as_of": "2026-08-01",
+      "factor": "actual",
+      "metric": "ebitda_per_t",
+      "value_num": 18200.0,
+      "unit": "INR/t India",
+      "period": "Q1FY27",
+      "direction": 1,
+      "confidence": 0.9,
+      "quote": "driven entirely by India (EBITDA/t +₹2,950/t QoQ to ₹18,200/t on realisation)",
+      "extractor_version": "manual-v1"
+    }
+  ]
+}
