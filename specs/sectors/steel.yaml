@@ -181,7 +181,7 @@ validation:
     Three shocks, all four mills:
 
       iron_ore_china_cfr62 +20 USD/t
-        jindal_steel -10.69%   jsw_steel  -8.59%     <- material, NEGATIVE
+        jindal_steel  -9.09%   jsw_steel  -7.52%     <- material, NEGATIVE
         sail          -3.25%   tata_steel -1.78%     <- ALSO material now
         RE-RUN 2026-08-25 after the ore intensity went 1.60 -> 1.70 (desk model)
         and the captive names' market_pct went 0.05 -> 0.20 (ad valorem royalty).
@@ -196,12 +196,16 @@ validation:
         treating a mine like an internal transfer of a processed intermediate.
 
       coking_coal_spot_aus +20 USD/t
-        sail         -11.38%   jindal_steel -11.01%
+        jindal_steel -11.01%
         jsw_steel     -8.85%   tata_steel    -5.73%
+        sail         -12.86%   <- now the MOST coal-exposed name
         All four material and all negative — no captivity dispersion, and the
-        ordering is set purely by EBITDA/t (SAIL thinnest, Tata fattest).
-        Confirms the dispersion_note above. Tata moved -5.87% -> -5.73% only
-        because its coking coal market_pct went 0.80 (guess) -> 0.78 (sourced).
+        ordering is set by EBITDA/t and by import share. FINAL numbers after all
+        captive shares were sourced 2026-08-25: Tata's coking coal market_pct went
+        0.80 (guess) -> 0.78 (~78% imported) and SAIL's 0.85 (guess) -> 0.96
+        (~95% imported, only 0.59 MT captive in FY25, CAG-censured). SAIL is
+        therefore both the thinnest-margin AND the most import-exposed name, which
+        is why it takes the largest hit of the four.
 
       hrc_india_inr +2000 INR/t
         jindal_steel +16.48%   jsw_steel +13.24%   tata_steel +10.99%

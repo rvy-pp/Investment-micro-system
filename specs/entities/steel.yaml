@@ -314,20 +314,21 @@ entities:
         intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.80          # LARGELY BOUGHT — from NMDC and from Odisha /
-                                  # Karnataka auction blocks. This is the number
-                                  # that makes nalco/vaml's analogue work here.
+        market_pct: 0.70          # captive_share 0.37 SOURCED (FY25) ->
+                                  # 0.37 x 0.20 + 0.63 x 1.00 = 0.704.
+                                  # Was 0.80 on a guessed 0.25 captive.
         basis_pass_through: 0.50
         source_note: >
-          The only citation is forward: "Value-over-volume strategy, ~50% captive
-          iron ore post-2030" (digest). A 50% captive TARGET four years out
-          implies materially less than 50% today, which is what 0.75 encodes —
-          but the digest does not say today's number, so this is an inference
-          from a target, not a measurement.
-        verify: pending           # THE MOST IMPORTANT PENDING NUMBER IN THE FILE.
-                                  # tata 0.05 vs jsw 0.75 IS the flagship pair.
-                                  # If the true gap is narrower, the pair has
-                                  # much less ore content than this spec claims.
+          SOURCED 2026-08-25, and it settles what the digests could not: "Captive
+          sourcing accounted for 37% of JSW Steel's iron ore requirements in
+          FY 2024-25. The company expects the captive linkage to reach 50%."
+          Consistent with the digest's forward target ("~50% captive iron ore
+          post-2030") and with the plan to double captive mining capacity to
+          ~50 MT by FY31. The earlier 0.25 guess understated captivity.
+        verify: sourced            # captive_share sourced; the 0.20 royalty
+                                  # coefficient is sourced separately. Still the
+                                  # most consequential number in the file —
+                                  # tata 0.20 vs jsw 0.70 IS the flagship pair.
 
       - item: coking_coal
         price_link: coking_coal_spot_aus
@@ -382,13 +383,24 @@ entities:
         intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.80
+        market_pct: 0.68          # captive_share 0.40 -> 0.40 x 0.20 + 0.60 = 0.68
         basis_pass_through: 0.50
         source_note: >
           "Captive coal share ~50%, captive iron ore targeted ~40% by FY27-end"
-          (IIFL, Prateek Singh) — the ONLY dated captive-ore citation in the
-          corpus, and it is a TARGET for the end of FY27, so today's share is
-          below 40%. 0.75 market_pct encodes ~25% captive now.
+          (IIFL, Prateek Singh) — dated, attributed, and in the digest corpus.
+          Taken at 0.40 because we are now inside FY27.
+
+          !! UNRECONCILED SECONDARY READING, recorded rather than averaged away.
+          A public source states Jindal's captive:outside iron ore mix was about
+          60:40 in FY26, i.e. captive 0.60, which would give market_pct 0.52. That
+          DIRECTLY CONTRADICTS the digest — you do not target 40% if you are
+          already at 60%. The digest is used because it is dated, attributed to a
+          named analyst and inside the corpus, while the 60:40 came from a search
+          snippet with no primary document behind it. Settle it against the
+          FY26 annual report or the Q4FY26 earnings presentation
+          (docs.jindalsteel.in) — a WebFetch of that PDF returned binary and could
+          not be read here. The spread between the two readings is 0.68 vs 0.52,
+          which is material to the tata/jindal pair.
         verify: pending
 
       - item: coking_coal
@@ -493,6 +505,10 @@ entities:
     outputs:
       - item: rebar
         price_link: rebar_india_primary_inr
+        basis_group: crude_steel  # CO-PRODUCT with hrc below: the same 16.64mt
+                                  # of steel, sold in two forms, over one cost
+                                  # base. basis_volume() sums the group and the
+                                  # per-tonne denominator uses the group total.
         volume: 8320000           # 50% of 16.64mt
         volume_unit: t
         asp_premium: 0
@@ -507,6 +523,7 @@ entities:
 
       - item: hrc
         price_link: hrc_india_inr
+        basis_group: crude_steel  # see the rebar line above
         volume: 8320000           # 50% of 16.64mt
         volume_unit: t
         asp_premium: 0
@@ -526,60 +543,46 @@ entities:
         # both sides, or neither.
 
     inputs:
-      # --- the long half, basis'd on the 8.32mt rebar line ---
-      - item: iron_ore_long
+      # Two lines, not four. They are basis'd on the `crude_steel` GROUP, so
+      # basis_volume() sums both output legs and returns the full 16.64mt. The
+      # previous version duplicated each line per output item to work around
+      # basis_volume() resolving only a single item — correct on the score but it
+      # left d_ebitda_per_t 2x too high and read as redundancy someone would tidy
+      # away. See the docstring on bridge.basis_volume().
+      - item: iron_ore
         price_link: iron_ore_china_cfr62
         intensity: 1.70
         intensity_unit: t/t
-        basis_item: rebar
-        market_pct: 0.20          # ~FULLY CAPTIVE — SAIL's own mines in
-                                  # Jharkhand and Odisha.
+        basis_item: crude_steel
+        market_pct: 0.20          # captive_share 1.00 -> royalty-only exposure
         basis_pass_through: 0.50
-        source_note: "Not cited in the corpus. Sector knowledge only."
-        verify: pending
+        source_note: >
+          SOURCED 2026-08-25: SAIL is completely self-sufficient in iron ore,
+          producing 33.78 MT from its captive mines in FY25. captive_share 1.00,
+          same as Tata, so both sit at the royalty-only 0.20.
+        verify: sourced
 
-      - item: coking_coal_long
+      - item: coking_coal
         price_link: coking_coal_spot_aus
         intensity: 0.70
         intensity_unit: t/t
-        basis_item: rebar
-        market_pct: 0.85          # Mostly imported today. Tasra changes this.
+        basis_item: crude_steel
+        market_pct: 0.96          # captive_share 0.05 -> 0.05x0.20 + 0.95 = 0.96
         basis_pass_through: 1.00
         source_note: >
-          Dated and directional: "Coking coal costs to fall Rs1,000-1,500/t in
+          SOURCED 2026-08-25: SAIL imports ~95% of its coking coal requirement,
+          producing only 0.59 MT from captive mines in FY25 against a far larger
+          need — a gap the CAG has formally censured. So captive_share is ~0.05,
+          not the ~0.15 the earlier 0.85 market_pct implied. This makes SAIL the
+          most coal-exposed name in the group, which matches it taking the largest
+          hit on every coking coal shock.
+
+          Corroborating and dated: "Coking coal costs to fall Rs1,000-1,500/t in
           Q2; Tasra captive coal mine (Dec-26) to drive structural savings"
-          (ICICI Securities). Tasra starting Dec-2026 means market_pct should
-          STEP DOWN then, with a new `effective_from` row rather than an edit in
-          place — which is exactly the dated-parameter mechanism CLAUDE.md
-          describes as the route to a genuine forecast. Change BOTH coking coal
-          lines on that date, or the two halves disagree about the same mine.
-        verify: pending
-
-      # --- the flat half, basis'd on the 8.32mt hrc line ---
-      # SAME intensities, market_pct and pass-through as the long half, because
-      # the ore and coal are consumed identically whichever form the steel is
-      # rolled into. They are separate lines ONLY to recover the full 16.64mt of
-      # cost basis. If SAIL's flat and long routes ever differ materially in
-      # coke rate or ore grade, this is where that would be expressed.
-      - item: iron_ore_flat
-        price_link: iron_ore_china_cfr62
-        intensity: 1.70
-        intensity_unit: t/t
-        basis_item: hrc
-        market_pct: 0.20
-        basis_pass_through: 0.50
-        source_note: "Mirror of iron_ore_long; see the warning at the top of this entity."
-        verify: pending
-
-      - item: coking_coal_flat
-        price_link: coking_coal_spot_aus
-        intensity: 0.70
-        intensity_unit: t/t
-        basis_item: hrc
-        market_pct: 0.85
-        basis_pass_through: 1.00
-        source_note: "Mirror of coking_coal_long; see the warning at the top of this entity."
-        verify: pending
+          (ICICI Securities). Tasra commencing Dec-2026 means captive_share steps
+          UP and market_pct steps DOWN then, via a new `effective_from` row rather
+          than an edit in place.
+        verify: sourced
 
   # ==========================================================================
   # APL APOLLO — the converter. HRC is a COST here, the mirror of every mill.

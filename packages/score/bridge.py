@@ -85,10 +85,40 @@ def to_inr(delta: float, unit: str, usdinr: float) -> float:
 
 
 def basis_volume(entity: dict, basis_item: str) -> float | None:
-    for out in entity.get("outputs") or []:
+    """Volume an input line is applied to.
+
+    Resolves an output ITEM name first, then falls back to a `basis_group` — a
+    label several output lines share when they are CO-PRODUCTS: the same tonnes
+    sold in more than one form, over one cost base. In that case the volumes are
+    SUMMED.
+
+    WHY THIS EXISTS. Every multi-output entity here used to be a primary line
+    plus a BY-PRODUCT (nalco/hindalco `alumina_surplus`, hzl `silver_byproduct`),
+    which does not consume the primary's inputs — so naming the primary in
+    `basis_item` was correct. SAIL's 50/50 flat/long split was the first
+    co-product case, and it broke silently and BULLISHLY: two 8.32mt output lines
+    with inputs still basis'd on `rebar` returned 8.32mt instead of 16.64mt, which
+    HALVED the entire cost side while leaving revenue whole. Measured at the time:
+    coking coal -11.38% -> -5.69%, iron ore -0.77% -> -0.38%, with coverage still
+    reporting 6/6 and nothing raising.
+
+    The first fix was spec-only — write each input line twice, once per
+    basis_item. It restored pct_of_ebitda exactly but left `d_ebitda_per_t`
+    dividing by one leg's 8.32mt while d_ebitda covered all 16.64mt, i.e. 2x too
+    high, in the one sector where EBITDA/t is the unit the sell-side quotes. It
+    also left four input lines where two would look natural, which is a standing
+    invitation to reintroduce the bug by tidying.
+
+    Backward compatible by construction: an entity with no `basis_group` anywhere
+    resolves exactly as before, so aluminium and zinc are untouched.
+    """
+    outs = entity.get("outputs") or []
+    for out in outs:
         if out["item"] == basis_item:
             return out.get("volume")
-    return None
+    grouped = [o.get("volume") for o in outs
+               if o.get("basis_group") == basis_item and o.get("volume") is not None]
+    return sum(grouped) if grouped else None
 
 
 def run_bridge(
@@ -178,8 +208,18 @@ def run_bridge(
 
 
 def _primary(entity: dict) -> str:
+    """The key the per-tonne denominator is taken against.
+
+    Returns the first output's `basis_group` when it has one, so d_ebitda_per_t
+    divides by the CO-PRODUCT TOTAL rather than by whichever leg happens to be
+    listed first. Without this SAIL's reported /t came out 2x too high — the
+    numerator covered 16.64mt and the denominator 8.32mt. Falls back to the first
+    output's item name, which is what every by-product entity still uses.
+    """
     outs = entity.get("outputs") or []
-    return outs[0]["item"] if outs else ""
+    if not outs:
+        return ""
+    return outs[0].get("basis_group") or outs[0]["item"]
 
 
 # ---------------------------------------------------------------------------
