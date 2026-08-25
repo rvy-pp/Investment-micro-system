@@ -181,16 +181,27 @@ validation:
     Three shocks, all four mills:
 
       iron_ore_china_cfr62 +20 USD/t
-        jindal_steel  -9.44%   jsw_steel  -7.58%     <- material, NEGATIVE
-        sail          -0.77%   tata_steel -0.42%     <- immaterial, no trade
-        Captivity separates them by ~18x. This is the intended result.
+        jindal_steel -10.69%   jsw_steel  -8.59%     <- material, NEGATIVE
+        sail          -3.25%   tata_steel -1.78%     <- ALSO material now
+        RE-RUN 2026-08-25 after the ore intensity went 1.60 -> 1.70 (desk model)
+        and the captive names' market_pct went 0.05 -> 0.20 (ad valorem royalty).
+        Previously read jindal -9.44% / jsw -7.58% / sail -0.77% / tata -0.42%,
+        with the captive pair IMMATERIAL and emitting no trade.
+
+        THE BEHAVIOURAL CHANGE IS THE POINT: Tata and SAIL now CROSS the 1.5%
+        materiality threshold on an ore move instead of being filtered out. That
+        is correct — a fully captive miner still pays 15% royalty plus DMF and
+        NMET on the benchmark ASP, so it is ~20% exposed, not ~0%. The captive
+        advantage is now ~5x rather than ~18x, and 18x was an artefact of
+        treating a mine like an internal transfer of a processed intermediate.
 
       coking_coal_spot_aus +20 USD/t
         sail         -11.38%   jindal_steel -11.01%
-        jsw_steel     -8.85%   tata_steel    -5.87%
+        jsw_steel     -8.85%   tata_steel    -5.73%
         All four material and all negative — no captivity dispersion, and the
         ordering is set purely by EBITDA/t (SAIL thinnest, Tata fattest).
-        Confirms the dispersion_note above.
+        Confirms the dispersion_note above. Tata moved -5.87% -> -5.73% only
+        because its coking coal market_pct went 0.80 (guess) -> 0.78 (sourced).
 
       hrc_india_inr +2000 INR/t
         jindal_steel +16.48%   jsw_steel +13.24%   tata_steel +10.99%
@@ -207,6 +218,35 @@ validation:
         difference. Rebar is now the only series that separates SAIL from the
         group, and its symmetry with the HRC result (+10.02% on both) is the
         check that the 50/50 split is actually 50/50 rather than mis-weighted.
+
+  test_5_basis_from_the_desk_model: >
+    FLAGGED, DELIBERATELY NOT APPLIED. The desk's Tata Steel model
+    (data/models/tata_steel_*.xlsx, `Input` sheet) gives India standalone
+    FY27E as 23.21 mt at Rs16,757/t = Rs38,901 cr. This spec carries 20.68 mt
+    (5.17 mt Q1FY27 sales x4) against base_ebitda Rs37,636 cr.
+
+    The EBITDA figures agree to 3.3%, which is a good independent check on the
+    denominator. The VOLUMES are 11% apart, because Q1FY27 was a weak-volume,
+    strong-margin quarter (sales -16% QoQ, EBITDA/t +Rs2,950 QoQ) and this spec
+    annualises it.
+
+    What matters for the bridge is the RATIO, since d_revenue = volume x d_price
+    over base_ebitda:
+
+        this spec   20.68 mt / 37,636 cr = 549 t per crore
+        desk model  23.21 mt / 38,901 cr = 597 t per crore
+
+    So Tata's price sensitivity here is ~8.7% LOW against the model.
+
+    NOT FIXED, and the reason is the rule rather than laziness: base_quarter is
+    1QFY27-annualised for EVERY name in base_financials.yaml, and CLAUDE.md is
+    explicit that changing one name's basis and not the others silently breaks
+    the pair. Moving Tata to a full-year FY27E basis alone would make the
+    flagship Tata/JSW comparison a like-for-unlike one. Switching the whole book
+    to a forward full-year basis is a coherent alternative and a better one —
+    it stops annualising whichever quarter happened to print — but it is one
+    coordinated edit across all thirteen names plus base_quarter, not a Tata
+    patch.
 
   test_2_direction: >
     NOT RUN, and it cannot be run yet. Does the sign of pct_of_ebitda at date D

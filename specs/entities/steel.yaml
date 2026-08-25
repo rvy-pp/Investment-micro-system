@@ -95,6 +95,98 @@ reference_entities:
 # 0.50 is a PLACEHOLDER and is flagged `verify: pending` on every line. The
 # aluminium coal analogue sits at 0.35 and is itself still provisional.
 
+# ============================================================================
+# WHERE THE INTENSITIES AND CAPTIVE SHARES COME FROM — revised 2026-08-25
+# ============================================================================
+# Both were sector-knowledge guesses in v0.1.0. Both now have sources, and the
+# two sources are of completely different kinds, which matters.
+#
+# INTENSITIES: from the desk's Tata Steel model, data/models/tata_steel_*.xlsx,
+# `Input` sheet rows 10-11.
+#
+#     iron ore     1.70 t/t   (was 1.60)
+#     coking coal  0.70 t/t   (unchanged — the guess was exactly right)
+#
+# Held CONSTANT across FY03..FY29E in the model, which is the point: these are
+# process constants for the blast-furnace route, not annual estimates. Applied to
+# all four mills, because the route is the same.
+#
+# The model was checked rather than trusted, and it reconciles TO THE RUPEE
+# across four separate years:
+#
+#     Total RM cost US$/t  =  1.70 x iron_ore  +  0.70 x coking_coal
+#     FY25  1.70x102.08 + 0.70x210.22 = 320.69   model 320.69   diff 0.000
+#     FY26  1.70x101.85 + 0.70x200.63 = 313.59   model 313.59   diff 0.000
+#     FY27E 1.70x101.00 + 0.70x237.50 = 337.95   model 337.95   diff 0.000
+#     FY28E 1.70x 96.50 + 0.70x250.00 = 339.05   model 339.05   diff 0.000
+#
+# !! NOTE WHAT IS ABSENT FROM THAT IDENTITY: there is NO market_pct, NO captive
+# !! adjustment, NO basis_pass_through. The model prices raw material at 100%
+# !! BENCHMARK for every name and lets a separate `Conversion margin` input
+# !! (US$177-187/t) absorb everything company-specific — captive advantage
+# !! included. It is a STEEL-SPREAD model, not a cost-attribution model.
+# !!
+# !! So THE MODEL CANNOT SUPPLY market_pct. It does not have the concept. Do not
+# !! read its 100%-market treatment as a claim that captivity does not matter;
+# !! read it as the captive advantage being folded into conversion margin. This
+# !! bridge makes the opposite choice deliberately, because per-company captive
+# !! share is the entire source of dispersion (see the header above).
+#
+# CAPTIVE SHARES: from public disclosure, not from the model.
+#
+#     Tata Steel iron ore    "meets its entire iron ore demand from its six
+#                            captive mines" — Noamundi, Katamati, Joda East,
+#                            Khondbond, Vijaya II, Koida. Tata Steel integrated
+#                            report. => 100% CAPTIVE.
+#     Tata Steel coking coal ~78% imported, ~12-13 mtpa, mainly Australia; ~22%
+#                            from captive West Bokaro and Jharia.
+#     SAIL iron ore          own mines in Jharkhand/Odisha; still uncited.
+#     JSW / Jindal Steel     forward targets only — JSW "~50% captive iron ore
+#                            post-2030", Jindal "targeted ~40% by FY27-end".
+#
+# ============================================================================
+# !! A FULLY CAPTIVE MINE IS NOT ZERO-EXPOSED TO THE ORE PRICE. ROYALTY IS AD
+# !! VALOREM, AND THIS IS WHY market_pct ON THE ORE LINES IS 0.20 AND NOT 0.00.
+# ============================================================================
+# This was the real error in v0.1.0, and it was a conceptual one rather than a
+# wrong estimate. Tata and SAIL were set to market_pct 0.05 on the reasoning
+# "captive, therefore ~no market exposure", by analogy with NALCO's captive
+# alumina at 0.00. THE ANALOGY DOES NOT HOLD, because Indian mineral royalty is
+# a PERCENTAGE OF THE BENCHMARK PRICE, not a fixed fee:
+#
+#     royalty  15% of the IBM Average Sale Price   (MMDR Act, 2nd Schedule)
+#     DMF      30% of royalty on a captive lease
+#     NMET      2% of royalty
+#     ---------------------------------------------------------------
+#     total    15% x 1.32 = ~19.8% of ASP, moving one-for-one with ASP
+#
+# The Supreme Court upheld in July 2026 that royalty, DMF and NMET are themselves
+# included in the sale value used to compute ASP — "royalty on royalty" — which
+# grosses the figure up slightly rather than reducing it.
+#
+# So when the benchmark ore price rises 10%, a 100%-captive miner's statutory
+# cost rises 10% on ~20% of the ore value. Its effective exposure is ~0.20, not
+# ~0.00. NALCO's captive alumina genuinely IS ~0.00 because an internal transfer
+# of a processed intermediate carries no ad valorem levy; a MINE does.
+#
+# market_pct IS THEREFORE NOW DERIVED, not freehand:
+#
+#     market_pct = captive_share x 0.20  +  (1 - captive_share) x 1.00
+#
+#     tata_steel     captive 1.00  ->  0.20      (was 0.05)
+#     sail           captive 1.00  ->  0.20      (was 0.05)
+#     jsw_steel      captive 0.25  ->  0.80      (was 0.75)
+#     jindal_steel   captive 0.25  ->  0.80      (was 0.75)
+#
+# UPDATE `captive_share` AND RE-DERIVE; do not hand-edit market_pct. The 0.20
+# coefficient is sourced and stable; the captive shares are the estimates.
+#
+# CONSEQUENCE FOR THE FLAGSHIP PAIR, and it cuts against the spec's own story:
+# the Tata-vs-JSW ore gap NARROWS from 0.70 to 0.60, so the pair carries ~14%
+# less ore content than v0.1.0 claimed. Partly offset by the intensity going
+# 1.60 -> 1.70 (+6.25%). Net, the pair is modestly weaker and the numbers in
+# `specs/sectors/steel.yaml` validation.test_1 were re-run rather than left.
+
 entities:
 
   # ==========================================================================
@@ -132,10 +224,10 @@ entities:
     inputs:
       - item: iron_ore
         price_link: iron_ore_china_cfr62
-        intensity: 1.60
+        intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.05          # ~FULLY CAPTIVE. Tata's Noamundi/Joda mines
+        market_pct: 0.20          # ~FULLY CAPTIVE. Tata's Noamundi/Joda mines
                                   # cover essentially all of India's requirement,
                                   # which is the single most important structural
                                   # fact about the name and the reason it is the
@@ -156,8 +248,11 @@ entities:
         intensity: 0.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.80          # Jharia / West Bokaro cover a minority; the
-                                  # balance is imported at seaborne prices.
+        market_pct: 0.78          # SOURCED 2026-08-25: Tata imports ~78% of its
+                                  # coking coal (~12-13 mtpa, mainly Australia);
+                                  # the remaining 22% comes from the captive
+                                  # West Bokaro and Jharia mines. Was 0.80 as a
+                                  # guess and happened to be close.
         basis_pass_through: 1.00  # 1.00, NOT a fraction, and deliberately unlike
                                   # the ore and thermal lines. Imported coking
                                   # coal IS bought at the seaborne benchmark, so
@@ -165,11 +260,24 @@ entities:
                                   # discount. Do not "harmonise" these to one
                                   # number.
         source_note: >
-          Sensitivity is independently cited and is a good check on
-          intensity x market_pct: "Every USD10/t increase = USD7-9/t EBITDA
-          impact — JSW Steel and Tata Steel most exposed" (Nomura). 0.70 x 0.80
-          = 0.56 t/t implies USD5.6/t per USD10/t, below Nomura's 7-9 — so the
-          intensity, the captive share, or both are conservative here.
+          SOURCED: Tata imports ~78% of its coking coal requirement, ~12-13 mtpa,
+          mainly from Australia; the balance comes from the captive West Bokaro
+          and Jharia mines.
+
+          AND THE NOMURA CROSS-CHECK RESOLVES, which it appeared not to. Nomura:
+          "Every USD10/t increase = USD7-9/t EBITDA impact — JSW Steel and Tata
+          Steel most exposed". An earlier version of this note compared that to
+          0.70 x 0.78 = 0.55 t/t, i.e. USD5.5/t, and concluded "the intensity,
+          the captive share, or both are conservative here."
+
+          THAT COMPARISON WAS WRONG — it put a NET number against a GROSS one.
+          0.70 t/t x 1.00 = USD7.0/t per USD10/t, which is EXACTLY Nomura's lower
+          bound, so Nomura is quoting the coke-rate effect gross of captive
+          supply. The upper bound of 9 implies a ~0.9 t/t coke rate, consistent
+          with PCI and coke-oven losses included. There was never an
+          inconsistency to fix; the intensity is right and so is the captive
+          share. Recorded because the false alarm nearly caused a real number to
+          be "corrected" to fit a mismatched comparison.
         verify: pending
 
   # ==========================================================================
@@ -203,10 +311,10 @@ entities:
     inputs:
       - item: iron_ore
         price_link: iron_ore_china_cfr62
-        intensity: 1.60
+        intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.75          # LARGELY BOUGHT — from NMDC and from Odisha /
+        market_pct: 0.80          # LARGELY BOUGHT — from NMDC and from Odisha /
                                   # Karnataka auction blocks. This is the number
                                   # that makes nalco/vaml's analogue work here.
         basis_pass_through: 0.50
@@ -271,10 +379,10 @@ entities:
     inputs:
       - item: iron_ore
         price_link: iron_ore_china_cfr62
-        intensity: 1.60
+        intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.75
+        market_pct: 0.80
         basis_pass_through: 0.50
         source_note: >
           "Captive coal share ~50%, captive iron ore targeted ~40% by FY27-end"
@@ -421,10 +529,10 @@ entities:
       # --- the long half, basis'd on the 8.32mt rebar line ---
       - item: iron_ore_long
         price_link: iron_ore_china_cfr62
-        intensity: 1.60
+        intensity: 1.70
         intensity_unit: t/t
         basis_item: rebar
-        market_pct: 0.05          # ~FULLY CAPTIVE — SAIL's own mines in
+        market_pct: 0.20          # ~FULLY CAPTIVE — SAIL's own mines in
                                   # Jharkhand and Odisha.
         basis_pass_through: 0.50
         source_note: "Not cited in the corpus. Sector knowledge only."
@@ -455,10 +563,10 @@ entities:
       # coke rate or ore grade, this is where that would be expressed.
       - item: iron_ore_flat
         price_link: iron_ore_china_cfr62
-        intensity: 1.60
+        intensity: 1.70
         intensity_unit: t/t
         basis_item: hrc
-        market_pct: 0.05
+        market_pct: 0.20
         basis_pass_through: 0.50
         source_note: "Mirror of iron_ore_long; see the warning at the top of this entity."
         verify: pending
