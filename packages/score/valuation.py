@@ -89,7 +89,25 @@ def quarter_average(conn, link: str, start: str, end: str) -> float | None:
 def spot_multiple_series(conn, ent: dict, fin: dict, units: dict,
                          qstart: str, qend: str, usdinr: float):
     """[(date, multiple, spot_ebitda)] — EV / spot-marked EBITDA, daily."""
-    shares, base = fin.get("shares_outstanding"), fin.get("base_ebitda")
+    # TWO DENOMINATORS, NOT ONE, and the distinction is load-bearing.
+    #
+    # `base_ebitda` is the ECONOMICS denominator: it must match the entity's
+    # spec lines, because pct_of_ebitda asks "how big is this move against the
+    # earnings the lines describe". For Hindalco those lines are India aluminium
+    # UPSTREAM only, so base_ebitda is the upstream segment.
+    #
+    # Valuation asks a different question. `ev` below is consolidated by
+    # construction — all the shares and all the net debt — so dividing it by a
+    # SEGMENT EBITDA produces a multiple for a company that does not exist. When
+    # Hindalco's base_ebitda was corrected from a consolidated guess (32,000) to
+    # the upstream segment (29,560) on 2026-08-24, this silently re-rated it from
+    # 11.21x to 12.29x on no news at all — a pure denominator artefact.
+    #
+    # So a name whose economics are specced at segment level carries an explicit
+    # `valuation_ebitda` for the whole entity. Everyone else omits it and falls
+    # back to base_ebitda, where the two questions have the same answer.
+    shares = fin.get("shares_outstanding")
+    base = fin.get("valuation_ebitda") or fin.get("base_ebitda")
     if not shares or not base:
         return [], None, None, "no shares_outstanding or base_ebitda"
 

@@ -151,12 +151,35 @@ entities:
     outputs:
       - item: aluminium_ingot
         price_link: lme_aluminium
-        volume: 1300000
+        # 1300000 -> 1340000 on 2026-08-24. Was "India primary metal CAPACITY",
+        # a round number from sector knowledge; now the actual shipped run-rate.
+        # 335 kt in 1QFY27 x 4, matching the base_quarter convention that sets
+        # base_ebitda, so the numerator's volume and the denominator's earnings
+        # describe the same quarter. bridge.py:449 — "beta is set by base_ebitda
+        # and volumes" — so this is the other half of that pair.
+        #
+        # THREE-WAY RECONCILIATION, which is why this can be trusted rather than
+        # merely sourced. The release gives segment EBITDA, shipments AND EBITDA
+        # per tonne independently:
+        #     Rs7,390 cr / 335 kt = Rs220,597/t = $2,311/t at usdinr 95.43
+        #     disclosed                            $2,331/t
+        # 0.9% apart, which is the company's own average FX against our spot
+        # reference. Any one of the three being wrong would break the identity.
+        volume: 1340000
         volume_unit: t
+        # STILL PENDING, and deliberately not guessed. The release discloses no
+        # realisation or premium over LME, so this stays sector knowledge. It is
+        # a straight adder on the revenue line, so an error here moves d_revenue
+        # by volume x error — 1.34 Mt x $1 = $1.34m per dollar.
         asp_premium: 150
         asp_premium_unit: USD/t
-        source_note: "India primary metal capacity"
-        verify: pending
+        asp_premium_verify: pending
+        source_note: >
+          1QFY27 upstream shipments annualised. Hindalco Q1 FY27 press release,
+          quarter ended 30 June 2026: "Shipments Kt 335" (325 Kt in Q1 FY26),
+          alongside "All-time high quarterly Aluminium Upstream EBITDA per tonne"
+          of "$2,331". Not capacity — actual shipments.
+        verify: sourced
 
       - item: alumina_surplus
         price_link: alumina_index
@@ -175,7 +198,12 @@ entities:
         market_pct: 0.05          # broadly self-sufficient => alumina spike is
                                   # near cost-neutral, unlike VAML
         source_note: "Integrated bauxite and alumina; minimal third-party purchase"
-        verify: pending
+        # intensity CORROBORATED 2026-08-25 against the BofA model, not changed:
+        # 1.92 on the Renukoot/Hirakud sheet and 1.950 derived on both new
+        # smelters (665,047/341,050 and 666,900/342,000). The spec's 1.93 sits
+        # inside that range, and a value between two independent estimates is not
+        # improved by moving it to either one.
+        verify: sourced
 
       - item: thermal_coal_seaborne
         price_link: thermal_coal_seaborne
@@ -186,16 +214,36 @@ entities:
                                   # roughly half NALCO's coal beta
         basis_pass_through: 0.35   # seaborne -> Indian domestic coal cost
         source_note: "Captive blocks (Dumri, Chakla etc.) cover a material share"
-        verify: pending
+        # market_pct CORROBORATED 2026-08-25: Aditya buys 2.65 mn t of coal and
+        # takes 1.50 mn t from the Gare Palma blocks = 56.5% captive, so 43.5%
+        # market-exposed against the 0.45 here. Left unchanged.
+        #
+        # THE INTENSITY IS STILL PENDING AND THE MODEL DOES NOT SETTLE IT. It
+        # implies 8.39 t/t at Mahan and 7.76 at Aditya, both below the 9.60 here
+        # — but those are two of three smelter groups and Renukoot/Hirakud is not
+        # derivable from the sheet. Changing a blended intensity on partial
+        # coverage would replace a documented guess with an undocumented one.
+        intensity_verify: pending
+        verify: partial
 
       - item: cp_coke
         price_link: cp_coke
-        intensity: 0.40
+        # 0.40 -> 0.36 on 2026-08-25, from the desk's BofA model. Not a rounder
+        # guess replacing a round one: Mahan and Aditya each carry coke tonnage
+        # and metal tonnage as SEPARATE line items, and both divide to 0.360
+        # exactly — 122,778/341,050 and 123,120/342,000.
+        #
+        # NALCO's and VAML's cp_coke lines are deliberately LEFT at 0.40. Anode
+        # consumption per tonne is a property of a particular smelter's anode
+        # plant, and this is Hindalco's model. Copying it across would be
+        # inventing two data points out of one.
+        intensity: 0.36
         intensity_unit: t/t
         basis_item: aluminium_ingot
         market_pct: 1.00
-        source_note: "Anode consumption per tonne metal"
-        verify: pending
+        source_note: "Anode consumption per tonne metal. 0.360 derived twice
+          from the BofA model's Mahan and Aditya coke/metal tonnages."
+        verify: sourced
 
     notes: >
       Do NOT treat Hindalco as an LME proxy. Novelis is close to half of
@@ -213,10 +261,17 @@ entities:
     outputs:
       - item: flat_rolled_products
         price_link: can_sheet_spread
-        volume: 3700000
+        # 3700000 -> 3664000 on 2026-08-24. 1QFY27 annualised, matching the
+        # base_quarter convention: "Rolled product shipments of 916 kilotonnes,
+        # down 5% YoY" (Novelis Q1 FY27 release) x 4 = 3,664 kt. FY26 actual was
+        # 3,557 kt, so the old 3.7 Mt was a fair guess and is now a number.
+        volume: 3664000
         volume_unit: t
-        source_note: "Annual shipments; economics are CONVERSION spread, not LME level"
-        verify: pending
+        source_note: >
+          1QFY27 shipments 916 kt annualised. Novelis Q1 FY27 press release:
+          "Rolled product shipments of 916 kilotonnes, down 5% YoY"; FY26 actual
+          3,557 kt at $462/t. Economics are CONVERSION spread, not LME level.
+        verify: sourced
 
     inputs:
       - item: aluminium_scrap

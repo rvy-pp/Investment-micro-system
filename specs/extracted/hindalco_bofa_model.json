@@ -1,0 +1,141 @@
+{
+  "_note": [
+    "Numbers taken off the desk's BofA Hindalco model (13006375.xlsx, supplied",
+    "2026-08-25; Bharat Subramanian, bharat.subramanian@bofa.com). 11 sheets.",
+    "",
+    "THESE ARE MODEL VALUES, NOT PRINTS. factor='estimate' on every forecast row",
+    "so nothing here can resolve as an observation of fact. The FY26 rows are the",
+    "model's view of a completed year, which is still the model's view - where the",
+    "company published the same quantity, the company's figure is what the specs",
+    "use (base_financials.yaml precedence: a company release beats the model).",
+    "",
+    "WHY THE CONVERSION SPREAD MATTERS. `can_sheet_spread` has no public series -",
+    "not from the company, not from any free feed, not on the Daily Metals Pack.",
+    "The model's 'Premium (US$/t)' over LME is the only quantification of it",
+    "anywhere available to this system, which is why it is captured even though it",
+    "is an annual model value rather than a price.",
+    "",
+    "AND WHY THE SCRAP LEG IS DEAD. Every sheet was searched for a scrap price.",
+    "The only scrap rows in the workbook are 'Recycled content' (a percentage) and",
+    "an EBITDA-level '- Elimination/scrap benefit' in US$mn. The model prices",
+    "Novelis' raw material AT LME. So `al_scrap_midwest` is now unsourced in three",
+    "independent places - company disclosure, free market data, and the sell-side",
+    "model. That is a settled negative, not a gap to keep waiting on.",
+    "",
+    "THE DEFINITION TRAP, recorded so nobody 'fixes' the spec to the model. The",
+    "model's Novelis FY26 Adj. EBITDA is $2,057mn against the company's reported",
+    "$1,645mn on IDENTICAL shipments of 3,557 kt. Row 87 of the Novelis sheet is",
+    "'- Elimination/scrap benefit' = $411mn, and 2,057 - 1,645 = 412. Different",
+    "EBITDA definition, reconciled to within $1mn. novelis.base_ebitda uses the",
+    "company's figure and must keep doing so."
+  ],
+  "sources": [
+    {
+      "id": "bofa-hndl-model-2026-08-25",
+      "kind": "broker_model",
+      "origin": "file",
+      "title": "BofA Hindalco model (13006375.xlsx) - Bharat Subramanian",
+      "source_date": "2026-08-25",
+      "raw_path": "data/models/hindalco_bofa_13006375.xlsx"
+    }
+  ],
+  "observations": [
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "novelis",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "can_sheet_spread",
+      "value_num": 2417.2,
+      "unit": "USD/t",
+      "period": "FY26",
+      "confidence": 0.7,
+      "quote": "Novelis Inc sheet row 9 'Premium (US$/t)' = 2,417.2 for FY26, against 'AL LME (US$/t)' 2,765.3 and 'Realisation (US$/t)' 5,182.5"
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "novelis",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "can_sheet_spread",
+      "value_num": 3026.3,
+      "unit": "USD/t",
+      "period": "FY27E",
+      "confidence": 0.6,
+      "quote": "Novelis Inc sheet row 9 'Premium (US$/t)' = 3,026.3 for FY27E"
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "novelis",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "adj_ebitda_model",
+      "value_num": 2057.0,
+      "unit": "USD mn",
+      "period": "FY26",
+      "confidence": 0.6,
+      "quote": "Novelis Inc sheet 'Adj. EBITDA (including MPL)' = 2,057 for FY26 - a DIFFERENT definition from the company's reported $1,645mn; row 87 '- Elimination/scrap benefit' = 411 reconciles the gap"
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "novelis",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "recycled_content_note",
+      "value_num": null,
+      "unit": "qualitative",
+      "period": "FY26",
+      "confidence": 0.9,
+      "quote": "The only scrap-related rows in the entire workbook are 'Recycled content' (a percentage) and '- Elimination/scrap benefit' (US$mn). Raw material is priced at LME. There is no scrap price series in the model.",
+      "value_text": "no scrap price in model"
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "hindalco",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "cp_coke_intensity",
+      "value_num": 0.36,
+      "unit": "t/t",
+      "period": "FY26",
+      "confidence": 0.8,
+      "quote": "Mahan sheet: C.P.Coke volumes consumed 122,778 MT against aluminium metal 341,050 MT = 0.360. Aditya sheet: 123,120 MT against 342,000 MT = 0.360. Both sheets also carry an explicit 'CP Coke' per-tonne row reading 0.36."
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "hindalco",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "alumina_intensity",
+      "value_num": 1.95,
+      "unit": "t/t",
+      "period": "FY26",
+      "confidence": 0.8,
+      "quote": "Mahan sheet: alumina volumes consumed 665,047 MT against 341,050 MT metal = 1.950; Aditya 666,900 against 342,000 = 1.950. The Aluminum sheet's 'Alumina consumed/t of aluminum' row reads 1.92 for the older units."
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "hindalco",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "coal_captive_share",
+      "value_num": 0.565,
+      "unit": "share",
+      "period": "FY26",
+      "confidence": 0.7,
+      "quote": "Aditya sheet: 'Total coal consumed (mn tonnes)' 2.65 with 'Captive coal supply from Gare Palma blocks' 1.50 = 56.5% captive, i.e. 43.5% market"
+    },
+    {
+      "source_id": "bofa-hndl-model-2026-08-25",
+      "entity_id": "hindalco",
+      "as_of": "2026-08-25",
+      "factor": "estimate",
+      "metric": "blended_premium_to_lme",
+      "value_num": 1124.2,
+      "unit": "USD/t",
+      "period": "FY26",
+      "confidence": 0.7,
+      "quote": "Aluminum sheet row 43 'Premium to LME' = 1,124.22 for FY26, being 'Blended realizations' 3,889.48 less 'LME Aluminum' 2,765.25. BLENDED across ingot, rolled, extruded and foil - NOT an ingot premium, and not comparable to the spec's asp_premium of 150 USD/t"
+    }
+  ]
+}

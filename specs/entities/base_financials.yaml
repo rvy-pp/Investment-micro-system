@@ -11,7 +11,11 @@
 # precise, but it must be the right order of magnitude, because a wrong
 # denominator silently rescales every signal for that name.
 #
-# ALL verify: pending — set from sector knowledge, not from filings.
+# verify: tracks each denominator individually. As of 2026-08-24 every name is
+# `sourced` — hindalco was the last `pending` and is now taken from the Q1 FY27
+# segment disclosure. The old blanket line here ("ALL verify: pending — set from
+# sector knowledge, not from filings") had been false for some time, which is
+# its own small lesson about summary claims in headers.
 # ============================================================================
 
 spec_version: 0.1.0
@@ -37,6 +41,33 @@ period: FY26
 # together, in one edit. Leaving it stale is SAFE, not broken: the bridge simply
 # re-marks over a longer window, which costs a little accuracy and no
 # correctness. Splitting them is what breaks.
+# ============================================================================
+# WHERE THESE NUMBERS ARE ALLOWED TO COME FROM — set by the PM 2026-08-24
+# ============================================================================
+# Hindalco's and Novelis' base numbers are STATIC. They do not move with the
+# tape; they change once a quarter, from the company's own release, and they are
+# refreshed by hand. `packages/adapters/concall_check.py` runs on every refresh
+# and says whether that quarter has turned — it never writes, because a wrong
+# base_ebitda is a wrong beta on every signal the name emits (invariant 5).
+#
+# PRECEDENCE, highest wins. Same idea as prices_io.PRECEDENCE and for the same
+# reason: several things can supply one figure and nothing recorded which won.
+#
+#     company release for a LATER quarter    beats   the desk model
+#     the desk model (data/models/*.xlsx)    beats   sector-knowledge guesses
+#
+# A superseded figure is replaced with a dated reason in *_source, never silently
+# overwritten. If the model disagrees with a printed release, the release wins
+# AND the disagreement is worth investigating rather than reconciling away.
+#
+# The desk Excel model is not wired in yet — deliberately. Writing a parser
+# against a layout nobody has looked at produces a plausible wrong number, which
+# is the one failure mode this file cannot afford. See data/models/README.md for
+# what the model is wanted for: the ASP premium, the alumina surplus volume, the
+# intensities and captive shares, and above all a Novelis conversion spread and
+# scrap cost — the last being the only route to scoring Novelis at all, since
+# neither `can_sheet_spread` nor `al_scrap_midwest` has any public series.
+# ============================================================================
 base_quarter:
   label: 1QFY27
   start: 2026-04-01
@@ -107,7 +138,77 @@ companies:
     caveat: "+81% yoy — a peak-cycle quarter, so annualising overstates a mid-cycle base."
 
   hindalco:
-    base_ebitda: 32000
+    # ------------------------------------------------------------------------
+    # 32000 -> 29560 on 2026-08-24. This resolves the caveat that used to sit at
+    # the bottom of this block ("Either split India out or accept that
+    # Hindalco's pct_of_ebitda is not comparable to a pure play's") and the
+    # "only unsourced denominator in the group" flag. Both are gone.
+    #
+    # THE OLD NUMBER WAS THE WRONG QUANTITY, not merely imprecise. It was a
+    # guess at CONSOLIDATED EBITDA, while every line in this entity's spec is
+    # India Aluminium UPSTREAM: 1.3 Mt India primary metal, India alumina at
+    # market_pct 0.05, India coal at 0.45, anode coke. No copper line, no
+    # downstream line, no Novelis line. So a consolidated denominator was
+    # dividing an upstream-only numerator by a whole-company base.
+    #
+    # It was also too small for the thing it claimed to be: FY26 consolidated
+    # EBITDA actually printed Rs38,097 crore, not 32,000.
+    #
+    # NOW: Aluminium Upstream, 1QFY27 annualised, matching base_quarter above
+    # and matching NALCO's convention exactly so the NALCO-Hindalco pair is a
+    # like-for-like comparison. Rs7,390 cr x 4 = Rs29,560 cr.
+    #
+    # Q1 FY27 segment EBITDA reconciles to the rupee, which is why these three
+    # numbers can be trusted as a split rather than as three separate estimates:
+    #
+    #     Aluminium Upstream      7,390   <- this denominator, x4
+    #     Aluminium Downstream      298   } not modelled - no spec lines
+    #     Copper                    918   }
+    #     Novelis                 4,875   <- novelis block below, x4
+    #     other / unallocated     1,508
+    #     ------------------------------
+    #     consolidated           14,989   = the reported figure
+    #
+    # FY26 full year reconciles the same way: 18,884 + 978 + 2,809 = 22,671
+    # exactly the reported "India business" total, and 22,671 + 15,426 = 38,097
+    # exactly the reported consolidated. Two independent periods, both additive.
+    #
+    # CONSEQUENCE. The denominator falls 7.6% (32,000 -> 29,560), so Hindalco's
+    # pct_of_ebitda becomes 1.08x more sensitive to the same rupee move: the
+    # -184.5cr bridge reads -0.624% of EBITDA instead of -0.577%. Small, because
+    # the old guess happened to be close to the upstream figure by coincidence —
+    # it was the wrong QUANTITY, not badly wrong in magnitude. Invariant 5 says
+    # base_ebitda IS the beta, so this is the sanctioned way to change it.
+    #
+    # WHAT THIS DENOMINATOR DOES *NOT* ANSWER. pct_of_ebitda is now "% of the
+    # upstream segment", not "% of Hindalco's earnings". Upstream is roughly half
+    # of consolidated, so the equity-level sensitivity is the upstream move plus
+    # the Novelis move over 38,097 — which needs the roll-up decision recorded in
+    # the novelis block. Do not read Hindalco's score as an equity beta until
+    # that is settled.
+    base_ebitda: 29560
+    # CONSOLIDATED, for P3 only. Required because base_ebitda above is a SEGMENT
+    # figure while EV is whole-company (all shares, all net debt) — dividing one
+    # by the other prices a company that does not exist. Splitting the segment
+    # out re-rated Hindalco 11.21x -> 12.29x on no news until this was added.
+    # Rs14,989 cr x 4 = Rs59,956 cr. Verbatim: "Consolidated EBITDA for the
+    # first quarter stood at Rs14,989 crore, up 73% from the same quarter last
+    # year." Only Hindalco needs this; every other name's economics lines cover
+    # the whole entity, so they fall back to base_ebitda.
+    valuation_ebitda: 59956
+    base_ebitda_source: >
+      Hindalco Q1 FY27 press release, quarter ended 30 June 2026, verbatim:
+      "Record Aluminium quarterly Upstream EBITDA at Rs7,390 crore, up 81%,
+      driven by favourable macros and stronger operational performance".
+      Annualised x4 per the base_quarter convention above.
+      https://www.hindalco.com/media/press-releases/hindalco-results-q1fy27
+    base_ebitda_caveat: >
+      +81% yoy. A peak-cycle quarter, so annualising overstates a mid-cycle
+      base — the same caveat NALCO carries, and deliberately worded the same way
+      because both are annualised from the same quarter. FY26 actual upstream was
+      Rs18,884 crore, so the annualised figure is 57% above the last full year.
+      If a mid-cycle base is wanted, use FY26 and change NALCO's the same day;
+      changing one and not the other silently breaks the pair.
     shares_outstanding: 2247230000     # Wind total_shares, 500440.BO
     shares_verify: sourced
     net_debt: 74207                    # screener.in consolidated, Mar 2026:
@@ -121,13 +222,69 @@ companies:
     net_debt_verify: sourced
     valuation_metric: ev_ebitda
     primary_output: aluminium_ingot
-    source_note: "Consolidated incl. Novelis and copper — NOT yet sourced from a print"
-    verify: pending
-    caveat: >
-      Consolidated denominator against India-only ASP/cost lines understates
-      Hindalco's sensitivity in pct terms. Either split India out or accept
-      that Hindalco's pct_of_ebitda is not comparable to a pure play's.
-      >> Still unresolved, and now the only unsourced denominator in the group. <<
+    source_note: "India Aluminium UPSTREAM only, 1QFY27 annualised — matches the
+      entity's spec lines. Copper, Downstream and Novelis are excluded by
+      construction; Novelis has its own block below."
+    verify: sourced
+
+  # ==========================================================================
+  # NOVELIS — added 2026-08-24. It had a full economics spec in aluminium.yaml
+  # and NO DENOMINATOR ANYWHERE, so it could not be scored at all, and its
+  # earnings sat silently inside Hindalco's consolidated base while also being
+  # modelled separately. That is a double count, and it resolved in the
+  # direction that flattered nothing in particular — it just made both numbers
+  # wrong.
+  # ==========================================================================
+  novelis:
+    # 1QFY27 annualised, same convention and same quarter as every other name
+    # here. Rs4,875 cr x 4 = Rs19,500 cr.
+    #
+    # CROSS-CHECKED IN TWO CURRENCIES, because Novelis reports in USD and
+    # Hindalco restates it in INR, so the two must agree or one is wrong:
+    #     $516m x 4 = $2,064m; at usdinr 95.43 -> Rs19,697 cr
+    #     Rs4,875 cr x 4                        -> Rs19,500 cr
+    # 1.0% apart, which is FX timing (the company converts at its own average
+    # rate, not at a spot date). The company's own INR figure is used, because
+    # mixing a USD figure at a spot rate into a rupee denominator would put an
+    # FX error inside the beta.
+    base_ebitda: 19500
+    base_ebitda_source: >
+      Hindalco Q1 FY27 press release, quarter ended 30 June 2026, verbatim:
+      "Record Novelis quarterly Adjusted EBITDA* at Rs4,875 crore, up 37%".
+      Novelis' own release for the same quarter, verbatim: "Adjusted EBITDA of
+      $516 million, up 24% YoY" and "Adjusted EBITDA per tonne shipped of $563,
+      up 30% YoY". Annualised x4 per the base_quarter convention.
+      https://www.hindalco.com/media/press-releases/hindalco-results-q1fy27
+      https://investors.novelis.com/news-events/press-releases/detail/1425/novelis-reports-first-quarter-fiscal-year-2027-results
+    base_ebitda_caveat: >
+      +37% yoy off a disrupted base — FY26 was held down by the Oswego plant
+      fires and the hot mill only restarted in early June 2026, inside this very
+      quarter. So this annualises a recovering quarter, which cuts the OPPOSITE
+      way to NALCO's peak-cycle caveat: it may understate a normalised Novelis
+      rather than overstate it. FY26 actual was $1,645m on 3,557 kt = $462/t;
+      this quarter ran $563/t. Kotak (Sumangal Nevatia, 2026-07-15) forecasts
+      "EBITDA per ton of US$545/577 per ton in FY2027/28E".
+    # No shares_outstanding, net_debt or valuation_metric, deliberately. It is
+    # is_tradeable: false with peer_group: null, so it can never receive a
+    # valuation score and those fields would be decoration that later reads as
+    # data. bridge.py only requires base_ebitda.
+    primary_output: flat_rolled_products
+    source_note: "Reporting unit under hindalco. Its EBITDA is EXCLUDED from
+      hindalco's base_ebitda above, which is upstream-only, so there is no
+      double count."
+    verify: sourced
+    roll_up: >
+      UNRESOLVED, and deliberately left as a flag rather than guessed. Nothing
+      currently adds Novelis' d_ebitda to Hindalco's — consumed_by() walks
+      reporting units for the staleness gate, but the bridge scores each entity
+      on its own lines. So Hindalco's score is an UPSTREAM SEGMENT score, not an
+      equity score. Decide one of:
+        (a) roll up  — Hindalco equity delta = upstream + novelis, over the
+                       consolidated 38,097 (FY26) / 59,956 (1QFY27 annualised)
+        (b) report alongside — keep two segment scores and size off the pair
+      Option (a) is what the equity actually trades on; (b) is what the current
+      code does. Until this is settled, do not compare Hindalco's economics
+      score to NALCO's as though both were whole-company betas.
 
   vaml:
     base_ebitda: 42000
@@ -205,8 +362,316 @@ companies:
       CONSOLIDATED denominator would understate sensitivity by ~35%. Numerator
       and denominator must sit on the same basis.
 
-  novelis:
-    base_ebitda: 15000
-    primary_output: flat_rolled_products
-    source_note: "Provisional; reporting unit, not scored directly"
-    verify: pending
+
+  # ==========================================================================
+  # STEEL — added 2026-08-25. Seven names, the vault's Coverage/Steel roster.
+  # ==========================================================================
+  # SAME CONVENTION AS EVERY NAME ABOVE: 1QFY27 print annualised x4, matching
+  # `base_quarter` at the top of this file. Every figure carries the digest it
+  # was cited from.
+  #
+  # THE VOLUME x EBITDA/t IDENTITY RECONCILES FOR ALL SEVEN, and that is why
+  # these can be trusted rather than merely quoted. Brokers report steel as
+  # EBITDA/t against a disclosed tonnage, so the two are independently checkable
+  # against the absolute print — a cross-check the aluminium names never had:
+  #
+  #     sail              4.16 mt x  9,974 = Rs 4,149 cr  vs cited Rs 41.5 bn
+  #     jindal_stainless  0.581mt x 22,884 = Rs 1,330 cr  vs cited Rs 13.3 bn
+  #     apl_apollo        0.745mt x  5,522 = Rs   411 cr  vs cited Rs  4.11bn
+  #     jindal_steel      2.20 mt x 12,000 = Rs 2,640 cr  vs cited Rs 26.7 bn
+  #     tata_steel        5.17 mt x 18,199 = Rs 9,409 cr  vs consol Rs 93.7 bn
+  #
+  # Tata's India-only product reconciling to the CONSOLIDATED print is not an
+  # error: Europe swung to a loss this quarter ("Europe back to losses", CLSA
+  # digest 2026-07-31), so India ~ consolidated by coincidence of a bad European
+  # quarter. It will NOT hold next quarter. Hence the separate valuation_ebitda,
+  # for the same reason Hindalco carries one.
+  #
+  # ==========================================================================
+  # !! NET DEBT: THE `Borrowings - Investments` CONVENTION FAILS ON THESE NAMES
+  # ==========================================================================
+  # Every name above takes net_debt from screener.in as Borrowings less
+  # Investments. Applied to steel that convention OVERSTATES net debt on all
+  # four names where an independently cited figure exists, and on one it FLIPS
+  # THE SIGN. Measured, not asserted:
+  #
+  #   name              screener Mar-26   cited              gap
+  #   tata_steel             85,293      80,100 (Mar-26)    +6.5%
+  #   jindal_steel           19,442      15,900 (1QFY27)    +22%
+  #   jindal_stainless        5,913       2,950 (1QFY27)    +100%
+  #   jsw_steel              89,092      53,900 (Mar-26)    +65%
+  #   apl_apollo                449      -1,410 (1QFY27)    SIGN FLIP
+  #
+  # WHY. screener's "Investments" line is non-current investments only. It does
+  # not include cash, bank balances or current investments, and the Indian steel
+  # names carry large balances there — JSW's gross borrowings are Rs 99,310 cr
+  # against a company-reported net debt of Rs 53,900 cr, so ~Rs 45,000 cr of
+  # liquidity sits outside the line the convention subtracts.
+  #
+  # This is the silent-arithmetic shape (docs/SILENT_BUGS.md): EV = mcap +
+  # net_debt, so an overstatement makes a name read DEARER, nothing raises, and
+  # coverage_ok stays true.
+  #
+  # BUT MEASURE THE EFFECT BEFORE CLAIMING IT, because the rupee gap and the
+  # MULTIPLE gap are very different sizes — mcap dominates EV for all seven, so
+  # a 65% error in net debt is not a 65% error in EV/EBITDA:
+  #
+  #   name              EV/EBITDA cited   convention    delta
+  #   tata_steel              8.47x          8.50x      +0.3%
+  #   jindal_steel           12.51x         12.84x      +2.7%
+  #   apl_apollo             35.27x         36.40x      +3.2%
+  #   jindal_stainless       11.42x         11.98x      +4.9%
+  #   jsw_steel               9.84x         10.98x     +11.6%
+  #
+  # An earlier draft of this note said the uneven bias "corrupts the
+  # cross-sectional ranking". That was asserted, then checked, and it is NOT
+  # true at these magnitudes: on today's prices the convention changes no
+  # name's rank in the group — JSW sits between shyam and jindal_stainless
+  # either way. JSW's +11.6% is the only material distortion, and APL Apollo's
+  # sign flip is wrong in KIND (a net-cash company recorded as levered) rather
+  # than in size. Both are worth fixing; neither is the ranking disaster the
+  # rupee table suggests on its own.
+  #
+  # SO THESE SEVEN USE THE CITED FIGURE WHERE ONE EXISTS, and the screener
+  # number is recorded beside it as the disagreement rather than dropped. That
+  # follows the precedence rule in this file's header — a company release for a
+  # LATER quarter beats a derived figure — and 1QFY27 is both later and the base
+  # quarter.
+  #
+  # THE FIVE NAMES ABOVE ARE NOT RE-DERIVED HERE, deliberately. Changing them is
+  # a separate, testable edit: hindalco's screener figure was cross-checked to
+  # within 2% against a cited Novelis number, and hzl/nalco are net cash, so the
+  # failure may be specific to levered names with big cash piles. Re-checking
+  # them against cited figures is worth doing and must not ride along inside a
+  # steel commit.
+  # ==========================================================================
+
+  tata_steel:
+    base_ebitda: 37636                 # INDIA, for the bridge: 5.17mt x
+                                       # Rs18,199/t x 4. The spec lines are
+                                       # India HRC/long, India iron ore and
+                                       # imported coking coal, so the
+                                       # denominator is India — the Hindalco
+                                       # precedent.
+    valuation_ebitda: 37480            # CONSOLIDATED, for P3: Rs93.7bn x 4. EV
+                                       # is whole-company (all shares, all net
+                                       # debt) and includes Europe, so P3 must
+                                       # not divide by an India-only figure.
+    shares_outstanding: 12483500000    # Wind total_shares, 500470.BO. Cross-check:
+                                       # x Rs186.94 = Rs 2,33,368 cr mcap.
+    shares_verify: sourced
+    net_debt: 84200                    # CITED, 1QFY27. Rs842bn, corroborated by
+                                       # THREE brokers independently: CLSA "Net
+                                       # debt Rs842bn", Ambit "+Rs40bn QoQ to
+                                       # Rs842bn on working capital", and a third
+                                       # note "Rs842bn vs Rs801bn Mar'26".
+                                       # screener Mar-26 gives 85,293 (92,382 -
+                                       # 7,089) against the cited Mar-26 80,100,
+                                       # i.e. +6.5%.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: hrc
+    source_note: >
+      1QFY27 consol EBITDA Rs93.7bn x4. Quote: "1Q adj EBITDA Rs93.7bn beat
+      street 3%, driven entirely by India (EBITDA/t +Rs2,950/t QoQ to
+      Rs18,200/t on realisation). Europe swung to loss" (Ambit, Satyadeep Jain,
+      digest 2026-08-01). India EBITDA/t Rs18,199 and India sales 5.17mnt from
+      CLSA (digest 2026-07-31) and Morgan Stanley (digest 2026-07-08).
+    verify: sourced
+    caveat: >
+      TWO-SIDED, unlike the aluminium names' one-way peak-cycle caveat. India ran
+      a strong quarter on a +Rs2,950/t realisation gain that management itself
+      guided to reverse ("India 2Q realisation -Rs1,500/t", coking coal +$5/t),
+      so the India base is above run-rate. Europe was at a LOSS, so the
+      consolidated base is BELOW a normalised one. The two do not cancel and
+      they sit in different fields.
+
+  jsw_steel:
+    base_ebitda: 37520                 # Rs93.8bn x 4, consolidated.
+    shares_outstanding: 2445450000     # Wind total_shares, 500228.BO. Cross-check:
+                                       # x Rs1,320.30 = Rs 3,22,833 cr mcap.
+    shares_verify: sourced
+    net_debt: 46200                    # CITED, 1QFY27. Rs462bn, down from
+                                       # Rs539bn, "aided by JFE Rs79bn tranche"
+                                       # after the BPSL JV completed. screener
+                                       # Mar-26 gives 89,092 — 65% higher, the
+                                       # worst gap in the group and the reason
+                                       # the convention is not used here.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: hrc
+    source_note: >
+      1QFY27 consol EBITDA Rs93.8bn x4. Quote: "JSW Steel 1QFY27 cons. EBITDA
+      Rs93.8bn beat est by 9%/13% on strong realizations offsetting lower
+      volumes + higher coking coal" (Emkay, Akhilesh Kumar). Net debt quote:
+      "net debt down to Rs462bn (from Rs539bn) on BPSL slump-sale proceeds"
+      (Morgan Stanley, Rahul Gupta). India EBITDA/t Rs15,110 (+23% qoq, Kotak).
+    verify: sourced
+    caveat: >
+      THE BPSL/JFE JV MAKES THE HISTORY NON-COMPARABLE, in volumes as well as
+      debt: one note reads volumes "+3% YoY, flat QoQ EX-BPSL". Any series
+      crossing 1QFY27 compares two different consolidation perimeters. Also
+      +23% qoq margins on a quarter brokers call peak — "likely PEAK steel
+      profitability" (JPMorgan) — with coking coal guided +$12-15/t.
+
+  jindal_steel:
+    base_ebitda: 10680                 # Rs26.7bn x 4, consolidated adjusted.
+    shares_outstanding: 1020090000     # Wind total_shares, 532286.BO. Cross-check:
+                                       # x Rs1,154.10 = Rs 1,17,728 cr mcap.
+    shares_verify: sourced
+    net_debt: 15900                    # CITED, 1QFY27. "Net debt flat qoq at
+                                       # Rs159bn" (Avendus Spark). screener
+                                       # Mar-26 gives 19,442, +22%.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: hrc
+    source_note: >
+      1QFY27 consol adj EBITDA Rs26.7bn x4. Quote: "1QFY27 consol adj EBITDA
+      Rs26.7bn, ~10% above Spark/street; adj EBITDA/t Rs12.0k vs Rs10.1k in Q4
+      on higher realisation (Rs69k/t). Sales +17% yoy at 2.2MMT, VA-steel mix up
+      to 66%. Net debt flat qoq at Rs159bn" (Avendus Spark, Somaiah V).
+    verify: sourced
+    caveat: >
+      Management guided the give-back explicitly: "expects 2Q EBITDA/t to give
+      back ~Rs2,700/t on weaker rebar pricing and higher coking coal costs" —
+      i.e. -22% on a Rs12,000/t base. The most levered of the four to a rebar
+      correction, because the mix is long-weighted.
+
+  sail:
+    base_ebitda: 16600                 # Rs41.5bn x 4, adjusted.
+    shares_outstanding: 4130530000     # Wind total_shares, 500113.BO. Cross-check:
+                                       # x Rs184.59 = Rs 76,245 cr mcap.
+    shares_verify: sourced
+    net_debt: 27589                    # screener.in consolidated Mar 2026:
+                                       # Borrowings 31,928 less Investments 4,339.
+                                       # !! THE ONLY STEEL NAME WITH NO CITED
+                                       # CROSS-CHECK. Given the convention
+                                       # overstated every other name in this
+                                       # group by 6.5%-100%, treat this as an
+                                       # UPPER BOUND, and read SAIL as
+                                       # artificially expensive on P3 until a
+                                       # cited figure replaces it. The DIRECTION
+                                       # of the error is known even though its
+                                       # size is not, which is worth more than
+                                       # labelling the figure sourced.
+    net_debt_verify: convention_upper_bound
+    valuation_metric: ev_ebitda
+    primary_output: rebar
+    source_note: >
+      1QFY27 adj EBITDA Rs41.5bn x4. Quote: "Q1FY27 adj EBITDA Rs41.5bn, 9.1%
+      below Emkay est on weak volumes (4.16mt), in-line vs street. NSR
+      +~Rs4,600/t qoq; EBITDA/t Rs9,974" (Emkay, Akhilesh Kumar). Corroborated:
+      "1Q EBITDA +50% YoY to Rs41.5bn (13% above est)" (ICICI Securities).
+    verify: sourced
+    caveat: >
+      The lowest EBITDA/t of the four integrated mills (Rs9,974 vs Tata's
+      Rs18,199) on "higher semi-finished exposure", so the SAME rupee move in
+      HRC is roughly 1.8x more material to SAIL's EBITDA than to Tata's. That is
+      the beta, not a bug — see invariant 5. Long-product mix: "SAIL flagged as
+      key downside risk on higher rebar mix exposure" (Emkay).
+
+  jindal_stainless:
+    base_ebitda: 5320                  # Rs13.3bn x 4, consolidated.
+    shares_outstanding: 824420000      # Wind total_shares, 532508.BO. Cross-check:
+                                       # x Rs701.40 = Rs 57,825 cr mcap.
+    shares_verify: sourced
+    net_debt: 2950                     # CITED, 1QFY27. "Net debt -Rs0.9bn to
+                                       # Rs29.5bn" (Ambit). screener Mar-26 gives
+                                       # 5,913 — exactly 2x, the second-worst gap.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: stainless_flat
+    source_note: >
+      1QFY27 EBITDA Rs13.3bn x4. Quote: "Q1FY27 EBITDA Rs13.3bn beat by 6%/1%
+      vs Ambit/consensus. Volumes -7% YoY / -10% QoQ to 0.58MT (weakest in 7
+      quarters) as West Asia gas/propane shortage forced production cuts.
+      EBITDA/t Rs22,900 (+1% qoq), above the Rs18-20k/t 1H guidance. Net debt
+      -Rs0.9bn to Rs29.5bn" (Ambit, Satyadeep Jain).
+    verify: sourced
+    caveat: >
+      ANNUALISES THE WEAKEST VOLUME QUARTER IN SEVEN, so unlike every other name
+      here the tonnage understates rather than overstates — it is the margin per
+      tonne that ran hot. Both brokers say so: "EBITDA/t to normalise to
+      Rs19-20k as volumes recover" (Ambit) against Rs22,884 realised. Net of the
+      two the annualised figure is roughly fair, and the noisiest in the group.
+    scoring_note: >
+      NOT COMPARABLE TO THE CARBON-STEEL NAMES ON ECONOMICS. Stainless is priced
+      off LME nickel, ferrochrome and stainless scrap, not off HRC, iron ore and
+      coking coal. The pack carries lme_nickel; it carries NO ferrochrome and no
+      stainless scrap series, and scrap_turkey is dead after 2020-12-03. So a
+      stainless bridge is missing most of its cost stack today.
+
+  shyam_metalics:
+    base_ebitda: 3040                  # Rs7.6bn x 4, consolidated.
+    shares_outstanding: 279132000      # Wind total_shares, 543299.BO. Cross-check:
+                                       # x Rs1,006.20 = Rs 28,082 cr mcap.
+    shares_verify: sourced
+    net_debt: -577                     # NET CASH. screener.in Mar 2026:
+                                       # Borrowings 1,005 less Investments 1,582.
+                                       # No cited LEVEL exists, only ratios:
+                                       # "net debt/EBITDA 0.2x in FY28E"
+                                       # (Nuvama) and "peak net debt/EBITDA 0.6x"
+                                       # (Ambit) — both FORWARD, so neither pins
+                                       # today. The SIGN is corroborated (a
+                                       # net-cash balance sheet); the size is
+                                       # not. Small either way against a
+                                       # Rs28,082 cr mcap.
+    net_debt_verify: sign_sourced_level_derived
+    valuation_metric: ev_ebitda
+    primary_output: long_steel
+    source_note: >
+      1QFY27 EBITDA Rs7.6bn x4. Quote: "1QFY27 EBITDA Rs7.6bn beat by 9%/6% on
+      strong margins across segments (Metallics + Steel)... EBITDA +32% YoY led
+      by Metallics (+54%) and Steel (+20%)" (Ambit, Satyadeep Jain). Blended
+      EBITDA/t Rs7,718 (+20% YoY).
+    verify: sourced
+    caveat: >
+      Ambit guides "-16% QoQ EBITDA" for 2Q "as long-steel spreads (rebar/sponge/
+      pellet) soften", so this annualises a quarter the analyst already expects
+      to fall.
+    scoring_note: >
+      NOT A PURE STEEL NAME. The segments are Metallics, Carbon Steel, Stainless
+      (~22%) and ALUMINIUM — and the aluminium segment "saw the sharpest margin
+      expansion" this quarter, with an 18ktpa foil facility commissioned Jul-2026
+      and a 60ktpa FRP plant guided ~Sep-2026. A steel-only bridge will explain
+      less of its EBITDA than for any other name in the group. It is also the
+      one name whose cost stack is sponge-iron/pellet based rather than
+      blast-furnace.
+
+  apl_apollo:
+    base_ebitda: 1644                  # Rs4.11bn x 4, consolidated.
+    shares_outstanding: 277658000      # Wind total_shares, 533758.BO. Cross-check:
+                                       # x Rs2,139.30 = Rs 59,406 cr mcap.
+    shares_verify: sourced
+    net_debt: -1410                    # NET CASH, CITED 1QFY27: "net cash
+                                       # Rs14.1bn" (IIFL, Prateek Singh).
+                                       # !! THE SIGN FLIP. screener Mar-26 gives
+                                       # +449 (Borrowings 498 - Investments 49),
+                                       # i.e. net DEBT. The cash is not in
+                                       # screener's Investments line. Using the
+                                       # convention would have raised EV by
+                                       # Rs1,859 cr on a Rs59,406 cr mcap and
+                                       # called a net-cash company levered.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: steel_tubes
+    source_note: >
+      1QFY27 EBITDA Rs4.11bn x4. Quote: "Revenue Rs56.1bn (+8.5% YoY, -11% QoQ),
+      11% above est on higher realizations (+16% YoY) despite volumes -6% YoY/
+      -19% QoQ. EBITDA Rs4.11bn (+10.6% YoY), EBITDA/t Rs5,522 (+18% YoY, flat
+      QoQ)" (Nuvama Q1FY27 review). Volumes 745kt, "significantly below guidance
+      of 800-900kt" (Nuvama).
+    verify: sourced
+    caveat: >
+      Annualises a MISSED volume quarter — 745kt against 800-900kt guided, Dubai
+      utilisation below 50% — so the tonnage understates. Management's own
+      15-20% volume growth guide is "expected to be cut to single digits".
+    scoring_note: >
+      APL APOLLO IS A CONVERTER AND ITS HRC SIGN IS OPPOSITE TO EVERY MILL'S.
+      It BUYS hot-rolled coil and sells tubes, so a rising HRC price is a COST,
+      exactly as alumina is a cost to VAML and revenue to NALCO. The digests
+      state the mechanism directly: "Domestic demand soft as HRC prices rose 3%
+      QoQ", and the key watch is "the widening HRC-Patra gap". This is the
+      cleanest mirror pair available in the sector and the structural reason to
+      carry the name at all — but it is a CROSS PEER-GROUP pair, so the UI must
+      flag it the way it flags hindalco/hindustan_zinc.
