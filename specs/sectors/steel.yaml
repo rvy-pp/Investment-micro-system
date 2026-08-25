@@ -20,7 +20,7 @@
 # in the pack and Shyam is a four-segment company including aluminium.
 
 sector: steel
-spec_version: 0.1.0
+spec_version: 0.2.0
 peer_groups: [steel_integrated, steel_converter, steel_stainless, steel_secondary]
 
 # ----------------------------------------------------------------------------
@@ -127,12 +127,22 @@ output:
 
     - pair: [sail, jsw_steel]
       rationale: >
-        Captive ore and long product against bought ore and flat product. The
-        cleanest expression of "ore up, rebar holding, HRC soft" — SAIL is the
-        only name in the group priced off rebar, so it is the only leg that does
-        NOT respond to an HRC move at all. Note SAIL's Rs9,974/t margin makes it
-        the most sensitive name in the group to any per-tonne cost, so a coking
-        coal rally works against this pair even while ore works for it.
+        Captive ore against bought ore, with a flat/long mix difference on top.
+        The cleanest expression of "ore up, rebar holding, HRC soft".
+
+        REVISED 2026-08-25 when SAIL went to a 50/50 flat/long split. The earlier
+        text said SAIL "is the only name in the group priced off rebar, so it is
+        the only leg that does NOT respond to an HRC move at all". That was true
+        of the all-rebar version and is now FALSE — SAIL responds +10.02% to a
+        +Rs2,000/t HRC shock, against JSW's +13.24%. So HRC no longer cancels
+        cleanly in this pair; it is now a partial hedge with SAIL carrying ~half
+        the flat exposure JSW does. What still separates the legs is ore
+        captivity (-0.77% vs -7.58%) and the rebar half, which JSW does not
+        carry at all (+10.02% vs +0.00% on a rebar shock).
+
+        SAIL's Rs9,974/t margin still makes it the most cost-sensitive name in
+        the group, so a coking coal rally works against this pair even while ore
+        works for it: -11.38% against JSW's -8.85%.
 
     - pair: [tata_steel, apl_apollo]
       cross_peer_group: true
@@ -164,7 +174,7 @@ output:
 # VALIDATION
 # ----------------------------------------------------------------------------
 validation:
-  test_1_economics: RUN 2026-08-25, PASSED
+  test_1_economics: RUN 2026-08-25, PASSED; re-run same day after the SAIL 50/50 split
   test_1_result: >
     The sanity check aluminium_primary.yaml demands before any prediction
     testing — does the bridge produce the ordering the desk already believes.
@@ -184,8 +194,19 @@ validation:
 
       hrc_india_inr +2000 INR/t
         jindal_steel +16.48%   jsw_steel +13.24%   tata_steel +10.99%
-        sail          +0.00%
-        SAIL correctly does not respond — it is priced off rebar, not HRC.
+        sail         +10.02%
+        RE-RUN 2026-08-25 after SAIL went to a 50/50 flat/long split. It
+        previously read +0.00% and the note here said "SAIL correctly does not
+        respond — it is priced off rebar, not HRC". That was right for the
+        all-rebar version; SAIL now carries 8.32mt of HRC.
+
+      rebar_india_primary_inr +2000 INR/t
+        sail         +10.02%
+        every other name +0.00%
+        Added as a fourth shock BECAUSE the HRC test no longer isolates the mix
+        difference. Rebar is now the only series that separates SAIL from the
+        group, and its symmetry with the HRC result (+10.02% on both) is the
+        check that the 50/50 split is actually 50/50 rather than mis-weighted.
 
   test_2_direction: >
     NOT RUN, and it cannot be run yet. Does the sign of pct_of_ebitda at date D
@@ -202,6 +223,42 @@ validation:
     So test_1 currently confirms that the ARITHMETIC works, not that the INPUTS
     are right. Confirm all four captive shares against annual reports before
     sizing anything off this group.
+
+  test_4_coproduct_basis: >
+    OPEN, and it is a SPEC-FORMAT gap rather than a bug. Referenced from the
+    warning block on `sail` in specs/entities/steel.yaml.
+
+    The bridge has no way to say "these two output lines are the same tonnes sold
+    in two forms". `basis_volume()` returns the volume of the ONE output line
+    named in `basis_item`, and `_primary()` returns the FIRST output line. Both
+    assume a second output is a BY-PRODUCT sitting on top of the primary tonnage
+    — which is exactly right for nalco/hindalco `alumina_surplus` and hzl
+    `silver_byproduct`, and exactly wrong for SAIL's 50/50 flat/long split, where
+    the two lines are CO-PRODUCTS dividing one tonnage and sharing one cost base.
+    Identical YAML shape, opposite meaning, and the engine cannot tell.
+
+    Consequence, measured: the naive split halved SAIL's whole cost side (coking
+    coal -11.38% -> -5.69%) while leaving revenue intact. Worked around in the
+    spec by writing each input line twice, once per basis_item. That restores
+    `pct_of_ebitda` exactly and is verified.
+
+    WHAT THE WORKAROUND DOES NOT FIX: `d_ebitda_per_t` still divides by the first
+    output's 8.32mt while `d_ebitda` covers all 16.64mt, so SAIL's reported /t is
+    2x too high (10,000 where 5,000 is correct). It is a display metric and does
+    not affect any score — but EBITDA/t is the native unit the steel sell-side
+    quotes, so it is the one number a reader here is most likely to sanity-check
+    against a broker note, and it will not match.
+
+    THE REAL FIX, for a decision rather than a guess: an explicit field marking
+    output lines that share a cost base — e.g. `basis_group: crude_steel` on both
+    of SAIL's outputs — with `basis_volume()` summing the group and the per-tonne
+    denominator using the group total. That removes the duplicate input lines and
+    closes the class. It IS an engine change, which the README modularity test
+    says means the spec format is wrong — and here the spec format IS wrong: the
+    co-product/by-product distinction is real modelling information the format
+    cannot express. Worth doing before a second co-product name appears; the
+    duplicate-line workaround does not scale and reads as redundancy to anyone
+    tidying up.
 
   minimum_bar: >
     Directional hit rate above 55% on high-conviction pairs, monotonic

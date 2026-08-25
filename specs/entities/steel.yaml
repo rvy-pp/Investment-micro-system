@@ -30,7 +30,11 @@
 # ---------------------------------------------------------------------------
 
 sector: steel
-spec_version: 0.1.0
+spec_version: 0.2.0        # 0.1.0 -> 0.2.0: SAIL split 50/50 flat/long,
+                           # which changed its output STRUCTURE and not just a
+                           # number. Bumped because the co-product workaround
+                           # (duplicated input lines) is a structural contract
+                           # a reader must not consolidate away.
 currency: INR
 
 # ============================================================================
@@ -323,61 +327,110 @@ entities:
     nse_symbol: SAIL
     effective_from: 2026-04-01
 
+    # ========================================================================
+    # 50/50 FLAT/LONG, set by the PM 2026-08-25. READ THE WARNING BELOW BEFORE
+    # TOUCHING THESE SIX LINES — FOUR OF THEM LOOK REDUNDANT AND ARE NOT.
+    # ========================================================================
+    # The previous version put all 16.64mt on one rebar line, which made SAIL the
+    # highest-beta name in the group by construction (+35.6% of EBITDA on the
+    # live window, against +50.1% on a +Rs5,000/t rebar shock). SAIL is roughly
+    # half flat product, so the tonnage is now split.
+    #
+    # !! THE OBVIOUS WAY TO DO THIS SPLIT IS WRONG, SILENTLY, AND IN THE
+    # !! BULLISH DIRECTION. Splitting the OUTPUT into two 8.32mt lines and
+    # !! leaving the two input lines basis'd on `rebar` HALVES THE ENTIRE COST
+    # !! SIDE, because `bridge.basis_volume()` returns the volume of the ONE
+    # !! output line named in `basis_item` — which is now 8.32mt, not 16.64mt.
+    # !! Measured, not feared:
+    # !!
+    # !!                         all-rebar    naive 50/50 split
+    # !!   coking coal +$20/t      -11.38%       -5.69%     <- cost HALVED
+    # !!   iron ore +$20/t          -0.77%       -0.38%     <- cost HALVED
+    # !!   rebar +Rs5,000/t        +50.12%      +25.06%     <- revenue intact,
+    # !!   HRC   +Rs5,000/t         +0.00%      +25.06%        just redistributed
+    # !!
+    # !! Full revenue sensitivity against half the cost sensitivity. Nothing
+    # !! raises, coverage stays 6/6, and the name reads structurally long steel
+    # !! prices with no cost base. Textbook silent-arithmetic — see
+    # !! docs/SILENT_BUGS.md.
+    #
+    # WHY THE ENGINE DOES THIS, and why it is not a bug in the engine. Every
+    # other multi-output entity's second line is a genuine BY-PRODUCT on top of
+    # the primary tonnage — nalco/hindalco `alumina_surplus`, hzl
+    # `silver_byproduct` — and a by-product does not consume the smelter's
+    # inputs, so basis'ing every input on the primary output is correct there.
+    # SAIL is the first entity where two output lines are CO-PRODUCTS: the same
+    # tonnes, sold in two forms, sharing one cost base. The YAML shape is
+    # identical and the meaning is opposite, and the engine assumes by-product.
+    #
+    # THE FIX USED HERE IS SPEC-ONLY, because the modularity test in README says
+    # a change that needs the bridge engine means the spec format is wrong. Each
+    # input is written TWICE, once per basis_item, each carrying its own 8.32mt.
+    # Verified to reproduce the all-rebar cost numbers exactly:
+    # coking coal -11.38%, iron ore -0.77%, and revenue now 25.06% on each of
+    # rebar and HRC instead of 50.12% on rebar alone.
+    #
+    # DO NOT CONSOLIDATE `*_long` AND `*_flat` BACK INTO ONE LINE EACH. That is
+    # the whole bug, and the consolidated version looks tidier.
+    #
+    # STILL WRONG AFTER THIS FIX, and it is a display metric rather than a score
+    # input: `d_ebitda_per_t` divides by `_primary(entity)`, which is the FIRST
+    # output line — 8.32mt — while `d_ebitda` covers all 16.64mt. So SAIL's
+    # reported /t is ~2x too high. `pct_of_ebitda` (what actually scores) is
+    # correct. It matters here more than it would elsewhere because EBITDA/t is
+    # the native unit the steel sell-side quotes. Fixing it properly needs the
+    # spec to distinguish a co-product from a by-product, which it cannot today
+    # — see specs/sectors/steel.yaml `validation.test_4_coproduct_basis`.
+
     outputs:
       - item: rebar
         price_link: rebar_india_primary_inr
-        volume: 16640000          # 4.16 mt Q1FY27 x 4.
+        volume: 8320000           # 50% of 16.64mt
         volume_unit: t
         asp_premium: 0
         source_note: >
           "adj EBITDA Rs41.5bn, 9.1% below Emkay est on weak volumes (4.16mt)"
-          (Emkay, Akhilesh Kumar). Priced off REBAR rather than HRC because the
-          long-product mix is what the sell-side flags as the exposure: "SAIL
-          flagged as key downside risk on higher rebar mix exposure" (Emkay),
-          "higher semi-finished exposure" on realisations.
-        verify: sourced
-        # !! ALL 16.64mt SITS ON ONE REBAR LINE, AND THAT OVERSTATES THE BETA.
-        # SAIL is roughly half flat product and half long, not all long. Pricing
-        # the whole book off primary rebar makes it the highest-beta name in the
-        # group by construction: run the live 30-session bridge and it reads
-        # +35.6% of EBITDA, because rebar rose 10.68% (48,700 -> 53,900) while HRC
-        # rose 1.7%, and 16.64mt against a Rs16,600 cr denominator means every
-        # Rs166/t is 1% of EBITDA.
-        #
-        # THE MOVE IS REAL — checked, because a 10.7% monthly move is exactly the
-        # shape a data artefact takes. It is a dozen small steps from 48,000 on
-        # 14-Jul to 53,900 on 21-Aug with no single jump above 2.7%, and the
-        # digests independently call the bottom: "Rebar (~Rs48,000/t) near bottom"
-        # (Emkay, late July). So the ARITHMETIC and the PRICE are both right and
-        # the MIX is wrong.
-        #
-        # FIX BY SPLITTING THE LINE, not by trimming the volume: one rebar line
-        # and one hrc_india_inr line at the true flat/long split, both summing to
-        # 16.64mt. Cutting the tonnage instead would break the volume/base_ebitda
-        # basis rule below. The split ratio is a PM number — no digest gives it.
-        #
-        # !! DO NOT REPLACE THIS WITH THE FY27 GUIDANCE TONNAGE. The digests cite
-        # "FY27 volume guide 22-22.5mt held" (ICICI), which is 34% above this
-        # 16.64mt. base_ebitda is 4.16mt x Rs9,974 x 4, so swapping in 22.25mt
-        # here while leaving the denominator at Q1-annualised would inflate every
-        # pct_of_ebitda for SAIL by 1.34x with nothing raising. The guide is also
-        # probably crude steel production rather than saleable sales, so it is not
-        # even the same quantity. Same basis on both sides, or neither.
+          (Emkay, Akhilesh Kumar) x4 = 16.64mt, split 50/50 flat/long by the PM
+          2026-08-25. The long half is what the sell-side flags as the exposure:
+          "SAIL flagged as key downside risk on higher rebar mix exposure"
+          (Emkay), "higher semi-finished exposure" on realisations.
+        verify: sourced            # tonnage sourced; the 50/50 SPLIT is a PM
+                                   # input, not a disclosure
+
+      - item: hrc
+        price_link: hrc_india_inr
+        volume: 8320000           # 50% of 16.64mt
+        volume_unit: t
+        asp_premium: 0
+        source_note: >
+          The flat half. No digest gives SAIL's flat/long mix; 50/50 is the PM's
+          number, 2026-08-25. Before this, SAIL responded 0.00% to an HRC shock,
+          which was the one clearly wrong thing about the all-rebar version.
+        verify: pending            # PM input, not cited
+
+        # !! DO NOT REPLACE THESE VOLUMES WITH THE FY27 GUIDANCE TONNAGE. The
+        # digests cite "FY27 volume guide 22-22.5mt held" (ICICI), 34% above the
+        # 16.64mt these two lines sum to. base_ebitda is 4.16mt x Rs9,974 x 4,
+        # so swapping the guide in here while leaving the denominator at
+        # Q1-annualised would inflate every pct_of_ebitda by 1.34x with nothing
+        # raising. The guide is also probably crude steel PRODUCTION rather than
+        # saleable SALES, so it is not even the same quantity. Same basis on
+        # both sides, or neither.
 
     inputs:
-      - item: iron_ore
+      # --- the long half, basis'd on the 8.32mt rebar line ---
+      - item: iron_ore_long
         price_link: iron_ore_china_cfr62
         intensity: 1.60
         intensity_unit: t/t
         basis_item: rebar
-        market_pct: 0.05          # ~FULLY CAPTIVE, like Tata — SAIL's own mines
-                                  # in Jharkhand and Odisha.
+        market_pct: 0.05          # ~FULLY CAPTIVE — SAIL's own mines in
+                                  # Jharkhand and Odisha.
         basis_pass_through: 0.50
-        source_note: >
-          Not cited in the corpus. Sector knowledge only.
+        source_note: "Not cited in the corpus. Sector knowledge only."
         verify: pending
 
-      - item: coking_coal
+      - item: coking_coal_long
         price_link: coking_coal_spot_aus
         intensity: 0.70
         intensity_unit: t/t
@@ -390,7 +443,34 @@ entities:
           (ICICI Securities). Tasra starting Dec-2026 means market_pct should
           STEP DOWN then, with a new `effective_from` row rather than an edit in
           place — which is exactly the dated-parameter mechanism CLAUDE.md
-          describes as the route to a genuine forecast.
+          describes as the route to a genuine forecast. Change BOTH coking coal
+          lines on that date, or the two halves disagree about the same mine.
+        verify: pending
+
+      # --- the flat half, basis'd on the 8.32mt hrc line ---
+      # SAME intensities, market_pct and pass-through as the long half, because
+      # the ore and coal are consumed identically whichever form the steel is
+      # rolled into. They are separate lines ONLY to recover the full 16.64mt of
+      # cost basis. If SAIL's flat and long routes ever differ materially in
+      # coke rate or ore grade, this is where that would be expressed.
+      - item: iron_ore_flat
+        price_link: iron_ore_china_cfr62
+        intensity: 1.60
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.05
+        basis_pass_through: 0.50
+        source_note: "Mirror of iron_ore_long; see the warning at the top of this entity."
+        verify: pending
+
+      - item: coking_coal_flat
+        price_link: coking_coal_spot_aus
+        intensity: 0.70
+        intensity_unit: t/t
+        basis_item: hrc
+        market_pct: 0.85
+        basis_pass_through: 1.00
+        source_note: "Mirror of coking_coal_long; see the warning at the top of this entity."
         verify: pending
 
   # ==========================================================================
