@@ -297,19 +297,19 @@ def score_one_date(conn, as_of: str, sha: str,
         # graded against that print than against a proxy series, and letting the
         # forward score override it would replace a measurement with an inference.
         # Forward fills in only where run-rate has nothing to stand on.
-        gscore, gconf, gdetail, gwithheld = gr.score_entity(conn, eid, as_of)
-        if gscore is None:
-            fscore, fconf, fdetail, fwithheld = gf.score_entity(conn, eid, as_of)
-            if fscore is not None:
-                gscore, gconf = fscore, fconf
-                gdetail = {"basis": "forward", **(fdetail or {})}
-                gwithheld = None
-            else:
-                # Report BOTH reasons. "no actual" alone hid that the forward path
-                # had also been tried and why it declined.
-                gwithheld = f"runrate: {gwithheld}; forward: {fwithheld}"
-        elif isinstance(gdetail, dict):
-            gdetail = {"basis": "runrate", **gdetail}
+        # ONE SCORER FOR THE WHOLE COLUMN. guidance_forward now absorbs the
+        # run-rate gap as evidence rather than competing with it, so every name is
+        # scored on one question ("will they hit it, versus a typical company
+        # here") on one scale, with 3.00 meaning neutral for all of them.
+        #
+        # It used to try run-rate first and fall back to forward, which meant the
+        # guidance column answered a different question per name depending on
+        # whether a period had reported — Tata on peer-relative credibility,
+        # SAIL on its own FY27 volume run-rate. A composite cannot blend a column
+        # that means two things.
+        gscore, gconf, gdetail, gwithheld = gf.score_entity(conn, eid, as_of)
+        if isinstance(gdetail, dict):
+            gdetail = {"basis": "forward+runrate", **gdetail}
         ph = PLACEHOLDERS.get(("guidance", eid))
         if gscore is not None:
             parts["guidance"] = gscore

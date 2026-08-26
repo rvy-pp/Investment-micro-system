@@ -91,8 +91,32 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 DB = REPO / "data" / "ims.db"
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import guidance_runrate as gr  # noqa: E402
 
-NEUTRAL_PRIOR = 0.5
+RUNRATE_SHARPNESS = 3.0   # logit units per 1.0 of run-rate gap
+
+# !! 0.50 IS NOT A NEUTRAL DELIVERY RATE, AND CENTRING ON IT WAS THE BUG.
+# !!
+# !! Indian large-caps guide conservatively and then deliver: the median delivery
+# !! rate across the eleven names with a concall ledger is 0.75, not 0.50. So the
+# !! first version, which mapped an absolute rate through logit() with 0.50 as its
+# !! centre, read ORDINARY CORPORATE BEHAVIOUR as top-decile — Tata Steel's 0.81
+# !! raw / 0.77 shrunk came out at 4.12 while sitting barely above the peer median.
+# !!
+# !! Worse, it made the pillar NON-UNIFORM, which is how it was noticed. The
+# !! run-rate scorer is centred correctly: gap = 0, i.e. exactly on track, gives
+# !! sigmoid(0) = 0.5 = a score of 3.00. The forward scorer's neutral was 0.50
+# !! delivery, which nobody has. So the same pillar meant two different things
+# !! depending on which scorer ran, and forward systematically outscored run-rate.
+# !! Tata 4.12 against SAIL 1.95 was mostly that gap, not a real difference in
+# !! how likely each is to hit its numbers.
+# !!
+# !! BOTH SCORERS NOW READ 3.00 AT NEUTRAL. Forward is centred on the UNIVERSE
+# !! MEDIAN delivery rate, so the score answers "more or less likely than the
+# !! typical company here to hit its guidance" — which is a claim worth making.
+# !! An absolute hit rate is not: everyone's is high by construction.
+NEUTRAL_PRIOR = 0.5   # only the fallback when a name has NO ledger at all
 PRIOR_SHRINK_N = 4.0     # resolved commitments needed before the record
                          # outweighs the neutral prior 1:1. Deliberately small
                          # but not 1: a single met commitment is not a habit.
@@ -200,6 +224,29 @@ def period_window(period: str):
 # ---------------------------------------------------------------------------
 # prior — demonstrated delivery, COUNTED not assessed
 # ---------------------------------------------------------------------------
+def universe_centre(conn) -> float | None:
+    """Median RAW delivery rate across every name with a concall ledger.
+
+    The centre the forward score is measured against. Computed from the store
+    rather than pinned as a constant, so it moves as the corpus grows — and it
+    must be computed on the SAME basis as each name's own rate (raw, not shrunk),
+    or a name would be compared against a differently-derived benchmark.
+    """
+    rates = []
+    for (e,) in conn.execute("SELECT DISTINCT entity_id FROM concall_commitments"):
+        c = dict(conn.execute(
+            "SELECT verdict, COUNT(*) FROM concall_commitments WHERE entity_id=? "
+            "GROUP BY verdict", (e,)).fetchall())
+        due = c.get("delivered", 0) + c.get("partial", 0) + c.get("missed", 0)
+        if due:
+            rates.append((c.get("delivered", 0) + 0.5 * c.get("partial", 0)) / due)
+    if not rates:
+        return None
+    rates.sort()
+    n = len(rates)
+    return rates[n // 2] if n % 2 else (rates[n // 2 - 1] + rates[n // 2]) / 2
+
+
 def delivery_prior(conn, entity_id: str, as_of: str):
     """(prior, n_due, detail) — management's COUNTED delivery rate.
 
@@ -233,13 +280,18 @@ def delivery_prior(conn, entity_id: str, as_of: str):
     due = c.get("delivered", 0) + c.get("partial", 0) + c.get("missed", 0)
     if due:
         raw = (c.get("delivered", 0) + 0.5 * c.get("partial", 0)) / due
-        w = due / (due + PRIOR_SHRINK_N)
-        prior = w * raw + (1 - w) * NEUTRAL_PRIOR
+        centre = universe_centre(conn) or NEUTRAL_PRIOR
+        # EDGE OVER THE PEER MEDIAN, shrunk toward ZERO by count — so a name with
+        # three graded commitments sits near the median rather than near 0.50.
+        # Shrinking toward the median is the right default: absent evidence, a
+        # company behaves like its peers, not like a coin flip.
+        edge = (logit(raw) - logit(centre)) * (due / (due + PRIOR_SHRINK_N))
+        prior = sigmoid(logit(centre) + edge)
         return prior, due, (
             f"concall ledger: {c.get('delivered',0)}D/{c.get('partial',0)}P/"
             f"{c.get('missed',0)}M of {due} due "
-            f"({c.get('not_due',0)} not due, excluded), raw {raw:.2f}"
-            f"->{prior:.2f}")
+            f"({c.get('not_due',0)} not due, excluded), raw {raw:.2f} vs peer "
+            f"median {centre:.2f}, edge {edge:+.2f} logit")
 
     g = conn.execute(
         "SELECT status FROM guidance WHERE entity_id=? AND status IN ('met','missed') "
@@ -338,6 +390,17 @@ def score_entity(conn, entity_id: str, as_of: str) -> tuple:
 
     as_of_d = dt.date.fromisoformat(as_of)
     prior, n_res, prior_note = delivery_prior(conn, entity_id, as_of)
+    centre = universe_centre(conn) or NEUTRAL_PRIOR
+
+    # gaps are keyed "metric:period", computed from CITED actuals against the
+    # target. gr is asked once per entity rather than per commitment.
+    rr_gaps = {}
+    try:
+        _s, _c, rr_detail, _w = gr.score_entity(conn, entity_id, as_of)
+        if isinstance(rr_detail, dict):
+            rr_gaps = rr_detail.get("gaps") or {}
+    except Exception:
+        rr_gaps = {}
 
     confs, per, skipped = [], {}, []
     for g in gs:
@@ -353,6 +416,31 @@ def score_entity(conn, entity_id: str, as_of: str) -> tuple:
             skipped.append(f"{g['metric']}:{g['period']} period closed")
             continue
         ev, note = observable_evidence(conn, g, as_of)
+
+        # RUN-RATE FOLDED IN AS EVIDENCE, not run as a rival scorer.
+        #
+        # This was two separate pillars-in-one until 2026-08-25: run_scores tried
+        # guidance_runrate first and fell back to forward, so Tata was scored on
+        # "is it more likely than peers to deliver" while SAIL was scored on "is
+        # it behind its own FY27 volume guide". Both centre at 3.00 now, but they
+        # are still different QUESTIONS, and a composite that blends one column
+        # cannot have that column mean two things. The PM called it random and it
+        # was.
+        #
+        # A run-rate gap is not a rival answer — it is EVIDENCE toward the forward
+        # question. A company 24% behind its volume guide one quarter in is less
+        # likely to hit it. So it enters the same sigmoid as the price divergence,
+        # on the same scale, and one model produces the whole column.
+        rr = None
+        if rr_gaps:
+            rr = rr_gaps.get(f"{g['metric']}:{g['period']}")
+        if rr is not None:
+            rr_ev = max(-MAX_EVIDENCE, min(MAX_EVIDENCE, RUNRATE_SHARPNESS * rr))
+            ev = (ev or 0.0) + rr_ev
+            note = (f"{note}; run-rate gap {rr:+.1%}" if note and
+                    "not declared observable" not in note
+                    else f"run-rate gap {rr:+.1%}")
+
         if ev is None and n_res == 0:
             skipped.append(f"{g['metric']}:{g['period']} {note}, no track record")
             continue
@@ -361,18 +449,24 @@ def score_entity(conn, entity_id: str, as_of: str) -> tuple:
         # for a volume guide nothing in `prices` can watch, and it is why the
         # concall ledger mattered: before it, prior was 0.50 for everyone and a
         # prior-only score carried no information at all.
-        c = sigmoid(logit(prior) + (ev or 0.0))
+        # CENTRED. logit(prior) - logit(centre) is the edge over a typical
+        # company; adding the observable evidence to that keeps 3.00 meaning
+        # "no better or worse than the peer median", which is exactly what
+        # gap = 0 means in the run-rate scorer. The two are now the same scale.
+        c = sigmoid(logit(prior) - logit(centre) + (ev or 0.0))
         confs.append(c)
         per[f"{g['metric']}:{g['period']}"] = {
             "confidence": round(c, 3),
             "evidence_logits": None if ev is None else round(ev, 3),
+            "runrate_gap": None if rr is None else round(rr, 4),
             "why": note,
         }
 
     if not confs:
         return None, None, None, "; ".join(skipped) or "nothing forward-scoreable"
     conf = sum(confs) / len(confs)
-    detail = {"prior": round(prior, 3), "prior_basis": prior_note,
+    detail = {"prior": round(prior, 3), "peer_median": round(centre, 3),
+              "prior_basis": prior_note,
               "n_resolved": n_res, "commitments": per}
     if skipped:
         detail["skipped"] = skipped
