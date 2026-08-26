@@ -297,8 +297,10 @@ SECTORS = [
         # steel.yaml. steel_stainless and steel_secondary carry NO economics
         # lines by design, so those two names score on valuation and mood only
         # and their economics pillar is WITHHELD rather than absent.
+        # steel_secondary (shyam_metalics) removed 2026-08-25 — PM. Not
+        # scored at all now; see specs/entities/steel.yaml.
         "peer_groups": ["steel_integrated", "steel_converter",
-                        "steel_stainless", "steel_secondary"],
+                        "steel_stainless"],
         "commodities": [
             "coking_coal_spot_aus", "coking_coal_contract_qtr",
             "iron_ore_china_cfr62", "iron_ore_china_import62",

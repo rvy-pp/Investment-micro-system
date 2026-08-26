@@ -1,6 +1,6 @@
 {
   "_note": "PM overrides \u2014 the one part of the store that cannot be regenerated. Exported on every snapshot so judgement is versioned, not just backed up.",
-  "exported": "2026-08-25",
+  "exported": "2026-08-26",
   "overrides": [
     {
       "id": 1,

@@ -711,10 +711,66 @@ entities:
     effective_from: 2026-04-01
     outputs: []
     inputs: []
+    # ========================================================================
+    # NICKEL WAS CHECKED AGAINST THE VAULT'S OWN FACT BASE AND IT DOES NOT CLOSE
+    # THIS. The pack carries lme_nickel — 4,729 rows, current to today — so the
+    # SERIES is not the blocker, which is what the earlier reason here implied.
+    # The blocker is that a nickel cost line would have the WRONG SIGN.
+    #
+    # Three findings from Coverage/Steel/Jindal Stainless/Fact Base.md, each of
+    # which independently breaks a naive nickel bridge:
+    #
+    #  1. NICKEL PASSES THROUGH TO THE CUSTOMER. "Largely spot/short-term with
+    #     nickel surcharge adjustment mechanism (1-2 month lag). No long-term
+    #     fixed-price contracts disclosed." So nickel is not a net cost exposure,
+    #     it is a pass-through with a timing lag. Modelled as a cost line, a
+    #     nickel rally reads as a margin hit when the surcharge makes it roughly
+    #     neutral — and across the lag, an inventory GAIN.
+    #
+    #  2. THE BRIDGE CANNOT EXPRESS THE LAG. windows_days is [1, 5, 20] and
+    #     basis_pass_through is a scalar fraction with no time dimension. A 1-2
+    #     month surcharge lag is 30-60 days, outside every window. The whole
+    #     economic content here IS the lag, so a lagless model does not
+    #     approximate it — it inverts it.
+    #
+    #  3. JSL IS PARTLY CAPTIVE ON NICKEL. "Indonesia NPI smelter is the key
+    #     structural hedge — it converts laterite nickel ore into NPI, feeding the
+    #     co-located SMS. This captures the mine-to-melt spread and reduces
+    #     exposure to LME nickel volatility." Same market_pct logic as iron ore,
+    #     and the captive share is not disclosed anywhere I can find.
+    #
+    # AND THE INTENSITY IS A MIX, NOT A CONSTANT. Product mix is 200-series 37%,
+    # 300-series 46%, 400-series 18%. Nickel content runs ~8-10% on 300-series,
+    # low single digits on 200-series, and essentially ZERO on 400-series, which
+    # is ferritic. Effective nickel intensity is therefore ~4-5% and moves with a
+    # mix the company is deliberately shifting — "400-series share is growing
+    # (positive for margins — lower nickel content, higher end-user value)". A
+    # fixed intensity would drift wrong in a KNOWN direction, which is worse than
+    # being merely imprecise.
+    #
+    # WHAT WOULD ACTUALLY UNBLOCK IT, in order of tractability:
+    #   (a) a STAINLESS PRICE series, so nickel sits on BOTH sides and the
+    #       modelled quantity becomes the spread rather than the input. Nothing in
+    #       the pack carries one. This is the same gap that blocks APL Apollo, and
+    #       fixing it once would fix both.
+    #   (b) a lag term in the bridge — a schema and engine change for one name,
+    #       which is not a good reason to build one.
+    #   (c) the disclosed captive NPI share plus the mix-weighted nickel
+    #       intensity, which would at least make a residual-exposure model honest
+    #       rather than sign-inverted.
+    #
+    # Until then economics stays WITHHELD and JSL scores on valuation and mood,
+    # which are real. A deliberate half-measure, not an oversight.
+    # ========================================================================
     withhold_reason: >
-      Economics withheld: no ferrochrome and no stainless-scrap series exists in
-      the metals pack, and scrap_turkey is dead after 2020-12-03. Unblocks if a
-      ferrochrome or stainless-scrap assessment is added to the daily pack.
+      Economics withheld: nickel is a 1-2 month LAGGED PASS-THROUGH via the
+      surcharge mechanism, partly hedged by captive Indonesian NPI, over a
+      nickel-content mix (200/300/400-series at 37/46/18%) the company is
+      actively shifting. lme_nickel EXISTS in the pack, so the series is not the
+      gap — a cost-only nickel line would carry the wrong sign, and the bridge's
+      1/5/20d windows cannot express a 30-60 day lag. Unblocks on a stainless
+      PRICE series (nickel on both sides, model the spread), not on more input
+      series.
 
   # ==========================================================================
   # SHYAM METALICS — carried, NOT bridged. PM decision 2026-08-25.
@@ -727,11 +783,33 @@ entities:
   #
   # A four-segment company modelled on one segment's economics would produce a
   # score that looks like the others and means something different. Withhold.
+  # ==========================================================================
+  # DROPPED FROM THE SCORED UNIVERSE — PM decision 2026-08-25.
+  # ==========================================================================
+  # `peer_group: null` is the schema's own switch for exactly this: "scoring
+  # universe; NULL = not scored". run_scores iterates entities WITH a peer_group,
+  # so this one is skipped entirely — no rows in pillar_scores, no cell on the
+  # page, and it cannot turn up in a pair.
+  #
+  # NOTHING IS DELETED. Its 15y of prices, its concall ledger (4 graded
+  # commitments), its base_financials block and its digest tag mapping all stay.
+  # Re-enabling it means restoring one line. That distinction matters because the
+  # reason for dropping it is that a steel-only model explains too little of it,
+  # NOT that the data is bad — if a segment split with volumes ever arrives, the
+  # case changes.
+  #
+  # WHY IT WAS NEVER GOING TO SCORE WELL: four reporting segments (Metallics,
+  # Carbon Steel, Stainless ~22%, ALUMINIUM), a sponge-iron/pellet cost route
+  # rather than blast-furnace, and the aluminium segment showing "the sharpest
+  # margin expansion" in the latest quarter. Its economics was already WITHHELD at
+  # coverage 0/0, so it had been scoring on valuation and mood alone — half the
+  # composite weight — while sitting in a peer group of one where no pair was
+  # possible either.
   - id: shyam_metalics
     kind: company
     name: Shyam Metalics and Energy
     sector: steel
-    peer_group: steel_secondary
+    peer_group: null
     nse_symbol: SHYAMMETL
     effective_from: 2026-04-01
     outputs: []

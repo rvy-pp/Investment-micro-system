@@ -355,12 +355,29 @@ async function loadScores(){
   const r = await fetch(`/api/scores?window=${w}`);
   const d = await r.json();
   if (d.error) return showErr(d.error);
-  const g = d.aluminium_primary;
+  /* PEER GROUPS OF THE SELECTED SECTOR, not a hardcoded pair.
+     This read `d.aluminium_primary` and `d.zinc` as literals, so the Bridge view
+     showed non-ferrous whatever tab you were on — the Steel tab rendered its
+     commodity list correctly and then a bridge for Hindalco. /api/scores has
+     returned every group since steel went live; only this function had not been
+     told. The nav already carries peer_groups per sector, so it is the source. */
+  const e = SECTORS.find(x => x.id === SECTOR) || {};
+  const groups = (e.peer_groups || []).map(k => d[k]).filter(Boolean);
+  if (!groups.length){
+    $('#s-scores').innerHTML = `<p class="note">No peer group in this sector
+      returned a bridge. If the sector is live in <code>engine.SECTORS</code>,
+      check that <code>/api/scores</code> lists its groups.</p>`;
+    return;
+  }
+  /* Header facts come from the FIRST group rather than being averaged: as_of and
+     USDINR are run-level and identical across groups, and overrides_applied is
+     per-group — summing it would double-count an override that touches two. */
+  const g = groups[0];
   $('#asof').textContent = 'as of ' + g.as_of;
   $('#fx').textContent = 'USDINR ' + g.usdinr.toFixed(2);
   $('#ovr').textContent = g.overrides_applied + ' override' +
     (g.overrides_applied === 1 ? '' : 's');
-  $('#s-scores').innerHTML = renderGroup(g) + renderGroup(d.zinc);
+  $('#s-scores').innerHTML = groups.map(renderGroup).join('');
 }
 
 function spark(vals){
@@ -1021,7 +1038,14 @@ loadSectorNav()
     // Never leave the page on "sectors…". If the nav cannot load, fall back to
     // the view that has always worked rather than showing a dead shell.
     showErr('sector nav: ' + e.message);
-    SECTORS = [{id:'non_ferrous', kind:'sector', label:'Non-Ferrous', live:true}];
+    /* Fallback nav when /api/nav fails. It must carry peer_groups now that
+       loadScores() reads them, or the Bridge view renders its empty state on a
+       sector that actually works. */
+    SECTORS = [{id:'non_ferrous', kind:'sector', label:'Non-Ferrous', live:true,
+                peer_groups:['aluminium_primary','zinc']},
+               {id:'steel', kind:'sector', label:'Steel', live:true,
+                peer_groups:['steel_integrated','steel_converter',
+                             'steel_stainless']}];
     SECTOR = 'non_ferrous';
     $('#snav').innerHTML = '<button class="stab" aria-selected="true">Non-Ferrous</button>';
     $('#vnav').hidden = false;

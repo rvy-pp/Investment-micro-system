@@ -1,9 +1,10 @@
 # ============================================================================
-# steel — four peer groups, one sector
+# steel — three peer groups, one sector
 # ============================================================================
-# Added 2026-08-25. Peer-group split set by the PM the same day. It is FOUR
+# Added 2026-08-25. Peer-group split set by the PM the same day. It is THREE
 # groups rather than one because a peer group is a scoring universe, and these
-# four sets of names do not share a cost stack:
+# sets of names do not share a cost stack. It was four until shyam_metalics was
+# dropped from scoring later the same day.
 #
 #   steel_integrated   tata_steel, jsw_steel, jindal_steel, sail
 #                      Blast-furnace mills. HRC or rebar out, iron ore and
@@ -12,16 +13,24 @@
 #   steel_converter    apl_apollo
 #                      Buys HRC, sells tubes. Opposite sign on the same series.
 #   steel_stainless    jindal_stainless      economics WITHHELD, see below
-#   steel_secondary    shyam_metalics        economics WITHHELD, see below
 #
-# The last two are carried, not bridged: they score on valuation and mood and
-# emit no economics. The reasons are per-name in specs/entities/steel.yaml; the
-# short version is that stainless has no ferrochrome or stainless-scrap series
-# in the pack and Shyam is a four-segment company including aluminium.
+# steel_secondary held shyam_metalics and was REMOVED 2026-08-25 (PM). Its
+# peer_group is now null in specs/entities/steel.yaml so it is not scored at all
+# — four segments including aluminium, a sponge-iron cost route, and economics
+# already withheld. Data retained; re-enabling is one line.
+#
+# jindal_stainless is carried, not bridged: it scores valuation and mood and
+# emits no economics. AND THE REASON CHANGED on 2026-08-25 — it is NOT a missing
+# series. lme_nickel is in the pack and current. Nickel is a 1-2 month LAGGED
+# PASS-THROUGH via the surcharge mechanism, partly hedged by captive Indonesian
+# NPI, over a nickel-content mix the company is actively shifting. A cost-only
+# nickel line would carry the WRONG SIGN, and windows_days [1,5,20] cannot express
+# a 30-60 day lag. Full reasoning on the entity in specs/entities/steel.yaml.
+# Unblocks on a stainless PRICE series — the same gap that blocks apl_apollo.
 
 sector: steel
 spec_version: 0.2.0
-peer_groups: [steel_integrated, steel_converter, steel_stainless, steel_secondary]
+peer_groups: [steel_integrated, steel_converter, steel_stainless]
 
 # ----------------------------------------------------------------------------
 # P1 ASP + P2 COSTS
