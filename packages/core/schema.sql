@@ -709,3 +709,51 @@ FROM observations o
 WHERE NOT EXISTS (
     SELECT 1 FROM observations c WHERE c.supersedes_id = o.id
 );
+
+-- ============================================================================
+-- concall_commitments — the delivery ledger from the vault's concall analysis
+-- ============================================================================
+-- Added 2026-08-25. THE PRIOR FOR P4 FORWARD, and the reason it can be a counted
+-- fact rather than an assessment.
+--
+-- `AI Insights/<TICKER>_Concall/Concall - <TICKER> - Q<n> FY<yy>.md` carries, per
+-- quarter, a table headed "Did they deliver? (prior commitments -> actual)" with
+-- columns Said / Actual / Verdict, and a Credibility tally line beneath it. That
+-- is a human grading management against its own prior words, one quarter at a
+-- time, thirteen quarters deep for each of the four steel mills and back to FY24.
+--
+-- WHY IT IS NOT LOADED INTO `guidance`. That table's CHECK requires a numeric
+-- target (point/range/direction), and these ledger rows are prose — "Karnataka
+-- mines: 3 new mines in Q1 FY27" against "Zero mention — ninth consecutive
+-- quarter of silence". Forcing them in would mean inventing target values, which
+-- is the fabricated-number failure SILENT_BUGS entry 6 records. `guidance` stays
+-- the table of PARSED numeric commitments; this is the table of GRADED ones.
+--
+-- WHY NOT Hindsight.md, which looks similar. That file is `type: hindsight`,
+-- written by the deprecated vault dashboard, and stopped updating. The concall
+-- directory has Q1 FY27 notes, so it is live. A frozen file makes a prior that
+-- silently ages into a constant.
+--
+-- `verdict` is classified from the VERDICT WORD, not the emoji. The corpus mixes
+-- real emoji with GitHub shortcodes (:white_check_mark: vs the character) and the
+-- mix is not consistent within a single file, so matching glyphs would drop rows
+-- silently. Every verdict cell contains one of the four words.
+CREATE TABLE IF NOT EXISTS concall_commitments (
+    id           INTEGER PRIMARY KEY,
+    entity_id    TEXT NOT NULL REFERENCES entities (id),
+    call_period  TEXT NOT NULL,             -- the quarter of the CALL, 'Q4FY26'
+    said         TEXT NOT NULL,             -- the prior commitment, verbatim
+    actual       TEXT NOT NULL,             -- what happened, verbatim
+    verdict      TEXT NOT NULL,             -- delivered|partial|missed|not_due
+    source_path  TEXT NOT NULL,             -- the concall note it came from
+    created_at   TEXT NOT NULL,
+    CHECK (length(trim(said)) > 0),
+    CHECK (length(trim(actual)) > 0),
+    CHECK (verdict IN ('delivered','partial','missed','not_due')),
+    -- One grading per commitment per call. Re-running the adapter must not
+    -- double-count a quarter into the delivery rate.
+    UNIQUE (entity_id, call_period, said)
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS idx_concall_entity
+    ON concall_commitments (entity_id, call_period);

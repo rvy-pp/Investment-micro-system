@@ -201,18 +201,57 @@ def period_window(period: str):
 # prior — demonstrated delivery, COUNTED not assessed
 # ---------------------------------------------------------------------------
 def delivery_prior(conn, entity_id: str, as_of: str):
-    """(prior, n_resolved, detail). Shrunk toward NEUTRAL_PRIOR by count."""
+    """(prior, n_due, detail) — management's COUNTED delivery rate.
+
+    Primary source is `concall_commitments`, loaded by
+    adapters/vault_concall.py from the vault's per-quarter concall analysis. Each
+    row is one prior commitment graded against what actually happened, by a human,
+    at the time — thirteen quarters deep for the steel mills, 457 rows in total.
+
+    THAT IS WHAT MAKES THIS A COUNT RATHER THAN AN OPINION. The alternative was
+    the Thesis Drivers `Stance` column, which is a judgement about the OUTCOME and
+    would have put P4 back where commit 8a65338 found it. A verdict of "Missed —
+    ninth consecutive quarter of silence" is a graded fact about a stated
+    commitment; a stance of "-" is a view about the future.
+
+    NOT `Hindsight.md`, which carries similar-looking pattern logs: that file is
+    written by the DEPRECATED vault dashboard and stopped updating. A prior built
+    on a frozen file decays into a constant while still looking measured.
+
+    `not_due` IS EXCLUDED FROM THE DENOMINATOR and this is the load-bearing
+    choice. A commitment whose date has not arrived is not evidence either way;
+    counting it as a non-delivery would penalise a company for having long-dated
+    plans, and JSW has 47 of them against 13 misses. Partial counts as half.
+
+    Falls back to resolved `guidance` rows when a name has no concall ledger, and
+    to NEUTRAL_PRIOR when it has neither.
+    """
     rows = conn.execute(
+        "SELECT verdict, COUNT(*) FROM concall_commitments WHERE entity_id=? "
+        "GROUP BY verdict", (entity_id,)).fetchall()
+    c = {v: n for v, n in rows}
+    due = c.get("delivered", 0) + c.get("partial", 0) + c.get("missed", 0)
+    if due:
+        raw = (c.get("delivered", 0) + 0.5 * c.get("partial", 0)) / due
+        w = due / (due + PRIOR_SHRINK_N)
+        prior = w * raw + (1 - w) * NEUTRAL_PRIOR
+        return prior, due, (
+            f"concall ledger: {c.get('delivered',0)}D/{c.get('partial',0)}P/"
+            f"{c.get('missed',0)}M of {due} due "
+            f"({c.get('not_due',0)} not due, excluded), raw {raw:.2f}"
+            f"->{prior:.2f}")
+
+    g = conn.execute(
         "SELECT status FROM guidance WHERE entity_id=? AND status IN ('met','missed') "
         "AND IFNULL(resolved_date, issued_date) <= ?", (entity_id, as_of)).fetchall()
-    n = len(rows)
+    n = len(g)
     if not n:
-        return NEUTRAL_PRIOR, 0, "no resolved commitments — neutral prior"
-    met = sum(1 for r in rows if r[0] == "met")
+        return NEUTRAL_PRIOR, 0, "no concall ledger and no resolved guidance — neutral"
+    met = sum(1 for r in g if r[0] == "met")
     raw = met / n
     w = n / (n + PRIOR_SHRINK_N)
     prior = w * raw + (1 - w) * NEUTRAL_PRIOR
-    return prior, n, f"{met}/{n} met, shrunk {raw:.2f}->{prior:.2f}"
+    return prior, n, f"guidance fallback: {met}/{n} met, raw {raw:.2f}->{prior:.2f}"
 
 
 # ---------------------------------------------------------------------------
@@ -317,6 +356,11 @@ def score_entity(conn, entity_id: str, as_of: str) -> tuple:
         if ev is None and n_res == 0:
             skipped.append(f"{g['metric']}:{g['period']} {note}, no track record")
             continue
+        # A commitment with a REAL prior and no observable driver still scores —
+        # off credibility alone. That is the honest reading of "will they hit it"
+        # for a volume guide nothing in `prices` can watch, and it is why the
+        # concall ledger mattered: before it, prior was 0.50 for everyone and a
+        # prior-only score carried no information at all.
         c = sigmoid(logit(prior) + (ev or 0.0))
         confs.append(c)
         per[f"{g['metric']}:{g['period']}"] = {
