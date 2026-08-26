@@ -86,6 +86,52 @@ guidance:
     review_trigger: next Novelis quarterly
     escalate_after_days: 120
 
+  # ------------------------------------------------------------------------
+  # JSW Steel — granted by the PM on 2026-08-25.
+  # ------------------------------------------------------------------------
+  # WHY IT IS WITHHELD, and it is the most benign reason in this file: JSW has no
+  # OPEN commitment. Its one loaded commitment — coking coal cost inflation of
+  # $12-15/t — is `status: missed`, resolved against a print of +$17/t. So the
+  # scorer is not failing and no data is absent; the company simply has nothing
+  # outstanding in the store to be scored on.
+  #
+  # It is also the only one here that will clear ITSELF. The next time management
+  # guides anything numeric, JSW gets a real forward score off a 120-commitment
+  # concall ledger — the largest track record of any name in the book, delivery
+  # rate 0.73 against a peer median of 0.75. A measured score would land near
+  # 2.9, i.e. very close to the 3.0 being granted, which is the strongest argument
+  # for granting it: the placeholder is not papering over an unknown, it is
+  # standing in for a number we can already estimate and simply have no open
+  # commitment to attach to.
+  #
+  # WHAT THE 3.0 ACTUALLY CHANGES — checked, not assumed:
+  #   composite withheld (renormalised over 3 pillars)  2.6006
+  #   composite with guidance 3.0                       2.6605
+  #   delta                                             +0.0599
+  # It moves JSW from 4th to 3rd in the steel group, ahead of sail (2.53) and
+  # jindal_steel (2.61) — so this is not cosmetic and the ordering it produces
+  # should be read knowing one of the four inputs is a decision.
+  #
+  # THE HONEST COST, and it is the reason the composite renormalises in the first
+  # place: JSW is now the ONLY steel name whose guidance is not measured, while
+  # the other three are compared against each other on a real one. tata 3.34 and
+  # sail 1.98 are earned; this 3.0 is granted. A reader comparing the column
+  # cannot tell without the `placeholder` flag in the detail, which is exactly why
+  # that flag exists and why this file is git-tracked.
+  jsw_steel:
+    score: 3.0
+    reason: >
+      No OPEN commitment: JSW's only loaded guidance is status=missed (coking coal
+      guided $12-15/t, printed +$17/t). Not a scorer failure and not missing data
+      — nothing outstanding to score. Clears itself at the next numeric guide,
+      when a 120-commitment concall ledger (0.73 delivery vs 0.75 peer median)
+      gives a measured score near 2.9.
+    granted: 2026-08-25
+    granted_by: PM
+    review_trigger: JSW's next numeric guidance, or ingestion of the concall
+      "New commitments -> next quarter's scorecard" sections
+    escalate_after_days: 120
+
 
 # ============================================================================
 # NOVELIS — neutral across the board. Granted by the PM 2026-08-25.
