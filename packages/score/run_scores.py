@@ -43,7 +43,46 @@ import guidance_forward as gf  # noqa: E402
 SPEC_VERSION = "0.5.0"
 # Pillar weights for the composite. Economics leads because it is the only
 # pillar measuring the thing itself; the rest qualify it.
-WEIGHTS = {"economics": 0.45, "valuation": 0.25, "mood": 0.15, "guidance": 0.15}
+#
+# GUIDANCE IS WEIGHTED ZERO — PM decision, 2026-08-25. Its 0.15 was redistributed
+# EQUALLY (+0.05 each) rather than proportionally, which is what was asked for and
+# is worth stating because the two differ: proportional would have given economics
+# +0.078 and mood +0.026, tilting the composite further toward economics. Equal
+# redistribution lifts mood's relative share the most (0.15 -> 0.20, +33%).
+#
+#     before   economics 0.45  valuation 0.25  mood 0.15  guidance 0.15
+#     after    economics 0.50  valuation 0.30  mood 0.20  guidance 0.00
+#
+# WHY, in the PM's words: "guidance is making it obscure". The pillar had just
+# been rebuilt twice in one day — forward-scoring, then centred on the peer median
+# — and still needed a placeholder for JSW and carried a probable basis artefact
+# on SAIL. A term nobody can read is worse than a term that is absent, because it
+# moves the ranking while looking like information.
+#
+# THE PILLAR IS STILL COMPUTED, STORED AND SHOWN. Only its composite weight is
+# zero. That is deliberate: it stays visible and auditable, accumulates history
+# for the day it earns weight back, and can be re-weighted with a one-line edit
+# and a re-run. Deleting it would throw away the concall ledger work.
+#
+# TWO CONSEQUENCES, both real:
+#
+#  1. THE JSW GUIDANCE PLACEHOLDER IS NOW INERT. Its entire purpose was to stop
+#     the composite renormalising over three pillars instead of four. At weight
+#     zero, renormalisation is identical whether guidance scored or not, so the
+#     grant changes nothing — JSW's composite is the same 2.60 with or without it.
+#     Noted in specs/placeholders.yaml; it is a candidate for revocation rather
+#     than something to leave reporting on every run as though it mattered.
+#
+#  2. `conviction.py` STILL USES GUIDANCE AS A MULTIPLIER, and that is NOT
+#     changed here. Its sizing rule is
+#         size = (economics - 3) x f(valuation) x g(guidance)
+#     which is a different mechanism from a weighted average — a withheld pillar
+#     returns exactly 1.0 there rather than reweighting a denominator. Removing
+#     guidance from the sizing path is a separate decision and has not been taken.
+#     So guidance currently has zero weight in the SCORE and non-zero influence on
+#     the SIZE. That is inconsistent on its face and is flagged rather than
+#     quietly harmonised.
+WEIGHTS = {"economics": 0.50, "valuation": 0.30, "mood": 0.20, "guidance": 0.00}
 
 
 # --------------------------------------------------------------------------
@@ -341,7 +380,15 @@ def score_one_date(conn, as_of: str, sha: str,
         # honest, and `covered` records how much of the intended weight it rests on.
         if parts:
             wsum = sum(WEIGHTS[k_] for k_ in parts)
-            comp = sum(parts[k_] * WEIGHTS[k_] for k_ in parts) / wsum
+            # GUARD ADDED WITH THE ZERO WEIGHT. This division was safe while every
+            # pillar carried weight: `parts` non-empty implied wsum > 0. With
+            # guidance at 0.00 that stops holding — a name whose ONLY scored
+            # pillar is guidance now yields wsum == 0.0 and a ZeroDivisionError.
+            # Rare but reachable: a new name with a concall ledger and no prices
+            # would hit it on its first run. Withhold instead, which is what
+            # "nothing with weight has scored" honestly means.
+            comp = (sum(parts[k_] * WEIGHTS[k_] for k_ in parts) / wsum
+                    if wsum else None)
             put(conn, as_of, eid, "composite", comp, None,
                 {"pillars": {k_: round(v, 2) for k_, v in parts.items()},
                  "covered": round(wsum, 2)}, None, sha)

@@ -118,6 +118,22 @@ guidance:
   # sail 1.98 are earned; this 3.0 is granted. A reader comparing the column
   # cannot tell without the `placeholder` flag in the detail, which is exactly why
   # that flag exists and why this file is git-tracked.
+  # !! INERT AS OF 2026-08-25, LATER THE SAME DAY. The PM zeroed guidance's
+  # !! composite weight and redistributed its 0.15 equally, so renormalising over
+  # !! three pillars and over four now give the SAME answer. Verified rather than
+  # !! reasoned: JSW's composite is 2.636364 with this grant and 2.636364 without.
+  # !!
+  # !! This grant existed ONLY to stop the composite renormalising. At weight zero
+  # !! it changes nothing, and its whole visible effect — moving JSW from 4th to
+  # !! 2nd in the steel group — has reversed itself (JSW is now 4th at 2.63).
+  # !!
+  # !! SO IT IS A REVOCATION CANDIDATE, not something to leave reporting on every
+  # !! run as though it mattered. It is kept for now rather than deleted because
+  # !! guidance's weight is expected to come back once the concall "New
+  # !! commitments" sections are ingested, at which point this becomes live again
+  # !! and the reasoning below applies unchanged. Revoke it if that ingestion
+  # !! lands and gives JSW a real open commitment — then it is both inert AND
+  # !! unnecessary.
   jsw_steel:
     score: 3.0
     reason: >

@@ -210,7 +210,7 @@ for head, body in [
      "out — a score move with no new information."),
     ("PILLAR 4 IS DIFFERENT", "Guidance scores LINEARLY: score = 1 + 4 × confidence. A confidence "
      "is already a bounded probability; squashing it again would distort it."),
-    ("COMPOSITE", "0.45 economics / 0.25 valuation / 0.15 mood / 0.15 guidance, RENORMALISED over "
+    ("COMPOSITE", "0.50 economics / 0.30 valuation / 0.20 mood / 0.00 guidance, RENORMALISED over "
      "whichever pillars actually scored. A withheld pillar is never filled with 3.0 — that would "
      "let missing data pose as neutral evidence."),
     ("PAIRS", "pair_score = score(pct_long − pct_short). Score the spread; do not subtract two "

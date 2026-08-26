@@ -87,7 +87,15 @@ REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 DB = REPO / "data" / "ims.db"
 
 MULT_MIN, MULT_MAX = 0.40, 1.60   # no qualifier may dominate or invert
-AVG_W = {"economics": 0.45, "valuation": 0.25, "mood": 0.15, "guidance": 0.15}
+# Kept in step with run_scores.WEIGHTS by hand — two copies of one set of
+# numbers, which is its own hazard. Guidance zeroed and the 0.15 redistributed
+# equally, PM decision 2026-08-25; see the long note in run_scores.py.
+#
+# NOTE THIS FILE USES GUIDANCE TWICE, and only ONE use is zeroed. AVG_W is the
+# comparison average and now excludes guidance. The `multiplier()` path below
+# still applies g(guidance) to the SIZE. That inconsistency is deliberate and
+# flagged, not resolved: dropping guidance from sizing is a separate call.
+AVG_W = {"economics": 0.50, "valuation": 0.30, "mood": 0.20, "guidance": 0.00}
 
 
 def multiplier(score: float | None, strength: float = 0.30) -> tuple[float, str]:
@@ -146,7 +154,9 @@ def main() -> int:
         c = conviction(p)
         got = {k: p.get(k) for k in AVG_W if p.get(k) is not None}
         wsum = sum(AVG_W[k] for k in got)
-        avg = sum(p[k] * AVG_W[k] for k in got) / wsum if got else None
+        # `if wsum` not `if got` — with a zero weight in the table, `got` can be
+        # non-empty while wsum is 0.0.
+        avg = sum(p[k] * AVG_W[k] for k in got) / wsum if wsum else None
         rows.append((eid, p, c, avg, wsum))
 
     print(f"conviction sizing vs weighted average — {as_of}\n")
