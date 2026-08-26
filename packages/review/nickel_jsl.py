@@ -155,9 +155,19 @@ def main() -> int:
     print(f"LME NICKEL vs JINDAL STAINLESS — weekly log returns, "
           f"{start} .. {a.end}")
     if not a.full:
-        print(f"  starting {DEFAULT_FROM}: JSL's close went 56.35 -> 22.05 "
-              f"(-60.9%) on {JSL_ACTION}, the JSL/JSHL restructuring. A return "
-              f"series crossing it carries one -61% week that is not a return.")
+        # `start`, not DEFAULT_FROM. It printed the constant, so `--from
+        # 2023-08-26` announced "starting 2016-01-01" over numbers computed from
+        # 2023 — a caption contradicting its own table, which is exactly how a
+        # window gets misreported in a writeup.
+        note = (f"  window starts {start}")
+        if start <= JSL_ACTION:
+            note += (f" — CROSSES {JSL_ACTION}, where JSL went 56.35 -> 22.05 "
+                     f"(-60.9%) at the JSL/JSHL restructuring. That week is not a "
+                     f"return.")
+        else:
+            note += (f" — clear of the {JSL_ACTION} restructuring "
+                     f"(-60.9%), which is not a return.")
+        print(note)
     n_jsl = len(wk["jindal_stainless"])
     print(f"  {n_jsl} weekly observations\n")
 

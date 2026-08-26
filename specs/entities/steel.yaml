@@ -783,6 +783,29 @@ entities:
     #     +0.107 against nickel's +0.111 — indistinguishable. What little
     #     co-movement exists is shared metals beta, not stainless economics.
     #
+    # PAST 3 YEARS ONLY (2023-08-26, 156 weeks) — the result STRENGTHENS:
+    #
+    #     jindal_stainless   +0.021    (r-squared 0.04%, i.e. nothing)
+    #     tata_steel         +0.209
+    #     jsw_steel          +0.299
+    #     excess vs peers    -0.233    (was -0.158 on the 2016+ window)
+    #
+    # Over the recent window JSL's nickel correlation is INDISTINGUISHABLE FROM
+    # ZERO while the carbon-steel names carry +0.21 to +0.30. The aluminium control
+    # collapses too: JSL +0.014 vs nickel's +0.021. So on current-regime data JSL
+    # has essentially no measurable loading on ANY base metal, and the carbon names
+    # have a real one.
+    #
+    # JSL's strongest reading in the 3y window is +0.132 at lag MINUS 3 weeks —
+    # the EQUITY leading nickel, |t| 1.64, not significant. Worth naming because a
+    # negative lag is the opposite of a cost-transmission story; nothing there
+    # supports a nickel input line even as a timing play.
+    #
+    # AND A DEMONSTRATION OF WHY LEVELS ARE USELESS HERE, which is why the script
+    # prints them only to dismiss them: the LEVEL correlation is +0.234 on the
+    # 2016+ window and -0.145 on the 3y window. Same two series, opposite sign,
+    # decided entirely by where the window starts.
+    #
     # SO THE WITHHOLD IS RIGHT AND THE REASON IS STRONGER THAN FIRST WRITTEN:
     # nickel explains ~1% of JSL's weekly variance and less of it than it explains
     # for Tata or JSW. A nickel line of ANY sign, lagged or not, would add noise to
