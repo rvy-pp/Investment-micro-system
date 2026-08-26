@@ -584,9 +584,18 @@ entities:
         market_pct: 0.20          # captive_share 1.00 -> royalty-only exposure
         basis_pass_through: 0.50
         source_note: >
-          SOURCED 2026-08-25: SAIL is completely self-sufficient in iron ore,
-          producing 33.78 MT from its captive mines in FY25. captive_share 1.00,
-          same as Tata, so both sit at the royalty-only 0.20.
+          SOURCED 2026-08-25 and CONFIRMED BY THE PM the same day: SAIL is 100%
+          captive on iron ore, producing 33.78 MT from its own mines in FY25.
+          captive_share 1.00, same as Tata, so both sit at the royalty-only 0.20.
+
+          A CONFLICTING FIGURE EXISTS AND IS NOT A CONFLICT — recorded so nobody
+          "corrects" this back. The vault's Coverage/Steel/SAIL Knowledge Card
+          says "Captive iron ore ~40% self-sufficiency (targeting 56 MT FY27,
+          80 MT long-term)". That ~40% is not the share of REQUIREMENT met
+          captively: 33.78 MT of ore against ~19-22 mt of steel at ~1.7 t/t is
+          ~33-37 MT of need, i.e. ~100%. The ~40% is against the 80 MT long-term
+          MINING AMBITION, which is a capacity-utilisation number, not a
+          sourcing-mix number. Two different denominators, same word.
         verify: sourced
 
       - item: coking_coal

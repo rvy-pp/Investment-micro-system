@@ -38,6 +38,7 @@ from scoring import score as to_score, solve_k  # noqa: E402
 import mood as mood_mod  # noqa: E402
 import valuation as val_mod  # noqa: E402
 import guidance_runrate as gr  # noqa: E402
+import guidance_forward as gf  # noqa: E402
 
 SPEC_VERSION = "0.5.0"
 # Pillar weights for the composite. Economics leads because it is the only
@@ -278,7 +279,37 @@ def score_one_date(conn, as_of: str, sha: str,
         # period has elapsed. guidance_evidence is no longer read here; it is for
         # facts arithmetic cannot reach (a regulatory clearance), not for numbers
         # it can.
+        # TWO SCORERS, ONE PILLAR, AND THE CHOICE IS THE PERIOD'S STATE.
+        #
+        # guidance_runrate answers "given what has printed, are they on track in
+        # the period already running" and needs a cited ACTUAL.
+        # guidance_forward answers "will they hit a period that has not reported"
+        # and needs NO actual — it uses the demonstrated delivery record plus the
+        # observable divergence of the guided driver from the guided path.
+        #
+        # CLAUDE.md defines P4 as "Will they hit the quarter? — forward view", and
+        # until 2026-08-25 only the run-rate scorer existed, so the pillar could
+        # not score the one thing it was specified for: Tata Steel's Q2FY27
+        # guidance was withheld as "no actual" when the absence of an actual is
+        # exactly what makes a guide forward-looking.
+        #
+        # RUN-RATE WINS WHERE BOTH APPLY. A period with a reported print is better
+        # graded against that print than against a proxy series, and letting the
+        # forward score override it would replace a measurement with an inference.
+        # Forward fills in only where run-rate has nothing to stand on.
         gscore, gconf, gdetail, gwithheld = gr.score_entity(conn, eid, as_of)
+        if gscore is None:
+            fscore, fconf, fdetail, fwithheld = gf.score_entity(conn, eid, as_of)
+            if fscore is not None:
+                gscore, gconf = fscore, fconf
+                gdetail = {"basis": "forward", **(fdetail or {})}
+                gwithheld = None
+            else:
+                # Report BOTH reasons. "no actual" alone hid that the forward path
+                # had also been tried and why it declined.
+                gwithheld = f"runrate: {gwithheld}; forward: {fwithheld}"
+        elif isinstance(gdetail, dict):
+            gdetail = {"basis": "runrate", **gdetail}
         ph = PLACEHOLDERS.get(("guidance", eid))
         if gscore is not None:
             parts["guidance"] = gscore
