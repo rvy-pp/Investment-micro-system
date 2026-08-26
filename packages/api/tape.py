@@ -217,7 +217,25 @@ def refresh_status() -> dict:
 # the tape
 # ---------------------------------------------------------------------------
 
-def tape(pillar: str = "composite", since: str | None = None) -> dict:
+def tape(pillar: str = "composite", since: str | None = None,
+         peer_groups: list[str] | None = None) -> dict:
+    """The persisted tape, optionally restricted to some peer groups.
+
+    !! `peer_groups` WAS NOT HERE UNTIL 2026-08-26 AND THE PAIR TAB WAS BROKEN
+    !! BECAUSE OF IT. tape() returned EVERY scored entity regardless of which
+    !! sector tab was selected, so Non-Ferrous and Steel drew identical charts —
+    !! the PM's report was "Non-ferrous and steel show all same graphs", and that
+    !! is exactly what it was.
+    !!
+    !! It is the same bug I fixed in loadScores() the day before and did not look
+    !! for in its neighbour. loadScores() read `d.aluminium_primary` as a literal;
+    !! this read nothing at all and returned the union. One view was hardcoded to
+    !! one sector, the other was blind to sector, and both looked fine on the
+    !! Non-Ferrous tab — which was the only tab anybody had opened.
+    !!
+    !! LESSON WORTH THE LINE: when a sector-awareness bug is found in one view,
+    !! check every other view that reads the store. There were two.
+    """
     if pillar not in PILLARS:
         raise ValueError(f"unknown pillar {pillar!r}; expected one of {PILLARS}")
 
@@ -225,6 +243,14 @@ def tape(pillar: str = "composite", since: str | None = None) -> dict:
     groups = {e["id"]: e.get("peer_group") for e in entities.values()
               if e.get("peer_group")}
     names = {e["id"]: e.get("name", e["id"]) for e in entities.values()}
+
+    keep = None
+    if peer_groups:
+        want = set(peer_groups)
+        keep = {eid for eid, g in groups.items() if g in want}
+        # A reporting unit has no peer_group and so is never in `keep`. That is
+        # correct for a sector view — novelis carries economics but cannot be
+        # traded or paired, so it does not belong on a chart of a sector's names.
 
     conn = connect()
     where = "pillar=?" + (" AND as_of>=?" if since else "")
@@ -236,6 +262,8 @@ def tape(pillar: str = "composite", since: str | None = None) -> dict:
 
     by_ent: dict[str, list[dict]] = {}
     for r in rows:
+        if keep is not None and r["entity_id"] not in keep:
+            continue
         by_ent.setdefault(r["entity_id"], []).append(dict(r))
 
     ents = sorted(by_ent)

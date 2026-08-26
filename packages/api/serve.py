@@ -77,7 +77,11 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(
                         {"error": f"unknown pillar {p!r}; "
                                   f"expected one of {tape_mod.PILLARS}"}, 400)
-                return self._json(tape_mod.tape(p, since))
+                # `groups` is a comma-separated peer_group list. Absent, the
+                # tape returns every scored name — which is what made the Pair
+                # tab identical on every sector until 2026-08-26.
+                gs = [x for x in (q.get("groups", [""])[0] or "").split(",") if x]
+                return self._json(tape_mod.tape(p, since, gs or None))
             if u.path == "/api/inputs":
                 return self._json(engine.inputs_for_ui())
             if u.path == "/api/oi":

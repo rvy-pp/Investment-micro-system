@@ -446,7 +446,14 @@ const SPANS = {'1m':30, '3m':91, '6m':182, '1y':365, '3y':1095, 'all':null};
 
 async function getTape(pillar){
   if (!TAPE[pillar]){
-    const d = await (await fetch('/api/tape?pillar=' + encodeURIComponent(pillar))).json();
+    /* SEND THE SELECTED SECTOR'S PEER GROUPS. Without this the tape returns
+       every scored name and the Pair tab draws the same chart on every sector —
+       the same sector-blindness that loadScores() had, in the neighbouring
+       view. */
+    const se = SECTORS.find(x => x.id === SECTOR) || {};
+    const gq = (se.peer_groups || []).join(',');
+    const d = await (await fetch('/api/tape?pillar=' + encodeURIComponent(pillar) +
+      (gq ? '&groups=' + encodeURIComponent(gq) : ''))).json();
     if (d.error) throw new Error(d.error);
     TAPE[pillar] = d;
   }
