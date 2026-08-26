@@ -166,6 +166,45 @@ def main() -> int:
 
     print(f"front end as of {r['as_of']}  ->  packages/web/app.html "
           f"(served live, nothing to rebuild)\n")
+    # ---- IS THE RUNNING SERVER ACTUALLY SERVING THIS CODE? ----------------
+    #
+    # "served live, nothing to rebuild" above is true of the FILE and says nothing
+    # about the PROCESS. serve.py imports engine at startup, so engine.SECTORS is
+    # frozen in memory from whenever the server was launched.
+    #
+    # On 2026-08-26 the Steel tab still showed the "no spec" badge a full day
+    # after steel went live. The server had been running since 8/25 15:17 and was
+    # answering `Steel live=False, peer_groups=[]` while the code on disk said
+    # otherwise. Every route answered, every check here passed, and the page was a
+    # day stale — with this step's own output reassuring the reader.
+    #
+    # Same shape as the refresh light in CLAUDE.md: "a scheduled task that
+    # silently stops looks exactly like a quiet market". A stale server looks
+    # exactly like a sector with no spec.
+    #
+    # NOT FATAL. No server, or one on another port, is a normal state for a
+    # headless run and must not fail the refresh.
+    try:
+        import urllib.request
+        live = json.load(urllib.request.urlopen(
+            "http://127.0.0.1:8770/api/nav", timeout=5))
+        live_groups = {x["id"]: sorted(x.get("peer_groups") or [])
+                       for x in live if x.get("kind") == "sector"}
+        disk_groups = {s["id"]: sorted(s["peer_groups"]) for s in engine.SECTORS}
+        drift = {k: (live_groups.get(k), v) for k, v in disk_groups.items()
+                 if live_groups.get(k) != v}
+        if drift:
+            print("  !! THE RUNNING SERVER IS SERVING STALE CODE — restart it")
+            for k, (was, now) in drift.items():
+                print("       %-14s server %s  disk %s" % (k, was, now))
+            print()
+        else:
+            print("  server on 8770 matches the code on disk")
+            print()
+    except Exception:
+        print("  no server answering on 8770 — nothing to check against")
+        print()
+
     print(f"{'route':32}{'':4}detail")
     print("-" * 92)
     for x in r["routes"]:
