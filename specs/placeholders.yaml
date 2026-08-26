@@ -31,51 +31,41 @@ spec_version: 0.1.0
 
 guidance:
 
-  # ------------------------------------------------------------------------
-  # Vedanta — granted by the PM on 2026-08-24.
-  # ------------------------------------------------------------------------
-  # WHY IT IS WITHHELD. guidance_runrate.py scores actual against a cited target
-  # weighted by how much of the period has elapsed. All three of Vedanta's FY27
-  # volume commitments are marked `ramp-dependent`, so there is no fixed target
-  # to measure a run rate against and the scorer correctly declines. This is not
-  # a missing-data problem that a fetch would fix; it is a guidance that does not
-  # take a measurable form until the ramp is disclosed.
+  # ========================================================================
+  # VEDANTA — REVOKED 2026-08-25. Kept as a record, not as a grant.
+  # ========================================================================
+  # Granted by the PM 2026-08-24 because guidance_runrate declined: all three of
+  # Vedanta's FY27 volume commitments are `ramp-dependent`, so there was no fixed
+  # target to measure a run rate against.
   #
-  # WHAT THE 3.0 ACTUALLY CHANGES — checked, not assumed:
+  # THE GAP IT FILLED HAS CLOSED, which is the whole lifecycle this file
+  # describes. guidance_forward now scores Vedanta 3.86 from a measured basis —
+  # a concall ledger of 20 due commitments at a 0.90 delivery rate, the highest
+  # in the book, against a 0.75 peer median. That is exactly the "next Vedanta
+  # concall" review_trigger the grant was written with, reached by a scorer that
+  # can answer the forward question without a fixed target.
   #
-  #   SIZE           NOTHING. conviction.multiplier() maps a withheld pillar to
-  #                  exactly 1.0, and 3.0 maps to 1.0 as well
-  #                  (1 + (3-3)/2 * 0.30 * 2 = 1.0). Vedanta's SIZE is +1.70
-  #                  either way. The number the desk trades on is untouched.
+  # It was ALSO inert by then, for a second and independent reason: guidance's
+  # composite weight went to 0.00 the same day. Verified rather than assumed —
+  # Vedanta's composite is 3.976256 with the grant and 3.976256 without.
   #
-  #   composite      4.05 -> 3.89. The average renormalises over present
-  #                  pillars, so today it divides by 0.85 and excludes guidance.
-  #                  Adding a 4th pillar at 3.0 divides by 1.00 instead.
-  #
-  # NOTE THE DIRECTION: this makes Vedanta LOWER, not higher. Its other three
-  # pillars are all above 3.0, so renormalising had been FLATTERING it — the
-  # placeholder is the conservative choice here, not a thumb on the scale. It
-  # stays top of the book but its lead over Hindustan Zinc narrows from 0.24 to
-  # 0.08, which is inside the noise of any of these pillars.
-  vedanta:
-    score: 3.0
-    reason: >
-      FY27 volume commitments are all ramp-dependent, so the run-rate scorer has
-      no fixed target to measure against and withholds. Neutral placeholder until
-      the ramp is quantified.
-    granted: 2026-08-24
-    granted_by: PM
-    review_trigger: next Vedanta concall
-    # Not an auto-expiry. Silently dropping a placeholder would move a composite
-    # with no cause anyone could see in the transcript, which is the same class
-    # of failure as silently adding one. Past this many days the run escalates
-    # from a note to an OVERDUE warning and keeps applying it, so the decision
-    # to revoke stays a human one.
-    escalate_after_days: 120
+  # REVOKED RATHER THAN LEFT DORMANT. run_scores prefers a real score over a
+  # placeholder, so this block had stopped affecting anything; but a grant that
+  # sits in the file still prints on every run and still reads as a live decision
+  # to anyone scanning it. Two dead grants and one live one is how this file stops
+  # being legible. Nothing had to be unwound — placeholders are recomputed each
+  # run, never accumulated.
 
   # Novelis. Kept in THIS block, not a second `guidance:` — a duplicate
   # top-level key is silent and last-wins, and when this file briefly had two it
   # deleted Vedanta's entry above without a word. One block per pillar.
+  # INERT at the composite level since guidance went to weight 0.00 on
+  # 2026-08-25 — verified, Novelis' composite is 3.000000 either way. KEPT
+  # regardless, and not for the reason JSW's is kept: Novelis is a reporting unit
+  # with ALL FOUR pillars on placeholders, so its composite comes from the
+  # all-placeholder path rather than the renormaliser, and this entry is what
+  # makes the guidance cell say "granted" instead of "withheld" on a name where
+  # every cell is granted. Removing it would make one of four look measured.
   novelis:
     score: 3.0
     reason: >
