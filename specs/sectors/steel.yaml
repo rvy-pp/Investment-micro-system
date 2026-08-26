@@ -1,10 +1,11 @@
 # ============================================================================
-# steel — three peer groups, one sector
+# steel — two peer groups, five scored names
 # ============================================================================
-# Added 2026-08-25. Peer-group split set by the PM the same day. It is THREE
-# groups rather than one because a peer group is a scoring universe, and these
-# sets of names do not share a cost stack. It was four until shyam_metalics was
-# dropped from scoring later the same day.
+# Added 2026-08-25. Peer-group split set by the PM. It is TWO groups because a
+# peer group is a scoring universe and these sets of names do not share a cost
+# stack. It was FOUR on 2026-08-25, three after shyam_metalics was dropped that
+# evening, and two after jindal_stainless was dropped on 2026-08-26 — both on
+# evidence rather than tidiness, both recorded below.
 #
 #   steel_integrated   tata_steel, jsw_steel, jindal_steel, sail
 #                      Blast-furnace mills. HRC or rebar out, iron ore and
@@ -12,25 +13,31 @@
 #                      like-for-like.
 #   steel_converter    apl_apollo
 #                      Buys HRC, sells tubes. Opposite sign on the same series.
-#   steel_stainless    jindal_stainless      economics WITHHELD, see below
+#
+# steel_stainless held jindal_stainless and was REMOVED 2026-08-26 (PM), leaving
+# FIVE scored names. The deciding evidence was measured, not asserted: JSL loads
+# +0.021 on LME nickel over the past 3 years against tata_steel's +0.209 and
+# jsw_steel's +0.299 — LESS than two names that consume no nickel — and +0.014 on
+# aluminium. It does not respond to any commodity this store carries, which is
+# what the bridge exists to exploit. It also has no concall ledger (no
+# JINDALSTNLS_Concall directory exists) and no OI, so it was scoring on valuation
+# and mood alone. See packages/review/nickel_jsl.py and the entity note.
 #
 # steel_secondary held shyam_metalics and was REMOVED 2026-08-25 (PM). Its
 # peer_group is now null in specs/entities/steel.yaml so it is not scored at all
 # — four segments including aluminium, a sponge-iron cost route, and economics
 # already withheld. Data retained; re-enabling is one line.
 #
-# jindal_stainless is carried, not bridged: it scores valuation and mood and
-# emits no economics. AND THE REASON CHANGED on 2026-08-25 — it is NOT a missing
-# series. lme_nickel is in the pack and current. Nickel is a 1-2 month LAGGED
-# PASS-THROUGH via the surcharge mechanism, partly hedged by captive Indonesian
-# NPI, over a nickel-content mix the company is actively shifting. A cost-only
-# nickel line would carry the WRONG SIGN, and windows_days [1,5,20] cannot express
-# a 30-60 day lag. Full reasoning on the entity in specs/entities/steel.yaml.
-# Unblocks on a stainless PRICE series — the same gap that blocks apl_apollo.
+# THE FIVE SCORED NAMES are the four blast-furnace mills plus apl_apollo. Note
+# apl_apollo's economics is LIVE but uninformative by construction — its output
+# and input are both linked to hrc_india_inr at ~1:1, so the bridge nets it to
+# -0.73% on a +Rs2,000/t HRC shock. It is kept because that is a spec-shape
+# problem with a known fix (a tube price series), not an absence of response.
+# The same stainless/tube price gap would have unblocked jindal_stainless.
 
 sector: steel
 spec_version: 0.2.0
-peer_groups: [steel_integrated, steel_converter, steel_stainless]
+peer_groups: [steel_integrated, steel_converter]
 
 # ----------------------------------------------------------------------------
 # P1 ASP + P2 COSTS

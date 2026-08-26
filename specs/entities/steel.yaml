@@ -702,11 +702,58 @@ entities:
   #
   # Its valuation and mood pillars DO score, from base_financials and its 8
   # broker actions. That is the honest half.
+  # ==========================================================================
+  # DROPPED FROM THE SCORED UNIVERSE — PM decision 2026-08-26.
+  # ==========================================================================
+  # Same lever as shyam_metalics: `peer_group: null`, which the schema defines as
+  # "scoring universe; NULL = not scored". No pillar rows, no cell, cannot appear
+  # in a pair. Nothing is deleted — 15y of prices, 8 broker actions and its digest
+  # tag mapping all stay, so re-enabling is one line.
+  #
+  # THE DECIDING EVIDENCE IS A MEASUREMENT, not a judgement about the business.
+  # packages/review/nickel_jsl.py, weekly log returns:
+  #
+  #                        3y (156w)   2016+ (555w)
+  #     jindal_stainless      +0.021        +0.111
+  #     tata_steel            +0.209        +0.283
+  #     jsw_steel             +0.299        +0.254
+  #
+  # JSL loads on nickel LESS than two carbon-steel names that consume none, and on
+  # the recent window its loading is r-squared 0.04% — nothing. lme_aluminium is
+  # the same story (+0.014). So it does not respond measurably to ANY commodity
+  # this store carries, which is the one thing the economics bridge is built to
+  # exploit. Its economics was already WITHHELD; the correlation work established
+  # that this is structural rather than a missing-series problem.
+  #
+  # AND ITS OTHER INPUTS ARE THE THINNEST IN THE BOOK, which is what settled it
+  # against keeping the name on valuation and mood alone:
+  #
+  #     entity             broker_actions  concall_ledger  oi_rows
+  #     jindal_stainless          8               0            0
+  #     shyam_metalics            8               4            0    <- dropped
+  #     apl_apollo                8              11           91
+  #     tata_steel               28              35           91
+  #
+  # There is NO `JINDALSTNLS_Concall` directory in the vault — only JINDALSTEL,
+  # which is Jindal Steel. So JSL has no delivery ledger, hence no P4 prior, and
+  # no OI. It was scoring on valuation and mood only: 0.50 of the intended weight,
+  # with the other 0.50 renormalised away.
+  #
+  # WHAT WOULD BRING IT BACK, and it is a shared fix rather than a JSL-specific
+  # one: a STAINLESS PRICE series. That would let nickel sit on both sides of the
+  # bridge so the modelled quantity is the conversion spread rather than an input —
+  # the same gap that makes apl_apollo's economics uninformative. One series, two
+  # names. Until then this is a name the model has nothing to say about.
+  #
+  # NOT A JUDGEMENT ON THE BUSINESS. Its near-zero loading on the metals complex
+  # is a real property and arguably a useful one in a book that is long/short
+  # metals — it just makes JSL a poor fit for a system whose edge IS commodity
+  # pass-through.
   - id: jindal_stainless
     kind: company
     name: Jindal Stainless
     sector: steel
-    peer_group: steel_stainless
+    peer_group: null
     nse_symbol: JSL
     effective_from: 2026-04-01
     outputs: []
