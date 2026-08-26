@@ -21,6 +21,14 @@ sys.path.insert(0, str(REPO / "packages" / "api"))
 
 import engine  # noqa: E402
 import tape as tape_mod  # noqa: E402
+sys.path.insert(0, str(REPO / "packages" / "core"))
+from code_fingerprint import fingerprint  # noqa: E402
+
+# CAPTURED ONCE, AT IMPORT. That is the point — it records the code as it was when
+# this process loaded it, so /api/version can be compared against the same
+# function run fresh against disk. Computing it per request would make the two
+# always agree and the guard useless.
+BOOT_FINGERPRINT = fingerprint(REPO)
 
 # 8765 is taken by the vault's existing node dashboard. Sharing a port does not
 # error visibly — the other server just answers, and every request 404s as if
@@ -98,6 +106,15 @@ class Handler(BaseHTTPRequestHandler):
                 sid = q.get("id", [""])[0]
                 d = engine.sector_detail(sid)
                 return self._json(d, 404 if d.get("error") else 200)
+            if u.path == "/api/version":
+                # What this PROCESS loaded, versus what is on disk right now.
+                # build_frontend compares them; a mismatch means restart.
+                now = fingerprint(REPO)
+                return self._json({
+                    "boot": BOOT_FINGERPRINT,
+                    "disk": now,
+                    "stale": now["newest_mtime"] > BOOT_FINGERPRINT["newest_mtime"],
+                })
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             return self._json({"error": "not found"}, 404)

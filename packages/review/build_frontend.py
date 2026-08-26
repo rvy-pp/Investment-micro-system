@@ -186,23 +186,21 @@ def main() -> int:
     # headless run and must not fail the refresh.
     try:
         import urllib.request
-        live = json.load(urllib.request.urlopen(
-            "http://127.0.0.1:8770/api/nav", timeout=5))
-        live_groups = {x["id"]: sorted(x.get("peer_groups") or [])
-                       for x in live if x.get("kind") == "sector"}
-        disk_groups = {s["id"]: sorted(s["peer_groups"]) for s in engine.SECTORS}
-        drift = {k: (live_groups.get(k), v) for k, v in disk_groups.items()
-                 if live_groups.get(k) != v}
-        if drift:
+        v = json.load(urllib.request.urlopen(
+            "http://127.0.0.1:8770/api/version", timeout=5))
+        if v.get("stale"):
             print("  !! THE RUNNING SERVER IS SERVING STALE CODE — restart it")
-            for k, (was, now) in drift.items():
-                print("       %-14s server %s  disk %s" % (k, was, now))
+            print("       loaded at boot : %s" % v["boot"].get("newest_file"))
+            print("       newest on disk : %s" % v["disk"].get("newest_file"))
+            print("       the server imported %d modules; one is newer than the "
+                  "process" % v["boot"].get("n_modules", 0))
             print()
         else:
-            print("  server on 8770 matches the code on disk")
+            print("  server on 8770 is running the code on disk")
             print()
     except Exception:
-        print("  no server answering on 8770 — nothing to check against")
+        print("  no /api/version on 8770 — server absent, or older than this "
+              "check (restart it once to enable staleness detection)")
         print()
 
     print(f"{'route':32}{'':4}detail")
