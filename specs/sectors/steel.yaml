@@ -12,7 +12,10 @@
 #                      coking coal in. The only group where pairs are
 #                      like-for-like.
 #   steel_converter    apl_apollo
-#                      Buys HRC, sells tubes. Opposite sign on the same series.
+#                      Buys HRC, sells tubes. The "opposite sign on the same
+#                      series" this line used to claim is REFUTED — measured
+#                      +0.103 against the mills' +0.076 and +0.109. A group of
+#                      one, kept for its valuation and mood, not for a mirror.
 #
 # steel_stainless held jindal_stainless and was REMOVED 2026-08-26 (PM), leaving
 # FIVE scored names. The deciding evidence was measured, not asserted: JSL loads
@@ -28,12 +31,27 @@
 # — four segments including aluminium, a sponge-iron cost route, and economics
 # already withheld. Data retained; re-enabling is one line.
 #
-# THE FIVE SCORED NAMES are the four blast-furnace mills plus apl_apollo. Note
-# apl_apollo's economics is LIVE but uninformative by construction — its output
-# and input are both linked to hrc_india_inr at ~1:1, so the bridge nets it to
-# -0.73% on a +Rs2,000/t HRC shock. It is kept because that is a spec-shape
-# problem with a known fix (a tube price series), not an absence of response.
-# The same stainless/tube price gap would have unblocked jindal_stainless.
+# THE FIVE SCORED NAMES are the four blast-furnace mills plus apl_apollo.
+#
+# apl_apollo's economics is LIVE and sits near 3.0, and as of 2026-08-26 that is
+# a DEFENSIBLE reading rather than a known-wrong one. This note used to say it was
+# "uninformative by construction... a spec-shape problem with a known fix (a tube
+# price series), not an absence of response". Measured, it IS an absence of
+# response: +0.103 on hrc_india_inr against tata_steel's +0.076 and jsw_steel's
+# +0.109, excess +0.011. The bridge nets to -0.73% on a +Rs2,000/t HRC shock and
+# the equity does roughly the same, so the pillar is honest about HRC.
+#
+# WHAT IT IS STILL SILENT ABOUT, and the distinction must not be collapsed: the
+# CONVERSION SPREAD. "No net exposure to the LEVEL of HRC" was measured; "no
+# exposure to the tube/coil spread" was not, and nothing here observes that
+# spread. A tube price series would give this name real economics. It would NOT
+# resurrect the tata/apl_apollo pair, which needs the two legs to move oppositely
+# on HRC and they do not.
+#
+# WHY IT IS KEPT WHERE jindal_stainless WAS NOT: JSL had no measurable response to
+# ANY commodity in the store, no concall ledger and no OI. apl_apollo has 11
+# graded concall commitments, 91 OI rows, and an economics reading that is
+# approximately correct rather than misleading.
 
 sector: steel
 spec_version: 0.2.0
@@ -209,22 +227,44 @@ output:
 
     - pair: [tata_steel, apl_apollo]
       cross_peer_group: true
+      status: REFUTED
       rationale: >
-        THE HRC MIRROR. A mill against a converter of the same coil: rising HRC is
-        revenue to Tata and cost to APL Apollo. Structurally the sharpest pair
-        available in the sector, and the only one whose legs sit on opposite sides
-        of a single price series.
-      blocked: conversion_spread_unpriced
+        WITHDRAWN 2026-08-26 ON MEASUREMENT, and kept only to record that it was
+        wrong. This read: "THE HRC MIRROR. A mill against a converter of the same
+        coil: rising HRC is revenue to Tata and cost to APL Apollo. Structurally
+        the sharpest pair available in the sector, and the only one whose legs sit
+        on opposite sides of a single price series."
+
+        The legs do NOT sit on opposite sides. packages/review/driver_beta.py,
+        weekly log returns vs hrc_india_inr over 3 years:
+
+            apl_apollo   +0.103    tata_steel   +0.076    jsw_steel  +0.109
+
+        Same sign, same magnitude, and APL Apollo's excess over the two mills is
+        +0.011. A short-coil leg would read NEGATIVE. It does not, on either the
+        3-year or the since-2016 window.
+
+        THE REASONING THAT PRODUCED IT WAS SOUND AND THE CONCLUSION WAS STILL
+        WRONG, which is the part worth keeping. "It buys coil and sells tubes,
+        therefore it is short coil" is correct about the physical flow and wrong
+        about the equity, because APL Apollo passes coil through on brand pricing
+        power — "EBITDA/t Rs5,522 flat qoq despite... dealer destocking", "APL
+        preserved margins over volume". A structural argument about a cost stack
+        is a hypothesis about an exposure, not evidence of one.
+      blocked: no_measurable_hrc_differential
       blocked_note: >
-        NOT TRADEABLE ON THIS MODEL TODAY, and the spec says so rather than
-        offering it. APL Apollo's output and input are both linked to
-        hrc_india_inr at ~1:1, so the bridge nets it to -0.73% on a +Rs2,000/t HRC
-        shock — it reports the name as HRC-NEUTRAL when the digests plainly say
-        rising coil hurt it ("Domestic demand soft as HRC prices rose 3% QoQ",
-        Nuvama; the stated key monitorable is "the widening HRC-Patra gap"). A
-        converter earns the tube/coil SPREAD, and no tube price series exists in
-        the pack. Same gap that put Novelis on a placeholder. Unblocks on a tube
-        price series or a granted placeholder.
+        The block reason CHANGED with the measurement, and the change matters.
+        It used to read `conversion_spread_unpriced` — "the bridge reports the
+        name as HRC-neutral when the digests plainly say rising coil hurt it",
+        i.e. we cannot measure a real exposure. The truth is the other way round:
+        the exposure is not there to measure. The bridge netting to -0.73% on a
+        +Rs2,000/t HRC shock is roughly what the equity does too.
+
+        SO THIS PAIR IS NOT WAITING ON A DATA FEED. A tube price series would let
+        the CONVERSION SPREAD be modelled, which is worth having for APL Apollo's
+        own economics — but it would not resurrect this pair, because the pair
+        needs the two legs to respond to HRC in opposite directions and they do
+        not. Do not re-add it when a tube series arrives.
 
   require_falsifier: true
   report_residual_beta: true

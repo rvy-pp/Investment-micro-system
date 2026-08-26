@@ -667,11 +667,25 @@ companies:
       utilisation below 50% — so the tonnage understates. Management's own
       15-20% volume growth guide is "expected to be cut to single digits".
     scoring_note: >
-      APL APOLLO IS A CONVERTER AND ITS HRC SIGN IS OPPOSITE TO EVERY MILL'S.
-      It BUYS hot-rolled coil and sells tubes, so a rising HRC price is a COST,
-      exactly as alumina is a cost to VAML and revenue to NALCO. The digests
-      state the mechanism directly: "Domestic demand soft as HRC prices rose 3%
-      QoQ", and the key watch is "the widening HRC-Patra gap". This is the
-      cleanest mirror pair available in the sector and the structural reason to
-      carry the name at all — but it is a CROSS PEER-GROUP pair, so the UI must
-      flag it the way it flags hindalco/hindustan_zinc.
+      REVISED 2026-08-26 ON MEASUREMENT. This said: "APL APOLLO IS A CONVERTER AND
+      ITS HRC SIGN IS OPPOSITE TO EVERY MILL'S... the cleanest mirror pair
+      available in the sector and the structural reason to carry the name at all."
+
+      THE SIGN IS NOT OPPOSITE. Weekly log returns vs hrc_india_inr over three
+      years: apl_apollo +0.103, tata_steel +0.076, jsw_steel +0.109 — same sign,
+      same magnitude, excess over the mills +0.011. A cost exposure reads
+      NEGATIVE. Same result since 2016. It passes coil through on brand pricing
+      power: "EBITDA/t Rs5,522 flat qoq (+18% yoy) despite West Asia war, energy
+      inflation, dealer destocking", and "APL preserved margins over volume".
+
+      The digest lines that were read as proof of a cost exposure — "Domestic
+      demand soft as HRC prices rose 3% QoQ", "the widening HRC-Patra gap" —
+      describe a DEMAND effect and a SPREAD, not a cost pass-through to the
+      equity. Both can be true while the stock has no net HRC beta, and both are.
+
+      CONSEQUENCE: the tata/apl_apollo pair is marked REFUTED in
+      specs/sectors/steel.yaml and should not be re-added when a tube price series
+      arrives — that series would give this name real economics but would not make
+      the two legs move oppositely. The reason to carry APL Apollo is its
+      valuation and mood plus a real concall ledger, not a mirror trade.
+      See packages/review/driver_beta.py.
