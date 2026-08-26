@@ -748,6 +748,47 @@ entities:
     # fixed intensity would drift wrong in a KNOWN direction, which is worse than
     # being merely imprecise.
     #
+    # ========================================================================
+    # MEASURED 2026-08-25, and it settles the question more firmly than the Fact
+    # Base did — packages/review/nickel_jsl.py. Weekly log returns, 556 weeks
+    # from 2016 (JSL's history is cut at the 2015-11-19 restructuring, -60.9%).
+    #
+    #   contemporaneous r, nickel vs the equity
+    #     jindal_stainless   +0.111   (n=555, |t|=2.63)
+    #     tata_steel         +0.283   (n=555, |t|=6.95)
+    #     jsw_steel          +0.254   (n=555, |t|=6.18)
+    #
+    # !! JSL IS LESS NICKEL-SENSITIVE THAN TWO CARBON-STEEL NAMES THAT CONSUME NO
+    # !! NICKEL AT ALL. The excess attributable to stainless is NEGATIVE: -0.158
+    # !! on this window, -0.128 on full history, -0.209 from 2021. Stable in sign
+    # !! and rough size across all three.
+    #
+    # THREE THINGS THAT FOLLOW, and the second corrects the note above rather than
+    # supporting it:
+    #
+    #  1. THE SIGN IS POSITIVE, SO NICKEL IS NOT AN UNHEDGED COST. A real cost
+    #     exposure reads negative — nickel up, margin down, equity down. It does
+    #     not. That is what the surcharge pass-through and the captive NPI hedge
+    #     predict, so the mechanism is supported.
+    #
+    #  2. THE 1-2 MONTH LAG IS NOT VISIBLE, and the comment above leaned on it.
+    #     A lead-lag scan from -12 to +12 weeks shows NO peak where the surcharge
+    #     story predicts one: lag +4w reads +0.107 against lag 0's +0.111, and
+    #     every other lag sits inside |r| < 0.08, i.e. noise. So "the whole
+    #     economic content here IS the lag" is NOT established by prices. It may
+    #     still be true of the P&L and simply not reach the equity; it is not
+    #     evidence for building a lag term.
+    #
+    #  3. NICKEL IS NOT EVEN A SPECIFIC EXPOSURE. JSL tracks lme_aluminium at
+    #     +0.107 against nickel's +0.111 — indistinguishable. What little
+    #     co-movement exists is shared metals beta, not stainless economics.
+    #
+    # SO THE WITHHOLD IS RIGHT AND THE REASON IS STRONGER THAN FIRST WRITTEN:
+    # nickel explains ~1% of JSL's weekly variance and less of it than it explains
+    # for Tata or JSW. A nickel line of ANY sign, lagged or not, would add noise to
+    # this name's economics rather than signal. That is a measurement, not a
+    # reading of a document.
+    #
     # WHAT WOULD ACTUALLY UNBLOCK IT, in order of tractability:
     #   (a) a STAINLESS PRICE series, so nickel sits on BOTH sides and the
     #       modelled quantity becomes the spread rather than the input. Nothing in
@@ -768,9 +809,14 @@ entities:
       nickel-content mix (200/300/400-series at 37/46/18%) the company is
       actively shifting. lme_nickel EXISTS in the pack, so the series is not the
       gap — a cost-only nickel line would carry the wrong sign, and the bridge's
-      1/5/20d windows cannot express a 30-60 day lag. Unblocks on a stainless
-      PRICE series (nickel on both sides, model the spread), not on more input
-      series.
+      1/5/20d windows cannot express a 30-60 day lag. MEASURED and stronger than
+      that: weekly returns 2016-2026 put JSL's nickel correlation at +0.111
+      against tata_steel's +0.283 and jsw_steel's +0.254 — LESS nickel-sensitive
+      than two names that consume none — with no lead-lag peak anywhere from -12
+      to +12 weeks, and aluminium tracking equally well (+0.107). Nickel explains
+      ~1% of variance and none of it specific. Unblocks on a stainless PRICE
+      series (nickel on both sides, model the spread), not on more input series.
+      See packages/review/nickel_jsl.py.
 
   # ==========================================================================
   # SHYAM METALICS — carried, NOT bridged. PM decision 2026-08-25.
