@@ -31,6 +31,7 @@ import argparse
 import json
 import pathlib
 import subprocess
+import time
 import sys
 from datetime import datetime, timezone
 
@@ -42,6 +43,19 @@ PY = sys.executable
 # Tier 0 in DAILY_MONITORING.md is explicitly "HALT", not "warn and continue",
 # because everything downstream of a failed integrity check is untrustworthy
 # rather than merely missing.
+# SQLite reports contention with two different messages depending on whether the
+# whole file or a single table is held. Matching only the first would let the
+# other one through as a hard failure, which is the bug this helper exists to stop
+# — so both are matched, case-insensitively, and the check is deliberately narrow:
+# any OTHER OperationalError is a real failure and must stay red.
+_LOCK_MARKERS = ("database is locked", "database table is locked")
+
+
+def _is_locked(stderr: str | None) -> bool:
+    t = (stderr or "").lower()
+    return any(m in t for m in _LOCK_MARKERS)
+
+
 STEPS = [
     ("preflight",         ["packages/core/preflight.py"],                     True),
     ("equity closes",     ["packages/adapters/yahoo_prices.py", "--load",
@@ -289,6 +303,67 @@ def main() -> int:
         body = (r.stdout or "").strip()
         if body:
             say("  " + body.replace("\n", "\n  "))
+
+        # A LOCKED DATABASE IS A SCHEDULING CONDITION, NOT A CODE FAILURE, and
+        # conflating the two turned the whole run red for a reason that had
+        # nothing wrong with it.
+        #
+        # 2026-08-26: the launcher fired a refresh while a `run_scores --backfill
+        # 148` was still writing, and `equity closes` died on
+        # "sqlite3.OperationalError: database is locked". The run went FAILED and
+        # the dashboard light went red on a store that was completely healthy. The
+        # store is WAL with a 5,000 ms busy_timeout — WAL lets readers coexist
+        # with ONE writer, but not two writers, and 5s is nothing against a
+        # twenty-minute backfill.
+        #
+        # THE POINT OF THAT LIGHT IS THAT IT IS TRUSTED. A red light that means
+        # "two things ran at once" trains you to ignore a red light that means
+        # something is broken, which is the same reasoning this file already
+        # applies to a stale feed: "a data condition, not a code failure".
+        #
+        # RETRY ONCE FIRST. Ordinary contention clears in seconds and a retry is
+        # cheaper and more honest than a skip. Only a persistent lock is treated
+        # as contention.
+        if r.returncode != 0 and _is_locked(r.stderr):
+            say("  db locked — another writer is active; retrying once in 8s")
+            time.sleep(8)
+            r = subprocess.run([PY, *argv], cwd=REPO,
+                               capture_output=True, text=True)
+            body = (r.stdout or "").strip()
+            if body:
+                say("  " + body.replace("\n", "\n  "))
+
+        if r.returncode != 0 and _is_locked(r.stderr):
+            # SKIPPED, not failed. The page renders anything that is neither `ok`
+            # nor `skipped` as red, so the status string is what keeps the light
+            # honest; `detail` is what the chip shows on hover.
+            #
+            # NOT marked in the done-marker, because that is only written on
+            # SUCCESS — so this step is retried on the next launch rather than
+            # being skipped for the rest of the day.
+            say("  ! still locked — SKIPPED, not failed. Nothing is broken; this "
+                "step did not run and will retry next launch.")
+            results.append({
+                "step": label, "status": "skipped", "reason": "db_locked",
+                "detail": "skipped: database locked by a concurrent writer "
+                          "(e.g. a backfill). Not a failure; retries next launch.",
+                "error": (r.stderr or "").strip()[:2000]})
+            if fatal:
+                # A FATAL step that never ran is still fatal. If score+persist
+                # could not write, everything downstream is stale and calling the
+                # run OK would be exactly the silent failure this file exists to
+                # prevent. Halt — but say it is contention, not breakage.
+                ok = False
+                say(f"\nHALT — {label} is a Tier 0 gate and it did not run "
+                    f"(database contended, not broken). Re-run once the other "
+                    f"writer finishes.")
+                break
+            # Non-fatal: the run stays green. That is only safe because the
+            # freshness check below independently verifies the DATA is current —
+            # so a skipped load whose feed has genuinely gone stale still turns
+            # the light amber. The two checks answer different questions.
+            continue
+
         if r.returncode != 0:
             ok = False
             err = (r.stderr or "").strip() or f"exit {r.returncode}"
