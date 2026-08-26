@@ -33,8 +33,85 @@ RATING = re.compile(
     r"\b(BUY|SELL|HOLD|ADD|REDUCE|NEUTRAL|OUTPERFORM|UNDERPERFORM|"
     r"OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]WEIGHT|ACCUMULATE)\b", re.I)
 
-# Broker names seen in these digests. A named list beats a generic
-# capitalised-word heuristic, which picks up analyst surnames and plant names.
+# CANONICAL HOUSE -> the patterns that name it, longest form first so
+# "Bank of America" is not shadowed by "BofA" and "JP Morgan" not by "JPM".
+#
+# !! WHY THIS EXISTS: BROKER ATTRIBUTION WAS BULLET-LEVEL AND RESOLVED BY LIST
+# !! POSITION, WHICH MISATTRIBUTED EVERY MULTI-HOUSE ROUND-UP.
+# !!
+# !! `scan()` matched houses against the whole BULLET and `collect()` took
+# !! brokers[0]. Because the comprehension iterates BROKERS, brokers[0] is the
+# !! house earliest in THE LIST, not the one the sentence actually names. "Ambit"
+# !! sat at index 0, "Kotak" at 2, "JPM" at 5 — so they won everything.
+# !!
+# !! Measured on the store before the fix (2026-08-26):
+# !!
+# !!   jindal_steel / "Ambit" / 2026-07-28 — four rows, quotes naming IIFL,
+# !!       Nomura, ICICI Securities and Ambit. All four recorded as Ambit.
+# !!   jsw_steel / "Kotak" / 2026-07-21 — quotes naming Nomura, Elara, Avendus
+# !!       Spark and MS. All recorded as Kotak.
+# !!   sail / "JPM" / 2026-07-29 — quotes naming Elara and BofA. Recorded as JPM.
+# !!
+# !! THE DAMAGE WAS NOT MAINLY DUPLICATION, WHICH IS WHAT IT LOOKED LIKE. Four
+# !! houses collapsing into one wrong house destroys BREADTH, and mood.py's gate
+# !! weights breadth ~3x an extra note from the same house
+# !! (1 - exp(-(0.40*brokers + 0.15*events))). So the notes carrying the MOST
+# !! independent opinion — sector round-ups — were the ones whose breadth was
+# !! most understated, and the recorded house was usually wrong too.
+# !!
+# !! The entity side of this was already fixed: extract_broker_actions.named_in()
+# !! resolves the COMPANY per sentence and falls back to bullet tags. The same
+# !! idea was never applied to brokers.
+BROKER_PATTERNS = [
+    ("Morgan Stanley", r"Morgan Stanley|\bMS\b"),
+    ("JPMorgan",       r"JP ?Morgan|\bJPM\b"),
+    ("BofA",           r"Bank of America|\bBofA\b"),
+    ("Goldman",        r"Goldman(?: Sachs)?|\bGS\b"),
+    ("Avendus Spark",  r"Avendus(?: Spark)?"),
+    ("ICICI",          r"ICICI(?: Securities| Direct)?"),
+    ("Motilal Oswal",  r"Motilal(?: Oswal)?|\bMOSL\b"),
+    ("Kotak",          r"\bKotak\b|\bKIE\b"),
+    ("Ambit",          r"\bAmbit\b"),
+    ("Emkay",          r"\bEmkay\b"),
+    ("Jefferies",      r"\bJefferies\b"),
+    ("CLSA",           r"\bCLSA\b"),
+    ("Nomura",         r"\bNomura\b"),
+    ("UBS",            r"\bUBS\b"),
+    ("Citi",           r"\bCiti\w*\b"),
+    ("Macquarie",      r"\bMacquarie\b"),
+    ("HSBC",           r"\bHSBC\b"),
+    ("PhillipCapital", r"\bPhillip ?Cap\w*\b"),
+    ("Investec",       r"\bInvestec\b"),
+    ("Axis",           r"\bAxis\b"),
+    ("Antique",        r"\bAntique\b"),
+    ("Elara",          r"\bElara\b"),
+    ("IIFL",           r"\bIIFL\b"),
+    ("Systematix",     r"\bSystematix\b"),
+    ("Nuvama",         r"\bNuvama\b"),
+    ("Incred",         r"\bIn ?Cred\b"),
+    ("B&K",            r"B&K"),
+]
+
+
+def brokers_in(text: str) -> list[str]:
+    """Canonical houses named in `text`, in the order they APPEAR IN THE TEXT.
+
+    Text order, not list order — the whole point. Returns each house once.
+    """
+    hits = []
+    for canon, pat in BROKER_PATTERNS:
+        m = re.search(pat, text, re.I)
+        if m:
+            hits.append((m.start(), canon))
+    hits.sort()
+    out = []
+    for _pos, canon in hits:
+        if canon not in out:
+            out.append(canon)
+    return out
+
+
+# Kept for the probe output and for callers that want the flat list.
 BROKERS = [
     "Ambit", "Emkay", "Kotak", "KIE", "Jefferies", "JPM", "JP Morgan",
     "Morgan Stanley", "BofA", "Bank of America", "CLSA", "Nomura", "UBS",
@@ -56,16 +133,20 @@ def scan(entity: str | None):
             tags = sorted({TAGS[t] for t in TAGS if t in line})
             if not tags or (entity and entity not in tags):
                 continue
-            # broker attribution is line-level, like the tags
-            brokers = [b for b in BROKERS if re.search(rf"\b{re.escape(b)}\b", line)]
+            # Bullet-level houses are now only the FALLBACK. The sentence's own
+            # house wins, resolved in text order — see the note on
+            # BROKER_PATTERNS for what list-order attribution was doing.
+            bullet_brokers = brokers_in(line)
             for sent in sentences(line):
                 tp = TP.search(sent)
                 rating = RATING.search(sent)
                 if not (tp or rating):
                     continue
-                out.append((date, tags, brokers, sent,
+                sent_brokers = brokers_in(sent)
+                out.append((date, tags, sent_brokers or bullet_brokers, sent,
                             tp.group(1) if tp else None,
-                            rating.group(1).upper() if rating else None))
+                            rating.group(1).upper() if rating else None,
+                            bool(sent_brokers)))
     return out
 
 

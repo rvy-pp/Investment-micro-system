@@ -134,9 +134,16 @@ def classify(sent: str, rating: str | None) -> tuple[str, int, float]:
     return "reiterate", pol, 0.2
 
 
+# Informativeness, for choosing which row survives a same-house same-day
+# collapse. Mirrors classify()'s weights: an upgrade is a decision, a reiterate
+# is a restatement.
+_INFORM = {"upgrade": 4, "downgrade": 4, "initiate": 3, "tp_change": 2,
+           "reiterate": 1}
+
+
 def collect(entity: str | None = None):
     rows = []
-    for date, tags, brokers, sent, tp, rating in scan(entity):
+    for date, tags, brokers, sent, tp, rating, sent_named in scan(entity):
         if not brokers:
             continue          # broker_actions.broker is NOT NULL, and an
                               # unattributable call cannot be deduplicated
@@ -159,8 +166,127 @@ def collect(entity: str | None = None):
                 "tp_to": float(tp.replace(",", "")) if tp else None,
                 "direction": direction, "weight": weight,
                 "quote": re.sub(r"\s+", " ", sent)[:400],
+                "_sent_named": sent_named,
             })
-    return rows
+    return _dedupe(rows)
+
+
+def _dedupe(rows: list[dict]) -> list[dict]:
+    """One row per (entity, house, date) — the most informative one.
+
+    WHY DEDUPE AT ALL. broker_candidates.py already states the principle: a call
+    is only usable if the house is named, because "restating the same call three
+    times would look like three independent opinions and inflate a consensus".
+    The named-broker requirement was built to ENABLE that dedup and nothing ever
+    performed it. One BofA note on APL Apollo produced two rows — the header
+    sentence with the target price, and a bare "Reiterate BUY." later in the same
+    bullet.
+
+    THIS IS DELIBERATELY SECOND, AFTER THE ATTRIBUTION FIX, AND THE ORDER MATTERS.
+    Deduping on the OLD bullet-level attribution would have been actively
+    destructive: `jindal_steel / "Ambit" / 2026-07-28` held four rows whose quotes
+    named IIFL, Nomura, ICICI and Ambit, and collapsing them would have thrown
+    away three real houses' opinions to keep one — turning a misattribution into
+    permanent data loss. With sentences resolved to their own house, those four
+    rows are four DIFFERENT keys and all survive. Only genuine same-note repeats
+    collapse.
+
+    WHICH ROW WINS: most informative action first (upgrade/downgrade > initiate >
+    tp_change > reiterate), then a row carrying a target price over one without,
+    then the longer quote as a proxy for more context. A sentence that named its
+    own house also beats one that inherited the bullet's, because the inherited
+    one is a weaker claim about who said it.
+    """
+    best: dict[tuple, dict] = {}
+    for r in rows:
+        k = (r["entity_id"], r["broker"], r["action_date"])
+        cur = best.get(k)
+        rank = (_INFORM.get(r["action"], 0), 1 if r["tp_to"] is not None else 0,
+                1 if r.get("_sent_named") else 0, len(r["quote"]))
+        if cur is None:
+            best[k] = {**r, "_rank": rank, "_collapsed": 1}
+            continue
+        cur["_collapsed"] += 1
+        if rank > cur["_rank"]:
+            best[k] = {**r, "_rank": rank, "_collapsed": cur["_collapsed"]}
+    out = []
+    for r in best.values():
+        r.pop("_rank", None)
+        r.pop("_sent_named", None)
+        out.append(r)
+    return sorted(out, key=lambda r: (r["action_date"], r["entity_id"],
+                                      r["broker"]))
+
+
+def sweep_store(conn, verbose: bool = True) -> int:
+    """Collapse duplicate (entity, broker, date) rows ACROSS ALL source_ids.
+
+    WHY A SECOND DEDUPE. `_dedupe()` runs inside this loader and can only see the
+    rows this loader is about to write. `broker_actions` has more than one writer:
+    load_guidance.py inserts a `broker_actions` block from the hand-built
+    specs/extracted/*.json files under its own source_id.
+
+    Found 2026-08-26 after the in-loader dedupe was working. One row survived:
+
+        hindustan_zinc / BofA / 2026-07-27
+          digest-2026-07-27  rating "Underperform"  tp 515   <- load_guidance
+          digest-auto        rating "UNDERPERFORM"  tp 515   <- this loader
+
+    The same BofA note, same day, same target price, recorded twice by two
+    loaders. Exactly the inflated-consensus failure broker_candidates.py warns
+    about, arriving by a route a per-loader dedupe cannot close.
+
+    NOTE THE CASE DIFFERENCE, which is a second bug the pair exposed: the
+    hand-written row says "Underperform" while the regex path upper-cases to
+    "UNDERPERFORM". POSITIVE/NEGATIVE in this module are UPPERCASE sets, so the
+    hand-written row scored direction 0 — counted as an event, contributing no
+    direction. Collapsing to the richer row fixes that instance; the general fix
+    is for any hand-built JSON to upper-case its ratings.
+
+    KEEPS the most informative row by the same rule as `_dedupe`, and PREFERS
+    `digest-auto` on a tie because that row is regenerated from the digests on
+    every load, so keeping it means the next load re-derives it rather than
+    leaving a hand-written row nothing refreshes.
+    """
+    rows = conn.execute(
+        "SELECT id, source_id, entity_id, broker, action_date, action, "
+        "rating_to, tp_to, quote FROM broker_actions").fetchall()
+    groups: dict[tuple, list] = {}
+    for r in rows:
+        groups.setdefault((r[2], r[3], r[4]), []).append(r)
+
+    kill, notes = [], []
+    for k, g in groups.items():
+        if len(g) < 2:
+            continue
+        def rank(r):
+            return (_INFORM.get(r[5], 0),
+                    1 if r[7] is not None else 0,
+                    1 if r[1] == "digest-auto" else 0,
+                    len(r[8] or ""))
+        g = sorted(g, key=rank, reverse=True)
+        keep, drop = g[0], g[1:]
+        kill += [r[0] for r in drop]
+        srcs = {r[1] for r in g}
+        if len(srcs) > 1:
+            notes.append(f"    {k[0]}/{k[1]}/{k[2]}  CROSS-LOADER: kept "
+                         f"{keep[1]}, dropped {', '.join(r[1] for r in drop)}")
+        else:
+            notes.append(f"    {k[0]}/{k[1]}/{k[2]}  kept {keep[5]}, "
+                         f"dropped {len(drop)}")
+    if kill:
+        conn.executemany("DELETE FROM broker_actions WHERE id=?",
+                         [(i,) for i in kill])
+        conn.commit()
+    if verbose:
+        if kill:
+            print(f"  swept {len(kill)} duplicate row(s) across "
+                  f"{len(notes)} group(s):")
+            for n in notes:
+                print(n)
+        else:
+            print("  no duplicate (entity, broker, date) rows in the store")
+    return len(kill)
 
 
 def main() -> int:
@@ -211,6 +337,8 @@ def main() -> int:
                  r["rating_to"], r["tp_to"], r["quote"], now))
             n += 1
         conn.commit()
+        # ACROSS loaders, after this loader has written its own rows.
+        sweep_store(conn)
         conn.close()
         print(f"\nloaded {n} broker actions")
     return 0
