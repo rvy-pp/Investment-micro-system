@@ -12,10 +12,12 @@
 #                      coking coal in. The only group where pairs are
 #                      like-for-like.
 #   steel_converter    apl_apollo
-#                      Buys HRC, sells tubes. The "opposite sign on the same
-#                      series" this line used to claim is REFUTED — measured
-#                      +0.103 against the mills' +0.076 and +0.109. A group of
-#                      one, kept for its valuation and mood, not for a mirror.
+#                      Buys HRC, sells tubes, and is scored on a DIFFERENT
+#                      ECONOMICS BASIS from the mills — the HRC vs secondary-steel
+#                      spread, transmitting through VOLUME, not a margin bridge.
+#                      See economics_spread on the entity. The "opposite sign on
+#                      the same series" this line once claimed is REFUTED
+#                      (+0.103 against the mills' +0.076 and +0.109).
 #
 # steel_stainless held jindal_stainless and was REMOVED 2026-08-26 (PM), leaving
 # FIVE scored names. The deciding evidence was measured, not asserted: JSL loads
@@ -33,20 +35,33 @@
 #
 # THE FIVE SCORED NAMES are the four blast-furnace mills plus apl_apollo.
 #
-# apl_apollo's economics is LIVE and sits near 3.0, and as of 2026-08-26 that is
-# a DEFENSIBLE reading rather than a known-wrong one. This note used to say it was
-# "uninformative by construction... a spec-shape problem with a known fix (a tube
-# price series), not an absence of response". Measured, it IS an absence of
-# response: +0.103 on hrc_india_inr against tata_steel's +0.076 and jsw_steel's
-# +0.109, excess +0.011. The bridge nets to -0.73% on a +Rs2,000/t HRC shock and
-# the equity does roughly the same, so the pillar is honest about HRC.
+# apl_apollo NO LONGER USES A MARGIN BRIDGE. PM instruction 2026-08-26: score it
+# on the HRC vs secondary-steel spread, transmitting through VOLUME, 1-5 directly
+# rather than through pct_of_ebitda. The bridge answered its question correctly
+# and uselessly — output and input both on hrc_india_inr netted to ~0, and the
+# equity nets to ~0 on HRC too (+0.103 vs the mills' +0.076/+0.109), so per-tonne
+# margin is simply not the quantity that moves this company.
 #
-# WHAT IT IS STILL SILENT ABOUT, and the distinction must not be collapsed: the
-# CONVERSION SPREAD. "No net exposure to the LEVEL of HRC" was measured; "no
-# exposure to the tube/coil spread" was not, and nothing here observes that
-# spread. A tube price series would give this name real economics. It would NOT
-# resurrect the tata/apl_apollo pair, which needs the two legs to move oppositely
-# on HRC and they do not.
+# THE MECHANISM: it buys primary coil; the small tube makers it competes with buy
+# cheap secondary sheet ("patra"). Wide gap = its feedstock is dear in relative
+# terms = it loses share = volumes fall. The digests name exactly this as the
+# monitorable: "key watch: steel price outlook and impact of widening HRC-Patra
+# gap".
+#
+# THE SCORE NOW MOVES AND THE TRAJECTORY CORROBORATES: spread z went +0.96 (Mar)
+# -> +3.17 (Jun) -> +1.94 (now), scoring 2.03 -> 1.30 -> 1.54. It peaked at 3sd
+# wide THROUGH Q1FY27, the quarter APL Apollo printed 745kt against 800-900kt
+# guided with its 15-20% growth guide "expected to be cut to single digits".
+#
+# STILL NOT VALIDATED, and read it as PM-specified rather than measured: weekly
+# returns show no relationship (r +0.010 over 3y), which is expected for a
+# quarterly volume mechanism rather than evidence against. The settling test is
+# spread vs REPORTED VOLUMES, and `observations` holds one volume actual for this
+# name so far.
+#
+# NOTE THE SUBSTITUTE LEG IS A PROXY: rebar_india_secondary_inr is secondary
+# REBAR, a long product; patra is secondary FLAT. Same secondary price level,
+# different form, not renamed — invariant 6.
 #
 # WHY IT IS KEPT WHERE jindal_stainless WAS NOT: JSL had no measurable response to
 # ANY commodity in the store, no concall ledger and no OI. apl_apollo has 11

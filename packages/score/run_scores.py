@@ -39,6 +39,7 @@ import mood as mood_mod  # noqa: E402
 import valuation as val_mod  # noqa: E402
 import guidance_runrate as gr  # noqa: E402
 import guidance_forward as gf  # noqa: E402
+import spread_score as sps  # noqa: E402
 
 SPEC_VERSION = "0.5.0"
 # Pillar weights for the composite. Economics leads because it is the only
@@ -249,22 +250,47 @@ def score_one_date(conn, as_of: str, sha: str,
         # coverage_ok asks "is every line priced at all", which a carried-forward
         # dead feed answers yes to.
         bad = sorted(consumed_by(ent) & set(stale_series))
-        r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr,
-                       available | set(shocks))
-        pct = r["pct_of_ebitda"]
-        if bad:
-            put(conn, as_of, eid, "economics", None, pct, None,
-                "stale inputs: " + "; ".join(f"{s} {stale_series[s]}" for s in bad),
-                sha)
-        elif pct is not None and r["coverage_ok"]:
-            s = to_score(pct, k, form, p)
-            parts["economics"] = s
-            put(conn, as_of, eid, "economics", s, pct,
-                {"d_ebitda_cr": round(r["d_ebitda_cr"], 1),
-                 "priced": f"{r['n_priced']}/{r['n_total']}"}, None, sha)
+        # A DECLARED ALTERNATIVE BASIS, not a special case for one name. An
+        # entity carrying `economics_spread` is scored on that spread's z rather
+        # than on a margin bridge, because a margin bridge answers the wrong
+        # question for a converter that passes its input cost through. See
+        # packages/score/spread_score.py. Anything without the block is untouched
+        # and takes the bridge path below, unchanged.
+        if ent.get("economics_spread"):
+            cfg = ent["economics_spread"]
+            sp_bad = sorted({cfg.get("long"), cfg.get("substitute")}
+                            & set(stale_series))
+            if sp_bad:
+                # Same staleness discipline as the bridge: a carried-forward dead
+                # leg would make a spread look stable rather than unknown.
+                put(conn, as_of, eid, "economics", None, None, None,
+                    "stale inputs: " + "; ".join(
+                        f"{x} {stale_series[x]}" for x in sp_bad), sha)
+            else:
+                s_, z_, det_, wh_ = sps.score_entity(conn, ent, as_of)
+                if s_ is None:
+                    put(conn, as_of, eid, "economics", None, None, None,
+                        wh_, sha)
+                else:
+                    parts["economics"] = s_
+                    put(conn, as_of, eid, "economics", s_, z_, det_, None, sha)
         else:
-            put(conn, as_of, eid, "economics", None, pct, None,
-                f"coverage {r['n_priced']}/{r['n_total']}", sha)
+            r = run_bridge(ent, shocks, units, f.get("base_ebitda", 0), usdinr,
+                           available | set(shocks))
+            pct = r["pct_of_ebitda"]
+            if bad:
+                put(conn, as_of, eid, "economics", None, pct, None,
+                    "stale inputs: " + "; ".join(f"{s} {stale_series[s]}" for s in bad),
+                    sha)
+            elif pct is not None and r["coverage_ok"]:
+                s = to_score(pct, k, form, p)
+                parts["economics"] = s
+                put(conn, as_of, eid, "economics", s, pct,
+                    {"d_ebitda_cr": round(r["d_ebitda_cr"], 1),
+                     "priced": f"{r['n_priced']}/{r['n_total']}"}, None, sha)
+            else:
+                put(conn, as_of, eid, "economics", None, pct, None,
+                    f"coverage {r['n_priced']}/{r['n_total']}", sha)
         n += 1
 
         # --- valuation (P3a) ---

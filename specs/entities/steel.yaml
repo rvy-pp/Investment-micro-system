@@ -644,6 +644,60 @@ entities:
   # point rather than an obstacle: the two legs sit on opposite sides of one HRC
   # print, which is a real trade and a comparison the schema should force you to
   # look at twice.
+  # ==========================================================================
+  # APL APOLLO — scored on the FEEDSTOCK SPREAD, not on a margin bridge.
+  # ==========================================================================
+  # REWORKED 2026-08-26 on PM instruction: "Use the secondary rebar as patra to
+  # measure HRC-patra spread. It has impact on volumes... Granted it passes down
+  # costs and per ton remains more or less same, but volumes matter. Rework APL
+  # Apollo entirely on volumes and score between 1 to 5 rather than using ebitda."
+  #
+  # WHAT WAS HERE BEFORE AND WHY IT WENT. An output line and an input line both
+  # on hrc_india_inr at 1.00 and 1.02, which netted to the ~2% yield loss and
+  # produced an economics score that sat in a 0.222 band across 149 dates against
+  # tata_steel's 2.680. Measurement said that near-zero was APPROXIMATELY RIGHT
+  # about HRC — the equity loads +0.103 on coil against the mills' +0.076 and
+  # +0.109 — so the bridge was not wrong, it was answering a question that does
+  # not matter for this company.
+  #
+  # PER-TONNE MARGIN IS THE WRONG QUANTITY FOR A CONVERTER. It passes coil
+  # through on brand pricing power and its EBITDA/t is near-constant by
+  # construction: "EBITDA/t Rs5,522 flat qoq (+18% yoy) despite West Asia war,
+  # energy inflation, dealer destocking". What moves its earnings is VOLUME, and
+  # what moves volume is its feedstock cost against its COMPETITORS' feedstock —
+  # the small tube makers buying cheap secondary sheet, "patra".
+  #
+  # The digests name it as the monitorable, verbatim: "key watch: steel price
+  # outlook and impact of widening HRC-Patra gap".
+  #
+  #     spread WIDE    APL's premium coil is dear vs what secondary players pay
+  #                    -> it loses share -> volumes fall -> LOW score
+  #     spread NARROW  the premium is relatively cheap -> it gains share
+  #
+  # !! THE SUBSTITUTE LEG IS A PROXY AND IS NOT RENAMED (invariant 6). There is
+  # !! no patra series in the pack. `rebar_india_secondary_inr` is secondary
+  # !! rebar 12mm — a LONG product — while patra is secondary FLAT sheet. Both are
+  # !! secondary-route steel and track the same secondary price level, which is
+  # !! the economically relevant thing, but the FORM differs. If a secondary-flat
+  # !! assessment ever lands, repoint `substitute` at it and do NOT rename this
+  # !! series to patra.
+  #
+  # WHAT IS VERIFIED. Not the weekly price relationship: change in the spread vs
+  # APL Apollo's weekly returns is r +0.010 over 3y and -0.017 since 2016, i.e.
+  # nothing. That is the EXPECTED result rather than evidence against — a
+  # share-loss mechanism runs through quarterly volume, so weekly repricing is
+  # the wrong instrument and a null there settles neither way.
+  #
+  # CORROBORATED ONCE, at the right timescale and in the right direction: the
+  # spread sits at z +1.09 (1y) / +1.90 (3y), i.e. WIDE, and APL Apollo has just
+  # printed 745kt against 800-900kt guided, volumes -6% yoy, with management's
+  # 15-20% growth guide "expected to be cut to single digits".
+  #
+  # THE TEST THAT WOULD SETTLE IT is spread vs REPORTED VOLUMES quarter by
+  # quarter. `observations` holds one volume actual for this name (Q1FY27, 745kt),
+  # so it is not runnable yet — roughly 6-8 quarters away. Until then this is a
+  # PM-specified structural model with one corroborating observation, and it
+  # should be read as that rather than as a validated relationship.
   - id: apl_apollo
     kind: company
     name: APL Apollo Tubes
@@ -652,110 +706,26 @@ entities:
     nse_symbol: APLAPOLLO
     effective_from: 2026-04-01
 
-    outputs:
-      - item: steel_tubes
-        price_link: hrc_india_inr
-        volume: 2980000           # 745 kt Q1FY27 x 4.
-        volume_unit: t
-        asp_premium: 0
-        source_note: >
-          "volumes -6% yoy at 745kt as APL preserved margins over volume" (IIFL,
-          Prateek Singh). Tube prices have no series in the pack, so the output
-          is linked to HRC as a proxy for the tube price level.
-        verify: sourced
+    # NO outputs / inputs, deliberately. A margin bridge on this name nets to
+    # noise, and leaving the lines in place would mean two economics bases
+    # competing for one pillar. `economics_spread` replaces them entirely.
+    outputs: []
+    inputs: []
 
-    inputs:
-      - item: hrc
-        price_link: hrc_india_inr
-        intensity: 1.02
-        intensity_unit: t/t
-        basis_item: steel_tubes
-        market_pct: 1.00          # 100% BOUGHT. No captive steelmaking at all —
-                                  # this is the whole reason the name is here.
-        basis_pass_through: 1.00
-        source_note: >
-          Mechanism stated directly in the digests: "Domestic demand soft as HRC
-          prices rose 3% QoQ" (Nuvama), and the stated key monitorable is "the
-          widening HRC-Patra gap". Intensity 1.02 is one tonne of coil per tonne
-          of tube plus ~2% process yield loss.
-        verify: pending
+    economics_spread:
+      long: hrc_india_inr                    # what APL Apollo buys
+      substitute: rebar_india_secondary_inr  # PROXY for patra — see the note above
+      worse_if_wide: true                    # wide = loses share = low score
+      lookback_days: 1260                    # calendar days, same as pillar_3
+      scored_as: z                           # z against the spread's own history,
+                                             # hill curve, z=1.0 reads 4.0 —
+                                             # identical to P3 valuation, because
+                                             # it is the same question: how
+                                             # unusual is this against its own
+                                             # past.
+      transmits_via: volume
+      verify: pm_specified
 
-    # ========================================================================
-    # MEASURED 2026-08-26, AND IT REVERSES THE READING BELOW. The note that
-    # follows called the near-zero economics output a WRONG ANSWER from a wrong
-    # structure. Prices say the near-zero is approximately RIGHT.
-    #
-    # packages/review/driver_beta.py, weekly log returns vs hrc_india_inr, 3y:
-    #
-    #     apl_apollo   +0.103   (n=156, |t|=1.28)   <- subject
-    #     tata_steel   +0.076   (|t|=0.95)
-    #     jsw_steel    +0.109   (|t|=1.36)
-    #     excess over the controls: +0.011
-    #
-    # A GENUINE UNHEDGED COST EXPOSURE PREDICTS A NEGATIVE READING. APL Apollo's
-    # is POSITIVE and statistically indistinguishable from the two mills that
-    # SELL hot-rolled coil. There is no measurable short-HRC position in this
-    # equity. Same conclusion since 2016 (+0.093 vs +0.103 and +0.128), so it is
-    # not a recent-regime artefact.
-    #
-    # WHY: it passes coil through. The digests say so directly — "EBITDA/t
-    # Rs5,522 flat qoq (+18% yoy) despite West Asia war, energy inflation, dealer
-    # destocking" and "APL preserved margins over volume". A converter with brand
-    # pricing power is not short its input in any tradeable sense.
-    #
-    # !! KEEP ONE DISTINCTION OR THIS BECOMES AN OVERCLAIM. "No net exposure to
-    # !! the LEVEL of HRC" is what was measured. "No exposure to the conversion
-    # !! SPREAD" is NOT — the spread can move while HRC does not, and nothing in
-    # !! this store observes it. The bridge's ~0 output and the equity's ~0
-    # !! differential beta agree in MAGNITUDE for different reasons. So the
-    # !! economics pillar here is honest about HRC and simply silent about the
-    # !! thing that actually drives the name.
-    #
-    # CONSEQUENCE FOR THE PILLAR: economics stays LIVE and stays near 3.0, and
-    # that is now a defensible reading rather than a known-wrong one. Its span
-    # over 149 backfilled dates is 0.222 against tata_steel's 2.680 and sail's
-    # 3.466 — 12x less movement, correctly, because there is 12x less commodity
-    # exposure to move it.
-    # ========================================================================
-    # THE ORIGINAL NOTE, KEPT BECAUSE ITS REASONING IS THE THING THAT WAS WRONG:
-    # !! THIS ENTITY IS A SPREAD, AND THE SPEC AS WRITTEN NETS TO NEARLY ZERO.
-    # Output volume 2.98mt at 1.00x HRC against input 2.98mt at 1.02x HRC, both
-    # linked to the SAME series, so a 10% HRC move produces a d_ebitda of about
-    # -2% of one tonne's price — i.e. the spec says APL Apollo is almost
-    # HRC-NEUTRAL, when the digests plainly say rising HRC hurt it.
-    #
-    # THAT IS NOT A BUG TO PATCH WITH A COEFFICIENT. It is the correct output of
-    # a wrong structure, and naming it is more useful than hiding it. A converter
-    # earns a CONVERSION SPREAD, so what moves its EBITDA is the tube-price /
-    # coil-price gap, not either leg. Modelling that needs a tube price series,
-    # which the pack does not carry — the same gap that blocks Novelis, where
-    # `can_sheet_spread` has "no public series" and the pillar sits on a PM
-    # placeholder for exactly this reason.
-    #
-    # SO: expect economics to be uninformative for this name until either a tube
-    # price series exists or the PM grants a placeholder. Its VALUATION and MOOD
-    # pillars are unaffected and are real — it has 8 broker actions, all
-    # positive, and sits at the 97th percentile of a long buildup.
-    modelling_gap: conversion_spread_unpriced
-
-  # ==========================================================================
-  # JINDAL STAINLESS — carried, NOT bridged. PM decision 2026-08-25.
-  # ==========================================================================
-  # Deliberately NO outputs and NO inputs. `run_bridge` will find no priced
-  # lines, coverage will fail, and economics will be WITHHELD — which is the
-  # correct outcome and is recorded rather than being a gap in the history
-  # (run_scores writes a withheld row).
-  #
-  # WHY: stainless is priced off LME nickel, ferrochrome and stainless scrap.
-  # The pack carries lme_nickel and NOTHING for ferrochrome or stainless scrap,
-  # and `scrap_turkey` — the nearest available proxy — has not printed since
-  # 2020-12-03 (the column went to #N/A and then to zeros; the adapter correctly
-  # drops both). A bridge on nickel alone would be missing most of the cost
-  # stack while reporting coverage_ok, which is the failure this project spends
-  # the most effort avoiding.
-  #
-  # Its valuation and mood pillars DO score, from base_financials and its 8
-  # broker actions. That is the honest half.
   # ==========================================================================
   # DROPPED FROM THE SCORED UNIVERSE — PM decision 2026-08-26.
   # ==========================================================================
