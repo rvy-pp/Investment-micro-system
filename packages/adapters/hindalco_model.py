@@ -114,9 +114,55 @@ WANT = {
 }
 
 
-def find_model() -> pathlib.Path | None:
-    hits = sorted(glob.glob(str(MODELS / "*.xls*")))
-    return pathlib.Path(hits[-1]) if hits else None
+# The company this checker is FOR. Discovery matches on it, so a second model in
+# the directory cannot be mistaken for this one.
+COMPANY = "hindalco"
+
+
+def find_model(company: str = COMPANY) -> pathlib.Path | None:
+    """The newest workbook whose FILENAME names `company`.
+
+    !! THIS TOOK hits[-1] OF `data/models/*.xls*` UNTIL 2026-08-26 AND IT BROKE
+    !! THE MOMENT A SECOND MODEL ARRIVED. data/models/README.md said "any filename
+    !! is fine", which held while one workbook lived there. Adding
+    !! tata_steel_12975179.xlsx made the sorted list
+    !!
+    !!     hindalco_bofa_13006375.xlsx
+    !!     tata_steel_12975179.xlsx      <- hits[-1]
+    !!
+    !! so the HINDALCO checker began parsing the TATA STEEL model. It matched none
+    !! of its row labels, returned None for every field, and died on a format
+    !! string. refresh.py reported `desk model check FAILED`.
+    !!
+    !! THE CRASH WAS LUCK. Every field came back None and one hit an f-string that
+    !! cannot format None. Had the Tata workbook carried a number in a row this
+    !! parser recognises, it would have compared TATA's figure against HINDALCO's
+    !! spec and printed "spec DISAGREES, consider the change" — a cross-company
+    !! comparison presented as a reconciliation, with nothing raising. That is the
+    !! silent-arithmetic shape; the loud failure is the only reason one run caught
+    !! it instead of it surviving into a spec edit.
+    !!
+    !! Discovery is now COMPANY-SCOPED and refuses rather than guessing.
+    """
+    pat = str(MODELS / f"*{company}*.xls*")
+    hits = sorted(glob.glob(pat), key=lambda f: pathlib.Path(f).stat().st_mtime)
+    return pathlib.Path(hits[-1]) if hits else None   # newest, not last a-z
+
+
+def _num(v, fmt: str = ",.0f") -> str:
+    """Format a possibly-absent extracted field.
+
+    A partial parse must REPORT rather than crash. The crash this replaces was the
+    only signal that the wrong workbook was being read — useful once, and the wrong
+    mechanism: it failed the whole refresh step instead of naming which fields came
+    back empty.
+    """
+    if v is None:
+        return "—(not parsed)"
+    try:
+        return format(v, fmt)
+    except (TypeError, ValueError):
+        return str(v)
 
 
 def header_cols(rows) -> dict[str, int]:
@@ -237,8 +283,17 @@ def main() -> int:
 
     f = find_model()
     if not f:
-        print(f"no model found in {MODELS}\\*.xls*")
-        print("  drop the workbook there; see data/models/README.md")
+        print(f"no {COMPANY} model found in {MODELS}")
+        others = sorted(pathlib.Path(x).name
+                        for x in glob.glob(str(MODELS / "*.xls*")))
+        if others:
+            print(f"  {len(others)} workbook(s) present, none naming "
+                  f"{COMPANY}: {', '.join(others)}")
+            print(f"  RENAME so the filename contains '{COMPANY}'. Discovery is "
+                  f"company-scoped deliberately — it used to take the last file "
+                  f"in the directory and parsed another company's model.")
+        else:
+            print("  drop the workbook there; see data/models/README.md")
         return 0
 
     m = read(f)
@@ -270,7 +325,7 @@ def main() -> int:
 
     print("DOES NOT SETTLE — different quantity, do not reconcile")
     print(f"  asp_premium              spec ${d['asp_premium_spec_ingot']:.0f}/t "
-          f"(ingot)   model ${d['asp_premium_model_blended']:,.0f}/t (BLENDED,\n"
+          f"(ingot)   model ${_num(d['asp_premium_model_blended'])}/t (BLENDED,\n"
           f"     includes rolled/extruded/foil which realise far above ingot)")
     cl = [d.get("coal_t_per_t_mahan"), d.get("coal_t_per_t_aditya")]
     cl = [x for x in cl if x]
