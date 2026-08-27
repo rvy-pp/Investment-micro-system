@@ -363,6 +363,74 @@
        move; the .scroll wrapper owns that, so give it a visible edge. */
     .scroll{border-radius:var(--r-sm)}
   }
+
+  /* ------------------------------------------------------ series palette
+     Categorical slots for the sector charts. Both modes are SELECTED, not
+     flipped: the dark column is the same eight hues re-stepped for the dark
+     surface. Validated against this app's own panel colours (#FFFFFF and
+     #171B21) on the adjacent-pair gates — worst adjacent CVD Delta E 9.1
+     light / 8.4 dark, normal-vision 19.6 / 19.3.
+
+     THE ORDER IS THE SAFETY MECHANISM. Reordering these silently degrades
+     colourblind separation, and a 9th generated hue is never correct — past
+     eight names the view must facet or fold to "other" instead. */
+  :root{
+    --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100;
+    --series-5:#e87ba4; --series-6:#008300; --series-7:#4a3aa7; --series-8:#e34948;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500;
+      --series-5:#d55181; --series-6:#008300; --series-7:#9085e9; --series-8:#e66767;
+    }
+  }
+
+  /* Legend. Identity is never colour-alone: the swatch is a line (mirroring the
+     mark) and the NAME is ordinary ink beside it. */
+  .lgd{display:flex;gap:var(--s4);flex-wrap:wrap;margin:0 0 var(--s3);
+       font-size:var(--t-sm);color:var(--soft);align-items:center}
+  .lgd span{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono)}
+  .lgd i,i.swatch{display:inline-block;width:14px;height:0;
+       border-top:2.5px solid var(--faint);border-radius:2px;flex:0 0 14px}
+  i.swatch{margin-right:7px;vertical-align:middle}
+
+  /* End-of-line labels: ink, not the series colour. Three light-mode slots sit
+     under 3:1 on white, so coloured label text would be unreadable — the dot
+     and leader carry identity instead. */
+  .vend{fill:var(--ink);font-family:var(--mono);font-size:10px;font-weight:600}
+  .vdot{stroke:var(--surface)}
+  .xhair{stroke:var(--faint);stroke-width:1;pointer-events:none}
+
+  .chartwrap{position:relative}
+  /* Beat `.chart svg{width:100%}` from the base sheet: these charts are laid
+     out in real pixels by lineChart(), and letting the container stretch them
+     scales the TEXT too (1.55x was observed).
+
+     PAN, DO NOT SHRINK. Below the 520px floor that lineChart() clamps to, a
+     capped max-width squeezed the chart to 0.60 and took the 10px axis labels
+     down to 6px. The chart now keeps its size and the panel scrolls, which is
+     what the data tables on this page already do. */
+  .chart .chartwrap{overflow-x:auto;overflow-y:hidden;
+       -webkit-overflow-scrolling:touch}
+  .chart .chartwrap svg{display:block;width:auto;height:auto;
+       max-width:none;max-height:none;outline-offset:3px}
+  .viztip{position:absolute;pointer-events:none;z-index:30;opacity:0;
+       background:var(--surface);box-shadow:var(--shadow-2);
+       border-radius:var(--r-sm);padding:var(--s2) var(--s3);
+       min-width:158px;transition:opacity .1s}
+  .viztip.on{opacity:1}
+  .viztip .d{font-family:var(--mono);font-size:var(--t-micro);color:var(--faint);
+       letter-spacing:.06em;margin-bottom:5px}
+  .viztip .r{display:flex;align-items:center;gap:7px;line-height:1.7}
+  .viztip .r i{display:inline-block;width:12px;height:0;
+       border-top:2.5px solid var(--faint);flex:0 0 12px}
+  /* Value leads, label follows — the legend's hierarchy inverted, because here
+     the reader already knows the series and wants the number. */
+  .viztip .r b{font-family:var(--mono);font-variant-numeric:tabular-nums;
+       color:var(--ink);font-weight:600;font-size:var(--t-body);
+       min-width:56px;text-align:right}
+  .viztip .r em{font-style:normal;color:var(--soft);font-family:var(--mono);
+       font-size:var(--t-label)}
 </style>
 </head>
 <body>
@@ -679,66 +747,239 @@ function showRefresh(tp){
 // way, so they have no subject any more.
 //
 // WHAT IS KEPT AND WHY. The corporate-action break is kept: VEDL's -64.9% on
-// 2026-04-30 is a real unadjusted demerger, so the quoted price steps
-// mechanically and the line must not be drawn across it. The score line is NOT
-// broken there — those are the values that were actually stored.
-//
-// Two independent y-axes per row, each scaled to its own range. The shapes are
-// comparable, the levels are not, and the axis labels say so.
-function nameChart(pts, breaks, cur){
-  const W = 1000, H = 190, ML = 46, MR = 54, MT = 14, MB = 26;
-  const ok = pts.filter(p => p.score != null && p.close != null);
-  if (ok.length < 2) return '<div class="hint">not enough points to draw</div>';
-  const t = d => Date.parse(d);
-  const x0 = t(ok[0].d), x1 = t(ok[ok.length - 1].d);
-  const X = d => ML + (x1 === x0 ? 0 : (t(d) - x0) / (x1 - x0) * (W - ML - MR));
-  const sc = ok.map(p => p.score), pr = ok.map(p => p.close);
-  // The score axis is pinned to the 1-5 scale, not to the data range. A name
-  // that sat between 2.9 and 3.0 all year would otherwise fill the panel with
-  // noise and read as violent movement.
-  const sLo = 1, sHi = 5;
-  const pLo = Math.min(...pr), pHi = Math.max(...pr);
-  const YS = v => MT + (1 - (v - sLo) / (sHi - sLo)) * (H - MT - MB);
-  const YP = v => MT + (1 - (v - pLo) / ((pHi - pLo) || 1)) * (H - MT - MB);
+/* =====================================================================
+   SECTOR CHARTS — two charts, one measure each
 
-  let grid = '', sax = '';
-  for (const v of [1, 2, 3, 4, 5]){
-    const y = YS(v).toFixed(1);
-    grid += `<line class="${v === 3 ? 'zero' : 'grid'}" x1="${ML}" x2="${W - MR}" y1="${y}" y2="${y}"/>`;
-    sax += `<text class="ax" x="${ML - 7}" y="${y}" text-anchor="end" dominant-baseline="middle">${v}</text>`;
+   Replaces the old per-name dual-axis chart, which put score on a left
+   axis and price on a right one. A dual-axis plot invites a comparison
+   that is not in the data: the two scales are unrelated, so a crossing
+   means nothing and the reader reads a relationship out of an artefact of
+   the scaling. Split by MEASURE instead — score on its fixed 1-5 axis,
+   price as % change from the start of the span — and put every name on
+   both charts as its own line, which is the comparison actually worth
+   making inside a sector.
+
+   Price is indexed to % rather than quoted in rupees because that is what
+   makes several names shareable on one axis. Absolute closes cannot be
+   overlaid: SAIL near 130 and APL Apollo near 1,900 on one scale flattens
+   four of the five lines into the floor.
+
+   COLOUR is keyed on the entity's position in tp.order, which is stable
+   across span and pillar changes, so a name keeps its colour when the
+   series count changes. The slot ORDER is the colourblind-safety
+   mechanism, not decoration — it was validated (adjacent-pair Delta E,
+   both modes, against this app's own panel surfaces). Do not reorder it,
+   and do not add a 9th generated hue.
+   ===================================================================== */
+const SERIES_MAX = 8;
+const slotOf = (tp, eid) => {
+  const i = tp.order.indexOf(eid);
+  return (i >= 0 && i < SERIES_MAX) ? i + 1 : 0;
+};
+// var() needs to ride in `style`, not in a fill/stroke presentation attribute.
+const inkOf = slot => slot ? 'var(--series-' + slot + ')' : 'var(--faint)';
+
+/* Cumulative % change, chaining daily returns from the first close in the span.
+
+   ACROSS A CONFIRMED CORPORATE ACTION NO RETURN IS CARRIED. The quoted price
+   steps mechanically there, and the API's `pct` is the OBSERVED jump rather
+   than a separable adjustment factor — `from`/`to` are simply the two closes —
+   so there is nothing to divide out. Dropping that single day's return is the
+   only handling that does not invent a number, and the chart draws a rule where
+   it happened. Left alone, an unadjusted demerger prints as a real -40% on a
+   line whose entire purpose is comparing performance. */
+function pctSeries(pts, breaks){
+  const ok = pts.filter(p => p.close != null);
+  if (ok.length < 2) return [];
+  const out = [{d: ok[0].d, v: 0}];
+  let cum = 1;
+  for (let i = 1; i < ok.length; i++){
+    const prev = ok[i - 1].close;
+    if (prev && !breaks.has(ok[i].d)) cum *= ok[i].close / prev;
+    out.push({d: ok[i].d, v: (cum - 1) * 100});
   }
-  let pax = '';
-  for (const v of [pLo, (pLo + pHi) / 2, pHi]){
-    pax += `<text class="ax" x="${W - MR + 7}" y="${YP(v).toFixed(1)}" dominant-baseline="middle">${
-      v >= 1000 ? Math.round(v).toLocaleString() : v.toFixed(1)}</text>`;
+  return out;
+}
+const scoreSeries = pts =>
+  pts.filter(p => p.score != null).map(p => ({d: p.d, v: p.score}));
+
+const PAIRV = {};        // chart id -> geometry + data, for the hover layer
+
+/* One chart, one y-axis. Sized in REAL PIXELS rather than a fixed viewBox
+   stretched with preserveAspectRatio of none — that stretch scaled x, not y,
+   so every axis label was drawn ~38% wide on a full-width monitor. */
+function lineChart(cfg){
+  const {id, w, h, series, yLo, yHi, ticks, fmtY, fmtV, xDom, xTicks, marks, axisLabel} = cfg;
+  const ML = 54, MR = 116, MT = 16, MB = 30;
+  const [x0, x1] = xDom;
+  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0) * (w - ML - MR));
+  const Y = v => MT + (1 - (v - yLo) / ((yHi - yLo) || 1)) * (h - MT - MB);
+  const T = d => Date.parse(d);
+
+  let grid = '', yax = '';
+  for (const v of ticks){
+    const y = Y(v).toFixed(1);
+    // Solid hairlines. A dashed rule reads as "this line is itself data".
+    const base = (v === 0 || (yLo === 1 && v === 3));
+    grid += '<line class="' + (base ? 'zero' : 'grid') + '" x1="' + ML +
+            '" x2="' + (w - MR) + '" y1="' + y + '" y2="' + y + '"/>';
+    yax += '<text class="ax" x="' + (ML - 8) + '" y="' + y +
+           '" text-anchor="end" dominant-baseline="middle">' + esc(fmtY(v)) + '</text>';
   }
+
+  let mk = '';
+  for (const m of (marks || [])){
+    const x = X(T(m.d)).toFixed(1);
+    mk += '<line class="zero" x1="' + x + '" x2="' + x + '" y1="' + MT +
+          '" y2="' + (h - MB) + '"/>';
+  }
+
   const wide = (x1 - x0) > 400 * 864e5;
-  let tax = '';
-  for (const d of [ok[0].d, ok[Math.floor(ok.length / 2)].d, ok[ok.length - 1].d]){
-    tax += `<text class="ax" x="${X(d).toFixed(1)}" y="${H - 8}" text-anchor="middle">${
-      esc(dtick(d, wide))}</text>`;
+  let xax = '';
+  for (const d of xTicks)
+    xax += '<text class="ax" x="' + X(T(d)).toFixed(1) + '" y="' + (h - 9) +
+           '" text-anchor="middle">' + esc(dtick(d, wide)) + '</text>';
+
+  let lines = '';
+  const ends = [];
+  for (const s of series){
+    if (s.pts.length < 2) continue;
+    const pl = s.pts.map(p => X(T(p.d)).toFixed(1) + ',' + Y(p.v).toFixed(1)).join(' ');
+    lines += '<polyline points="' + pl + '" fill="none" style="stroke:' + inkOf(s.slot) +
+             '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    const last = s.pts[s.pts.length - 1];
+    ends.push({s: s, yTrue: Y(last.v), y: Y(last.v), x: X(T(last.d))});
   }
 
-  // Price segmented at a confirmed corporate action; score drawn continuous.
-  let pp = '', pen = false, brk = '';
-  for (const q of ok){
-    if (breaks.has(q.d)){
-      pen = false;
-      brk += `<line class="zero" x1="${X(q.d).toFixed(1)}" x2="${X(q.d).toFixed(1)}" y1="${MT}" y2="${H - MB}"/>`;
-    }
-    pp += (pen ? 'L' : 'M') + X(q.d).toFixed(1) + ' ' + YP(q.close).toFixed(1) + ' ';
-    pen = true;
+  /* De-collide the end labels. Five names inside a 1-5 band overlap routinely,
+     and a stack of unreadable labels is its own anti-pattern. The DOT stays on
+     the true value and a leader connects it to the moved label, so nothing is
+     mis-attributed to the wrong line. */
+  ends.sort((a, b) => a.yTrue - b.yTrue);
+  const GAP = 13;
+  for (let i = 1; i < ends.length; i++)
+    if (ends[i].y - ends[i - 1].y < GAP) ends[i].y = ends[i - 1].y + GAP;
+  if (ends.length){
+    ends[ends.length - 1].y = Math.min(ends[ends.length - 1].y, h - MB);
+    for (let i = ends.length - 2; i >= 0; i--)
+      ends[i].y = Math.min(ends[i].y, ends[i + 1].y - GAP);
+    for (const e of ends) e.y = Math.max(e.y, MT + 5);
   }
-  const ss = ok.map(q => `${X(q.d).toFixed(1)},${YS(q.score).toFixed(1)}`).join(' ');
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
-      style="width:100%;height:${H}px">
-    ${grid}${brk}
-    <path d="${pp.trim()}" fill="none" stroke="var(--faint)" stroke-width="1.6"/>
-    <polyline points="${ss}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>
-    ${sax}${pax}${tax}
-    <text class="axl" x="${ML}" y="9">score 1-5</text>
-    <text class="axl" x="${W - MR}" y="9" text-anchor="end">price</text>
-  </svg>`;
+
+  let lab = '';
+  for (const e of ends){
+    const col = inkOf(e.s.slot);
+    lab += '<circle cx="' + e.x.toFixed(1) + '" cy="' + e.yTrue.toFixed(1) +
+           '" r="3" style="fill:' + col + '" stroke-width="1.5" class="vdot"/>';
+    if (Math.abs(e.y - e.yTrue) > 2)
+      lab += '<line x1="' + (w - MR + 3) + '" x2="' + (w - MR + 8) + '" y1="' +
+             e.yTrue.toFixed(1) + '" y2="' + e.y.toFixed(1) +
+             '" style="stroke:' + col + '" stroke-width="1"/>';
+    // Label text wears INK, never the series colour — the dot and leader beside
+    // it carry identity. On the light surface three of the eight slots sit under
+    // 3:1, so coloured label text would be genuinely unreadable.
+    lab += '<text class="vend" x="' + (w - MR + 12) + '" y="' + e.y.toFixed(1) +
+           '" dominant-baseline="middle">' + esc(e.s.label) + '</text>';
+  }
+
+  PAIRV[id] = {
+    ML: ML, MR: MR, w: w, h: h, MT: MT, MB: MB, x0: x0, x1: x1, X: X,
+    fmt: fmtV || fmtY,
+    all: cfg.allDates,
+    series: series.filter(s => s.pts.length).map(s => ({
+      label: s.label, slot: s.slot,
+      byDate: new Map(s.pts.map(p => [p.d, p.v]))
+    }))
+  };
+
+  return '<div class="chartwrap" id="cw-' + id + '">' +
+    '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h +
+      '" role="img" tabindex="0" aria-label="' + esc(axisLabel) + '">' +
+    grid + mk +
+    '<line class="xhair" x1="0" x2="0" y1="' + MT + '" y2="' + (h - MB) + '" style="display:none"/>' +
+    lines + lab + yax + xax +
+    '<text class="axl" x="' + ML + '" y="10">' + esc(axisLabel) + '</text>' +
+    '</svg><div class="viztip" role="status"></div></div>';
+}
+
+/* The hover layer. Required rather than optional: an SVG chart in a browser is
+   interactive, and the crosshair is how a reader aims at a DATE instead of at a
+   2px line. One tooltip lists every series at that x, so the pointer never has
+   to land on a particular line to get a number. */
+function wireChart(id){
+  const wrap = document.getElementById('cw-' + id);
+  const m = PAIRV[id];
+  if (!wrap || !m) return;
+  const svg = wrap.querySelector('svg');
+  const xh = wrap.querySelector('.xhair');
+  const tip = wrap.querySelector('.viztip');
+  let idx = -1;
+
+  const hide = () => { xh.style.display = 'none'; tip.classList.remove('on'); idx = -1; };
+
+  const draw = i => {
+    if (i < 0 || i >= m.all.length) return hide();
+    idx = i;
+    const d = m.all[i];
+    const x = m.X(Date.parse(d));
+    xh.setAttribute('x1', x); xh.setAttribute('x2', x);
+    xh.style.display = '';
+
+    // textContent throughout: entity ids arrive from the API and are untrusted.
+    tip.textContent = '';
+    const hd = document.createElement('div');
+    hd.className = 'd';
+    hd.textContent = d;
+    tip.appendChild(hd);
+    let any = false;
+    for (const s of m.series){
+      if (!s.byDate.has(d)) continue;
+      any = true;
+      const row = document.createElement('div'); row.className = 'r';
+      const key = document.createElement('i');
+      key.style.borderTopColor = inkOf(s.slot);
+      const val = document.createElement('b');
+      val.textContent = m.fmt(s.byDate.get(d));      // value leads
+      const nm = document.createElement('em');
+      nm.textContent = s.label;                       // label follows
+      row.appendChild(key); row.appendChild(val); row.appendChild(nm);
+      tip.appendChild(row);
+    }
+    if (!any) return hide();
+
+    tip.classList.add('on');
+    // Flip before the right edge rather than letting the panel clip it.
+    const tw = tip.offsetWidth || 170;
+    const left = (x + 14 + tw > m.w) ? x - tw - 14 : x + 14;
+    tip.style.left = Math.max(4, left) + 'px';
+    tip.style.top = m.MT + 'px';
+  };
+
+  const nearest = clientX => {
+    const r = svg.getBoundingClientRect();
+    if (!r.width) return -1;
+    const px = (clientX - r.left) * (m.w / r.width);
+    const frac = (px - m.ML) / (m.w - m.ML - m.MR);
+    if (frac < -0.03 || frac > 1.03) return -1;
+    const ms = m.x0 + Math.min(1, Math.max(0, frac)) * (m.x1 - m.x0);
+    let best = -1, bd = Infinity;
+    for (let i = 0; i < m.all.length; i++){
+      const dd = Math.abs(Date.parse(m.all[i]) - ms);
+      if (dd < bd){ bd = dd; best = i; }
+    }
+    return best;
+  };
+
+  svg.addEventListener('pointermove', ev => draw(nearest(ev.clientX)));
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  // Keyboard reaches the same readout. The table below is the full fallback.
+  svg.addEventListener('focus', () => draw(idx < 0 ? m.all.length - 1 : idx));
+  svg.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowLeft'){ draw(Math.max(0, (idx < 0 ? m.all.length - 1 : idx) - 1)); ev.preventDefault(); }
+    else if (ev.key === 'ArrowRight'){ draw(Math.min(m.all.length - 1, (idx < 0 ? 0 : idx) + 1)); ev.preventDefault(); }
+    else if (ev.key === 'Escape') hide();
+  });
 }
 
 function stackControls(tp){
@@ -764,57 +1005,164 @@ async function loadPair(){
   const rows = tp.order.map(eid => {
     const ser = tp.series[eid] || {};
     const pts = (ser.points || []).filter(q => !cut || q.d >= cut);
-    const breaks = new Set((tp.corporate_actions[eid]?.confirmed || [])
-      .map(c => c.date));
-    const acts = (tp.corporate_actions[eid]?.confirmed || [])
+    const breaks = new Set((tp.corporate_actions[eid] || {}).confirmed
+      ? tp.corporate_actions[eid].confirmed.map(c => c.date) : []);
+    const acts = ((tp.corporate_actions[eid] || {}).confirmed || [])
       .filter(c => pts.length && c.date >= pts[0].d && c.date <= pts[pts.length - 1].d);
-    const ok = pts.filter(q => q.score != null && q.close != null);
-    const first = ok.length ? ok[0] : null, last = ok.length ? ok[ok.length - 1] : null;
-    const dS = first && last ? last.score - first.score : null;
-    const dP = first && last && first.close ? (last.close / first.close - 1) * 100 : null;
-    return {eid, ser, pts, breaks, acts, first, last, dS, dP, n: ok.length};
+    const sc = scoreSeries(pts), px = pctSeries(pts, breaks);
+    const okS = pts.filter(q => q.score != null);
+    const first = okS.length ? okS[0] : null, last = okS.length ? okS[okS.length - 1] : null;
+    return {
+      eid: eid, ser: ser, pts: pts, breaks: breaks, acts: acts,
+      slot: slotOf(tp, eid), sc: sc, px: px,
+      last: last,
+      dS: first && last ? last.score - first.score : null,
+      dP: px.length ? px[px.length - 1].v : null,
+      n: sc.length
+    };
   });
 
-  const body = rows.map(r => {
-    const g = r.ser.peer_group || '—';
-    const late = r.ser.first && tp.coverage[tp.pillar].first
+  const drawn = rows.filter(r => r.sc.length > 1 || r.px.length > 1);
+  if (!drawn.length){
+    $('#s-pair').innerHTML = stackControls(tp) +
+      '<p class="note">No name in this sector has two or more points in the ' +
+      esc(P.span) + ' span. Widen the span.</p>';
+    wirePair();
+    return;
+  }
+
+  // One shared x domain, so the two charts read as a single timeline.
+  const dset = new Set();
+  for (const r of drawn){
+    for (const p of r.sc) dset.add(p.d);
+    for (const p of r.px) dset.add(p.d);
+  }
+  const all = Array.from(dset).sort();
+  const xDom = [Date.parse(all[0]), Date.parse(all[all.length - 1])];
+  const xTicks = all.length <= 2 ? all
+    : [all[0], all[Math.floor(all.length / 2)], all[all.length - 1]];
+
+  // Price ticks: nice steps that always include 0, over the actual range.
+  let lo = 0, hi = 0;
+  for (const r of drawn) for (const p of r.px){
+    if (p.v < lo) lo = p.v;
+    if (p.v > hi) hi = p.v;
+  }
+  const stepv = niceCeil((Math.max(hi, 0) - Math.min(lo, 0) || 1) / 4);
+  const tLo = Math.floor(Math.min(lo, 0) / stepv) * stepv;
+  const tHi = Math.ceil(Math.max(hi, 0) / stepv) * stepv;
+  const pTicks = [];
+  for (let v = tLo; v <= tHi + 1e-9; v += stepv) pTicks.push(+v.toFixed(6));
+
+  const H = 300;
+  const mkSeries = key => drawn.map(r => ({label: r.eid, slot: r.slot, pts: r[key]}));
+  const marks = [];
+  for (const r of drawn) for (const c of r.acts) marks.push({d: c.date});
+
+  const drawScore = availW => lineChart({
+    id: 'score', w: availW, h: H, series: mkSeries('sc'),
+    yLo: 1, yHi: 5, ticks: [1, 2, 3, 4, 5], fmtY: v => String(v),
+    fmtV: v => v.toFixed(2),
+    xDom: xDom, xTicks: xTicks, allDates: all,
+    axisLabel: esc(tp.pillar) + ' score 1-5'
+  });
+  const drawPrice = availW => lineChart({
+    id: 'price', w: availW, h: H, series: mkSeries('px'),
+    yLo: tLo, yHi: tHi, ticks: pTicks,
+    fmtY: v => (v > 0 ? '+' : '') + v.toFixed(Math.abs(stepv) < 1 ? 1 : 0) + '%',
+    fmtV: v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%',
+    xDom: xDom, xTicks: xTicks, allDates: all, marks: marks,
+    axisLabel: 'price · % change in span'
+  });
+
+  const legend = '<div class="lgd">' + drawn.map(r =>
+    '<span><i style="border-top-color:' + inkOf(r.slot) + '"></i>' + esc(r.eid) +
+    '</span>').join('') + '</div>';
+
+  const tbody = rows.map(r => {
+    const late = r.ser.first && tp.coverage[tp.pillar] && tp.coverage[tp.pillar].first
       && r.ser.first > tp.coverage[tp.pillar].first
-      ? ` · starts ${esc(r.ser.first)}` : '';
-    const actNote = r.acts.length
-      ? `<div class="banner" style="margin:8px 0 0"><b>Price line broken</b> at ${
-          r.acts.map(c => `${esc(c.date)} — ${c.pct.toFixed(1)}%, ${esc(c.why)}`).join('; ')
-        }. The quoted price steps mechanically, so it is a different company
-        across that line and the two sides are not comparable. The score line is
-        not broken — those are the stored values.</div>`
-      : '';
-    return `<div class="nrow">
-      <div class="nhead">
-        <h3>${esc(r.eid)} <span class="g">${esc(g)}</span></h3>
-        <div class="nstat">
-          <span><b>${r.last && r.last.score != null ? r.last.score.toFixed(2) : '—'}</b> ${esc(tp.pillar)}</span>
-          <span>${r.dS == null ? '' : (r.dS >= 0 ? '+' : '') + r.dS.toFixed(2) + ' in span'}</span>
-          <span style="color:${r.dP > 0 ? 'var(--up)' : r.dP < 0 ? 'var(--down)' : 'var(--faint)'}">${
-            r.dP == null ? '—' : (r.dP >= 0 ? '+' : '') + r.dP.toFixed(1) + '% px'}</span>
-          <span class="hint">${r.n} pts${late}</span>
-        </div>
-      </div>
-      ${nameChart(r.pts, r.breaks, tp.curves[tp.pillar])}
-      ${actNote}
-    </div>`;
+      ? '<span class="hint"> · from ' + esc(r.ser.first) + '</span>' : '';
+    const dpc = r.dP == null ? 'var(--faint)'
+      : r.dP > 0 ? 'var(--up)' : r.dP < 0 ? 'var(--down)' : 'var(--faint)';
+    return '<tr>' +
+      '<td class="k"><i class="swatch" style="border-top-color:' + inkOf(r.slot) + '"></i>' +
+        esc(r.eid) + late + '</td>' +
+      '<td class="k">' + esc(r.ser.peer_group || '—') + '</td>' +
+      '<td class="n"><span class="score">' +
+        (r.last && r.last.score != null ? r.last.score.toFixed(2) : '—') + '</span></td>' +
+      '<td class="n">' + (r.dS == null ? '—' : (r.dS >= 0 ? '+' : '') + r.dS.toFixed(2)) + '</td>' +
+      '<td class="n" style="color:' + dpc + '">' +
+        (r.dP == null ? '—' : (r.dP >= 0 ? '+' : '') + r.dP.toFixed(1) + '%') + '</td>' +
+      '<td class="n hint">' + r.n + '</td></tr>';
   }).join('');
 
+  const actNote = marks.length
+    ? '<div class="banner"><b>Corporate action in span</b> — ' +
+      drawn.filter(r => r.acts.length).map(r => esc(r.eid) + ' ' +
+        r.acts.map(c => esc(c.date) + ' (' + c.pct.toFixed(1) + '%, ' + esc(c.why) + ')').join(', ')
+      ).join('; ') +
+      '. The quoted price steps mechanically there, so <b>no return is carried across ' +
+      'that day</b> — the % line is chained around it and the vertical rule marks it. ' +
+      'Score is not adjusted; those are the stored values.</div>'
+    : '';
+
   $('#s-pair').innerHTML = stackControls(tp)
-    + `<h2>${esc(tp.pillar)} score and price · ${rows.length} names</h2>
-       <p class="note">Score in <b style="color:var(--accent)">blue</b> on a fixed
-         1-5 axis, price in grey on its own range. The shapes are comparable, the
-         levels are not. One name per row, newest date ${esc(tp.as_of_max)}.</p>`
-    + body
-    + `<p class="note hint">Persisted <code>pillar_scores</code> — not
-       recomputed, and not affected by overrides. The Bridge tab recomputes live
-       and will differ whenever an override is active or
-       <code>run_scores.py</code> has not been re-run.</p>`;
+    + '<h2>' + esc(tp.pillar) + ' · ' + drawn.length + ' names</h2>'
+    + '<p class="note">Two charts, one measure each. <b>Score</b> on the fixed 1-5 '
+    + 'axis; <b>price</b> as % change from the start of the span, which is what '
+    + 'lets names on very different price levels share an axis. A name keeps its '
+    + 'colour in both. Newest date ' + esc(tp.as_of_max) + '.</p>'
+    + actNote
+    + legend
+    + '<div class="chart" id="ch-score" style="min-height:' + (H + 24) + 'px"></div>'
+    + '<div class="chart" id="ch-price" style="min-height:' + (H + 24) + 'px"></div>'
+    + '<h2>By name</h2>'
+    + '<div class="scroll"><table><thead><tr><th>Entity</th><th>Peer group</th>'
+    + '<th class="n">Score</th><th class="n">Δ score</th><th class="n">Δ price</th>'
+    + '<th class="n">Pts</th></tr></thead><tbody>' + tbody + '</tbody></table></div>'
+    + '<p class="note hint">Persisted <code>pillar_scores</code> — not recomputed, '
+    + 'and not affected by overrides. The Bridge tab recomputes live and will differ '
+    + 'whenever an override is active or <code>run_scores.py</code> has not been re-run.</p>';
+
+  /* TWO-PASS RENDER. The panels go in first, then their real content-box width
+     is measured, then the charts are drawn into them.
+
+     Measuring before the panels existed meant estimating the padding inset,
+     which was off — and the paths meant to correct it afterwards (rAF and
+     ResizeObserver) are both tied to the rendering lifecycle, so in a
+     BACKGROUNDED OR HIDDEN TAB neither callback ever runs. Verified: a fresh
+     ResizeObserver on this section reported zero callbacks, not even the
+     guaranteed initial one. The chart then stayed wider than its box and
+     max-width silently rescaled it, shrinking every label with it.
+
+     The placeholders carry the finished height so the page's scrollbar state —
+     worth ~15px of width — is already settled when the measurement is taken. */
+  const availW = pairWidth();
+  document.getElementById('ch-score').innerHTML = drawScore(availW);
+  document.getElementById('ch-price').innerHTML = drawPrice(availW);
   wirePair();
 }
+
+let PAIR_RO = null, PAIR_W = 0, PAIR_BUSY = false, PAIR_FIX = 0;
+
+function pairWidth(){
+  // Authoritative: the content box of the panel the svg actually sits in.
+  const c = document.querySelector('#s-pair .chart');
+  if (c){
+    const cs = getComputedStyle(c);
+    const inner = c.clientWidth - parseFloat(cs.paddingLeft || 0)
+                                - parseFloat(cs.paddingRight || 0);
+    if (inner > 200) return Math.max(Math.floor(inner), 520);
+  }
+  // First render only — no panel exists yet, so estimate and let the
+  // post-paint reconciliation correct it.
+  return Math.max(($('#s-pair').clientWidth || 900) - 34, 520);
+}
+const rerenderPair = () => {
+  PAIR_BUSY = true;
+  return loadPair().catch(e => showErr(e.message)).then(() => { PAIR_BUSY = false; });
+};
 
 function wirePair(){
   const go = () => loadPair().catch(e => showErr(e.message));
@@ -822,8 +1170,44 @@ function wirePair(){
   if (pp) pp.onchange = () => { P.pillar = pp.value; go(); };
   const sp = $('#pspan');
   if (sp) sp.onchange = () => { P.span = sp.value; go(); };
-}
+  wireChart('score');
+  wireChart('price');
 
+  /* Belt and braces, NOT the mechanism — loadPair now measures the panel
+     directly (see the two-pass note there). This only catches a width that
+     moves after paint, e.g. a late webfont reflow. It is also the one path
+     that cannot be relied on: rAF does not fire in a hidden tab. PAIR_FIX
+     caps it at two passes so a width oscillating between two scrollbar
+     states cannot loop. */
+  requestAnimationFrame(() => {
+    const svg = document.querySelector('#cw-score svg');
+    if (!svg || PAIR_BUSY) return;
+    if (Math.abs(pairWidth() - (+svg.getAttribute('width'))) < 6){ PAIR_FIX = 0; return; }
+    if (PAIR_FIX >= 2) return;
+    PAIR_FIX++;
+    PAIR_W = $('#s-pair').clientWidth;
+    rerenderPair();
+  });
+
+  /* Charts are sized in pixels, so a width change needs a re-render. This also
+     covers the case where the section was laid out at zero width — the first
+     observation then draws at the real width. Guarded on a 16px delta and a
+     re-entrancy flag: the render itself must not be able to retrigger it. */
+  if (!PAIR_RO && typeof ResizeObserver !== 'undefined'){
+    PAIR_RO = new ResizeObserver(es => {
+      const w = es[0].contentRect.width;
+      /* 6px, not 16: the common case is the section losing ~15px when content
+         grows a scrollbar, and a threshold above that left the chart rendered
+         wider than its container, where max-width silently rescaled it. */
+      if (PAIR_BUSY || Math.abs(w - PAIR_W) < 6) return;
+      PAIR_W = w;
+      if (!$('#s-pair').classList.contains('on')) return;
+      PAIR_FIX = 0;          // a real resize earns a fresh reconciliation pass
+      rerenderPair();
+    });
+    PAIR_RO.observe($('#s-pair'));
+  }
+}
 let SECTORS = [];
 let SECTOR = 'overview';
 let LAST_VIEW = 'pair';
