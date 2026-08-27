@@ -4,233 +4,365 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investment Micro-System</title>
-<style>
+<style>  /* ===================================================================
+     DESIGN SYSTEM
+
+     Three rules hold this together. Breaking one is what made the old
+     sheet feel like an admin panel:
+
+     1. DEPTH, NOT OUTLINES. The ground is grey, panels are white and
+        float on a soft shadow. Nine components used to share one
+        `surface + 1px border + radius:3px` recipe, so the page was a
+        uniform field of rectangles with nothing in front of anything.
+        Borders now belong to TABLES and DIVIDERS only.
+
+     2. ONE VOICE FOR DATA. Mono is for numbers and identifiers.
+        Mono+uppercase+tracked is for section labels and status badges,
+        and nothing else — eleven selectors used to shout in that voice
+        at once, which is the same as none of them shouting.
+
+     3. SCALES, NOT VALUES. Spacing comes from --s*, type from --t*,
+        weight from 400/500/600/700. The old sheet used 17 ad-hoc
+        paddings and weights (560, 640, 650, 660) that no system UI font
+        has, so they snapped and the hierarchy silently vanished.
+     =================================================================== */
   :root{
-    --ground:#F6F7F8; --surface:#fff; --alt:#EFF1F3;
-    --ink:#15181C; --soft:#4B535E; --faint:#7A838F;
-    --rule:#DCE0E5; --rule2:#E9ECEF;
-    --accent:#24507F; --accent-soft:#E2EAF3;
-    --up:#1B6A57; --up-soft:#DDEDE7;
-    --warn:#8A5716; --warn-soft:#F4E9D8;
-    --down:#93332D; --down-soft:#F5E1DF;
+    color-scheme:light dark;
+
+    /* spacing, 4px base */
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+
+    /* radii */
+    --r-sm:5px; --r:9px; --r-pill:999px;
+
+    /* type — integers only. Fractional px (the old 9.5/11.5/13.5/14.5)
+       land on half-pixels and blur on any non-retina desk monitor. */
+    --t-micro:10px; --t-label:11px; --t-sm:12px; --t-body:13px;
+    --t-md:14px; --t-lg:16px; --t-xl:20px; --t-2xl:26px;
+    --measure:72ch;         /* prose cap. Unset, notes ran to 1560px. */
+
+    --ground:#F1F3F6; --surface:#FFFFFF; --alt:#F6F8FA; --sunken:#E9EDF1;
+    --ink:#12161B; --soft:#525C69; --faint:#666F7C;
+    --rule:#DDE3E9; --hair:#EBEFF3;
+    --accent:#1F4E82; --accent-soft:#E7EEF7;
+    --up:#12634B; --up-soft:#DFEDE7;
+    --warn:#875416; --warn-soft:#F6EAD7;
+    --down:#8C2F2A; --down-soft:#F7E2E0;
+
+    --shadow-1:0 1px 2px rgba(16,24,40,.05), 0 1px 1px rgba(16,24,40,.03);
+    --shadow-2:0 2px 4px rgba(16,24,40,.05), 0 6px 16px -6px rgba(16,24,40,.12);
+
     --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
     --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
   }
   @media (prefers-color-scheme:dark){
     :root{
-      --ground:#121519; --surface:#191D22; --alt:#21262C;
-      --ink:#E3E7EB; --soft:#A6B0BB; --faint:#7C868F;
-      --rule:#2C333A; --rule2:#232930;
-      --accent:#7FA8D6; --accent-soft:#1D2A3A;
-      --up:#6BC0A5; --up-soft:#16302A;
-      --warn:#D8A55E; --warn-soft:#33280F;
-      --down:#DE8079; --down-soft:#36211F;
+      /* The old dark mode put 7 units between ground (#121519) and
+         surface (#191D22). Panels were invisible, which is most of why
+         the dark page read as a flat wall. This is ~25 units plus a
+         real shadow. */
+      --ground:#0D1014; --surface:#171B21; --alt:#1D242B; --sunken:#101418;
+      --ink:#E5EAEF; --soft:#A2ADBA; --faint:#7F8A97;
+      --rule:#2A323B; --hair:#1F262D;
+      --accent:#8AB3E0; --accent-soft:#17273A;
+      --up:#5FBFA1; --up-soft:#12302A;
+      --warn:#DBA65E; --warn-soft:#332810;
+      --down:#DF7F77; --down-soft:#37211F;
+      --shadow-1:0 1px 2px rgba(0,0,0,.45);
+      --shadow-2:0 2px 6px rgba(0,0,0,.45), 0 10px 24px -8px rgba(0,0,0,.55);
     }
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
-       font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1560px;margin:0 auto;padding:0 24px 96px}
+       font-size:var(--t-md);line-height:1.55;-webkit-font-smoothing:antialiased;
+       text-rendering:optimizeLegibility}
+  .wrap{max-width:1560px;margin:0 auto;padding:0 var(--s5) var(--s7)}
 
-  header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
-         padding:20px 0 14px;border-bottom:2px solid var(--ink)}
-  h1{font-size:19px;font-weight:660;letter-spacing:-.02em;margin:0}
-  .meta{font-family:var(--mono);font-size:11.5px;color:var(--faint);
-        display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;align-items:center}
+  /* ---------------------------------------------------------------- shell */
+  header{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;
+         padding:var(--s5) 0 var(--s3)}
+  h1{font-size:var(--t-lg);font-weight:600;letter-spacing:-.01em;margin:0;
+     white-space:nowrap}
+  .meta{font-family:var(--mono);font-size:var(--t-label);color:var(--faint);
+        display:flex;gap:var(--s3);flex-wrap:wrap;margin-left:auto;
+        align-items:center;font-variant-numeric:tabular-nums}
+
   select,button,input{font:inherit;color:inherit}
   select,input[type=number],input[type=text]{background:var(--surface);
-        border:1px solid var(--rule);border-radius:3px;padding:4px 7px}
-  button{background:var(--accent);color:#fff;border:0;border-radius:3px;
-         padding:5px 11px;cursor:pointer;font-size:13px}
-  button.ghost{background:transparent;color:var(--accent);
+        border:1px solid var(--rule);border-radius:var(--r-sm);
+        padding:5px var(--s2);box-shadow:var(--shadow-1);
+        font-size:var(--t-body)}
+  select:hover{border-color:var(--faint)}
+  button{background:var(--accent);color:#fff;border:0;border-radius:var(--r-sm);
+         padding:6px var(--s3);cursor:pointer;font-size:var(--t-body);
+         font-weight:500;box-shadow:var(--shadow-1)}
+  button:hover{filter:brightness(1.08)}
+  button.ghost{background:var(--surface);color:var(--accent);
                border:1px solid var(--rule)}
-  button:disabled{opacity:.45;cursor:default}
+  button.ghost:hover{background:var(--accent-soft);border-color:var(--accent)}
+  button:disabled{opacity:.45;cursor:default;filter:none}
   button:focus-visible,select:focus-visible,input:focus-visible,
-  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .tab:focus-visible,.stab:focus-visible{outline:2px solid var(--accent);
+       outline-offset:2px}
 
   /* Both navs STICK. Losing the tab bar while scrolling a long chart column is
      the other half of the readability complaint — you can end up several
-     screens into a view with nothing on screen saying which one it is. */
-  .navs{position:sticky;top:0;z-index:20;background:var(--ground);
-        padding-top:2px;box-shadow:0 6px 10px -10px rgba(0,0,0,.45)}
+     screens into a view with nothing on screen saying which one it is.
+     The blur is what lets content pass UNDER it without a hard seam. */
+  .navs{position:sticky;top:0;z-index:20;
+        background:var(--ground);
+        background:color-mix(in srgb, var(--ground) 88%, transparent);
+        backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+        margin:0 calc(var(--s5) * -1);padding:2px var(--s5) 0;
+        box-shadow:0 10px 12px -12px rgba(0,0,0,.45)}
+  @supports not (backdrop-filter:blur(4px)){
+    .navs{background:var(--ground)}
+  }
 
-  nav.snav{display:flex;gap:4px;margin:14px 0 0;border-bottom:2px solid var(--rule)}
-  .stab{background:none;border:0;border-bottom:3px solid transparent;
-        color:var(--soft);padding:10px 18px 9px;cursor:pointer;font-size:15px;
-        font-weight:640;letter-spacing:-.01em;border-radius:0;
-        display:flex;align-items:center;gap:8px}
-  .stab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+  /* Sector tabs — the primary axis, so they get size and a real indicator. */
+  nav.snav{display:flex;gap:var(--s1);margin:0;flex-wrap:nowrap;
+        overflow-x:auto;overflow-y:hidden;
+        box-shadow:inset 0 -1px 0 var(--rule);
+        scrollbar-width:none;-ms-overflow-style:none}
+  nav.snav::-webkit-scrollbar{display:none}
+  .stab{background:none;border:0;border-bottom:2px solid transparent;
+        color:var(--soft);padding:var(--s3) var(--s4) 10px;cursor:pointer;
+        font-size:var(--t-md);font-weight:500;letter-spacing:-.01em;
+        border-radius:0;display:flex;align-items:center;gap:var(--s2);
+        flex:0 0 auto;white-space:nowrap;
+        transition:color .12s, border-color .12s}
+  .stab[aria-selected=true]{color:var(--ink);font-weight:600;
+        border-bottom-color:var(--accent)}
   .stab:hover{color:var(--ink)}
-  .stab .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
-           text-transform:uppercase;padding:2px 5px;border-radius:2px;
-           background:var(--alt);color:var(--faint);font-weight:600}
+  .stab .n{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.07em;
+           text-transform:uppercase;padding:2px 6px;border-radius:var(--r-pill);
+           background:var(--sunken);color:var(--faint);font-weight:600}
   .stab[aria-selected=true] .n{background:var(--accent-soft);color:var(--accent)}
 
-  nav.vnav{display:flex;gap:2px;margin:0;border-bottom:1px solid var(--rule);
-           background:var(--ground)}
-  .tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--soft);
-       padding:8px 14px;cursor:pointer;font-size:13px;font-weight:560;border-radius:0}
-  .tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+  /* View tabs — secondary, so pills rather than a second underline row.
+     Two stacked underline bars was ambiguous about which axis was which. */
+  nav.vnav{display:flex;gap:2px;margin:0;padding:var(--s2) 0 var(--s2);
+           background:transparent;flex-wrap:nowrap;overflow-x:auto;
+           scrollbar-width:none;-ms-overflow-style:none}
+  nav.vnav::-webkit-scrollbar{display:none}
+  .tab{background:none;border:0;color:var(--soft);padding:5px var(--s3);
+       cursor:pointer;font-size:var(--t-body);font-weight:500;flex:0 0 auto;
+       white-space:nowrap;
+       border-radius:var(--r-pill);transition:background .12s, color .12s}
+  .tab:hover{background:var(--sunken);color:var(--ink)}
+  .tab[aria-selected=true]{color:#fff;background:var(--accent);font-weight:600}
   nav.vnav[hidden]{display:none}
 
-  section{display:none;padding-top:24px}
+  section{display:none;padding-top:var(--s5)}
   section.on{display:block}
-  h2{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
-     text-transform:uppercase;color:var(--accent);font-weight:600;
-     margin:26px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
-  h2:first-child{margin-top:0}
 
-  .scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;
-          background:var(--surface);margin-bottom:6px}
-  table{border-collapse:collapse;width:100%;font-size:13.5px}
-  th{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
-     color:var(--faint);text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);
-     white-space:nowrap;font-weight:600;position:sticky;top:0;background:var(--surface)}
-  td{padding:8px 12px;border-bottom:1px solid var(--rule2);vertical-align:middle}
+  /* Section label. Deliberately quiet and deliberately mono-uppercase: it is
+     a LABEL, not a title, and now that .k/.tile .k/th no longer use this
+     voice it reads as structure instead of competing. */
+  h2{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.13em;
+     text-transform:uppercase;color:var(--faint);font-weight:600;
+     margin:var(--s6) 0 var(--s3);padding-bottom:var(--s2);
+     border-bottom:1px solid var(--hair)}
+  h2:first-child{margin-top:0}
+  h3{font-size:var(--t-md);font-weight:600;letter-spacing:-.01em}
+
+  /* ---------------------------------------------------------------- panels */
+  .scroll{overflow-x:auto;border-radius:var(--r);background:var(--surface);
+          box-shadow:var(--shadow-1);margin-bottom:var(--s2)}
+  table{border-collapse:collapse;width:100%;font-size:var(--t-body)}
+  /* Column heads in SANS. Uppercase mono here was one of the eleven shouting
+     voices, and it competed with h2 directly above it. */
+  th{font-family:var(--sans);font-size:var(--t-label);letter-spacing:.04em;
+     text-transform:uppercase;color:var(--faint);text-align:left;
+     padding:10px var(--s3);border-bottom:1px solid var(--rule);
+     white-space:nowrap;font-weight:600;position:sticky;top:0;
+     background:var(--surface)}
+  td{padding:9px var(--s3);border-bottom:1px solid var(--hair);
+     vertical-align:middle}
   tr:last-child td{border-bottom:0}
-  td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
-  td.k{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+  td.n,th.n{text-align:right;font-family:var(--mono);
+            font-variant-numeric:tabular-nums}
+  td.k{font-family:var(--mono);font-size:var(--t-sm);white-space:nowrap;
+       color:var(--soft)}
+  td.flat{color:var(--faint)}
+  tbody tr{transition:background .1s}
   tbody tr:hover{background:var(--alt)}
 
-  .chip{display:inline-block;font-family:var(--mono);font-size:10px;
-        letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;
-        border-radius:2px;font-weight:600;white-space:nowrap}
-  .c-up{background:var(--up-soft);color:var(--up)}
-  .c-warn{background:var(--warn-soft);color:var(--warn)}
-  .c-down{background:var(--down-soft);color:var(--down)}
-  .c-flat{background:var(--alt);color:var(--faint)}
+  /* ------------------------------------------------------- badges + values */
+  .chip,.st{display:inline-block;font-family:var(--mono);font-size:var(--t-micro);
+        letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;
+        border-radius:var(--r-pill);font-weight:600;white-space:nowrap}
+  .c-up,.st-ready{background:var(--up-soft);color:var(--up)}
+  .c-warn,.st-thin{background:var(--warn-soft);color:var(--warn)}
+  .c-down,.st-blocked{background:var(--down-soft);color:var(--down)}
+  .c-flat{background:var(--sunken);color:var(--faint)}
+  .st-open{background:var(--accent-soft);color:var(--accent)}
 
-  .score{font-family:var(--mono);font-weight:660;font-size:15px;
+  .score{font-family:var(--mono);font-weight:600;font-size:var(--t-md);
          font-variant-numeric:tabular-nums}
-  .bar{height:5px;border-radius:3px;background:var(--alt);position:relative;
-       min-width:70px;overflow:hidden}
+  .bar{height:6px;border-radius:var(--r-pill);background:var(--sunken);
+       position:relative;min-width:70px;overflow:hidden}
   .bar i{position:absolute;top:0;bottom:0;left:50%;background:var(--accent)}
 
-  .drivers{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-  .drv{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-       padding:7px 10px;font-family:var(--mono);font-size:11.5px;min-width:150px}
-  .drv b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
-  .drv span{color:var(--faint);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+  /* --------------------------------------------------------- KPI tiles
+     .tiles/.stats and .tile/.stat were near-duplicate components. Same
+     thing, so: one look, both selectors kept. */
+  .tiles,.stats{display:grid;gap:var(--s3);margin-bottom:var(--s5);
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .tile,.stat{background:var(--surface);border-radius:var(--r);
+        padding:var(--s3) var(--s4);box-shadow:var(--shadow-1);
+        position:relative;overflow:hidden}
+  /* The status edge is an inset bar, not a border-left: a coloured border
+     changed the box's geometry, so a good tile and a neutral one did not
+     line up their text. */
+  .tile::before,.stat::before{content:'';position:absolute;left:0;top:0;bottom:0;
+        width:3px;background:transparent}
+  .tile.good::before{background:var(--up)}
+  .tile.warn::before{background:var(--warn)}
+  .tile.bad::before{background:var(--down)}
+  .tile .k,.stat .k{font-family:var(--sans);font-size:var(--t-label);
+        letter-spacing:.03em;text-transform:uppercase;color:var(--faint);
+        font-weight:600}
+  .tile .v,.stat .v{font-family:var(--mono);font-size:var(--t-xl);font-weight:600;
+        line-height:1.25;font-variant-numeric:tabular-nums;
+        letter-spacing:-.02em;margin-top:2px}
+  .tile .s,.stat .s{font-size:var(--t-sm);color:var(--faint);line-height:1.45;
+        margin-top:2px}
 
-  .note{font-size:12.5px;color:var(--soft);margin:2px 0 16px}
-  .hint{font-family:var(--mono);font-size:11px;color:var(--faint)}
-  .err{background:var(--down-soft);color:var(--down);padding:10px 14px;
-       border-radius:3px;margin:14px 0;font-family:var(--mono);font-size:12.5px}
-  .loading{color:var(--faint);padding:30px 0;font-family:var(--mono);font-size:12px}
+  /* ---------------------------------------------------------- text + notes */
+  .note{font-size:var(--t-body);color:var(--soft);margin:0 0 var(--s4);
+        max-width:var(--measure)}
+  .hint{font-family:var(--mono);font-size:var(--t-label);color:var(--faint)}
+  .err{background:var(--down-soft);color:var(--down);padding:var(--s3) var(--s4);
+       border-radius:var(--r);margin:var(--s4) 0;font-family:var(--mono);
+       font-size:var(--t-sm);box-shadow:var(--shadow-1)}
+  .loading{color:var(--faint);padding:var(--s6) 0;font-family:var(--mono);
+           font-size:var(--t-sm)}
+  .banner{background:var(--warn-soft);color:var(--warn);border-radius:var(--r);
+          padding:10px var(--s4);margin:0 0 var(--s4);font-size:var(--t-body);
+          box-shadow:inset 3px 0 0 var(--warn);max-width:var(--measure)}
+  .banner b{font-family:var(--mono);font-weight:600}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-  /* ---- pair view ---- */
-  .ctl{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
-       background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-       padding:12px 14px;margin-bottom:14px}
-  .ctl label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);
-       font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
-       font-weight:600}
+  /* ----------------------------------------------------------- pair view */
+  .ctl{display:flex;gap:var(--s4);flex-wrap:wrap;align-items:flex-end;
+       background:var(--surface);border-radius:var(--r);
+       padding:var(--s3) var(--s4);margin-bottom:var(--s4);
+       box-shadow:var(--shadow-1)}
+  .ctl label{display:flex;flex-direction:column;gap:var(--s1);
+       font-family:var(--sans);font-size:var(--t-label);letter-spacing:.03em;
+       text-transform:uppercase;color:var(--faint);font-weight:600}
   .ctl select{min-width:150px}
-  .ctl .sidebar-l{border-left:3px solid var(--up);padding-left:8px}
-  .ctl .sidebar-s{border-left:3px solid var(--down);padding-left:8px}
+  .ctl .sidebar-l{border-left:3px solid var(--up);padding-left:var(--s2)}
+  .ctl .sidebar-s{border-left:3px solid var(--down);padding-left:var(--s2)}
 
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-         gap:10px;margin-bottom:14px}
-  .stat{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-        padding:11px 13px}
-  .stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.09em;
-        text-transform:uppercase;color:var(--faint);font-weight:600}
-  .stat .v{font-family:var(--mono);font-size:22px;font-weight:660;line-height:1.25;
-        font-variant-numeric:tabular-nums}
-  .stat .s{font-size:11.5px;color:var(--faint)}
+  .drivers{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s4)}
+  .drv{background:var(--surface);border-radius:var(--r-sm);
+       padding:var(--s2) var(--s3);font-family:var(--mono);
+       font-size:var(--t-label);min-width:150px;box-shadow:var(--shadow-1)}
+  .drv b{display:block;font-size:var(--t-md);font-weight:600;
+         font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .drv span{font-family:var(--sans);color:var(--faint);font-size:var(--t-micro);
+       letter-spacing:.04em;text-transform:uppercase;font-weight:600}
 
-  .chart{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-         padding:14px 16px 8px;margin-bottom:4px}
+  .chart{background:var(--surface);border-radius:var(--r);
+         padding:var(--s4) var(--s4) var(--s2);margin-bottom:var(--s1);
+         box-shadow:var(--shadow-1)}
   /* max-height keeps the pair chart from occupying an entire viewport on a wide
      monitor, which is what made the page feel unscrollable even where nothing
      was trapping the wheel. */
   .chart svg{display:block;width:100%;height:auto;max-height:62vh}
   .cd svg{max-height:none}
-  .ax{fill:var(--faint);font-family:var(--mono);font-size:11px}
-  .axl{fill:var(--faint);font-family:var(--mono);font-size:10px;
-       letter-spacing:.09em;text-transform:uppercase;font-weight:600}
-  .grid{stroke:var(--rule2);stroke-width:1}
+  .ax{fill:var(--faint);font-family:var(--mono);font-size:var(--t-label)}
+  .axl{fill:var(--faint);font-family:var(--sans);font-size:var(--t-micro);
+       letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+  .grid{stroke:var(--hair);stroke-width:1}
   .zero{stroke:var(--rule);stroke-width:1;stroke-dasharray:3 3}
 
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;
-          font-size:12px;color:var(--soft);align-items:center}
+  .legend{display:flex;gap:var(--s4);flex-wrap:wrap;margin:var(--s3) 0 0;
+          font-size:var(--t-sm);color:var(--soft);align-items:center}
   .legend i{display:inline-block;width:20px;height:0;border-top-width:2.5px;
             margin-right:6px;vertical-align:middle}
 
-  .banner{background:var(--warn-soft);color:var(--warn);border-radius:3px;
-          padding:9px 13px;margin:0 0 14px;font-size:12.5px;
-          border-left:3px solid var(--warn)}
-  .banner b{font-family:var(--mono)}
-
+  /* ------------------------------------------------------------- cards
+     The card grid sits in a SUNKEN well, so a group of cards reads as one
+     object. Previously the well and the cards were both bordered boxes. */
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-         gap:12px;padding:12px;
-         border:1px solid var(--rule);border-radius:3px;background:var(--alt)}
-  .cd{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-      padding:10px 12px 6px}
-  .cd h3{margin:0 0 2px;font-size:13.5px;font-weight:640;display:flex;
-         align-items:baseline;gap:8px}
-  .cd h3 .g{font-family:var(--mono);font-size:10px;letter-spacing:.07em;
-            text-transform:uppercase;color:var(--faint);font-weight:600}
-  .cd .row{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;
-           color:var(--faint);margin-bottom:5px;font-variant-numeric:tabular-nums}
-  .cd .row b{color:var(--ink);font-size:13px}
-  .cd.pick-l{border-color:var(--up);box-shadow:inset 3px 0 0 var(--up)}
-  .cd.pick-s{border-color:var(--down);box-shadow:inset 3px 0 0 var(--down)}
-
-  /* ---- stacked score+price rows ---- */
-  .nrow{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-        padding:12px 14px 6px;margin-bottom:14px}
-  .nhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
-         margin-bottom:6px}
-  .nhead h3{margin:0;font-size:15px;font-weight:650;display:flex;
-            align-items:baseline;gap:8px}
-  .nhead h3 .g{font-family:var(--mono);font-size:10px;letter-spacing:.07em;
-               text-transform:uppercase;color:var(--faint);font-weight:600}
-  .nstat{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto;
-         font-family:var(--mono);font-size:11.5px;color:var(--faint);
-         font-variant-numeric:tabular-nums}
-  .nstat b{color:var(--ink);font-size:13.5px}
-
-  /* ---- daily overview ---- */
-  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-         gap:12px;margin-bottom:20px}
-  .tile{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-        padding:13px 15px;border-left:3px solid var(--rule)}
-  .tile.good{border-left-color:var(--up)}
-  .tile.warn{border-left-color:var(--warn)}
-  .tile.bad{border-left-color:var(--down)}
-  .tile .k{font-family:var(--mono);font-size:10px;letter-spacing:.09em;
-           text-transform:uppercase;color:var(--faint);font-weight:600}
-  .tile .v{font-family:var(--mono);font-size:21px;font-weight:660;line-height:1.3;
+         gap:var(--s3);padding:var(--s3);border-radius:var(--r);
+         background:var(--sunken)}
+  .cd{background:var(--surface);border-radius:var(--r-sm);
+      padding:var(--s3) var(--s3) var(--s2);box-shadow:var(--shadow-1)}
+  .cd h3{margin:0 0 2px;font-size:var(--t-md);font-weight:600;display:flex;
+         align-items:baseline;gap:var(--s2)}
+  .cd h3 .g,.nhead h3 .g{font-family:var(--mono);font-size:var(--t-micro);
+            letter-spacing:.06em;text-transform:uppercase;color:var(--faint);
+            font-weight:600}
+  .cd .row{display:flex;gap:var(--s4);font-family:var(--mono);
+           font-size:var(--t-label);color:var(--faint);margin-bottom:5px;
            font-variant-numeric:tabular-nums}
-  .tile .s{font-size:12px;color:var(--faint);line-height:1.4}
-  .steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-  .stp{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:2px;
-       background:var(--alt);color:var(--soft);white-space:nowrap}
+  .cd .row b{color:var(--ink);font-size:var(--t-body);font-weight:600}
+  .cd{transition:box-shadow .12s}
+  .cd:hover{box-shadow:var(--shadow-2)}
+  .cd.pick-l{box-shadow:var(--shadow-1), inset 3px 0 0 var(--up)}
+  .cd.pick-l:hover{box-shadow:var(--shadow-2), inset 3px 0 0 var(--up)}
+  .cd.pick-s:hover{box-shadow:var(--shadow-2), inset 3px 0 0 var(--down)}
+  .cd.pick-s{box-shadow:var(--shadow-1), inset 3px 0 0 var(--down)}
+
+  /* ------------------------------------------ stacked score+price rows */
+  .nrow{background:var(--surface);border-radius:var(--r);
+        padding:var(--s3) var(--s4) var(--s2);margin-bottom:var(--s4);
+        box-shadow:var(--shadow-1)}
+  .nhead{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;
+         margin-bottom:var(--s2)}
+  .nhead h3{margin:0;font-size:var(--t-lg);font-weight:600;display:flex;
+            align-items:baseline;gap:var(--s2)}
+  .nstat{display:flex;gap:var(--s4);flex-wrap:wrap;margin-left:auto;
+         font-family:var(--mono);font-size:var(--t-label);color:var(--faint);
+         font-variant-numeric:tabular-nums}
+  .nstat b{color:var(--ink);font-size:var(--t-body);font-weight:600}
+
+  /* ------------------------------------------------------ run step chips */
+  .steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--s2)}
+  .stp{font-family:var(--mono);font-size:var(--t-label);padding:3px var(--s2);
+       border-radius:var(--r-pill);background:var(--sunken);color:var(--soft);
+       white-space:nowrap}
   .stp.ok{background:var(--up-soft);color:var(--up)}
   .stp.skip{background:var(--warn-soft);color:var(--warn)}
   .stp.bad{background:var(--down-soft);color:var(--down)}
 
-  /* ---- flows ---- */
-  .st{display:inline-block;font-family:var(--mono);font-size:10px;
-      letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;
-      border-radius:2px;font-weight:600;white-space:nowrap}
-  .st-ready{background:var(--up-soft);color:var(--up)}
-  .st-thin{background:var(--warn-soft);color:var(--warn)}
-  .st-blocked{background:var(--down-soft);color:var(--down)}
-  .st-open{background:var(--accent-soft);color:var(--accent)}
+  /* --------------------------------- a sector with prices but no spec */
+  .await{background:var(--surface);border-radius:var(--r);
+         padding:var(--s5);margin-bottom:var(--s5);
+         box-shadow:var(--shadow-1), inset 3px 0 0 var(--accent)}
+  .await h3{margin:0 0 var(--s2);font-size:var(--t-lg);font-weight:600}
+  .await p{margin:0 0 10px;max-width:var(--measure);color:var(--soft);
+           font-size:var(--t-body)}
+  .await ol{margin:var(--s3) 0 0;padding-left:22px;color:var(--soft);
+            font-size:var(--t-body);max-width:var(--measure)}
+  .await ol li{margin-bottom:var(--s1)}
+  .await code,code{font-family:var(--mono);font-size:var(--t-sm);
+              background:var(--sunken);padding:1px 5px;border-radius:3px}
 
-  /* ---- a sector with prices but no spec ---- */
-  .await{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-         padding:18px 20px;margin-bottom:18px;border-left:3px solid var(--accent)}
-  .await h3{margin:0 0 8px;font-size:16px;font-weight:640}
-  .await p{margin:0 0 10px;max-width:74ch;color:var(--soft);font-size:13.5px}
-  .await ol{margin:10px 0 0;padding-left:22px;color:var(--soft);font-size:13.5px}
-  .await ol li{margin-bottom:5px}
-  .await code{font-family:var(--mono);font-size:12px;background:var(--alt);
-              padding:1px 4px;border-radius:2px}
-  td.flat{color:var(--faint)}
+  /* ------------------------------------------------------------- narrow
+     The portable snapshot is opened on a phone, so this is a real target
+     rather than a courtesy. 24px gutters cost 13% of a 375px screen. */
+  @media (max-width:640px){
+    .wrap{padding-left:var(--s4);padding-right:var(--s4)}
+    .navs{margin-left:calc(var(--s4) * -1);margin-right:calc(var(--s4) * -1);
+          padding-left:var(--s4);padding-right:var(--s4)}
+    header{padding-top:var(--s4);gap:var(--s2)}
+    .meta{margin-left:0;width:100%;gap:var(--s2)}
+    h1{font-size:var(--t-md)}
+    section{padding-top:var(--s4)}
+    .tiles,.stats{gap:var(--s2);grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr;padding:var(--s2)}
+    .nrow,.await{padding-left:var(--s3);padding-right:var(--s3)}
+    .await{padding-top:var(--s4);padding-bottom:var(--s4)}
+    h2{margin-top:var(--s5)}
+    /* A table narrower than its own content still needs the page not to
+       move; the .scroll wrapper owns that, so give it a visible edge. */
+    .scroll{border-radius:var(--r-sm)}
+  }
 </style>
 </head>
 <body>
@@ -445,19 +577,26 @@ const P = {pillar: 'composite', span: 'all'};   // legs removed with the pair vi
 const SPANS = {'1m':30, '3m':91, '6m':182, '1y':365, '3y':1095, 'all':null};
 
 async function getTape(pillar){
-  if (!TAPE[pillar]){
-    /* SEND THE SELECTED SECTOR'S PEER GROUPS. Without this the tape returns
-       every scored name and the Pair tab draws the same chart on every sector —
-       the same sector-blindness that loadScores() had, in the neighbouring
-       view. */
-    const se = SECTORS.find(x => x.id === SECTOR) || {};
-    const gq = (se.peer_groups || []).join(',');
+  /* SEND THE SELECTED SECTOR'S PEER GROUPS. Without this the tape returns
+     every scored name and the Pair tab draws the same chart on every sector —
+     the same sector-blindness that loadScores() had, in the neighbouring
+     view. */
+  const se = SECTORS.find(x => x.id === SECTOR) || {};
+  const gq = (se.peer_groups || []).join(',');
+  /* AND CACHE ON THE GROUPS, not on the pillar alone. The request above was
+     made sector-aware; this key was not, so the FIRST sector's tape was
+     handed to every later one under the same pillar and only a page reload
+     cleared it. Keyed on gq rather than on SECTOR because the response
+     depends on the groups: two sectors sharing a group set may legitimately
+     share the entry, and a sector with none gets its own. */
+  const ck = gq + '|' + pillar;
+  if (!TAPE[ck]){
     const d = await (await fetch('/api/tape?pillar=' + encodeURIComponent(pillar) +
       (gq ? '&groups=' + encodeURIComponent(gq) : ''))).json();
     if (d.error) throw new Error(d.error);
-    TAPE[pillar] = d;
+    TAPE[ck] = d;
   }
-  return TAPE[pillar];
+  return TAPE[ck];
 }
 
 function spanCut(tp){
@@ -730,7 +869,7 @@ function sector(id){
   if (e.kind === 'flows'){ $('#vnav').hidden = true; tab('flows'); return; }
   $('#vnav').hidden = !e.live;
   if (e.live){ tab(LAST_VIEW); }
-  else { delete loaded.sector; tab('sector'); }   // refetch: content is per-sector
+  else { tab('sector'); }   // per-sector; tab() refetches on a sector change
 }
 
 /* ===================== daily overview =====================
@@ -1003,7 +1142,25 @@ let TODAY = null;
 
 const loaders = {pair:loadPair, scores:loadScores, pos:loadPos,
                 sector:loadSector, overview:loadOverview, flows:loadFlows};
-const loaded = {};
+
+/* Which views render SECTOR-SPECIFIC content. The other three are global —
+   Positioning is the whole F&O table, Overview and Flows are run-level — so
+   their DOM stays valid across a sector switch and must not be refetched. */
+const SECTOR_SCOPED = {pair:1, scores:1, sector:1};
+
+/* view -> the sector whose content is currently IN THAT SECTION'S DOM, or '*'
+   for a global view. NOT "has this view loaded": there is one #s-<view> node
+   shared by every sector, so a per-view flag reported Steel's bridge as
+   already loaded when Non-Ferrous asked for it, and left Steel on screen. */
+const rendered = {};
+
+/* Run a view's loader and record what its DOM now holds. Clears the record on
+   failure — the old flag was set BEFORE the await, so a view that threw once
+   was marked loaded forever and stayed blank until a reload. */
+function render(name){
+  rendered[name] = SECTOR_SCOPED[name] ? SECTOR : '*';
+  loaders[name]().catch(e => { delete rendered[name]; showErr(e.message); });
+}
 function tab(name){
   document.querySelectorAll('.tab').forEach(b =>
     b.setAttribute('aria-selected', String(b.dataset.t === name)));
@@ -1020,13 +1177,14 @@ function tab(name){
   const live = (name === 'scores');
   $('#winwrap').hidden = !live;
   $('#fxwrap').hidden = !live;
-  if (!loaded[name]){ loaded[name] = 1; loaders[name]().catch(e => showErr(e.message)); }
+  // Re-render when this section is showing another sector's content.
+  if (rendered[name] !== (SECTOR_SCOPED[name] ? SECTOR : '*')) render(name);
 }
 document.querySelectorAll('.tab').forEach(b =>
   b.addEventListener('click', () => tab(b.dataset.t)));
 $('#win').addEventListener('change', () => loadScores().catch(e => showErr(e.message)));
 $('#reload').addEventListener('click', () => {
-  for (const k in loaded) delete loaded[k];
+  for (const k in rendered) delete rendered[k];
   for (const k in TAPE) delete TAPE[k];      // else Refresh cannot see a new run
   // The visible view is the sector placeholder whenever the sector has no spec;
   // reading the sub-nav then reloads a view that is not on screen.
@@ -1035,7 +1193,7 @@ $('#reload').addEventListener('click', () => {
     : e.kind === 'flows' ? 'flows'
     : e.live ? document.querySelector('.tab[aria-selected=true]').dataset.t
     : 'sector';
-  loaded[cur] = 1; loaders[cur]().catch(e => showErr(e.message));
+  render(cur);
 });
 $('#winwrap').hidden = true;
 $('#fxwrap').hidden = true;
