@@ -431,6 +431,13 @@
        min-width:56px;text-align:right}
   .viztip .r em{font-style:normal;color:var(--soft);font-family:var(--mono);
        font-size:var(--t-label)}
+
+  /* Divergence markers. Surface-coloured ring so a marker stays readable where
+     two lines cross — same reason the endpoint dots carry one. */
+  .vdiv{stroke:var(--surface);stroke-width:1.5}
+  .lgd .dvk{color:var(--faint);font-family:var(--sans);font-size:var(--t-label)}
+  .viztip .r .dv{font-family:var(--mono);font-size:var(--t-micro);
+       color:var(--warn);white-space:nowrap;margin-left:2px}
 </style>
 </head>
 <body>
@@ -641,8 +648,49 @@ async function loadPos(){
 // constants. If the curve form ever changes, this must be updated with it.
 const NEUTRAL = 3.0, HALF = 2.0;
 const TAPE = {};
-const P = {pillar: 'composite', span: 'all'};   // legs removed with the pair view
+const P = {pillar: 'composite', span: 'all', div: 20};  // legs removed with the pair view
 const SPANS = {'1m':30, '3m':91, '6m':182, '1y':365, '3y':1095, 'all':null};
+
+/* DIVERGENCE THRESHOLDS. Both must be cleared, in opposite directions, over
+   the selected window. Calibrated against the live tape rather than picked:
+   at a 20-session window these give 12 markers across the 5 steel names over
+   149 sessions and 16 across non-ferrous — two or three per name over seven
+   months. The looser pair below (0.15 / 3%) gives 18 and 20, which starts to
+   read as texture; the tighter one (0.40 / 8%) gives 8 and 9.
+
+   They are constants rather than a second control on purpose: the window is
+   the knob worth turning day to day, and two selects for one feature crowds
+   the filter row. Exposing them is a small change if it turns out to matter. */
+const DIV_S = 0.25;    // minimum |change in score|, on the 1-5 scale
+const DIV_P = 5.0;     // minimum |change in price|, per cent
+
+/* Score and price moving AGAINST each other over a trailing window — the
+   market disagreeing with the fundamental view, which is the whole point of
+   plotting the two together.
+
+   `al` is the score and cumulative-% series already aligned on date. The
+   window return is taken as the RATIO of the two cumulative points, not their
+   difference: the % series is a chained index, so subtracting two of its
+   levels is not a return over that leg.
+
+   ONSET ONLY, then a refractory period of one window. Without it every
+   session inside a divergent leg qualifies and the line disappears under a
+   run of identical markers — the condition persists, but it is one event. */
+function divergences(al, win){
+  const out = [];
+  let blockUntil = -1;
+  for (let i = win; i < al.length; i++){
+    if (i <= blockUntil) continue;
+    const now = al[i], then = al[i - win];
+    const ds = now.s - then.s;
+    const ret = ((1 + now.p / 100) / (1 + then.p / 100) - 1) * 100;
+    if (ds * ret >= 0) continue;                       // same way, or a flat leg
+    if (Math.abs(ds) < DIV_S || Math.abs(ret) < DIV_P) continue;
+    out.push({d: now.d, v: now.s, ds: ds, ret: ret, dir: ds > 0 ? 1 : -1});
+    blockUntil = i + win;
+  }
+  return out;
+}
 
 async function getTape(pillar){
   /* SEND THE SELECTED SECTOR'S PEER GROUPS. Without this the tape returns
@@ -866,6 +914,25 @@ function lineChart(cfg){
     for (const e of ends) e.y = Math.max(e.y, MT + 5);
   }
 
+  /* Divergence markers. A TRIANGLE POINTING THE WAY THE SCORE WENT: up means
+     score rose while price fell, down means score fell while price rose. The
+     marker existing at all is what says the two disagreed, so one shape rule
+     covers both cases and needs no second colour — which matters, because
+     colour here already means "which name" and cannot also mean "which
+     direction". Filled in the series colour with a surface-coloured ring so
+     it stays legible where two lines cross. */
+  let dmk = '';
+  for (const sr of series){
+    for (const g of (sr.divs || [])){
+      const x = X(T(g.d)), y = Y(g.v), r = 5;
+      const pts = g.dir > 0
+        ? [[x, y - r], [x - r * 0.9, y + r * 0.7], [x + r * 0.9, y + r * 0.7]]
+        : [[x, y + r], [x - r * 0.9, y - r * 0.7], [x + r * 0.9, y - r * 0.7]];
+      dmk += '<polygon points="' + pts.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ') +
+             '" style="fill:' + inkOf(sr.slot) + '" class="vdiv"/>';
+    }
+  }
+
   let lab = '';
   for (const e of ends){
     const col = inkOf(e.s.slot);
@@ -888,7 +955,8 @@ function lineChart(cfg){
     all: cfg.allDates,
     series: series.filter(s => s.pts.length).map(s => ({
       label: s.label, slot: s.slot,
-      byDate: new Map(s.pts.map(p => [p.d, p.v]))
+      byDate: new Map(s.pts.map(p => [p.d, p.v])),
+      divByDate: new Map((s.divs || []).map(g => [g.d, g]))
     }))
   };
 
@@ -897,7 +965,7 @@ function lineChart(cfg){
       '" role="img" tabindex="0" aria-label="' + esc(axisLabel) + '">' +
     grid + mk +
     '<line class="xhair" x1="0" x2="0" y1="' + MT + '" y2="' + (h - MB) + '" style="display:none"/>' +
-    lines + lab + yax + xax +
+    lines + dmk + lab + yax + xax +
     '<text class="axl" x="' + ML + '" y="10">' + esc(axisLabel) + '</text>' +
     '</svg><div class="viztip" role="status"></div></div>';
 }
@@ -943,6 +1011,17 @@ function wireChart(id){
       const nm = document.createElement('em');
       nm.textContent = s.label;                       // label follows
       row.appendChild(key); row.appendChild(val); row.appendChild(nm);
+      const g = s.divByDate && s.divByDate.get(d);
+      if (g){
+        // Spell out both legs. A marker that only says "divergence here" sends
+        // you hunting across the other chart for the half it withheld.
+        const dv = document.createElement('span');
+        dv.className = 'dv';
+        dv.textContent = (g.ds > 0 ? '▲' : '▼') + ' score ' +
+          (g.ds > 0 ? '+' : '') + g.ds.toFixed(2) + ' vs price ' +
+          (g.ret > 0 ? '+' : '') + g.ret.toFixed(1) + '%';
+        row.appendChild(dv);
+      }
       tip.appendChild(row);
     }
     if (!any) return hide();
@@ -990,9 +1069,13 @@ function stackControls(tp){
   }).join('');
   const spans = Object.keys(SPANS).map(x =>
     `<option value="${x}"${x === P.span ? ' selected' : ''}>${x}</option>`).join('');
+  const divs = [['0','off'],['10','10 sessions'],['20','20 sessions'],['40','40 sessions']]
+    .map(([v, t]) => `<option value="${v}"${+v === P.div ? ' selected' : ''}>${t}</option>`)
+    .join('');
   return `<div class="ctl">
     <label>pillar<select id="pp">${pills}</select></label>
     <label>span<select id="pspan">${spans}</select></label>
+    <label>divergence<select id="pdiv">${divs}</select></label>
   </div>`;
 }
 
@@ -1010,11 +1093,16 @@ async function loadPair(){
     const acts = ((tp.corporate_actions[eid] || {}).confirmed || [])
       .filter(c => pts.length && c.date >= pts[0].d && c.date <= pts[pts.length - 1].d);
     const sc = scoreSeries(pts), px = pctSeries(pts, breaks);
+    // Aligned on date, because score and close can go missing independently.
+    const pmap = new Map(px.map(p => [p.d, p.v]));
+    const al = sc.filter(q => pmap.has(q.d))
+                 .map(q => ({d: q.d, s: q.v, p: pmap.get(q.d)}));
+    const divs = P.div > 0 ? divergences(al, P.div) : [];
     const okS = pts.filter(q => q.score != null);
     const first = okS.length ? okS[0] : null, last = okS.length ? okS[okS.length - 1] : null;
     return {
       eid: eid, ser: ser, pts: pts, breaks: breaks, acts: acts,
-      slot: slotOf(tp, eid), sc: sc, px: px,
+      slot: slotOf(tp, eid), sc: sc, px: px, divs: divs,
       last: last,
       dS: first && last ? last.score - first.score : null,
       dP: px.length ? px[px.length - 1].v : null,
@@ -1055,19 +1143,22 @@ async function loadPair(){
   for (let v = tLo; v <= tHi + 1e-9; v += stepv) pTicks.push(+v.toFixed(6));
 
   const H = 300;
-  const mkSeries = key => drawn.map(r => ({label: r.eid, slot: r.slot, pts: r[key]}));
+  const mkSeries = (key, withDivs) => drawn.map(r => ({
+    label: r.eid, slot: r.slot, pts: r[key],
+    divs: withDivs ? r.divs.filter(g => r[key].length > 1) : null
+  }));
   const marks = [];
   for (const r of drawn) for (const c of r.acts) marks.push({d: c.date});
 
   const drawScore = availW => lineChart({
-    id: 'score', w: availW, h: H, series: mkSeries('sc'),
+    id: 'score', w: availW, h: H, series: mkSeries('sc', true),
     yLo: 1, yHi: 5, ticks: [1, 2, 3, 4, 5], fmtY: v => String(v),
     fmtV: v => v.toFixed(2),
     xDom: xDom, xTicks: xTicks, allDates: all,
     axisLabel: esc(tp.pillar) + ' score 1-5'
   });
   const drawPrice = availW => lineChart({
-    id: 'price', w: availW, h: H, series: mkSeries('px'),
+    id: 'price', w: availW, h: H, series: mkSeries('px', false),
     yLo: tLo, yHi: tHi, ticks: pTicks,
     fmtY: v => (v > 0 ? '+' : '') + v.toFixed(Math.abs(stepv) < 1 ? 1 : 0) + '%',
     fmtV: v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%',
@@ -1075,9 +1166,13 @@ async function loadPair(){
     axisLabel: 'price · % change in span'
   });
 
+  const nDiv = drawn.reduce((a, r) => a + r.divs.length, 0);
   const legend = '<div class="lgd">' + drawn.map(r =>
     '<span><i style="border-top-color:' + inkOf(r.slot) + '"></i>' + esc(r.eid) +
-    '</span>').join('') + '</div>';
+    '</span>').join('')
+    + (P.div > 0 ? '<span class="dvk">\u25b2 score up, price down' +
+       '</span><span class="dvk">\u25bc score down, price up</span>' : '')
+    + '</div>';
 
   const tbody = rows.map(r => {
     const late = r.ser.first && tp.coverage[tp.pillar] && tp.coverage[tp.pillar].first
@@ -1094,6 +1189,7 @@ async function loadPair(){
       '<td class="n">' + (r.dS == null ? '—' : (r.dS >= 0 ? '+' : '') + r.dS.toFixed(2)) + '</td>' +
       '<td class="n" style="color:' + dpc + '">' +
         (r.dP == null ? '—' : (r.dP >= 0 ? '+' : '') + r.dP.toFixed(1) + '%') + '</td>' +
+      '<td class="n">' + (P.div > 0 ? (r.divs.length || '—') : '—') + '</td>' +
       '<td class="n hint">' + r.n + '</td></tr>';
   }).join('');
 
@@ -1113,6 +1209,13 @@ async function loadPair(){
     + 'axis; <b>price</b> as % change from the start of the span, which is what '
     + 'lets names on very different price levels share an axis. A name keeps its '
     + 'colour in both. Newest date ' + esc(tp.as_of_max) + '.</p>'
+    + (P.div > 0
+      ? '<p class="note"><b>' + nDiv + ' divergence' + (nDiv === 1 ? '' : 's') +
+        '</b> marked on the score line: over ' + P.div + ' sessions the score moved '
+        + '\u2265' + DIV_S.toFixed(2) + ' and the price \u2265' + DIV_P.toFixed(0) +
+        '% in the <i>opposite</i> direction. One marker per episode, not per '
+        + 'session. Hover a marker for both legs.</p>'
+      : '')
     + actNote
     + legend
     + '<div class="chart" id="ch-score" style="min-height:' + (H + 24) + 'px"></div>'
@@ -1120,7 +1223,8 @@ async function loadPair(){
     + '<h2>By name</h2>'
     + '<div class="scroll"><table><thead><tr><th>Entity</th><th>Peer group</th>'
     + '<th class="n">Score</th><th class="n">Δ score</th><th class="n">Δ price</th>'
-    + '<th class="n">Pts</th></tr></thead><tbody>' + tbody + '</tbody></table></div>'
+    + '<th class="n">Div</th><th class="n">Pts</th></tr></thead><tbody>' + tbody
+    + '</tbody></table></div>'
     + '<p class="note hint">Persisted <code>pillar_scores</code> — not recomputed, '
     + 'and not affected by overrides. The Bridge tab recomputes live and will differ '
     + 'whenever an override is active or <code>run_scores.py</code> has not been re-run.</p>';
@@ -1170,6 +1274,8 @@ function wirePair(){
   if (pp) pp.onchange = () => { P.pillar = pp.value; go(); };
   const sp = $('#pspan');
   if (sp) sp.onchange = () => { P.span = sp.value; go(); };
+  const dv = $('#pdiv');
+  if (dv) dv.onchange = () => { P.div = +dv.value; go(); };
   wireChart('score');
   wireChart('price');
 
