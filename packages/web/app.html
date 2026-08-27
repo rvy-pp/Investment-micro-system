@@ -1203,8 +1203,28 @@ async function loadPair(){
       'Score is not adjusted; those are the stored values.</div>'
     : '';
 
+  /* THE EXPLANATORY PROSE SITS AT THE BOTTOM, under the table, rather than
+     above the charts. It is read once and then never again, and standing
+     between the heading and the first data it pushed the numbers down the page
+     on every visit.
+
+     THE CORPORATE-ACTION BANNER STAYS AT THE TOP, and the distinction is the
+     point: it is not boilerplate but a conditional warning that changes how the
+     price line in front of you must be read, and it renders only when there is
+     an action inside the span. A warning filed under "Notes" at the foot of the
+     page is a warning nobody reads. */
   $('#s-pair').innerHTML = stackControls(tp)
     + '<h2>' + esc(tp.pillar) + ' · ' + drawn.length + ' names</h2>'
+    + actNote
+    + legend
+    + '<div class="chart" id="ch-score" style="min-height:' + (H + 24) + 'px"></div>'
+    + '<div class="chart" id="ch-price" style="min-height:' + (H + 24) + 'px"></div>'
+    + '<h2>By name</h2>'
+    + '<div class="scroll"><table><thead><tr><th>Entity</th><th>Peer group</th>'
+    + '<th class="n">Score</th><th class="n">Δ score</th><th class="n">Δ price</th>'
+    + '<th class="n">Div</th><th class="n">Pts</th></tr></thead><tbody>' + tbody
+    + '</tbody></table></div>'
+    + '<h2>Notes</h2>'
     + '<p class="note">Two charts, one measure each. <b>Score</b> on the fixed 1-5 '
     + 'axis; <b>price</b> as % change from the start of the span, which is what '
     + 'lets names on very different price levels share an axis. A name keeps its '
@@ -1216,15 +1236,6 @@ async function loadPair(){
         '% in the <i>opposite</i> direction. One marker per episode, not per '
         + 'session. Hover a marker for both legs.</p>'
       : '')
-    + actNote
-    + legend
-    + '<div class="chart" id="ch-score" style="min-height:' + (H + 24) + 'px"></div>'
-    + '<div class="chart" id="ch-price" style="min-height:' + (H + 24) + 'px"></div>'
-    + '<h2>By name</h2>'
-    + '<div class="scroll"><table><thead><tr><th>Entity</th><th>Peer group</th>'
-    + '<th class="n">Score</th><th class="n">Δ score</th><th class="n">Δ price</th>'
-    + '<th class="n">Div</th><th class="n">Pts</th></tr></thead><tbody>' + tbody
-    + '</tbody></table></div>'
     + '<p class="note hint">Persisted <code>pillar_scores</code> — not recomputed, '
     + 'and not affected by overrides. The Bridge tab recomputes live and will differ '
     + 'whenever an override is active or <code>run_scores.py</code> has not been re-run.</p>';
