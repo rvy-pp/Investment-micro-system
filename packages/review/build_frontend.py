@@ -144,6 +144,22 @@ def check() -> dict:
             r["routes"].append({"route": name, "ok": True,
                                 "detail": f"{len(d)} row(s)"})
 
+    # /api/cement_watch - the Overview banner. Checked like any other route, but
+    # an EMPTY watch is not a problem: `no_data` is what a store with no sweep
+    # yet correctly reports, and `calibrating` is the expected state for the
+    # first fortnight. Only `error` is a defect, because that means the scrape
+    # or the parse broke and the banner would be claiming nothing is happening.
+    cw, _ = route("/api/cement_watch", engine.cement_watch)
+    if cw is not None:
+        state = cw.get("state")
+        det = (f"{state}, {cw.get('n_days', 0)} capture(s), "
+               f"{len(cw.get('regions', []))} region(s), "
+               f"{len(cw.get('alerts', []))} alert(s)")
+        if state == "error":
+            r["problems"].append("/api/cement_watch: " + str(cw.get("note")))
+        r["routes"].append({"route": "/api/cement_watch",
+                            "ok": state != "error", "detail": det})
+
     r["ok"] = not r["problems"]
     r["n_warnings"] = len(r["warnings"])
     r["n_routes"] = len(r["routes"])

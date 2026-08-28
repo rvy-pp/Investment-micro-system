@@ -1390,13 +1390,27 @@ async function loadOverview(){
   const d = await (await fetch('/api/overview')).json();
   if (d.error) throw new Error(d.error);
 
+  /* Fetched separately and NEVER allowed to break the tab. The cement watch is
+     a scraped side-signal; if IndiaMART changed its markup or the table is
+     empty, the Overview must still render every score. Hence catch -> a state
+     the banner knows how to say out loud, rather than a rejected promise. */
+  const cwd_ = await fetch('/api/cement_watch').then(r => r.json())
+      .catch(e => ({state:'error', regions:[], alerts:[], note:String(e)}));
+  window.__CEMENT_WATCH__ = cwd_;
+
   const run = d.run || {};
   const runBad = run.ok === false || !!run.warning || !run.day;
   const feeds = d.feeds || {};
   const fe = d.frontend || {};
 
   const stepChips = (run.steps || []).map(x => {
-    const cls = x.status === 'ok' ? 'ok' : x.status === 'skipped' ? 'skip' : 'bad';
+    // 'background' is a step the refresh SPAWNED and did not wait for (the
+    // IndiaMART sweep, ~6.5 min detached). It is not a failure and must not
+    // paint red — its real outcome is the cement_watch banner above, which
+    // reads the table the background process writes.
+    const cls = x.status === 'ok' ? 'ok'
+              : (x.status === 'skipped' || x.status === 'background') ? 'skip'
+              : 'bad';
     return `<span class="stp ${cls}" title="${esc(x.detail || x.status)}">${
       esc(x.step)}</span>`;
   }).join('');
@@ -1485,7 +1499,41 @@ async function loadOverview(){
          3.00 both map to a 1.0 multiplier.`).join('<hr style="border:0;border-top:1px solid var(--rule);margin:8px 0">')}</div>`
     : '';
 
-  $('#s-overview').innerHTML = tiles + phBanner
+  /* CEMENT WATCH — the one banner on this page that is about something the
+     scored book cannot see yet. The Kotak pack's prints land ~15 days late, so a
+     multi-region move in IndiaMART dealer asks is tradeable information before
+     the priced series carries it.
+
+     THREE STATES, AND THE MIDDLE ONE MUST BE VISIBLE. `live` with an alert is
+     the point; `live` with no alert renders nothing, correctly. But
+     `calibrating` renders a QUIET line rather than nothing, because an absent
+     banner reads as "no move" and that is exactly what it does not mean — the
+     panel's own day-to-day noise has never been measured, so alerts are
+     suppressed by design. Rendering silence there would be the dashboard making
+     a claim the data cannot support. */
+  const cw = window.__CEMENT_WATCH__ || {state:'no_data', regions:[], alerts:[]};
+  const cwRow = r => `${esc(r.region)} ${r.matched_pct == null ? '—'
+      : (r.matched_pct >= 0 ? '+' : '') + r.matched_pct.toFixed(2) + '%'}` +
+      `<span class="hint"> (${r.n_matched == null ? 'first capture'
+        : r.n_matched + ' matched'})</span>`;
+  const cwBanner =
+    cw.state === 'live' && cw.alerts.length
+      ? `<div class="banner">${cw.alerts.map(a =>
+          `<b>CEMENT ${esc(a.direction)} — ${esc(a.regions.join(', '))}</b><br>
+           ${esc(a.text)}<br>
+           <span class="hint">${cw.regions.map(cwRow).join(' · ')}</span>`
+         ).join('<hr style="border:0;border-top:1px solid var(--rule);margin:8px 0">')}</div>`
+    : cw.state === 'calibrating'
+      ? `<p class="note hint">Cement watch (IndiaMART asks, ${esc(cw.day || '—')}):
+         <b>calibrating</b> — ${cw.n_days} capture${cw.n_days === 1 ? '' : 's'},
+         ${cw.days_to_calibrate} more before alerts arm. Day-on-day matched-listing
+         move: ${cw.regions.map(cwRow).join(' · ')}</p>`
+    : cw.state === 'error'
+      ? `<p class="note hint" style="color:var(--warn)">Cement watch unavailable:
+         ${esc(cw.note || '')}</p>`
+    : '';
+
+  $('#s-overview').innerHTML = tiles + cwBanner + phBanner
     + `<h2>Run · ${esc(run.day || '—')}</h2>
        <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
        ${probs.length ? `<div class="banner">${probs.map(esc).join('<br>')}</div>` : ''}

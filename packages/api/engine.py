@@ -262,6 +262,39 @@ def clear_override(override_id: int) -> None:
     conn.commit()
     conn.close()
 
+def cement_watch() -> dict:
+    """IndiaMART day-to-day cement ask move, for the Overview banner.
+
+    A WATCH, NOT A SCORE, and the API keeps that separation visible: this reads
+    `cement_watch`, never `prices`, and no pillar consumes it. It exists because
+    the Kotak pack's prints land ~15 days late (PM), so a multi-region move in
+    dealer asks is knowable well before the priced series shows it.
+
+    Returns `{state: no_data|calibrating|live, ...}`. `calibrating` is a real
+    state, not an error: the panel's own day-to-day noise has never been
+    measured, so a threshold set today would be invented rather than observed.
+    The page must SAY it is calibrating rather than render an empty banner —
+    silence would read as "no move", which is the one thing it does not mean.
+    """
+    import importlib.util as _u
+    try:
+        sp = _u.spec_from_file_location(
+            "_im", REPO / "packages" / "adapters" / "indiamart_cement.py")
+        mod = _u.module_from_spec(sp)
+        sp.loader.exec_module(mod)
+    except Exception as e:
+        return {"state": "error", "regions": [], "alerts": [],
+                "note": f"cement watch unavailable: {type(e).__name__}: {e}"}
+    conn = connect()
+    try:
+        return mod.report(conn)
+    except Exception as e:
+        return {"state": "error", "regions": [], "alerts": [],
+                "note": f"cement watch failed: {type(e).__name__}: {e}"}
+    finally:
+        conn.close()
+
+
 # ---------------------------------------------------------------------------
 # SECTORS — the front end's top-level navigation, defined here rather than in
 # the page so adding one is a data edit, not a JavaScript edit.
@@ -317,11 +350,23 @@ SECTORS = [
         "id": "cement",
         "label": "Cement",
         "peer_groups": [],
-        # The Daily CEMENT Pack arrives in the same mail and is deliberately not
-        # read — metals-pack-fetch ignores it. So cement has no prices of its own
-        # yet; these are the input costs it shares with the others. Wiring the
-        # cement pack is the first step whenever this sector is built.
+        # THE OUTPUT PRICE LANDED 2026-08-27 — `adapters/cement_pack.py` reads
+        # the Daily CEMENT Pack that arrives in the same Kotak mail as the
+        # metals pack. Six regional series, Rs/TONNE (the sheet prints Rs/50kg
+        # bag; the 20x is done in the adapter, deliberately, because bridge.py
+        # multiplies an ABSOLUTE delta by a tonnage), monthly back to 2014-04.
+        #
+        # Still no peer_groups, and that is now the ONLY thing missing: the
+        # sector has both legs of a margin bridge on disk and no spec to link
+        # them — no base_ebitda, no volumes, no intensities, no market_pct.
+        # Regional prices are listed first because a cement peer group is
+        # region-defined in a way steel's is not: North/Central names and South
+        # names do not share an output price, so the region choice per company
+        # is a spec decision, not a default to all-India.
         "commodities": [
+            "cement_price_india_inr", "cement_price_north_inr",
+            "cement_price_central_inr", "cement_price_east_inr",
+            "cement_price_west_inr", "cement_price_south_inr",
             "thermal_coal_seaborne", "thermal_coal_indonesia_6322",
             "cp_coke", "brent", "usdinr",
         ],
@@ -366,6 +411,19 @@ def sector_detail(sector_id: str) -> dict:
         LABELS = {v[0]: v[2] for v in _mp.COLS.values()}
     except Exception:
         LABELS = {}
+    # The cement pack is a second adapter with its own labels. Merged rather
+    # than special-cased so the Cement tab does not render six rows of raw
+    # slugs — the exact thing the comment above says entities.name would do.
+    try:
+        import importlib.util as _u2
+        _sc = _u2.spec_from_file_location(
+            "_cp", REPO / "packages" / "adapters" / "cement_pack.py")
+        _cp = _u2.module_from_spec(_sc)
+        _sc.loader.exec_module(_cp)
+        LABELS.update({eid: f"Cement price, {name}, Rs/t (monthly)"
+                       for eid, name in _cp.ROWS.values()})
+    except Exception:
+        pass
 
     conn = connect()
     ids = list(dict.fromkeys(spec["commodities"]))          # dedupe, keep order

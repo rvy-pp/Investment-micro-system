@@ -94,6 +94,25 @@ STEPS = [
     # rather than two, per the PM's instruction that every fetch happens in one
     # run. `--if-staged` makes each a skip, never a failure, when absent.
     ("metals pack (staged)", ["packages/refresh.py", "--consume", "metals"],  False),
+    # The CEMENT pack, unlike the metals pack, comes through the M365 connector
+    # complete — it is a WIDE sheet, so the whole workbook fits inside the
+    # connector's character cap. That makes it an agent step rather than an
+    # unattended one (the connector is agent-callable only), but a cheap one:
+    # one read, no Outlook automation. See adapters/cement_pack.py.
+    ("cement pack (staged)", ["packages/refresh.py", "--consume", "cement"],  False),
+    # THE ONLY STEP HERE THAT IS A WATCH RATHER THAN A FEED. Scrapes IndiaMART
+    # dealer asks into `cement_watch`, never into `prices`, and no pillar reads
+    # it. It earns its place because the Kotak pack lands ~15 days late, so a
+    # multi-region move in asks is knowable before the priced series shows it.
+    # SLOW BY NECESSITY (32 pages at 12s apart, ~6.5 min — IndiaMART 429s at
+    # roughly 15 rapid requests), WHICH IS WHY IT RUNS DETACHED — see
+    # BACKGROUND below. The .vbs launcher runs this whole file BLOCKING before
+    # it opens the page, so a foreground sweep would turn an ~18s morning
+    # launch into ~7 minutes of staring at nothing. It did, on 2026-08-28,
+    # for one day. Never fatal: a scraped side-signal must not be able to
+    # stop a scoring run.
+    ("cement watch (IndiaMART)",
+     ["packages/adapters/indiamart_cement.py", "--capture"],                False),
     ("mail watch (staged)",  ["packages/refresh.py", "--consume", "mail"],    False),
     # ADVISORY, NEVER WRITES. Hindalco's and Novelis' base numbers are static by
     # the PM's instruction and change once a quarter from the public release.
@@ -132,7 +151,28 @@ STEPS = [
 #
 # Trade-off accepted: if the vault publishes new OI after the day's first
 # refresh, it is not picked up until tomorrow. `--force` is the escape hatch.
-SKIP_IF_DONE = {"NSE OI fetch", "open interest"}
+# The IndiaMART sweep is here too, and for a plainer reason than OI: it takes
+# ~6 minutes of deliberate rate-limit sleeping, and the launcher refreshes on
+# every double-click. Without the guard, opening the dashboard three times in a
+# morning costs 18 minutes and scrapes an unchanged panel three times. Once a
+# day is also the right SAMPLING rate — the signal is a day-on-day change, so a
+# second capture on the same date would overwrite the first and compare today
+# against today. `--force` is the escape hatch.
+SKIP_IF_DONE = {"NSE OI fetch", "open interest", "cement watch (IndiaMART)"}
+
+# Steps SPAWNED DETACHED rather than awaited. The refresh reports "background"
+# and moves on; the step writes its own tables when it finishes, minutes later.
+# Two consequences, both accepted and both visible rather than silent:
+#   - the day-marker is written AT SPAWN, not at success — for an awaited step
+#     the marker-on-success rule lets a failed pull retry on the next launch,
+#     but an unawaited step has no success to observe, and spawning a second
+#     6-minute sweep on every launch until one finishes is the worse failure.
+#     A sweep that dies leaves no capture for today, which the Overview banner
+#     shows as a stale capture date. `--force` re-spawns.
+#   - this run's status.json says "background", never "ok" — the step's own
+#     outcome lands in data/refresh/cement_watch_last.log and in the
+#     cement_watch table itself, which /api/cement_watch reads live.
+BACKGROUND = {"cement watch (IndiaMART)"}
 MARKER = OUT / "steps_done.json"
 
 
@@ -148,6 +188,8 @@ def _marker_read() -> dict:
 MANUAL = [
     ("Wind zinc (ZN.SHF)", "Wind MCP is agent-callable only"),
     ("broker mail",        "Microsoft 365 MCP is agent-callable only"),
+    ("cement pack",        "Microsoft 365 MCP is agent-callable only — but "
+                           "one connector read, not an Outlook fetch"),
     ("extraction",         "deliberately never automated — a wrong extraction "
                            "enters the store as a fact"),
 ]
@@ -158,6 +200,7 @@ MANUAL = [
 # the source is alive. Keyed by the step label.
 _STEP_TABLE = {
     "NSE OI fetch":  ("oi", "date"),
+    "cement watch (IndiaMART)": ("cement_watch", "capture_date"),
     "open interest": ("oi", "date"),
 }
 
@@ -238,6 +281,53 @@ def consume(what: str) -> int:
                            capture_output=True, text=True)
         print(r.stdout.strip() or r.stderr.strip())
         return r.returncode
+    if what == "cement":
+        # THE OPPOSITE PREFERENCE TO metals, and deliberately so. There the .tsv
+        # is the connector's truncation and the .xlsx is the real thing; here the
+        # cement pack is WIDE (336 lines, ~70k chars) so the connector returns
+        # the whole workbook and the .tsv is the normal capture. Both are read
+        # by cement_pack.py, so the order only decides which is preferred when
+        # somebody has also dropped a workbook by hand — in which case that hand
+        # -dropped file should win, hence .xlsx first here too.
+        f = None
+        for ext in (".xlsx", ".tsv"):
+            cand = stage / f"cement_pack_{today}{ext}"
+            if cand.exists():
+                f = cand
+                break
+        stale_note = ""
+        if f is None:
+            import datetime as _d
+            cands = (sorted(stage.glob("cement_pack_*.xlsx"))
+                     + sorted(stage.glob("cement_pack_*.tsv")))
+            recent = []
+            for c in cands:
+                try:
+                    d = _d.date.fromisoformat(c.stem.replace("cement_pack_", ""))
+                except ValueError:
+                    continue
+                if 0 < (_d.date.today() - d).days <= 7:
+                    recent.append((d, c))
+            if recent:
+                d, f = max(recent)
+                # Safe to fall back BECAUSE the adapter dates the in-progress
+                # month from the FILENAME, not from today. An older capture
+                # therefore re-states what that morning knew rather than
+                # re-dating a stale month-to-date average to now.
+                stale_note = (f"no cement pack dated {today}; using the "
+                              f"{d.isoformat()} capture — its month-to-date "
+                              f"column stays stamped {d.isoformat()}")
+        if f is None:
+            print(f"no cement staging for {today} and none within 7 days — "
+                  f"skipped. Cement prices keep their last stored month.")
+            return 0
+        if stale_note:
+            print(stale_note)
+        r = subprocess.run([PY, "packages/adapters/cement_pack.py",
+                            "--file", str(f), "--load"], cwd=REPO,
+                           capture_output=True, text=True)
+        print(r.stdout.strip() or r.stderr.strip())
+        return r.returncode
     if what == "mail":
         f = stage / f"mail_{today}.json"
         if not f.exists():
@@ -254,7 +344,7 @@ def consume(what: str) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
-    ap.add_argument("--consume", choices=["metals", "mail"],
+    ap.add_argument("--consume", choices=["metals", "cement", "mail"],
                     help="load a staging file the agent wrote (internal)")
     ap.add_argument("--force", action="store_true",
                     help="re-pull even steps whose data is already there for today")
@@ -298,6 +388,28 @@ def main() -> int:
             say(f"  skipped — already pulled today ({day}){extra}; --force to re-pull")
             results.append({"step": label, "status": "skipped",
                             "data_age": age})
+            continue
+        if label in BACKGROUND:
+            # DETACHED_PROCESS: the child must outlive this refresh AND the
+            # cmd.exe the .vbs launcher wraps it in. Stdout goes to a log file
+            # because a detached process has no console to inherit — writing to
+            # a dead handle would kill the sweep with a cryptic OSError.
+            logf = OUT / "cement_watch_last.log"
+            OUT.mkdir(parents=True, exist_ok=True)
+            with open(logf, "w", encoding="utf-8") as lf:
+                flags = (getattr(subprocess, "DETACHED_PROCESS", 0)
+                         | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+                # -u: unbuffered. Piped-to-file stdout is BLOCK-buffered, so
+                # without it a sweep that dies mid-run leaves a 0-byte log —
+                # verified 2026-08-28: 38s into a live sweep the log held
+                # nothing. The log exists precisely for the dying case.
+                subprocess.Popen([PY, "-u", *argv], cwd=REPO, stdout=lf,
+                                 stderr=subprocess.STDOUT, creationflags=flags)
+            say(f"  started in background (~6.5 min); output -> {logf.name}")
+            results.append({"step": label, "status": "background"})
+            if label in SKIP_IF_DONE:
+                marker[label] = day        # at spawn — see BACKGROUND above
+                MARKER.write_text(json.dumps(marker, indent=2), encoding="utf-8")
             continue
         r = subprocess.run([PY, *argv], cwd=REPO, capture_output=True, text=True)
         body = (r.stdout or "").strip()

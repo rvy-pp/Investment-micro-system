@@ -60,6 +60,44 @@ Two exit codes, and the distinction is the point:
 Needs the machine **awake and logged in**. Locked is fine; asleep was already
 fatal to the whole run.
 
+## Step 2b — cement pack (MCP, agent only, and it WORKS here)
+
+Added 2026-08-27. The same Kotak mail carries a **second** attachment,
+`Daily Cement Pack, <Month> DD , YYYY.xlsx` (note the stray space before the
+comma — `outlook_pack.py` records that this is not a stable discriminator; match
+the `Daily Cement Pack` prefix). It holds cement's **output price**, which no
+other source in this system carries.
+
+1. `outlook_email_search` for `Daily Cement Pack`, newest first.
+2. `read_resource` on that message to get the attachment URI.
+3. `read_resource` on the **attachment** URI.
+4. Save the returned text verbatim to
+   `data/staging/cement_pack_<YYYY-MM-DD>.tsv` — the date being the mail's date,
+   because `cement_pack.py` reads the capture date out of the filename.
+
+**Do NOT reach for `outlook_pack.py` here.** Step 2 exists because the connector
+truncates the metals pack to the ~830 oldest rows. That does not happen to this
+one: the cement pack is a **WIDE** sheet — dates run across the columns — so the
+whole four-sheet workbook is 336 lines and ~70k characters, inside the ~200k cap,
+current to the same morning. Verified 2026-08-27. Cost is ~18k tokens.
+
+If it ever does outgrow the cap the symptom is a **short span**, not an error, so
+read the `--probe` span rather than assuming.
+
+`refresh.py` then loads it in Step 3 (`cement pack (staged)`), and skips
+cleanly — never fails — when no capture exists.
+
+**The pack lands ~15 days late (PM), so it confirms a move rather than carrying
+it.** That is why `refresh.py` also runs `cement watch (IndiaMART)` — a scrape of
+dealer asks that banners a same-day multi-region move on the Overview tab. It is
+ordinary Python and needs no agent. The sweep takes ~6.5 min (32 pages at 12s
+apart, around IndiaMART's 429 limit), so `refresh.py` **spawns it detached** —
+the refresh, and therefore the .vbs launcher that blocks on it, is not held up;
+the capture lands in the table minutes later and its log is
+`data/refresh/cement_watch_last.log`. Guarded to once a day, marker written at
+spawn. **It writes to `cement_watch*`, never to `prices`, and no pillar reads
+it.**
+
 ## Step 3 — everything Python
 
 ```bash
@@ -193,7 +231,7 @@ a Python data edit and needs no front-end change:
 | **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
 | **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |
 | **Steel** | prices landing (20 series), no spec |
-| **Cement** | shares 5 input series, no spec, and the Daily **Cement** Pack in the same mail is still unread |
+| **Cement** | prices landing (11 series — 6 regional **output** prices from the Daily Cement Pack + 5 shared input costs), no spec. An IndiaMART day-to-day watch banners on **Daily Overview** |
 
 **Daily Overview** is assembled from what the run *wrote* — `status.json`,
 `frontend.json`, `freshness.check()`, `pillar_scores`, the `oi` table — and never

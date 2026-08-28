@@ -117,6 +117,8 @@ class Handler(BaseHTTPRequestHandler):
                 })
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
+            if u.path == "/api/cement_watch":
+                return self._json(engine.cement_watch())
             return self._json({"error": "not found"}, 404)
         except Exception as exc:                    # surface, do not swallow
             import traceback

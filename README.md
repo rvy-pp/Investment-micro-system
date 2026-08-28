@@ -220,8 +220,10 @@ live.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — see `docs/FLOWS.md`), OI as a conviction modifier, book
-ingestion, Cement (its own daily pack arrives in the same mail and is not read
-yet), and Mining, EMS, IT and Autos.
+ingestion, Cement's **spec** (its daily pack IS now read — six regional price
+series as of 2026-08-27, plus an IndiaMART day-to-day watch on the Overview tab
+because the pack lands ~15 days late; what is missing is peer groups, volumes,
+`base_ebitda` and intensities), and Mining, EMS, IT and Autos.
 
 **The gate still standing:** the backtest has now been RUN
 (`packages/review/backtest.py`) and the honest answer is *not yet decidable*.

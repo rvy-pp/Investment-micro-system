@@ -213,6 +213,7 @@ through **`packages/core/prices_io.py`**:
 | rank | source | |
 |---|---|---|
 | 40 | `metals_pack` | licensed, hand-dropped, the desk's own reference |
+| 40 | `cement_pack` | same broker, same mail, same provenance — cannot collide, it owns only `cement_price_*` |
 | 30 | `westmetall` | real LME cash-settlement, free, day-delayed |
 | 20 | `wind` | Wind terminal |
 | 10 | `fred` | monthly fallback |
@@ -432,8 +433,10 @@ why `combined.py` reports spread and not just the average.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion,
-Cement, and Mining / EMS / IT / Autos. **Steel IS built as of 2026-08-25** — see
-the section below.
+Cement's **spec**, and Mining / EMS / IT / Autos. **Steel IS built as of
+2026-08-25** — see the section below. **Cement's PRICES land as of 2026-08-27**
+— see "Cement" below; the sector has both legs of a margin bridge on disk and no
+spec to link them.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
@@ -558,6 +561,151 @@ Neither is an adapter bug — `read()` correctly drops `#N/A` strings and
 non-positive values, so the zeros that follow never loaded. They are columns the
 broker stopped populating. `scrap_turkey` is why a stainless bridge is not
 possible. `coking_coal_spot_aus` (col 10) is live and is the one that matters.
+
+## Cement — prices landed 2026-08-27, spec NOT written
+
+`adapters/cement_pack.py` reads the **Daily Cement Pack**, the second attachment
+on the same Kotak mail that carries the metals pack. Six regional series —
+North / Central / East / West / South / all-India — **monthly, 2014-04 to
+current, in Rs per TONNE**, source `cement_pack`. The Cement tab is 11/11 priced:
+those six plus `cp_coke`, `thermal_coal_seaborne`,
+`thermal_coal_indonesia_6322`, `brent`, `usdinr`, which were already landing.
+
+**THE OCTOBER 2025 DROP IS GENUINE. DO NOT "CORRECT" IT.** PM ruling
+2026-08-28. All-India fell **−9.37%** in one month, every region −8.0% to
+−11.4%, and it is by a wide margin the largest monthly move in 149 months — the
+next-worst is −4.43%, and October's own seasonal mean is −0.16%. Every property
+that normally marks a rebasing is present, which is exactly why this note
+exists: **it was a real price collapse.** No cleaning, no exclusion window, no
+allow-list entry. A P1 window spanning Sep→Oct 2025 SHOULD book it. Treat this
+the way `tape.py`'s `CONFIRMED_ACTIONS` treats the eleven 15% equity jumps that
+are real market moves — marked, understood, and drawn through.
+
+**"Daily" is the MAIL, not the prices — and the distinction is the whole shape
+of this feed.** Region-wise: yes, five regions plus all-India. Daily: **no.** The
+2026-08-27 and 2026-08-28 captures were diffed and the price sheet is identical
+to the fourth decimal — all six regions, all 149 months, the in-progress August
+column included. Cement is the only sector here whose OUTPUT price is monthly
+while its whole cost stack is daily, which is why the pack is worth re-reading
+each morning anyway: **the cost side moves every day and the price side does
+not.** Consequence for the load: an unchanged current-month value is left on its
+stored date rather than re-stamped, per `series.py` rule 2 and invariant 3. The
+current-month column's true update cadence is still unknown — two adjacent
+captures cannot separate weekly from month-end — and the load does not need to
+know, because it keys on the value rather than a predicted schedule.
+
+**The M365 connector works for THIS pack and not for the metals pack.** Worth
+stating plainly because `outlook_pack.py` exists entirely to route around that
+connector, and a reader who knows why will assume the same is needed here. The
+metals pack is TALL — ~4,760 dated rows — so the ~200k-character cap truncates it
+to the oldest ~830 and it never contains today. The cement pack is **WIDE**:
+dates run across the columns, the whole four-sheet workbook is 336 lines and
+~70k characters, and the connector returns all of it, current to the morning.
+One `read_resource`, ~18k tokens, no Outlook automation.
+
+**Rs/TONNE, and the 20x is done in the adapter on purpose.** The sheet prints
+Rs per 50 kg bag. `bridge.py` multiplies an ABSOLUTE delta by a tonnage, so a
+Rs/bag delta against a tonnage basis understates the revenue leg by exactly 20x
+with nothing raising. Rs/t also matches steel's `hrc_india_inr`. The staging
+`.tsv` keeps the source's own Rs/bag numbers; divide by 20 to get back.
+
+**Three traps in the sheet, all live, all guarded:**
+
+- The **date convention changes mid-series** at 2019-10-01 -> 2019-11-30: the
+  first 67 columns label a month by its first day, the rest by its last. Every
+  column is normalised to (year, month).
+- The **current month is a month-to-date average**, so stamping it at month end
+  writes a FUTURE row — which moves `bridge.py`'s default `as_of` for every
+  pillar, silently. This one actually happened; it is entry 8 in
+  `SILENT_BUGS.md`. Stamp is `min(month_end, capture_date)`, capture date read
+  from the staging filename, future dates refused.
+- The **six region labels appear three times** — levels, then mom change, then
+  yoy change. A naive label match loads DELTAS as levels. Guarded twice: first
+  block only, plus a Rs/bag plausibility range a delta block cannot pass.
+
+### The pack lands ~15 days late — hence the IndiaMART watch
+
+PM figure, 2026-08-28: the pack's prints are about a **fortnight** behind. Cement
+takes its hikes at the start of a month, so by the time the priced series carries
+a move it is no longer tradeable. `adapters/indiamart_cement.py` exists only to
+close that gap, and its scope is deliberately narrow: **a warning on the Overview
+tab when several regions move together.** Nothing else.
+
+**IT WRITES TO `cement_watch*`, NEVER TO `prices`, AND NO PILLAR READS IT.** Three
+reasons; the third is the one that would actually bite. These are marketplace
+ASKS, not transactions. They carry no date, so they fail the citation standard.
+And `prices` is where the CLOCK comes from — a daily-printing scrape would let
+`latest_daily_date()` hand an IndiaMART ask the as_of for the whole book, which
+is SILENT_BUGS 8b invited back in through the front door.
+
+**The signal is a MATCHED-PAIR median, not a median.** Listings carry stable
+product ids in their URLs, so the reported move is the median % change across
+only the ids present in BOTH captures. A plain median of a marketplace page moves
+when the PANEL churns, which it does all day for commercial reasons that have
+nothing to do with cement. `n_matched` is printed beside every figure: 0.0%
+across 40 matched listings and across 4 are different statements.
+
+**Two limits that are not fixable by better parsing.** Every rupee figure on the
+page comes from the promoted "Best Sellers" rails — the visible result grid says
+"Request a quote" and carries no price — so this samples PROMOTED inventory, a
+selection the tool cannot see around. And there is **no date anywhere in the
+HTML**, so there is no history: the series starts the day capture started
+(2026-08-28, 1,032 listings across 5 regions) and can never be backfilled.
+
+**Thresholds are UNCALIBRATED on purpose and the page says so.** With no history
+the panel's own day-to-day noise floor is unknown, and a number guessed now would
+either scream every morning or never fire. `--report` stays in CALIBRATING mode
+for 15 captures, printing moves and refusing to alert; the Overview renders that
+state as a quiet line rather than nothing, because an absent banner would read as
+"no move" — the one thing it does not mean. `python packages/adapters/
+indiamart_cement.py --selftest` covers eight alert scenarios including the
+non-firing ones.
+
+### The store clock changed because of this, and it is not a cement detail
+
+**`as_of` is `series.latest_daily_date()`, never `MAX(date) FROM prices`.** PM
+decision 2026-08-27: **a coarse series contributes its SHOCK but must not set the
+CLOCK.** Removing cement's future dates fixed the symptom and left the cause —
+even correctly stamped, the in-progress month sits on the capture date, so
+`MAX(date)` runs a day ahead of every equity close and `run_scores.py` would
+stamp a score a day after the prices it is built from, against 1,407 stored
+dates where the two agree. Five call sites now go through the helper:
+`run_scores`, `bridge`, `mood`, `mood_bias`, `whatif`. `iron_ore` (FRED monthly)
+was always coarse too and had simply never been the max.
+
+**Cadence is MEASURED, not listed** — an explicit list of monthly ids is right
+today and silently wrong the first time somebody adds one without reading this,
+the same maintenance failure as an unregistered unit or price source. And it is
+the **median** gap over the last 8 prints, not the last gap: on 1 September the
+cement series holds 2026-08-31 and 2026-09-01, one day apart, so a last-gap test
+calls it daily on exactly the month seam. `python packages/core/series.py
+--selftest` tests both directions — the seam and a daily series with a long
+holiday break that must NOT be demoted.
+
+**The level disagrees with Nomura's and it is NOT resolved.** Kotak reads ~353
+Rs/bag all-India in Jul-Aug 2026; Nomura's channel checks in the digests read
+~321-326 and say explicitly "trade prices". ~9% apart, so they are probably
+trade versus a trade/non-trade blend. Deltas are what reach a score, so a
+constant offset is harmless — a divergence in the CHANGES would not be. The ids
+claim no basis (`cement_price_<region>_inr`), per invariant 6.
+
+**What the spec still needs, and one thing it must decide.** Peer groups,
+volumes, `base_ebitda`, intensities, `market_pct`. The decision with no default:
+**which regional price each company sells into.** Cement is a regional market in
+a way steel is not — a South-heavy name and a North-heavy name do not share an
+output price, and the pack gives all five regions precisely so that can be a spec
+choice rather than an all-India fudge. The digests support it: on the August
+print East ran -2.25% m/m and North +0.36%.
+
+**Three sheets are captured but NOT loaded**, listed so "read" is never mistaken
+for "loaded": `Volumes` (DIPP all-India monthly production, '000 t, back to
+2004 — a demand indicator, and putting a tonnage in `prices.close` would let the
+bridge shock it), `Valuation` (Kotak's comparative table incl. **EV/ton of
+capacity** and EV/EBITDA — real P3 inputs, and valuable because Wind returns
+empty for every Indian fundamental field), and `Stock`. Unlike the metals pack
+there is no urgency: the connector returns the full history every morning, so
+"a series you are not capturing today is history you cannot recover" does not
+apply here.
 
 ## What P1 is — settled 2026-08-18
 
