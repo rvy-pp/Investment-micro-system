@@ -58,6 +58,15 @@ NAMES = {
     "Jindal Stainless": "jindal_stainless",
     "Shyam Metalics": "shyam_metalics",
     "APL Apollo Tubes": "apl_apollo",
+    # --- cement, added 2026-08-28, same collision check run: none of these
+    # four folder names appears under any other Coverage/<sector>/. Only the
+    # F&O names are mapped — the vault marks JK Cement, Ramco, Nuvoco, Star
+    # and JSW Cement `status: not_in_fno`, and vault_oi already skips that
+    # status, but an unmapped name never even resolves a folder.
+    "UltraTech": "ultratech",
+    "Ambuja": "ambuja",
+    "Shree Cement": "shree",
+    "Dalmia Bharat": "dalmia",
 }
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",
