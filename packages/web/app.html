@@ -1357,9 +1357,12 @@ function fmtNum(v){
 async function loadSectorNav(){
   SECTORS = await (await fetch('/api/nav')).json();
   $('#snav').innerHTML = SECTORS.map(s =>
+    // "prices only", not "no spec": the chip describes what the TAB HOLDS, not
+    // what the sector lacks. "No spec" read as "this tab is empty" once cement
+    // gained a chart and a watch — the tab shows prices; it just scores nothing.
     `<button class="stab" role="tab" data-s="${esc(s.id)}"
        aria-selected="${s.id === SECTOR}">${esc(s.label)}${
-       s.kind === 'sector' && !s.live ? '<span class="n">no spec</span>' :
+       s.kind === 'sector' && !s.live ? '<span class="n">prices only</span>' :
        s.kind === 'flows' ? '<span class="n">scoped</span>' : ''}</button>`).join('');
   document.querySelectorAll('.stab').forEach(b =>
     b.addEventListener('click', () => sector(b.dataset.s)));
@@ -1754,18 +1757,26 @@ async function loadSector(){
           <td class="k">${esc(u.date)}</td></tr>`).join('')}</tbody></table></div>`
     : '';
 
-  $('#s-sector').innerHTML = `
-    <div class="await">
-      <h3>${esc(d.label)} — prices are landing, the spec is not written</h3>
-      <p>There is no peer group, no <code>base_ebitda</code> and no cost
-        intensities for ${esc(d.label.toLowerCase())}, so nothing here is scored
-        and nothing is withheld either — the pillars simply do not exist yet.
-        What does exist is the input data: <b>${d.n_priced} of ${d.n_total}</b>
-        series below are priced and refreshing daily.</p>
-      <p>They are captured deliberately rather than when the sector is built.
-        The pack arrives as an email attachment and the connector route can only
-        ever return the OLDEST rows, so a column not captured today is history
-        that cannot be recovered later.</p>
+  /* THE PLACEHOLDER DEMOTES ITSELF ONCE THERE IS DATA TO SHOW. This box was
+     written when an unbuilt sector's tab had nothing else on it, and it earned
+     the lead position then. With a chart and a watch above the fold it read as
+     "this tab is empty" — the PM's words: "cement shows no specs" — while the
+     data sat below a wall of build instructions. The instructions still matter
+     (they are the recipe for making the sector live) so they fold into a
+     <details> at the BOTTOM, and the not-scored fact itself moves into a
+     one-line note where it cannot be mistaken for the tab's content. */
+  const buildNote = `
+    <p class="note hint">${esc(d.label)} is <b>not scored</b> — prices land
+      daily, but no spec links them, so no pillar exists and nothing is
+      withheld either.</p>`;
+  const buildHow = `
+    <details class="await" style="margin-top:var(--s5)">
+      <summary style="cursor:pointer;font-weight:600">How this tab becomes
+        Pair / Bridge / Positioning</summary>
+      <p style="margin-top:10px">The series are captured deliberately before
+        the sector is built — the pack arrives as an email attachment and the
+        connector route can only ever return the OLDEST rows, so a column not
+        captured today is history that cannot be recovered later.</p>
       <ol>
         <li>Write <code>specs/entities/${esc(d.id)}.yaml</code> — names, peer
           group, <code>base_ebitda</code>, cost items with
@@ -1776,7 +1787,10 @@ async function loadSector(){
         <li>Add the peer group to <code>engine.SECTORS</code> — this tab becomes
           Pair / Bridge / Positioning with no further front-end work</li>
       </ol>
-    </div>
+    </details>`;
+
+  $('#s-sector').innerHTML = `
+    ${buildNote}
     ${chartHtml}
     ${watchHtml}
     <h2>${esc(d.label)} inputs · ${d.n_priced}/${d.n_total} priced</h2>
@@ -1788,7 +1802,8 @@ async function loadSector(){
       <th>series</th><th>what it is</th><th class="n">last</th>
       <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
     </tr></thead><tbody>${rows}</tbody></table></div>
-    ${unc}`;
+    ${unc}
+    ${buildHow}`;
   // After insertion — the hover layer needs the SVG in the DOM. (`unc` above
   // was also built-but-never-rendered until the chart landed here.)
   if (chartHtml) wireChart('sectorpx');
