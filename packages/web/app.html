@@ -1651,6 +1651,99 @@ async function loadSector(){
     </tr>`;
   }).join('');
 
+  /* ------- the regional price chart, where the sector declares one -------
+     Absolute Rs/bag on one axis, NOT %-indexed like the pair chart. The pair
+     chart indexes because SAIL at 130 and APL at 1,900 cannot share a scale;
+     these five regions live within ~60 Rs of each other and the LEVEL GAP is
+     itself the information — West trading 20 Rs over South is a statement
+     about regional tightness that an indexed chart would erase. */
+  let chartHtml = '';
+  if (d.price_chart && d.price_chart.series.some(s => s.pts.length > 1)){
+    const pc = d.price_chart;
+    const region = id => {
+      const r = id.replace(/^cement_price_/, '').replace(/_inr$/, '');
+      return r === 'india' ? 'all-India' : r;
+    };
+    const drawn = pc.series.filter(s => s.pts.length > 1)
+      .map((s, i) => ({label: region(s.id), slot: i + 1, pts: s.pts}));
+    const all = [...new Set(drawn.flatMap(s => s.pts.map(p => p.d)))].sort();
+    const xDom = [Date.parse(all[0]), Date.parse(all[all.length - 1])];
+    const xTicks = all.length <= 2 ? all
+      : [all[0], all[Math.floor(all.length / 2)], all[all.length - 1]];
+    let lo = Infinity, hi = -Infinity;
+    for (const s of drawn) for (const p of s.pts){
+      if (p.v < lo) lo = p.v;
+      if (p.v > hi) hi = p.v;
+    }
+    const step = niceCeil((hi - lo || 1) / 4);
+    const yLo = Math.floor(lo / step) * step, yHi = Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let v = yLo; v <= yHi + 1e-9; v += step) ticks.push(v);
+    const availW = Math.max(560,
+      (document.getElementById('s-sector').clientWidth || 900) - 8);
+    const svg = lineChart({
+      id: 'sectorpx', w: availW, h: 300, series: drawn,
+      yLo: yLo, yHi: yHi, ticks: ticks,
+      fmtY: v => String(Math.round(v)), fmtV: v => v.toFixed(1),
+      xDom: xDom, xTicks: xTicks, allDates: all,
+      marks: pc.marks || [],
+      axisLabel: esc(d.label) + ' price · ' + esc(pc.unit)
+    });
+    const legend = '<div class="lgd">' + drawn.map(s =>
+      '<span><i style="border-top-color:' + inkOf(s.slot) + '"></i>' +
+      esc(s.label) + '</span>').join('') + '</div>';
+    const markNote = (pc.marks || []).map(m =>
+      `<p class="note hint">Rule at ${esc(m.d)}: ${esc(m.label || '')}</p>`).join('');
+    chartHtml = `<h2>${esc(d.label)} price by region · ${esc(pc.unit)} · monthly</h2>
+      ${legend}${svg}${markNote}
+      <p class="note">Kotak pack levels. These run ~Rs30/bag above Nomura's
+        trade-only channel checks — a basis difference, recorded in
+        <code>adapters/cement_pack.py</code>; the deltas are what matter.
+        The current month is a month-to-date average dated at its capture.</p>`;
+  }
+
+  /* ------- the IndiaMART watch, where the sector carries one -------
+     Same payload the Overview banner reads; this is the per-region detail.
+     The banner answers "did something move today" — this table is for the
+     morning after it says yes. Calibrating is rendered as a state, not as
+     absence: an empty panel would read as "no move", which is the one thing
+     an uncalibrated watch cannot claim. */
+  let watchHtml = '';
+  if (d.watch && d.watch.state !== 'no_data' && d.watch.state !== 'error'){
+    const w = d.watch;
+    const rows2 = (w.regions || []).map(r => `<tr>
+      <td><b>${esc(r.region)}</b></td>
+      <td class="n">${r.median_bag == null ? '—' : Math.round(r.median_bag)}</td>
+      <td class="n">${r.n_listings}</td>
+      ${r.matched_pct == null
+        ? '<td class="n flat">first capture</td>'
+        : `<td class="n" style="color:${r.matched_pct > 0 ? 'var(--up)' :
+             r.matched_pct < 0 ? 'var(--down)' : 'var(--faint)'}">${
+             (r.matched_pct >= 0 ? '+' : '') + r.matched_pct.toFixed(2)}%</td>`}
+      <td class="n">${r.n_matched == null ? '—' : r.n_matched}</td>
+      <td class="k flat">${esc(r.prior_date || '—')}</td>
+    </tr>`).join('');
+    const alertHtml = (w.alerts || []).length
+      ? `<div class="banner">${w.alerts.map(a => esc(a.text)).join('<br>')}</div>`
+      : '';
+    watchHtml = `<h2>Dealer asks · IndiaMART · ${esc(w.day || '—')}
+        <span class="chip ${w.state === 'live' ? 'c-up' : 'c-warn'}"
+          style="margin-left:8px">${esc(w.state)}${
+          w.state === 'calibrating' ? ' · ' + w.days_to_calibrate + ' capture(s) to go' : ''}</span></h2>
+      ${alertHtml}
+      <p class="note">Promoted-rail ask prices. The d/d figure is the median
+        move across listings present in BOTH captures — panel churn cancels out
+        of it. Watch only: nothing here reaches a score, and the Kotak pack
+        above stays the reference.</p>
+      <div class="scroll"><table><thead><tr><th>region</th>
+        <th class="n">median ask (Rs/bag)</th><th class="n">listings</th>
+        <th class="n">d/d matched</th><th class="n">n matched</th>
+        <th>vs capture</th></tr></thead><tbody>${rows2}</tbody></table></div>`;
+  } else if (d.watch && d.watch.state === 'error'){
+    watchHtml = `<p class="note hint" style="color:var(--warn)">
+      Cement watch unavailable: ${esc(d.watch.note || '')}</p>`;
+  }
+
   const unc = d.unclaimed && d.unclaimed.length
     ? `<h2>Captured, claimed by no sector</h2>
        <p class="note">Loaded from the pack so the history exists. Nothing reads
@@ -1684,6 +1777,8 @@ async function loadSector(){
           Pair / Bridge / Positioning with no further front-end work</li>
       </ol>
     </div>
+    ${chartHtml}
+    ${watchHtml}
     <h2>${esc(d.label)} inputs · ${d.n_priced}/${d.n_total} priced</h2>
     <p class="note">Change is measured against the last close that actually
       <b>differed</b>, not the previous row — the pack pre-creates the current
@@ -1692,7 +1787,11 @@ async function loadSector(){
     <div class="scroll"><table><thead><tr>
       <th>series</th><th>what it is</th><th class="n">last</th>
       <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>`;
+    </tr></thead><tbody>${rows}</tbody></table></div>
+    ${unc}`;
+  // After insertion — the hover layer needs the SVG in the DOM. (`unc` above
+  // was also built-but-never-rendered until the chart landed here.)
+  if (chartHtml) wireChart('sectorpx');
 }
 
 let TODAY = null;

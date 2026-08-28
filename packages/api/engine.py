@@ -370,6 +370,31 @@ SECTORS = [
             "thermal_coal_seaborne", "thermal_coal_indonesia_6322",
             "cp_coke", "brent", "usdinr",
         ],
+        # An awaiting-spec tab with a chart, because this sector's output price
+        # is the one series in the store worth LOOKING at before any spec
+        # exists: five regions on one axis is the comparison the pack was
+        # captured for. Declared as data so the next sector with a chartable
+        # series is a dict edit, not an engine edit.
+        #
+        # `divide: 20` — the store holds Rs/TONNE (bridge arithmetic needs it);
+        # the desk, the pack and every broker note quote Rs/50kg BAG. The API
+        # serves the display unit so the page never grows unit arithmetic.
+        "chart": {
+            "ids": ["cement_price_north_inr", "cement_price_central_inr",
+                    "cement_price_east_inr", "cement_price_west_inr",
+                    "cement_price_south_inr", "cement_price_india_inr"],
+            "divide": 20.0,
+            "unit": "Rs/bag",
+            # Drawn as a dated rule, same visual as the pair chart's corporate
+            # actions, but the meaning is the opposite and the caption says so:
+            # PM-confirmed REAL move (2026-08-28), not an artefact to break on.
+            "marks": [{"d": "2025-10-31",
+                       "label": "Oct-2025 — real ~9% drop, PM-confirmed"}],
+        },
+        # Embed the IndiaMART watch payload on this tab too. Same source as
+        # /api/cement_watch — the Overview banner answers "did something move
+        # today"; this tab is where the per-region detail belongs.
+        "watch": True,
     },
 ]
 
@@ -471,6 +496,25 @@ def sector_detail(sector_id: str) -> dict:
             if r:
                 unclaimed.append({"id": eid, "last": r["close"],
                                   "date": r["date"]})
+
+    # Full history for the tab's chart, where the sector declares one.
+    # Divided into the DISPLAY unit here (Rs/t -> Rs/bag for cement) so the
+    # page never carries unit arithmetic — the 20x is exactly the class of
+    # constant that gets inverted silently in a second place.
+    price_chart = None
+    cfg = spec.get("chart")
+    if cfg:
+        div = cfg.get("divide", 1.0)
+        series = []
+        for eid in cfg["ids"]:
+            pts = conn.execute(
+                "SELECT date, close FROM prices WHERE entity_id=? "
+                "AND close IS NOT NULL ORDER BY date", (eid,)).fetchall()
+            series.append({"id": eid,
+                           "pts": [{"d": p["date"], "v": p["close"] / div}
+                                   for p in pts]})
+        price_chart = {"unit": cfg["unit"], "series": series,
+                       "marks": cfg.get("marks", [])}
     conn.close()
 
     return {"id": spec["id"], "label": spec["label"],
@@ -478,6 +522,9 @@ def sector_detail(sector_id: str) -> dict:
             "peer_groups": spec["peer_groups"],
             "commodities": rows,
             "unclaimed": unclaimed,
+            "price_chart": price_chart,
+            # cement_watch() opens its own connection, hence after conn.close()
+            "watch": cement_watch() if spec.get("watch") else None,
             "n_priced": sum(1 for r in rows if r["last"] is not None),
             "n_total": len(rows)}
 
