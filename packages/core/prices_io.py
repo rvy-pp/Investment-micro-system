@@ -38,6 +38,12 @@ import sqlite3
 # otherwise quietly become the lowest-priority writer and lose every race.
 PRECEDENCE = {
     "metals_pack": 40,
+    # Same broker, same mail, same licensed provenance as metals_pack, so the
+    # same rank. They cannot collide in practice — the cement pack supplies only
+    # `cement_price_*`, which nothing else carries — but ranking it below would
+    # be a claim about relative quality that is not true, and ranking is what
+    # decides a future overlap.
+    "cement_pack": 40,
     "westmetall":  30,
     "wind":        20,
     "fred":        10,

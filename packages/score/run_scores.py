@@ -465,6 +465,21 @@ def score_one_date(conn, as_of: str, sha: str,
     return n
 
 
+
+def _clock(conn):
+    """as_of over DAILY series only — see series.latest_daily_date.
+
+    Not `SELECT MAX(date) FROM prices`. The cement pack stamps its in-progress
+    month at the CAPTURE date, so plain MAX(date) reads today while every equity
+    close is still yesterday's, and the score would be dated a day after the
+    prices it is built from. PM decision 2026-08-27: a coarse series contributes
+    its shock, never the clock.
+    """
+    import sys as _s, pathlib as _p
+    _s.path.insert(0, str(_p.Path(__file__).resolve().parent.parent / "core"))
+    from series import latest_daily_date
+    return latest_daily_date(conn)
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of")
@@ -499,8 +514,7 @@ def main() -> int:
             "ORDER BY date DESC LIMIT ?", (a.backfill,))]
         dates = sorted(dates)
     else:
-        dates = [a.as_of or conn.execute(
-            "SELECT MAX(date) FROM prices").fetchone()[0]]
+        dates = [a.as_of or _clock(conn)]
 
     total = 0
     for d in dates:

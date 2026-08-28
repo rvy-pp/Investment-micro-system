@@ -188,6 +188,21 @@ def policy_mood(conn, eid: str, sector: str, as_of: str):
     return raw, events
 
 
+
+def _clock(conn):
+    """as_of over DAILY series only — see series.latest_daily_date.
+
+    Not `SELECT MAX(date) FROM prices`. The cement pack stamps its in-progress
+    month at the CAPTURE date, so plain MAX(date) reads today while every equity
+    close is still yesterday's, and the score would be dated a day after the
+    prices it is built from. PM decision 2026-08-27: a coarse series contributes
+    its shock, never the clock.
+    """
+    import sys as _s, pathlib as _p
+    _s.path.insert(0, str(_p.Path(__file__).resolve().parent.parent / "core"))
+    from series import latest_daily_date
+    return latest_daily_date(conn)
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--peer-group", default="aluminium_primary")
@@ -197,7 +212,7 @@ def main() -> int:
 
     entities, _u, _f = load_specs()
     conn = sqlite3.connect(DB)
-    as_of = a.as_of or conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
+    as_of = a.as_of or _clock(conn)
     k = solve_k("hill", MOOD_ANCHOR, SCORE_ANCHOR, P)
 
     print(f"{a.peer_group} · mood as of {as_of} · half-life {HALF_LIFE_DAYS:g}d\n")

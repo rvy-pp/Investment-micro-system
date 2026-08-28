@@ -277,7 +277,11 @@ def shocks_from_store(window: int, as_of: str | None = None,
     sys.path.insert(0, str(REPO / "packages" / "core"))
     from series import resolve, delta_over, ewma_delta  # noqa: E402
 
-    latest = conn.execute("SELECT MAX(date) FROM prices").fetchone()[0]
+    # THE CLOCK. Not MAX(date) — the cement pack stamps its in-progress month
+    # at the capture date, so MAX(date) runs a day ahead of every daily close.
+    # A coarse series contributes its shock, never the clock. SILENT_BUGS 8.
+    from series import latest_daily_date  # noqa: E402
+    latest = latest_daily_date(conn)
     as_of = as_of or latest
 
     ents = [r[0] for r in conn.execute("SELECT DISTINCT entity_id FROM prices")]

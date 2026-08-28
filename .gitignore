@@ -17,6 +17,9 @@ data/staging/*
 # reason, while the adapter's docstring claimed it was version-controlled.
 !data/staging/*.csv
 !data/staging/*.json
+# The Kotak Daily CEMENT Pack arrives through the M365 connector as a
+# TAB-separated text extraction of the workbook, so it is a third format.
+!data/staging/*.tsv
 snapshots/
 !snapshots/.gitkeep
 
