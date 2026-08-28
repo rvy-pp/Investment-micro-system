@@ -220,10 +220,11 @@ live.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — see `docs/FLOWS.md`), OI as a conviction modifier, book
-ingestion, Cement's **spec** (its daily pack IS now read — six regional price
-series as of 2026-08-27, plus an IndiaMART day-to-day watch on the Overview tab
-because the pack lands ~15 days late; what is missing is peer groups, volumes,
-`base_ebitda` and intensities), and Mining, EMS, IT and Autos.
+ingestion, cement's P4 guidance ledger, and Mining, EMS, IT and Autos.
+**Cement went LIVE 2026-08-28** — four scored F&O names (ultratech, ambuja,
+shree, dalmia) on economics + valuation + mood, regional output prices from
+the Daily Cement Pack, an IndiaMART day-to-day watch, and P4 withheld until a
+guidance ledger exists.
 
 **The gate still standing:** the backtest has now been RUN
 (`packages/review/backtest.py`) and the honest answer is *not yet decidable*.

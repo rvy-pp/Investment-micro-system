@@ -468,6 +468,12 @@
       <button class="tab" role="tab" aria-selected="true" data-t="pair">Scores &amp; Price</button>
       <button class="tab" role="tab" aria-selected="false" data-t="scores">Bridge</button>
       <button class="tab" role="tab" aria-selected="false" data-t="pos">Positioning</button>
+      <!-- Only shown for a sector that declares a price chart or a watch
+           (cement). For every other live sector the loader hides it — an
+           always-on fourth tab that usually renders "nothing here" would
+           train people to stop clicking tabs. -->
+      <button class="tab" role="tab" aria-selected="false" data-t="sector"
+              id="vtab-sector" hidden>Prices &amp; Watch</button>
     </nav>
   </div>
 
@@ -1380,7 +1386,14 @@ function sector(id){
   if (e.kind === 'overview'){ $('#vnav').hidden = true; tab('overview'); return; }
   if (e.kind === 'flows'){ $('#vnav').hidden = true; tab('flows'); return; }
   $('#vnav').hidden = !e.live;
-  if (e.live){ tab(LAST_VIEW); }
+  // The Prices & Watch sub-view exists only where the sector declares content
+  // for it (nav carries has_chart/has_watch). If the remembered view was
+  // 'sector' and this sector has no such tab, fall back to the pair view
+  // rather than showing a hidden section.
+  const extra = !!(e.has_chart || e.has_watch);
+  const vt = document.getElementById('vtab-sector');
+  if (vt) vt.hidden = !e.live || !extra;
+  if (e.live){ tab(LAST_VIEW === 'sector' && !extra ? 'pair' : LAST_VIEW); }
   else { tab('sector'); }   // per-sector; tab() refetches on a sector change
 }
 
@@ -1765,11 +1778,14 @@ async function loadSector(){
      (they are the recipe for making the sector live) so they fold into a
      <details> at the BOTTOM, and the not-scored fact itself moves into a
      one-line note where it cannot be mistaken for the tab's content. */
-  const buildNote = `
+  // A LIVE sector reaches this view through the Prices & Watch sub-tab, and
+  // the not-scored disclaimer would then be false — its pillars live on the
+  // other three tabs. Both notes key on d.live.
+  const buildNote = d.live ? '' : `
     <p class="note hint">${esc(d.label)} is <b>not scored</b> — prices land
       daily, but no spec links them, so no pillar exists and nothing is
       withheld either.</p>`;
-  const buildHow = `
+  const buildHow = d.live ? '' : `
     <details class="await" style="margin-top:var(--s5)">
       <summary style="cursor:pointer;font-weight:600">How this tab becomes
         Pair / Bridge / Positioning</summary>
@@ -1844,7 +1860,8 @@ function tab(name){
   // Only the three sector sub-views are remembered. Overview and Flows are
   // top-level tabs, so recording them here would send you to a hidden section
   // the next time you picked a live sector.
-  if (name === 'pair' || name === 'scores' || name === 'pos') LAST_VIEW = name;
+  if (name === 'pair' || name === 'scores' || name === 'pos'
+      || name === 'sector') LAST_VIEW = name;
   const live = (name === 'scores');
   $('#winwrap').hidden = !live;
   $('#fxwrap').hidden = !live;

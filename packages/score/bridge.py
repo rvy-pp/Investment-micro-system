@@ -156,7 +156,15 @@ def run_bridge(
             continue
         n_priced += 1
         delta = shocks.get(link, 0.0)
-        impact = vol * to_inr(delta, units.get(link, ""), usdinr) / CR
+        # basis_pass_through now applies to OUTPUTS too (added 2026-08-28 for
+        # cement, default 1.0 so every existing spec is bit-identical). Same
+        # concept as the input haircut: how much of the LINKED series' move
+        # reaches this company's realisation. Cement is the forcing case — the
+        # only output series available is RETAIL incl. GST, while EBITDA earns
+        # NSR (~0.74x the retail level), so a Rs200/t retail move is ~Rs150/t
+        # of realisation. Steel's HRC is ex-mill and keeps 1.0.
+        impact = (vol * out.get("basis_pass_through", 1.0)
+                  * to_inr(delta, units.get(link, ""), usdinr) / CR)
         d_revenue += impact
         lines.append(
             {"kind": "output", "item": out["item"], "priced": True,

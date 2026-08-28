@@ -433,10 +433,8 @@ why `combined.py` reports spread and not just the average.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion,
-Cement's **spec**, and Mining / EMS / IT / Autos. **Steel IS built as of
-2026-08-25** — see the section below. **Cement's PRICES land as of 2026-08-27**
-— see "Cement" below; the sector has both legs of a margin bridge on disk and no
-spec to link them.
+cement's P4 guidance ledger, and Mining / EMS / IT / Autos. **Steel IS built as
+of 2026-08-25** and **Cement as of 2026-08-28** — see the sections below.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
@@ -562,7 +560,62 @@ non-positive values, so the zeros that follow never loaded. They are columns the
 broker stopped populating. `scrap_turkey` is why a stainless bridge is not
 possible. `coking_coal_spot_aus` (col 10) is live and is the one that matters.
 
-## Cement — prices landed 2026-08-27, spec NOT written
+## Cement — LIVE 2026-08-28: four scored names, three pillars
+
+The spec landed the day after the prices did: `specs/entities/cement.yaml` +
+`specs/sectors/cement.yaml`, zero new engine code except one generic line (see
+below). Four scored of nine — ultratech, ambuja, shree, dalmia are the F&O
+names; jk_cement, ramco, nuvoco, star_cement, jsw_cement are `peer_group: null`
+per invariant 7 (the vault's OI fetch records `status: not_in_fno` for all
+five). ONE peer group where steel needed two: the four share a cost stack and
+differ by REVENUE REGION, which lives on the entity output lines.
+
+**THE STRUCTURAL CLAIM, tested not asserted (validation in the sector yaml):
+regional mix sets the dispersion; fuel sets the level.** A petcoke +$20 shock
+hits all four, ordered by EBITDA/t (ambuja -12.3%, shree -5.6%); an EAST-only
+-Rs200/t reaches shree at 0.35 of volumes and dalmia at 0.45 while ultratech
+and ambuja correctly read ZERO through all-India links. Every denominator is a
+cited Q1FY27 print that reconciles to the rupee against volumes x EBITDA/t
+(e.g. UltraTech 41.3mt x Rs1,214/t = Rs50.14bn vs the cited Rs50.2bn).
+
+**The bridge grew ONE generic knob for this: outputs now honour
+`basis_pass_through`** (default 1.0 — steel regression-verified bit-identical
+before anything else was built). Cement's only output series is RETAIL incl.
+GST while EBITDA earns NSR (~0.74x the level, empirically and by GST
+arithmetic), so every cement output line carries 0.75. The Oct-2025 -9.4%
+retail print is the Sep-2025 GST cut (28->18%) passing through — the mechanism
+behind the move the PM confirmed as genuine.
+
+**The fuel intensities are DERIVED but double-anchored**: ~750 kcal/kg clinker
+x 0.65 clinker factor / 8,200 kcal/kg petcoke GCV = 0.060 t/t, and the check
+that makes it believable is that Shree's cited "fuel cost to Rs1.95/kcal (from
+Rs1.6)" reconciles exactly with Nomura's cited petcoke USD147/t (= Rs1.59 per
+1,000 kcal). Per-company deviations only where cited: UltraTech's green power
+47% halves its coal line; Shree's petcoke-to-domestic-coal switch (West Asia
+disruption) halves its petcoke and adds a 0.50-basis domestic coal line —
+TRANSIENT by management's own framing, restore when contracted petcoke resumes.
+
+**What is NOT live: P4 guidance** — no cement guidance ledger exists, so it
+withholds for all four, honestly. The raw material is in the digests (Ambuja
+"FY27 vol +8%", UltraTech "cost +Rs130-140/t qoq peaking 2Q", Dalmia "~67mtpa
+by 3QFY28"); building `specs/extracted/cement_guidance.json` is the next step,
+steel's playbook. Ambuja's volume guide is the SAIL-class trap-in-waiting: it
+guides +8% while running -7% on a deliberate "value over volume" share cession.
+
+**Mood carries a known bias worth a PM decision**: the extractor classifies
+"maintains SELL, FV raised (rollover)" as tp_change/+1 at half weight. Kotak
+rates the ENTIRE cement pack SELL/SELL/SELL/REDUCE while rolling FVs forward,
+so cement mood reads more positive than the house view it summarises
+(ultratech +17/-1). Same calculus steel lives with — changing it changes
+steel's stored mood too, so it is flagged rather than patched.
+
+**Extraction traps recorded in the extractor itself**: #JKCement bullets that
+are actually about JK LAKSHMI (guarded in named_in), "ambuja" resolving to
+GUJARAT AMBUJA EXPORTS and "dalmia bharat" to DALMIA BHARAT SUGAR on Yahoo
+(the search-first rule paid twice), and no bare #Cement tag (sector, not
+entity).
+
+## Cement prices — the feed underneath (landed 2026-08-27)
 
 `adapters/cement_pack.py` reads the **Daily Cement Pack**, the second attachment
 on the same Kotak mail that carries the metals pack. Six regional series —

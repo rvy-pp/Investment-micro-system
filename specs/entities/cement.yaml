@@ -1,0 +1,460 @@
+# ============================================================================
+# Cement — entity roster, pillars 1 and 2 (ASP and costs)
+# ============================================================================
+# Added 2026-08-28. Nine names, the vault's Coverage/Cement roster; FOUR scored.
+# Same shape as steel.yaml: each company is what it SELLS and what it CONSUMES,
+# and direction falls out of arithmetic.
+#
+# ---------------------------------------------------------------------------
+# THE ONE THING THIS SPEC EXISTS TO EXPRESS
+# ---------------------------------------------------------------------------
+# Cement is a REGIONAL market wearing one sector label. Every mill runs the same
+# kiln on the same fuels, so the COST side separates nobody — a petcoke print
+# hits all four scored names the same way, ordered only by EBITDA/t (Ambuja at
+# Rs917/t takes ~1.3x UltraTech's Rs1,214/t percentage hit). What separates them
+# is WHERE THEY SELL: the Daily Cement Pack carries five regional price series
+# that genuinely diverge (Aug-2026: East -2.25% m/m while North +0.36%), and
+# each company's output lines are split across the regions it actually sells
+# into. REGIONAL MIX SETS THE DISPERSION; FUEL SETS THE LEVEL — the cement
+# analogue of steel's ore/coal claim, and testable the same way (see
+# specs/sectors/cement.yaml validation).
+#
+# ---------------------------------------------------------------------------
+# WHY ONLY FOUR OF NINE ARE SCORED
+# ---------------------------------------------------------------------------
+# Invariant 7: no row for a name not in F&O — a score you cannot express in the
+# book is not an output. The vault's OI fetch records status per name:
+#
+#   IN F&O          ultratech, ambuja, shree, dalmia          -> peer_group: cement
+#   status: not_in_fno   jk_cement, ramco, nuvoco, star_cement,
+#                        jsw_cement                           -> peer_group: null
+#
+# The five unscored names keep entities (prices, mood rows, watch coverage all
+# still accumulate) — re-enabling any of them when a contract lists is one line.
+#
+# ---------------------------------------------------------------------------
+# THE OUTPUT SERIES IS RETAIL, AND THE PASS-THROUGH IS THE WHOLE STORY
+# ---------------------------------------------------------------------------
+# cement_price_*_inr is the Kotak pack's RETAIL price incl. GST (Rs/t; the sheet
+# prints Rs/50kg bag and the adapter does the 20x). Companies EARN net sales
+# realisation (NSR) — ex-GST, net of dealer margin. The LEVELS are far apart:
+#
+#     Q1FY27 NSR:  dalmia Rs5,118/t (IIFL), shree Rs5,360/t (Emkay/BofA)
+#     Q1FY27 retail: all-India avg ~Rs7,053/t (pack, Apr-Jun)
+#     ratio ~0.73-0.76
+#
+# The bridge only reads DELTAS, so the level gap itself is harmless — but a
+# RETAIL delta is not an NSR delta either: GST is ad valorem (18% since the
+# Sep-2025 cut — which is what the Oct-2025 -9.4% retail print was, the cut
+# passing through; PM-confirmed genuine), so ~1/1.18 of a retail move is
+# ex-tax, and non-trade (~25-30% of volumes) follows trade pricing only partly.
+# Empirical cross-check: Q1FY27 percentage moves matched (retail +3% QoQ pack;
+# realisations +3.4% UTCEM, +2.3% Shree QoQ) — equal PERCENTAGES on levels in a
+# 0.74 ratio means the ABSOLUTE Rs/t pass-through is ~0.74.
+#
+# Hence `basis_pass_through: 0.75` on every output line (the knob the bridge
+# grew for exactly this — outputs default 1.0, steel unaffected). verify:
+# pending; the empirical ratio and the GST arithmetic agree, which is why 0.75
+# and not a rounder number.
+#
+# ---------------------------------------------------------------------------
+# FX: THE PUREST COST-SIDE ASYMMETRY IN THE BOOK
+# ---------------------------------------------------------------------------
+# Steel has rupee revenue against dollar costs, softened by import-parity HRC
+# pricing. Cement is the extreme case: revenue is DOMESTIC RETAIL — no import
+# parity, cement barely trades across oceans — while petcoke and imported coal
+# are dollars. A weaker INR is pure cost inflation with literally no revenue
+# leg, not even a lagged one. No correction needed; stated so nobody "fixes" a
+# large FX-day cost move as a bug.
+#
+# ---------------------------------------------------------------------------
+# WHERE THE FUEL INTENSITIES COME FROM, since none is disclosed per-company
+# ---------------------------------------------------------------------------
+# Derived from process arithmetic and CROSS-CHECKED against a cited print:
+#
+#   kiln heat   ~750 kcal/kg clinker (Indian benchmark) x ~0.65 clinker factor
+#               = ~490 Mcal/t cement. Petcoke GCV ~8,200 kcal/kg
+#               -> ~0.060 t petcoke / t cement
+#   power       ~70 kWh/t; thermal share after WHR/renewables ~50-60%; station
+#               heat ~2,800 kcal/kWh on ~6,300 kcal/kg Indonesian coal
+#               -> ~0.015-0.025 t coal / t cement
+#
+# THE CROSS-CHECK THAT MAKES THIS BELIEVABLE: Shree's cited fuel cost moved
+# "to Rs1.95/kcal (from Rs1.6)" (Emkay, digest 2026-08-06; the industry writes
+# Rs/kcal for Rs per 1,000 kcal). Petcoke at Nomura's cited USD147/t x Rs88.5
+# / 8,200 kcal/kg = Rs1.59 per 1,000 kcal — EXACTLY the "from Rs1.6". The
+# convention, the GCV and the cited prices all reconcile, so the intensity
+# arithmetic above is anchored to two independent citations rather than free.
+#
+# Per-company deviations only where a digest says so: UltraTech "green power
+# ~47%" (Kotak) cuts its thermal line; Shree's "contracted petcoke ... forcing
+# expensive high-ash domestic coal" (BofA/Emkay) shifts petcoke -> domestic
+# coal with a basis haircut. Everything is verify: pending — attack the
+# intensities before trusting a fuel-led score.
+
+sector: cement
+spec_version: 0.1.0
+currency: INR
+
+# ============================================================================
+# PRICE SERIES these economics link to — units are LOAD-BEARING (bridge.to_inr
+# applies the FX leg only to units starting "USD"; see steel.yaml's 95x lesson)
+# ============================================================================
+reference_entities:
+  # --- outputs: RETAIL incl. GST, in rupees; deltas haircut by pass-through ---
+  - {id: cement_price_india_inr,   kind: commodity, name: Cement retail all-India, unit: INR/t}
+  - {id: cement_price_north_inr,   kind: commodity, name: Cement retail North,     unit: INR/t}
+  - {id: cement_price_central_inr, kind: commodity, name: Cement retail Central,   unit: INR/t}
+  - {id: cement_price_east_inr,    kind: commodity, name: Cement retail East,      unit: INR/t}
+  - {id: cement_price_west_inr,    kind: commodity, name: Cement retail West,      unit: INR/t}
+  - {id: cement_price_south_inr,   kind: commodity, name: Cement retail South,     unit: INR/t}
+  # --- inputs: dollars, so each carries the FX leg ---
+  - {id: cp_coke,                      kind: commodity, name: Pet coke,              unit: USD/t}
+  - {id: thermal_coal_indonesia_6322,  kind: commodity, name: Indonesia coal 6322,   unit: USD/t}
+  - {id: usdinr,                       kind: fx,        name: USDINR,                unit: INR/USD}
+
+entities:
+
+  # ==========================================================================
+  # ULTRATECH — the pan-India name, #1 on EBITDA/t, all-India price by right
+  # ==========================================================================
+  - id: ultratech
+    kind: company
+    name: UltraTech Cement
+    sector: cement
+    peer_group: cement
+    nse_symbol: ULTRACEMCO
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: cement_india
+        price_link: cement_price_india_inr
+        volume: 165200000         # 41.3mt Q1FY27 consol x 4
+        volume_unit: t
+        basis_pass_through: 0.75  # retail -> NSR; see header
+        source_note: >
+          "1QFY27 consol EBITDA Rs50.2bn (+14% yoy, -10% qoq) beat on volumes;
+          consol volumes 41.3mt +12.2% yoy (vs industry 7-8%), realizations
+          +3.4% qoq, EBITDA/t Rs1,214" (Kotak, Siddharth Mehrotra, digest
+          2026-07-22). Reconciles: 41.3mt x Rs1,214/t = Rs50.14bn. ALL-INDIA
+          link is cited, not assumed: "UltraTech leads pan-India" (Emkay Cement
+          Corner) and its ~242mtpa-by-FY28 footprint spans every region.
+        verify: sourced
+
+    inputs:
+      - item: petcoke
+        price_link: cp_coke
+        intensity: 0.060
+        intensity_unit: t/t
+        basis_item: cement_india
+        market_pct: 1.00          # all bought; nobody mines petcoke
+        basis_pass_through: 1.00  # imported at the benchmark
+        source_note: >
+          Derived: ~750 kcal/kg clinker x 0.65 clinker factor / 8,200 kcal/kg
+          petcoke GCV — anchored by the Shree Rs1.6-per-Mcal cross-check in the
+          header. Nomura's cited "imported pet coke +12% QoQ to USD147/t" is
+          the same series this line links (store cp_coke printed 148.0).
+        verify: pending
+      - item: thermal_coal_power
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.015          # LOWEST of the four: "green power ~47%"
+        intensity_unit: t/t       # (Kotak, digest 2026-07-22), rising to 85%
+        basis_item: cement_india  # by FY30 — the thermal share shrinks.
+        market_pct: 1.00
+        basis_pass_through: 0.70  # blend of imported spot, linkage and
+                                  # e-auction domestic; NOT all seaborne
+        source_note: >
+          Power ~70 kWh/t at ~2,800 kcal/kWh station heat on 6,322 kcal/kg
+          Indonesian coal, scaled by the NON-green share (53%, cited). verify
+          pending on both the kWh and the pass-through.
+        verify: pending
+
+  # ==========================================================================
+  # AMBUJA — the thin-margin diversified name (with ACC, pan-India)
+  # ==========================================================================
+  # Rs917-929/t against UltraTech's Rs1,214 means the same Rs/t cost move is
+  # ~1.3x more material here — invariant 5, out of base_ebitda, never a
+  # coefficient. Volume is FALLING by choice ("value over volume", ceded ~3%
+  # share to UTCEM/Shree/Dalmia per JPMorgan) — do not read a volume print
+  # against guidance as a miss without that context.
+  - id: ambuja
+    kind: company
+    name: Ambuja Cements
+    sector: cement
+    peer_group: cement
+    nse_symbol: AMBUJACEM
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: cement_india
+        price_link: cement_price_india_inr
+        volume: 68400000          # 17.1mt Q1FY27 x 4 (JPM print; IIFL says
+        volume_unit: t            # 17.3mt — the 0.2mt gap is materiality noise)
+        basis_pass_through: 0.75
+        source_note: >
+          "EBITDA Rs15.9bn only 3% ahead; volume 17.1mt -7%" (JPMorgan, Sanjay
+          Mookim, digest 2026-07-29); "volume -8% YoY (17.3mt, 64% util)"
+          (IIFL, Devesh Agarwal, same digest). Reconciles: 17.1mt x Rs929/t =
+          Rs15.9bn. Pan-India footprint (with ACC) -> all-India link.
+        verify: sourced
+
+    inputs:
+      - item: petcoke
+        price_link: cp_coke
+        intensity: 0.060
+        intensity_unit: t/t
+        basis_item: cement_india
+        market_pct: 1.00
+        basis_pass_through: 1.00
+        source_note: >
+          Same derivation as UltraTech. Management's cited cost programme
+          ("Rs450/t cost savings to Rs4,000/t by FY28", IIFL) changes the
+          LEVEL, not the sensitivity, so it lives in base_ebitda refreshes
+          rather than in this line.
+        verify: pending
+      - item: thermal_coal_power
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.022
+        intensity_unit: t/t
+        basis_item: cement_india
+        market_pct: 1.00
+        basis_pass_through: 0.70
+        source_note: >
+          No cited green share for Ambuja; the 0.022 assumes ~40% non-thermal
+          power, between UltraTech's cited 47% and the industry base.
+        verify: pending
+
+  # ==========================================================================
+  # SHREE — the North name, with a growing East leg
+  # ==========================================================================
+  - id: shree
+    kind: company
+    name: Shree Cement
+    sector: cement
+    peer_group: cement
+    nse_symbol: SHREECEM
+    effective_from: 2026-04-01
+
+    # TWO output lines, one per region, volumes summing to the total — the SAIL
+    # flat/long precedent. The split is the number to attack: North is the
+    # Rajasthan heartland, East is real and growing ("Union Cement + Shree East
+    # nearly doubled", BofA), but no digest states the shares.
+    outputs:
+      - item: cement_north
+        price_link: cement_price_north_inr
+        volume: 27300000          # 0.65 x 42.0mt (10.5mt Q1 x 4)
+        volume_unit: t
+        basis_pass_through: 0.75
+        source_note: >
+          Total is cited: "volumes +17% YoY to 10.5mt" (Emkay first cut, digest
+          2026-08-06), EBITDA/t Rs1,045 (India), standalone EBITDA Rs10.7bn
+          (BofA, same week) — 10.5 x 1,045 = Rs10.97bn, within rounding of the
+          Rs10.7bn print. THE 65/35 REGIONAL SPLIT IS SECTOR KNOWLEDGE, not a
+          filing.
+        verify: pending
+      - item: cement_east
+        price_link: cement_price_east_inr
+        volume: 14700000          # 0.35 x 42.0mt
+        volume_unit: t
+        basis_pass_through: 0.75
+        source_note: >
+          East presence cited in kind, not in share: "subsidiaries (Union
+          Cement + Shree East nearly doubled)" (BofA, Neha Manpuria, digest
+          2026-08-05).
+        verify: pending
+
+    # Shree's fuel mix INVERTED this quarter, and the lines say so: "West Asia
+    # conflict disrupted contracted petcoke + Omani gypsum, forcing expensive
+    # high-ash domestic coal -> fuel cost to Rs1.95/kcal (from Rs1.6)" (Emkay).
+    # So petcoke intensity is HALVED versus peers and domestic coal carries the
+    # load, behind a basis haircut (e-auction domestic is not the seaborne
+    # benchmark — invariant 6's proxy rule, expressed as pass-through).
+    # INPUTS ARE DUPLICATED PER OUTPUT LEG — the SAIL co-product workaround.
+    # `basis_item` scales an input by ONE output's volume, so a single petcoke
+    # line on cement_north would fuel only 27.3 of the 42.0mt and silently
+    # understate the cost side by the east leg's 35%. Caught by the first
+    # validation run: Shree's petcoke read Rs156 cr where 42mt implies Rs240.
+    # Same intensity on both legs; the split is volume, not chemistry.
+    inputs:
+      - item: petcoke_north
+        price_link: cp_coke
+        intensity: 0.030
+        intensity_unit: t/t
+        basis_item: cement_north
+        market_pct: 1.00
+        basis_pass_through: 1.00
+        source_note: >
+          Halved from the 0.060 derivation because the cited disruption pushed
+          Shree onto domestic coal for a large share of kiln heat. TRANSIENT by
+          management's own framing ("views cost spike as transient", Emkay) —
+          when contracted petcoke resumes, restore ~0.060 here and cut the coal
+          lines below.
+        verify: pending
+      - item: petcoke_east
+        price_link: cp_coke
+        intensity: 0.030
+        intensity_unit: t/t
+        basis_item: cement_east
+        market_pct: 1.00
+        basis_pass_through: 1.00
+        source_note: Duplicate of petcoke_north over the east leg's volume.
+        verify: pending
+      - item: thermal_coal_north
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.060          # HIGHEST of the four: carrying kiln heat that
+        intensity_unit: t/t       # peers buy as petcoke, plus captive power
+        basis_item: cement_north
+        market_pct: 1.00
+        basis_pass_through: 0.50  # HIGH-ASH DOMESTIC coal, cited — the seaborne
+                                  # print reaches it only through e-auction
+                                  # sympathy, like steel's NMDC-vs-CFR ore
+        source_note: >
+          "forcing expensive high-ash domestic coal ... power cost +22%/MT QoQ"
+          (BofA, digest 2026-08-05). The 0.50 pass-through is the aluminium
+          thermal-coal 0.35 / steel ore 0.50 class of haircut: a domestic
+          administered/auction price tracked by a seaborne benchmark.
+        verify: pending
+      - item: thermal_coal_east
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.060
+        intensity_unit: t/t
+        basis_item: cement_east
+        market_pct: 1.00
+        basis_pass_through: 0.50
+        source_note: Duplicate of thermal_coal_north over the east leg's volume.
+        verify: pending
+
+  # ==========================================================================
+  # DALMIA — the South + East name; the regional-mix short leg by construction
+  # ==========================================================================
+  - id: dalmia
+    kind: company
+    name: Dalmia Bharat
+    sector: cement
+    peer_group: cement
+    nse_symbol: DALBHARAT
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: cement_south
+        price_link: cement_price_south_inr
+        volume: 16700000          # 0.55 x 30.4mt (7.6mt Q1 x 4)
+        volume_unit: t
+        basis_pass_through: 0.75
+        source_note: >
+          Total is cited: "Volumes +9% yoy to 7.6mt; NSR +6% qoq to Rs5,118/t
+          on price hikes (Rs10-15/bag south, Rs15-20/bag east)" (IIFL, Devesh
+          Agarwal, digest 2026-08-01) — the broker's own parenthesis names
+          exactly these two regional markets, which is the citation for the
+          LINKS if not for the 55/45 SPLIT. EBITDA Rs8.05bn reconciles:
+          7.6 x 1,055 = Rs8.02bn.
+        verify: pending
+      - item: cement_east
+        price_link: cement_price_east_inr
+        volume: 13700000          # 0.45 x 30.4mt. The JPA central assets ramp
+        volume_unit: t            # adds a Central leg over FY27-28 — revisit
+        basis_pass_through: 0.75  # the split when those volumes are cited.
+        source_note: >
+          Same IIFL citation. Note the JAL/JPA acquisition ("Jaypee assets to
+          help unlock central India", Elara) will eventually deserve its own
+          cement_price_central_inr line; today its volumes are in ramp-up and
+          uncited.
+        verify: pending
+
+    # Inputs duplicated per output leg — see the Shree note. One line on the
+    # south basis alone would fuel 16.7 of 30.4mt.
+    inputs:
+      - item: petcoke_south
+        price_link: cp_coke
+        intensity: 0.055
+        intensity_unit: t/t
+        basis_item: cement_south
+        market_pct: 1.00
+        basis_pass_through: 1.00
+        source_note: >
+          Slightly under the 0.060 derivation: "fuel-inventory management that
+          contained inflation by >Rs150/t" (Emkay) and the mildest Q2 fuel
+          guide of the peer set ("Rs70-80/t vs peers' Rs120-140/t",
+          PhillipCapital) both say Dalmia's spot-fuel exposure runs below
+          benchmark sensitivity.
+        verify: pending
+      - item: petcoke_east
+        price_link: cp_coke
+        intensity: 0.055
+        intensity_unit: t/t
+        basis_item: cement_east
+        market_pct: 1.00
+        basis_pass_through: 1.00
+        source_note: Duplicate of petcoke_south over the east leg's volume.
+        verify: pending
+      - item: thermal_coal_south
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.022
+        intensity_unit: t/t
+        basis_item: cement_south
+        market_pct: 1.00
+        basis_pass_through: 0.70
+        source_note: No cited green share; industry base assumption.
+        verify: pending
+      - item: thermal_coal_east
+        price_link: thermal_coal_indonesia_6322
+        intensity: 0.022
+        intensity_unit: t/t
+        basis_item: cement_east
+        market_pct: 1.00
+        basis_pass_through: 0.70
+        source_note: Duplicate of thermal_coal_south over the east leg's volume.
+        verify: pending
+
+  # ==========================================================================
+  # NOT SCORED — peer_group null, invariant 7 (not in F&O). Entities kept so
+  # prices, mood rows and the IndiaMART watch keep accumulating against them.
+  # ==========================================================================
+  - id: jk_cement
+    kind: company
+    name: JK Cement
+    sector: cement
+    peer_group: null              # status: not_in_fno (vault OI, 2026-08-26)
+    nse_symbol: JKCEMENT
+    effective_from: 2026-04-01
+    # Q1FY27 EBITDA/t Rs982, volumes +18.8% yoy (Emkay Cement Corner) — a
+    # strong print that CANNOT be expressed in the book. Do not confuse with
+    # JK LAKSHMI (Rs719/t, a different company the digests tag #JKCement).
+
+  - id: ramco
+    kind: company
+    name: The Ramco Cements
+    sector: cement
+    peer_group: null              # status: not_in_fno
+    nse_symbol: RAMCOCEM
+    effective_from: 2026-04-01
+    # The pure-South name (Kotak: realisations "+4.8% qoq on better east/south
+    # trade prices"; EBITDA Rs664/t, 4.6mt Q1). If it ever lists in F&O it is
+    # the cleanest single-region leg against UltraTech's all-India.
+
+  - id: nuvoco
+    kind: company
+    name: Nuvoco Vistas
+    sector: cement
+    peer_group: null              # status: not_in_fno
+    nse_symbol: NUVOCO
+    effective_from: 2026-04-01
+
+  - id: star_cement
+    kind: company
+    name: Star Cement
+    sector: cement
+    peer_group: null              # status: not_in_fno
+    nse_symbol: STARCEMENT
+    effective_from: 2026-04-01
+    # Northeast micro-market; EBITDA/t leader (Rs1,436 reported, ~Rs1,590
+    # adjusted, PhillipCapital). No regional series covers the NE premium.
+
+  - id: jsw_cement
+    kind: company
+    name: JSW Cement
+    sector: cement
+    peer_group: null              # status: not_in_fno (listed 2025-08, no F&O)
+    nse_symbol: JSWCEMENT
+    effective_from: 2026-04-01
+    # The extractor must NEVER match bare "JSW" — steel.yaml records why.

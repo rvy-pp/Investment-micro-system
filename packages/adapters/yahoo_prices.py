@@ -79,6 +79,17 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "jindal_stainless": [("JSL.NS", r"jindal\s*stainless")],
     "shyam_metalics":   [("SHYAMMETL.NS", r"shyam\s*metalics|shyam\s*metal")],
     "apl_apollo":       [("APLAPOLLO.NS", r"apl\s*apollo")],
+    # --- equities: cement, added 2026-08-28 ---
+    # All four resolved with yahoo_search.py first, per the VAML lesson — and
+    # the search PAID twice on this set: "ambuja" alone returns GUJARAT AMBUJA
+    # EXPORTS (GAEL) first, and "dalmia bharat" returns DALMIA BHARAT SUGAR
+    # (DALMIASUG) above the cement company. Both are different listed
+    # companies a guessed pattern could have accepted; the name regexes below
+    # are written to reject them.
+    "ultratech":  [("ULTRACEMCO.NS", r"ultratech\s*cement")],
+    "ambuja":     [("AMBUJACEM.NS", r"ambuja\s*cement")],
+    "shree":      [("SHREECEM.NS", r"shree\s*cement")],
+    "dalmia":     [("DALBHARAT.NS", r"dalmia\s*bharat\s*(?!sug)")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -124,6 +135,7 @@ EQUITIES = {
     "hindalco", "nalco", "hindustan_zinc", "vedanta", "vaml",
     "tata_steel", "jsw_steel", "jindal_steel", "sail",
     "jindal_stainless", "shyam_metalics", "apl_apollo",
+    "ultratech", "ambuja", "shree", "dalmia",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.

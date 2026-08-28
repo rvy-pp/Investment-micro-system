@@ -89,6 +89,32 @@ NAME_PATTERNS = [
     ("sail",             r"\bSAIL\b|#SAIL\b"),
     ("shyam_metalics",   r"\bShyam\b|#ShyamMetalics\b"),
     ("apl_apollo",       r"\bAPL ?Apollo\b|#APLApollo\b"),
+    # --- cement, added 2026-08-28 ---
+    # Every shorthand CONFIRMED IN CONTEXT before being written, per the steel
+    # rule: UTCEM/ACEM/SRCM/DALBHARA/TRCL/JKCE/STRCEM/JSWCEMEN all appear in
+    # broker rating lists in these digests ("Buy: UTCEM, ACEM, DALBHARA,
+    # NUVOCO, Ramco, Shree", "UTCEM, SRCM, JKCE +12-15% YoY volume growth").
+    #
+    # TWO TRAPS, both live in the corpus:
+    #   - "#JKCement (JK Lakshmi — Not Rated ...)" — a bullet TAGGED JK Cement
+    #     whose content is JK LAKSHMI, a different listed company. The
+    #     jk_cement patterns therefore never match a sentence containing
+    #     "JK Lakshmi" (negative lookahead), and there is no bare \bJK\b.
+    #   - NO BARE \bShree\b WITHOUT GUARD ("Meghalaya CM backs Shree Cement
+    #     project" is fine, but Shree is a common name-particle) — matched as
+    #     "Shree Cement", the SRCM shorthand, or the #Shree tag only.
+    #   - NO BARE \bJSW\b — steel.yaml records why; jsw_cement matches its
+    #     full name, its confirmed shorthand and its tag only.
+    #   - NO BARE \bStar\b — "star performer" is broker prose.
+    ("ultratech",  r"\bUltraTech\b|\bUltratech\b|\bUTCEM\b|#Ultratech\b|#UltraTech\b"),
+    ("ambuja",     r"\bAmbuja\b|\bACEM\b|#Ambuja\b"),
+    ("shree",      r"\bShree Cement\b|\bSRCM\b|#Shree\b|#ShreeCement\b"),
+    ("dalmia",     r"\bDalmia\b|\bDALBHARA\b|#Dalmia\b|#DalmiaBharat\b"),
+    ("jk_cement",  r"JK Cement|JKCE|#JKCement"),
+    ("ramco",      r"\bRamco\b|\bTRCL\b|#Ramco\b|#RamcoCement\b"),
+    ("nuvoco",     r"\bNuvoco\b|\bNUVOCO\b|#Nuvoco\b"),
+    ("star_cement", r"\bStar Cement\b|\bSTRCEM\b|#StarCement\b"),
+    ("jsw_cement", r"\bJSW Cement\b|\bJSWCEMEN\b|#JSWCement\b"),
 ]
 
 
@@ -99,6 +125,13 @@ def named_in(sent: str) -> list[str]:
         if re.search(pat, sent, re.I):
             # 'Vedanta' inside 'Vedanta Aluminium' must not also claim the parent
             if eid == "vedanta" and "vaml" in found:
+                continue
+            # A sentence about JK LAKSHMI often wears the #JKCement tag — a
+            # different listed company entirely ("#JKCement (JK Lakshmi — Not
+            # Rated ...)"). Any mention of JK Lakshmi disqualifies the whole
+            # sentence for jk_cement, in either order; a lookahead in the
+            # pattern only guarded one direction.
+            if eid == "jk_cement" and re.search(r"JK Lakshmi", sent, re.I):
                 continue
             found.append(eid)
     return found

@@ -143,15 +143,18 @@ COLS = {
 # Loaded so the history exists, but NOT price_link-ed from any spec yet — the
 # steel group is not built. Listed explicitly so "captured" is never mistaken for
 # "modelled": a series in here contributes to no cost bridge and no score.
+# Pruned 2026-08-28: hrc_india_inr, rebar_india_primary/secondary_inr,
+# iron_ore_china_cfr62 and coking_coal_spot_aus left when STEEL price_linked
+# them (2026-08-25 — they had lingered here three days in violation of this
+# set's own rule), and thermal_coal_indonesia_6322 left for CEMENT.
 PARKED = {
     "lme_lead", "lme_copper", "lme_nickel", "gold", "dxy",
-    "iron_ore_china_cfr62", "iron_ore_china_import62", "iron_ore_sgx_tsi62",
+    "iron_ore_china_import62", "iron_ore_sgx_tsi62",
     "iron_ore_futures_china_cny",
     "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",
-    "hrc_india_inr", "hrc_india_usd", "hrc_uk", "hrc_germany",
-    "rebar_china_cny", "rebar_india_primary_inr", "rebar_india_secondary_inr",
-    "scrap_turkey", "coking_coal_contract_qtr", "coking_coal_spot_aus",
-    "thermal_coal_indonesia_6322",
+    "hrc_india_usd", "hrc_uk", "hrc_germany",
+    "rebar_china_cny",
+    "scrap_turkey", "coking_coal_contract_qtr",
     "aluminium_shfe_cny", "zinc_shfe_cny", "alumina_shfe_cny",
     "alumina_shfe_usd",
 }

@@ -231,7 +231,7 @@ a Python data edit and needs no front-end change:
 | **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
 | **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |
 | **Steel** | prices landing (20 series), no spec |
-| **Cement** | prices landing (11 series — 6 regional **output** prices from the Daily Cement Pack + 5 shared input costs), no spec. An IndiaMART day-to-day watch banners on **Daily Overview** |
+| **Cement** | LIVE 2026-08-28 — 4 scored F&O names, one peer group, regional output links. Holds Pair / Bridge / Positioning plus a **Prices & Watch** sub-view (regional chart + IndiaMART asks). P4 withheld pending a guidance ledger |
 
 **Daily Overview** is assembled from what the run *wrote* — `status.json`,
 `frontend.json`, `freshness.check()`, `pillar_scores`, the `oi` table — and never

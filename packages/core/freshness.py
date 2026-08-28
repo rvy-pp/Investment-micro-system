@@ -123,6 +123,33 @@ FEEDS = {
     "cp_coke":               ("Daily Metals Pack",  3, "assessed"),
     "thermal_coal_seaborne": ("Daily Metals Pack — Richards Bay", 3, "assessed"),
     "iron_ore":              ("FRED PIORECRUSDM monthly", 70, "monthly"),
+
+    # UNPARKED 2026-08-28, and the steel five are a CORRECTION, not an
+    # addition: PARKED_FEEDS' own rule says "move a series OUT of here the
+    # moment a spec price_links it", and steel price_linked all five on
+    # 2026-08-25 while they stayed parked — so for three days a dead pack
+    # could not have gated a steel score. Found while unparking cement's
+    # coal line, which would have repeated the mistake.
+    "hrc_india_inr":             ("Daily Metals Pack", 3, "assessed"),
+    "rebar_india_primary_inr":   ("Daily Metals Pack", 3, "assessed"),
+    "rebar_india_secondary_inr": ("Daily Metals Pack", 3, "assessed"),
+    "iron_ore_china_cfr62":      ("Daily Metals Pack", 3, "assessed"),
+    "coking_coal_spot_aus":      ("Daily Metals Pack", 3, "assessed"),
+    "thermal_coal_indonesia_6322": ("Daily Metals Pack", 3, "assessed"),
+
+    # Cement's OUTPUT price: monthly, and the pack that carries it lands ~15
+    # days late (PM figure), so the threshold is a monthly cadence plus that
+    # lag — not the 3-day rule of the daily pack columns. 45 calendar days:
+    # a completed month lands at month end + capture, and an unchanged
+    # in-progress month deliberately keeps its stored date (a restatement is
+    # not a new datapoint), so the newest row can legitimately be ~40 days
+    # old between flat months.
+    "cement_price_india_inr":   ("Daily Cement Pack — monthly", 45, "monthly"),
+    "cement_price_north_inr":   ("Daily Cement Pack — monthly", 45, "monthly"),
+    "cement_price_central_inr": ("Daily Cement Pack — monthly", 45, "monthly"),
+    "cement_price_east_inr":    ("Daily Cement Pack — monthly", 45, "monthly"),
+    "cement_price_west_inr":    ("Daily Cement Pack — monthly", 45, "monthly"),
+    "cement_price_south_inr":   ("Daily Cement Pack — monthly", 45, "monthly"),
 }
 
 # CAPTURED BUT NOT MODELLED. Loaded from the pack so the history exists for the
@@ -136,9 +163,8 @@ PARKED_FEEDS = [
     "iron_ore_china_cfr62", "iron_ore_china_import62", "iron_ore_sgx_tsi62",
     "iron_ore_futures_china_cny",
     "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",
-    "hrc_india_inr", "hrc_india_usd", "hrc_uk", "hrc_germany",
-    "rebar_china_cny", "rebar_india_primary_inr", "rebar_india_secondary_inr",
-    "coking_coal_spot_aus", "thermal_coal_indonesia_6322",
+    "hrc_india_usd", "hrc_uk", "hrc_germany",
+    "rebar_china_cny",
     "aluminium_shfe_cny", "alumina_shfe_cny", "alumina_shfe_usd",
 ]
 for _e in PARKED_FEEDS:

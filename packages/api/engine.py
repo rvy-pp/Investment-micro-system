@@ -349,20 +349,14 @@ SECTORS = [
     {
         "id": "cement",
         "label": "Cement",
-        "peer_groups": [],
-        # THE OUTPUT PRICE LANDED 2026-08-27 — `adapters/cement_pack.py` reads
-        # the Daily CEMENT Pack that arrives in the same Kotak mail as the
-        # metals pack. Six regional series, Rs/TONNE (the sheet prints Rs/50kg
-        # bag; the 20x is done in the adapter, deliberately, because bridge.py
-        # multiplies an ABSOLUTE delta by a tonnage), monthly back to 2014-04.
-        #
-        # Still no peer_groups, and that is now the ONLY thing missing: the
-        # sector has both legs of a margin bridge on disk and no spec to link
-        # them — no base_ebitda, no volumes, no intensities, no market_pct.
-        # Regional prices are listed first because a cement peer group is
-        # region-defined in a way steel's is not: North/Central names and South
-        # names do not share an output price, so the region choice per company
-        # is a spec decision, not a default to all-India.
+        # LIVE 2026-08-28. One peer group where steel needed two: the four
+        # scored names share a cost stack (same kiln, same bought fuels) and
+        # differ by REVENUE REGION, which lives on the entity output lines
+        # (regional price_links) rather than in the grouping. Four scored of
+        # nine — ultratech, ambuja, shree, dalmia are the F&O names; the other
+        # five are peer_group: null per invariant 7. See
+        # specs/sectors/cement.yaml for the validation runs.
+        "peer_groups": ["cement"],
         "commodities": [
             "cement_price_india_inr", "cement_price_north_inr",
             "cement_price_central_inr", "cement_price_east_inr",
@@ -537,8 +531,13 @@ def nav_list() -> list[dict]:
             "live": True},
            {"id": "flows", "kind": "flows", "label": "Flows", "live": False}]
     for s in sector_list():
+        spec = next(x for x in SECTORS if x["id"] == s["id"])
         out.append({"id": s["id"], "kind": "sector", "label": s["label"],
-                    "live": s["live"], "peer_groups": s["peer_groups"]})
+                    "live": s["live"], "peer_groups": s["peer_groups"],
+                    # The page shows the Prices & Watch sub-view only where a
+                    # sector declares content for it — cement today.
+                    "has_chart": bool(spec.get("chart")),
+                    "has_watch": bool(spec.get("watch"))})
     return out
 
 

@@ -1,0 +1,186 @@
+# ============================================================================
+# cement — one peer group, four scored names
+# ============================================================================
+# Added 2026-08-28. ONE group where steel needed two, and the reason is the
+# inverse of steel's: every scored cement name runs the same kiln on the same
+# bought fuels, so they genuinely share a cost stack. What they do NOT share is
+# a REVENUE market — cement is regional — and that difference lives on the
+# entity output lines (regional price_links), not in the peer grouping.
+#
+#   cement    ultratech, ambuja, shree, dalmia
+#             The four F&O names. jk_cement, ramco, nuvoco, star_cement and
+#             jsw_cement are peer_group: null — invariant 7, not in F&O, a
+#             score that cannot be expressed is not an output. Ramco is the
+#             name to re-enable first if a contract ever lists: pure-South,
+#             the cleanest regional leg in the sector.
+
+sector: cement
+spec_version: 0.1.0
+peer_groups: [cement]
+
+# ----------------------------------------------------------------------------
+# P1 ASP + P2 COSTS
+# ----------------------------------------------------------------------------
+pillars_1_2:
+  windows_days: [1, 5, 20]
+  materiality:
+    min_pct_of_ebitda: 0.015
+    on_fail: emit_nothing
+
+  dispersion_note: >
+    REGIONAL MIX SETS THE DISPERSION; FUEL SETS THE LEVEL — the cement analogue
+    of steel's ore/coal claim, and validation below runs it rather than asserts
+    it. A petcoke move hits all four names the same way, separated only by
+    EBITDA/t (Ambuja at Rs917/t takes the largest percentage hit, Rs1,214/t
+    UltraTech the smallest of the full-intensity names). A REGIONAL price move
+    separates them structurally: an East-only move reaches Shree at 0.35 of
+    volumes and Dalmia at 0.45 while UltraTech and Ambuja read ZERO through
+    their all-India links.
+
+  margin_note: >
+    EBITDA/t is the beta, disclosed every quarter, exactly as in steel: the
+    Emkay Cement Corner leaderboard prints it for the whole sector in one
+    table (Q1FY27: UltraTech 1,214 / Nuvoco 1,072 / Dalmia 1,055 / Shree 1,045
+    / JK Cement 982 / Ambuja 917). It comes out of base_ebitda and volumes and
+    must never be adjusted with a coefficient.
+
+  output_basis_note: >
+    THE OUTPUT SERIES IS RETAIL INCL. GST, NOT REALISATION. Every output line
+    carries basis_pass_through 0.75 (retail -> NSR: 1/1.18 GST wedge x partial
+    non-trade follow-through; empirically NSR/retail ~ 0.74 and Q1FY27
+    percentage moves matched). The bridge grew output-side basis_pass_through
+    for this — default 1.0, steel and non-ferrous bit-identical, regression-run
+    against steel.yaml's recorded coking-coal numbers before anything else was
+    built.
+
+  monthly_output_note: >
+    THE OUTPUT PRICE PRINTS MONTHLY while every cost line prints daily — the
+    only sector in the book with that asymmetry. Over a 30-day window the
+    bridge sees roughly one cement print against ~22 fuel prints, so
+    short-window economics are COST-LED BY CONSTRUCTION and a cement-price move
+    lands as a monthly step. Read a 1d/5d window as a fuel signal; only the
+    20d+ windows carry both legs. The IndiaMART watch (cement_watch, never a
+    pillar input) exists because the pack's prints also land ~15 days late.
+
+# ----------------------------------------------------------------------------
+# P3 VALUATION
+# ----------------------------------------------------------------------------
+pillar_3:
+  metrics: [ev_ebitda]
+  reference: own_history
+  lookback_days: 1260
+  note: >
+    (price x shares + net_debt) / valuation_ebitda, z on own history, as
+    everywhere. Two cement-specific facts recorded in base_financials.yaml:
+    shares are DERIVED from the Kotak Daily Cement Pack's own Valuation sheet
+    (they land within rounding of the true counts on all four), and net_debt is
+    cited ONLY for Dalmia — the other three carry 0. That biases the DISPLAYED
+    multiple (UltraTech understated; net-cash Ambuja and Shree overstated) and
+    does NOT bias the score: a constant net-debt error is a constant offset to
+    the multiple, and a constant offset cancels out of a z exactly.
+
+# ----------------------------------------------------------------------------
+# P4 GUIDANCE
+# ----------------------------------------------------------------------------
+pillar_4:
+  track_metrics: [volume, ebitda_per_t, cost_per_t, capex]
+  note: >
+    NOT LIVE — no cement guidance ledger exists yet, so P4 withholds for all
+    four names, which is the honest state rather than a gap to paper over. The
+    raw material is unusually good and already in the digests: Ambuja "FY27
+    vol +8%, cost to Rs4,250/t FY27 -> Rs4,000/t FY28" (JPMorgan), UltraTech
+    "margin pressure peaking 2QFY27 (cost +Rs130-140/t qoq)" and "~242mtpa by
+    FY28/29" (Kotak), Shree "EBITDA/MT to improve to ~Rs1,185 in 2H" (BofA),
+    Dalmia "~67mtpa by 3QFY28" (Emkay). Building specs/extracted/
+    cement_guidance.json from these is the next P4 step, steel's playbook.
+  caution: >
+    Ambuja's volume guide is the trap-in-waiting: management guides FY27 +8%
+    while RUNNING -7% on a deliberate "value over volume" share cession
+    (ceded ~3% to UTCEM/Shree/Dalmia, JPMorgan). A volume miss there is partly
+    a strategy statement, not only an execution failure — grade it against the
+    strategy the same way SAIL's crude-vs-saleable basis gap is flagged in
+    steel.yaml before trading its P4.
+
+# ----------------------------------------------------------------------------
+# GATE
+# ----------------------------------------------------------------------------
+gate:
+  scope: cement
+  consumed_by: flows
+  pair_exception: true
+
+# ----------------------------------------------------------------------------
+# OUTPUT
+# ----------------------------------------------------------------------------
+output:
+  emit_singles: true
+  emit_pairs: true
+  pair_candidates:
+    - pair: [ultratech, ambuja]
+      rationale: >
+        The MARGIN pair, deliberately region-neutral: both legs are all-India,
+        so the regional links cancel and what is left is EBITDA/t quality
+        (Rs1,214 vs Rs917) plus execution — UltraTech gaining the ~3% share
+        Ambuja is ceding on "value over volume" (JPMorgan). On a petcoke +$20
+        shock the bridge reads UltraTech -9.42% against Ambuja -12.32%, so the
+        long-quality leg also wins every fuel rally. The two sit 4 Kotak
+        ratings apart in the same pack (both SELL, FVs 8,900 / 370) — the pair
+        expresses relative quality without fighting the house view on the
+        sector's level.
+      residual_exposure: >
+        Ambuja consolidates ACC; group/NextGen execution risk ("execution
+        failure acknowledged by NextGen", PhillipCapital) is idiosyncratic to
+        the short leg and not a commodity exposure at all. Size for headline
+        risk, not only for the bridge spread.
+
+    - pair: [shree, dalmia]
+      rationale: >
+        THE REGIONAL pair — the trade this sector spec exists to express. Long
+        North (Shree 0.65 north) against short South+East (Dalmia 0.55/0.45).
+        August 2026 is exactly the tape it monetises: North +0.36% m/m while
+        East fell -2.25% and South -0.67% ("South weakest, East under
+        pressure", Nomura). On an East -Rs200/t shock the bridge reads Shree
+        -5.15% vs Dalmia -6.38% — same direction (Shree has an east leg too)
+        but a real spread; on a NORTH-led rally Dalmia reads zero.
+      residual_exposure: >
+        NOT fuel-neutral this quarter: Shree's petcoke line is halved by the
+        cited domestic-coal switch, so a petcoke spike flatters the long leg
+        (-5.62% vs -9.91%) and a petcoke COLLAPSE hurts it relatively. That
+        asymmetry is transient by management's own framing and reverses when
+        contracted petcoke resumes — check specs/entities/cement.yaml's Shree
+        inputs before sizing.
+
+# ----------------------------------------------------------------------------
+# VALIDATION — run 2026-08-28, results recorded not asserted
+# ----------------------------------------------------------------------------
+validation:
+  test_1_fuel_sets_level:
+    shock: cp_coke +20 USD/t
+    result: >
+      all four negative, no zeros: ambuja -12.32% (Rs917/t margin), dalmia
+      -9.91%, ultratech -9.42%, shree -5.62% (petcoke halved by the cited
+      domestic-coal switch). Ordering is margin plus documented mix, exactly
+      the dispersion_note's claim about the cost side.
+  test_2_region_sets_dispersion:
+    shock: cement_price_east_inr -200 INR/t
+    result: >
+      ultratech 0.00 and ambuja 0.00 (all-India links, correctly untouched by
+      a region-only move); shree -5.15% (0.35 east leg); dalmia -6.38% (0.45
+      east leg). A regional print separates the group structurally — the
+      claim this sector was built on, and the reason the pack's five regional
+      series were loaded as five ids rather than one average.
+  test_3_hike_parity:
+    shock: all six cement_price series +200 INR/t (a Rs10/bag hike)
+    result: >
+      all four positive within a band — ultratech +12.34%, dalmia +14.16%,
+      shree +14.72%, ambuja +16.13% — ordered by EBITDA/t as expected
+      (thinnest margin gains most in percentage terms). Cross-check against
+      the hand arithmetic: Rs200 retail x 0.75 pass = Rs150/t NSR on
+      UltraTech's 165.2mt = Rs2,478 cr on Rs20,080 cr = +12.3%. Matches.
+  caught_by_validation: >
+    The first run of test_1 read shree -3.65% and dalmia -5.44% — the fuel
+    lines were scaled by ONE regional output leg's volume instead of the
+    company's total (basis_item points at a single output). Fixed by
+    duplicating each input across both legs, the SAIL co-product workaround.
+    Left recorded because it is exactly the class of silent understatement
+    the validation section exists to catch.

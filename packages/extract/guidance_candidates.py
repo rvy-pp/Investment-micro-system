@@ -64,6 +64,35 @@ TAGS = {
     "#JindalStainless": "jindal_stainless",
     "#ShyamMetalics": "shyam_metalics",
     "#APLApollo": "apl_apollo",
+    # --- cement, added 2026-08-28 ---
+    # From the same frequency count discipline: #Dalmia 43, #Ultratech 36,
+    # #Ambuja 33, #Shree 29, #JKCement 26, #Ramco 18, #Nuvoco 17,
+    # #JSWCement 16, #StarCement 15, plus singleton long forms (#UltraTech,
+    # #ShreeCement, #RamcoCement — safe under containment because each
+    # CONTAINS its short form and maps to the same entity).
+    #
+    # DO NOT ADD "#Cement" (40 occurrences): it is the sector tag. Note it is
+    # NOT a containment hazard here — "#Cement" the string does not occur
+    # inside "#JKCement"/"#StarCement"/"#JSWCement" (their C is not preceded
+    # by #) — it is excluded because a sector tag is not an entity.
+    #
+    # #ACC (3) is NOT mapped: ACC is Ambuja's subsidiary and a separate listed
+    # company outside the vault's coverage roster. Ambuja's own prints
+    # consolidate it; mapping #ACC to ambuja would hand ACC's standalone
+    # misses (Rs458/t EBITDA, MS Underweight) to the parent's mood twice.
+    #
+    # THE JK LAKSHMI TRAP LIVES DOWNSTREAM: "#JKCement (JK Lakshmi — Not
+    # Rated ...)" bullets are tagged jk_cement HERE and disqualified in
+    # extract_broker_actions.named_in(), which sees the sentence text.
+    "#Ultratech": "ultratech", "#UltraTech": "ultratech",
+    "#Ambuja": "ambuja",
+    "#Shree": "shree", "#ShreeCement": "shree",
+    "#Dalmia": "dalmia",
+    "#JKCement": "jk_cement",
+    "#Ramco": "ramco", "#RamcoCement": "ramco",
+    "#Nuvoco": "nuvoco",
+    "#StarCement": "star_cement",
+    "#JSWCement": "jsw_cement",
     # NOT MAPPED, deliberately, pending a scope decision: #NMDC 37,
     # #CoalIndia 30, #LloydsMetals 9. All three are steel INPUT suppliers and
     # appear constantly in the steel bullets — NMDC sets the domestic iron ore

@@ -689,3 +689,99 @@ companies:
       the two legs move oppositely. The reason to carry APL Apollo is its
       valuation and mood plus a real concall ledger, not a mirror trade.
       See packages/review/driver_beta.py.
+
+  # ==========================================================================
+  # CEMENT — added 2026-08-28, all 1QFY27 prints, all reconciling to the rupee
+  # against volumes x EBITDA/t (the same double-entry check steel used).
+  # SHARES are DERIVED from the Kotak Daily Cement Pack's own Valuation sheet
+  # (mcap US$mn x the sheet's USDINR 95.4125 / CMP) — the pack is licensed desk
+  # reference, and the derived counts land within rounding of the true counts
+  # (UltraTech 294.3mn, Shree 36.0mn, Dalmia 187.3mn, Ambuja 2,481mn).
+  #
+  # NET DEBT: only Dalmia's is CITED. The other three carry 0 with a flag, and
+  # the reason this is acceptable where it would not be for steel: P3 scores
+  # the z OF THE MULTIPLE AGAINST ITS OWN HISTORY, and a CONSTANT net-debt
+  # error is a constant offset that cancels out of a z-score exactly. It
+  # biases the DISPLAYED multiple (UltraTech's true ~Rs8-12k cr debt
+  # understates EV; Ambuja and Shree are net-CASH so theirs overstate), and
+  # the display bias is annotated rather than guessed at.
+  # ==========================================================================
+  ultratech:
+    base_ebitda: 20080                 # Rs50.2bn x 4
+    valuation_ebitda: 20080            # consolidated print IS the consol figure
+    shares_outstanding: 294250000      # pack Valuation sheet: 36,135.0 US$mn
+                                       # x 95.4125 / Rs11,717
+    shares_verify: derived
+    net_debt: 0                        # NOT cited in the digests. True figure
+                                       # is positive (capex-heavy); multiple
+                                       # DISPLAYED is understated, z unaffected.
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
+    primary_output: cement_india
+    source_note: >
+      "1QFY27 consol EBITDA Rs50.2bn (+14% yoy, -10% qoq) ... consol volumes
+      41.3mt +12.2% yoy, EBITDA/t Rs1,214" (Kotak, Siddharth Mehrotra, digest
+      2026-07-22). 41.3 x 1,214 = Rs50.14bn — reconciles.
+
+  ambuja:
+    base_ebitda: 6360                  # Rs15.9bn x 4
+    valuation_ebitda: 6360
+    shares_outstanding: 2481200000     # pack: 10,689.4 US$mn x 95.4125 / 411.05
+    shares_verify: derived
+    net_debt: 0                        # NOT cited. Ambuja is net CASH in
+                                       # reality, so 0 OVERSTATES its multiple;
+                                       # z unaffected (constant offset).
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
+    primary_output: cement_india
+    source_note: >
+      "EBITDA Rs15.9bn only 3% ahead; volume 17.1mt -7%" (JPMorgan, digest
+      2026-07-29). 17.1 x Rs929/t = Rs15.9bn — reconciles. EBITDA/t prints
+      Rs917 (Emkay leaderboard) / Rs918 (IIFL) / Rs929 (Nomura) — same
+      quarter, minor basis differences, all within 1.3%.
+
+  shree:
+    base_ebitda: 4280                  # INDIA standalone Rs10.7bn x 4 — the
+                                       # bridge's lines are India volumes at
+                                       # India regional prices (Tata precedent).
+    valuation_ebitda: 5080             # CONSOLIDATED Rs12.7bn x 4: "consol
+                                       # EBITDA Rs12.7bn, 9% beat aided by
+                                       # subsidiaries (Union Cement + Shree
+                                       # East nearly doubled)" (BofA). EV is
+                                       # whole-company, so P3 must not divide
+                                       # by the India-only figure.
+    shares_outstanding: 36030000       # pack: 9,243.8 US$mn x 95.4125 / 24,480
+    shares_verify: derived
+    net_debt: 0                        # NOT cited; Shree is net cash in
+                                       # reality — displayed multiple slightly
+                                       # overstated, z unaffected.
+    net_debt_verify: pending
+    valuation_metric: ev_ebitda
+    primary_output: cement_north
+    source_note: >
+      "Q1FY27 standalone EBITDA Rs10.7bn ... EBITDA/t Rs1,045 (India ops)"
+      (Emkay, Harsh Mittal, digest 2026-08-06); "India standalone EBITDA in
+      line at Rs10.7bn (Rs1,045/MT) on 17% volume growth" (BofA, Neha
+      Manpuria, digest 2026-08-05). 10.5mt x 1,045 = Rs10.97bn — reconciles
+      within the brokers' own rounding.
+
+  dalmia:
+    base_ebitda: 3220                  # Rs8.05bn x 4
+    valuation_ebitda: 3220
+    shares_outstanding: 187290000      # pack: 3,682.9 US$mn x 95.4125 / 1,876.2
+    shares_verify: derived
+    net_debt: 4430                     # CITED, the only cement name with one:
+                                       # "net debt up to Rs44.3bn (1.47x) post
+                                       # JAL" (Avendus Spark, digest 2026-08-01)
+                                       # and "Net debt Rs44bn (from Rs14bn)"
+                                       # (IIFL, same digest). Cross-check:
+                                       # 44.3/1.47 = Rs30.1bn TTM EBITDA vs the
+                                       # Rs32.2bn annualised here — consistent.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: cement_south
+    source_note: >
+      "EBITDA Rs8.05bn (14% above Spark), EBITDA/t Rs1,055 ... vols +9% yoy"
+      (Avendus Spark, digest 2026-08-01); "Volumes +9% yoy to 7.6mt; NSR +6%
+      qoq to Rs5,118/t" (IIFL, same digest). 7.6 x 1,055 = Rs8.02bn —
+      reconciles.
