@@ -107,19 +107,40 @@ python packages/refresh.py
 Runs in order, and the order is load-bearing:
 
 ```
-preflight              HALT on failure — everything downstream is untrustworthy
-equity closes          Yahoo, 3mo
-LME cash               westmetall — plain urllib, no agent, no auth
-NSE OI fetch           the /oi pipeline. WRITES the vault OI History.md files
-open interest          reads them into the store. Reports NEWEST DATA AGE when
-                       skipped, so a dead source is visible, not "pulled"
-FRED coal              iron_ore only in practice; see the note below
-metals pack (Outlook)  step 2, an ordinary step since 2026-08-24
-metals pack (staged)   loads it. .xlsx first, .tsv only as a legacy fallback
-mail watch (staged)    consumes step 1, skips cleanly if absent
+preflight                HALT on failure — everything downstream is untrustworthy
+equity closes            Yahoo, 3mo — includes the mining four since 2026-08-29
+LME cash                 westmetall — plain urllib, no agent, no auth
+NSE OI fetch             the /oi pipeline. WRITES the vault OI History.md files
+open interest            reads them into the store. Reports NEWEST DATA AGE when
+                         skipped, so a dead source is visible, not "pulled"
+FRED coal                iron_ore only in practice; see the note below
+mining filings (fetch)   CIL production/offtake + SWMA e-auction from
+                         coalindia.in, NMDC CMS lists — plain urllib, NO agent.
+                         Monthly-cadence work run daily like FRED: one page
+                         request each, and forgetting silently ages a volume
+                         series. NMDC's site lags ~6 months, so its recent rows
+                         come from specs/extracted/mining_prints.json instead
+mining filings (load)    staging + ledger -> the six mining series (source
+                         'filing'). Recomputes every run, so a hand-edit to
+                         mining_prints.json lands on the next refresh
+metals pack (Outlook)    step 2, an ordinary step since 2026-08-24
+metals pack (staged)     loads it. .xlsx first, .tsv only as a legacy fallback
+cement pack (staged)     consumes step 2b's capture, skips cleanly if absent
+cement watch (IndiaMART) spawned DETACHED (~6.5 min sweep); once a day;
+                         writes cement_watch*, never prices
+mail watch (staged)      consumes step 1, skips cleanly if absent
+concall check            advisory, never writes
+desk model check         advisory, no-ops without data/models/
 corporate actions
-score + persist        HALT on failure
+score + persist          HALT on failure
+front end                build_frontend.py — step 4, run here so the run
+                         verifies what the page will render
 ```
+
+This block is the ACTUAL `STEPS` list in `packages/refresh.py` — if the two
+disagree, refresh.py is the truth and this file is the bug (it was, until
+2026-08-30: the block above stopped at eleven steps and named neither cement
+nor mining, while refresh.py had carried both for days).
 
 **THE FALLBACK IS THE PRECEDENCE RULE, NOT A BRANCH.** Nothing checks whether the
 pack arrived before deciding what else to run. Every source runs every day, and
@@ -230,8 +251,9 @@ a Python data edit and needs no front-end change:
 | **Daily Overview** | the landing tab. Did the run work, what is stale, where the book landed |
 | **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
 | **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |
-| **Steel** | prices landing (20 series), no spec |
+| **Steel** | LIVE 2026-08-25 — 5 scored names in two groups (integrated + apl_apollo on the HRC-patra spread) |
 | **Cement** | LIVE 2026-08-28 — 4 scored F&O names, one peer group, regional output links. Holds Pair / Bridge / Positioning plus a **Prices & Watch** sub-view (regional chart + IndiaMART asks). P4 withheld pending a guidance ledger |
+| **Mining** | LIVE 2026-08-29 — nmdc + coal_india (`mining_bulk`, the F&O pair) and hindustan_copper (`mining_copper`, NOT in F&O, scored on explicit PM decision, cash-only). Volumes are a scored driver (monthly TTM lines); chart is NMDC's own circular sequence. P4 withheld, same as cement |
 
 **Daily Overview** is assembled from what the run *wrote* — `status.json`,
 `frontend.json`, `freshness.check()`, `pillar_scores`, the `oi` table — and never
@@ -276,7 +298,12 @@ State plainly:
 - whether the metals pack arrived, and its date — if the newest pack is not
   today's, `--consume metals` says so and loads it for history only
 - whether mail staging was written, and how many structural hits it produced
-- the composite and SIZE for all five names
+- the composite and SIZE across the scored names (17 across seven peer
+  groups as of 2026-08-29)
+- around the 1st-4th of a month: whether the mining filings fetch found the
+  new CIL month, and whether NMDC's monthly print has appeared in a digest —
+  if it has, its row belongs in `specs/extracted/mining_prints.json` (the one
+  monthly HAND step mining has; see below)
 - **any step that failed, quoted, not summarised**
 
 `data/refresh/status.json` is written by step 3 and served by the API, so a
@@ -300,6 +327,16 @@ pack contributed nothing, say the pack contributed nothing. Do not write
 - **Concall ingestion** — quarterly, `concall-ingest`, needs a human read
 - **Extraction into the store** — deliberately never automated; a wrong
   extraction enters as a fact
+- **NMDC's recent months** — the fetch step checks nmdc.co.in every run, but
+  the site uploads its own filings ~6 months late, so NMDC's monthly
+  production/sales print and any price-circular change reach the store
+  through `specs/extracted/mining_prints.json`, hand-entered from the digest
+  that carried them (usually the 2nd-4th of the month). Deliberately not
+  automated for the same reason as extraction: the entry is a cited number
+  with a basis to check (EX-ROYALTY levels only — Morgan Stanley quotes the
+  same circulars including taxes, and loading that basis is the fake-crash
+  bug `mining_filings.py`'s header documents). Coal India needs nothing;
+  its site is timely and the fetch parses it unattended
 - **Nothing is unsourced any more.** The old text here named `alumina_index` and
   `cp_coke` as having no automated source. Both were wrong: `alumina_index` had
   Yahoo `ALA=F` all along, and `cp_coke` now has the pack, so its
