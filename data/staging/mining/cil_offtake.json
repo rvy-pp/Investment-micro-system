@@ -1,0 +1,82 @@
+{
+ "_note": "CIL provisional production/offtake filings, CIL-total row only. TTM(month) = FY_prev_total + (FYTD - FYTD_LY); no chain, gaps tolerated.",
+ "fy_anchors": {
+  "fy2025_offtake_mt": 763.0,
+  "fy2026_offtake_mt": 744.8,
+  "source": "PRODUCTION.pdf \u2014 Mar'26 filing carries Apr'25-Mar'26 both years"
+ },
+ "months": [
+  {
+   "month": "2025-10",
+   "offtake": 58.3,
+   "offtake_ly": 62.0,
+   "fytd": 415.3,
+   "fytd_ly": 425.6,
+   "doc": "prodletter_signed.pdf (coalindia.in, Oct'25 filing dated 01.11.2025)",
+   "how": "pypdf row parse"
+  },
+  {
+   "month": "2025-12",
+   "offtake": 64.9,
+   "offtake_ly": 68.5,
+   "fytd": 544.7,
+   "fytd_ly": 557.0,
+   "doc": "Dec25.pdf",
+   "how": "pypdf row parse"
+  },
+  {
+   "month": "2026-01",
+   "offtake": 66.3,
+   "offtake_ly": 69.5,
+   "fytd": 612.1,
+   "fytd_ly": 631.2,
+   "doc": "Prodf.pdf",
+   "how": "pypdf row parse"
+  },
+  {
+   "month": "2026-03",
+   "offtake": 69.5,
+   "offtake_ly": 69.0,
+   "fytd": 744.8,
+   "fytd_ly": 763.0,
+   "doc": "PRODUCTION.pdf (Mar'26 + FY26 full year)",
+   "how": "pypdf row parse"
+  },
+  {
+   "month": "2026-04",
+   "offtake": 63.2,
+   "offtake_ly": 64.5,
+   "fytd": 63.2,
+   "fytd_ly": 64.5,
+   "doc": "Prodf_rnZX8AO.pdf (Apr'26, month-only filing)",
+   "how": "pypdf row parse"
+  },
+  {
+   "month": "2026-05",
+   "offtake": 66.7,
+   "offtake_ly": 65.2,
+   "fytd": 130.9,
+   "fytd_ly": 129.8,
+   "doc": "Provisional_Production_May_2026.pdf",
+   "how": "OCR text, hand-verified; digest corroboration: 'Offtake rose 2.3% YoY to 66.7mt' (Emkay)"
+  },
+  {
+   "month": "2026-06",
+   "offtake": 65.8,
+   "offtake_ly": 61.2,
+   "fytd": 197.7,
+   "fytd_ly": 191.0,
+   "doc": "Production_June_2026.pdf",
+   "how": "OCR text, hand-verified; digest corroboration: 'Dispatch +7.5% YoY in June' (Kotak)"
+  },
+  {
+   "month": "2026-07",
+   "offtake": 63.7,
+   "offtake_ly": 54.2,
+   "fytd": 261.9,
+   "fytd_ly": 245.2,
+   "doc": "production_1.pdf (Jul'26)",
+   "how": "pypdf row parse; digest: 'July 2026 dispatch 63.7mt (+17.4% YoY)' (Kotak 03-08)"
+  }
+ ]
+}

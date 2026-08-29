@@ -1,0 +1,137 @@
+{
+ "_note": "NMDC 'Details of Production & Sales of Iron Ore (Provisional)' filings, Total row. 2025-03 row is the FY25 full year (cumsales 44.40 = FY25 sales). Apr'25 filing (id 96) is a month-only layout that did not parse; its month values are recoverable from id 97's cumulative minus monthly. The NMDC website lags ~6 months; months after Feb'26 come from specs/extracted/mining_prints.json (digest-cited).",
+ "months": [
+  {
+   "month": "2025-03",
+   "prod": 3.55,
+   "prod_ly": 4.86,
+   "sales": 4.21,
+   "sales_ly": 3.96,
+   "cumprod": 44.04,
+   "cumprod_ly": 45.02,
+   "cumsales": 44.4,
+   "cumsales_ly": 44.48,
+   "doc": "NMDC CMS productiondetails id 95"
+  },
+  {
+   "month": "2025-05",
+   "prod": 4.43,
+   "prod_ly": 2.34,
+   "sales": 4.34,
+   "sales_ly": 2.82,
+   "cumprod": 8.43,
+   "cumprod_ly": 5.82,
+   "cumsales": 7.94,
+   "cumsales_ly": 6.35,
+   "doc": "NMDC CMS productiondetails id 97"
+  },
+  {
+   "month": "2025-06",
+   "prod": 3.57,
+   "prod_ly": 3.37,
+   "sales": 3.58,
+   "sales_ly": 3.73,
+   "cumprod": 11.99,
+   "cumprod_ly": 9.19,
+   "cumsales": 11.51,
+   "cumsales_ly": 10.07,
+   "doc": "NMDC CMS productiondetails id 98"
+  },
+  {
+   "month": "2025-07",
+   "prod": 3.09,
+   "prod_ly": 2.17,
+   "sales": 3.46,
+   "sales_ly": 3.06,
+   "cumprod": 15.09,
+   "cumprod_ly": 11.36,
+   "cumsales": 14.98,
+   "cumsales_ly": 13.13,
+   "doc": "NMDC CMS productiondetails id 99"
+  },
+  {
+   "month": "2025-08",
+   "prod": 3.37,
+   "prod_ly": 3.07,
+   "sales": 3.39,
+   "sales_ly": 3.14,
+   "cumprod": 18.45,
+   "cumprod_ly": 14.43,
+   "cumsales": 18.37,
+   "cumsales_ly": 16.27,
+   "doc": "NMDC CMS productiondetails id 100"
+  },
+  {
+   "month": "2025-09",
+   "prod": 3.75,
+   "prod_ly": 3.04,
+   "sales": 3.88,
+   "sales_ly": 3.54,
+   "cumprod": 22.2,
+   "cumprod_ly": 17.47,
+   "cumsales": 22.25,
+   "cumsales_ly": 19.8,
+   "doc": "NMDC CMS productiondetails id 101"
+  },
+  {
+   "month": "2025-10",
+   "prod": 4.27,
+   "prod_ly": 4.07,
+   "sales": 3.89,
+   "sales_ly": 4.03,
+   "cumprod": 26.47,
+   "cumprod_ly": 21.55,
+   "cumsales": 26.14,
+   "cumsales_ly": 23.84,
+   "doc": "NMDC CMS productiondetails id 102"
+  },
+  {
+   "month": "2025-11",
+   "prod": 5.01,
+   "prod_ly": 4.51,
+   "sales": 4.17,
+   "sales_ly": 4.0,
+   "cumprod": 31.48,
+   "cumprod_ly": 26.06,
+   "cumsales": 30.28,
+   "cumsales_ly": 27.84,
+   "doc": "NMDC CMS productiondetails id 103"
+  },
+  {
+   "month": "2025-12",
+   "prod": 5.4,
+   "prod_ly": 4.71,
+   "sales": 4.64,
+   "sales_ly": 3.91,
+   "cumprod": 36.89,
+   "cumprod_ly": 30.77,
+   "cumsales": 34.92,
+   "cumsales_ly": 31.8,
+   "doc": "NMDC CMS productiondetails id 104"
+  },
+  {
+   "month": "2026-01",
+   "prod": 5.56,
+   "prod_ly": 5.1,
+   "sales": 4.79,
+   "sales_ly": 4.48,
+   "cumprod": 42.45,
+   "cumprod_ly": 35.87,
+   "cumsales": 39.73,
+   "cumsales_ly": 36.22,
+   "doc": "NMDC CMS productiondetails id 105"
+  },
+  {
+   "month": "2026-02",
+   "prod": 5.35,
+   "prod_ly": 4.62,
+   "sales": 4.6,
+   "sales_ly": 3.98,
+   "cumprod": 47.79,
+   "cumprod_ly": 40.49,
+   "cumsales": 44.34,
+   "cumsales_ly": 40.2,
+   "doc": "NMDC CMS productiondetails id 106"
+  }
+ ]
+}

@@ -20,6 +20,12 @@ data/staging/*
 # The Kotak Daily CEMENT Pack arrives through the M365 connector as a
 # TAB-separated text extraction of the workbook, so it is a third format.
 !data/staging/*.tsv
+# Mining filings (CIL production/offtake + SWMA, NMDC circulars + monthly
+# sales) stage into their own SUBDIRECTORY, so the descend rule applies again:
+# the directory itself must be un-excluded before any pattern inside it can be.
+!data/staging/mining/
+data/staging/mining/*
+!data/staging/mining/*.json
 snapshots/
 !snapshots/.gitkeep
 

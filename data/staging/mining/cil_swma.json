@@ -1,0 +1,49 @@
+{
+ "_note": "SWMA e-auction filings, CIL total. Q1FY27 volume-weighted premium = 43.8%, matching UBS's cited 'avg 44% in Q1' \u2014 the cross-check that validates the parse. Realisation series = notified_base x (1 + premium).",
+ "notified_base_inr_per_t": 1614.0,
+ "notified_base_derivation": "Kotak Q1FY27: 'auction realization Rs2,321/t' (digest 28-07-2026) / 1.438 (SWMA Q1 wavg premium) = 1,614. verify: pending \u2014 a blended proxy, not a rate card.",
+ "months": [
+  {
+   "month": "2026-02",
+   "premium_pct": 32.7,
+   "alloc_lt": 103.66,
+   "doc": "Provisional_Auction_Performance_of_CIL__Subsidiary_Companies.pdf",
+   "how": "no CIL-total column in this first-format filing; volume-weighted across 8 subsidiaries"
+  },
+  {
+   "month": "2026-03",
+   "premium_pct": 45.0,
+   "alloc_lt": 133.17,
+   "doc": "Eacuction_2.pdf",
+   "how": "CIL column"
+  },
+  {
+   "month": "2026-04",
+   "premium_pct": 51.0,
+   "alloc_lt": 117.74,
+   "doc": "SWMA-Apr26.pdf",
+   "how": "CIL column"
+  },
+  {
+   "month": "2026-05",
+   "premium_pct": 36.0,
+   "alloc_lt": 84.2,
+   "doc": "SWMA-MAY2026.pdf",
+   "how": "CIL column"
+  },
+  {
+   "month": "2026-06",
+   "premium_pct": 42.0,
+   "alloc_lt": 108.76,
+   "doc": "SWMA_JUNE_26.pdf",
+   "how": "CIL column"
+  },
+  {
+   "month": "2026-07",
+   "premium_pct": 41.0,
+   "alloc_lt": 83.95,
+   "doc": "eauctionjul.pdf",
+   "how": "CIL column"
+  }
+ ]
+}

@@ -37,6 +37,15 @@ import sqlite3
 # raises rather than silently ranking 0, because a typo'd source name would
 # otherwise quietly become the lowest-priority writer and lose every race.
 PRECEDENCE = {
+    # Regulatory filings parsed from the issuer's own documents (Coal India
+    # monthly production/offtake and SWMA e-auction filings, NMDC price
+    # circulars and monthly production/sales) — plus the desk ledger rows in
+    # specs/extracted/mining_prints.json that carry the SAME filings' numbers
+    # via broker digests while the issuer's website lags. One rank for both on
+    # purpose: they are one measure from one primary source, and when the
+    # website catches up the direct parse overwrites the digest-cited row with
+    # the same value rather than being refused below it.
+    "filing": 40,
     "metals_pack": 40,
     # Same broker, same mail, same licensed provenance as metals_pack, so the
     # same rank. They cannot collide in practice — the cement pack supplies only

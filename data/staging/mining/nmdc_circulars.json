@@ -1,0 +1,75 @@
+{
+ "_note": "NMDC Baila lump (65.5%) / fines (64%) FOR price circulars. THE BASIS CHANGED 2026-01-09: circulars through 15-11-2025 are INCLUSIVE of Royalty+DMF+NMET; from 09-01-2026 they are EXCLUSIVE. The apparent Rs1,000/t Jan-26 'cut' is mostly that redefinition (~18%, consistent with 15% royalty x 1.32). ONLY ex_royalty rows may load into nmdc_lumps_inr / nmdc_fines_inr \u2014 invariant 6.",
+ "circulars": [
+  {
+   "effective": "2024-10-23",
+   "lumps": 6350,
+   "fines": 5410,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 58"
+  },
+  {
+   "effective": "2025-01-09",
+   "lumps": 6000,
+   "fines": 5060,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 59"
+  },
+  {
+   "effective": "2025-05-01",
+   "lumps": 6440,
+   "fines": 5500,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 60"
+  },
+  {
+   "effective": "2025-06-04",
+   "lumps": 6300,
+   "fines": 5350,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 61"
+  },
+  {
+   "effective": "2025-07-01",
+   "lumps": 5700,
+   "fines": 4850,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 62"
+  },
+  {
+   "effective": "2025-08-01",
+   "lumps": 6100,
+   "fines": 5250,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 63"
+  },
+  {
+   "effective": "2025-10-22",
+   "lumps": 5550,
+   "fines": 4750,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 64"
+  },
+  {
+   "effective": "2025-11-15",
+   "lumps": 5600,
+   "fines": 4750,
+   "basis": "incl_royalty",
+   "doc": "NMDC CMS ironoresales id 65"
+  },
+  {
+   "effective": "2026-01-09",
+   "lumps": 4600,
+   "fines": 3900,
+   "basis": "ex_royalty",
+   "doc": "NMDC CMS ironoresales id 66"
+  },
+  {
+   "effective": "2026-02-10",
+   "lumps": 4700,
+   "fines": 4000,
+   "basis": "ex_royalty",
+   "doc": "NMDC CMS ironoresales id 67"
+  }
+ ]
+}
