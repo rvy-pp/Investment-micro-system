@@ -134,6 +134,27 @@ NAME_PATTERNS = [
     ("coal_india",        r"\bCoal India\b|\bCIL\b|#CoalIndia\b"),
     ("hindustan_copper",  r"\bHindustan Copper\b|#HindustanCopper\b"),
     ("lloyds_metals",     r"\bLloyds Metals\b|#LloydsMetals\b"),
+    # --- ems, added 2026-08-30 ---
+    # Shorthands measured in the corpus first, per the standing rule: bare
+    # \bDixon\b 65 hits (every one the company), \bAmber\b 53 (zero lowercase
+    # 'amber' anywhere in 47 digests — but matching is re.I, so a prose
+    # "amber flag" WOULD hit; a named_in() disqualifier guards it), \bKaynes\b
+    # 32, \bSyrma\b 7, all clean. PGEL is ONLY ever the tag/ticker — the
+    # string "PG Electroplast" appears zero times in the digests — so the
+    # ticker is the pattern and the full name rides along for the day a
+    # broker spells it out. NO BARE \bPG\b, obviously.
+    #
+    # AVALON IS THE TRAP, and the corpus flags it itself: "the 'Avalon' in
+    # Kotak's Infra Daily Wrap ('Akasa Air signs further sale and leaseback
+    # deal with Avalon') is the aircraft lessor, NOT Avalon Technologies"
+    # (digest 18-08-2026). Sentence-disqualifier in named_in(), the JK
+    # Lakshmi mechanism.
+    ("dixon",            r"\bDixon\b|#Dixon\b"),
+    ("amber",            r"\bAmber\b|#Amber\b"),
+    ("kaynes",           r"\bKaynes\b|#Kaynes\b"),
+    ("pg_electroplast",  r"\bPGEL\b|\bPG Electroplast\b|#PGEL\b"),
+    ("syrma_sgs",        r"\bSyrma\b|#SyrmaSGS\b"),
+    ("avalon",           r"\bAvalon\b|#Avalon\b"),
 ]
 
 
@@ -157,6 +178,20 @@ def named_in(sent: str) -> list[str]:
             # any sentence naming it is disqualified for the miner. Same
             # mechanism as the JK Lakshmi guard above.
             if eid == "nmdc" and re.search(r"NMDC Steel|NSLNISP", sent, re.I):
+                continue
+            # The Avalon in aviation bullets is the aircraft lessor, not
+            # Avalon Technologies — the 18-08-2026 digest flags the collision
+            # in its own text. Any leasing/aviation marker disqualifies the
+            # sentence for the EMS entity.
+            if eid == "avalon" and re.search(
+                    r"leaseback|lessor|Akasa|aircraft", sent, re.I):
+                continue
+            # Zero lowercase 'amber' in the corpus today, but matching is
+            # case-insensitive and "amber flag/light/zone" is ordinary broker
+            # prose — guard the status-colour usage before it costs a wrong
+            # attribution.
+            if eid == "amber" and re.search(
+                    r"amber\s+(?:flag|light|warning|zone|alert)", sent, re.I):
                 continue
             found.append(eid)
     return found

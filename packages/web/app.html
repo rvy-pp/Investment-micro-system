@@ -1390,7 +1390,7 @@ function sector(id){
   // for it (nav carries has_chart/has_watch). If the remembered view was
   // 'sector' and this sector has no such tab, fall back to the pair view
   // rather than showing a hidden section.
-  const extra = !!(e.has_chart || e.has_watch);
+  const extra = !!(e.has_chart || e.has_watch || e.has_estimates);
   const vt = document.getElementById('vtab-sector');
   if (vt) vt.hidden = !e.live || !extra;
   if (e.live){ tab(LAST_VIEW === 'sector' && !extra ? 'pair' : LAST_VIEW); }
@@ -1766,6 +1766,60 @@ async function loadSector(){
       Cement watch unavailable: ${esc(d.watch.note || '')}</p>`;
   }
 
+  /* ------- the consensus panel, where the sector declares one (EMS) -------
+     Forward P/E, growth, PEG and estimate-revision momentum per name — the
+     tab's lead content for a sector whose P3 IS the forward multiple. Live
+     from the latest capture, so it can run a day ahead of the persisted
+     score (the strict as-of rule); the Overview/Pair tabs stay the tape.
+     PEG and momentum are shown TOGETHER on purpose: today Dixon is the
+     group's richest PEG while being the only name whose estimates are
+     RISING — either half alone would read as a verdict. */
+  let estHtml = '';
+  if (d.estimates && (d.estimates.rows || []).length){
+    const E = d.estimates;
+    const pct = (v, dec=1) => v == null ? '—'
+      : `<span style="color:${v > 0 ? 'var(--up)' : v < 0 ? 'var(--down)'
+          : 'var(--faint)'}">${(v >= 0 ? '+' : '') + (v * 100).toFixed(dec)}%</span>`;
+    const rows3 = E.rows.map(r => {
+      if (r.withheld) return `<tr>
+        <td class="k">${esc(r.id)}</td><td>${esc(shortLabel(r.name))}</td>
+        <td class="k flat" colspan="7">no reading: ${esc(r.withheld)}</td>
+        <td class="k flat">${r.scored ? 'scored' : 'not in F&O'}</td></tr>`;
+      const pegCell = E.peg_median == null ? fmtNum(r.peg)
+        : `<b style="color:${r.peg < E.peg_median ? 'var(--up)'
+            : r.peg > E.peg_median ? 'var(--down)' : 'inherit'}">${
+            r.peg.toFixed(2)}</b>`;
+      return `<tr>
+        <td class="k">${esc(r.id)}</td>
+        <td>${esc(shortLabel(r.name))}</td>
+        <td class="n">${fmtNum(r.close)}</td>
+        <td class="n">${r.eps_fy1.toFixed(1)} / ${r.eps_fy2.toFixed(1)}</td>
+        <td class="n">${r.n_analysts}</td>
+        <td class="n"><b>${r.fwd_pe.toFixed(1)}x</b></td>
+        <td class="n">${pct(r.growth, 0)}</td>
+        <td class="n">${pegCell}</td>
+        <td class="n">${pct(r.rev_90d)}</td>
+        <td class="k flat">${r.scored ? 'scored' : 'not in F&O'}</td>
+      </tr>`;
+    }).join('');
+    estHtml = `<h2>Consensus forward P/E · capture ${
+        esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
+      <p class="note">Yahoo consensus (cross-checked against broker notes in
+        the digests). <b>fwd P/E</b> divides the close by the 12-month-forward
+        EPS blend of FY1/FY2; <b>PEG</b> divides that by FY2-over-FY1 growth —
+        green is cheaper than the scored group's median (${
+        E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
+        P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is
+        the street moving its own numbers — context, never scored: a cheap PEG
+        on falling estimates is cheap because the E is falling.</p>
+      <div class="scroll"><table><thead><tr>
+        <th>id</th><th>name</th><th class="n">close</th>
+        <th class="n">EPS FY1/FY2</th><th class="n">analysts</th>
+        <th class="n">fwd P/E</th><th class="n">growth</th>
+        <th class="n">PEG</th><th class="n">rev 90d</th><th>state</th>
+      </tr></thead><tbody>${rows3}</tbody></table></div>`;
+  }
+
   const unc = d.unclaimed && d.unclaimed.length
     ? `<h2>Captured, claimed by no sector</h2>
        <p class="note">Loaded from the pack so the history exists. Nothing reads
@@ -1813,6 +1867,7 @@ async function loadSector(){
 
   $('#s-sector').innerHTML = `
     ${buildNote}
+    ${estHtml}
     ${chartHtml}
     ${watchHtml}
     <h2>${esc(d.label)} inputs · ${d.n_priced}/${d.n_total} priced</h2>

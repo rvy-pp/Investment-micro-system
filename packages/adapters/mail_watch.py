@@ -74,6 +74,17 @@ KEYWORDS: dict[str, list[str]] = {
         r"kiln", r"clinker", r"grinding unit", r"WHRS", r"pet ?coke",
         r"limestone", r"split grinding",
     ],
+    # added 2026-08-30 — mining went live 2026-08-29 without this block (the
+    # "add a block per sector" rule above was missed), ems the day after.
+    "mining": [
+        r"circular", r"SWMA", r"premium", r"royalty", r"MMDR", r"dispatch",
+        r"evacuation", r"washery", r"overburden",
+    ],
+    "ems": [
+        r"PLI", r"anchor customer", r"order book", r"order win", r"ODM",
+        r"OSAT", r"display fab", r"backward integration", r"component",
+        r"smart meter", r"compressor", r"PCB", r"copper[- ]clad", r"JV",
+    ],
 }
 
 # Aliases the spec fields cannot supply. Keep SMALL — anything derivable should

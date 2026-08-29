@@ -230,11 +230,17 @@ live.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — see `docs/FLOWS.md`), OI as a conviction modifier, book
-ingestion, cement's P4 guidance ledger, and Mining, EMS, IT and Autos.
+ingestion, the P4 guidance ledgers for cement/mining/EMS, and IT / Autos.
 **Cement went LIVE 2026-08-28** — four scored F&O names (ultratech, ambuja,
 shree, dalmia) on economics + valuation + mood, regional output prices from
 the Daily Cement Pack, an IndiaMART day-to-day watch, and P4 withheld until a
-guidance ledger exists.
+guidance ledger exists. **Mining went LIVE 2026-08-29** (nmdc, coal_india,
+hindustan_copper — volumes as a scored driver). **EMS went LIVE 2026-08-30**
+(dixon, amber, kaynes, pg_electroplast) — the first non-commodity sector: P3
+is FORWARD P/E vs growth from daily-captured consensus (`estimates` table,
+`adapters/yahoo_estimates.py`, `score/valuation_pe.py`), mood beside it,
+economics deliberately unbridged (converters; the binding cost drivers have
+no price series), guidance withheld.
 
 **The gate still standing:** the backtest has now been RUN
 (`packages/review/backtest.py`) and the honest answer is *not yet decidable*.

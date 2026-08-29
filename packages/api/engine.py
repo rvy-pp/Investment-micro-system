@@ -436,6 +436,42 @@ SECTORS = [
                        "label": "Aug-26 circular — 2nd consecutive cut"}],
         },
     },
+    {
+        "id": "ems",
+        "label": "EMS",
+        # LIVE 2026-08-30. One peer group, four F&O names — and the first
+        # NON-COMMODITY sector: P3 is FORWARD P/E vs growth (peer-relative,
+        # packages/score/valuation_pe.py), mood rides beside it, economics
+        # and guidance withhold by construction. There is deliberately no
+        # margin bridge — these are converters, and the binding cost drivers
+        # the digests name (copper-clad laminate, resin) have no series at
+        # all. See specs/sectors/ems.yaml.
+        "peer_groups": ["ems_assemblers"],
+        # "Maybe some commodity prices" (PM, 2026-08-29) lands here: the cost
+        # complex is DISPLAYED as context, linked from no spec, scoring
+        # nothing. usdinr earns its row twice over — both PGEL and Amber name
+        # rupee depreciation as a live margin driver in the digests.
+        "commodities": [
+            "lme_copper", "lme_aluminium", "hrc_india_inr",
+            "brent", "usdinr",
+        ],
+        "chart": {
+            "ids": ["lme_copper"],
+            "divide": 1.0,
+            "unit": "USD/t",
+            "title": "LME copper · USD/t · the most-cited EMS input",
+            "caption": "Context, not a driver: EMS economics is deliberately "
+                       "not bridged (pass-through contracts, unsourced "
+                       "intensities — specs/entities/ems.yaml). Copper is the "
+                       "input the digests name first for RAC/PCBA cost "
+                       "pressure; aluminium, HRC, brent and USDINR sit in the "
+                       "table below.",
+            "marks": [],
+        },
+        # The tab's real content: the consensus panel — forward P/E, growth,
+        # PEG and estimate-revision momentum per name, live from `estimates`.
+        "estimates": True,
+    },
 ]
 
 # Series the pack carries that no sector claims yet. Surfaced so a captured
@@ -443,6 +479,62 @@ SECTORS = [
 # the connector route can never backfill.
 # lme_copper left 2026-08-29 — mining claims it (hindustan_copper).
 UNCLAIMED_HINT = ["lme_lead", "lme_nickel", "gold", "dxy"]
+
+
+def consensus_panel(sector_id: str) -> dict:
+    """The consensus-estimates table for a sector that declares one (EMS).
+
+    LIVE-COMPUTED from `estimates` + latest closes via
+    valuation_pe.compute_row — the same arithmetic the scorer persists, so
+    the panel and the pillar cannot use two different formulas. It is NOT
+    the persisted score: the panel shows today's close against the latest
+    capture (including one dated after the last scored close), which is what
+    the desk wants to LOOK at; the persisted P3 stays strictly as-of and is
+    what the tape shows. The unscored names (peer_group null — Syrma,
+    Avalon) appear too, flagged: their consensus is captured daily even
+    though nothing scores them.
+    """
+    import datetime as _dt
+    import valuation_pe as _vpe  # packages/score is on sys.path above
+
+    entities, _u, _f = load_specs()
+    ents = [e for e in entities.values() if e.get("sector") == sector_id
+            and e.get("kind") == "company"]
+    conn = connect()
+    today = _dt.date.today().isoformat()
+    rows, pegs = [], []
+    for ent in sorted(ents, key=lambda e: e["id"]):
+        row, why = _vpe.compute_row(conn, ent["id"], today)
+        scored = bool(ent.get("peer_group"))
+        if row is None:
+            rows.append({"id": ent["id"], "name": ent.get("name") or ent["id"],
+                         "scored": scored, "withheld": why})
+            continue
+        if scored:
+            pegs.append(row["peg"])
+        rows.append({
+            "id": ent["id"], "name": ent.get("name") or ent["id"],
+            "scored": scored,
+            "close": row["close"], "px_date": row["px_date"],
+            "fy1": row["fy1"], "fy2": row["fy2"],
+            "eps_fy1": round(row["eps_fy1"], 2),
+            "eps_fy2": round(row["eps_fy2"], 2),
+            "n_analysts": int(row["n_analysts"]),
+            "fwd_pe": round(row["fwd_pe"], 1),
+            "growth": round(row["growth"], 4),
+            "peg": round(row["peg"], 3),
+            "rev_90d": (round(row["rev_90d"], 4)
+                        if row["rev_90d"] is not None else None),
+            "capture": row["capture"],
+        })
+    conn.close()
+    med = None
+    if len(pegs) >= _vpe.MIN_GROUP:
+        import statistics as _st
+        med = round(_st.median(pegs), 3)
+    return {"rows": rows, "peg_median": med,
+            "anchor_ratio": _vpe.PEG_ANCHOR_RATIO,
+            "min_analysts": _vpe.MIN_ANALYSTS}
 
 
 def sector_list() -> list[dict]:
@@ -583,6 +675,9 @@ def sector_detail(sector_id: str) -> dict:
             "price_chart": price_chart,
             # cement_watch() opens its own connection, hence after conn.close()
             "watch": cement_watch() if spec.get("watch") else None,
+            # consensus_panel() likewise
+            "estimates": (consensus_panel(spec["id"])
+                          if spec.get("estimates") else None),
             "n_priced": sum(1 for r in rows if r["last"] is not None),
             "n_total": len(rows)}
 
@@ -599,9 +694,10 @@ def nav_list() -> list[dict]:
         out.append({"id": s["id"], "kind": "sector", "label": s["label"],
                     "live": s["live"], "peer_groups": s["peer_groups"],
                     # The page shows the Prices & Watch sub-view only where a
-                    # sector declares content for it — cement today.
+                    # sector declares content for it — cement and ems today.
                     "has_chart": bool(spec.get("chart")),
-                    "has_watch": bool(spec.get("watch"))})
+                    "has_watch": bool(spec.get("watch")),
+                    "has_estimates": bool(spec.get("estimates"))})
     return out
 
 

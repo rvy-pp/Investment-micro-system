@@ -433,9 +433,9 @@ why `combined.py` reports spread and not just the average.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion,
-cement's and mining's P4 guidance ledgers, and EMS / IT / Autos. **Steel IS
-built as of 2026-08-25**, **Cement as of 2026-08-28** and **Mining as of
-2026-08-29** — see the sections below.
+cement's, mining's and EMS's P4 guidance ledgers, and IT / Autos. **Steel IS
+built as of 2026-08-25**, **Cement as of 2026-08-28**, **Mining as of
+2026-08-29** and **EMS as of 2026-08-30** — see the sections below.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
@@ -852,6 +852,86 @@ step writes itself: NMDC's 60mt guide and Emkay's 815mt CIL model graded
 MONTHLY against the TTM series. Mining's mood: NMDC scores (fresh mid-Aug
 actions), CIL's results-week actions have decayed past the half-life, HC has
 nothing to extract — all three states honest.
+
+## EMS — LIVE 2026-08-30: the first non-commodity sector, forward P/E leads
+
+PM instruction verbatim: "Dixon, amber, kaynes, PGEL. Find a method to score
+them, they are harder to track btw ... along the lines of 1 year fwd P/E
+valuations majorly and maybe some commodity prices. Self-valuation score is
+fine, other economics is difficult, if you can, figure something out." One
+peer group — `ems_assemblers`, all four F&O — plus syrma_sgs and avalon at
+`peer_group: null` (not_in_fno), tracked not scored. Zero schema changes.
+
+**THE METHOD: P3 forward P/E is the lead pillar; economics and guidance
+withhold by construction.** These are converters (the APL Apollo finding at
+sector scale) whose binding cost drivers per the digests — copper-clad
+laminate, resin — have NO price series at all, so a margin bridge would run
+on unsourced intensities and carry economics' 0.50 composite weight. The
+composite renormalises to valuation 0.60 / mood 0.40 effective. "Maybe some
+commodity prices" landed as the tab's context panel (copper, aluminium, HRC,
+brent, USDINR), linked from no spec.
+
+**THE DENOMINATOR IS DATED CONSENSUS, NOT A YAML CONSTANT.**
+`adapters/yahoo_estimates.py` captures Yahoo's earningsTrend daily (crumb
+dance, stdlib-only, unattended-safe) into `estimates` — the table that had
+the right shape and zero rows since the schema was written. NOT into
+`prices`: anything there becomes bridge-shockable (`_series_in_store()`),
+the reason cement_pack refuses to load its own Valuation sheet. The feed was
+cross-validated against the digests before being trusted: PhillipCapital
+"35x FY28E EPS of Rs16" vs Yahoo PGEL FY28 16.56; CLSA "52x FY28 PE" vs
+Dixon FY28 281.6 at CMP. Both agree.
+
+**THE SCORE: PEG log-ratio against the peer median, because own-history is
+IMPOSSIBLE, not dispreferred.** No free source carries HISTORICAL consensus;
+reconstructing it from realised EPS is look-ahead, and freezing today's
+estimate across history degrades to a price z. So: fwd P/E = close /
+(time-weighted FY1/FY2 blend), PEG = fwd P/E / growth, raw =
+ln(PEG/group median) — spreadable, the median cancels pairwise. Anchor:
+1.5x the group's growth-adjusted multiple reads 2.0. The daily captures are
+what make an own-history variant possible in ~6 months; that intent is
+recorded in `specs/sectors/ems.yaml pillar_3.reference`.
+
+**`pillar_3.metrics` FINALLY HAS A READER.** It was written in all five
+sector specs and consulted by nothing (the `effective_from` shape).
+`run_scores.py` now dispatches on it: `pe_forward_peg` routes to
+`valuation_pe.scores_for_group()` (group-at-once, memoised — a relative
+score does not exist name-by-name); everything else takes the EV/EBITDA
+path untouched.
+
+**Consequences to expect, stated before they are noticed:** a name's score
+can move on a PEER's revision with no news of its own (peg_median and
+n_group ride in detail); the strict capture<=as_of rule (westmetall T-1
+logic) means the live score uses a consensus ~1 trading day behind the
+close, and the first scored date was the first capture date (2026-08-29);
+and PEG treats consensus growth as deliverable — Kaynes reads mid-group
+partly BECAUSE its E was cut 19% in 90 days. That is why **rev_90d
+(estimate-revision momentum) rides beside the score everywhere but inside
+it nowhere** — Yahoo's own 90-days-ago fields make it computable from one
+capture. First cross-section, 2026-08-29: amber P3 3.87 (PEG 0.66, revisions
+-5%), pgel 3.40 (0.79, -19%), kaynes 2.67 (1.07, -19%), dixon 2.29 (1.22,
+**+10% — the only name being upgraded**, the Vivo JV). The score and the
+momentum disagree on Dixon by construction; hiding either half would make
+the other read as a verdict.
+
+**Gates (withhold rather than guess):** capture older than 30d (the feed is
+daily; older means it broke), fewer than 5 analysts on FY1 (PGEL sits at 7 —
+the floor is under it deliberately), FY1/blended EPS <= 0, growth < 5%
+(PEG explodes as g->0), fewer than 3 computable names (a median of two is
+just the other name — one gated name can therefore withhold the GROUP).
+
+**Extraction traps, measured live before writing patterns:** bare \bDixon\b
+(65), \bAmber\b (53), \bKaynes\b (32), \bSyrma\b (7) are all clean in the
+corpus; "PG Electroplast" appears ZERO times — #PGEL is the entity's only
+handle. The "Avalon" in aviation bullets is the AIRCRAFT LESSOR (the
+18-08-2026 digest flags it itself) — named_in() disqualifier on
+leaseback/lessor/Akasa/aircraft. "amber flag/light" is guarded pre-emptively
+(re.I matching; zero corpus hits today). #EMS (33) is a sector tag, never an
+entity.
+
+**Two registries were already one sector stale when found** — mining had
+been added to neither `mail_watch.KEYWORDS` nor `valuation_pairs.GROUPS`.
+Both fixed with the EMS pass; ems is deliberately ABSENT from
+valuation_pairs (it replays EV/EBITDA z-history, which EMS does not use).
 
 ## What P1 is — settled 2026-08-18
 

@@ -1,0 +1,174 @@
+# ============================================================================
+# ems — one peer group, four scored names, the first pe_forward sector
+# ============================================================================
+# Added 2026-08-30, PM instruction 2026-08-29: "Dixon, amber, kaynes, PGEL.
+# Find a method to score them, they are harder to track btw ... along the
+# lines of 1 year fwd P/E valuations majorly and maybe some commodity prices.
+# Self-valuation score is fine, other economics is difficult, if you can,
+# figure something out."
+#
+#   ems_assemblers   dixon, amber, kaynes, pg_electroplast
+#                    All four F&O (vault OI 2026-08-29, real rows, lots
+#                    50/100/150/950) — every pair is expressible.
+#
+# syrma_sgs, avalon: peer_group null (not_in_fno), tracked not scored.
+#
+# WHAT "HARDER TO TRACK" RESOLVED TO. No commodity margin bridge can carry
+# these names — they are converters on pass-through contracts, and the two
+# cost drivers the digests actually name as binding (copper-clad laminate,
+# resin) have no price series at all. The method instead:
+#
+#   P3 valuation  FORWARD P/E, growth-adjusted, peer-relative — THE LEAD
+#                 PILLAR. packages/score/valuation_pe.py, dispatched by
+#                 pillar_3.metrics below (the first time metrics: is read).
+#   P3 mood       broker actions from the digests, unchanged machinery —
+#                 #EMS is a standing section in 33 of 47 digests.
+#   P1/P2, P4     WITHHELD, honestly. Composite renormalises to
+#                 valuation 0.60 / mood 0.40 effective (0.30/0.20 over 0.50
+#                 covered) — the steel_stainless shape.
+#   context       revision momentum (rev_90d, in the P3 detail and on the
+#                 tab) and the commodity complex (displayed, never scored).
+
+sector: ems
+spec_version: 0.1.0
+peer_groups: [ems_assemblers]
+
+# ----------------------------------------------------------------------------
+# P1 ASP + P2 COSTS — withheld by construction
+# ----------------------------------------------------------------------------
+pillars_1_2:
+  windows_days: [1, 5, 20]
+  materiality:
+    min_pct_of_ebitda: 0.015
+    on_fail: emit_nothing
+  withheld_note: >
+    Zero priced lines on every entity, so coverage_ok is false and economics
+    withholds — deliberately. Every physical intensity would be unsourced
+    (the digests give margin COMMENTARY, not per-unit quantities), and an
+    unsourced bridge would carry economics' 0.50 composite weight. The
+    citations that would seed a future bridge are recorded on the entities
+    (PGEL's "raw materials 85.5% of revenue — copper, aluminium, resin, FX"
+    is the best of them); CCL and resin additionally have NO series, and
+    invariant 6 forbids proxying them onto brent. "Maybe some commodity
+    prices" (PM) lands as the tab's price panel: lme_copper, lme_aluminium,
+    hrc_india_inr, usdinr, brent — visible context, no arithmetic.
+
+# ----------------------------------------------------------------------------
+# P3 VALUATION — forward P/E vs growth, peer-relative
+# ----------------------------------------------------------------------------
+pillar_3:
+  metrics: [pe_forward_peg]     # READ by valuation_pe.spec_metrics — routes
+                                # run_scores away from the EV/EBITDA path
+  reference: peer_group         # NOT own_history, and not by preference:
+                                # no free source carries HISTORICAL consensus,
+                                # so an own-history forward P/E is not
+                                # computable today. yahoo_estimates.py
+                                # captures daily; once ~120 captures exist an
+                                # own-history variant becomes possible and
+                                # this field is the switch to revisit.
+  lookback_days: 1260           # unused by pe_forward_peg; kept so a future
+                                # own-history variant states its window here
+  anchor:
+    x_ref_ratio: 1.5            # 1.5x the group's growth-adjusted multiple
+    score_ref: 2.0              # ...reads 2.0 (rich); its inverse reads 4.0
+  staleness:
+    max_est_age_days: 30
+    min_analysts: 5
+    min_growth: 0.05
+    min_group: 3
+  note: >
+    fwd P/E = close / (time-weighted FY1/FY2 consensus EPS, 12m forward);
+    PEG = fwd P/E / (FY2-over-FY1 growth x 100); raw = ln(PEG / group
+    median). The raw is a LOG-RATIO so a pair spread is ln(PEG_a/PEG_b) —
+    the median cancels, satisfying scoring.yaml's score-the-spread rule.
+    Consequence to expect: a name's score can move on a PEER's revision with
+    no news of its own; peg_median and n_group ride in detail so that is
+    auditable. The consensus feed was cross-validated against the digests
+    before being trusted: PhillipCapital "35x FY28E EPS of Rs16" vs Yahoo
+    PGEL FY28 16.56; CLSA "52x FY28 PE" vs Yahoo Dixon FY28 281.6 at CMP.
+    Clock discipline: a capture dated AFTER the equity close is never read
+    (the westmetall T-1 rule), so the first scored date is the first clock
+    date on/after the first capture (2026-08-29), and the live score uses a
+    consensus ~1 trading day behind the close.
+  known_bias: >
+    PEG treats consensus growth as deliverable. Kaynes reads mid-group
+    (PEG 1.07) partly BECAUSE its E has been cut -19% in 90 days — a falling
+    denominator flatters the G in PEG while the P/E stays put. rev_90d is
+    carried beside the score for exactly this read; whether revision
+    momentum should be SCORED (as mood input or a P4 analogue) is a PM call,
+    flagged not taken.
+
+# ----------------------------------------------------------------------------
+# P4 GUIDANCE — withheld
+# ----------------------------------------------------------------------------
+pillar_4:
+  track_metrics: [volume, revenue_growth, margin]
+  note: >
+    NOT LIVE — no EMS guidance ledger exists; withholds for all four
+    (cement/mining-consistent; composite weight 0.00 anyway). The raw
+    material is unusually gradeable here: Dixon guides FY27 smartphones
+    30-32mn units and PhillipCapital already models a miss (29mn, digest
+    04-08-2026); PGEL management guides RAC +15-20% on a six-month view
+    (digest 10-08-2026). Building specs/extracted/ems_guidance.json against
+    monthly/quarterly prints is the next P4 step, steel's playbook.
+
+# ----------------------------------------------------------------------------
+# GATE
+# ----------------------------------------------------------------------------
+gate:
+  scope: ems
+  consumed_by: flows
+  pair_exception: false
+
+# ----------------------------------------------------------------------------
+# OUTPUT
+# ----------------------------------------------------------------------------
+output:
+  emit_singles: true
+  emit_pairs: true
+  pair_candidates:
+    - pair: [amber, dixon]
+      rationale: >
+        The valuation spread at first capture: long amber (PEG 0.66, P3
+        3.87) / short dixon (PEG 1.22, P3 2.29), pair raw ln(0.66/1.22) =
+        -0.61 — the widest growth-adjusted gap in the group. It is also the
+        HARDEST version of the trade, deliberately stated: Dixon is the one
+        name whose estimates are RISING (+10.2% blended 90d, 18 up / 5 down
+        in 30d on FY27 — the Vivo JV upgrades) while Amber's drift down
+        (-5.4%). The pair is long cheapness against long momentum; if the
+        street keeps upgrading Dixon the PEG gap closes from the E side, not
+        the P side, and the short loses without Dixon ever de-rating.
+      residual_exposure: >
+        Both legs are consensus-underwritten growth stories in one policy
+        complex (PLI, import substitution, China+1). A sector de-rating or a
+        PLI policy shock moves both the same way; the spread sees only the
+        RELATIVE growth-adjusted multiple. Amber carries the single-customer
+        and CCL-cost risks its own digests flag.
+
+# ----------------------------------------------------------------------------
+# VALIDATION — run 2026-08-29 capture / 2026-08-29 as_of, recorded not asserted
+# ----------------------------------------------------------------------------
+validation:
+  cross_check_consensus_vs_digests: >
+    PGEL: PhillipCapital "35x FY28E EPS of Rs16" (digest 10-08-2026) vs Yahoo
+    FY28 consensus 16.56 — agrees. Dixon: CLSA "52x FY28 PE demanding"
+    (digest 01-08-2026, CMP ~14,500) implies FY28E ~279 vs consensus 281.6 —
+    agrees. Nomura "45x FY28F P/E" (10-07-2026, lower CMP) — consistent.
+    Two houses, two names, independent agreement is what let the feed be
+    trusted as the scoring denominator.
+  first_scored_cross_section: >
+    as of 2026-08-29 (close carried from 28th, capture 2026-08-29):
+    amber  fwdPE 55.0, growth +82.8%, PEG 0.66, raw -0.339, P3 3.87, rev90d -5.4%
+    dixon  fwdPE 65.4, growth +53.4%, PEG 1.22, raw +0.272, P3 2.29, rev90d +10.2%
+    kaynes fwdPE 54.7, growth +51.1%, PEG 1.07, raw +0.138, P3 2.67, rev90d -18.8%
+    pgel   fwdPE 44.9, growth +56.4%, PEG 0.80, raw -0.160, P3 3.40, rev90d -18.6%
+    group median PEG 0.93, n=4, analysts 25/22/19/7. The ordering matches
+    the digests' own framing — the SELL-side worries about Dixon's multiple
+    ("52x demanding", "40x FY28" TP basis) while Amber/PGEL carry BUY/ADD
+    theses on growth delivery — which is the sanity check that the score
+    measures the thing the desk argues about.
+  withhold_paths_exercised: >
+    Before the first capture was loaded, all four names withheld with "no
+    consensus estimates (run yahoo_estimates.py)" and, at as_of 2026-08-28
+    (capture dated 29th), with the same — the strict capture<=as_of rule
+    refusing look-ahead. Both observed on 2026-08-30, not asserted.

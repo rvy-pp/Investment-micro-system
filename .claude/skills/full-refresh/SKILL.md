@@ -112,6 +112,7 @@ Runs in order, and the order is load-bearing:
 ```
 preflight                HALT on failure — everything downstream is untrustworthy
 equity closes            Yahoo, 3mo — includes the mining four since 2026-08-29
+                         and the EMS six since 2026-08-30
 LME cash                 westmetall — plain urllib, no agent, no auth
 NSE OI fetch             the /oi pipeline. WRITES the vault OI History.md files
 open interest            reads them into the store. Reports NEWEST DATA AGE when
@@ -126,6 +127,15 @@ mining filings (fetch)   CIL production/offtake + SWMA e-auction from
 mining filings (load)    staging + ledger -> the six mining series (source
                          'filing'). Recomputes every run, so a hand-edit to
                          mining_prints.json lands on the next refresh
+EMS consensus (fetch)    Yahoo earningsTrend for the six EMS names — crumb
+                         dance, stdlib-only, no login. Stages
+                         data/staging/estimates/yahoo_estimates_<date>.json.
+                         Daily on purpose: historical consensus can never be
+                         backfilled, and the P3 forward-P/E scorer withholds
+                         past a 30d capture age
+EMS consensus (load)     -> the `estimates` table (NOT prices — an EPS is not
+                         a price and must not become bridge-shockable).
+                         Idempotent per capture date
 metals pack (Outlook)    step 2, an ordinary step since 2026-08-24
 metals pack (staged)     loads it. .xlsx first, .tsv only as a legacy fallback
 cement pack (staged)     consumes step 2b's capture, skips cleanly if absent
@@ -261,6 +271,7 @@ a Python data edit and needs no front-end change:
 | **Steel** | LIVE 2026-08-25 — 5 scored names in two groups (integrated + apl_apollo on the HRC-patra spread) |
 | **Cement** | LIVE 2026-08-28 — 4 scored F&O names, one peer group, regional output links. Holds Pair / Bridge / Positioning plus a **Prices & Watch** sub-view (regional chart + IndiaMART asks). P4 withheld pending a guidance ledger |
 | **Mining** | LIVE 2026-08-29 — nmdc + coal_india (`mining_bulk`, the F&O pair) and hindustan_copper (`mining_copper`, NOT in F&O, scored on explicit PM decision, cash-only). Volumes are a scored driver (monthly TTM lines); chart is NMDC's own circular sequence. P4 withheld, same as cement |
+| **EMS** | LIVE 2026-08-30 — dixon, amber, kaynes, pg_electroplast (`ems_assemblers`, all F&O; syrma_sgs and avalon tracked unscored). The first non-commodity sector: P3 is FORWARD P/E vs growth (PEG log-ratio vs the group median, from daily consensus captures), mood beside it, economics deliberately unbridged, P4 withheld. Its **Prices & Watch** sub-view leads with the consensus panel (fwd P/E, PEG, revision momentum) over the copper chart and cost-complex table |
 
 **Daily Overview** is assembled from what the run *wrote* — `status.json`,
 `frontend.json`, `freshness.check()`, `pillar_scores`, the `oi` table — and never

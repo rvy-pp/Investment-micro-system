@@ -109,7 +109,17 @@ def curves() -> dict:
                       "p": 1.5, "sign": -1,
                       "spreadable": True,
                       "unit": "z (sd vs own history)",
-                      "why": "raw is z; cheap (negative z) scores HIGH, hence sign -1"},
+                      "why": "raw is z; cheap (negative z) scores HIGH, hence sign -1",
+                      # ems_assemblers rows are the exception: their raw is
+                      # ln(PEG / group median), anchored ln(1.5) -> 2.0, not a
+                      # z (valuation_pe.py; each row's detail.metric says so).
+                      # Spreading THOSE on this k understates by ~2.5x. No
+                      # client applies spread arithmetic since the pair view
+                      # was replaced 2026-08-24; if one returns, curves must
+                      # become per-peer-group first.
+                      "except_peer_groups": {"ems_assemblers": {
+                          "k": solve_k("hill", 0.4055, 4.0, 1.5),
+                          "unit": "ln(PEG / group median)"}}},
         "mood":      {"form": "hill", "k": solve_k("hill", 2.0, 4.0, 1.5),
                       "p": 1.5, "sign": 1,
                       "spreadable": True,

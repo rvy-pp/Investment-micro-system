@@ -108,6 +108,23 @@ TAGS = {
     "#CoalIndia": "coal_india",
     "#HindustanCopper": "hindustan_copper",
     "#LloydsMetals": "lloyds_metals",
+    # --- ems, added 2026-08-30 ---
+    # Frequency count 2026-08-30 over 47 digests: #Dixon 37, #Amber 31,
+    # #SyrmaSGS 17, #Kaynes 16, #Avalon 15, #PGEL 10. All six safe under
+    # `t in line` containment against each other and against everything
+    # above. syrma_sgs and avalon are peer_group: null (not in F&O) — mood
+    # and guidance candidates accumulate, nothing scores, the lloyds_metals
+    # shape.
+    #
+    # DO NOT ADD "#EMS" (33) — sector tag, same rule as #Cement/#Steel/#Mining.
+    # PGEL is tag-only in the corpus: the digests never once write
+    # "PG Electroplast", so this tag is the entity's ONLY reliable handle.
+    "#Dixon": "dixon",
+    "#Amber": "amber",
+    "#Kaynes": "kaynes",
+    "#PGEL": "pg_electroplast",
+    "#SyrmaSGS": "syrma_sgs",
+    "#Avalon": "avalon",
 }
 
 NUM = r"\d"

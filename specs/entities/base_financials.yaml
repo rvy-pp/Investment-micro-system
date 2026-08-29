@@ -908,3 +908,56 @@ companies:
       retracement shrinks the denominator fast; the Rs473/t-class error here
       is reading a margin print as structure. Watch the announced
       fund-raising (BSE intimation 27-08-2026) for dilution.
+
+  # ==========================================================================
+  # EMS — added 2026-08-30. THE FIRST pe_forward SECTOR, and the block is
+  # deliberately thinner than every commodity block above: the P/E scorer
+  # (packages/score/valuation_pe.py) divides a per-share price by a per-share
+  # consensus, so shares_outstanding and net_debt never enter the score.
+  # base_ebitda is OMITTED on all four — economics carries no lines
+  # (specs/entities/ems.yaml explains why), so a denominator here would be a
+  # number waiting to be misused. The consensus EPS itself is NOT here either:
+  # it is DATED data, not structure, and lives in the `estimates` table via
+  # adapters/yahoo_estimates.py, one capture per day.
+  #
+  # shares_outstanding: Yahoo defaultKeyStatistics, recorded for the mcap
+  # display and any future EV work; marked derived, not exchange-verified —
+  # the BSE MktCapFull cross-check the mining names got has not been run.
+  # ==========================================================================
+  dixon:
+    shares_outstanding: 60801893
+    shares_verify: derived
+    valuation_metric: pe_forward
+    source_note: >
+      Shares from Yahoo (2026-08-29 capture); 60.8mn x Rs14,650 = Rs89,075 cr
+      mcap, consistent with the digests' large-cap EMS framing. Forward EPS
+      consensus: FY27 183.6 (25 analysts), FY28 281.6 (26) — CLSA's "52x FY28
+      PE demanding" at CMP 14,500 independently implies FY28E ~279.
+    verify: pending
+  amber:
+    shares_outstanding: 35267767
+    shares_verify: derived
+    valuation_metric: pe_forward
+    source_note: >
+      Shares from Yahoo (2026-08-29). FY27 consensus 104.0 (22 analysts),
+      FY28 190.0 (25). Trailing EPS ~26 — the forward numbers underwrite the
+      electronics-division step change, see ems.yaml caveat.
+    verify: pending
+  kaynes:
+    shares_outstanding: 67222491
+    shares_verify: derived
+    valuation_metric: pe_forward
+    source_note: >
+      Shares from Yahoo (2026-08-29). FY27 consensus 59.5 (19 analysts), FY28
+      89.9 (21); FY27 cut -17% over the 90d to 2026-08-29 (smart-metering
+      working capital, ABC digest 02-07-2026).
+    verify: pending
+  pg_electroplast:
+    shares_outstanding: 286496708
+    shares_verify: derived
+    valuation_metric: pe_forward
+    source_note: >
+      Shares from Yahoo (2026-08-29). FY27 consensus 10.59 (7 analysts), FY28
+      16.56 (10) — PhillipCapital's "35x FY28E EPS of Rs16" (digest
+      10-08-2026) is the independent cross-check on the feed.
+    verify: pending

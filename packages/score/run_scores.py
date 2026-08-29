@@ -37,6 +37,7 @@ from bridge import (load_specs, load_scoring, load_accumulation, run_bridge,  # 
 from scoring import score as to_score, solve_k  # noqa: E402
 import mood as mood_mod  # noqa: E402
 import valuation as val_mod  # noqa: E402
+import valuation_pe as vpe  # noqa: E402
 import guidance_runrate as gr  # noqa: E402
 import guidance_forward as gf  # noqa: E402
 import spread_score as sps  # noqa: E402
@@ -237,6 +238,21 @@ def score_one_date(conn, as_of: str, sha: str,
     val_k = solve_k("hill", val_mod.Z_ANCHOR, val_mod.SCORE_ANCHOR, val_mod.P)
     mood_k = solve_k("hill", mood_mod.MOOD_ANCHOR, mood_mod.SCORE_ANCHOR, mood_mod.P)
 
+    # P3 dispatch: `pillar_3.metrics` in the sector spec finally has a reader.
+    # pe_forward_peg routes to valuation_pe (peer-relative, so the whole group
+    # is computed at once and memoised); everything else takes the EV/EBITDA
+    # path below, unchanged. Cached per peer group — the metric cannot vary
+    # inside one group without the spec being wrong.
+    pe_metrics: dict[str, bool] = {}
+    pe_group_scores: dict[str, dict] = {}
+
+    def pe_scores_for(pg_: str, eid_: str):
+        if pg_ not in pe_group_scores:
+            grp = [e for e in entities.values() if e.get("peer_group") == pg_]
+            pe_group_scores[pg_] = vpe.scores_for_group(conn, grp, as_of)
+        return pe_group_scores[pg_].get(eid_) or (
+            None, None, None, "not computed for this group")
+
     for ent in sorted(entities.values(), key=lambda e: e["id"]):
         pg = ent.get("peer_group")
         if not pg:
@@ -294,26 +310,45 @@ def score_one_date(conn, as_of: str, sha: str,
         n += 1
 
         # --- valuation (P3a) ---
-        ser, cut, _cp, err = val_mod.spot_multiple_series(
-            conn, ent, f, units, bq["start"], bq["end"], usdinr,
-            lookback_days=val_mod.spec_lookback(pg), as_of=as_of)
-        # P3 re-marks EV/EBITDA at the CURRENT price, so a stale equity close
-        # means it is re-marking at an old price and calling it spot.
-        if eid in stale_series:
-            put(conn, as_of, eid, "valuation", None, None, None,
-                f"stale price: {eid} {stale_series[eid]}", sha)
-        elif len(ser) >= 20:
-            import statistics
-            mults = [m for _, m, _ in ser]
-            z = (mults[-1] - statistics.fmean(mults)) / (statistics.pstdev(mults) or 1e-9)
-            s = to_score(-z, val_k, "hill", val_mod.P)
-            parts["valuation"] = s
-            put(conn, as_of, eid, "valuation", s, z,
-                {"multiple": round(mults[-1], 2), "n": len(mults)}, None, sha)
+        if pg not in pe_metrics:
+            pe_metrics[pg] = "pe_forward_peg" in vpe.spec_metrics(pg)
+        if pe_metrics[pg]:
+            # Forward P/E path (EMS and any later non-commodity sector). The
+            # same staleness discipline as the EV/EBITDA branch: a stale
+            # equity close would divide an old price by a current consensus.
+            if eid in stale_series:
+                put(conn, as_of, eid, "valuation", None, None, None,
+                    f"stale price: {eid} {stale_series[eid]}", sha)
+            else:
+                s_, raw_, det_, wh_ = pe_scores_for(pg, eid)
+                if s_ is None:
+                    put(conn, as_of, eid, "valuation", None, None, None,
+                        wh_, sha)
+                else:
+                    parts["valuation"] = s_
+                    put(conn, as_of, eid, "valuation", s_, raw_, det_, None, sha)
+            n += 1
         else:
-            put(conn, as_of, eid, "valuation", None, None, None,
-                err or "insufficient clean history", sha)
-        n += 1
+            ser, cut, _cp, err = val_mod.spot_multiple_series(
+                conn, ent, f, units, bq["start"], bq["end"], usdinr,
+                lookback_days=val_mod.spec_lookback(pg), as_of=as_of)
+            # P3 re-marks EV/EBITDA at the CURRENT price, so a stale equity close
+            # means it is re-marking at an old price and calling it spot.
+            if eid in stale_series:
+                put(conn, as_of, eid, "valuation", None, None, None,
+                    f"stale price: {eid} {stale_series[eid]}", sha)
+            elif len(ser) >= 20:
+                import statistics
+                mults = [m for _, m, _ in ser]
+                z = (mults[-1] - statistics.fmean(mults)) / (statistics.pstdev(mults) or 1e-9)
+                s = to_score(-z, val_k, "hill", val_mod.P)
+                parts["valuation"] = s
+                put(conn, as_of, eid, "valuation", s, z,
+                    {"multiple": round(mults[-1], 2), "n": len(mults)}, None, sha)
+            else:
+                put(conn, as_of, eid, "valuation", None, None, None,
+                    err or "insufficient clean history", sha)
+            n += 1
 
         # --- mood (P3b) ---
         c_raw, brokers, events = mood_mod.company_mood(conn, eid, as_of)

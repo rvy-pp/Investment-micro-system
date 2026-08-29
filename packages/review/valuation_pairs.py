@@ -122,6 +122,14 @@ GROUPS = {
     "cement":           ["ultratech", "ambuja", "shree", "dalmia"],
     "steel_integrated": ["tata_steel", "jsw_steel", "jindal_steel", "sail"],
     "aluminium_primary": ["hindalco", "nalco"],
+    # added 2026-08-30 — mining went live 2026-08-29 without a row here (this
+    # registry was already one sector stale when found).
+    "mining_bulk":      ["nmdc", "coal_india"],
+    # ems_assemblers is DELIBERATELY ABSENT: this backtest replays spot
+    # EV/EBITDA z-history via spot_multiple_series, and EMS's P3 is a forward
+    # P/E whose denominator (historical consensus) does not exist anywhere to
+    # replay — see specs/sectors/ems.yaml pillar_3.reference. Adding it here
+    # would backtest a metric the sector does not use.
 }
 
 

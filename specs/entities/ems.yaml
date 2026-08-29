@@ -1,0 +1,184 @@
+# ============================================================================
+# EMS — six entities, four scored, ZERO bridge lines by design
+# ============================================================================
+# Added 2026-08-30, PM instruction 2026-08-29: "Dixon, amber, kaynes, PGEL.
+# Find a method to score them ... along the lines of 1 year fwd P/E
+# valuations majorly and maybe some commodity prices. Self-valuation score is
+# fine, other economics is difficult, if you can, figure something out."
+#
+# THE FIRST NON-COMMODITY SECTOR, and the departure is deliberate: these are
+# converters. They earn a conversion margin on a largely pass-through cost
+# stack, so a commodity margin bridge answers the wrong question — the exact
+# APL Apollo finding ("a converter earns the tube/coil SPREAD"), at sector
+# scale. P3 valuation is therefore the lead pillar, scored on FORWARD P/E
+# (packages/score/valuation_pe.py, dispatched by pillar_3.metrics in
+# specs/sectors/ems.yaml), with mood from the digests beside it. Economics
+# and guidance withhold, honestly, and the composite renormalises (the
+# steel_stainless precedent).
+#
+# WHY NO INPUT LINES, when copper/aluminium/HRC series sit right there in the
+# store: every intensity would be UNSOURCED. The digests give margin
+# COMMENTARY, not physical intensities — the best cost citation in 47 digests
+# is PGEL's "gross contribution margin 15.9% -> 14.5% as raw materials hit
+# 85.5% of revenue — driven by elevated copper, aluminium and resin prices
+# plus rupee depreciation, with only partial pass-through" (PhillipCapital,
+# digest 10-08-2026), which names the drivers and quantifies NONE of them per
+# unit. A bridge built on guessed intensities would score, carry economics'
+# 0.50 composite weight, and dominate the ranking with numbers nobody can
+# defend — worse than the steel market_pct problem, which at least had one
+# cited share. Withhold rather than guess. The citations above are the SEED
+# for a future bridge if the desk models RAC input intensities; two of the
+# named drivers (resin, copper-clad laminate) also have NO series at all, and
+# per invariant 6 must not be proxied onto brent.
+#
+#   ems_assemblers   dixon, amber, kaynes, pg_electroplast
+#                    The four F&O names (vault OI 2026-08-29: lots 50 / 100 /
+#                    150 / 950, real OI rows, no not_in_fno marker). One peer
+#                    group although their end-markets differ (mobiles/TVs,
+#                    RAC components, industrial PCBA, RAC+durables), because
+#                    the P3 raw is growth-adjusted relative cheapness and
+#                    needs a cross-section; the digests treat them as one
+#                    section (#EMS) and price them on the same multiple.
+#
+# syrma_sgs, avalon: peer_group null — NOT in F&O (vault OI: status
+# not_in_fno on both), invariant 7. Prices, consensus captures and mood
+# accumulate; no score, no pair leg. The digests cover both (Syrma 17 tagged
+# bullets, Avalon 15), so the extraction layer tracks them from day one.
+
+sector: ems
+spec_version: 0.1.0
+currency: INR
+
+# No reference_entities: nothing here price_links a commodity series. The
+# EMS tab still DISPLAYS the cost complex (lme_copper, lme_aluminium,
+# hrc_india_inr, usdinr, brent) via engine.SECTORS — "maybe some commodity
+# prices" lands as context on the tab, not as unsourced arithmetic in the
+# score.
+reference_entities: []
+
+entities:
+  - id: dixon
+    kind: company
+    name: Dixon Technologies
+    sector: ems
+    peer_group: ems_assemblers
+    nse_symbol: DIXON
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      Largest Indian EMS: mobiles (the P&L, ~35mn units/yr guided FY27
+      30-32mn), TVs, appliances; Vivo JV (51:49) PN-3 approved — "JV to
+      contribute 11mn mobile volumes in FY27, 22mn each in FY28/29, revenue
+      estimates upgraded 24-39% over FY27-29E, EPS upgrade 13-18%" (JPMorgan,
+      digest 10-07-2026). Margin structure the bridge cannot see: "core
+      mobile phone EBITDA margin ~2.2% (-100bps yoy) on mobile PLI expiry +
+      memory chip upcycle raising component prices" (PhillipCapital, digest
+      04-08-2026). Memory/display inputs have no price series.
+    caveat: >
+      Trailing EPS (~340) carries a one-off well above the FY27 consensus
+      (~184); trailing P/E is therefore not comparable to forward and is not
+      used anywhere. Broker dispersion is unusually wide — CLSA U-PF
+      TP 10,600 / PhillipCapital SELL TP 8,817 (40x FY28) / JPM TP 16,700 in
+      the same fortnight.
+    verify: sourced
+
+  - id: amber
+    kind: company
+    name: Amber Enterprises
+    sector: ems
+    peer_group: ems_assemblers
+    nse_symbol: AMBER
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      RAC components + electronics (ILJIN/Ever, PCBA) + railway subsystems
+      (Sidwal). The digests' cost-side handle: "copper-clad laminate (CCL)
+      and currency depreciation the binding margin constraint into 2HFY27"
+      (digest 17-08-2026, with Syrma/PGEL) and "both Amber and Syrma are
+      building out captive [CCL capacity]". CCL has no price series.
+    caveat: >
+      FY27 consensus EPS ~104 against trailing ~26 — the street is
+      underwriting a step change (electronics division scale-up); the PEG
+      here leans on delivery of an inflection, not a run-rate.
+    verify: sourced
+
+  - id: kaynes
+    kind: company
+    name: Kaynes Technology
+    sector: ems
+    peer_group: ems_assemblers
+    nse_symbol: KAYNES
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      Industrial/auto/aerospace PCBA plus OSAT capex; "Rev/EBITDA/PAT CAGR of
+      39/40/36% over FY26-29E ... working capital pain in smart metering,
+      corrective measures expected to show in H2FY27" (Aditya Birla Capital,
+      digest 02-07-2026).
+    caveat: >
+      Listed 2022-11 — every lookback that reaches past it (P3 EV/EBITDA-style
+      1260d, pair charts) is truncated at the listing, the vaml shape.
+      FY27 consensus has been cut hard (-17% over 90d at the 2026-08-29
+      capture); the PEG reads cheap partly BECAUSE the E is falling.
+    verify: sourced
+
+  - id: pg_electroplast
+    kind: company
+    name: PG Electroplast
+    sector: ems
+    peer_group: ems_assemblers
+    nse_symbol: PGEL
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      RAC/washer ODM plus plastic moulding. The best cost citation in the
+      corpus: "1QFY27 record topline, margin down ... Revenue Rs20.34bn +35%
+      yoy; EBITDA Rs1.56bn +12%; PAT Rs753mn +13%; EBITDA margin contracted
+      160bps yoy to 7.7%, gross contribution margin 15.9% -> 14.5% as raw
+      materials hit 85.5% of revenue — elevated copper, aluminium and resin
+      prices plus rupee depreciation, with only partial pass-through. RAC
+      revenue +38% yoy but only ~20-22% was volume" (PhillipCapital, Neutral
+      TP Rs559 at 35x FY28E EPS of Rs16, digest 10-08-2026). Yahoo FY28E
+      consensus 16.56 — the two independently agree, which is the
+      cross-check that let the consensus feed be trusted.
+    caveat: >
+      The digests only ever write #PGEL, never "PG Electroplast" — extraction
+      patterns must match the tag. Thinnest analyst coverage of the four
+      (FY27 n=7 at first capture); MIN_ANALYSTS=5 in valuation_pe.py is the
+      floor under it.
+    verify: sourced
+
+  - id: syrma_sgs
+    kind: company
+    name: Syrma SGS Technology
+    sector: ems
+    peer_group: null          # not in F&O (vault OI: not_in_fno) — invariant 7
+    nse_symbol: SYRMA
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      Tracked, not scored: consensus captures and mood accumulate ("Syrma SGS
+      BUY, TP Rs2,050", digests; building captive CCL alongside Amber).
+    verify: sourced
+
+  - id: avalon
+    kind: company
+    name: Avalon Technologies
+    sector: ems
+    peer_group: null          # not in F&O (vault OI: not_in_fno) — invariant 7
+    nse_symbol: AVALON
+    effective_from: 2026-04-01
+    outputs: []
+    inputs: []
+    source_note: >
+      Tracked, not scored: US-exposed EMS, "Avalon BUY, TP Rs2,400" in the
+      digests. Extraction guard: the "Avalon" in Kotak's Infra Daily Wrap
+      ("Akasa Air signs further sale and leaseback deal with Avalon") is the
+      aircraft lessor — the digest itself flags it; the extractor's
+      disqualifier encodes it.
+    verify: sourced
