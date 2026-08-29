@@ -67,6 +67,15 @@ NAMES = {
     "Ambuja": "ambuja",
     "Shree Cement": "shree",
     "Dalmia Bharat": "dalmia",
+    # --- mining, added 2026-08-29, same collision check run: none of these
+    # four folder names appears under any other Coverage/<sector>/. Hindustan
+    # Copper and Lloyds Metals carry `status: not_in_fno` (price-only files)
+    # and are skipped by the status check below — mapped anyway so the day a
+    # contract lists, the load starts without an edit here.
+    "NMDC": "nmdc",
+    "Coal India": "coal_india",
+    "Hindustan Copper": "hindustan_copper",
+    "Lloyds Metals": "lloyds_metals",
 }
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",

@@ -90,6 +90,16 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "ambuja":     [("AMBUJACEM.NS", r"ambuja\s*cement")],
     "shree":      [("SHREECEM.NS", r"shree\s*cement")],
     "dalmia":     [("DALBHARAT.NS", r"dalmia\s*bharat\s*(?!sug)")],
+    # --- equities: mining, added 2026-08-29 ---
+    # All four resolved with yahoo_search.py first, and the search paid AGAIN:
+    # a bare "NMDC" query returns NMDC STEEL LIMITED (NSLNISP — the demerged
+    # steel plant, a different listed company and the "NSL" whose receivables
+    # sit on NMDC's own balance sheet) ABOVE the miner. The name pattern
+    # requires "ltd" precisely to reject "NMDC STEEL LIMITED".
+    "nmdc":             [("NMDC.NS", r"nmdc\s*ltd")],
+    "coal_india":       [("COALINDIA.NS", r"coal\s*india")],
+    "hindustan_copper": [("HINDCOPPER.NS", r"hindustan\s*copper")],
+    "lloyds_metals":    [("LLOYDSME.NS", r"lloyds\s*metals")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -136,6 +146,7 @@ EQUITIES = {
     "tata_steel", "jsw_steel", "jindal_steel", "sail",
     "jindal_stainless", "shyam_metalics", "apl_apollo",
     "ultratech", "ambuja", "shree", "dalmia",
+    "nmdc", "coal_india", "hindustan_copper", "lloyds_metals",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.

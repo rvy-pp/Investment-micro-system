@@ -93,13 +93,21 @@ TAGS = {
     "#Nuvoco": "nuvoco",
     "#StarCement": "star_cement",
     "#JSWCement": "jsw_cement",
-    # NOT MAPPED, deliberately, pending a scope decision: #NMDC 37,
-    # #CoalIndia 30, #LloydsMetals 9. All three are steel INPUT suppliers and
-    # appear constantly in the steel bullets — NMDC sets the domestic iron ore
-    # price the mills pay. They are in the vault's Mining coverage, not Steel,
-    # and mapping a tag to an entity_id that does not exist in `entities` would
-    # produce extraction candidates that cannot be loaded. Add the entity first
-    # if the peer group is widened to include the ore leg.
+    # --- mining, added 2026-08-29 — the scope decision the note below waited
+    # on was taken (PM: score NMDC, Coal India, Hindustan Copper). Frequency
+    # count re-run same day: #NMDC 37, #CoalIndia 30, #HindustanCopper 9,
+    # #LloydsMetals 9 (entity exists now, peer_group null — mood accumulates).
+    #
+    # DO NOT ADD "#Mining" (25) — sector tag, same rule as #Cement/#Steel.
+    # DO NOT ADD "#Coal" — all 30 occurrences sit INSIDE "#CoalIndia", so
+    # under `t in line` containment it is redundant on every real bullet and
+    # a hazard on any future bare-#Coal commodity bullet.
+    # #NMDCSteel does not occur in the corpus; NMDC STEEL (NSLNISP) traffic
+    # is guarded at the sentence layer in extract_broker_actions.named_in().
+    "#NMDC": "nmdc",
+    "#CoalIndia": "coal_india",
+    "#HindustanCopper": "hindustan_copper",
+    "#LloydsMetals": "lloyds_metals",
 }
 
 NUM = r"\d"

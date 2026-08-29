@@ -1,0 +1,173 @@
+# ============================================================================
+# mining — two peer groups, three scored names
+# ============================================================================
+# Added 2026-08-29, PM instruction: "NMDC, Coal India and Hindustan Copper.
+# Leave Lloyds Metals. NMDC: include the effect of volumes every month.
+# Coal India: volumes plus e-auction premiums in economics. Hindustan Copper:
+# normal."
+#
+#   mining_bulk     nmdc, coal_india
+#                   The two F&O names (vault OI: lots 6750 / 1350, real OI
+#                   rows). Administered/auction-priced domestic bulk — the
+#                   only pair that can actually be expressed on both legs.
+#   mining_copper   hindustan_copper
+#                   NOT IN F&O (vault OI: status not_in_fno, price-only).
+#                   SCORED ANYWAY BY EXPLICIT PM DECISION 2026-08-29 — the
+#                   invariant-7 exception is the PM's to make and this records
+#                   it. Cash-only expression: long/avoid signal, never a short
+#                   leg, never a pair leg — a singleton group by construction
+#                   (the steel_converter precedent) so no default pair crosses
+#                   into it.
+#
+# lloyds_metals: peer_group null — "Leave Lloyds Metals" (PM, same message).
+# Not in F&O either. Prices and mood accumulate; its Q1 prints are in the
+# digests if it is ever enabled.
+
+sector: mining
+spec_version: 0.1.0
+peer_groups: [mining_bulk, mining_copper]
+
+# ----------------------------------------------------------------------------
+# P1 ASP + P2 COSTS
+# ----------------------------------------------------------------------------
+pillars_1_2:
+  windows_days: [1, 5, 20]
+  materiality:
+    min_pct_of_ebitda: 0.015
+    on_fail: emit_nothing
+
+  dispersion_note: >
+    THE DRIVER SETS THE NAME — the inverse of steel and cement, where one
+    benchmark moves the whole group and mix sets dispersion. These three sell
+    on three unrelated mechanisms: NMDC's own circulars, Coal India's SWMA
+    auction premium over an administered floor, LME copper. Validation below
+    confirms every shock reaches exactly one name. The economically
+    interesting spread is therefore CROSS-SECTOR: an NMDC cut is
+    NMDC-negative and JSW/JSPL-positive on external ore (the 11-08-2026
+    digest says exactly this), a premium collapse is CIL-negative and
+    cement/aluminium-positive on e-auction coal.
+
+  volume_note: >
+    VOLUMES ARE A SCORED DRIVER HERE — the first sector where they are, per
+    the PM's instruction. Both PSU miners file monthly; the volume_effect
+    lines multiply EBITDA/mt by the delta of a TRAILING-12M volume series
+    (mining_filings.py builds it from each filing's own this-year/last-year
+    pair, so one document yields the point and gaps do not chain). The TTM
+    month-over-month delta IS the YoY monthly increment — monsoon seasonality
+    cancels. Bias is asymmetric and flagged on both entities: NMDC's EBITDA/t
+    multiplier understates incremental-tonne margin (fixed-cost absorption);
+    CIL's blended Rs610/t overstates a volume gain that lands mostly in
+    below-average-margin FSA tonnes.
+
+  cadence_note: >
+    Every mining output leg prints MONTHLY (circulars, SWMA, volume filings)
+    while the only daily lines are CIL's diesel input and HC's LME copper. So
+    a 1d/5d window on mining_bulk is diesel-led by construction, and scores
+    step on filing days — the cement monthly-output asymmetry, stronger. Read
+    20d+ windows. HC is the exception: LME copper prints daily and is the
+    whole bridge.
+
+# ----------------------------------------------------------------------------
+# P3 VALUATION
+# ----------------------------------------------------------------------------
+pillar_3:
+  metrics: [ev_ebitda]
+  reference: own_history
+  lookback_days: 1260
+  note: >
+    (price x shares + net_debt) / spot EBITDA, z on own history. All three
+    names are NET CASH (CIL by Rs38.5k cr — the biggest in the book), so EV
+    sits below market cap; balance-sheet convention is borrowings-minus-cash,
+    stated per name in base_financials.yaml. All three share counts are
+    exchange-filed and cross-checked to BSE's MktCapFull to the rupee.
+    Watch item: HC announced a fund-raising intimation (BSE 27-08-2026) —
+    dilution changes shares_outstanding when it prices.
+
+# ----------------------------------------------------------------------------
+# P4 GUIDANCE
+# ----------------------------------------------------------------------------
+pillar_4:
+  track_metrics: [volume, capex]
+  note: >
+    NOT LIVE — no mining guidance ledger exists yet; P4 withholds for all
+    three, the cement-consistent honest state (composite weight is 0.00
+    anyway). The raw material is already in the digests and unusually
+    gradeable BECAUSE the volume series is monthly: NMDC management targets
+    60mt FY27 against Ambit's 55mt and a 50.3mt TTM ("NMDC's 60MT dream faces
+    tougher iron ore reality", Ambit, 02-07-2026); Emkay models CIL output
+    815/850mt FY27/28. Building specs/extracted/mining_guidance.json from
+    these, graded monthly against the TTM series, is the next P4 step.
+
+# ----------------------------------------------------------------------------
+# GATE
+# ----------------------------------------------------------------------------
+gate:
+  scope: mining
+  consumed_by: flows
+  pair_exception: true
+
+# ----------------------------------------------------------------------------
+# OUTPUT
+# ----------------------------------------------------------------------------
+output:
+  emit_singles: true
+  emit_pairs: true
+  pair_candidates:
+    - pair: [coal_india, nmdc]
+      rationale: >
+        The only expressible pair (both in F&O), and today it is the
+        administered-price divergence trade: NMDC has cut twice consecutively
+        into a falling seaborne curve (Kotak models USD100/95/90 on Simandou)
+        while CIL's July offtake ran +17.4% YoY with the e-auction premium
+        holding ~41%. On the live 30-day EWMA window the bridge reads
+        coal_india +0.36% vs nmdc -1.70% of EBITDA — PAIR 3.42 long
+        coal_india / short nmdc, where the naive score difference reads 0.37.
+      residual_exposure: >
+        Both legs are PSUs with administered pricing and a common political
+        owner — a sector-wide policy event (an MMDR-class bill, a divestment
+        push, an election) moves both the same way and the bridge sees none
+        of it. CIL's structural short thesis (RTC renewables capping thermal,
+        CLSA 11-08-2026) is also invisible to a margin bridge. Size for
+        policy risk, not only the spread.
+
+# ----------------------------------------------------------------------------
+# VALIDATION — run 2026-08-29, results recorded not asserted
+# ----------------------------------------------------------------------------
+validation:
+  test_1_driver_sets_the_name:
+    shock: nmdc_fines_inr -200 INR/t and nmdc_lumps_inr -200 INR/t (one circular cut)
+    result: >
+      nmdc -6.41% (revenue -936 cr, royalty gives back +234 cr — exactly the
+      0.25 ad-valorem intensity); coal_india 0.00%, hindustan_copper 0.00%.
+      Hand-check: 46.8mt x Rs200 x (1 - 0.25) = Rs702 cr on Rs10,960 cr. The
+      live August cut prices this at roughly its real size.
+  test_2_eauction_premium_reaches_cil_alone:
+    shock: coal_eauction_realisation_inr +161 INR/t (a +10pp SWMA premium move)
+    result: >
+      coal_india +3.43% (+1,658 cr = 103mt x Rs161); nmdc and
+      hindustan_copper 0.00%. A ten-point premium month is MATERIAL — the
+      PM's "e-auction premiums in economics somehow" lands as a first-class
+      driver, not decoration. The premium's observed 2026 range (33%..51%)
+      spans ~6% of EBITDA.
+  test_3_volume_lines_move_scores:
+    shock: coalindia_offtake_ttm_mt +20 mt/yr; separately nmdc_sales_ttm_mt +5 mt/yr
+    result: >
+      coal_india +2.53% (+1,220 cr, Rs610/t x 20mt); nmdc +10.68% (+1,171 cr,
+      Rs2,342/t x 5mt) — the 55-vs-60mt FY27 guidance debate is worth ~10% of
+      NMDC's EBITDA, which is why the monthly line exists. Cross-isolation
+      holds: each volume shock reaches its own name only.
+  test_4_lme_reaches_hc_alone:
+    shock: lme_copper +1000 USD/t
+    result: >
+      hindustan_copper +12.22% (+248 cr = 27,400t x 0.95 x 1000 x 95.4);
+      others 0.00%. HC is the highest-beta name in the book per unit of its
+      driver — one LME leg over a 2,032 cr base annualised off a 54%-OPM
+      quarter (the caveat in base_financials.yaml).
+  live_window_2026_08_29: >
+    EWMA 30d: nmdc -1.70% / 2.67 NEGATIVE (two consecutive circular cuts,
+    fines -7.2%, royalty offset visible in the decomposition); coal_india
+    +0.36% / 3.04 immaterial (volume +87 cr and diesel +92 cr against a soft
+    e-auction step); hindustan_copper +3.07% / 3.65 POSITIVE (LME copper
+    +6.7%). Directionally identical to the live broker stances (JPM UW /
+    Kotak FV cut on NMDC; UBS/Elara Buy vs Kotak SELL split on CIL; nobody
+    covers HC).

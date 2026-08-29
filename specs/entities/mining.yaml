@@ -1,0 +1,327 @@
+# ============================================================================
+# Mining — entity roster, pillars 1 and 2 (ASP and costs)
+# ============================================================================
+# Added 2026-08-29, PM instruction: "NMDC, Coal India and Hindustan Copper.
+# Leave Lloyds Metals. In NMDC include the effect of volumes every month; in
+# Coal India volumes plus e-auction premiums in economics; Hindustan Copper is
+# normal."
+#
+# ---------------------------------------------------------------------------
+# THE ONE THING THIS SPEC EXISTS TO EXPRESS
+# ---------------------------------------------------------------------------
+# These names are the SELLERS of what the rest of the book consumes — NMDC
+# sets the domestic ore price the steel mills pay, Coal India sells the coal
+# the kilns and smelters burn. So their price drivers are administered or
+# auction-set, not benchmark-linked: NMDC's own circulars ARE the output
+# series, Coal India's e-auction premium IS the market-facing leg. The bridge
+# consequence is that a commodity print separates these names from each other
+# completely — an NMDC circular reaches only NMDC, an SWMA premium print only
+# Coal India, an LME copper move only Hindustan Copper. Within this sector,
+# THE DRIVER SETS THE NAME, and the interesting dispersion is against the
+# CONSUMERS in steel/cement (an NMDC cut is NMDC-negative and JSW/JSPL-
+# positive on external ore — the 11-08 digest says exactly this).
+#
+# VOLUMES ARE A SCORED DRIVER HERE, the first sector where they are. Both PSU
+# miners file monthly volume disclosures, and the PM asked for their effect
+# monthly. Mechanism — no new engine code: a `volume_effect` output line links
+# a TRAILING-12-MONTH volume series (mt/yr, built by mining_filings.py from
+# the filings' own this-year/last-year pairs) and carries EBITDA-per-mt in
+# its `volume` field, so
+#     impact = EBITDA/mt x d(TTM mt) = margin x annualised YoY volume gain
+# lands in d_revenue through the ordinary volume x delta arithmetic. The TTM
+# form is what makes monthly steps meaningful: its month-over-month delta is
+# exactly (this month - same month last year), the YoY increment the brokers
+# quote, so monsoon seasonality cancels instead of reading as a demand
+# collapse every September. EBITDA/t as the multiplier UNDERSTATES operating
+# leverage (incremental tonnes beat average margin on fixed-cost absorption)
+# — conservative by construction, noted rather than tuned away.
+#
+# ---------------------------------------------------------------------------
+# WHO IS SCORED, AND THE INVARIANT-7 EXCEPTION THE PM MADE
+# ---------------------------------------------------------------------------
+# Vault OI status (2026-08-28): NMDC in F&O (lot 6750), Coal India in F&O
+# (lot 1350), Hindustan Copper NOT in F&O (price-only), Lloyds Metals NOT in
+# F&O. Invariant 7 as cement applied it would score only the first two.
+#
+#   hindustan_copper IS SCORED ANYWAY — explicit PM instruction 2026-08-29
+#   ("Let's do NMDC, Coal India and Hindustan Copper"), which is the PM
+#   decision invariant 7 defers to. CASH-ONLY EXPRESSION: no futures leg, no
+#   short leg, so treat its score as a long/avoid signal, not a pair leg.
+#   It sits in its own peer group (mining_copper) so no default pair ever
+#   crosses into it.
+#
+#   lloyds_metals is peer_group: null — "Leave Lloyds Metals" (PM, same
+#   instruction). Entity kept so prices and mood accumulate; also not in F&O.
+#
+# Peer groups: TWO. mining_bulk (nmdc, coal_india) — administered/auction
+# domestic bulk, the two names a pair could actually be expressed across;
+# mining_copper (hindustan_copper) — LME-linked and cash-only, a singleton by
+# construction (the steel_converter precedent).
+
+sector: mining
+spec_version: 0.1.0
+currency: INR
+
+# ============================================================================
+# PRICE SERIES these economics link to — units are LOAD-BEARING (bridge.to_inr
+# applies the FX leg only to units starting "USD"; steel.yaml's 95x lesson).
+# brent and lme_copper are registered HERE because no other spec declares
+# them: both are USD series, and an unregistered unit silently drops the FX
+# leg (SILENT_BUGS entry 3).
+# ============================================================================
+reference_entities:
+  # --- NMDC administered prices: the company's own circulars, EX-ROYALTY
+  #     basis (the basis NMDC switched to 2026-01-09 — data/staging/mining/
+  #     nmdc_circulars.json documents the break; loading the older inclusive
+  #     prints under these ids is forbidden, invariant 6) ---
+  - {id: nmdc_lumps_inr,               kind: commodity, name: NMDC Baila lump 65.5% FOR ex-royalty, unit: INR/t}
+  - {id: nmdc_fines_inr,               kind: commodity, name: NMDC Baila fines 64% FOR ex-royalty,  unit: INR/t}
+  # --- Coal India realisation legs ---
+  - {id: coal_eauction_realisation_inr, kind: commodity, name: CIL e-auction realisation (notified x (1+SWMA premium)), unit: INR/t}
+  - {id: coal_fsa_realisation_inr,      kind: commodity, name: CIL blended FSA realisation, unit: INR/t}
+  # --- monthly volume series (TTM, from the filings' own YoY pairs) ---
+  - {id: nmdc_sales_ttm_mt,            kind: commodity, name: NMDC iron ore sales TTM, unit: mt/yr}
+  - {id: coalindia_offtake_ttm_mt,     kind: commodity, name: CIL offtake TTM,         unit: mt/yr}
+  # --- dollar series: each carries the FX leg ---
+  - {id: lme_copper,                   kind: commodity, name: LME copper cash,  unit: USD/t}
+  - {id: brent,                        kind: commodity, name: Brent crude,      unit: USD/bbl}
+  - {id: usdinr,                       kind: fx,        name: USDINR,           unit: INR/USD}
+
+entities:
+
+  # ==========================================================================
+  # NMDC — administered ore prices out, ad-valorem levies in, volumes monthly
+  # ==========================================================================
+  # The quarter's tension, and why the volume line earns its place: production
+  # +26% YoY against sales +1.8% — "a sales ramp is critical to any earnings
+  # improvement" (JPMorgan, Vibhav Zutshi, digest 15-08-2026). Management
+  # targets 60mt FY27 against the street's ~55mt (Ambit/Nuvama, 02-07-2026);
+  # the TTM series reads 50.3 at Jun-26. The ramp, if it comes, lands here
+  # month by month; if it does not, the line correctly contributes nothing.
+  - id: nmdc
+    kind: company
+    name: NMDC
+    sector: mining
+    peer_group: mining_bulk
+    nse_symbol: NMDC
+    effective_from: 2026-04-01
+
+    outputs:
+      # Lump/fines split: NMDC does not disclose the sales mix per grade.
+      # ~1/3 lumps 2/3 fines is sector knowledge (Bailadila fines-heavy mix)
+      # and is THE NUMBER TO ATTACK on this entity — both legs move on the
+      # same circular in the same direction, so the split mostly matters for
+      # the (small) lump-fine spread changes in the circulars.
+      - item: iron_ore_fines
+        price_link: nmdc_fines_inr
+        volume: 31400000            # 0.67 x 46.8mt (Q1FY27 sales 11.7mt x 4)
+        volume_unit: t
+        basis_group: ore
+        source_note: >
+          Sales basis matches the denominator: 11.7mn t Q1FY27 x 4 = 46.8mt
+          ("sales 11.7mn t (+1.8% YoY, -23% QoQ)", Kotak, Sumangal Nevatia,
+          digest 17-08-2026). Split 67/33 is sector knowledge, verify below.
+          Price series is NMDC's own circular sequence (ex-royalty FOR) —
+          data/staging/mining/nmdc_circulars.json + specs/extracted/
+          mining_prints.json, basis break 2026-01-09 recorded in both.
+        verify: pending
+      - item: iron_ore_lumps
+        price_link: nmdc_lumps_inr
+        volume: 15400000            # 0.33 x 46.8mt
+        volume_unit: t
+        basis_group: ore
+        source_note: Same citation and split caveat as iron_ore_fines.
+        verify: pending
+      # THE MONTHLY VOLUME LINE — see the header for the mechanism. `volume`
+      # here is EBITDA PER MILLION TONNES in INR: Rs2,342/t x 1e6 = 2.342e9,
+      # from base_ebitda 10,960 cr / 46.8mt (reconciles with Kotak's cited
+      # EBITDA/t Rs2,333 within rounding). NOT in basis_group ore — its
+      # `volume` field is a margin, not tonnes, and summing it into a basis
+      # volume would corrupt every input line resting on the group.
+      - item: volume_effect
+        price_link: nmdc_sales_ttm_mt
+        volume: 2342000000          # EBITDA/mt: Rs2,342/t x 1e6 t
+        volume_unit: INR/mt
+        source_note: >
+          d_EBITDA = EBITDA/mt x d(TTM sales mt). EBITDA/t from the same
+          Q1FY27 print as base_ebitda ("EBITDA/t Rs2,333 (+7% YoY, +34% QoQ)",
+          Kotak, digest 17-08-2026). Understates incremental-tonne margin;
+          conservative. Series from NMDC's monthly production & sales filings
+          (this-year/last-year pairs; mining_filings.py).
+        verify: pending
+
+    # Royalty, DMF and NMET are AD VALOREM — the government takes a share of
+    # every price move, so a circular hike's EBITDA effect is well under its
+    # revenue effect. JPMorgan tracks exactly this: "royalty per tonne of
+    # production rose to Rs2.3K/t (vs Rs2.2K in 1QFY26, Rs2.0K in 4QFY26), on
+    # both a qoq and yoy basis" (digest 15-08-2026) — the LEVEL anchor. The
+    # SENSITIVITY here: levies ~19.8% of the IBM average sale price (15%
+    # royalty x 1.32 DMF/NMET gross-up — the same ~18% wedge visible in the
+    # Jan-26 circular basis change), and the IBM ASP moves ~1.25x the
+    # ex-royalty FOR (grossed up), so ~0.25 of the FOR move leaves as levies.
+    # Duplicated per output leg — the Shree/SAIL co-product workaround; one
+    # line on the fines basis alone would levy 31.4 of 46.8mt.
+    inputs:
+      - item: royalty_levies_fines
+        price_link: nmdc_fines_inr
+        intensity: 0.25
+        intensity_unit: INR levy / INR price move
+        basis_item: iron_ore_fines
+        market_pct: 1.00
+        source_note: >
+          Derivation above; anchored by the JPM royalty/t print and the
+          Jan-2026 circular basis wedge (incl->excl royalty = ~18% of the
+          inclusive price). verify pending — attack the 0.25 before trusting
+          a hike-led score.
+        verify: pending
+      - item: royalty_levies_lumps
+        price_link: nmdc_lumps_inr
+        intensity: 0.25
+        intensity_unit: INR levy / INR price move
+        basis_item: iron_ore_lumps
+        market_pct: 1.00
+        source_note: Duplicate of royalty_levies_fines over the lumps leg.
+        verify: pending
+
+  # ==========================================================================
+  # COAL INDIA — FSA floor, e-auction premium as the market leg, volumes
+  # ==========================================================================
+  # ~87% of tonnes go at notified FSA prices that move only on a rare
+  # administered hike (none in this corpus; CLSA lists "FSA price hikes" as a
+  # watch item, 08-07-2026). The market-facing leg is e-auction: 13% of
+  # volumes at a premium the SWMA filings print MONTHLY (Feb-26 33% ->
+  # Apr 51% -> Jul 41%). The premium enters economics as a REALISATION series
+  # — notified base x (1 + premium) — so a premium print moves the same
+  # volume x delta arithmetic as every other output leg. Cadence caveat as
+  # cement's: both realisation legs and the volume series print monthly while
+  # the diesel input prints daily, so 1d/5d windows are cost-led by
+  # construction; the 20d+ windows carry the auction and volume legs.
+  - id: coal_india
+    kind: company
+    name: Coal India
+    sector: mining
+    peer_group: mining_bulk
+    nse_symbol: COALINDIA
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: fsa_coal
+        price_link: coal_fsa_realisation_inr
+        volume: 689000000           # 0.87 x 792mt (Q1FY27 dispatch 198mt x 4)
+        volume_unit: t
+        basis_group: coal
+        source_note: >
+          "volumes 198mt (+3.6% yoy ...), blended realization Rs1,595/t;
+          E-auction vol +24% YoY, share 13%" (Kotak, Abhishek Khanna, digests
+          28/29-07-2026). FSA level Rs1,487/t backed out of the blend — the
+          derivation lives on the series row in specs/extracted/
+          mining_prints.json. This leg is deliberately near-static: it exists
+          to carry a notified hike WHEN one prints, and to keep the revenue
+          base honest in coverage terms.
+        verify: pending
+      - item: eauction_coal
+        price_link: coal_eauction_realisation_inr
+        volume: 103000000           # 0.13 x 792mt
+        volume_unit: t
+        basis_group: coal
+        source_note: >
+          E-auction share 13% of dispatch (Kotak, 29-07-2026); premium series
+          from the SWMA filings (CIL-total row), notified base Rs1,614/t =
+          Kotak's cited Q1 auction realisation Rs2,321/t / 1.438 (the SWMA
+          Q1 volume-weighted premium — which independently matches UBS's
+          cited "avg 44% in Q1", digest 03-07-2026, the cross-check that
+          makes the base believable). Allocated-vs-lifted gap noted: SWMA
+          prints ALLOCATED lakh tonnes; the 13% share is lifted.
+        verify: pending
+      # Monthly volume line — same mechanism as NMDC's. Rs610/t x 1e6 =
+      # 6.10e8 INR/mt, from base_ebitda 48,280 cr / 792mt (reconciles with
+      # CLSA's cited "EBITDA/t ex-OBR +5% YoY to Rs614", digest 08-07-2026).
+      # The Jul-26 print alone moved TTM offtake 751.5 -> 761.5 (+17.4% YoY
+      # month on a weak base) — the kind of step this line exists to score.
+      - item: volume_effect
+        price_link: coalindia_offtake_ttm_mt
+        volume: 610000000           # EBITDA/mt: Rs610/t x 1e6 t
+        volume_unit: INR/mt
+        source_note: >
+          d_EBITDA = EBITDA/mt x d(TTM offtake mt). Series from CIL's own
+          monthly provisional production/offtake filings (mining_filings.py;
+          FY anchors 763.0 FY25 / 744.8 FY26 from the Mar-26 filing).
+          Incremental tonnes are mostly FSA tonnes at below-average margin,
+          so Rs610 blended likely OVERSTATES a volume-led gain somewhat —
+          opposite bias to NMDC's conservative line, both flagged.
+        verify: pending
+
+    inputs:
+      # Diesel is the priced slice of the cost stack (strip ratio, contractor
+      # mining). Wages — the actual largest cost — have no price series and
+      # are deliberately NOT listed as an unpriced line. basis_item "coal"
+      # resolves through basis_group to 792mt, the SAIL mechanism.
+      - item: diesel
+        price_link: brent
+        intensity: 0.007
+        intensity_unit: bbl/t
+        basis_item: coal
+        market_pct: 1.00
+        source_note: >
+          ~Rs45-60/t of diesel in a ~Rs1,000/t cash cost (sector arithmetic;
+          "cash cost/t ex-OBR +3% QoQ (+37% YoY) on post-conflict input
+          costs", CLSA, digest 08-07-2026; "rising diesel and explosives
+          costs", BofA, 13-07-2026). At brent +$10: ~Rs530 cr, ~1.1% of
+          EBITDA — small, real, and the only daily-printing line this entity
+          has.
+        verify: pending
+
+  # ==========================================================================
+  # HINDUSTAN COPPER — "normal": one LME-linked concentrate leg
+  # ==========================================================================
+  # ZERO broker coverage in the 47-digest corpus (7 mentions, all tags on
+  # commodity prints — no note, no rating, no estimate anywhere). Everything
+  # here is primary-sourced from the FY26 Annual Report (BSE filing
+  # 27-08-2026) and Q1FY27 results (10-08-2026). Mood will therefore score
+  # thin or withhold — that is the honest state for an uncovered name, not a
+  # gap; economics is the pillar that works, because 99.1% of revenue is MIC
+  # concentrate (Rs3,049 of Rs3,078 cr FY26) priced off LME.
+  - id: hindustan_copper
+    kind: company
+    name: Hindustan Copper
+    sector: mining
+    peer_group: mining_copper       # singleton — cash-only, no pair leg; see header
+    nse_symbol: HINDCOPPER
+    effective_from: 2026-04-01
+
+    outputs:
+      - item: copper_concentrate_mic
+        price_link: lme_copper
+        volume: 27400               # t MIC/yr — FY26 produced 27,421t, sold 27,369t
+        volume_unit: t
+        basis_pass_through: 0.95
+        source_note: >
+          FY26 AR (BSE 27-08-2026): MIC production 27,421t (seven-year high),
+          MIC sales 27,369t; concentrate 17-26% Cu sold to domestic smelters
+          (Hindalco/Vedanta/Adani), invoiced provisionally and trued up on
+          final assay. Pass-through 0.95 is the payable-metal share of
+          concentrate value — the AR discloses NO TC/RC rate or LME discount,
+          so 0.95 is a convention, not a citation; attack it. Volume is the
+          FY26 run-rate against a Q1FY27x4 denominator: ore roadmap 3.67mt ->
+          4.71mt FY27 (AR chart), so MIC likely rises through FY27 — update
+          on the H1 print rather than assuming the ramp.
+        verify: pending
+    # No priced input lines: mining cash costs are rupee wages/stores with no
+    # series; a diesel sliver would be noise on a 2,032 cr base. The bridge is
+    # one-legged BY CONSTRUCTION here (a miner selling at LME with rupee
+    # costs), unlike novelis's one-legged-by-GAP — coverage 1/1 is honest.
+
+  # ==========================================================================
+  # NOT SCORED — "Leave Lloyds Metals" (PM, 2026-08-29). Also not in F&O.
+  # Entity kept so prices and mood accumulate; re-enabling is one line plus
+  # an economics block (its Q1FY27 prints are in the digests: iron ore
+  # volumes 5.46MT +58% YoY, realisations Rs6,068/t, EBITDA Rs27.8bn — Nomura
+  # downgrade note, 12-08-2026).
+  # ==========================================================================
+  - id: lloyds_metals
+    kind: company
+    name: Lloyds Metals & Energy
+    sector: mining
+    peer_group: null
+    nse_symbol: LLOYDSME
+    effective_from: 2026-04-01

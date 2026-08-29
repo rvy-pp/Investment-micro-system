@@ -785,3 +785,126 @@ companies:
       (Avendus Spark, digest 2026-08-01); "Volumes +9% yoy to 7.6mt; NSR +6%
       qoq to Rs5,118/t" (IIFL, same digest). 7.6 x 1,055 = Rs8.02bn —
       reconciles.
+
+  # ==========================================================================
+  # MINING — added 2026-08-29. Hindustan Copper carries ZERO broker coverage
+  # in the digest corpus, so its block (and the share counts / net debt on
+  # all three) is PRIMARY-SOURCED: BSE-filed results, annual report and
+  # investor decks, cross-checked share count x 28-08-2026 close = BSE's own
+  # MktCapFull to the rupee on all three names. Net debt here follows the
+  # header's precedence with the balance-sheet convention (borrowings minus
+  # cash), NOT the steel screener convention (borrowings minus investments) —
+  # these are cash-rich PSUs where investments are a sliver and cash is the
+  # story; the convention is stated per name.
+  # ==========================================================================
+  nmdc:
+    base_ebitda: 10960                 # Rs27.4bn x 4, standalone reported.
+                                       # Reconciles: EBITDA/t Rs2,333 x 11.7mt
+                                       # = Rs27.3bn (Kotak).
+    valuation_ebitda: 9870             # consolidated ex-other-income Rs24.68bn
+                                       # x 4 (screener consolidated quarters) —
+                                       # EV is whole-company.
+    shares_outstanding: 8791816830     # paid-up Rs879.18 cr, FV Re1 (Q1FY27
+                                       # filing, BSE 14-08-2026; post the
+                                       # Sep-2024 2:1 bonus). Cross-check:
+                                       # x Rs86.65 = Rs76,181.1 cr = BSE
+                                       # MktCapFull exactly (+-800 shares
+                                       # inside the rounding).
+    shares_verify: sourced
+    net_debt: -4980                    # NET CASH: borrowings Rs6,407 cr less
+                                       # cash Rs11,387 cr (Mar-2026 audited
+                                       # consolidated via screener schedules).
+                                       # JPM's thesis is capex "eroding the
+                                       # net-cash position" — expect this to
+                                       # shrink through FY27-28.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: ore
+    source_note: >
+      "1QFY27 first take — EBITDA Rs27.4bn beat KIE Rs25.6bn; EBITDA/t
+      Rs2,333 (+7% YoY, +34% QoQ); blended realisation Rs5,793/t" (Kotak,
+      Sumangal Nevatia, digest 17-08-2026). Company deck (BSE 14-08-2026)
+      prints EBITDA Rs2,817 cr including other income — a PSU with Rs11k cr
+      of cash earns real interest; the bridge base excludes it.
+    verify: sourced
+    caveat: >
+      THE QUARTER WAS FLATTERED BY AN INVENTORY BUILD: production 15.1mt vs
+      sales 11.7mt put ~Rs10.9bn of cost into inventory ("costs Rs3,460/t vs
+      KIE Rs3,862/t, flattered by inventory build", Kotak; Elara's adjusted
+      EBITDA for the same quarter is Rs24.7bn, -10%). If the sales ramp the
+      volume_effect line is watching arrives, the flattering unwinds as the
+      inventory ships — base_ebitda runs ~10% hot until then.
+
+  coal_india:
+    base_ebitda: 48280                 # Rs120.7bn x 4, consolidated
+                                       # EX-other-income (screener op profit
+                                       # Rs12,069 cr; company deck's Rs14,349
+                                       # cr includes Rs2,281 cr other income —
+                                       # Rs52k cr of net cash earns it).
+                                       # Reconciles: /792mt = Rs610/t vs
+                                       # CLSA's cited Rs614/t ex-OBR.
+    valuation_ebitda: 48280
+    shares_outstanding: 6162728327     # paid-up Rs6,162.73 cr, FV Rs10
+                                       # (Q1FY27 filing, BSE 27-07-2026).
+                                       # Cross-check: x Rs401.00 =
+                                       # Rs2,47,125.4 cr = BSE MktCapFull
+                                       # exactly.
+    shares_verify: sourced
+    net_debt: -38502                   # NET CASH: borrowings Rs14,072 cr less
+                                       # cash & bank Rs52,574 cr (Mar-2026
+                                       # audited consolidated via screener;
+                                       # ~-Rs48.7k cr if the Rs10.2k cr of
+                                       # investments count too). The single
+                                       # biggest net-cash position in the
+                                       # book; the ~6.5% dividend yield (UBS)
+                                       # is its product.
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: coal
+    source_note: >
+      Q1FY27 consolidated revenue Rs46,255 cr, EBITDA Rs14,349 cr incl. other
+      income / Rs12,069 cr ex-OI (CIL deck + screener, BSE 27-07-2026).
+      Broker EBITDA prints for the SAME quarter span Rs120bn (CLSA) to
+      Rs143.5bn (Emkay) on an accounting-policy change ("distorted reported
+      revenue/EBITDA", Kotak, digest 28-07-2026) — the ex-OI basis is used
+      because it reconciles with CLSA's per-tonne figure and with the
+      dispatch denominator.
+    verify: sourced
+    caveat: >
+      The accounting-policy change means cross-broker EBITDA comparisons for
+      FY27 quarters are basis-fights, not disagreements about the business.
+      Anchor on EBITDA/t (~Rs610) and volumes when the Q2 print lands.
+
+  hindustan_copper:
+    base_ebitda: 2032                  # Rs508 cr x 4, Q1FY27 consolidated
+                                       # operating profit (54% OPM — LME
+                                       # copper at record highs; FY26 full
+                                       # year was Rs1,462 cr at 48%).
+    valuation_ebitda: 2032
+    shares_outstanding: 967024020      # FY26 AR (BSE 27-08-2026), FV Rs5,
+                                       # paid-up Rs483.51 cr; unchanged
+                                       # through the Aug-2026 promoter OFS.
+                                       # Cross-check: x Rs533.50 =
+                                       # Rs51,590.7 cr = BSE MktCapFull
+                                       # exactly.
+    shares_verify: sourced
+    net_debt: -699                     # NET CASH: borrowings Rs111 cr less
+                                       # cash Rs810 cr (Mar-2026 consolidated;
+                                       # company's own loan-trend chart shows
+                                       # borrowings down to Rs90 cr by Jul-26).
+    net_debt_verify: sourced
+    valuation_metric: ev_ebitda
+    primary_output: copper_concentrate_mic
+    source_note: >
+      Q1FY27 (BSE 10-08-2026): revenue Rs936.5 cr, operating profit Rs508 cr,
+      PAT Rs352 cr. NO broker estimate exists in the digest corpus to
+      reconcile against — the reconciliation is internal: FY26 revenue
+      Rs3,078 cr of which MIC concentrate Rs3,049 cr (99.1%), on 27,369t
+      sold, ~Rs11.1 lakh/t of concentrate value.
+    verify: sourced
+    caveat: >
+      base_ebitda annualises a PEAK quarter — Q1 caught LME copper +63% YoY
+      (Kotak, digest 09-08-2026) at 54% OPM against 48% for FY26. A copper
+      retracement shrinks the denominator fast; the Rs473/t-class error here
+      is reading a margin print as structure. Watch the announced
+      fund-raising (BSE intimation 27-08-2026) for dilution.

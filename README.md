@@ -165,8 +165,9 @@ prints that list every run rather than implying completeness it does not have.
 
 ## Status
 
-**Six peer groups score on live data across two sectors**, 13 entities, as of
-2026-08-25.
+**Seven peer groups score on live data across four sectors** — 17 scored
+names — as of 2026-08-29. (steel_stainless and steel_secondary were dropped
+2026-08-25/26 on evidence; their names sit at `peer_group: null`.)
 
 | sector | peer group | names |
 |---|---|---|
@@ -174,8 +175,17 @@ prints that list every run rather than implying completeness it does not have.
 | | `zinc` | hindustan_zinc, vedanta |
 | Steel | `steel_integrated` | tata_steel, jsw_steel, jindal_steel, sail |
 | | `steel_converter` | apl_apollo |
-| | `steel_stainless` | jindal_stainless — economics **withheld** |
-| | `steel_secondary` | shyam_metalics — economics **withheld** |
+| Cement | `cement` | ultratech, ambuja, shree, dalmia |
+| Mining | `mining_bulk` | nmdc, coal_india |
+| | `mining_copper` | hindustan_copper — NOT in F&O, scored by PM decision, cash-only |
+
+Mining (2026-08-29) is the first sector where VOLUMES are a scored driver:
+both PSU miners file monthly, and a `volume_effect` line prices the
+trailing-12M volume delta at EBITDA/t. Its output prices are the issuers' own
+filings — NMDC's circulars and Coal India's SWMA e-auction premium — parsed
+by `adapters/mining_filings.py`, so the drivers are administered/auction
+series no benchmark feed carries. Lloyds Metals is `peer_group: null` by the
+same PM instruction ("leave Lloyds Metals").
 
 Aluminium is still the proving ground: alumina's sign flips across the group,
 which is exactly what an absolute per-company score cannot express. **Steel is

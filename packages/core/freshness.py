@@ -150,6 +150,36 @@ FEEDS = {
     "cement_price_east_inr":    ("Daily Cement Pack — monthly", 45, "monthly"),
     "cement_price_west_inr":    ("Daily Cement Pack — monthly", 45, "monthly"),
     "cement_price_south_inr":   ("Daily Cement Pack — monthly", 45, "monthly"),
+
+    # --- mining, added 2026-08-29 ---
+    "nmdc":              ("Yahoo .NS", 2, "feed"),
+    "coal_india":        ("Yahoo .NS", 2, "feed"),
+    "hindustan_copper":  ("Yahoo .NS", 2, "feed"),
+    "lloyds_metals":     ("Yahoo .NS", 2, "feed"),
+    # UNPARKED 2026-08-29: hindustan_copper's spec price_links it — the
+    # PARKED_FEEDS rule ("move a series OUT the moment a spec links it").
+    # Pack column, daily, same 3-day rule as the other pack dailies.
+    "lme_copper":        ("Daily Metals Pack", 3, "assessed"),
+    # CIL files production/offtake and SWMA e-auction ~the 1st of the next
+    # month (mining_filings.py --fetch); month-end stamping means a healthy
+    # feed's newest row is ~30-33 calendar days old just before the next
+    # filing. 50 covers a late filing without crying wolf monthly.
+    "coalindia_offtake_ttm_mt":      ("CIL monthly filing", 50, "monthly"),
+    "coal_eauction_realisation_inr": ("CIL SWMA filing — monthly", 50, "monthly"),
+    # NMDC's monthly print reaches the digests days after the filing, but the
+    # loading path is the DESK LEDGER (mining_prints.json) because nmdc.co.in
+    # uploads ~6 months late — so the threshold covers a digest gap plus the
+    # hand-entry lag, not just the filing cadence.
+    "nmdc_sales_ttm_mt":  ("NMDC filing via digest ledger — monthly", 60, "monthly"),
+    # Administered prices move on NMDC's own circulars, roughly monthly in
+    # 2026 but with no fixed schedule — the loader stamps CHANGE EVENTS, not
+    # daily carries, so two quiet months are a legitimate state.
+    "nmdc_lumps_inr":     ("NMDC circular via digest ledger", 75, "monthly"),
+    "nmdc_fines_inr":     ("NMDC circular via digest ledger", 75, "monthly"),
+    # No automated source CAN exist: it moves on a notified price hike, an
+    # administered decision with no schedule (last visible watch item: CLSA
+    # 08-07-2026). Reported, never a breach — the cp_coke "manual" logic.
+    "coal_fsa_realisation_inr": ("quarterly cited derivation", 120, "manual"),
 }
 
 # CAPTURED BUT NOT MODELLED. Loaded from the pack so the history exists for the
@@ -159,7 +189,7 @@ FEEDS = {
 # is trained to ignore this report, which is the only way it can fail.
 # Move a series OUT of here the moment a spec price_links it.
 PARKED_FEEDS = [
-    "lme_lead", "lme_copper", "lme_nickel", "gold", "dxy",
+    "lme_lead", "lme_nickel", "gold", "dxy",
     "iron_ore_china_cfr62", "iron_ore_china_import62", "iron_ore_sgx_tsi62",
     "iron_ore_futures_china_cny",
     "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",

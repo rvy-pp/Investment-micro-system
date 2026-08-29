@@ -147,8 +147,11 @@ COLS = {
 # iron_ore_china_cfr62 and coking_coal_spot_aus left when STEEL price_linked
 # them (2026-08-25 — they had lingered here three days in violation of this
 # set's own rule), and thermal_coal_indonesia_6322 left for CEMENT.
+# lme_copper left 2026-08-29 when MINING price_linked it (hindustan_copper's
+# concentrate leg) — the same unparking rule as the steel five and cement's
+# coal line.
 PARKED = {
-    "lme_lead", "lme_copper", "lme_nickel", "gold", "dxy",
+    "lme_lead", "lme_nickel", "gold", "dxy",
     "iron_ore_china_import62", "iron_ore_sgx_tsi62",
     "iron_ore_futures_china_cny",
     "hrc_china_export_fob", "hrc_china_domestic", "hrc_cis_fob",

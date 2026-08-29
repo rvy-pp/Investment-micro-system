@@ -79,6 +79,16 @@ STEPS = [
     # Monthly series, but pulled daily because the cost is one request and the
     # failure mode of forgetting is a coal price that silently ages for weeks.
     ("FRED coal",         ["packages/adapters/fred_prices.py", "--load"],     False),
+    # Mining primary-source filings: CIL production/offtake + SWMA e-auction
+    # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
+    # (currently ~6 months stale — the fetch no-ops until the site catches up,
+    # and NMDC's recent months arrive via specs/extracted/mining_prints.json).
+    # Fetch is monthly-cadence work run daily for the same reason as FRED:
+    # one page request each, and the failure mode of forgetting is a volume
+    # series that silently ages. --load recomputes from staging + ledger, so
+    # a hand-edit to mining_prints.json lands on the next refresh.
+    ("mining filings (fetch)", ["packages/adapters/mining_filings.py", "--fetch"], False),
+    ("mining filings (load)",  ["packages/adapters/mining_filings.py", "--load"],  False),
     # THE PACK IS NO LONGER AN AGENT-ONLY STEP. Promoted 2026-08-24, same shape
     # as westmetall's promotion: the "needs an agent" was inferred from the M365
     # connector's limits and never tested against Outlook itself. Outlook has the

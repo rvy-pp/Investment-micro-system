@@ -433,8 +433,9 @@ why `combined.py` reports spread and not just the average.
 **Not built:** `signals` (no directional call with a falsifier is emitted),
 `outcomes` (nothing grades them), the in-flavour/out-of-flavour regime gate
 (scoped as Flows — `docs/FLOWS.md`), OI as a conviction modifier, book ingestion,
-cement's P4 guidance ledger, and Mining / EMS / IT / Autos. **Steel IS built as
-of 2026-08-25** and **Cement as of 2026-08-28** — see the sections below.
+cement's and mining's P4 guidance ledgers, and EMS / IT / Autos. **Steel IS
+built as of 2026-08-25**, **Cement as of 2026-08-28** and **Mining as of
+2026-08-29** — see the sections below.
 
 **The gate that still stands.** The backtest exists now
 (`python packages/review/backtest.py`) and has been run. It does NOT pass the
@@ -759,6 +760,98 @@ empty for every Indian fundamental field), and `Stock`. Unlike the metals pack
 there is no urgency: the connector returns the full history every morning, so
 "a series you are not capturing today is history you cannot recover" does not
 apply here.
+
+## Mining — LIVE 2026-08-29: three scored names, volumes as a driver
+
+PM instruction verbatim: NMDC, Coal India, Hindustan Copper; leave Lloyds
+Metals; NMDC gets the effect of volumes every month; Coal India gets volumes
+plus e-auction premiums in economics; Hindustan Copper is normal. Two peer
+groups — `mining_bulk` (nmdc, coal_india) and `mining_copper`
+(hindustan_copper, a singleton). **Hindustan Copper is NOT in F&O and is
+scored anyway — that is the PM's explicit invariant-7 exception, recorded in
+`specs/sectors/mining.yaml`. Cash-only expression: long/avoid signal, never a
+pair leg.** Zero new engine code, zero placeholders.
+
+**THE STRUCTURAL CLAIM, tested not asserted: THE DRIVER SETS THE NAME.** The
+inverse of steel/cement — these three sell on three unrelated mechanisms
+(NMDC's own circulars, CIL's SWMA auction premium, LME copper), and the
+validation runs in the sector yaml show every shock reaching exactly one
+name. The interesting spread is cross-sector: an NMDC cut is NMDC-negative
+and JSW/JSPL-positive on external ore.
+
+**VOLUMES ARE A SCORED DRIVER — the first sector where they are.** Both PSU
+miners file monthly. The mechanism costs no engine code: a `volume_effect`
+output line links a trailing-12M volume series and carries EBITDA-per-mt in
+its `volume` field, so the ordinary volume x delta arithmetic yields
+EBITDA/t x d(TTM tonnes). TTM is what makes monthly prints meaningful — its
+MoM delta is exactly the YoY monthly increment, so monsoon seasonality
+cancels. And the TTM needs NO history chain: every filing carries this-year
+AND last-year, monthly AND FYTD, so `TTM = FY_prev_total + (FYTD − FYTD_LY)`
+comes out of ONE document; gaps cost a point, never the months after it.
+Scale: the 60-vs-55mt NMDC FY27 guidance debate is worth ~10.7% of its
+EBITDA through this line; CIL's July print alone stepped TTM offtake
+751.5 → 761.5mt (+17.4% YoY month).
+
+**E-auction premiums enter as a REALISATION SERIES, and they are material.**
+`coal_eauction_realisation_inr` = notified base Rs1,614/t x (1 + the SWMA
+filing's CIL-total monthly premium). The base is derived (Kotak's cited Q1
+auction realisation Rs2,321/t / 1.438) and the 1.438 is CROSS-VALIDATED: the
+SWMA Q1 volume-weighted premium computes to 43.8% against UBS's independently
+cited "avg 44% in Q1". A 10pp premium month = ±3.4% of CIL EBITDA; the
+observed 2026 range (33%..51%) spans ~6%. The FSA leg (87% of tonnes) sits on
+a derived Rs1,487/t series that moves only on a notified hike — deliberately
+near-static, `kind: manual` in freshness so it never false-alarms.
+
+**THE NMDC BASIS BREAK — the catch that would have been a fake price crash.**
+NMDC's circulars changed basis on 2026-01-09: through Nov-2025 the FOR prices
+are INCLUSIVE of Royalty+DMF+NMET, from Jan-2026 EXCLUSIVE. Naively loading
+the sequence books a ~Rs1,000/t January "cut" (5,600 → 4,600 lumps) that is
+~18% basis redefinition — consistent with 15% royalty x 1.32 gross-up.
+`mining_filings.py` parses the basis SENTENCE of every circular and refuses
+anything not `ex_royalty`; the series therefore starts 2026-01-09 and the
+eight older circulars are recorded-and-refused, not loaded. Corollary: the
+royalty input lines (intensity 0.25 of the price move, both legs) are
+anchored by the same wedge plus JPM's royalty/t prints.
+
+**Data plumbing, and where the upkeep seam is.** `adapters/mining_filings.py`
+(--fetch/--load/--selftest, both steps in refresh.py) parses coalindia.in's
+monthly production/offtake and SWMA pages — timely, ~1st of the month — and
+NMDC's CMS API (the Angular bundle's own public read key). **The NMDC website
+lags ~6 months**, so NMDC's recent months and price changes are hand-entered
+into `specs/extracted/mining_prints.json` from the digests, every row
+source-noted; the fetch picks the site back up whenever it catches up, and
+identical months overwrite at equal rank ("filing", 40, registered in
+prices_io). Two CIL months (May/Jun-26) are OCR scans the parser refuses —
+hand-verified into staging with digest corroboration recorded. THE MONTHLY
+CHORE: when a digest carries NMDC's monthly print (~2nd-4th) or a circular,
+add the row to mining_prints.json; CIL needs nothing.
+
+**Extraction traps, both measured live in the corpus before writing the
+patterns:** bare `\bHCL\b` is HCL TECHNOLOGIES all 11 times (the bare-JSW
+class — Hindustan Copper matches full name and tag only), and `\bNMDC\b`
+matches inside "NMDC Steel" (NSLNISP, the demerged plant — also the "NSL"
+whose receivables sit on NMDC's book), guarded by a named_in() sentence
+disqualifier, the JK Lakshmi mechanism. Yahoo search paid again too: a bare
+"NMDC" query returns NMDC STEEL first, so the CANDIDATES pattern requires
+"nmdc ltd".
+
+**Financials are primary-sourced** (HC has ZERO broker coverage in 47
+digests — 7 mentions, all tags): BSE-filed results/AR/decks, all three share
+counts cross-checked to BSE's MktCapFull to the rupee, net debt on the
+borrowings-minus-cash convention (all three are NET CASH; CIL by Rs38.5k cr,
+the biggest in the book). Three caveats that will bite if forgotten: NMDC's
+base quarter is ~10% flattered by a Rs10.9bn inventory build (Elara adj
+24.7bn vs Kotak 27.4bn — the volume line watching the sales ramp is also
+watching this unwind); CIL's FY27 EBITDA prints are basis-fights after an
+accounting-policy change (anchor on EBITDA/t ~Rs610 and volumes); HC's
+2,032 cr base annualises a 54%-OPM quarter at record LME copper, and a
+fund-raising intimation (BSE 27-08-2026) may dilute the share count.
+
+**P4 withholds for all three** (cement-consistent; weight 0.00). The next P4
+step writes itself: NMDC's 60mt guide and Emkay's 815mt CIL model graded
+MONTHLY against the TTM series. Mining's mood: NMDC scores (fresh mid-Aug
+actions), CIL's results-week actions have decayed past the half-life, HC has
+nothing to extract — all three states honest.
 
 ## What P1 is — settled 2026-08-18
 

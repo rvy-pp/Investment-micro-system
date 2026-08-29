@@ -115,6 +115,25 @@ NAME_PATTERNS = [
     ("nuvoco",     r"\bNuvoco\b|\bNUVOCO\b|#Nuvoco\b"),
     ("star_cement", r"\bStar Cement\b|\bSTRCEM\b|#StarCement\b"),
     ("jsw_cement", r"\bJSW Cement\b|\bJSWCEMEN\b|#JSWCement\b"),
+    # --- mining, added 2026-08-29 ---
+    # Shorthands measured in the corpus before being written, per the steel
+    # rule: \bNMDC\b 75 hits, "Coal India" 13, \bCIL\b 1 (rare but real —
+    # Emkay writes "CIL June-26 production declined 1% YoY").
+    #
+    # TWO TRAPS, both counted live in the corpus:
+    #   - NO BARE \bHCL\b — all 11 corpus hits are HCL TECHNOLOGIES / HCL
+    #     Software (IT coverage, same digests). The bare-JSW class exactly.
+    #     Hindustan Copper is matched by its full name and tag only.
+    #   - NMDC STEEL (NSLNISP) is a different listed company — the demerged
+    #     steel plant, also the "NSL" whose receivables NMDC carries. \bNMDC\b
+    #     matches inside "NMDC Steel", so a sentence-disqualifier in
+    #     named_in() guards it, the JK Lakshmi mechanism. (Bare "NSL" is NOT
+    #     disqualifying: "NSL receivables Rs45bn" bullets are about NMDC's
+    #     own balance sheet and correctly fall back to the #NMDC bullet tag.)
+    ("nmdc",              r"\bNMDC\b|#NMDC\b"),
+    ("coal_india",        r"\bCoal India\b|\bCIL\b|#CoalIndia\b"),
+    ("hindustan_copper",  r"\bHindustan Copper\b|#HindustanCopper\b"),
+    ("lloyds_metals",     r"\bLloyds Metals\b|#LloydsMetals\b"),
 ]
 
 
@@ -132,6 +151,12 @@ def named_in(sent: str) -> list[str]:
             # sentence for jk_cement, in either order; a lookahead in the
             # pattern only guarded one direction.
             if eid == "jk_cement" and re.search(r"JK Lakshmi", sent, re.I):
+                continue
+            # NMDC STEEL LIMITED (NSLNISP) is the demerged steel plant, a
+            # separate listed company — \bNMDC\b matches inside its name, so
+            # any sentence naming it is disqualified for the miner. Same
+            # mechanism as the JK Lakshmi guard above.
+            if eid == "nmdc" and re.search(r"NMDC Steel|NSLNISP", sent, re.I):
                 continue
             found.append(eid)
     return found

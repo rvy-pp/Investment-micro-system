@@ -390,12 +390,43 @@ SECTORS = [
         # today"; this tab is where the per-region detail belongs.
         "watch": True,
     },
+    {
+        "id": "mining",
+        "label": "Mining",
+        # LIVE 2026-08-29. Two peer groups: mining_bulk (nmdc, coal_india —
+        # the two F&O names, administered/auction domestic bulk) and
+        # mining_copper (hindustan_copper alone — LME-linked, NOT in F&O,
+        # scored on explicit PM instruction as a cash-only expression; its
+        # singleton group keeps every default pair inside mining_bulk).
+        # lloyds_metals is peer_group: null ("Leave Lloyds Metals", PM).
+        # See specs/sectors/mining.yaml for the validation runs.
+        "peer_groups": ["mining_bulk", "mining_copper"],
+        "commodities": [
+            "nmdc_lumps_inr", "nmdc_fines_inr", "nmdc_sales_ttm_mt",
+            "coal_eauction_realisation_inr", "coal_fsa_realisation_inr",
+            "coalindia_offtake_ttm_mt",
+            "lme_copper", "iron_ore_china_cfr62", "thermal_coal_seaborne",
+            "brent", "usdinr",
+        ],
+        # NMDC's own circular sequence — the sector's administered output
+        # price, one axis, Rs/t as filed (ex-royalty basis from 2026-01-09;
+        # earlier inclusive-basis circulars are deliberately NOT in the
+        # series, so the chart starts where the current measure starts).
+        "chart": {
+            "ids": ["nmdc_lumps_inr", "nmdc_fines_inr"],
+            "divide": 1.0,
+            "unit": "Rs/t",
+            "marks": [{"d": "2026-08-08",
+                       "label": "Aug-26 circular — 2nd consecutive cut"}],
+        },
+    },
 ]
 
 # Series the pack carries that no sector claims yet. Surfaced so a captured
 # column cannot go quietly unused — the reason for capturing them at all is that
 # the connector route can never backfill.
-UNCLAIMED_HINT = ["lme_lead", "lme_copper", "lme_nickel", "gold", "dxy"]
+# lme_copper left 2026-08-29 — mining claims it (hindustan_copper).
+UNCLAIMED_HINT = ["lme_lead", "lme_nickel", "gold", "dxy"]
 
 
 def sector_list() -> list[dict]:
