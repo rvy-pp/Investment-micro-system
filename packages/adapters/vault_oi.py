@@ -76,6 +76,17 @@ NAMES = {
     "Coal India": "coal_india",
     "Hindustan Copper": "hindustan_copper",
     "Lloyds Metals": "lloyds_metals",
+    # --- ems, added 2026-08-30, same collision check run: none of these six
+    # folder names appears under any other Coverage/<sector>/. Syrma SGS and
+    # Avalon carry `status: not_in_fno` and are skipped by the status check —
+    # mapped anyway so a future F&O listing starts loading without an edit
+    # here (the mining convention).
+    "Dixon": "dixon",
+    "Amber": "amber",
+    "Kaynes": "kaynes",
+    "PG Electroplast": "pg_electroplast",
+    "Syrma SGS": "syrma_sgs",
+    "Avalon": "avalon",
 }
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",

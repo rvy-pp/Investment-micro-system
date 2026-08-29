@@ -26,6 +26,10 @@ data/staging/*
 !data/staging/mining/
 data/staging/mining/*
 !data/staging/mining/*.json
+# Yahoo consensus-estimate captures (EMS forward P/E) stage the same way.
+!data/staging/estimates/
+data/staging/estimates/*
+!data/staging/estimates/*.json
 snapshots/
 !snapshots/.gitkeep
 

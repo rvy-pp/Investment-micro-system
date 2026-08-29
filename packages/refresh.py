@@ -89,6 +89,16 @@ STEPS = [
     # a hand-edit to mining_prints.json lands on the next refresh.
     ("mining filings (fetch)", ["packages/adapters/mining_filings.py", "--fetch"], False),
     ("mining filings (load)",  ["packages/adapters/mining_filings.py", "--load"],  False),
+    # EMS consensus EPS (Yahoo earningsTrend, cookie+crumb, stdlib-only — no
+    # login, so an ordinary unattended step). Daily because the P3 forward-P/E
+    # scorer gates on capture age (30d) and, longer-term, because the
+    # accumulated captures are the only route to an own-history variant —
+    # historical consensus can never be backfilled, the same "a series you
+    # are not capturing today is history you cannot recover" logic as the
+    # pack. Fetch stages data/staging/estimates/; load is idempotent per
+    # capture date.
+    ("EMS consensus (fetch)", ["packages/adapters/yahoo_estimates.py", "--fetch"], False),
+    ("EMS consensus (load)",  ["packages/adapters/yahoo_estimates.py", "--load"],  False),
     # THE PACK IS NO LONGER AN AGENT-ONLY STEP. Promoted 2026-08-24, same shape
     # as westmetall's promotion: the "needs an agent" was inferred from the M365
     # connector's limits and never tested against Outlook itself. Outlook has the

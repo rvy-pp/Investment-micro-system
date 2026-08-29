@@ -100,6 +100,19 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "coal_india":       [("COALINDIA.NS", r"coal\s*india")],
     "hindustan_copper": [("HINDCOPPER.NS", r"hindustan\s*copper")],
     "lloyds_metals":    [("LLOYDSME.NS", r"lloyds\s*metals")],
+    # --- equities: ems, added 2026-08-30 ---
+    # All six resolved before being written here (the four F&O names verified
+    # against meta.longName on the chart API, Syrma/Avalon via yahoo_search.py).
+    # The name patterns matter twice in this set: "Amber" alone is a common
+    # word (Amber Road, amber alerts) so the pattern requires "enterprises",
+    # and "Avalon" alone matches AVALON HOLDINGS (AWX) and the aircraft lessor
+    # the digests themselves flag — the pattern requires "technologies".
+    "dixon":            [("DIXON.NS", r"dixon\s*tech")],
+    "amber":            [("AMBER.NS", r"amber\s*enterprises")],
+    "kaynes":           [("KAYNES.NS", r"kaynes\s*tech")],
+    "pg_electroplast":  [("PGEL.NS", r"pg\s*electroplast")],
+    "syrma_sgs":        [("SYRMA.NS", r"syrma\s*sgs")],
+    "avalon":           [("AVALON.NS", r"avalon\s*tech")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -147,6 +160,7 @@ EQUITIES = {
     "jindal_stainless", "shyam_metalics", "apl_apollo",
     "ultratech", "ambuja", "shree", "dalmia",
     "nmdc", "coal_india", "hindustan_copper", "lloyds_metals",
+    "dixon", "amber", "kaynes", "pg_electroplast", "syrma_sgs", "avalon",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.

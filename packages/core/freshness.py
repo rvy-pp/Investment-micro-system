@@ -180,6 +180,18 @@ FEEDS = {
     # administered decision with no schedule (last visible watch item: CLSA
     # 08-07-2026). Reported, never a breach — the cp_coke "manual" logic.
     "coal_fsa_realisation_inr": ("quarterly cited derivation", 120, "manual"),
+
+    # --- ems, added 2026-08-30 ---
+    # Six equities; the four F&O names gate their own P3 (a stale close under
+    # a current consensus is a wrong forward P/E). The consensus feed itself
+    # is NOT here — it lives in `estimates`, not `prices`, and valuation_pe
+    # gates on capture age (30d) directly; this file watches `prices` only.
+    "dixon":            ("Yahoo .NS", 2, "feed"),
+    "amber":            ("Yahoo .NS", 2, "feed"),
+    "kaynes":           ("Yahoo .NS", 2, "feed"),
+    "pg_electroplast":  ("Yahoo .NS", 2, "feed"),
+    "syrma_sgs":        ("Yahoo .NS", 2, "feed"),
+    "avalon":           ("Yahoo .NS", 2, "feed"),
 }
 
 # CAPTURED BUT NOT MODELLED. Loaded from the pack so the history exists for the
