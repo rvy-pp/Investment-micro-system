@@ -195,6 +195,16 @@ def compute_row(conn, eid: str, as_of: str) -> tuple[dict | None, str | None]:
     fwd_pe = close / eps_12mf
     peg = fwd_pe / (g * 100.0)
 
+    # Trailing (normal) P/E — DISPLAY ONLY, PM request 2026-08-30. Never in
+    # the score: trailing E is distorted exactly where it matters here
+    # (Dixon's TTM carries a one-off so its trailing P/E reads BELOW its
+    # forward; Amber's trough TTM reads ~294x). Shown so the forward multiple
+    # can be judged against the number every screener quotes.
+    ttm_pe = None
+    e_ttm = (est.get("TTM") or {}).get("eps_ttm")
+    if e_ttm and e_ttm > 0:
+        ttm_pe = close / e_ttm
+
     # Revision momentum — the street repricing the P&L. DISPLAY ONLY: it is
     # not part of the score (it is a direction-of-estimates signal, not a
     # cheapness one) but it is the context a PEG must be read in — today
@@ -213,7 +223,7 @@ def compute_row(conn, eid: str, as_of: str) -> tuple[dict | None, str | None]:
         "fy1": fy1, "fy2": fy2, "eps_fy1": e1, "eps_fy2": e2,
         "n_analysts": n1, "w_fy1": round(w, 3),
         "eps_12mf": eps_12mf, "fwd_pe": fwd_pe, "growth": g, "peg": peg,
-        "rev_90d": rev_90d,
+        "rev_90d": rev_90d, "ttm_pe": ttm_pe,
     }, None
 
 
@@ -259,6 +269,8 @@ def scores_for_group(conn, group_ents: list[dict], as_of: str) -> dict:
             "consensus_as_of": r["capture"],
             "rev_90d": (round(r["rev_90d"], 4)
                         if r["rev_90d"] is not None else None),
+            "ttm_pe": (round(r["ttm_pe"], 1)
+                       if r["ttm_pe"] is not None else None),
         }
         out[eid] = (s, raw, detail, None)
     for eid, why in held.items():

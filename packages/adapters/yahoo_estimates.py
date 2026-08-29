@@ -52,8 +52,14 @@ from yahoo_prices import UA  # noqa: E402
 DB = REPO / "data" / "ims.db"
 STAGING = REPO / "data" / "staging" / "estimates"
 
+# earningsTrend carries the forward consensus; defaultKeyStatistics carries
+# trailingEps, so the panel can show the NORMAL (trailing) P/E beside the
+# forward one (PM request 2026-08-30). Trailing is display-only — the EMS
+# score stays on the forward blend, because trailing E is distorted exactly
+# where it matters here (Dixon's carries a one-off, Amber's is a trough that
+# reads 294x).
 Q = ("https://query2.finance.yahoo.com/v10/finance/quoteSummary/{sym}"
-     "?modules=earningsTrend&crumb={crumb}")
+     "?modules=earningsTrend,defaultKeyStatistics&crumb={crumb}")
 
 # entity_id -> Yahoo symbol. EMS only for now — the P/E-scored sector. The
 # symbols are the same ones yahoo_prices.CANDIDATES resolved by name; keep the
@@ -124,8 +130,10 @@ def fetch(out_dir: pathlib.Path = STAGING) -> pathlib.Path:
     for eid, sym in SYMS.items():
         try:
             blob = json.load(op.open(Q.format(sym=sym, crumb=crumb), timeout=20))
-            trend = (blob["quoteSummary"]["result"][0]
-                     .get("earningsTrend", {}).get("trend", []))
+            res0 = blob["quoteSummary"]["result"][0]
+            trend = res0.get("earningsTrend", {}).get("trend", [])
+            trailing_eps = _raw(res0.get("defaultKeyStatistics") or {},
+                                "trailingEps")
         except Exception as exc:
             print(f"  {eid:16} FETCH FAILED {type(exc).__name__}: {str(exc)[:60]}")
             doc["entities"][eid] = {"symbol": sym, "error": str(exc)[:200]}
@@ -147,10 +155,11 @@ def fetch(out_dir: pathlib.Path = STAGING) -> pathlib.Path:
                 "down_30d":    _raw(rev, "downLast30days"),
                 "growth":      _raw(t, "growth"),
             })
-        doc["entities"][eid] = {"symbol": sym, "trend": rows}
+        doc["entities"][eid] = {"symbol": sym, "trend": rows,
+                                "trailing_eps": trailing_eps}
         got = ", ".join(f"{r['period']}={r['eps']}(n={r['n_analysts']})"
                         for r in rows)
-        print(f"  {eid:16} {got}")
+        print(f"  {eid:16} {got}, ttm={trailing_eps}")
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"yahoo_estimates_{today}.json"
     path.write_text(json.dumps(doc, indent=2), encoding="utf-8")
@@ -194,6 +203,19 @@ def load(path: pathlib.Path | None = None) -> int:
 
     n = 0
     for eid, ent in (doc.get("entities") or {}).items():
+        # Trailing EPS under its own period label so it can never be mistaken
+        # for a fiscal-year consensus row (compute_row selects periods by the
+        # FY prefix, so 'TTM' is invisible to the forward blend by shape).
+        if ent.get("trailing_eps") is not None:
+            conn.execute(
+                "INSERT INTO estimates (source_id,entity_id,broker,as_of,"
+                "period,metric,value_num,unit,quote,created_at) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (sid, eid, "consensus_yahoo", as_of, "TTM", "eps_ttm",
+                 float(ent["trailing_eps"]), "INR/sh",
+                 f"Yahoo trailingEps {ent['trailing_eps']} "
+                 f"(reported TTM, captured {as_of})", now))
+            n += 1
         for r in ent.get("trend") or []:
             if r.get("eps") is None:
                 continue

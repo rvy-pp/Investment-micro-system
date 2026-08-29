@@ -127,12 +127,13 @@ mining filings (fetch)   CIL production/offtake + SWMA e-auction from
 mining filings (load)    staging + ledger -> the six mining series (source
                          'filing'). Recomputes every run, so a hand-edit to
                          mining_prints.json lands on the next refresh
-EMS consensus (fetch)    Yahoo earningsTrend for the six EMS names — crumb
-                         dance, stdlib-only, no login. Stages
+EMS consensus (fetch)    Yahoo earningsTrend + trailingEps for the six EMS
+                         names — crumb dance, stdlib-only, no login. Stages
                          data/staging/estimates/yahoo_estimates_<date>.json.
                          Daily on purpose: historical consensus can never be
                          backfilled, and the P3 forward-P/E scorer withholds
-                         past a 30d capture age
+                         past a 30d capture age. Trailing (normal) P/E is
+                         display-only on the EMS panel, never scored
 EMS consensus (load)     -> the `estimates` table (NOT prices — an EPS is not
                          a price and must not become bridge-shockable).
                          Idempotent per capture date

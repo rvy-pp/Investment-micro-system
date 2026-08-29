@@ -521,6 +521,8 @@ def consensus_panel(sector_id: str) -> dict:
             "eps_fy2": round(row["eps_fy2"], 2),
             "n_analysts": int(row["n_analysts"]),
             "fwd_pe": round(row["fwd_pe"], 1),
+            "ttm_pe": (round(row["ttm_pe"], 1)
+                       if row.get("ttm_pe") is not None else None),
             "growth": round(row["growth"], 4),
             "peg": round(row["peg"], 3),
             "rev_90d": (round(row["rev_90d"], 4)
