@@ -1676,8 +1676,13 @@ async function loadSector(){
   let chartHtml = '';
   if (d.price_chart && d.price_chart.series.some(s => s.pts.length > 1)){
     const pc = d.price_chart;
+    /* Legend labels from series ids, sector-agnostically: strip the shared
+       prefix the sector's own ids carry (cement_price_east_inr -> east,
+       nmdc_lumps_inr -> lumps) rather than hardcoding one sector's prefix —
+       mining's chart rendered "nmdc_lumps" raw until this was generalised. */
     const region = id => {
-      const r = id.replace(/^cement_price_/, '').replace(/_inr$/, '');
+      const r = id.replace(/^cement_price_/, '').replace(/^nmdc_/, '')
+                  .replace(/_inr$/, '').replace(/_/g, ' ');
       return r === 'india' ? 'all-India' : r;
     };
     const drawn = pc.series.filter(s => s.pts.length > 1)
@@ -1710,12 +1715,13 @@ async function loadSector(){
       esc(s.label) + '</span>').join('') + '</div>';
     const markNote = (pc.marks || []).map(m =>
       `<p class="note hint">Rule at ${esc(m.d)}: ${esc(m.label || '')}</p>`).join('');
-    chartHtml = `<h2>${esc(d.label)} price by region · ${esc(pc.unit)} · monthly</h2>
-      ${legend}${svg}${markNote}
-      <p class="note">Kotak pack levels. These run ~Rs30/bag above Nomura's
-        trade-only channel checks — a basis difference, recorded in
-        <code>adapters/cement_pack.py</code>; the deltas are what matter.
-        The current month is a month-to-date average dated at its capture.</p>`;
+    /* Title and caption come from the API (engine.SECTORS chart dict) —
+       they were hardcoded here until 2026-08-30, when mining's chart rendered
+       under cement's "by region" heading and Kotak-vs-Nomura caption. */
+    const capNote = pc.caption
+      ? `<p class="note">${esc(pc.caption)}</p>` : '';
+    chartHtml = `<h2>${esc(pc.title || (d.label + ' prices'))}</h2>
+      ${legend}${svg}${markNote}${capNote}`;
   }
 
   /* ------- the IndiaMART watch, where the sector carries one -------
@@ -1893,11 +1899,18 @@ loadSectorNav()
     showErr('sector nav: ' + e.message);
     /* Fallback nav when /api/nav fails. It must carry peer_groups now that
        loadScores() reads them, or the Bridge view renders its empty state on a
-       sector that actually works. */
+       sector that actually works. KEEP IN STEP WITH engine.SECTORS — this
+       literal had silently fallen two sectors behind (no cement, no mining)
+       by 2026-08-30, which would have made an /api/nav outage also look like
+       half the coverage vanishing. */
     SECTORS = [{id:'non_ferrous', kind:'sector', label:'Non-Ferrous', live:true,
                 peer_groups:['aluminium_primary','zinc']},
                {id:'steel', kind:'sector', label:'Steel', live:true,
-                peer_groups:['steel_integrated','steel_converter']}];
+                peer_groups:['steel_integrated','steel_converter']},
+               {id:'cement', kind:'sector', label:'Cement', live:true,
+                peer_groups:['cement']},
+               {id:'mining', kind:'sector', label:'Mining', live:true,
+                peer_groups:['mining_bulk','mining_copper']}];
     SECTOR = 'non_ferrous';
     $('#snav').innerHTML = '<button class="stab" aria-selected="true">Non-Ferrous</button>';
     $('#vnav').hidden = false;

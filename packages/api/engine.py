@@ -379,6 +379,15 @@ SECTORS = [
                     "cement_price_south_inr", "cement_price_india_inr"],
             "divide": 20.0,
             "unit": "Rs/bag",
+            # Title and caption are DATA, like everything else here — they
+            # were hardcoded in app.html until mining's chart rendered under
+            # cement's "by region" heading and its Kotak-vs-Nomura caption.
+            "title": "Cement price by region · Rs/bag · monthly",
+            "caption": "Kotak pack levels. These run ~Rs30/bag above Nomura's "
+                       "trade-only channel checks — a basis difference, "
+                       "recorded in adapters/cement_pack.py; the deltas are "
+                       "what matter. The current month is a month-to-date "
+                       "average dated at its capture.",
             # Drawn as a dated rule, same visual as the pair chart's corporate
             # actions, but the meaning is the opposite and the caption says so:
             # PM-confirmed REAL move (2026-08-28), not an artefact to break on.
@@ -416,6 +425,13 @@ SECTORS = [
             "ids": ["nmdc_lumps_inr", "nmdc_fines_inr"],
             "divide": 1.0,
             "unit": "Rs/t",
+            "title": "NMDC administered iron ore price · Rs/t · per circular",
+            "caption": "NMDC's own circulars, Baila lump 65.5% / fines 64%, "
+                       "FOR EX-ROYALTY basis — the series starts 2026-01-09 "
+                       "because that circular changed the basis (earlier "
+                       "prints include royalty+DMF+NMET, ~18% higher, and are "
+                       "deliberately not loaded; adapters/mining_filings.py). "
+                       "Steps are change events, not daily carries.",
             "marks": [{"d": "2026-08-08",
                        "label": "Aug-26 circular — 2nd consecutive cut"}],
         },
@@ -472,6 +488,19 @@ def sector_detail(sector_id: str) -> dict:
         _sc.loader.exec_module(_cp)
         LABELS.update({eid: f"Cement price, {name}, Rs/t (monthly)"
                        for eid, name in _cp.ROWS.values()})
+    except Exception:
+        pass
+    # Mining's six filing series, same mechanism — mining_filings.SERIES is
+    # already the id -> human-label map, so it is merged rather than restated.
+    # Without this the Mining tab rendered six rows of raw slugs, the exact
+    # failure the two blocks above exist to prevent.
+    try:
+        import importlib.util as _u3
+        _sm = _u3.spec_from_file_location(
+            "_mf", REPO / "packages" / "adapters" / "mining_filings.py")
+        _mf = _u3.module_from_spec(_sm)
+        _sm.loader.exec_module(_mf)
+        LABELS.update(_mf.SERIES)
     except Exception:
         pass
 
@@ -539,7 +568,11 @@ def sector_detail(sector_id: str) -> dict:
                            "pts": [{"d": p["date"], "v": p["close"] / div}
                                    for p in pts]})
         price_chart = {"unit": cfg["unit"], "series": series,
-                       "marks": cfg.get("marks", [])}
+                       "marks": cfg.get("marks", []),
+                       # served, not hardcoded in the page — see the cement
+                       # chart dict's note
+                       "title": cfg.get("title") or f"{spec['label']} prices",
+                       "caption": cfg.get("caption") or ""}
     conn.close()
 
     return {"id": spec["id"], "label": spec["label"],
