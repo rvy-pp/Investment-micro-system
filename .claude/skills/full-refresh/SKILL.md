@@ -46,9 +46,12 @@ morning.
 
 **The pack is the PRIMARY price source** for everything it carries — it already
 outranks every other source in `prices_io.PRECEDENCE` (40 against westmetall 30,
-fred 10, yahoo 5), so nothing needed changing to make that true. All **36**
-columns load, up from nine; the 27 new ones are steel-complex series captured for
-a group not yet built and `price_link`-ed from no spec.
+fred 10, yahoo 5; the issuer-filing source `filing` shares rank 40 and owns
+disjoint ids), so nothing needed changing to make that true. All **36** columns
+load. When this step was written the 27 steel-complex columns fed no spec; steel
+(2026-08-25) took five of them, cement (2026-08-28) the Indonesian coal column,
+and mining (2026-08-29) `lme_copper` — what remains parked is only what
+`metals_pack.PARKED` lists (lead, nickel, gold, dxy, the China HRC/rebar set).
 
 Two exit codes, and the distinction is the point:
 
@@ -219,12 +222,16 @@ What it does instead is call every route the page calls, **in-process** so it
 needs no listening socket, and report what each tab will actually render:
 
 ```
-/api/sectors                      ok  3 sectors, 1 live: non_ferrous
-/api/sector?id=steel              ok  20/20 priced, 17 dated today
-/api/scores[aluminium_primary]    ok  3 name(s), as_of 2026-08-24
-/api/oi                           ok  4 name(s), newest 2026-08-17 (7d)  <-- SOURCE MAY BE DEAD
-/api/tape[composite]              ok  5 name(s), 40 point(s)
+/api/sectors                      ok  4 sectors, 4 live: non_ferrous, steel, cement, mining
+/api/sector?id=mining             ok  11/11 priced, 1 dated today
+/api/scores[mining_bulk]          ok  2 name(s), as_of 2026-08-29
+/api/oi                           ok  15 name(s), newest 2026-08-28 (1d)
+/api/tape[composite]              ok  18 name(s), 2,463 point(s), as_of_max 2026-08-29
 ```
+
+(real output, 2026-08-29 — seventeen routes in all, one line per sector and per
+peer group; the OI line reads `SOURCE MAY BE DEAD` when the newest row is >4
+days old, which is the state that used to be invisible)
 
 A blank tab and a loading tab look identical, which is the whole reason this is a
 step and not something you spot by opening the page. It separates two things
