@@ -12,6 +12,11 @@ Two files feed the Overview tab's "Morning brief" section (`/api/morning`):
 | `data/morning/markets_YYYY-MM-DD.json` | `morning_markets.py` (python) | US/semis/IT closes, GIFT Nifty + gap, entity-keyed headlines |
 | `data/morning/brief_YYYY-MM-DD.json` | **this skill** | sector mail actionables, AI/semis bullets, bellwether reasons |
 
+**Called by `full-refresh` as its Step 1b** (right after mail-fetch, so both
+mailbox steps share one known-good M365 token, and before refresh.py so its
+closing front-end check certifies the brief too). This file stays the single
+source of truth for the procedure — runs standalone exactly the same way.
+
 This skill exists because the mailbox is behind the Microsoft 365 MCP —
 callable by the agent, never by a Python process (the mail-fetch / Wind
 constraint). Unlike mail-fetch, this skill DOES interpret: the brief is

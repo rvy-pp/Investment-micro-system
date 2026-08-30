@@ -1,6 +1,6 @@
 ---
 name: full-refresh
-description: One run that fetches every data source and rescores — MCP steps and Python steps in a single sequence. Use for the scheduled overnight refresh, or when asked to refresh everything, update all data, or run the full pipeline.
+description: One run that fetches every data source, rescores, and rebuilds every front-end input including the Overview's morning brief — MCP steps, sector agents and Python steps in a single sequence. Use for the scheduled overnight refresh, or when asked to refresh everything, update all data, update the full front end, or run the full pipeline.
 ---
 
 # full-refresh — every fetch, one run
@@ -25,6 +25,36 @@ Follow the `mail-fetch` skill. It writes `data/staging/mail_<today>.json`.
 **Write the file even when every search is empty.** An empty array records that
 the watch ran and the day was quiet; a missing file means it did not run.
 `refresh.py --consume mail` distinguishes them and so must you.
+
+## Step 1b — morning brief (MCP + sector agents, agent only)
+
+Follow the **`morning-brief` skill in full** — its procedure stays the single
+source of truth; this step only fixes where it sits in the sequence. It writes
+`data/morning/brief_<today>.json`: the 24h all-mail sweep, one summarizer agent
+per non-empty sector bucket, the AI/semis bullets and the ACN/CTSH reasons.
+
+Run it **here, not later**, for two reasons:
+
+- It needs the same interactively-authenticated M365 MCP as step 1, so both
+  mailbox steps run while the token is known-good — a lapsed token then costs
+  one contiguous block of the run, not two scattered holes.
+- Step 3's LAST step is the front-end check, which reads `/api/morning`. With
+  the brief written first, the check certifies the WHOLE page current —
+  "update the full front end at once" is this ordering, not a separate pass.
+  (The markets half is no concern either way: the skill's own step 1 fetches
+  it, and refresh.py re-pulls it in step 3 — deliberately unguarded, so the
+  later pull just lands a fresher GIFT print.)
+
+**Step 1 and this step both read the mailbox and are NOT mergeable.** Step 1's
+per-entity searches match the FULL BODY server-side (a mail whose subject never
+names NALCO still surfaces); the sweep is date-only and keeps ~250-char
+snippets. Deriving `mail_<today>.json` from the sweep would silently lose
+body-only entity mentions — the watch's whole completeness claim. Two searches,
+two questions, both cheap.
+
+If the sweep fails (M365 down), continue the run: everything downstream is
+independent, `/api/morning` shows the dated warning, and the Overview says "no
+brief yet" rather than hiding the section.
 
 ## Step 2 — metals pack (now ordinary Python, run it every day)
 
@@ -321,6 +351,9 @@ State plainly:
 - whether the metals pack arrived, and its date — if the newest pack is not
   today's, `--consume metals` says so and loads it for history only
 - whether mail staging was written, and how many structural hits it produced
+- whether the morning brief was written: mails scanned, which sectors had
+  bullets, which were quiet — and if step 1b failed, that the Overview is
+  showing "no brief yet" for today
 - the composite and SIZE across the scored names (17 across seven peer
   groups as of 2026-08-29)
 - around the 1st-4th of a month: whether the mining filings fetch found the
@@ -394,11 +427,12 @@ Screen lock is fine; **sleep is not**. On AC this machine is set to never sleep
 after 15 minutes and the run dies with it.
 
 The likeliest overnight failure is **M365 auth lapsing**, and it now costs less
-than it used to: only **step 1** needs the interactively-authenticated MCP. Step 2
-moved to Outlook COM precisely because that dependency was fragile, so a lapsed
-token loses the mail digest and no longer touches prices. Step 3 still refreshes
-everything and rescores, and step 5 reports mail as stale. One failure, not a dead
-pipeline.
+than it used to: only **steps 1 and 1b** need the interactively-authenticated MCP
+(which is why they sit together). Step 2 moved to Outlook COM precisely because
+that dependency was fragile, so a lapsed token loses the mail digest and the
+brief's mail bullets and no longer touches prices. Step 3 still refreshes
+everything and rescores — including the brief's MARKETS half, which is plain
+Python — and step 5 reports mail as stale. One failure, not a dead pipeline.
 
 The new failure mode to know is **Outlook COM**: it needs a logged-in desktop
 session, so it works locked and idle but not asleep and not as a service.

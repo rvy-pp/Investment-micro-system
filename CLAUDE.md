@@ -215,7 +215,7 @@ constraint again:
 | file | written by | when |
 |---|---|---|
 | `markets_YYYY-MM-DD.json` | `adapters/morning_markets.py` — a refresh.py step | unattended, every launch |
-| `brief_YYYY-MM-DD.json` | `.claude/skills/morning-brief` | agent-only — the mailbox is behind the M365 MCP |
+| `brief_YYYY-MM-DD.json` | `.claude/skills/morning-brief` | agent-only — the mailbox is behind the M365 MCP; runs inside `full-refresh` as Step 1b |
 
 **Neither writes to `prices` or anywhere in ims.db.** ACN or the SOX in
 `prices` would become bridge-shockable — the same reason `estimates` exists
