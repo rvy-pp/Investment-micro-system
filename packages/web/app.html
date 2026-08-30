@@ -27,7 +27,7 @@
         has, so they snapped and the hierarchy silently vanished.
      =================================================================== */
   :root{
-    color-scheme:light dark;
+    color-scheme:dark;
 
     /* spacing, 4px base */
     --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
@@ -41,37 +41,27 @@
     --t-md:14px; --t-lg:16px; --t-xl:20px; --t-2xl:26px;
     --measure:72ch;         /* prose cap. Unset, notes ran to 1560px. */
 
-    --ground:#F1F3F6; --surface:#FFFFFF; --alt:#F6F8FA; --sunken:#E9EDF1;
-    --ink:#12161B; --soft:#525C69; --faint:#666F7C;
-    --rule:#DDE3E9; --hair:#EBEFF3;
-    --accent:#1F4E82; --accent-soft:#E7EEF7;
-    --up:#12634B; --up-soft:#DFEDE7;
-    --warn:#875416; --warn-soft:#F6EAD7;
-    --down:#8C2F2A; --down-soft:#F7E2E0;
+    /* THE VAULT DASHBOARD'S PALETTE, VERBATIM (PM, 2026-08-30: "that
+       front-end was way better" — Obsidian Vault/Dashboard/index.html).
+       GitHub-dark: #0d1117 ground, #161b22 panels, #30363d borders, and the
+       page is DARK-ONLY like the original — the light branch is gone, not
+       hidden. Panels separate by BORDER here, not by shadow, hence the
+       borders added on .scroll/.tile/.panel and the near-null shadows. */
+    --ground:#0d1117; --surface:#161b22; --alt:#1c2129; --sunken:#1c2129;
+    --ink:#e6edf3; --soft:#8b949e; --faint:#6e7681;
+    --rule:#30363d; --hair:#21262d;
+    --accent:#58a6ff; --accent-soft:rgba(88,166,255,.12);
+    --up:#3fb950; --up-soft:rgba(63,185,80,.15);
+    --warn:#d29922; --warn-soft:rgba(210,153,34,.15);
+    --down:#f85149; --down-soft:rgba(248,81,73,.15);
 
-    --shadow-1:0 1px 2px rgba(16,24,40,.05), 0 1px 1px rgba(16,24,40,.03);
-    --shadow-2:0 2px 4px rgba(16,24,40,.05), 0 6px 16px -6px rgba(16,24,40,.12);
+    --shadow-1:none;
+    --shadow-2:0 2px 6px rgba(0,0,0,.45);
 
     --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
     --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
   }
-  @media (prefers-color-scheme:dark){
-    :root{
-      /* The old dark mode put 7 units between ground (#121519) and
-         surface (#191D22). Panels were invisible, which is most of why
-         the dark page read as a flat wall. This is ~25 units plus a
-         real shadow. */
-      --ground:#0D1014; --surface:#171B21; --alt:#1D242B; --sunken:#101418;
-      --ink:#E5EAEF; --soft:#A2ADBA; --faint:#7F8A97;
-      --rule:#2A323B; --hair:#1F262D;
-      --accent:#8AB3E0; --accent-soft:#17273A;
-      --up:#5FBFA1; --up-soft:#12302A;
-      --warn:#DBA65E; --warn-soft:#332810;
-      --down:#DF7F77; --down-soft:#37211F;
-      --shadow-1:0 1px 2px rgba(0,0,0,.45);
-      --shadow-2:0 2px 6px rgba(0,0,0,.45), 0 10px 24px -8px rgba(0,0,0,.55);
-    }
-  }
+  /* No @media dark branch any more: the vault palette above IS the page. */
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
        font-size:var(--t-md);line-height:1.55;-webkit-font-smoothing:antialiased;
@@ -168,7 +158,7 @@
 
   /* ---------------------------------------------------------------- panels */
   .scroll{overflow-x:auto;border-radius:var(--r);background:var(--surface);
-          box-shadow:var(--shadow-1);margin-bottom:var(--s2)}
+          border:1px solid var(--rule);margin-bottom:var(--s2)}
   table{border-collapse:collapse;width:100%;font-size:var(--t-body)}
   /* Column heads in SANS. Uppercase mono here was one of the eleven shouting
      voices, and it competed with h2 directly above it. */
@@ -210,7 +200,7 @@
   .tiles,.stats{display:grid;gap:var(--s3);margin-bottom:var(--s5);
         grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
   .tile,.stat{background:var(--surface);border-radius:var(--r);
-        padding:var(--s3) var(--s4);box-shadow:var(--shadow-1);
+        padding:var(--s3) var(--s4);border:1px solid var(--rule);
         position:relative;overflow:hidden}
   /* The status edge is an inset bar, not a border-left: a coloured border
      changed the box's geometry, so a good tile and a neutral one did not
@@ -243,20 +233,50 @@
           box-shadow:inset 3px 0 0 var(--warn);max-width:var(--measure)}
   .banner b{font-family:var(--mono);font-weight:600}
 
-  /* ------------------------------------------------------- morning brief
-     Two columns: overnight globals left, broker-mail actionables right. The
-     PM reads this pre-market, so bullets, not tables — and every mail bullet
-     carries its source line so the full email is findable in Outlook. */
-  .brief{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5) var(--s6);
-         margin:0 0 var(--s4)}
-  .brief h3{font-size:var(--t-md);margin:0 0 var(--s2)}
-  .brief ul{margin:0 0 var(--s3);padding-left:18px;font-size:var(--t-body);
-            color:var(--ink)}
-  .brief li{margin-bottom:6px;line-height:1.5}
-  .brief .src{display:block;font-family:var(--mono);font-size:var(--t-label);
-              color:var(--faint)}
-  .brief .sec{font-weight:600;margin:var(--s3) 0 var(--s1);
-              font-size:var(--t-body)}
+  /* --------------------------------------------------- vault-dashboard kit
+     The component language of Obsidian Vault/Dashboard/index.html, copied at
+     the PM's instruction 2026-08-30: page title + meta-line, bordered panels,
+     accent-left callouts, outline pills, ▸ prose bullets, percentile bars.
+     Class names and px values match the original where they exist there. */
+  .pgt{font-size:20px;font-weight:600;font-family:var(--sans);margin:0 0 4px;
+       letter-spacing:0;text-transform:none;color:var(--ink);border:0;
+       padding:0}
+  .meta-line{color:var(--soft);font-size:var(--t-sm);margin:0 0 var(--s4)}
+  .panel{background:var(--surface);border:1px solid var(--rule);
+         border-radius:8px;padding:14px 16px;margin-bottom:14px}
+  .panel .scroll{border:0;margin:0;background:none;border-radius:0}
+  .callout{background:var(--surface);border:1px solid var(--rule);
+           border-left:3px solid var(--accent);border-radius:8px;
+           padding:12px 16px;margin-bottom:14px}
+  .callout.accent-green{border-left-color:var(--up)}
+  .callout.accent-amber{border-left-color:var(--warn)}
+  .callout-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .callout-head .t{font-size:var(--t-body);font-weight:600}
+  .callout-head .ico{font-size:14px}
+  .callout-head .right{margin-left:auto;font-family:var(--mono);
+           font-size:var(--t-label);color:var(--faint)}
+  .pill{display:inline-block;font-size:var(--t-label);padding:1px 8px;
+        border-radius:10px;border:1px solid var(--rule);color:var(--soft);
+        white-space:nowrap}
+  .pill.ok{border-color:var(--up);color:var(--up)}
+  .pill.warn{border-color:var(--warn);color:var(--warn)}
+  .pill.bad{border-color:var(--down);color:var(--down)}
+  .pos{color:var(--up)} .neg{color:var(--down)} .neu{color:var(--soft)}
+  .plist{list-style:none;margin:6px 0;padding-left:2px;font-size:var(--t-body)}
+  .plist li{position:relative;padding-left:14px;margin:3px 0 7px;
+            line-height:1.55}
+  .plist li::before{content:'▸';position:absolute;left:0;top:1px;
+            color:var(--accent);font-size:11px}
+  .src{display:block;font-family:var(--mono);font-size:var(--t-label);
+       color:var(--faint)}
+  .sechead{font-size:15px;font-weight:600;margin:26px 0 12px;color:var(--ink);
+           padding-top:14px;border-top:1px solid var(--rule)}
+  .sechead:first-of-type{border-top:0;padding-top:0;margin-top:14px}
+  .dwrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+         min-width:76px}
+  .dbar{height:3px;border-radius:2px;min-width:2px}
+  .dbar.pos{background:var(--up)} .dbar.neg{background:var(--down)}
+  .dbar.warn{background:var(--warn)} .dbar.neu{background:var(--soft)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ----------------------------------------------------------- pair view */
@@ -371,7 +391,6 @@
     section{padding-top:var(--s4)}
     .tiles,.stats{gap:var(--s2);grid-template-columns:1fr}
     .cards{grid-template-columns:1fr;padding:var(--s2)}
-    .brief{grid-template-columns:1fr}
     .nrow,.await{padding-left:var(--s3);padding-right:var(--s3)}
     .await{padding-top:var(--s4);padding-bottom:var(--s4)}
     h2{margin-top:var(--s5)}
@@ -390,15 +409,11 @@
      THE ORDER IS THE SAFETY MECHANISM. Reordering these silently degrades
      colourblind separation, and a 9th generated hue is never correct — past
      eight names the view must facet or fold to "other" instead. */
+  /* Dark-only page now, so only the dark-stepped column survives. The order
+     is still the safety mechanism — see the note above. */
   :root{
-    --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100;
-    --series-5:#e87ba4; --series-6:#008300; --series-7:#4a3aa7; --series-8:#e34948;
-  }
-  @media (prefers-color-scheme:dark){
-    :root{
-      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500;
-      --series-5:#d55181; --series-6:#008300; --series-7:#9085e9; --series-8:#e66767;
-    }
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500;
+    --series-5:#d55181; --series-6:#008300; --series-7:#9085e9; --series-8:#e66767;
   }
 
   /* Legend. Identity is never colour-alone: the swatch is a line (mirroring the
@@ -500,6 +515,7 @@
   <section id="s-pos"><div class="loading">loading…</div></section>
   <section id="s-sector"><div class="loading">loading…</div></section>
   <section id="s-overview"><div class="loading">loading…</div></section>
+  <section id="s-book"><div class="loading">loading…</div></section>
   <section id="s-flows"><div class="loading">loading…</div></section>
 </div>
 
@@ -628,35 +644,127 @@ const buChip = b => !b ? '<span class="chip c-flat">—</span>' :
   b === 'long_unwinding' ? '<span class="chip c-down">long unwinding</span>' :
   `<span class="chip c-flat">${esc(b)}</span>`;
 
+/* OI POSITIONING — the vault dashboard's viewOI, ported 2026-08-30 on the
+   PM's instruction. Same visual grammar: tiles, buildup pills, percentile
+   number-over-bar, the z+% magnitude cell, a status pill per row, grouped by
+   sector. Differences forced by the data, stated rather than fudged:
+   - OI/price deltas here are DAY changes (the oi table stores the day row);
+     the vault computed 15d deltas from its dailies. Labelled accordingly.
+   - The 60d sparkline column stays — this store has the history for it.
+   Positioning remains a timing veto: it never flips a fundamental call. */
+function oiPctileBar(p){
+  if (p == null) return '<span class="neu">—</span>';
+  const cls = p >= 90 ? 'neg' : p >= 75 ? 'warn' : p <= 25 ? 'pos' : 'neu';
+  const w = Math.max(2, Math.min(100, p));
+  return `<div class="dwrap"><span class="${cls}">${p.toFixed(0)}<span
+    style="font-size:9px">th</span></span>
+    <div class="dbar ${cls}" style="width:${w}%"></div></div>`;
+}
+function oiBuPill(t){
+  if (!t) return '<span class="neu">—</span>';
+  const map = {long_buildup: ['Long Buildup', 'ok'],
+               short_buildup: ['Short Buildup', 'bad'],
+               short_covering: ['Short Cov.', 'warn'],
+               long_unwinding: ['Long Unwind.', 'warn'],
+               neutral: ['Neutral', '']};
+  const [label, cls] = map[t] || [t, ''];
+  return `<span class="pill ${cls}">${esc(label)}</span>`;
+}
+function oiMagCell(z, pm){
+  if (z == null && pm == null) return '<span class="neu" style="font-size:11px">—</span>';
+  const zCls = z == null ? 'neu' : z <= -1.0 ? 'pos' : z >= 1.0 ? 'neg' : 'neu';
+  const pCls = pm == null ? 'neu' : pm <= -15 ? 'pos' : pm >= 15 ? 'neg' : 'neu';
+  const zStr = z != null ? (z > 0 ? '+' : '') + z.toFixed(1) + 'σ' : '—';
+  const pStr = pm != null ? (pm > 0 ? '+' : '') + pm.toFixed(1) + '%' : '—';
+  return `<span class="${zCls}" style="font-size:12px">${zStr}</span><br>
+    <span class="${pCls}" style="font-size:10px">${pStr}</span>`;
+}
+function oiStatusPill(dateStr){
+  // OI is T-1 BY DESIGN (NSE publishes the F&O bhavcopy after the close), so
+  // 1-2 days is Live, not late. >5 days is the state that went invisible once.
+  if (!dateStr) return '<span class="pill">no data</span>';
+  const age = Math.round((Date.now() - new Date(dateStr + 'T00:00:00')) / 86400e3);
+  if (age <= 2) return '<span class="pill ok">Live</span>';
+  if (age <= 5) return `<span class="pill warn">${esc(dateStr)}</span>`;
+  return `<span class="pill bad">Stale · ${esc(dateStr)}</span>`;
+}
+
 async function loadPos(){
   const rows = await (await fetch('/api/oi')).json();
   if (rows.error) return showErr(rows.error);
-  const body = rows.map(r => `
-    <tr>
-      <td class="k">${esc(r.entity_id)}</td>
-      <td class="n">${num(r.oi)}</td>
-      <td class="n" style="color:${(r.oi_chg_pct??0)>=0?'var(--up)':'var(--down)'}">
-        ${r.oi_chg_pct==null?'—':(r.oi_chg_pct>=0?'+':'')+r.oi_chg_pct.toFixed(2)+'%'}</td>
+
+  const age = d => Math.round((Date.now() - new Date(d + 'T00:00:00')) / 86400e3);
+  const fresh = rows.filter(r => r.date && age(r.date) <= 5).length;
+  const stale = rows.length - fresh;
+
+  const tiles = `<div class="tiles">
+    <div class="tile"><div class="k">F&amp;O names</div>
+      <div class="v">${rows.length}</div>
+      <div class="s">not in F&amp;O are absent, not zero</div></div>
+    <div class="tile ${fresh ? 'good' : ''}"><div class="k">fresh OI</div>
+      <div class="v">${fresh}</div><div class="s">within 5 days (T-1 by design)</div></div>
+    <div class="tile ${stale ? 'bad' : ''}"><div class="k">stale (&gt;5d)</div>
+      <div class="v">${stale}</div><div class="s">the state that went invisible once</div></div>
+  </div>`;
+
+  const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems'];
+  const bySector = {};
+  for (const r of rows) (bySector[r.sector || 'other'] =
+      bySector[r.sector || 'other'] || []).push(r);
+  const sectors = [...ORDER.filter(s => bySector[s]),
+                   ...Object.keys(bySector).filter(s => !ORDER.includes(s)).sort()];
+
+  const secTables = sectors.map(sec => {
+    const cos = bySector[sec].sort((a, b) =>
+      (a.name || a.entity_id).localeCompare(b.name || b.entity_id));
+    const trs = cos.map(r => `<tr>
+      <td><b>${esc(r.name || r.entity_id)}</b></td>
+      <td class="n">${r.oi == null ? '<span class="neu">—</span>'
+          : (r.oi / 100000).toFixed(1) + 'L'}<br><span class="neu"
+          style="font-size:10px">lot: ${r.lot_size || '—'}</span></td>
+      <td class="n">${r.oi_chg_pct == null ? '<span class="neu">—</span>'
+          : `<span class="${r.oi_chg_pct >= 0 ? 'pos' : 'neg'}">${
+              (r.oi_chg_pct >= 0 ? '+' : '') + r.oi_chg_pct.toFixed(1)}%</span>`}</td>
+      <td class="n">${r.price_chg_pct == null ? '<span class="neu">—</span>'
+          : `<span class="${r.price_chg_pct >= 0 ? 'pos' : 'neg'}">${
+              (r.price_chg_pct >= 0 ? '+' : '') + r.price_chg_pct.toFixed(1)}%</span>`}</td>
+      <td>${oiBuPill(r.buildup_15d)}</td>
+      <td class="n">${oiPctileBar(r.oi_percentile_15d)}</td>
+      <td>${oiBuPill(r.buildup)}</td>
+      <td class="n">${oiPctileBar(r.oi_percentile)}</td>
+      <td class="n">${oiMagCell(r.z_score_3m, r.pct_vs_median_3m)}</td>
+      <td class="n">${r.price == null ? '—'
+          : '₹' + r.price.toLocaleString('en-IN')}</td>
       <td>${spark(r.spark)}</td>
-      <td>${buChip(r.buildup)}</td>
-      <td>${buChip(r.buildup_15d)}</td>
-      <td class="n">${r.oi_percentile==null?'—':r.oi_percentile.toFixed(0)}</td>
-      <td class="n">${r.z_score_3m==null?'—':r.z_score_3m.toFixed(2)}</td>
-      <td class="n">${num(r.price,2)}</td>
+      <td>${oiStatusPill(r.date)}</td>
     </tr>`).join('');
-  $('#s-pos').innerHTML = `<h2>Futures positioning</h2>
-    <p class="note">From the existing vault OI pipeline. The two horizons are shown
-      separately <b>because they routinely disagree</b> — a name can be short-covering
-      over 15 days inside a 3-month short build, and that disagreement is the state
-      worth seeing. Positioning is a <b>timing veto</b>: it never flips a fundamental
-      call, it says the entry is poor, which is a different claim.
-      Names not in F&amp;O are absent rather than shown as zero.</p>
-    <div class="scroll"><table><thead><tr>
-      <th>Entity</th><th class="n">OI (lots)</th><th class="n">OI chg</th><th>60d</th>
-      <th>Buildup 3m</th><th>Buildup 15d</th><th class="n">%ile</th>
-      <th class="n">z 3m</th><th class="n">Price</th></tr></thead>
-      <tbody>${body || '<tr><td colspan="9" class="hint">no OI loaded</td></tr>'}</tbody>
-    </table></div>`;
+    const label = sec.charAt(0).toUpperCase() + sec.slice(1);
+    return `<div class="sechead">${esc(label)}
+        <span class="neu" style="font-weight:400;font-size:12px">${cos.length}</span></div>
+      <div class="panel"><div class="scroll"><table><thead><tr>
+        <th>Company</th><th class="n">Futures OI</th><th class="n">OI Δ (day)</th>
+        <th class="n">Price Δ (day)</th><th>Buildup (15d)</th><th class="n">15d pctl</th>
+        <th>Buildup (3m)</th><th class="n">3m pctl</th><th class="n">Mag (3m)</th>
+        <th class="n">Spot</th><th>60d OI</th><th>Status</th>
+      </tr></thead><tbody>${trs}</tbody></table></div></div>`;
+  }).join('');
+
+  $('#s-pos').innerHTML =
+    `<div class="pgt">OI Positioning</div>
+     <div class="meta-line">Futures Open Interest · 15-day &amp; 3-month
+       percentile bands · buildup type from OI+price direction · the two
+       horizons routinely disagree, and that disagreement is the state worth
+       seeing — a timing veto, never a fundamental call</div>
+     ${tiles}
+     <div class="hint" style="margin-bottom:4px">🟢 Long Buildup (OI↑ Price↑) ·
+       🔴 Short Buildup (OI↑ Price↓) · 🟡 Short Covering (OI↓ Price↑) ·
+       🟡 Long Unwinding (OI↓ Price↓)</div>
+     ${secTables || '<div class="panel"><div class="hint">no OI loaded</div></div>'}
+     <div class="hint" style="margin-top:16px">Percentile: 90th+ = crowded trade
+       risk, 25th− = under-positioned. <b>Mag (3m)</b>: Z-score &amp; % vs median —
+       how <em>far</em> OI has moved, not just its rank. Z ≤ −1σ / ≤ −15% = light
+       positioning (green). Z ≥ +1σ / ≥ +15% = heavy (red). OI is T-1 by design.
+       The refresh pulls it daily; <code>--force</code> re-pulls.</div>`;
 }
 
 /* ====================================================================
@@ -1439,6 +1547,7 @@ function sector(id){
   const e = SECTORS.find(s => s.id === id) || {};
   showErr('');
   if (e.kind === 'overview'){ $('#vnav').hidden = true; tab('overview'); return; }
+  if (e.kind === 'book'){ $('#vnav').hidden = true; tab('book'); return; }
   if (e.kind === 'flows'){ $('#vnav').hidden = true; tab('flows'); return; }
   $('#vnav').hidden = !e.live;
   // The Prices & Watch sub-view exists only where the sector declares content
@@ -1452,37 +1561,37 @@ function sector(id){
   else { tab('sector'); }   // per-sector; tab() refetches on a sector change
 }
 
-/* ===================== daily overview =====================
-   The first screen, and the one place that answers "did today work" before
-   showing a number. Everything here is read from what the run WROTE — status
-   and frontend json, pillar_scores, the oi table — never recomputed, so it
-   cannot tell a different story from the Pair tab. */
-/* The morning brief block. Everything here is READ from the two dated files
+/* The morning brief halves. Everything here is READ from the two dated files
    under data/morning/ via /api/morning — the page never fetches a market or
-   a mailbox itself. Two halves, and they go stale independently:
+   a mailbox itself:
      markets_*.json   python (morning_markets.py), runs unattended
      brief_*.json     the morning-brief skill — agent-only, because the M365
                       MCP is callable by the agent and never by a process
-   A missing or yesterday's half renders AS a warning line, not as silence:
-   yesterday's bullets reading as this morning's is the exact failure the
-   refresh light exists for. */
-function morningHtml(m){
-  if (!m || m.error) return `<h2>Morning brief</h2>
-    <p class="note hint" style="color:var(--warn)">unavailable: ${esc(m && m.error || 'no response')}</p>`;
-
-  const pct = v => v == null ? '—'
-    : `<span style="color:${v > 0 ? 'var(--up)' : v < 0 ? 'var(--down)' : 'var(--faint)'}">${
+   Layout is the PM's 2026-08-30 instruction, copied from the vault
+   dashboard: OVERNIGHT AT THE TOP (an accent callout), BROKER MAIL AT THE
+   BOTTOM, and staleness as a quiet meta-line — never a yellow box. A missing
+   or yesterday's half still renders AS TEXT, not as silence: yesterday's
+   bullets reading as this morning's is the refresh-light failure. */
+function pctSpan(v){
+  return v == null ? '<span class="neu">—</span>'
+    : `<span class="${v > 0 ? 'pos' : v < 0 ? 'neg' : 'neu'}">${
         (v >= 0 ? '+' : '') + v.toFixed(2)}%</span>`;
+}
+
+function overnightHtml(m){
+  if (!m || m.error) return `<div class="callout">
+    <div class="callout-head"><span class="ico">🌍</span>
+      <span class="t">Overnight · global</span></div>
+    <div class="hint">unavailable: ${esc(m && m.error || 'no response')}</div></div>`;
+
   const mk = m.markets || {};
   const q = mk.quotes || {};
-  const brief = m.brief || {};
-  const g = brief.global || {};
+  const g = (m.brief || {}).global || {};
 
   const groupLine = rows => (rows || []).map(x =>
-    `${esc(x.label)} ${fmtNum(x.close)} ${pct(x.chg_pct)}`).join(' &nbsp;·&nbsp; ');
+    `${esc(x.label)} <span class="mono">${fmtNum(x.close)}</span> ${pctSpan(x.chg_pct)}`)
+    .join(' &nbsp;·&nbsp; ');
 
-  // Bellwether reason: the agent's line if the brief has one, else the top
-  // on-entity dated headline from the markets file, else silence said aloud.
   const reasonFor = (name, key) => {
     const b = (g.bellwethers || []).find(x =>
       (x.name || '').toLowerCase().startsWith(name.toLowerCase()));
@@ -1492,101 +1601,118 @@ function morningHtml(m){
              : '<span class="hint">no on-entity headline — no signal, not "no move"</span>';
   };
 
-  const usDate = (q.us || [])[0] ? ` <span class="hint">(close ${esc(q.us[0].date)})</span>` : '';
+  const usDate = (q.us || [])[0] ? (q.us || [])[0].date : null;
   const gn = mk.gift_nifty || {};
   const gnLi = 'last' in gn
-    ? `<li><b>GIFT Nifty</b> ${fmtNum(gn.last)} ${pct(gn.chg_pct)}${
-        gn.gap_pts != null ? ` — <b>${gn.gap_pts >= 0 ? '+' : ''}${gn.gap_pts} pts</b> (${
-        (gn.gap_pct >= 0 ? '+' : '') + gn.gap_pct}%) vs Nifty close ${
-        fmtNum((gn.nifty_close || {}).close)}` : ''}
+    ? `<li><b>GIFT Nifty</b> <span class="mono">${fmtNum(gn.last)}</span> ${pctSpan(gn.chg_pct)}${
+        gn.gap_pts != null ? ` — <b class="${gn.gap_pts >= 0 ? 'pos' : 'neg'}">${
+        gn.gap_pts >= 0 ? '+' : ''}${gn.gap_pts} pts</b> (${
+        (gn.gap_pct >= 0 ? '+' : '') + gn.gap_pct}%) vs Nifty close <span class="mono">${
+        fmtNum((gn.nifty_close || {}).close)}</span>` : ''}
         <span class="src">${esc(gn.stamp || '')} IST · ${esc(gn.expiry || '')} · ${
         gn.volume || 0} lots</span></li>`
     : `<li><b>GIFT Nifty</b> <span class="hint">unavailable: ${esc(gn.error || 'no file')}</span></li>`;
 
-  const aiLis = (g.ai_semis || []).map(x => `<li>${esc(x.text || x)}${
-      x.source ? `<span class="src">${esc(x.source)}</span>` : ''}</li>`).join('');
-
   const acn = (q.it || []).find(x => x.symbol === 'ACN');
   const ctsh = (q.it || []).find(x => x.symbol === 'CTSH');
   const bw = (x, name, key) => x
-    ? `<li><b>${esc(name)}</b> ${fmtNum(x.close)} ${pct(x.chg_pct)} — ${reasonFor(name, key)}</li>`
+    ? `<li><b>${esc(name)}</b> <span class="mono">${fmtNum(x.close)}</span> ${
+        pctSpan(x.chg_pct)} — ${reasonFor(name, key)}</li>`
     : `<li><b>${esc(name)}</b> <span class="hint">no quote</span></li>`;
 
-  const overnight = mk.date ? `
-    <div><h3>Overnight · global</h3><ul>
-      <li><b>US</b>${usDate} &nbsp;${groupLine(q.us)}</li>
+  const aiLis = (g.ai_semis || []).map(x => `<li>${esc(x.text || x)}${
+      x.source ? `<span class="src">${esc(x.source)}</span>` : ''}</li>`).join('');
+
+  if (!mk.date) return `<div class="callout">
+    <div class="callout-head"><span class="ico">🌍</span>
+      <span class="t">Overnight · global</span></div>
+    <div class="hint">no markets file — <code>python packages/adapters/morning_markets.py</code></div></div>`;
+
+  return `<div class="callout">
+    <div class="callout-head"><span class="ico">🌍</span>
+      <span class="t">Overnight · global</span>
+      <span class="right">US close ${esc(usDate || '—')} · fetched ${
+        esc((mk.fetched_at || '').replace('T', ' ').slice(0, 16))}</span></div>
+    <ul class="plist">
+      <li><b>US</b> &nbsp;${groupLine(q.us)}</li>
       <li><b>Semis</b> &nbsp;${groupLine(q.semis)}</li>
       ${gnLi}
       ${bw(acn, 'Accenture', 'ACN')}
       ${bw(ctsh, 'Cognizant', 'CTSH')}
       ${aiLis}
-    </ul>${(mk.errors || []).length
-        ? `<p class="note hint" style="color:var(--warn)">${mk.errors.map(esc).join('<br>')}</p>` : ''}
-    </div>`
-    : `<div><h3>Overnight · global</h3>
-       <p class="note hint">no markets file — <code>python packages/adapters/morning_markets.py</code></p></div>`;
-
-  const mail = brief.mail || null;
-  const secBlocks = mail ? (mail.sectors || []).map(s => `
-      <div class="sec">${esc(s.sector)}</div>
-      <ul>${(s.bullets || []).map(b => `<li>${esc(b.text)}
-        <span class="src">${esc(b.source || '')}${b.received ? ' · ' + esc(b.received) : ''}</span></li>`).join('')
-        || '<li class="hint">nothing actionable</li>'}</ul>`).join('') : '';
-  const mailCol = mail ? `
-    <div><h3>Broker mail · ${esc(mail.window || 'last 24h')}
-      <span class="hint">(${mail.n_scanned != null ? mail.n_scanned + ' mails scanned' : '—'})</span></h3>
-      ${secBlocks || '<p class="note hint">no sector bullets</p>'}
-      ${(mail.quiet || []).length ? `<p class="note hint">Quiet — nothing actionable:
-        ${mail.quiet.map(esc).join(' · ')}</p>` : ''}
-    </div>`
-    : `<div><h3>Broker mail · last 24h</h3>
-       <p class="note hint">no brief yet — run the <b>morning-brief</b> skill
-       (agent-only: the mailbox is behind the M365 MCP)</p></div>`;
-
-  return `<h2>Morning brief · ${esc(brief.date || mk.date || m.as_of || '')}</h2>
-    ${(m.warnings || []).length
-      ? `<p class="note hint" style="color:var(--warn)">${m.warnings.map(esc).join('<br>')}</p>` : ''}
-    <div class="brief">${overnight}${mailCol}</div>`;
+    </ul>
+    ${(mk.errors || []).length
+      ? `<div class="hint">${mk.errors.map(esc).join('<br>')}</div>` : ''}
+  </div>`;
 }
 
+function mailHtml(m){
+  const mail = ((m || {}).brief || {}).mail || null;
+  if (!mail) return `<div class="sechead">Broker mail · last 24h</div>
+    <div class="panel"><div class="hint">no brief yet — run the
+    <b>morning-brief</b> skill (agent-only: the mailbox is behind the M365
+    MCP)</div></div>`;
+
+  const secBlocks = (mail.sectors || []).map(s => `
+    <div class="panel">
+      <div class="callout-head"><span class="t">${esc(s.sector)}</span>
+        <span class="right">${(s.bullets || []).length} actionable</span></div>
+      <ul class="plist">${(s.bullets || []).map(b => `<li>${esc(b.text)}
+        <span class="src">${esc(b.source || '')}${
+          b.received ? ' · ' + esc(b.received) : ''}</span></li>`).join('')
+        || '<li class="hint">nothing actionable</li>'}</ul>
+    </div>`).join('');
+
+  return `<div class="sechead">Broker mail · ${esc(mail.window || 'last 24h')}
+      <span class="neu" style="font-weight:400;font-size:12px">(${
+        mail.n_scanned != null ? mail.n_scanned + ' mails scanned' : '—'})</span></div>
+    ${secBlocks || '<div class="panel"><div class="hint">no sector bullets</div></div>'}
+    ${(mail.quiet || []).length ? `<div class="hint" style="margin-top:4px">Quiet —
+      nothing actionable: ${mail.quiet.map(esc).join(' · ')}</div>` : ''}`;
+}
+
+/* ===================== daily overview =====================
+   The first screen. Layout per the PM 2026-08-30, copied from the vault
+   dashboard's Daily Overview: title + meta-line, overnight callout on top,
+   tiles, run health, stale feeds, what moved, broker mail at the bottom.
+   THE BOOK LIVES IN ITS OWN TAB NOW, and there are deliberately NO warning
+   banner boxes here — staleness and placeholder facts ride as quiet text
+   (meta-line, hints) or in the Book tab, per the PM's explicit instruction.
+   Everything is still read from what the run WROTE, never recomputed. */
 async function loadOverview(){
   const d = await (await fetch('/api/overview')).json();
   if (d.error) throw new Error(d.error);
 
-  /* Fetched separately and NEVER allowed to break the tab. The cement watch is
-     a scraped side-signal; if IndiaMART changed its markup or the table is
-     empty, the Overview must still render every score. Hence catch -> a state
-     the banner knows how to say out loud, rather than a rejected promise.
-     The morning brief gets the same treatment for the same reason. */
-  const cwd_ = await fetch('/api/cement_watch').then(r => r.json())
+  /* Side signals are fetched separately and NEVER allowed to break the tab —
+     catch -> a state the section knows how to say out loud. */
+  const cw = await fetch('/api/cement_watch').then(r => r.json())
       .catch(e => ({state:'error', regions:[], alerts:[], note:String(e)}));
-  window.__CEMENT_WATCH__ = cwd_;
-  const morn_ = await fetch('/api/morning').then(r => r.json())
+  window.__CEMENT_WATCH__ = cw;
+  const morn = await fetch('/api/morning').then(r => r.json())
       .catch(e => ({error:String(e)}));
 
   const run = d.run || {};
   const runBad = run.ok === false || !!run.warning || !run.day;
   const feeds = d.feeds || {};
   const fe = d.frontend || {};
+  const nScanned = (((morn || {}).brief || {}).mail || {}).n_scanned;
 
-  const stepChips = (run.steps || []).map(x => {
-    // 'background' is a step the refresh SPAWNED and did not wait for (the
-    // IndiaMART sweep, ~6.5 min detached). It is not a failure and must not
-    // paint red — its real outcome is the cement_watch banner above, which
-    // reads the table the background process writes.
-    const cls = x.status === 'ok' ? 'ok'
-              : (x.status === 'skipped' || x.status === 'background') ? 'skip'
-              : 'bad';
-    return `<span class="stp ${cls}" title="${esc(x.detail || x.status)}">${
-      esc(x.step)}</span>`;
-  }).join('');
+  /* Everything that used to be a yellow box is now one quiet line here. */
+  const metaBits = [
+    esc(d.as_of || ''),
+    `last refresh ${esc(run.day || 'never')}${run.finished
+      ? ' ' + esc(run.finished.replace('T', ' ').slice(11, 19)) : ''}`,
+    `scores as of ${esc(d.as_of_scores || '—')}`,
+  ];
+  const metaWarn = [run.warning, ...(morn && morn.warnings || [])]
+    .filter(Boolean).map(esc).join(' · ');
 
   const tiles = `<div class="tiles">
     <div class="tile ${runBad ? 'warn' : 'good'}">
       <div class="k">last refresh</div>
       <div class="v">${esc(run.day || '—')}</div>
-      <div class="s">${run.warning ? esc(run.warning)
-        : esc((run.finished || '').replace('T', ' ').slice(0, 19) || 'no finish time')}</div>
+      <div class="s">${esc((run.finished || '').replace('T', ' ').slice(0, 19)
+        || 'no finish time')}</div>
     </div>
     <div class="tile ${feeds.n_stale ? 'warn' : 'good'}">
       <div class="k">feeds stale</div>
@@ -1600,17 +1726,110 @@ async function loadOverview(){
         <span style="font-size:13px;color:var(--faint)">/ ${fe.n_routes || 0}</span></div>
       <div class="s">${(fe.warnings || []).length} warning(s)</div>
     </div>
-    <div class="tile ${(d.book || []).some(b => b.verdict === 'FULL') ? 'good' : ''}">
-      <div class="k">at full size</div>
-      <div class="v">${(d.book || []).filter(b => b.verdict === 'FULL').length}
-        <span style="font-size:13px;color:var(--faint)">/ ${(d.book || []).length}</span></div>
-      <div class="s">scores as of ${esc(d.as_of_scores || '—')}</div>
+    <div class="tile ${nScanned != null ? 'good' : ''}">
+      <div class="k">broker mail</div>
+      <div class="v">${nScanned != null ? nScanned : '—'}</div>
+      <div class="s">${nScanned != null ? 'mails scanned, last 24h'
+        : 'no brief yet today'}</div>
     </div>
   </div>`;
+
+  const stepChips = (run.steps || []).map(x => {
+    // 'background' is a step the refresh SPAWNED and did not wait for. Its
+    // real outcome is the cement-watch callout, which reads the table the
+    // background process writes.
+    const cls = x.status === 'ok' ? 'ok'
+              : (x.status === 'skipped' || x.status === 'background') ? 'skip'
+              : 'bad';
+    return `<span class="stp ${cls}" title="${esc(x.detail || x.status)}">${
+      esc(x.step)}</span>`;
+  }).join('');
+
+  /* CEMENT WATCH — a live multi-region move is a real signal and keeps its
+     callout; `calibrating` stays one quiet line (an absent banner would read
+     as "no move", the one thing it does not mean); errors are one hint. */
+  const cwRow = r => `${esc(r.region)} ${r.matched_pct == null ? '—'
+      : (r.matched_pct >= 0 ? '+' : '') + r.matched_pct.toFixed(2) + '%'}` +
+      `<span class="hint"> (${r.n_matched == null ? 'first capture'
+        : r.n_matched + ' matched'})</span>`;
+  const cwHtml =
+    cw.state === 'live' && cw.alerts.length
+      ? `<div class="callout accent-amber"><div class="callout-head">
+           <span class="ico">🚨</span><span class="t">Cement watch</span></div>
+         ${cw.alerts.map(a => `<b>CEMENT ${esc(a.direction)} —
+           ${esc(a.regions.join(', '))}</b><br>${esc(a.text)}<br>
+           <span class="hint">${cw.regions.map(cwRow).join(' · ')}</span>`)
+           .join('<hr style="border:0;border-top:1px solid var(--rule);margin:8px 0">')}</div>`
+    : cw.state === 'calibrating'
+      ? `<div class="hint" style="margin-bottom:10px">Cement watch (IndiaMART
+         asks, ${esc(cw.day || '—')}): <b>calibrating</b> — ${cw.n_days}
+         capture${cw.n_days === 1 ? '' : 's'}, ${cw.days_to_calibrate} more
+         before alerts arm. ${cw.regions.map(cwRow).join(' · ')}</div>`
+    : cw.state === 'error'
+      ? `<div class="hint" style="margin-bottom:10px;color:var(--warn)">Cement
+         watch unavailable: ${esc(cw.note || '')}</div>`
+    : '';
+
+  const probs = [...(fe.problems || []), ...(fe.warnings || [])];
 
   const staleRows = (feeds.stale || []).map(x =>
     `<tr><td class="k">${esc(x.series)}</td><td>${esc(x.feed)}</td>
       <td class="k">${esc(x.last)}</td><td>${esc(x.age)}</td></tr>`).join('');
+
+  const moverRows = (d.movers || []).map(m =>
+    `<tr><td class="k">${esc(m.id)}</td>
+      <td class="n">${fmtNum(m.last)}</td>
+      ${m.chg_pct == null
+        ? '<td class="n flat">flat 30d+</td>'
+        : `<td class="n ${m.chg_pct > 0 ? 'pos' : m.chg_pct < 0 ? 'neg' : 'neu'}">${
+             (m.chg_pct >= 0 ? '+' : '') + m.chg_pct.toFixed(2)}%</td>`}
+      <td class="k">${esc(m.date || '—')}</td>
+      <td class="k flat">${esc(m.source || '—')}</td>
+      <td class="k flat">${m.moved_on ? 'carried since ' + esc(m.moved_on) : 'moved today'}</td>
+    </tr>`).join('');
+
+  $('#s-overview').innerHTML =
+    `<div class="pgt">Daily Overview</div>
+     <div class="meta-line">${metaBits.join(' · ')}${metaWarn
+        ? ` · <span style="color:var(--warn)">${metaWarn}</span>` : ''}</div>`
+    + overnightHtml(morn)
+    + cwHtml
+    + tiles
+    + `<div class="sechead">Run · ${esc(run.day || '—')}</div>
+       <div class="panel">
+         <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
+         ${probs.length ? `<div class="hint" style="margin-top:8px;color:var(--down)">${
+            probs.map(esc).join('<br>')}</div>` : ''}
+         ${(run.manual || []).length ? `<div class="hint" style="margin-top:6px">Not
+           covered by an unattended run:
+           ${run.manual.map(m => esc(Array.isArray(m) ? m[0] : m)).join(' · ')}</div>` : ''}
+       </div>`
+    + (staleRows ? `<div class="sechead">Stale feeds</div>
+       <div class="panel"><p class="note" style="margin-top:0">A stale price is
+         not a flat price. Scores were computed on these.</p>
+       <div class="scroll"><table><thead><tr><th>series</th><th>feed</th>
+         <th>last</th><th>age</th></tr></thead><tbody>${staleRows}</tbody></table></div></div>`
+       : `<div class="sechead">Stale feeds</div>
+          <div class="hint">None — every modelled feed is inside its threshold.</div>`)
+    + `<div class="sechead">What moved · modelled inputs only</div>
+       <div class="panel"><p class="note" style="margin-top:0">Only series a spec
+         <code>price_link</code>s — the parked columns drive nothing, so they are
+         not here. Change is against the last close that actually <b>differed</b>.</p>
+       <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
+         <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
+       </tr></thead><tbody>${moverRows}</tbody></table></div></div>`
+    + mailHtml(morn);
+}
+
+/* ===================== the book =====================
+   Split out of the Overview 2026-08-30 (PM: the Overview is the morning
+   read; the book gets reworked separately). Same persisted data —
+   /api/overview's book block — rendered under its own tab. Placeholder
+   facts ride HERE, beside the numbers they qualify, as amber-left callouts
+   rather than page-wide banners. */
+async function loadBook(){
+  const d = await (await fetch('/api/overview')).json();
+  if (d.error) throw new Error(d.error);
 
   const bookRows = (d.book || []).map(b => {
     const cls = b.verdict === 'FULL' ? 'c-up'
@@ -1622,7 +1841,7 @@ async function loadOverview(){
       if (ph) return `<td class="n" style="color:var(--warn)"
         title="PLACEHOLDER, not measured. ${esc(ph.reason || '')} Granted ${
           esc(ph.granted || '')} by ${esc(ph.granted_by || '')}; ends on ${
-          esc(ph.review_trigger || '')}.">${b[k].toFixed(2)}<sup>P</sup></span></td>`;
+          esc(ph.review_trigger || '')}.">${b[k].toFixed(2)}<sup>P</sup></td>`;
       return `<td class="n">${b[k].toFixed(2)}</td>`;
     }).join('');
     return `<tr><td><b>${esc(b.entity)}</b></td>
@@ -1632,113 +1851,46 @@ async function loadOverview(){
       <td><span class="chip ${cls}">${esc(b.verdict || 'n/a')}</span></td></tr>`;
   }).join('');
 
-  const moverRows = (d.movers || []).map(m =>
-    `<tr><td class="k">${esc(m.id)}</td>
-      <td class="n">${fmtNum(m.last)}</td>
-      ${m.chg_pct == null
-        ? '<td class="n flat">flat 30d+</td>'
-        : `<td class="n" style="color:${m.chg_pct > 0 ? 'var(--up)' :
-             m.chg_pct < 0 ? 'var(--down)' : 'var(--faint)'}">${
-             (m.chg_pct >= 0 ? '+' : '') + m.chg_pct.toFixed(2)}%</td>`}
-      <td class="k">${esc(m.date || '—')}</td>
-      <td class="k flat">${esc(m.source || '—')}</td>
-      <td class="k flat">${m.moved_on ? 'carried since ' + esc(m.moved_on) : 'moved today'}</td>
-    </tr>`).join('');
+  const nFull = (d.book || []).filter(b => b.verdict === 'FULL').length;
+  const tiles = `<div class="tiles">
+    <div class="tile ${nFull ? 'good' : ''}">
+      <div class="k">at full size</div>
+      <div class="v">${nFull}
+        <span style="font-size:13px;color:var(--faint)">/ ${(d.book || []).length}</span></div>
+      <div class="s">SIZE ≥ 1.00</div>
+    </div>
+    <div class="tile"><div class="k">scored names</div>
+      <div class="v">${(d.book || []).length}</div>
+      <div class="s">as of ${esc(d.as_of_scores || '—')}</div></div>
+    <div class="tile ${(d.placeholders || []).length ? 'warn' : ''}">
+      <div class="k">placeholders</div>
+      <div class="v">${(d.placeholders || []).length}</div>
+      <div class="s">desk decisions, not measurements</div></div>
+  </div>`;
 
-  const posRows = (d.positioning || []).map(o =>
-    `<tr><td><b>${esc(o.entity_id)}</b></td><td class="k">${esc(o.date)}</td>
-      <td>${esc(o.buildup || '—')}</td><td>${esc(o.buildup_15d || '—')}</td>
-      <td class="n">${o.oi_percentile == null ? '—' : o.oi_percentile.toFixed(0)}</td>
-      <td class="n">${o.oi_percentile_15d == null ? '—' : o.oi_percentile_15d.toFixed(0)}</td>
-      <td class="n">${o.z_score_3m == null ? '—' : (o.z_score_3m >= 0 ? '+' : '') + o.z_score_3m.toFixed(2)}</td>
-    </tr>`).join('');
-
-  const probs = [...(fe.problems || []), ...(fe.warnings || [])];
-
-  const phBanner = (d.placeholders || []).length
-    ? `<div class="banner">${d.placeholders.map(x =>
-        `<b>${esc(x.entity)} ${esc(x.pillar)} = ${x.value}</b> is a
-         <b>PLACEHOLDER, not a measurement</b>${x.overdue ? ' — <b>OVERDUE</b>' : ''}.
-         ${esc(x.reason || '')} Granted ${esc(x.granted || '')} by
-         ${esc(x.granted_by || '')}; ends on <b>${esc(x.review_trigger || '')}</b>.
+  const phCallouts = (d.placeholders || []).map(x =>
+    `<div class="callout accent-amber">
+       <div class="callout-head"><span class="t">${esc(x.entity)} ·
+         ${esc(x.pillar)} = ${x.value}</span>
+         <span class="pill warn">placeholder${x.overdue ? ' · OVERDUE' : ''}</span></div>
+       <div class="hint">${esc(x.reason || '')} Granted ${esc(x.granted || '')}
+         by ${esc(x.granted_by || '')}; ends on <b>${esc(x.review_trigger || '')}</b>.
          It changes the composite and <b>not</b> SIZE — a withheld pillar and a
-         3.00 both map to a 1.0 multiplier.`).join('<hr style="border:0;border-top:1px solid var(--rule);margin:8px 0">')}</div>`
-    : '';
+         3.00 both map to a 1.0 multiplier.</div></div>`).join('');
 
-  /* CEMENT WATCH — the one banner on this page that is about something the
-     scored book cannot see yet. The Kotak pack's prints land ~15 days late, so a
-     multi-region move in IndiaMART dealer asks is tradeable information before
-     the priced series carries it.
-
-     THREE STATES, AND THE MIDDLE ONE MUST BE VISIBLE. `live` with an alert is
-     the point; `live` with no alert renders nothing, correctly. But
-     `calibrating` renders a QUIET line rather than nothing, because an absent
-     banner reads as "no move" and that is exactly what it does not mean — the
-     panel's own day-to-day noise has never been measured, so alerts are
-     suppressed by design. Rendering silence there would be the dashboard making
-     a claim the data cannot support. */
-  const cw = window.__CEMENT_WATCH__ || {state:'no_data', regions:[], alerts:[]};
-  const cwRow = r => `${esc(r.region)} ${r.matched_pct == null ? '—'
-      : (r.matched_pct >= 0 ? '+' : '') + r.matched_pct.toFixed(2) + '%'}` +
-      `<span class="hint"> (${r.n_matched == null ? 'first capture'
-        : r.n_matched + ' matched'})</span>`;
-  const cwBanner =
-    cw.state === 'live' && cw.alerts.length
-      ? `<div class="banner">${cw.alerts.map(a =>
-          `<b>CEMENT ${esc(a.direction)} — ${esc(a.regions.join(', '))}</b><br>
-           ${esc(a.text)}<br>
-           <span class="hint">${cw.regions.map(cwRow).join(' · ')}</span>`
-         ).join('<hr style="border:0;border-top:1px solid var(--rule);margin:8px 0">')}</div>`
-    : cw.state === 'calibrating'
-      ? `<p class="note hint">Cement watch (IndiaMART asks, ${esc(cw.day || '—')}):
-         <b>calibrating</b> — ${cw.n_days} capture${cw.n_days === 1 ? '' : 's'},
-         ${cw.days_to_calibrate} more before alerts arm. Day-on-day matched-listing
-         move: ${cw.regions.map(cwRow).join(' · ')}</p>`
-    : cw.state === 'error'
-      ? `<p class="note hint" style="color:var(--warn)">Cement watch unavailable:
-         ${esc(cw.note || '')}</p>`
-    : '';
-
-  $('#s-overview').innerHTML = tiles + morningHtml(morn_) + cwBanner + phBanner
-    + `<h2>Run · ${esc(run.day || '—')}</h2>
-       <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
-       ${probs.length ? `<div class="banner">${probs.map(esc).join('<br>')}</div>` : ''}
-       ${(run.manual || []).length ? `<p class="note hint">Not covered by an
-         unattended run: ${run.manual.map(m => esc(Array.isArray(m) ? m[0] : m)).join(' · ')}</p>` : ''}`
-    + (staleRows ? `<h2>Stale feeds</h2>
-       <p class="note">A stale price is not a flat price. Scores below were
-         computed on these.</p>
-       <div class="scroll"><table><thead><tr><th>series</th><th>feed</th>
-         <th>last</th><th>age</th></tr></thead><tbody>${staleRows}</tbody></table></div>`
-       : `<h2>Stale feeds</h2><p class="note">None — every modelled feed is
-          inside its threshold.</p>`)
-    + `<h2>The book · ${esc(d.as_of_scores || '')}</h2>
-       <p class="note">Persisted <code>pillar_scores</code>. A dash is a
-         <b>withheld</b> pillar, not a 3.0 — the composite renormalises over the
-         pillars that exist. A <sup>P</sup> in amber is a <b>placeholder</b>: a
-         desk decision from <code>specs/placeholders.yaml</code>, not a measured
-         number. SIZE 1.00 is a full position; below 0.28 is under the desk
-         materiality floor.</p>
-       <div class="scroll"><table><thead><tr><th>name</th><th class="n">comp</th>
+  $('#s-book').innerHTML =
+    `<div class="pgt">The Book</div>
+     <div class="meta-line">Persisted <code>pillar_scores</code> ·
+       ${esc(d.as_of_scores || '—')} · a dash is a <b>withheld</b> pillar, not a
+       3.0 — the composite renormalises over the pillars that exist · SIZE 1.00
+       is a full position; below 0.28 is under the desk materiality floor</div>`
+    + tiles
+    + `<div class="panel"><div class="scroll"><table><thead><tr>
+         <th>name</th><th class="n">comp</th>
          <th class="n">econ</th><th class="n">val</th><th class="n">mood</th>
          <th class="n">guid</th><th class="n">SIZE</th><th>verdict</th>
-       </tr></thead><tbody>${bookRows}</tbody></table></div>`
-    + `<h2>What moved · modelled inputs only</h2>
-       <p class="note">Only series a spec <code>price_link</code>s — the 27 parked
-         steel columns are captured but drive nothing, so they are not here.
-         Change is against the last close that actually <b>differed</b>.</p>
-       <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
-         <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
-       </tr></thead><tbody>${moverRows}</tbody></table></div>`
-    + `<h2>Positioning · futures OI</h2>
-       <p class="note">15d and 3m buildup routinely disagree, and that
-         disagreement is the signal — a name can be short-covering over 15 days
-         inside a three-month short build. OI is <b>T-1 by design</b>: NSE
-         publishes the day's F&amp;O bhavcopy after the close.</p>
-       <div class="scroll"><table><thead><tr><th>name</th><th>as of</th>
-         <th>buildup 3m</th><th>buildup 15d</th><th class="n">pctile 3m</th>
-         <th class="n">pctile 15d</th><th class="n">z 3m</th>
-       </tr></thead><tbody>${posRows || '<tr><td colspan="7" class="hint">no OI rows</td></tr>'}</tbody></table></div>`;
+       </tr></thead><tbody>${bookRows}</tbody></table></div></div>`
+    + phCallouts;
 }
 
 /* ===================== flows =====================
@@ -2044,7 +2196,8 @@ async function loadSector(){
 let TODAY = null;
 
 const loaders = {pair:loadPair, scores:loadScores, pos:loadPos,
-                sector:loadSector, overview:loadOverview, flows:loadFlows};
+                sector:loadSector, overview:loadOverview, book:loadBook,
+                flows:loadFlows};
 
 /* Which views render SECTOR-SPECIFIC content. The other three are global —
    Positioning is the whole F&O table, Overview and Flows are run-level — so
@@ -2094,6 +2247,7 @@ $('#reload').addEventListener('click', () => {
   // reading the sub-nav then reloads a view that is not on screen.
   const e = SECTORS.find(x => x.id === SECTOR) || {};
   const cur = e.kind === 'overview' ? 'overview'
+    : e.kind === 'book' ? 'book'
     : e.kind === 'flows' ? 'flows'
     : e.live ? document.querySelector('.tab[aria-selected=true]').dataset.t
     : 'sector';

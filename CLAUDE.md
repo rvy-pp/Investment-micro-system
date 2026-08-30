@@ -205,10 +205,11 @@ the metals pack and extraction, three of which no unattended process can do.
 
 ## The morning brief — the Overview's pre-market block (2026-08-30)
 
-The Daily Overview opens with a two-column morning block: overnight globals
-left (US, semis, GIFT Nifty vs the Nifty close, Accenture/Cognizant with a
-reason), broker-mail actionables right, grouped by sector, every bullet
-carrying its source so the mail is findable in Outlook. Two dated files under
+The Daily Overview opens with the overnight callout at the TOP (US, semis,
+GIFT Nifty vs the Nifty close, Accenture/Cognizant with a reason) and closes
+with broker-mail actionables at the BOTTOM, grouped by sector, every bullet
+carrying its source so the mail is findable in Outlook. That ordering is the
+PM's, set with the 2026-08-30 reskin (next section). Two dated files under
 `data/morning/`, read by `/api/morning`, and the split is the mail-fetch/Wind
 constraint again:
 
@@ -238,6 +239,50 @@ need a dated on-entity source or they are `null`; the tab then falls back to
 the top on-entity headline from the markets file, and an empty headline list
 after the on-entity filter means NO SIGNAL, not "no move" (macro-fetch's
 Yahoo-search lesson: the endpoint is entity-keyed, not a search engine).
+
+## The 2026-08-30 reskin — the vault dashboard's face on this system's data
+
+PM instruction, verbatim intent: *"that front-end was way better and
+sublime"* — meaning the OLD vault dashboard's LOOK, not its methodology
+(which stays trash per the standing ruling). So the visual language of
+`Obsidian Vault/Dashboard/index.html` was copied onto app.html; the data
+layer did not move an inch.
+
+- **The palette is the vault dashboard's, verbatim, and the page is
+  DARK-ONLY** — GitHub-dark (#0d1117 / #161b22 / #30363d), applied by
+  re-pointing the existing tokens. The light branch and both
+  `prefers-color-scheme` blocks are deleted, not hidden; panels separate by
+  1px border now, not shadow. The chart series palette keeps only its
+  dark-stepped column — the ORDER is still the colourblind-separation
+  safety mechanism, do not reorder it.
+- **Component kit** (`.pgt`, `.meta-line`, `.panel`, `.callout`, `.pill`,
+  `.plist` ▸ bullets, `.dwrap/.dbar` percentile bars, `.sechead`) matches the
+  vault original's class behaviour and px values where they existed there.
+- **Overview order is the PM's:** overnight callout on top, then tiles/run/
+  feeds/movers, broker mail at the bottom. **NO WARNING BANNER BOXES on this
+  tab — explicit instruction.** Run/brief staleness rides in the meta-line;
+  frontend problems are a red hint line inside the Run panel; placeholder
+  callouts live in the Book tab beside the numbers they qualify. The cement
+  watch keeps a callout ONLY in its `live`-with-alerts state; `calibrating`
+  stays one quiet line (an absent banner reads as "no move" — the one thing
+  it does not mean).
+- **The Book is its own top-level tab** ("The Book", between Daily Overview
+  and Flows) — same `/api/overview` book block, new address. The PM plans to
+  rework it; the Overview is the morning read.
+- **Positioning is the vault's viewOI, ported:** tiles, buildup pills,
+  percentile number-over-bar, the z+% Mag cell, per-sector grouping, status
+  pills (OI is T-1 by design, so ≤2d = Live). `/api/oi` rows now carry
+  `sector` and `name` from the specs for the grouping. Deltas are DAY
+  changes (that is what the oi table stores) and are labelled so — do not
+  relabel them 15d to match the vault's old header.
+
+**Preflight rule 2 was corrected the same day, and it was a real blocker:**
+the morning refresh HALTED because the four EMS names carry a `peer_group`
+and deliberately zero bridge lines, and the rule demanded a `base_ebitda`
+that nothing divides by. It now requires base_ebitda only where lines exist
+("bridged", not "scoreable"); the lineless state stays visible as a warn.
+The halt had cost the whole day's scores for every sector — a guard written
+for bridged sectors firing on the first unbridged one.
 
 ## Price sources have a precedence order — read before adding a feed
 

@@ -198,6 +198,17 @@ def oi_snapshot() -> list[dict]:
         "SELECT o.* FROM oi o JOIN (SELECT entity_id, MAX(date) d FROM oi "
         "GROUP BY entity_id) m ON o.entity_id=m.entity_id AND o.date=m.d "
         "ORDER BY o.entity_id")]
+    # Sector + display name off the specs, so the Positioning tab can group
+    # by sector the way the vault dashboard did. Names with no spec (an OI
+    # file for something not modelled) fall into "other" rather than vanish.
+    try:
+        entities, _u, _f = load_specs()
+    except Exception:
+        entities = {}
+    for r in rows:
+        e = entities.get(r["entity_id"]) or {}
+        r["sector"] = e.get("sector") or "other"
+        r["name"] = e.get("name") or r["entity_id"]
     for r in rows:
         hist = conn.execute(
             "SELECT date, oi FROM oi WHERE entity_id=? ORDER BY date",
@@ -690,6 +701,10 @@ def sector_detail(sector_id: str) -> dict:
 def nav_list() -> list[dict]:
     out = [{"id": "overview", "kind": "overview", "label": "Daily Overview",
             "live": True},
+           # The Book got its own tab 2026-08-30 (PM: the Overview is the
+           # morning read; the book will be reworked separately). Same data
+           # as before — /api/overview's book block — different address.
+           {"id": "book", "kind": "book", "label": "The Book", "live": True},
            {"id": "flows", "kind": "flows", "label": "Flows", "live": False}]
     for s in sector_list():
         spec = next(x for x in SECTORS if x["id"] == s["id"])

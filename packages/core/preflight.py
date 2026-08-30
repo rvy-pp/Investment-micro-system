@@ -51,13 +51,31 @@ def main() -> int:
                     warns.append(f"{eid}.{ln.get('item')}: '{link}' has no price "
                                  f"series in the store — the line cannot be scored")
 
-    # 2. A scoreable entity needs a denominator. base_ebitda IS the beta.
+    # 2. A BRIDGED entity needs a denominator. base_ebitda IS the beta.
+    #
+    # "Bridged", not "scoreable" — corrected 2026-08-30 after this rule
+    # HALTED the whole refresh the morning after EMS went live. The four EMS
+    # names carry a peer_group and ZERO bridge lines BY DESIGN (economics is
+    # deliberately unbridged; P3 forward-P/E leads and needs no base_ebitda),
+    # so the old form demanded a denominator that nothing divides by, and the
+    # halt cost the day's scores for every OTHER sector. base_ebitda guards
+    # the bridge; require it exactly where the bridge runs — on entities with
+    # at least one priced line. The lineless state stays VISIBLE as a warn,
+    # so a sector that is supposed to be bridged cannot lose its lines
+    # silently and pass.
     for eid, e in sorted(ents.items()):
         if not e.get("peer_group"):
             continue
+        n_lines = len(e.get("outputs") or []) + len(e.get("inputs") or [])
         if not fin["companies"].get(eid, {}).get("base_ebitda"):
-            fails.append(f"{eid}: scoreable but has no base_ebitda — every score "
-                         f"for this name would be silently rescaled")
+            if n_lines:
+                fails.append(f"{eid}: bridged ({n_lines} lines) but has no "
+                             f"base_ebitda — every score for this name would "
+                             f"be silently rescaled")
+            else:
+                warns.append(f"{eid}: scored without a bridge (no lines, no "
+                             f"base_ebitda) — fine for EMS-style sectors; a "
+                             f"bridged sector should never show this")
         if eid not in priced:
             warns.append(f"{eid}: scoreable but has no price series")
 

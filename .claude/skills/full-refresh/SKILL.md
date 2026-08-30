@@ -300,7 +300,8 @@ a Python data edit and needs no front-end change:
 
 | tab | state |
 |---|---|
-| **Daily Overview** | the landing tab. Did the run work, what is stale, where the book landed |
+| **Daily Overview** | the landing tab, reskinned 2026-08-30 in the vault dashboard's visual language. Overnight callout on top, run health + stale feeds + movers in the middle, broker mail at the bottom. No warning banner boxes here by PM instruction — staleness rides in the meta-line |
+| **The Book** | split out of the Overview 2026-08-30. The persisted book with SIZE and verdicts; placeholder callouts sit here beside the numbers they qualify. PM plans a rework |
 | **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
 | **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |
 | **Steel** | LIVE 2026-08-25 — 5 scored names in two groups (integrated + apl_apollo on the HRC-patra spread) |
