@@ -892,6 +892,59 @@ def overview() -> dict:
     return out
 
 
+def morning() -> dict:
+    """The morning brief: pre-market globals + broker-mail actionables.
+
+    ASSEMBLED FROM FILES, NEVER FETCHED HERE. morning_markets.py (python,
+    unattended) writes markets_YYYY-MM-DD.json; the morning-brief skill
+    (agent — it needs the M365 MCP and judgment) writes brief_YYYY-MM-DD.json.
+    This endpoint only reads the newest of each and says HOW OLD it is. A
+    request must never trigger a network fetch — the page has to render in
+    milliseconds and identically on every reload, or the first screen becomes
+    the flakiest one.
+
+    STALENESS IS THE CONTRACT. Yesterday's brief rendering as this morning's
+    is the same failure the refresh light exists for, so both halves carry
+    their file date and a warning whenever it is not today's. The tab must
+    render the warning, not just the bullets.
+    """
+    import datetime as dt
+    import re as _re
+
+    today = dt.date.today().isoformat()
+    out: dict = {"as_of": today, "markets": None, "brief": None, "warnings": []}
+    mdir = REPO / "data" / "morning"
+
+    def newest(prefix: str):
+        # Parse the date OUT of the name rather than trusting mtime (OneDrive
+        # rewrites mtimes) or lexical order of anything non-ISO.
+        best, best_d = None, None
+        if mdir.exists():
+            for p in mdir.glob(f"{prefix}_*.json"):
+                m = _re.match(rf"{prefix}_(\d{{4}}-\d{{2}}-\d{{2}})\.json$",
+                              p.name)
+                if m and (best_d is None or m.group(1) > best_d):
+                    best, best_d = p, m.group(1)
+        return best, best_d
+
+    for prefix, key, maker in (
+            ("markets", "markets", "python packages/adapters/morning_markets.py"),
+            ("brief", "brief", "the morning-brief skill (agent)")):
+        p, d = newest(prefix)
+        if p is None:
+            out["warnings"].append(f"no {prefix} file yet — run {maker}")
+            continue
+        doc = _read_json(p)
+        if doc is None:
+            out["warnings"].append(f"{p.name} exists but does not parse")
+            continue
+        out[key] = doc
+        if d != today:
+            out["warnings"].append(
+                f"{prefix} is from {d}, not {today} — run {maker}")
+    return out
+
+
 def flows() -> dict:
     """F1-F4 readiness, measured against the store rather than read off a doc.
 

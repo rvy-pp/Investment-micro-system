@@ -1,0 +1,112 @@
+{
+ "date": "2026-08-30",
+ "generated_at": "2026-08-30T21:46:00+05:30",
+ "mail": {
+  "window": "24h to 21:45 IST, 30 Aug",
+  "n_scanned": 10,
+  "sectors": [
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Nvidia's 2QFY27 beat (US$96.2bn revenue, +106% YoY vs US$91bn guided; FY28 growth guided ~70%) read as a volume opportunity for Indian SIs: CLSA ranks Infosys strongest on Nvidia-ecosystem capability, then TechM and TCS, with Persistent the only advanced tech partner in coverage. Cautious near term on AI deflation; AI net positive for SIs medium-to-long term.",
+      "source": "CLSA — India IT: Nvidia 2Q27 read across",
+      "received": "18:48 IST"
+     },
+     {
+      "text": "BofA adds four Japan AI-hardware ideas: initiates Dexerials at Buy (PO JPY4,700, 54% upside) on photodiodes for data-center optical transceivers, Nichicon at Buy and Nippon Chemi-Con at Neutral on AI-server aluminium capacitor demand, and upgrades Kao to Buy partly on its ~60% share in package-substrate cleaning agents.",
+      "source": "BofA — APAC Signal-to-Noise: Four new AI ideas from Japan",
+      "received": "20:39 IST"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "BofA small-business payments data: alternative hiring indicator +21% YoY in July, profits at their highest level this year (transportation and manufacturing strongest) — US small-business activity rebounding, not rolling over.",
+      "source": "BofA Institute — Institute Insights",
+      "received": "20:47 IST"
+     },
+     {
+      "text": "US consumer K-shape persists: new vehicle sales above the 2025 average but carried by higher-income households — almost 20% of lower/middle-income households pay over $1,000/month in auto payments; restaurant recovery led by younger, lower-income consumers trading grocery for dining out.",
+      "source": "BofA Institute — Institute Insights",
+      "received": "20:47 IST"
+     },
+     {
+      "text": "AI capex cycle maturing per BofA: runway left in infrastructure investment, but capital is getting selective — investors now demanding project economics and monetization evidence rather than funding buildout on faith.",
+      "source": "BofA Institute — Institute Insights",
+      "received": "20:47 IST"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak maintains BUY on HDFC Bank, FV Rs1,050 (CMP Rs720), after MD & CEO Sashidhar Jagdishan said he will retire on 26 Oct 2026; the board has accelerated succession. Kotak flags the NIM gap vs peers still wide three years post-merger and expects the valuation discount to persist until leadership clarity emerges.",
+      "source": "Kotak — HDFC Bank: Preparing for the next leadership chapter",
+      "received": "14:48 IST"
+     },
+     {
+      "text": "PhillipCapital on Ather Community Day: new Konarc line on the EL platform starts at Rs99,999 (S 125 and S 161 ship Sep-26; S 100 in Q1 CY27); management explicit ASP will not drop — the platform cuts raw-material cost ~10–12%, battery warranty extends to 10 yr/100,000 km. Aurangabad capacity scales only from Q1FY28, so volume upside is an FY28 story.",
+      "source": "PhillipCapital — Ather Energy Community Day 2026: Comprehensive Takeaways",
+      "received": "00:13 IST"
+     },
+     {
+      "text": "Kotak first take: Ather launched the Konarc at its fourth Community Day in Bengaluru — the company's first entry into the mass EV scooter segment.",
+      "source": "Kotak — Ather Energy enters mass EV scooter segment with Konarc",
+      "received": "22:40 IST, 29 Aug"
+     },
+     {
+      "text": "GS Asia Leaders Conference runs Mon 31 Aug – 2 Sep at JW Marriott Hong Kong — 400 companies, 2,000+ investors; agenda and groups circulated. Flag any India coverage-name meetings starting tomorrow.",
+      "source": "Goldman Sachs — GS Asia Leaders Conference agenda",
+      "received": "20:16 IST"
+     },
+     {
+      "text": "JPMorgan first take on Axiata 2Q26: earnings and FCF remain under pressure but the dividend was increased.",
+      "source": "JPMorgan — Axiata Group 2Q26 First Take",
+      "received": "14:04 IST"
+     },
+     {
+      "text": "Kotak's weekly India Healthcare compendium: last week's low-competition ANDA approvals, 20–26 Aug 2026.",
+      "source": "Kotak — Weekly India Healthcare concoction, Aug 30",
+      "received": "10:07 IST"
+     }
+    ]
+   }
+  ],
+  "quiet": ["Non-ferrous", "Steel", "Cement", "Mining", "EMS"],
+  "dropped": ["Claude product marketing (no research content)"]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Nvidia 2QFY27: US$96.2bn revenue (+106% YoY) vs US$91bn guided; 3QFY27 guided to US$108bn ±2% and FY28 to ~70% growth, supply-constrained — citing an agentic-AI demand inflection, a US$2tn cloud backlog, and frontier AI labs at ~25% of FY28 revenue. Hyperscaler growth expected to reaccelerate from 4QFY27 as Vera Rubin ramps.",
+    "source": "CLSA — India IT: Nvidia 2Q27 read across"
+   },
+   {
+    "text": "The print lifted the whole complex into the 27-Aug close — NVDA +8.7%, AVGO +4.5%, TSMC ADR +2.3%, SOX +2.3% — while AMD fell 0.9%, framed as the beat being 'bad news for AMD and Intel'.",
+    "source": "27-Aug closes (Yahoo) + Motley Fool headline"
+   },
+   {
+    "text": "AI-hardware trade broadening down the supply chain: BofA initiates Japanese component names on optical-transceiver photodiodes and AI-server aluminium capacitors — AI deployments raising both volumes and content per server.",
+    "source": "BofA — APAC Signal-to-Noise: Four new AI ideas from Japan"
+   },
+   {
+    "text": "Counterweight: BofA Institute flags AI capex investors turning selective — demanding project economics and monetization evidence rather than funding buildout on faith.",
+    "source": "BofA Institute — Institute Insights"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Rose with the broad post-Nvidia tech rally (Nasdaq +1.6%, SOX +2.3% same session); no company-specific catalyst in overnight mail or on-entity headlines."
+   },
+   {
+    "name": "Cognizant",
+    "reason": "Rose with the same post-Nvidia tech rally; Zacks notes the stock is +18.3% since its last earnings report — post-earnings momentum, no fresh company-specific catalyst overnight."
+   }
+  ]
+ }
+}

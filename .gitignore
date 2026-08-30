@@ -30,6 +30,11 @@ data/staging/mining/*
 !data/staging/estimates/
 data/staging/estimates/*
 !data/staging/estimates/*.json
+# The morning brief's two dated halves are captures too: a GIFT Nifty print
+# and a 24h mail-window summary can never be re-fetched for a past date.
+!data/morning/
+data/morning/*
+!data/morning/*.json
 snapshots/
 !snapshots/.gitkeep
 

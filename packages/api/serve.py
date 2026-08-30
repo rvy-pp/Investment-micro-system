@@ -100,6 +100,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.nav_list())
             if u.path == "/api/overview":
                 return self._json(engine.overview())
+            if u.path == "/api/morning":
+                return self._json(engine.morning())
             if u.path == "/api/flows":
                 return self._json(engine.flows())
             if u.path == "/api/sector":

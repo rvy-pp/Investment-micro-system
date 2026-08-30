@@ -60,6 +60,13 @@ STEPS = [
     ("preflight",         ["packages/core/preflight.py"],                     True),
     ("equity closes",     ["packages/adapters/yahoo_prices.py", "--load",
                            "--range", "3mo"],                                 False),
+    # The morning brief's deterministic half: US/semis/IT closes, GIFT Nifty,
+    # entity-keyed headlines -> data/morning/markets_<date>.json, display-only,
+    # never prices. NOT in SKIP_IF_DONE, same logic as the equity load: GIFT
+    # trades ~21h, so a second double-click later in the morning pulls a
+    # fresher print and re-pulling is the point. The brief_*.json half is
+    # agent-only (M365) — see .claude/skills/morning-brief.
+    ("morning markets",   ["packages/adapters/morning_markets.py"],           False),
     # LME cash. Promoted from the manual list 2026-08-21 once it turned out
     # westmetall answers plain urllib with HTTP 200 — the earlier
     # "needs an agent" was inferred from lme.com's 403 without testing the

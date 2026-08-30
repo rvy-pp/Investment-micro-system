@@ -203,6 +203,42 @@ does equity closes, corporate actions, preflight and score-and-persist, and it
 **names the four things it did not do** on every run — Wind zinc, broker mail,
 the metals pack and extraction, three of which no unattended process can do.
 
+## The morning brief — the Overview's pre-market block (2026-08-30)
+
+The Daily Overview opens with a two-column morning block: overnight globals
+left (US, semis, GIFT Nifty vs the Nifty close, Accenture/Cognizant with a
+reason), broker-mail actionables right, grouped by sector, every bullet
+carrying its source so the mail is findable in Outlook. Two dated files under
+`data/morning/`, read by `/api/morning`, and the split is the mail-fetch/Wind
+constraint again:
+
+| file | written by | when |
+|---|---|---|
+| `markets_YYYY-MM-DD.json` | `adapters/morning_markets.py` — a refresh.py step | unattended, every launch |
+| `brief_YYYY-MM-DD.json` | `.claude/skills/morning-brief` | agent-only — the mailbox is behind the M365 MCP |
+
+**Neither writes to `prices` or anywhere in ims.db.** ACN or the SOX in
+`prices` would become bridge-shockable — the same reason `estimates` exists
+and cement_pack refuses its own Valuation sheet. Display only.
+
+**GIFT Nifty is nseix.com's own site API** (`/api/market-rate?type=derivatives`,
+plain urllib, no token — discovered by watching the SPA's XHR; the HTML is a
+5KB shell). Rows arrive duplicated and carry two expiries: front contract =
+**max volume, never first row** — on 2026-08-29 first-row was a 23-lot
+back-month print against the Sep contract's 46,485. The pre-market number is
+the GAP to the Nifty close (from `/api/nifty-market-rate`), and a >10%
+gap fails a relative plausibility guard rather than rendering.
+
+**The mail sweep is date-only** — `outlook_email_search` with no `query`
+returns everything in the window (verified 2026-08-30), paged 25 at a time.
+One agent per non-empty sector bucket summarizes actionables; quiet sectors
+are LISTED, not omitted, and yesterday's files render as loud warnings via
+`engine.morning()` — never as this morning's bullets. Bellwether "reasons"
+need a dated on-entity source or they are `null`; the tab then falls back to
+the top on-entity headline from the markets file, and an empty headline list
+after the on-entity filter means NO SIGNAL, not "no move" (macro-fetch's
+Yahoo-search lesson: the endpoint is entity-keyed, not a search engine).
+
 ## Price sources have a precedence order — read before adding a feed
 
 Added 2026-08-21. Four adapters wrote `prices` with `INSERT OR REPLACE` and no

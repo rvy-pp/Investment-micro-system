@@ -242,6 +242,21 @@
           padding:10px var(--s4);margin:0 0 var(--s4);font-size:var(--t-body);
           box-shadow:inset 3px 0 0 var(--warn);max-width:var(--measure)}
   .banner b{font-family:var(--mono);font-weight:600}
+
+  /* ------------------------------------------------------- morning brief
+     Two columns: overnight globals left, broker-mail actionables right. The
+     PM reads this pre-market, so bullets, not tables — and every mail bullet
+     carries its source line so the full email is findable in Outlook. */
+  .brief{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5) var(--s6);
+         margin:0 0 var(--s4)}
+  .brief h3{font-size:var(--t-md);margin:0 0 var(--s2)}
+  .brief ul{margin:0 0 var(--s3);padding-left:18px;font-size:var(--t-body);
+            color:var(--ink)}
+  .brief li{margin-bottom:6px;line-height:1.5}
+  .brief .src{display:block;font-family:var(--mono);font-size:var(--t-label);
+              color:var(--faint)}
+  .brief .sec{font-weight:600;margin:var(--s3) 0 var(--s1);
+              font-size:var(--t-body)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ----------------------------------------------------------- pair view */
@@ -356,6 +371,7 @@
     section{padding-top:var(--s4)}
     .tiles,.stats{gap:var(--s2);grid-template-columns:1fr}
     .cards{grid-template-columns:1fr;padding:var(--s2)}
+    .brief{grid-template-columns:1fr}
     .nrow,.await{padding-left:var(--s3);padding-right:var(--s3)}
     .await{padding-top:var(--s4);padding-bottom:var(--s4)}
     h2{margin-top:var(--s5)}
@@ -1441,6 +1457,98 @@ function sector(id){
    showing a number. Everything here is read from what the run WROTE — status
    and frontend json, pillar_scores, the oi table — never recomputed, so it
    cannot tell a different story from the Pair tab. */
+/* The morning brief block. Everything here is READ from the two dated files
+   under data/morning/ via /api/morning — the page never fetches a market or
+   a mailbox itself. Two halves, and they go stale independently:
+     markets_*.json   python (morning_markets.py), runs unattended
+     brief_*.json     the morning-brief skill — agent-only, because the M365
+                      MCP is callable by the agent and never by a process
+   A missing or yesterday's half renders AS a warning line, not as silence:
+   yesterday's bullets reading as this morning's is the exact failure the
+   refresh light exists for. */
+function morningHtml(m){
+  if (!m || m.error) return `<h2>Morning brief</h2>
+    <p class="note hint" style="color:var(--warn)">unavailable: ${esc(m && m.error || 'no response')}</p>`;
+
+  const pct = v => v == null ? '—'
+    : `<span style="color:${v > 0 ? 'var(--up)' : v < 0 ? 'var(--down)' : 'var(--faint)'}">${
+        (v >= 0 ? '+' : '') + v.toFixed(2)}%</span>`;
+  const mk = m.markets || {};
+  const q = mk.quotes || {};
+  const brief = m.brief || {};
+  const g = brief.global || {};
+
+  const groupLine = rows => (rows || []).map(x =>
+    `${esc(x.label)} ${fmtNum(x.close)} ${pct(x.chg_pct)}`).join(' &nbsp;·&nbsp; ');
+
+  // Bellwether reason: the agent's line if the brief has one, else the top
+  // on-entity dated headline from the markets file, else silence said aloud.
+  const reasonFor = (name, key) => {
+    const b = (g.bellwethers || []).find(x =>
+      (x.name || '').toLowerCase().startsWith(name.toLowerCase()));
+    if (b && b.reason) return esc(b.reason);
+    const h = ((mk.news || {})[key] || [])[0];
+    return h ? `${esc(h.title)} <span class="hint">[${esc(h.publisher)}]</span>`
+             : '<span class="hint">no on-entity headline — no signal, not "no move"</span>';
+  };
+
+  const usDate = (q.us || [])[0] ? ` <span class="hint">(close ${esc(q.us[0].date)})</span>` : '';
+  const gn = mk.gift_nifty || {};
+  const gnLi = 'last' in gn
+    ? `<li><b>GIFT Nifty</b> ${fmtNum(gn.last)} ${pct(gn.chg_pct)}${
+        gn.gap_pts != null ? ` — <b>${gn.gap_pts >= 0 ? '+' : ''}${gn.gap_pts} pts</b> (${
+        (gn.gap_pct >= 0 ? '+' : '') + gn.gap_pct}%) vs Nifty close ${
+        fmtNum((gn.nifty_close || {}).close)}` : ''}
+        <span class="src">${esc(gn.stamp || '')} IST · ${esc(gn.expiry || '')} · ${
+        gn.volume || 0} lots</span></li>`
+    : `<li><b>GIFT Nifty</b> <span class="hint">unavailable: ${esc(gn.error || 'no file')}</span></li>`;
+
+  const aiLis = (g.ai_semis || []).map(x => `<li>${esc(x.text || x)}${
+      x.source ? `<span class="src">${esc(x.source)}</span>` : ''}</li>`).join('');
+
+  const acn = (q.it || []).find(x => x.symbol === 'ACN');
+  const ctsh = (q.it || []).find(x => x.symbol === 'CTSH');
+  const bw = (x, name, key) => x
+    ? `<li><b>${esc(name)}</b> ${fmtNum(x.close)} ${pct(x.chg_pct)} — ${reasonFor(name, key)}</li>`
+    : `<li><b>${esc(name)}</b> <span class="hint">no quote</span></li>`;
+
+  const overnight = mk.date ? `
+    <div><h3>Overnight · global</h3><ul>
+      <li><b>US</b>${usDate} &nbsp;${groupLine(q.us)}</li>
+      <li><b>Semis</b> &nbsp;${groupLine(q.semis)}</li>
+      ${gnLi}
+      ${bw(acn, 'Accenture', 'ACN')}
+      ${bw(ctsh, 'Cognizant', 'CTSH')}
+      ${aiLis}
+    </ul>${(mk.errors || []).length
+        ? `<p class="note hint" style="color:var(--warn)">${mk.errors.map(esc).join('<br>')}</p>` : ''}
+    </div>`
+    : `<div><h3>Overnight · global</h3>
+       <p class="note hint">no markets file — <code>python packages/adapters/morning_markets.py</code></p></div>`;
+
+  const mail = brief.mail || null;
+  const secBlocks = mail ? (mail.sectors || []).map(s => `
+      <div class="sec">${esc(s.sector)}</div>
+      <ul>${(s.bullets || []).map(b => `<li>${esc(b.text)}
+        <span class="src">${esc(b.source || '')}${b.received ? ' · ' + esc(b.received) : ''}</span></li>`).join('')
+        || '<li class="hint">nothing actionable</li>'}</ul>`).join('') : '';
+  const mailCol = mail ? `
+    <div><h3>Broker mail · ${esc(mail.window || 'last 24h')}
+      <span class="hint">(${mail.n_scanned != null ? mail.n_scanned + ' mails scanned' : '—'})</span></h3>
+      ${secBlocks || '<p class="note hint">no sector bullets</p>'}
+      ${(mail.quiet || []).length ? `<p class="note hint">Quiet — nothing actionable:
+        ${mail.quiet.map(esc).join(' · ')}</p>` : ''}
+    </div>`
+    : `<div><h3>Broker mail · last 24h</h3>
+       <p class="note hint">no brief yet — run the <b>morning-brief</b> skill
+       (agent-only: the mailbox is behind the M365 MCP)</p></div>`;
+
+  return `<h2>Morning brief · ${esc(brief.date || mk.date || m.as_of || '')}</h2>
+    ${(m.warnings || []).length
+      ? `<p class="note hint" style="color:var(--warn)">${m.warnings.map(esc).join('<br>')}</p>` : ''}
+    <div class="brief">${overnight}${mailCol}</div>`;
+}
+
 async function loadOverview(){
   const d = await (await fetch('/api/overview')).json();
   if (d.error) throw new Error(d.error);
@@ -1448,10 +1556,13 @@ async function loadOverview(){
   /* Fetched separately and NEVER allowed to break the tab. The cement watch is
      a scraped side-signal; if IndiaMART changed its markup or the table is
      empty, the Overview must still render every score. Hence catch -> a state
-     the banner knows how to say out loud, rather than a rejected promise. */
+     the banner knows how to say out loud, rather than a rejected promise.
+     The morning brief gets the same treatment for the same reason. */
   const cwd_ = await fetch('/api/cement_watch').then(r => r.json())
       .catch(e => ({state:'error', regions:[], alerts:[], note:String(e)}));
   window.__CEMENT_WATCH__ = cwd_;
+  const morn_ = await fetch('/api/morning').then(r => r.json())
+      .catch(e => ({error:String(e)}));
 
   const run = d.run || {};
   const runBad = run.ok === false || !!run.warning || !run.day;
@@ -1588,7 +1699,7 @@ async function loadOverview(){
          ${esc(cw.note || '')}</p>`
     : '';
 
-  $('#s-overview').innerHTML = tiles + cwBanner + phBanner
+  $('#s-overview').innerHTML = tiles + morningHtml(morn_) + cwBanner + phBanner
     + `<h2>Run · ${esc(run.day || '—')}</h2>
        <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
        ${probs.length ? `<div class="banner">${probs.map(esc).join('<br>')}</div>` : ''}

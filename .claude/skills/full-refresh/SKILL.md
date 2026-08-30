@@ -113,6 +113,10 @@ Runs in order, and the order is load-bearing:
 preflight                HALT on failure — everything downstream is untrustworthy
 equity closes            Yahoo, 3mo — includes the mining four since 2026-08-29
                          and the EMS six since 2026-08-30
+morning markets          US/semis/IT closes, GIFT Nifty (nseix.com own API),
+                         entity-keyed headlines -> data/morning/markets_*.json.
+                         DISPLAY-ONLY, never prices. The brief_*.json half is
+                         the morning-brief skill (agent — M365)
 LME cash                 westmetall — plain urllib, no agent, no auth
 NSE OI fetch             the /oi pipeline. WRITES the vault OI History.md files
 open interest            reads them into the store. Reports NEWEST DATA AGE when

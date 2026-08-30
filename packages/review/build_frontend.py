@@ -160,6 +160,18 @@ def check() -> dict:
         r["routes"].append({"route": "/api/cement_watch",
                             "ok": state != "error", "detail": det})
 
+    # /api/morning - the Overview's morning brief. Missing or yesterday's
+    # files are WARNINGS the payload itself carries (the tab renders them),
+    # not route failures: on a fresh machine, or before the agent has run the
+    # morning-brief skill, "no brief yet" is the correct state and the route
+    # is doing its job by saying so. Only an exception is a defect.
+    mo, _ = route("/api/morning", engine.morning)
+    if mo is not None:
+        det = (f"markets {((mo.get('markets') or {}).get('date')) or 'none'}, "
+               f"brief {((mo.get('brief') or {}).get('date')) or 'none'}, "
+               f"{len(mo.get('warnings') or [])} warning(s)")
+        r["routes"].append({"route": "/api/morning", "ok": True, "detail": det})
+
     r["ok"] = not r["problems"]
     r["n_warnings"] = len(r["warnings"])
     r["n_routes"] = len(r["routes"])
