@@ -1118,6 +1118,45 @@ async function loadPair(){
 
   const drawn = rows.filter(r => r.sc.length > 1 || r.px.length > 1);
   if (!drawn.length){
+    /* A ONE-DATE SECTOR IS NOT AN EMPTY SECTOR. A line chart needs two
+       points, so a freshly built sector's first days rendered as nothing but
+       a "widen the span" hint — the PM's report was "the EMS tab is empty"
+       on the very day EMS went live with a full scored cross-section
+       sitting behind the chart. Until a second scored date exists there is
+       no time dimension to draw, but there IS a cross-section to show, so
+       show it: the persisted scores from the newest date, plus a pointer to
+       the sub-tab that carries the sector's working content. */
+    const latest = rows
+      .map(r => {
+        const lp = r.pts.length ? r.pts[r.pts.length - 1] : null;
+        return lp ? {eid: r.eid, name: r.ser.name, p: lp} : null;
+      })
+      .filter(Boolean);
+    if (latest.length){
+      const dmax = latest.map(x => x.p.d).sort().pop();
+      const trs = latest.sort((a, b) =>
+          (b.p.score == null ? -1 : b.p.score) -
+          (a.p.score == null ? -1 : a.p.score)).map(x => `<tr>
+        <td class="k">${esc(x.eid)}</td>
+        <td>${esc(shortLabel(x.name))}</td>
+        <td class="n">${x.p.score == null ? '—' : '<b>' + x.p.score.toFixed(2) + '</b>'}</td>
+        <td class="n">${x.p.close == null ? '—' : fmtNum(x.p.close)}</td>
+        <td class="k flat">${x.p.withheld
+          ? 'withheld: ' + esc(x.p.withheld) : esc(x.p.d)}</td>
+      </tr>`).join('');
+      $('#s-pair').innerHTML = stackControls(tp) +
+        `<h2>${esc(P.pillar)} · latest cross-section · ${esc(dmax)}</h2>
+         <p class="note">Not enough history to <b>chart</b> — no name here has
+           two scored dates yet; the lines start when the second one lands.
+           These are the persisted ${esc(P.pillar)} scores from the newest
+           date. This sector's working view is the <b>Prices &amp; Watch</b>
+           sub-tab.</p>
+         <div class="scroll"><table><thead><tr><th>id</th><th>name</th>
+           <th class="n">score</th><th class="n">close</th><th>as of</th>
+         </tr></thead><tbody>${trs}</tbody></table></div>`;
+      wirePair();
+      return;
+    }
     $('#s-pair').innerHTML = stackControls(tp) +
       '<p class="note">No name in this sector has two or more points in the ' +
       esc(P.span) + ' span. Widen the span.</p>';
