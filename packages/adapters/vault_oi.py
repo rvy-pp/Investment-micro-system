@@ -87,6 +87,48 @@ NAMES = {
     "PG Electroplast": "pg_electroplast",
     "Syrma SGS": "syrma_sgs",
     "Avalon": "avalon",
+    # --- IT, added 2026-08-31 on the PM's instruction ("add OI for IT").
+    # Same collision check run: none of these thirteen folder names appears
+    # under any other Coverage/<sector>/. IT is NOT a modelled sector — no
+    # specs, no scores — so these ids exist only in UNMODELLED below, which
+    # ensure-inserts their `entities` rows at load (the FK on oi.entity_id
+    # would otherwise reject every row). LTTS carries `status: not_in_fno`
+    # and is skipped by the status check; mapped anyway per the mining
+    # convention so an F&O listing starts loading without an edit here.
+    "Infosys": "infosys",
+    "TCS": "tcs",
+    "HCL Technologies": "hcl_tech",
+    "Wipro": "wipro",
+    "Tech Mahindra": "tech_mahindra",
+    "LTIMindtree": "ltimindtree",
+    "Persistent Systems": "persistent",
+    "Coforge": "coforge",
+    "Mphasis": "mphasis",
+    "KPIT Technologies": "kpit",
+    "Tata Elxsi": "tata_elxsi",
+    "OFSS": "ofss",
+    "LTTS": "ltts",
+}
+
+# OI-tracked names with NO spec and NO pillar — positioning context only.
+# Their `entities` rows are created here (kind 'company', sector set, NO
+# peer_group, so invariant 7 keeps them out of every scoring path), and the
+# display name comes from the vault folder rather than the slug. Modelled
+# names must never appear in this dict: their entity rows belong to init_db.
+UNMODELLED: dict[str, tuple[str, str]] = {
+    "infosys": ("Infosys", "it"),
+    "tcs": ("TCS", "it"),
+    "hcl_tech": ("HCL Technologies", "it"),
+    "wipro": ("Wipro", "it"),
+    "tech_mahindra": ("Tech Mahindra", "it"),
+    "ltimindtree": ("LTIMindtree", "it"),
+    "persistent": ("Persistent Systems", "it"),
+    "coforge": ("Coforge", "it"),
+    "mphasis": ("Mphasis", "it"),
+    "kpit": ("KPIT Technologies", "it"),
+    "tata_elxsi": ("Tata Elxsi", "it"),
+    "ofss": ("OFSS", "it"),
+    "ltts": ("LTTS", "it"),
 }
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",
@@ -175,6 +217,13 @@ def main() -> int:
 
     conn = sqlite3.connect(DB)
     conn.execute("PRAGMA foreign_keys = ON")
+    # OI-only names need an entities row or the FK rejects every OI insert.
+    # OR IGNORE, so a slug that later gains a real spec (and an init_db row)
+    # is never overwritten from here.
+    for eid, (disp, sector) in UNMODELLED.items():
+        conn.execute(
+            "INSERT OR IGNORE INTO entities (id, kind, name, sector) "
+            "VALUES (?, 'company', ?, ?)", (eid, disp, sector))
     n = 0
     for eid, path, fm, rows in found:
         if path is None or fm.get("status") == "not_in_fno" or not rows:

@@ -707,7 +707,11 @@ async function loadPos(){
       <div class="v">${stale}</div><div class="s">the state that went invisible once</div></div>
   </div>`;
 
-  const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems'];
+  // IT (2026-08-31) is OI-only: tracked for positioning, modelled nowhere.
+  const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems', 'it'];
+  const SEC_LABEL = {aluminium:'Aluminium', zinc:'Zinc', steel:'Steel',
+                     cement:'Cement', mining:'Mining', ems:'EMS', it:'IT',
+                     other:'Other'};
   const bySector = {};
   for (const r of rows) (bySector[r.sector || 'other'] =
       bySector[r.sector || 'other'] || []).push(r);
@@ -738,7 +742,7 @@ async function loadPos(){
       <td>${spark(r.spark)}</td>
       <td>${oiStatusPill(r.date)}</td>
     </tr>`).join('');
-    const label = sec.charAt(0).toUpperCase() + sec.slice(1);
+    const label = SEC_LABEL[sec] || (sec.charAt(0).toUpperCase() + sec.slice(1));
     return `<div class="sechead">${esc(label)}
         <span class="neu" style="font-weight:400;font-size:12px">${cos.length}</span></div>
       <div class="panel"><div class="scroll"><table><thead><tr>

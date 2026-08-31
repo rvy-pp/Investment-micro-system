@@ -286,6 +286,14 @@ layer did not move an inch.
   `sector` and `name` from the specs for the grouping. Deltas are DAY
   changes (that is what the oi table stores) and are labelled so — do not
   relabel them 15d to match the vault's old header.
+- **IT is OI-ONLY (added 2026-08-31, PM instruction):** 13 names mapped in
+  `vault_oi.NAMES` (12 F&O + LTTS not_in_fno), no specs, no pillars, no
+  Book rows — `vault_oi.UNMODELLED` ensure-inserts their `entities` rows
+  (kind company, sector 'it', NO peer_group, so invariant 7 keeps them out
+  of every scoring path) purely to satisfy the oi FK and give the
+  Positioning tab a label. The vault fetcher was already pulling all 13
+  daily; only the load-side map was missing. `engine.oi_snapshot` resolves
+  sector/name as specs -> entities table -> "other".
 
 **Preflight rule 2 was corrected the same day, and it was a real blocker:**
 the morning refresh HALTED because the four EMS names carry a `peer_group`

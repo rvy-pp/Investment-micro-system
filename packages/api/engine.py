@@ -198,17 +198,21 @@ def oi_snapshot() -> list[dict]:
         "SELECT o.* FROM oi o JOIN (SELECT entity_id, MAX(date) d FROM oi "
         "GROUP BY entity_id) m ON o.entity_id=m.entity_id AND o.date=m.d "
         "ORDER BY o.entity_id")]
-    # Sector + display name off the specs, so the Positioning tab can group
-    # by sector the way the vault dashboard did. Names with no spec (an OI
-    # file for something not modelled) fall into "other" rather than vanish.
+    # Sector + display name: specs first (modelled names), then the entities
+    # table (OI-only names — IT since 2026-08-31 — whose rows vault_oi
+    # ensure-inserts with the vault folder name and sector), then "other" so
+    # nothing ever vanishes from the Positioning tab for want of a label.
     try:
         entities, _u, _f = load_specs()
     except Exception:
         entities = {}
+    db_ent = {r["id"]: r for r in conn.execute(
+        "SELECT id, name, sector FROM entities")}
     for r in rows:
         e = entities.get(r["entity_id"]) or {}
-        r["sector"] = e.get("sector") or "other"
-        r["name"] = e.get("name") or r["entity_id"]
+        d = dict(db_ent.get(r["entity_id"]) or {})
+        r["sector"] = e.get("sector") or d.get("sector") or "other"
+        r["name"] = e.get("name") or d.get("name") or r["entity_id"]
     for r in rows:
         hist = conn.execute(
             "SELECT date, oi FROM oi WHERE entity_id=? ORDER BY date",
