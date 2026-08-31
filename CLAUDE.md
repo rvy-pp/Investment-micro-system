@@ -258,13 +258,16 @@ layer did not move an inch.
 - **Component kit** (`.pgt`, `.meta-line`, `.panel`, `.callout`, `.pill`,
   `.plist` ▸ bullets, `.dwrap/.dbar` percentile bars, `.sechead`) matches the
   vault original's class behaviour and px values where they existed there.
-- **Overview order is the PM's (re-cut 2026-08-31):** overnight callout on
-  top, run health + stale feeds in the middle, broker mail, then what-moved
+- **Overview order is the PM's (re-cut twice, 2026-08-31):** title +
+  meta-line, overnight callout, cement-watch line, broker mail, what-moved
   LAST (read the morning's words first, then the tape that should
-  corroborate them). **The tiles row is GONE and NO WARNING BANNER BOXES on
-  this tab — both explicit instructions.** Everything the tiles said lives
-  at lower volume: refresh/scores age and stale-feed count in the meta-line,
-  route failures as a red hint in the Run panel.
+  corroborate them). **Tiles, the Run panel and the Stale-feeds section are
+  ALL GONE — "just warn me if something isn't executed."** The tab is
+  EXCEPTION-ONLY on plumbing: a healthy run renders nothing about itself;
+  failed steps (by name), stale feeds (by name and age), route problems and
+  a yesterday's-run/brief date all collapse into one amber ⚠ line under the
+  title. The full step record still lives in data/refresh/status.json — the
+  page just stops re-printing it when it is green.
 - **Mail bullets are INSIGHTS, not summaries (PM, 2026-08-31):** one
   sentence, ≤25 words, max 3 per sector, source line as the pointer into
   Outlook — the morning-brief skill carries the calibration example. The

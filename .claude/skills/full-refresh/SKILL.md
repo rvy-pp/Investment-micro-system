@@ -300,7 +300,7 @@ a Python data edit and needs no front-end change:
 
 | tab | state |
 |---|---|
-| **Daily Overview** | the landing tab, reskinned 2026-08-30 in the vault dashboard's visual language. Overnight callout on top, run health + stale feeds + movers in the middle, broker mail at the bottom. No warning banner boxes here by PM instruction — staleness rides in the meta-line |
+| **Daily Overview** | the landing tab, reskinned 2026-08-30 in the vault dashboard's visual language. Overnight callout, broker mail, what-moved — and EXCEPTION-ONLY on plumbing since 2026-08-31: no tiles, no Run panel, no stale-feeds section; failed steps / stale feeds / route problems collapse into one amber ⚠ line, and a green run shows nothing about itself |
 | **The Book** | split out of the Overview 2026-08-30. The persisted book with SIZE and verdicts; placeholder callouts sit here beside the numbers they qualify. PM plans a rework |
 | **Flows** | scoped, not built. 1 of 5 L3 inputs ready |
 | **Non-Ferrous** | live. Holds the Pair / Bridge / Positioning views |

@@ -1694,30 +1694,40 @@ async function loadOverview(){
   const run = d.run || {};
   const feeds = d.feeds || {};
   const fe = d.frontend || {};
-  /* NO TILES ROW — removed 2026-08-31 on the PM's instruction. Everything
-     the tiles said lives elsewhere at lower volume: last refresh and scores
-     age in the meta-line (amber only when wrong), feed staleness in the
-     Stale feeds section, route failures as a red hint in the Run panel. */
+  /* NO TILES, NO RUN PANEL, NO STALE-FEEDS SECTION — PM instructions,
+     2026-08-31: "just warn me if something isn't executed." So this tab is
+     EXCEPTION-ONLY on plumbing: a healthy run renders nothing at all about
+     itself, and anything unhealthy becomes one amber line under the title —
+     failed steps by name, stale feeds by name and age, route problems, a
+     yesterday's-run or yesterday's-brief date. The full step-by-step record
+     still exists (data/refresh/status.json and the refresh transcript); this
+     page just stops re-printing it when it is green. */
   const metaBits = [
     esc(d.as_of || ''),
     `last refresh ${esc(run.day || 'never')}${run.finished
       ? ' ' + esc(run.finished.replace('T', ' ').slice(11, 19)) : ''}`,
     `scores as of ${esc(d.as_of_scores || '—')}`,
-    feeds.n_stale ? `${feeds.n_stale} feed(s) stale` : null,
-  ].filter(Boolean);
-  const metaWarn = [run.warning, ...(morn && morn.warnings || [])]
-    .filter(Boolean).map(esc).join(' · ');
+  ];
 
-  const stepChips = (run.steps || []).map(x => {
-    // 'background' is a step the refresh SPAWNED and did not wait for. Its
-    // real outcome is the cement-watch callout, which reads the table the
-    // background process writes.
-    const cls = x.status === 'ok' ? 'ok'
-              : (x.status === 'skipped' || x.status === 'background') ? 'skip'
-              : 'bad';
-    return `<span class="stp ${cls}" title="${esc(x.detail || x.status)}">${
-      esc(x.step)}</span>`;
-  }).join('');
+  const badSteps = (run.steps || []).filter(x =>
+    x.status !== 'ok' && x.status !== 'skipped' && x.status !== 'background');
+  const staleList = (feeds.stale || []).slice(0, 4).map(x =>
+    `${x.series} (${x.age})`).join(', ')
+    + ((feeds.stale || []).length > 4
+       ? ` +${feeds.stale.length - 4} more` : '');
+  const warnItems = [
+    run.warning,      // covers both "yesterday's run" and "no status.json ever"
+    badSteps.length ? `step${badSteps.length > 1 ? 's' : ''} FAILED: `
+      + badSteps.map(x => `${x.step}${x.detail ? ' — ' + x.detail : ''}`).join('; ')
+      : null,
+    feeds.n_stale ? `${feeds.n_stale} feed(s) stale: ${staleList}` : null,
+    ...(fe.problems || []),
+    ...(morn && morn.warnings || []),
+  ].filter(Boolean);
+  const warnLine = warnItems.length
+    ? `<div class="hint" style="color:var(--warn);margin:0 0 12px">⚠ ${
+        warnItems.map(esc).join('<br>⚠ ')}</div>`
+    : '';
 
   /* CEMENT WATCH — a live multi-region move is a real signal and keeps its
      callout; `calibrating` stays one quiet line (an absent banner would read
@@ -1744,12 +1754,6 @@ async function loadOverview(){
          watch unavailable: ${esc(cw.note || '')}</div>`
     : '';
 
-  const probs = [...(fe.problems || []), ...(fe.warnings || [])];
-
-  const staleRows = (feeds.stale || []).map(x =>
-    `<tr><td class="k">${esc(x.series)}</td><td>${esc(x.feed)}</td>
-      <td class="k">${esc(x.last)}</td><td>${esc(x.age)}</td></tr>`).join('');
-
   const moverRows = (d.movers || []).map(m =>
     `<tr><td class="k">${esc(m.id)}</td>
       <td class="n">${fmtNum(m.last)}</td>
@@ -1764,27 +1768,10 @@ async function loadOverview(){
 
   $('#s-overview').innerHTML =
     `<div class="pgt">Daily Overview</div>
-     <div class="meta-line">${metaBits.join(' · ')}${metaWarn
-        ? ` · <span style="color:var(--warn)">${metaWarn}</span>` : ''}</div>`
+     <div class="meta-line">${metaBits.join(' · ')}</div>`
+    + warnLine
     + overnightHtml(morn)
     + cwHtml
-    + `<div class="sechead">Run · ${esc(run.day || '—')}</div>
-       <div class="panel">
-         <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
-         ${probs.length ? `<div class="hint" style="margin-top:8px;color:var(--down)">${
-            probs.map(esc).join('<br>')}</div>` : ''}
-         ${(run.manual || []).length ? `<div class="hint" style="margin-top:6px">Not
-           covered by an unattended run:
-           ${run.manual.map(m => `<span title="${esc((m && m.why) || '')}">${
-             esc((m && m.name) || (Array.isArray(m) ? m[0] : m))}</span>`).join(' · ')}</div>` : ''}
-       </div>`
-    + (staleRows ? `<div class="sechead">Stale feeds</div>
-       <div class="panel"><p class="note" style="margin-top:0">A stale price is
-         not a flat price. Scores were computed on these.</p>
-       <div class="scroll"><table><thead><tr><th>series</th><th>feed</th>
-         <th>last</th><th>age</th></tr></thead><tbody>${staleRows}</tbody></table></div></div>`
-       : `<div class="sechead">Stale feeds</div>
-          <div class="hint">None — every modelled feed is inside its threshold.</div>`)
     + mailHtml(morn)
     /* What-moved BELOW the mail, per the PM 2026-08-31: read the morning's
        words first, then the tape that should corroborate them. */

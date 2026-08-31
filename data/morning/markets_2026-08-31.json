@@ -1,6 +1,6 @@
 {
  "date": "2026-08-31",
- "fetched_at": "2026-08-31T10:51:56",
+ "fetched_at": "2026-08-31T11:11:56",
  "quotes": {
   "us": [
    {
@@ -90,7 +90,44 @@
   ]
  },
  "news": {
-  "ACN": [],
+  "ACN": [
+   {
+    "title": "The Smaller Customers Accenture's Stock Now Needs",
+    "publisher": "Trefis",
+    "when": "2026-08-28 19:30Z",
+    "link": "https://finance.yahoo.com/m/0ac568d4-dd1c-3073-8b3c-d7b0d062978f/the-smaller-customers.html"
+   },
+   {
+    "title": "Accenture expands Edge for mid-market firms with COMWARE deal",
+    "publisher": "Verdict",
+    "when": "2026-08-28 07:26Z",
+    "link": "https://finance.yahoo.com/m/05e6a288-85a7-32e7-8ee5-9ac1b9a1e70a/accenture-expands-edge-for.html"
+   },
+   {
+    "title": "Accenture Stock And 2 Dividend Compounders for Passive Income",
+    "publisher": "Simply Wall St.",
+    "when": "2026-08-28 04:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-2-dividend-compounders-043428947.html"
+   },
+   {
+    "title": "Accenture To Acquire McCoy To Beef Up Its Mid-market Business",
+    "publisher": "Sourcing Journal",
+    "when": "2026-08-27 20:03Z",
+    "link": "https://finance.yahoo.com/m/2bdac394-be8b-360d-8e68-df169a370c4f/accenture-to-acquire-mccoy-to.html"
+   },
+   {
+    "title": "Accenture to Acquire Tokyo's COMWARE: Is it a Growth Catalyst?",
+    "publisher": "Zacks",
+    "when": "2026-08-27 15:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acquire-tokyos-comware-growth-150800166.html"
+   },
+   {
+    "title": "Accenture to Acquire Japan-Based Comware to Boost Mid-Market AI Services",
+    "publisher": "MT Newswires",
+    "when": "2026-08-27 07:36Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acquire-japan-based-comware-073625537.html"
+   }
+  ],
   "CTSH": [
    {
     "title": "Why Is Cognizant (CTSH) Up 18.3% Since Last Earnings Report?",
@@ -163,16 +200,16 @@
  },
  "errors": [],
  "gift_nifty": {
-  "last": 24146.5,
-  "chg_pct": -0.53,
-  "stamp": "31-Aug-2026 10:51:56",
+  "last": 24144.0,
+  "chg_pct": -0.54,
+  "stamp": "31-Aug-2026 11:11:59",
   "expiry": "29-Sep-2026",
-  "volume": 14396,
+  "volume": 15664,
   "nifty_close": {
    "close": 24175.65,
-   "stamp": "31-Aug-2026 10:52"
+   "stamp": "31-Aug-2026 11:11"
   },
-  "gap_pts": -29.2,
-  "gap_pct": -0.12
+  "gap_pts": -31.7,
+  "gap_pct": -0.13
  }
 }
