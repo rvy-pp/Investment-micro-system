@@ -1,0 +1,178 @@
+{
+ "date": "2026-08-31",
+ "fetched_at": "2026-08-31T10:51:56",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-08-27",
+    "close": 7730.99,
+    "prev_date": "2026-08-26",
+    "chg_pct": 0.72
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-08-27",
+    "close": 26541.35,
+    "prev_date": "2026-08-26",
+    "chg_pct": 1.57
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-08-27",
+    "close": 53569.44,
+    "prev_date": "2026-08-26",
+    "chg_pct": 0.2
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-08-27",
+    "close": 11882.17,
+    "prev_date": "2026-08-26",
+    "chg_pct": 2.33
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-08-27",
+    "close": 227.98,
+    "prev_date": "2026-08-26",
+    "chg_pct": 8.74
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-08-27",
+    "close": 476.67,
+    "prev_date": "2026-08-26",
+    "chg_pct": -0.89
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-08-27",
+    "close": 427.3,
+    "prev_date": "2026-08-26",
+    "chg_pct": 2.3
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-08-27",
+    "close": 371.54,
+    "prev_date": "2026-08-26",
+    "chg_pct": 4.49
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-08-27",
+    "close": 187.38,
+    "prev_date": "2026-08-26",
+    "chg_pct": 3.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-08-27",
+    "close": 63.76,
+    "prev_date": "2026-08-26",
+    "chg_pct": 2.69
+   }
+  ]
+ },
+ "news": {
+  "ACN": [],
+  "CTSH": [
+   {
+    "title": "Why Is Cognizant (CTSH) Up 18.3% Since Last Earnings Report?",
+    "publisher": "Zacks",
+    "when": "2026-08-28 15:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-cognizant-ctsh-18-3-153021845.html"
+   },
+   {
+    "title": "Is Cognizant (CTSH) Quietly Redefining Its Automation Edge With Kyowa Kirin\u2019s AI R&D Deal?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-08-26 20:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-quietly-redefining-automation-202030684.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Stock May Trade At A 44% Discount Despite Fresh AI Contract Pressure",
+    "publisher": "Simply Wall St.",
+    "when": "2026-08-26 19:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-stock-may-trade-191010032.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Trump Interrupts Nvidia Meeting With Surprise Call to Jensen Huang, Hours Before Praising 'Incredible' Numbers: Report",
+    "publisher": "Benzinga",
+    "when": "2026-08-31 03:44Z",
+    "link": "https://finance.yahoo.com/technology/articles/trump-interrupts-nvidia-meeting-surprise-034407585.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Prediction: Broadcom Stock Will Go Parabolic After Sept. 2",
+    "publisher": "Motley Fool",
+    "when": "2026-08-30 18:05Z",
+    "link": "https://finance.yahoo.com/m/54b39609-0e73-360e-ada2-4606a42b8ac0/prediction%3A-broadcom-stock.html"
+   },
+   {
+    "title": "Jobs, Broadcom, Dell, Hewlett, Planet Labs, and More to Watch This Week",
+    "publisher": "Barrons.com",
+    "when": "2026-08-30 18:00Z",
+    "link": "https://finance.yahoo.com/m/e49bec70-e76c-3b98-a541-438d00c01253/jobs%2C-broadcom%2C-dell%2C.html"
+   },
+   {
+    "title": "Hock Tan Guided Broadcom Past $100 Billion of AI Revenue in 2027. The Stock Is 25% off Its High.",
+    "publisher": "Motley Fool",
+    "when": "2026-08-30 12:58Z",
+    "link": "https://finance.yahoo.com/m/00b9b740-86be-3281-b6c0-cce730f346f5/hock-tan-guided-broadcom-past.html"
+   },
+   {
+    "title": "Broadcom or AMD? Here's Why the Market Is Pricing the Same AI Boom So Differently Across 2 Chip Stocks.",
+    "publisher": "Motley Fool",
+    "when": "2026-08-30 12:40Z",
+    "link": "https://finance.yahoo.com/m/c820e3b1-9a39-3fb5-abc2-a73333e8ebc8/broadcom-or-amd%3F-here%27s-why.html"
+   },
+   {
+    "title": "Billionaire Stanley Druckenmiller Sold Broadcom and Bought These Artificial Intelligence (AI) Giants Instead",
+    "publisher": "Motley Fool",
+    "when": "2026-08-29 20:20Z",
+    "link": "https://finance.yahoo.com/m/b5379027-2805-3c8f-a53f-c4763263327e/billionaire-stanley.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Nvidia Just Delivered Bad News for AMD and Intel",
+    "publisher": "Motley Fool",
+    "when": "2026-08-30 15:42Z",
+    "link": "https://finance.yahoo.com/m/f9de04f9-1bf8-31e3-88c6-d17016b6e192/nvidia-just-delivered-bad.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 24146.5,
+  "chg_pct": -0.53,
+  "stamp": "31-Aug-2026 10:51:56",
+  "expiry": "29-Sep-2026",
+  "volume": 14396,
+  "nifty_close": {
+   "close": 24175.65,
+   "stamp": "31-Aug-2026 10:52"
+  },
+  "gap_pts": -29.2,
+  "gap_pct": -0.12
+ }
+}

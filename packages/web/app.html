@@ -1692,47 +1692,21 @@ async function loadOverview(){
       .catch(e => ({error:String(e)}));
 
   const run = d.run || {};
-  const runBad = run.ok === false || !!run.warning || !run.day;
   const feeds = d.feeds || {};
   const fe = d.frontend || {};
-  const nScanned = (((morn || {}).brief || {}).mail || {}).n_scanned;
-
-  /* Everything that used to be a yellow box is now one quiet line here. */
+  /* NO TILES ROW — removed 2026-08-31 on the PM's instruction. Everything
+     the tiles said lives elsewhere at lower volume: last refresh and scores
+     age in the meta-line (amber only when wrong), feed staleness in the
+     Stale feeds section, route failures as a red hint in the Run panel. */
   const metaBits = [
     esc(d.as_of || ''),
     `last refresh ${esc(run.day || 'never')}${run.finished
       ? ' ' + esc(run.finished.replace('T', ' ').slice(11, 19)) : ''}`,
     `scores as of ${esc(d.as_of_scores || '—')}`,
-  ];
+    feeds.n_stale ? `${feeds.n_stale} feed(s) stale` : null,
+  ].filter(Boolean);
   const metaWarn = [run.warning, ...(morn && morn.warnings || [])]
     .filter(Boolean).map(esc).join(' · ');
-
-  const tiles = `<div class="tiles">
-    <div class="tile ${runBad ? 'warn' : 'good'}">
-      <div class="k">last refresh</div>
-      <div class="v">${esc(run.day || '—')}</div>
-      <div class="s">${esc((run.finished || '').replace('T', ' ').slice(0, 19)
-        || 'no finish time')}</div>
-    </div>
-    <div class="tile ${feeds.n_stale ? 'warn' : 'good'}">
-      <div class="k">feeds stale</div>
-      <div class="v">${feeds.n_stale == null ? '—' : feeds.n_stale}
-        <span style="font-size:13px;color:var(--faint)">/ ${feeds.n_series || 0}</span></div>
-      <div class="s">${feeds.parked || 0} parked (captured, not modelled)</div>
-    </div>
-    <div class="tile ${fe.n_failed ? 'bad' : 'good'}">
-      <div class="k">page routes</div>
-      <div class="v">${(fe.n_routes || 0) - (fe.n_failed || 0)}
-        <span style="font-size:13px;color:var(--faint)">/ ${fe.n_routes || 0}</span></div>
-      <div class="s">${(fe.warnings || []).length} warning(s)</div>
-    </div>
-    <div class="tile ${nScanned != null ? 'good' : ''}">
-      <div class="k">broker mail</div>
-      <div class="v">${nScanned != null ? nScanned : '—'}</div>
-      <div class="s">${nScanned != null ? 'mails scanned, last 24h'
-        : 'no brief yet today'}</div>
-    </div>
-  </div>`;
 
   const stepChips = (run.steps || []).map(x => {
     // 'background' is a step the refresh SPAWNED and did not wait for. Its
@@ -1794,7 +1768,6 @@ async function loadOverview(){
         ? ` · <span style="color:var(--warn)">${metaWarn}</span>` : ''}</div>`
     + overnightHtml(morn)
     + cwHtml
-    + tiles
     + `<div class="sechead">Run · ${esc(run.day || '—')}</div>
        <div class="panel">
          <div class="steps">${stepChips || '<span class="hint">no step record</span>'}</div>
@@ -1802,7 +1775,8 @@ async function loadOverview(){
             probs.map(esc).join('<br>')}</div>` : ''}
          ${(run.manual || []).length ? `<div class="hint" style="margin-top:6px">Not
            covered by an unattended run:
-           ${run.manual.map(m => esc(Array.isArray(m) ? m[0] : m)).join(' · ')}</div>` : ''}
+           ${run.manual.map(m => `<span title="${esc((m && m.why) || '')}">${
+             esc((m && m.name) || (Array.isArray(m) ? m[0] : m))}</span>`).join(' · ')}</div>` : ''}
        </div>`
     + (staleRows ? `<div class="sechead">Stale feeds</div>
        <div class="panel"><p class="note" style="margin-top:0">A stale price is
@@ -1811,14 +1785,16 @@ async function loadOverview(){
          <th>last</th><th>age</th></tr></thead><tbody>${staleRows}</tbody></table></div></div>`
        : `<div class="sechead">Stale feeds</div>
           <div class="hint">None — every modelled feed is inside its threshold.</div>`)
+    + mailHtml(morn)
+    /* What-moved BELOW the mail, per the PM 2026-08-31: read the morning's
+       words first, then the tape that should corroborate them. */
     + `<div class="sechead">What moved · modelled inputs only</div>
        <div class="panel"><p class="note" style="margin-top:0">Only series a spec
          <code>price_link</code>s — the parked columns drive nothing, so they are
          not here. Change is against the last close that actually <b>differed</b>.</p>
        <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
          <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
-       </tr></thead><tbody>${moverRows}</tbody></table></div></div>`
-    + mailHtml(morn);
+       </tr></thead><tbody>${moverRows}</tbody></table></div></div>`;
 }
 
 /* ===================== the book =====================

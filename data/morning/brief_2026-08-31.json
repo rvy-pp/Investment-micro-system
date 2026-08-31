@@ -1,0 +1,118 @@
+{
+ "date": "2026-08-31",
+ "generated_at": "2026-08-31T11:15:00+05:30",
+ "mail": {
+  "window": "24h to 11:10 IST, 31 Aug",
+  "n_scanned": 67,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "HRC-patra spread narrowed 10.4% WoW to Rs10,033/t, below the Rs11,850/t three-month average — supportive for APL Apollo.",
+      "source": "Nuvama — HRC-patra spread narrows by 10.4% WoW",
+      "received": "09:16 IST"
+     },
+     {
+      "text": "India HRC +Rs1,200/t WoW to Rs59,750/t, rebar +Rs1,050/t to Rs54,750/t; Nomura keeps Buys on Tata, JSW, Jindal Steel.",
+      "source": "Nomura — Steel weekly trends, week ended 28 Aug",
+      "received": "10:20 IST"
+     },
+     {
+      "text": "Imported coking coal +$24/t WoW to $259/t, the YTD high — a rising cost headwind for all mills.",
+      "source": "Nomura — Steel weekly trends, week ended 28 Aug",
+      "received": "10:20 IST"
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "TCS pays only 60-70% variable to mid-senior staff for Q1 — margin pressure read into Q2 wage commentary.",
+      "source": "Kotak — Technology News Wrap, Aug 31",
+      "received": "08:29 IST"
+     },
+     {
+      "text": "CLSA's Nvidia readthrough for IT services: near-term pain, long-term gain; unrated AI-infra plays Netweb and E2E flagged.",
+      "source": "CLSA sales — Nvidia Readthru: Netweb, E2E",
+      "received": "09:06 IST"
+     },
+     {
+      "text": "$103k H-1B fee plus tighter grace-period and spouse-work rules back in focus — visa overhang on large-cap IT.",
+      "source": "Kotak — Technology News Wrap, Aug 31",
+      "received": "08:29 IST"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "MSCI India rebal executes at today's close, +$2.7bn net: buy Eternal ($1bn), Laurus, Lenskart; sell Reliance (-$601m), SBI Card.",
+      "source": "BNPP — India Quick Notes",
+      "received": "08:50 IST"
+     },
+     {
+      "text": "Post-Warsh, a September Fed hike is 61% priced (from 35%); BNPP neutral US equities, expects ~$10bn month-end selling today.",
+      "source": "JPM Overnight Brief + BNPP",
+      "received": "06:34 IST"
+     },
+     {
+      "text": "July IIP beat at 6.7% YoY, June revised up to a 32-month-high 8.8% — supports domestic capex/industrial longs.",
+      "source": "CLSA — IIP grew 6.7% YoY in July",
+      "received": "06:35 IST"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "HDFC Bank CEO Jagdishan will not seek reappointment past October; BofA BUY PO Rs880 flags near-term overhang, JPM sees limited de-rating risk.",
+      "source": "BofA, JPM, Kotak, CLSA on the CEO exit (+5 more in Outlook)",
+      "received": "09:18 IST"
+     },
+     {
+      "text": "Ather's Rs100k Konarc lands well: Emkay BUY TP Rs2,200, CLSA 'premium engineering', JPM 'more than a product launch'.",
+      "source": "Emkay, CLSA, JPM on Ather Konarc (+1 more in Outlook)",
+      "received": "08:56 IST"
+     },
+     {
+      "text": "BSE downgraded to REDUCE, TP Rs3,080 ('options engine losing steam'); BofA initiates SBI AMC at BUY.",
+      "source": "Avendus Spark; BofA initiation (+3 more in Outlook)",
+      "received": "06:48 IST"
+     }
+    ]
+   }
+  ],
+  "quiet": ["Non-ferrous", "Cement", "Mining", "EMS"],
+  "dropped": ["marketing/awards/platform mails, conference logistics, GS Launchpad schedules, off-coverage China property first-takes"]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Broadcom results Sep 2 are the next AI-semis catalyst after Thursday's Nvidia-driven rally (NVDA +8.7%, AVGO +4.5%, SOX +2.3%).",
+    "source": "Motley Fool headline + 27-Aug closes"
+   },
+   {
+    "text": "A ~$100bn Anthropic IPO at ~$2trn valuation, likely early October, could pressure mega-cap tech; BNPP cuts delta to neutral, stays long vol.",
+    "source": "BNPP — India Quick Notes"
+   },
+   {
+    "text": "CLSA launched the book today for Shenzhen Longsys Electronics — a memory-semis IPO levered to the AI memory cycle.",
+    "source": "CLSA — Longsys IPO book launch"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "No US session since Thursday's +3.3% Nvidia rally; only news is the COMWARE acquisition for Japan mid-market."
+   },
+   {
+    "name": "Cognizant",
+    "reason": "No US session since Thursday's +2.7% post-Nvidia move; nothing new has printed."
+   }
+  ]
+ }
+}

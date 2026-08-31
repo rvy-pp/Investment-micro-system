@@ -258,9 +258,17 @@ layer did not move an inch.
 - **Component kit** (`.pgt`, `.meta-line`, `.panel`, `.callout`, `.pill`,
   `.plist` ▸ bullets, `.dwrap/.dbar` percentile bars, `.sechead`) matches the
   vault original's class behaviour and px values where they existed there.
-- **Overview order is the PM's:** overnight callout on top, then tiles/run/
-  feeds/movers, broker mail at the bottom. **NO WARNING BANNER BOXES on this
-  tab — explicit instruction.** Run/brief staleness rides in the meta-line;
+- **Overview order is the PM's (re-cut 2026-08-31):** overnight callout on
+  top, run health + stale feeds in the middle, broker mail, then what-moved
+  LAST (read the morning's words first, then the tape that should
+  corroborate them). **The tiles row is GONE and NO WARNING BANNER BOXES on
+  this tab — both explicit instructions.** Everything the tiles said lives
+  at lower volume: refresh/scores age and stale-feed count in the meta-line,
+  route failures as a red hint in the Run panel.
+- **Mail bullets are INSIGHTS, not summaries (PM, 2026-08-31):** one
+  sentence, ≤25 words, max 3 per sector, source line as the pointer into
+  Outlook — the morning-brief skill carries the calibration example. The
+  renderer does not truncate; the discipline lives at generation time. Run/brief staleness rides in the meta-line;
   frontend problems are a red hint line inside the Run panel; placeholder
   callouts live in the Book tab beside the numbers they qualify. The cement
   watch keeps a callout ONLY in its `live`-with-alerts state; `calibrating`

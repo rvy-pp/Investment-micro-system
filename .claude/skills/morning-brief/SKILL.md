@@ -66,16 +66,35 @@ plausibly belongs to two buckets goes to both.
 Spawn the sector agents **in parallel, one per non-empty bucket**, each with
 only its bucket's records. Instructions to each agent:
 
-- One bullet per mail that carries something actionable: a number, a rating
-  or estimate change, a price/volume datapoint, guidance, an event with a
-  date. Skip pleasantries; a mail with nothing actionable returns nothing.
-- Bullet = one or two sentences, PM-readable, no jargon-compression.
+- **PM ruling 2026-08-31: insights, not summaries.** One sentence per
+  bullet, ~25 words or fewer, leading with the thing that matters — the
+  number, the call change, the dated event. No methodology, no second
+  clause explaining the first, no "the broker notes that". The PM opens the
+  mail when detail is wanted; the source line is the pointer.
+- **At most 3 bullets per sector.** More material mails than that: keep the
+  three most tradeable and end the last bullet's source with
+  `(+N more in Outlook)`. Dropping is the feature — an eight-bullet sector
+  is a digest, not a brief.
+- Only genuinely actionable content earns a bullet: a number, a rating or
+  estimate change, a price/volume datapoint, guidance, an event with a
+  date. A mail with nothing actionable returns nothing.
 - Every bullet carries `source` ("Broker — subject line", enough to find the
   mail in Outlook) and `received` (IST HH:MM).
 - The metadata `summary` field is ~250 chars. Read the full body via
   `read_resource(uri)` ONLY when the snippet is not enough to state the
   actionable — typically the 2–5 material notes, not all of them.
 - Return JSON: `{"sector": "...", "bullets": [{"text","source","received"}]}`
+
+Bullet calibration, from the 2026-08-30 run:
+
+- ✗ *"Nvidia's 2QFY27 beat (US$96.2bn revenue, +106% YoY vs US$91bn guided;
+  FY28 growth guided ~70%) read as a volume opportunity for Indian SIs:
+  CLSA ranks Infosys strongest on Nvidia-ecosystem capability, then TechM
+  and TCS, with Persistent the only advanced tech partner in coverage.
+  Cautious near term on AI deflation; AI net positive for SIs
+  medium-to-long term."* — that is the mail, re-typed.
+- ✓ *"CLSA ranks Infosys > TechM > TCS on Nvidia-ecosystem capability after
+  the 2QFY27 beat; cautious near term on AI deflation."*
 
 Sectors with no mail are NOT omitted — they go in `quiet`, because "no mail"
 and "not checked" must stay distinguishable (the mail-fetch empty-array rule).
@@ -85,9 +104,10 @@ and "not checked" must stay distinguishable (the mail-fetch empty-array rule).
 From the markets file plus the swept mail (a broker's overnight tech note
 often beats a headline), write:
 
-- `ai_semis`: 2–5 bullets on AI/semiconductor overnight — earnings, guides,
-  big moves. Each bullet's `source` names where it came from (headline
-  publisher or broker mail).
+- `ai_semis`: 2–3 bullets on AI/semiconductor overnight — earnings, guides,
+  big moves. Same one-sentence discipline as the sector bullets. Each
+  bullet's `source` names where it came from (headline publisher or broker
+  mail).
 - `bellwethers`: for Accenture and Cognizant, `{"name", "reason"}` — one
   line on WHY it moved, only if a dated on-entity headline or broker mail
   supports it. **No supported reason -> `"reason": null`**, and the tab
