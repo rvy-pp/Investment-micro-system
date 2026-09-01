@@ -61,9 +61,9 @@ STAGING = REPO / "data" / "staging" / "estimates"
 Q = ("https://query2.finance.yahoo.com/v10/finance/quoteSummary/{sym}"
      "?modules=earningsTrend,defaultKeyStatistics&crumb={crumb}")
 
-# entity_id -> Yahoo symbol. EMS only for now — the P/E-scored sector. The
-# symbols are the same ones yahoo_prices.CANDIDATES resolved by name; keep the
-# two in agreement when a name is added.
+# entity_id -> Yahoo symbol. EMS plus IT — the P/E-scored / P/E-watched
+# sectors. The EMS symbols are the same ones yahoo_prices.CANDIDATES resolved
+# by name; keep the two in agreement when a name is added.
 SYMS = {
     "dixon":           "DIXON.NS",
     "amber":           "AMBER.NS",
@@ -71,6 +71,25 @@ SYMS = {
     "pg_electroplast": "PGEL.NS",
     "syrma_sgs":       "SYRMA.NS",
     "avalon":          "AVALON.NS",
+    # --- IT, added 2026-09-01 (PM: 1-yr fwd P/E first, scoring later). All
+    # resolved via yahoo_search / name-verified on the chart meta — bare
+    # "Infosys" search returns HCL INFOSYSTEMS first (the bare-HCL class), so
+    # none of these were guessed. LTIMindtree is ABSENT deliberately: Yahoo
+    # has no LTIM.NS at all and its BSE code 540005.BO carries prices but no
+    # earningsTrend, so it has no fetchable consensus here. It stays visible
+    # as a named gap rather than a silently missing row.
+    "infosys":         "INFY.NS",
+    "tcs":             "TCS.NS",
+    "hcl_tech":        "HCLTECH.NS",
+    "wipro":           "WIPRO.NS",
+    "tech_mahindra":   "TECHM.NS",
+    "persistent":      "PERSISTENT.NS",
+    "coforge":         "COFORGE.NS",
+    "mphasis":         "MPHASIS.NS",
+    "kpit":            "KPITTECH.NS",
+    "tata_elxsi":      "TATAELXSI.NS",
+    "ofss":            "OFSS.NS",
+    "ltts":            "LTTS.NS",
 }
 
 # Only the two annual periods. Yahoo also returns 0q/+1q rows, but on every
