@@ -522,6 +522,34 @@ SECTORS = [
         # PEG and estimate-revision momentum per name, live from `estimates`.
         "estimates": True,
     },
+    {
+        "id": "it",
+        "label": "IT",
+        # PM 2026-09-01: "rather than scoring, we will look at 1 year forward
+        # p/e ratios" — so IT gets a tab whose content IS the consensus panel,
+        # and deliberately nothing else: no specs, no peer groups, no pillars.
+        # The roster lives only in the `entities` table (vault_oi.UNMODELLED
+        # ensure-inserts it for the OI FK); consensus_panel falls back to that
+        # table when a sector has no spec entities. Closes land in `prices`
+        # via yahoo_prices (invariant 7 keeps unscored names out of every
+        # scoring path — peer_group stays NULL).
+        "peer_groups": [],
+        # USDINR is the one macro series the IT notes cite as a margin driver;
+        # context only, linked from nothing.
+        "commodities": ["usdinr"],
+        "estimates": True,
+        # Display sub-groups for the consensus panel/scatter — the vault
+        # coverage convention, NOT peer groups (nothing scores against them).
+        # LTIMindtree is listed although it has no Yahoo consensus (no LTIM.NS;
+        # 540005.BO is prices-only) so the gap renders as a named row rather
+        # than a silently missing name.
+        "est_groups": {
+            "IT Large Cap": ["tcs", "infosys", "hcl_tech", "wipro",
+                             "tech_mahindra", "ltimindtree"],
+            "IT Mid Cap":   ["persistent", "coforge", "mphasis", "ofss"],
+            "IT ER&D":      ["kpit", "tata_elxsi", "ltts"],
+        },
+    },
 ]
 
 # Series the pack carries that no sector claims yet. Surfaced so a captured
@@ -551,20 +579,41 @@ def consensus_panel(sector_id: str) -> dict:
     ents = [e for e in entities.values() if e.get("sector") == sector_id
             and e.get("kind") == "company"]
     conn = connect()
+    tracked_only = False
+    if not ents:
+        # A sector with no specs at all (IT): the roster lives only in the
+        # `entities` table. Nothing here is scored, so every row is display.
+        tracked_only = True
+        ents = [{"id": r["id"], "name": r["name"],
+                 "peer_group": r["peer_group"]}
+                for r in conn.execute(
+                    "SELECT id, name, peer_group FROM entities "
+                    "WHERE sector=? AND kind='company' AND active=1",
+                    (sector_id,))]
+    spec = next((x for x in SECTORS if x["id"] == sector_id), {})
+    group_of = {eid: g for g, eids in (spec.get("est_groups") or {}).items()
+                for eid in eids}
     today = _dt.date.today().isoformat()
     rows, pegs = [], []
     for ent in sorted(ents, key=lambda e: e["id"]):
-        row, why = _vpe.compute_row(conn, ent["id"], today)
-        scored = bool(ent.get("peer_group"))
+        # require_growth=False: the growth floor is a scoring gate; the panel
+        # still shows a low-growth name's multiple, with peg=None.
+        row, why = _vpe.compute_row(conn, ent["id"], today,
+                                    require_growth=False)
+        scored = bool(ent.get("peer_group")) and not tracked_only
+        state = ("tracked" if tracked_only
+                 else "scored" if scored else "not in F&O")
         if row is None:
             rows.append({"id": ent["id"], "name": ent.get("name") or ent["id"],
-                         "scored": scored, "withheld": why})
+                         "scored": scored, "state": state,
+                         "group": group_of.get(ent["id"]), "withheld": why})
             continue
-        if scored:
+        if scored and row["peg"] is not None:
             pegs.append(row["peg"])
         rows.append({
             "id": ent["id"], "name": ent.get("name") or ent["id"],
-            "scored": scored,
+            "scored": scored, "state": state,
+            "group": group_of.get(ent["id"]),
             "close": row["close"], "px_date": row["px_date"],
             "fy1": row["fy1"], "fy2": row["fy2"],
             "eps_fy1": round(row["eps_fy1"], 2),
@@ -574,7 +623,8 @@ def consensus_panel(sector_id: str) -> dict:
             "ttm_pe": (round(row["ttm_pe"], 1)
                        if row.get("ttm_pe") is not None else None),
             "growth": round(row["growth"], 4),
-            "peg": round(row["peg"], 3),
+            "peg": (round(row["peg"], 3)
+                    if row["peg"] is not None else None),
             "rev_90d": (round(row["rev_90d"], 4)
                         if row["rev_90d"] is not None else None),
             "capture": row["capture"],
@@ -586,7 +636,10 @@ def consensus_panel(sector_id: str) -> dict:
         med = round(_st.median(pegs), 3)
     return {"rows": rows, "peg_median": med,
             "anchor_ratio": _vpe.PEG_ANCHOR_RATIO,
-            "min_analysts": _vpe.MIN_ANALYSTS}
+            "min_analysts": _vpe.MIN_ANALYSTS,
+            # display-group order for the scatter's colour assignment; empty
+            # for a sector that declares none (EMS)
+            "groups": list((spec.get("est_groups") or {}).keys())}
 
 
 def sector_list() -> list[dict]:

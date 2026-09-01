@@ -113,6 +113,27 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "pg_electroplast":  [("PGEL.NS", r"pg\s*electroplast")],
     "syrma_sgs":        [("SYRMA.NS", r"syrma\s*sgs")],
     "avalon":           [("AVALON.NS", r"avalon\s*tech")],
+    # --- equities: IT, added 2026-09-01 (PM: forward P/E tab, no scoring) ---
+    # All name-verified before being written here, and the search paid AGAIN:
+    # a bare "Infosys" search returns HCL INFOSYSTEMS LTD first, whose
+    # lowercase name CONTAINS "infosys" — the pattern requires "infosys ltd/
+    # limited" precisely to reject "infosystems". LTIMindtree is the odd one:
+    # Yahoo has no LTIM.NS at all, so its closes come from the BSE numeric
+    # code (the Wind share-count convention) — prices only, no earningsTrend,
+    # which is why it is absent from yahoo_estimates.SYMS.
+    "infosys":          [("INFY.NS", r"infosys\s+(limited|ltd)")],
+    "tcs":              [("TCS.NS", r"tata\s*consultancy")],
+    "hcl_tech":         [("HCLTECH.NS", r"hcl\s*tech")],
+    "wipro":            [("WIPRO.NS", r"wipro")],
+    "tech_mahindra":    [("TECHM.NS", r"tech\s*mahindra")],
+    "ltimindtree":      [("540005.BO", r"ltimindtree")],
+    "persistent":       [("PERSISTENT.NS", r"persistent\s*systems")],
+    "coforge":          [("COFORGE.NS", r"coforge")],
+    "mphasis":          [("MPHASIS.NS", r"mphasis")],
+    "kpit":             [("KPITTECH.NS", r"kpit")],
+    "tata_elxsi":       [("TATAELXSI.NS", r"tata\s*elxsi")],
+    "ofss":             [("OFSS.NS", r"oracle\s*fin")],
+    "ltts":             [("LTTS.NS", r"l\s*&\s*t\s*tech")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -161,6 +182,8 @@ EQUITIES = {
     "ultratech", "ambuja", "shree", "dalmia",
     "nmdc", "coal_india", "hindustan_copper", "lloyds_metals",
     "dixon", "amber", "kaynes", "pg_electroplast", "syrma_sgs", "avalon",
+    "infosys", "tcs", "hcl_tech", "wipro", "tech_mahindra", "ltimindtree",
+    "persistent", "coforge", "mphasis", "kpit", "tata_elxsi", "ofss", "ltts",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.

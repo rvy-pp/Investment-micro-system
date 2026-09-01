@@ -157,8 +157,17 @@ def _blend(as_of: dt.date, fy1_end: dt.date, e1: float, e2: float) -> tuple[floa
     return w * e1 + (1 - w) * e2, w
 
 
-def compute_row(conn, eid: str, as_of: str) -> tuple[dict | None, str | None]:
-    """One name's forward P/E block, or (None, why_withheld)."""
+def compute_row(conn, eid: str, as_of: str,
+                require_growth: bool = True) -> tuple[dict | None, str | None]:
+    """One name's forward P/E block, or (None, why_withheld).
+
+    require_growth=False is the DISPLAY path (engine.consensus_panel): the
+    growth floor is a scoring gate, not an arithmetic one — a forward P/E is
+    perfectly defined at 4% growth, only the PEG explodes as g -> 0. IT's
+    large caps (TCS/Infosys/Wipro) all sit under 5% FY27->FY28, and a panel
+    that withheld three of five names would read as a broken feed. The row
+    then carries peg=None where the ratio is meaningless; every scoring call
+    keeps the default and withholds exactly as before."""
     px_date, close = _close_on(conn, eid, as_of)
     if close is None:
         return None, "no price"
@@ -189,11 +198,11 @@ def compute_row(conn, eid: str, as_of: str) -> tuple[dict | None, str | None]:
     if eps_12mf <= 0:
         return None, f"non-positive blended forward EPS ({eps_12mf:.2f})"
     g = e2 / e1 - 1.0
-    if g < MIN_GROWTH:
+    if g < MIN_GROWTH and require_growth:
         return None, f"growth {g:+.1%} below {MIN_GROWTH:.0%}; PEG undefined there"
 
     fwd_pe = close / eps_12mf
-    peg = fwd_pe / (g * 100.0)
+    peg = fwd_pe / (g * 100.0) if g >= MIN_GROWTH else None
 
     # Trailing (normal) P/E — DISPLAY ONLY, PM request 2026-08-30. Never in
     # the score: trailing E is distorted exactly where it matters here

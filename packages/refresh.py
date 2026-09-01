@@ -104,8 +104,11 @@ STEPS = [
     # are not capturing today is history you cannot recover" logic as the
     # pack. Fetch stages data/staging/estimates/; load is idempotent per
     # capture date.
-    ("EMS consensus (fetch)", ["packages/adapters/yahoo_estimates.py", "--fetch"], False),
-    ("EMS consensus (load)",  ["packages/adapters/yahoo_estimates.py", "--load"],  False),
+    # "Consensus", not "EMS consensus", since 2026-09-01: the same capture now
+    # carries the 12 IT names (yahoo_estimates.SYMS), feeding the IT tab's
+    # forward-P/E panel. One step, every P/E-watched sector.
+    ("Consensus (fetch)", ["packages/adapters/yahoo_estimates.py", "--fetch"], False),
+    ("Consensus (load)",  ["packages/adapters/yahoo_estimates.py", "--load"],  False),
     # THE PACK IS NO LONGER AN AGENT-ONLY STEP. Promoted 2026-08-24, same shape
     # as westmetall's promotion: the "needs an agent" was inferred from the M365
     # connector's limits and never tested against Outlook itself. Outlook has the

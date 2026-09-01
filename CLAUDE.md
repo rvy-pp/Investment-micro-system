@@ -294,6 +294,21 @@ layer did not move an inch.
   Positioning tab a label. The vault fetcher was already pulling all 13
   daily; only the load-side map was missing. `engine.oi_snapshot` resolves
   sector/name as specs -> entities table -> "other".
+  **Amended 2026-09-01 — IT still scores NOTHING, but it is no longer
+  OI-only.** PM: "rather than scoring, we will look at 1 year forward p/e
+  ratios." IT now has its own sector tab whose content is the consensus
+  forward-P/E panel (scatter vs growth + table), fed by the same daily
+  `yahoo_estimates` capture as EMS and by closes in `prices` (13 tickers in
+  `yahoo_prices.CANDIDATES`; LTIMindtree rides the BSE code 540005.BO —
+  Yahoo has no LTIM.NS and no LTIM estimates, so it renders as a named gap).
+  Still no specs, no peer_group, no pillars — `consensus_panel` falls back
+  to the `entities` table for the roster, and its display sub-groups
+  (`est_groups` in the SECTORS entry) are the vault coverage convention,
+  not scoring universes. `packages/review/it_forward_pe.py` is the
+  standalone cross-section; the panel relaxes the PEG growth floor for
+  display only (`compute_row(require_growth=False)`) because TCS, Infosys
+  and Wipro all grow under 5% FY27→FY28 and their multiples are still the
+  point.
 
 **Preflight rule 2 was corrected the same day, and it was a real blocker:**
 the morning refresh HALTED because the four EMS names carry a `peer_group`
