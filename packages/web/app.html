@@ -432,6 +432,16 @@
   .vdot{stroke:var(--surface)}
   .xhair{stroke:var(--faint);stroke-width:1;pointer-events:none}
 
+  /* Positioning rows expand into an OI-vs-time chart on click. */
+  tr.oirow{cursor:pointer}
+  tr.oirow:hover td{background:var(--sunken)}
+  tr.oirow .oicaret{color:var(--faint);font-size:10px;margin-left:6px;
+       display:inline-block;transition:transform .12s}
+  tr.oirow[aria-expanded=true] .oicaret{transform:rotate(90deg);
+       color:var(--accent)}
+  tr.oich>td{padding:12px 14px 14px;background:var(--sunken)}
+  tr.oich .legend{margin-top:2px}
+
   .chartwrap{position:relative}
   /* Beat `.chart svg{width:100%}` from the base sheet: these charts are laid
      out in real pixels by lineChart(), and letting the container stretch them
@@ -721,8 +731,10 @@ async function loadPos(){
   const secTables = sectors.map(sec => {
     const cos = bySector[sec].sort((a, b) =>
       (a.name || a.entity_id).localeCompare(b.name || b.entity_id));
-    const trs = cos.map(r => `<tr>
-      <td><b>${esc(r.name || r.entity_id)}</b></td>
+    const trs = cos.map(r => `<tr class="oirow" data-eid="${esc(r.entity_id)}"
+        aria-expanded="false" title="OI vs time chart">
+      <td><b>${esc(r.name || r.entity_id)}</b>
+        <span class="oicaret" aria-hidden="true">▸</span></td>
       <td class="n">${r.oi == null ? '<span class="neu">—</span>'
           : (r.oi / 100000).toFixed(1) + 'L'}<br><span class="neu"
           style="font-size:10px">lot: ${r.lot_size || '—'}</span></td>
@@ -762,13 +774,260 @@ async function loadPos(){
      ${tiles}
      <div class="hint" style="margin-bottom:4px">🟢 Long Buildup (OI↑ Price↑) ·
        🔴 Short Buildup (OI↑ Price↓) · 🟡 Short Covering (OI↓ Price↑) ·
-       🟡 Long Unwinding (OI↓ Price↓)</div>
+       🟡 Long Unwinding (OI↓ Price↓) · click a row for its OI-vs-time chart</div>
      ${secTables || '<div class="panel"><div class="hint">no OI loaded</div></div>'}
      <div class="hint" style="margin-top:16px">Percentile: 90th+ = crowded trade
        risk, 25th− = under-positioned. <b>Mag (3m)</b>: Z-score &amp; % vs median —
        how <em>far</em> OI has moved, not just its rank. Z ≤ −1σ / ≤ −15% = light
        positioning (green). Z ≥ +1σ / ≥ +15% = heavy (red). OI is T-1 by design.
        The refresh pulls it daily; <code>--force</code> re-pulls.</div>`;
+
+  // Property assignment, not addEventListener: loadPos re-renders this section
+  // wholesale on every visit, and a listener added per render would stack.
+  $('#s-pos').onclick = ev => {
+    const tr = ev.target.closest('tr.oirow');
+    if (tr) toggleOiRow(tr);
+  };
+}
+
+/* OI VS TIME — the Sensibull chart grammar, per the PM 2026-09-01: futures OI
+   as a shaded area against the futures price line, one name, daily since the
+   store began (2026-04). The RELATION is the signal — OI rising into a falling
+   price is a short build, and no buildup label says it as plainly as the two
+   curves crossing. Expanded inline under the clicked row rather than a modal,
+   so two names can be open at once for comparison.
+
+   TWO Y-AXES, DELIBERATELY, where lineChart() refuses them: OI is in lots and
+   price in rupees, and the whole point is overlaying the two shapes. The
+   alternative — two stacked panes — hides exactly the crossings this chart
+   exists to show. Neither axis starts at zero: OI's daily range is a few
+   percent of its level, and a zero base flattens every move that matters. */
+const OIH = {};   // entity_id -> /api/oi_history payload, fetched once
+const OIV = {};   // entity_id -> chart geometry + rows, for the hover layer
+
+async function toggleOiRow(tr){
+  const eid = tr.dataset.eid;
+  const open = tr.nextElementSibling;
+  if (open && open.classList.contains('oich')){
+    open.remove();
+    tr.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  const ntr = document.createElement('tr');
+  ntr.className = 'oich';
+  const td = document.createElement('td');
+  td.colSpan = tr.children.length;
+  ntr.appendChild(td);
+  tr.after(ntr);
+  tr.setAttribute('aria-expanded', 'true');
+  td.innerHTML = '<div class="hint">loading OI history…</div>';
+  if (!OIH[eid]){
+    try {
+      OIH[eid] = await (await fetch(
+        '/api/oi_history?id=' + encodeURIComponent(eid))).json();
+    } catch (e){
+      td.textContent = 'fetch failed: ' + e;
+      return;
+    }
+  }
+  const d = OIH[eid];
+  if (d.error){ td.textContent = d.error; return; }
+  // Real pixels, sized to the panel the row lives in — same reasoning as
+  // lineChart(): a stretched viewBox scales the axis text too.
+  const panel = tr.closest('.panel');
+  const w = Math.max(520, Math.min(1100,
+    (panel ? panel.clientWidth : 940) - 32));
+  td.innerHTML = oiChart(eid, d, w);
+  wireOiChart(eid);
+}
+
+const fmtOiLots = v => v == null ? '—'
+  : Math.abs(v) >= 1e5 ? (v / 1e5).toFixed(1) + 'L'
+  : Math.round(v / 1e3) + 'k';
+const fmtOiPrice = v => v == null ? '—'
+  : '₹' + Math.round(v).toLocaleString('en-IN');
+
+function oiChart(eid, d, w){
+  const rows = d.rows.filter(r => r.oi != null && r.price != null);
+  if (rows.length < 2)
+    return '<div class="hint">not enough OI history for a chart</div>';
+  const h = 260, ML = 60, MR = 72, MT = 20, MB = 30;
+  const T = s => Date.parse(s);
+  const x0 = T(rows[0].date), x1 = T(rows[rows.length - 1].date);
+  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0)) * (w - ML - MR);
+  const pad = (lo, hi) => {
+    const p = ((hi - lo) || Math.abs(hi) || 1) * 0.06;
+    return [lo - p, hi + p];
+  };
+  const [oLo, oHi] = pad(Math.min(...rows.map(r => r.oi)),
+                         Math.max(...rows.map(r => r.oi)));
+  const [pLo, pHi] = pad(Math.min(...rows.map(r => r.price)),
+                         Math.max(...rows.map(r => r.price)));
+  const Yo = v => MT + (1 - (v - oLo) / ((oHi - oLo) || 1)) * (h - MT - MB);
+  const Yp = v => MT + (1 - (v - pLo) / ((pHi - pLo) || 1)) * (h - MT - MB);
+
+  // ONE grid, both axes labelled at its lines. Two independent tick sets draw
+  // two competing grids and the chart reads as an error.
+  let grid = '', yl = '', yr = '';
+  for (const f of [0, 1 / 3, 2 / 3, 1]){
+    const y = (MT + f * (h - MT - MB)).toFixed(1);
+    grid += '<line class="grid" x1="' + ML + '" x2="' + (w - MR) +
+            '" y1="' + y + '" y2="' + y + '"/>';
+    yl += '<text class="ax" x="' + (ML - 8) + '" y="' + y +
+          '" text-anchor="end" dominant-baseline="middle">' +
+          fmtOiLots(oHi - f * (oHi - oLo)) + '</text>';
+    yr += '<text class="ax" x="' + (w - MR + 8) + '" y="' + y +
+          '" dominant-baseline="middle">' +
+          fmtOiPrice(pHi - f * (pHi - pLo)) + '</text>';
+  }
+  let xax = '';
+  const seen = new Set();
+  for (let i = 0; i < 6; i++){
+    const k = Math.round(i * (rows.length - 1) / 5);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    const dd = rows[k].date;
+    xax += '<text class="ax" x="' + X(T(dd)).toFixed(1) + '" y="' + (h - 9) +
+           '" text-anchor="middle">' + esc(dtick(dd, false)) + '</text>';
+  }
+
+  const oiPts = rows.map(r =>
+    X(T(r.date)).toFixed(1) + ',' + Yo(r.oi).toFixed(1)).join(' ');
+  const prPts = rows.map(r =>
+    X(T(r.date)).toFixed(1) + ',' + Yp(r.price).toFixed(1)).join(' ');
+  const bot = (h - MB).toFixed(1);
+  const area = 'M' + X(x0).toFixed(1) + ' ' + bot + ' L' +
+    oiPts.split(' ').join(' L') + ' L' + X(x1).toFixed(1) + ' ' + bot + ' Z';
+
+  OIV[eid] = {w: w, h: h, ML: ML, MR: MR, MT: MT, MB: MB,
+              x0: x0, x1: x1, X: X, rows: rows,
+              lot: d.lot_size};
+
+  const cid = 'oi-' + eid;
+  return '<div class="chartwrap" id="cw-' + cid + '">' +
+    '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h +
+      '" role="img" tabindex="0" aria-label="Futures OI vs time, ' +
+      esc(d.name || eid) + '">' +
+    grid +
+    '<line class="xhair" x1="0" x2="0" y1="' + MT + '" y2="' + (h - MB) +
+      '" style="display:none"/>' +
+    '<path d="' + area + '" style="fill:var(--accent-soft)"/>' +
+    '<polyline points="' + oiPts + '" fill="none" style="stroke:var(--accent)"' +
+      ' stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<polyline points="' + prPts + '" fill="none" style="stroke:var(--warn)"' +
+      ' stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    yl + yr + xax +
+    '<text class="axl" x="' + ML + '" y="12">FUTURES OI VS TIME — ' +
+      esc(d.name || eid) + '</text>' +
+    '</svg><div class="viztip" role="status"></div>' +
+    '<div class="legend">' +
+      '<span><i style="border-top:2.5px solid var(--accent)"></i> Futures OI' +
+        (d.lot_size ? ' · lot ' + esc(String(d.lot_size)) : '') + '</span>' +
+      '<span><i style="border-top:2.5px solid var(--warn)"></i> Futures' +
+        ' price</span></div></div>';
+}
+
+// Day buildup, derived from consecutive rows — same OI+price sign rule the
+// table's pills use, so the tooltip and the pills can never disagree.
+function oiDayBuildup(prev, cur){
+  if (!prev || prev.oi == null || cur.oi == null ||
+      prev.price == null || cur.price == null) return null;
+  const doi = cur.oi - prev.oi, dp = cur.price - prev.price;
+  if (!doi || !dp) return ['neutral', 'var(--faint)'];
+  return doi > 0
+    ? (dp > 0 ? ['long buildup', 'var(--up)'] : ['short buildup', 'var(--down)'])
+    : (dp > 0 ? ['short covering', 'var(--warn)']
+              : ['long unwinding', 'var(--warn)']);
+}
+
+function wireOiChart(eid){
+  const m = OIV[eid];
+  const wrap = document.getElementById('cw-oi-' + eid);
+  if (!wrap || !m) return;
+  const svg = wrap.querySelector('svg');
+  const xh = wrap.querySelector('.xhair');
+  const tip = wrap.querySelector('.viztip');
+  let idx = -1;
+
+  const hide = () => {
+    xh.style.display = 'none'; tip.classList.remove('on'); idx = -1;
+  };
+
+  const line = (label, val, col) => {
+    const row = document.createElement('div'); row.className = 'r';
+    const key = document.createElement('i');
+    key.style.borderTopColor = col;
+    const b = document.createElement('b'); b.textContent = val;
+    const em = document.createElement('em'); em.textContent = label;
+    row.appendChild(key); row.appendChild(b); row.appendChild(em);
+    return row;
+  };
+
+  const draw = i => {
+    if (i < 0 || i >= m.rows.length) return hide();
+    idx = i;
+    const r = m.rows[i], prev = m.rows[i - 1];
+    const x = m.X(Date.parse(r.date));
+    xh.setAttribute('x1', x); xh.setAttribute('x2', x);
+    xh.style.display = '';
+
+    tip.textContent = '';
+    const hd = document.createElement('div');
+    hd.className = 'd'; hd.textContent = r.date;
+    tip.appendChild(hd);
+    const doi = prev && prev.oi != null && r.oi != null ? r.oi - prev.oi : null;
+    tip.appendChild(line('OI' + (doi == null ? '' :
+      ' (' + (doi >= 0 ? '+' : '−') + fmtOiLots(Math.abs(doi)) + ')'),
+      fmtOiLots(r.oi), 'var(--accent)'));
+    const dp = prev && prev.price != null && r.price != null
+      ? (r.price / prev.price - 1) * 100 : null;
+    tip.appendChild(line('price' + (dp == null ? '' :
+      ' (' + (dp >= 0 ? '+' : '') + dp.toFixed(1) + '%)'),
+      fmtOiPrice(r.price), 'var(--warn)'));
+    const bu = oiDayBuildup(prev, r);
+    if (bu){
+      const dv = document.createElement('div'); dv.className = 'r';
+      const em = document.createElement('em');
+      // Inline: .viztip .r em pins color to --soft and outranks a class here.
+      em.style.color = bu[1]; em.textContent = bu[0];
+      dv.appendChild(em); tip.appendChild(dv);
+    }
+
+    tip.classList.add('on');
+    const tw = tip.offsetWidth || 170;
+    const left = (x + 14 + tw > m.w) ? x - tw - 14 : x + 14;
+    tip.style.left = Math.max(4, left) + 'px';
+    tip.style.top = m.MT + 'px';
+  };
+
+  const nearest = clientX => {
+    const rc = svg.getBoundingClientRect();
+    if (!rc.width) return -1;
+    const px = (clientX - rc.left) * (m.w / rc.width);
+    const frac = (px - m.ML) / (m.w - m.ML - m.MR);
+    if (frac < -0.03 || frac > 1.03) return -1;
+    const ms = m.x0 + Math.min(1, Math.max(0, frac)) * (m.x1 - m.x0);
+    let best = -1, bd = Infinity;
+    for (let i = 0; i < m.rows.length; i++){
+      const dd = Math.abs(Date.parse(m.rows[i].date) - ms);
+      if (dd < bd){ bd = dd; best = i; }
+    }
+    return best;
+  };
+
+  svg.addEventListener('pointermove', ev => draw(nearest(ev.clientX)));
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('focus', () => draw(idx < 0 ? m.rows.length - 1 : idx));
+  svg.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowLeft'){
+      draw(Math.max(0, (idx < 0 ? m.rows.length - 1 : idx) - 1));
+      ev.preventDefault();
+    } else if (ev.key === 'ArrowRight'){
+      draw(Math.min(m.rows.length - 1, (idx < 0 ? 0 : idx) + 1));
+      ev.preventDefault();
+    } else if (ev.key === 'Escape') hide();
+  });
 }
 
 /* ====================================================================

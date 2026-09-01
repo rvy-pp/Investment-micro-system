@@ -222,6 +222,41 @@ def oi_snapshot() -> list[dict]:
     return rows
 
 
+def oi_history(entity_id: str) -> dict:
+    """Full daily OI + futures-price series for ONE name — the Positioning
+    tab's expandable OI-vs-time chart (the Sensibull grammar: OI area against
+    the price line, so buildup is visible as a relation rather than a label).
+
+    Whole history on purpose: ~100 rows per name today, a few KB. Windowing
+    belongs in the client, which already has the data to do it."""
+    conn = connect()
+    rows = [{"date": r["date"], "oi": r["oi"], "price": r["price"]}
+            for r in conn.execute(
+                "SELECT date, oi, price FROM oi WHERE entity_id=? "
+                "ORDER BY date", (entity_id,))]
+    ent = conn.execute("SELECT name FROM entities WHERE id=?",
+                       (entity_id,)).fetchone()
+    lot = conn.execute(
+        "SELECT lot_size FROM oi WHERE entity_id=? AND lot_size IS NOT NULL "
+        "ORDER BY date DESC LIMIT 1", (entity_id,)).fetchone()
+    conn.close()
+    # Display name: specs first, entities second — the same resolution
+    # oi_snapshot uses. Modelled names store their SLUG in entities.name;
+    # only the OI-only names (IT) carry a display name there.
+    try:
+        entities, _u, _f = load_specs()
+    except Exception:
+        entities = {}
+    name = ((entities.get(entity_id) or {}).get("name")
+            or (ent["name"] if ent else None) or entity_id)
+    return {
+        "entity_id": entity_id,
+        "name": name,
+        "lot_size": (lot["lot_size"] if lot else None),
+        "rows": rows,
+    }
+
+
 def guidance_rows() -> list[dict]:
     import math
     conn = connect()

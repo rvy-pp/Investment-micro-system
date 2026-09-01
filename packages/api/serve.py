@@ -94,6 +94,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.inputs_for_ui())
             if u.path == "/api/oi":
                 return self._json(engine.oi_snapshot())
+            if u.path == "/api/oi_history":
+                eid = q.get("id", [""])[0]
+                if not eid:
+                    return self._json({"error": "id required"}, 400)
+                return self._json(engine.oi_history(eid))
             if u.path == "/api/sectors":
                 return self._json(engine.sector_list())
             if u.path == "/api/nav":
