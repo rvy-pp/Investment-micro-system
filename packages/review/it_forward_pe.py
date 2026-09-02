@@ -23,10 +23,9 @@ Sub-sector split follows the vault coverage convention:
     mid    Persistent, Coforge, Mphasis, OFSS
     er&d   KPIT, Tata Elxsi, LTTS
 
-LTIMindtree renders as an explicit GAP row: Yahoo has no LTIM.NS and its BSE
-code 540005.BO carries prices but no earningsTrend, so its forward multiple
-is not computable from any unattended source here. A silently missing row
-would read as "not covered"; the gap row reads as what it is.
+LTIMindtree rode a rename: the company is now "LTM LIMITED" and Yahoo carries
+only the new symbol (LTM.NS) — the old-name searches that came back empty on
+2026-09-01 were the rename, not a missing listing. Closed 2026-09-02.
 
 Usage:
     python packages/review/it_forward_pe.py            # table
@@ -53,12 +52,16 @@ from valuation_pe import _blend, _fy_end, MIN_ANALYSTS  # noqa: E402
 DB = REPO / "data" / "ims.db"
 
 GROUPS = {
-    "IT Large Cap": ["tcs", "infosys", "hcl_tech", "wipro", "tech_mahindra"],
+    "IT Large Cap": ["tcs", "infosys", "hcl_tech", "wipro", "tech_mahindra",
+                     "ltimindtree"],
     "IT Mid Cap":   ["persistent", "coforge", "mphasis", "ofss"],
     "IT ER&D":      ["kpit", "tata_elxsi", "ltts"],
 }
-NO_CONSENSUS = {"ltimindtree": "no Yahoo estimates (no LTIM.NS; 540005.BO has "
-                               "prices only) — needs a hand-entered broker row"}
+# The gap closed 2026-09-02: LTIMindtree RENAMED ITSELF "LTM LIMITED", and
+# Yahoo carries the new symbol (LTM.NS, 37-analyst consensus) while every
+# search for the old name returns nothing. Kept as an empty dict rather than
+# deleted so the render loop's gap path stays exercised-able.
+NO_CONSENSUS: dict[str, str] = {}
 
 CHART = ("https://query2.finance.yahoo.com/v8/finance/chart/{sym}"
          "?range=5d&interval=1d")

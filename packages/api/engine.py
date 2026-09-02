@@ -540,9 +540,8 @@ SECTORS = [
         "estimates": True,
         # Display sub-groups for the consensus panel/scatter — the vault
         # coverage convention, NOT peer groups (nothing scores against them).
-        # LTIMindtree is listed although it has no Yahoo consensus (no LTIM.NS;
-        # 540005.BO is prices-only) so the gap renders as a named row rather
-        # than a silently missing name.
+        # LTIMindtree trades as LTM.NS since its rename to "LTM Limited"
+        # (found 2026-09-02); the entity id stays `ltimindtree`.
         "est_groups": {
             "IT Large Cap": ["tcs", "infosys", "hcl_tech", "wipro",
                              "tech_mahindra", "ltimindtree"],

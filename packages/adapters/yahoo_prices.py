@@ -118,15 +118,20 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     # a bare "Infosys" search returns HCL INFOSYSTEMS LTD first, whose
     # lowercase name CONTAINS "infosys" — the pattern requires "infosys ltd/
     # limited" precisely to reject "infosystems". LTIMindtree is the odd one:
-    # Yahoo has no LTIM.NS at all, so its closes come from the BSE numeric
-    # code (the Wind share-count convention) — prices only, no earningsTrend,
-    # which is why it is absent from yahoo_estimates.SYMS.
+    # THE COMPANY RENAMED ITSELF "LTM LIMITED" and Yahoo carries only the new
+    # symbol — LTIM.NS / LTIMINDTREE.NS / LTI.NS all 404, and a Yahoo search
+    # for "LTIMindtree" or "Mindtree" returns NOTHING (found 2026-09-02, PM
+    # supplied the ticker). LTM.NS was verified against the BSE code
+    # 540005.BO before adoption: same closes to a few rupees on every
+    # overlapping day (28th 4,675 vs 4,680; 31st 4,540 vs 4,542.5). The BSE
+    # code stays as the fallback; the entity id stays `ltimindtree`.
     "infosys":          [("INFY.NS", r"infosys\s+(limited|ltd)")],
     "tcs":              [("TCS.NS", r"tata\s*consultancy")],
     "hcl_tech":         [("HCLTECH.NS", r"hcl\s*tech")],
     "wipro":            [("WIPRO.NS", r"wipro")],
     "tech_mahindra":    [("TECHM.NS", r"tech\s*mahindra")],
-    "ltimindtree":      [("540005.BO", r"ltimindtree")],
+    "ltimindtree":      [("LTM.NS", r"\bltm\b|ltimindtree"),
+                         ("540005.BO", r"ltimindtree|\bltm\b")],
     "persistent":       [("PERSISTENT.NS", r"persistent\s*systems")],
     "coforge":          [("COFORGE.NS", r"coforge")],
     "mphasis":          [("MPHASIS.NS", r"mphasis")],

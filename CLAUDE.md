@@ -299,8 +299,9 @@ layer did not move an inch.
   ratios." IT now has its own sector tab whose content is the consensus
   forward-P/E panel (scatter vs growth + table), fed by the same daily
   `yahoo_estimates` capture as EMS and by closes in `prices` (13 tickers in
-  `yahoo_prices.CANDIDATES`; LTIMindtree rides the BSE code 540005.BO —
-  Yahoo has no LTIM.NS and no LTIM estimates, so it renders as a named gap).
+  `yahoo_prices.CANDIDATES`; LTIMindtree is **LTM.NS** — the company renamed
+  itself "LTM Limited", which is why every old-name search returned nothing;
+  PM supplied the ticker 2026-09-02, cross-checked against BSE 540005.BO).
   Still no specs, no peer_group, no pillars — `consensus_panel` falls back
   to the `entities` table for the roster, and its display sub-groups
   (`est_groups` in the SECTORS entry) are the vault coverage convention,

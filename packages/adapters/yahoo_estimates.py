@@ -74,10 +74,11 @@ SYMS = {
     # --- IT, added 2026-09-01 (PM: 1-yr fwd P/E first, scoring later). All
     # resolved via yahoo_search / name-verified on the chart meta — bare
     # "Infosys" search returns HCL INFOSYSTEMS first (the bare-HCL class), so
-    # none of these were guessed. LTIMindtree is ABSENT deliberately: Yahoo
-    # has no LTIM.NS at all and its BSE code 540005.BO carries prices but no
-    # earningsTrend, so it has no fetchable consensus here. It stays visible
-    # as a named gap rather than a silently missing row.
+    # none of these were guessed. LTIMindtree joined a day late under LTM.NS:
+    # the company RENAMED ITSELF "LTM LIMITED", which is why every search for
+    # its old name returned nothing (PM supplied the ticker 2026-09-02;
+    # closes cross-checked against BSE 540005.BO before adoption).
+    "ltimindtree":     "LTM.NS",
     "infosys":         "INFY.NS",
     "tcs":             "TCS.NS",
     "hcl_tech":        "HCLTECH.NS",
