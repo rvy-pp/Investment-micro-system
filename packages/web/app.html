@@ -1417,6 +1417,8 @@ function wireEstScatter(){
       'P/E ' + (p.d.fy2 || 'FY2') + 'E'],
      ...(p.d.pe_2y != null
         ? [[p.d.pe_2y.toFixed(1) + 'x', '2y fwd (BBG)']] : []),
+     ...(p.d.eps_2y_implied != null
+        ? [[p.d.eps_2y_implied.toFixed(1), 'EPS 24m implied']] : []),
      [p.d.ttm_pe == null ? '—' : p.d.ttm_pe.toFixed(1) + 'x', 'P/E ttm'],
      [fmtNum(p.d.close), 'close'],
      [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1),

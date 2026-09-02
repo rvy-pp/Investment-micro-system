@@ -607,15 +607,22 @@ def consensus_panel(sector_id: str) -> dict:
         "SELECT entity_id, value_num FROM estimates WHERE broker='bloomberg' "
         "AND metric='pe_fwd_2y' AND as_of=?", (pe2y_asof,))) if pe2y_asof else {}
 
-    def _pe2y_marked(eid: str, row: dict) -> tuple[float | None, float | None]:
-        """(re-marked 2-yr multiple, consensus-EPS drift since capture)."""
+    def _pe2y_marked(eid: str, row: dict
+                     ) -> tuple[float | None, float | None, float | None]:
+        """(re-marked 2-yr multiple, implied 24m EPS, EPS drift since capture).
+
+        The PM's stated mechanism (2026-09-02): back-calculate the 2-yr EPS
+        from the capture-day price and captured multiple, then re-price it
+        with each new day's close. The EPS is the stable half — 2-yr
+        estimates move once or twice a quarter — so it is served explicitly
+        rather than left as internal arithmetic."""
         p2 = pe2y.get(eid)
         if p2 is None:
-            return None, None
+            return None, None, None
         cap_close = conn.execute(
             "SELECT close FROM prices WHERE entity_id=? AND date<=? "
             "ORDER BY date DESC LIMIT 1", (eid, pe2y_asof)).fetchone()
-        live = p2
+        live, implied_eps = p2, None
         if cap_close and cap_close[0] and row.get("close"):
             implied_eps = cap_close[0] / p2
             live = row["close"] / implied_eps
@@ -630,7 +637,7 @@ def consensus_panel(sector_id: str) -> dict:
                     deltas.append(now / old - 1.0)
             if deltas:
                 drift = max(deltas, key=abs)
-        return live, drift
+        return live, implied_eps, drift
     today = _dt.date.today().isoformat()
     rows, pegs = [], []
     for ent in sorted(ents, key=lambda e: e["id"]):
@@ -649,12 +656,14 @@ def consensus_panel(sector_id: str) -> dict:
             continue
         if scored and row["peg"] is not None:
             pegs.append(row["peg"])
-        p2_live, p2_drift = _pe2y_marked(ent["id"], row)
+        p2_live, p2_eps, p2_drift = _pe2y_marked(ent["id"], row)
         rows.append({
             "id": ent["id"], "name": ent.get("name") or ent["id"],
             "scored": scored, "state": state,
             "group": group_of.get(ent["id"]),
             "pe_2y": round(p2_live, 1) if p2_live is not None else None,
+            "eps_2y_implied": (round(p2_eps, 2)
+                               if p2_eps is not None else None),
             "pe_2y_drift": (round(p2_drift, 4)
                             if p2_drift is not None else None),
             "close": row["close"], "px_date": row["px_date"],
