@@ -1411,7 +1411,8 @@ function wireEstScatter(){
     [[p.d.fwd_pe.toFixed(1) + 'x', 'fwd P/E'],
      [p.d.ttm_pe == null ? '—' : p.d.ttm_pe.toFixed(1) + 'x', 'P/E ttm'],
      [fmtNum(p.d.close), 'close'],
-     [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1), 'EPS FY1/FY2'],
+     [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1),
+      'EPS ' + (p.d.fy1 || 'FY1') + '/' + (p.d.fy2 || 'FY2')],
      [sgn(p.d.growth, 1), 'growth'],
      [p.d.peg == null ? '—' : p.d.peg.toFixed(2), 'PEG'],
      [p.d.rev_90d == null ? '—' : sgn(p.d.rev_90d, 1), 'rev 90d'],
@@ -2457,6 +2458,13 @@ async function loadSector(){
     let scatterHtml = '';
     ESTV = null;   // else a sector without a scatter would keep the last one's
     const spts = E.rows.filter(r => !r.withheld && r.fwd_pe != null);
+    // The real fiscal pair, not "FY1/FY2": every computable row carries its
+    // own fy1/fy2 (today FY27/FY28 across the board). If a mixed-year cross-
+    // section ever appears (a non-March closer), the generic label returns
+    // rather than one name's pair being asserted for all.
+    const fy1s = new Set(spts.map(r => r.fy1)), fy2s = new Set(spts.map(r => r.fy2));
+    const FY1 = fy1s.size === 1 ? [...fy1s][0] : 'FY1';
+    const FY2 = fy2s.size === 1 ? [...fy2s][0] : 'FY2';
     if (spts.length >= 3){
       const W = 900, H = 380, ml = 48, mr = 26, mt = 14, mb = 42;
       const iw = W - ml - mr, ih = H - mt - mb;
@@ -2559,7 +2567,7 @@ async function loadSector(){
           aria-label="forward P/E against consensus growth — hover or use arrow keys for exact values; the table below carries the same data">
           ${s}${xh}
           <text x="${ml + iw / 2}" y="${H - 4}" text-anchor="middle"
-            font-size="11" fill="var(--soft)">consensus EPS growth, FY1 → FY2</text>
+            font-size="11" fill="var(--soft)">consensus EPS growth, ${FY1} → ${FY2}</text>
           <text x="12" y="${mt + ih / 2}" font-size="11" fill="var(--soft)"
             transform="rotate(-90 12 ${mt + ih / 2})"
             text-anchor="middle">12m forward P/E</text>
@@ -2569,7 +2577,8 @@ async function loadSector(){
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
       <p class="note">Yahoo consensus (cross-checked against broker notes in
         the digests). <b>fwd P/E</b> divides the close by the 12-month-forward
-        EPS blend of FY1/FY2; <b>PEG</b> divides that by FY2-over-FY1 growth —
+        EPS blend of ${FY1}/${FY2}; <b>PEG</b> divides that by
+        ${FY2}-over-${FY1} growth —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
         P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is
@@ -2581,7 +2590,7 @@ async function loadSector(){
       ${scatterHtml}
       <div class="scroll"><table><thead><tr>
         <th>id</th><th>name</th><th class="n">close</th>
-        <th class="n">EPS FY1/FY2</th><th class="n">analysts</th>
+        <th class="n">EPS ${FY1}E/${FY2}E</th><th class="n">analysts</th>
         <th class="n">fwd P/E</th><th class="n">P/E ttm</th>
         <th class="n">growth</th>
         <th class="n">PEG</th><th class="n">rev 90d</th><th>state</th>
