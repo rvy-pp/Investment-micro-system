@@ -297,7 +297,10 @@ layer did not move an inch.
   **Amended 2026-09-01 — IT still scores NOTHING, but it is no longer
   OI-only.** PM: "rather than scoring, we will look at 1 year forward p/e
   ratios." IT now has its own sector tab whose content is the consensus
-  forward-P/E panel (scatter vs growth + table), fed by the same daily
+  forward-P/E panel (scatter vs growth + table, with a 1-yr/2-yr horizon
+  toggle — the 2-yr side is Bloomberg's blended 24-month multiple,
+  hand-captured from terminal screenshots via `adapters/bbg_pe2y.py`, since
+  no fetchable source carries FY29), fed by the same daily
   `yahoo_estimates` capture as EMS and by closes in `prices` (13 tickers in
   `yahoo_prices.CANDIDATES`; LTIMindtree is **LTM.NS** — the company renamed
   itself "LTM Limited", which is why every old-name search returned nothing;

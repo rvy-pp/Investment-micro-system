@@ -476,6 +476,9 @@
   /* Divergence markers. Surface-coloured ring so a marker stays readable where
      two lines cross — same reason the endpoint dots carry one. */
   .vdiv{stroke:var(--surface);stroke-width:1.5}
+  /* the consensus scatter's 1y/2y horizon toggle */
+  .est-mode button[aria-pressed="true"]{color:var(--accent);
+       border-color:var(--accent)}
   .lgd .dvk{color:var(--faint);font-family:var(--sans);font-size:var(--t-label)}
   .viztip .r .dv{font-family:var(--mono);font-size:var(--t-micro);
        color:var(--warn);white-space:nowrap;margin-left:2px}
@@ -1370,7 +1373,8 @@ function lineChart(cfg){
    crosshair SNAPS to it — the chips then read the name's exact values and the
    viztip carries the full row. The scatter is viewBox-scaled (the pair charts
    are real-pixel), so client coords are mapped through the bounding rect. */
-let ESTV = null;
+let ESTV = null;       // geometry + rows of the currently drawn scatter
+let EST_REDRAW = null; // buildEstScatter closure for the 1y/2y toggle
 function wireEstScatter(){
   const wrap = document.getElementById('cw-est');
   if (!wrap || !ESTV) return;
@@ -1411,6 +1415,8 @@ function wireEstScatter(){
     [[p.d.fwd_pe.toFixed(1) + 'x', 'fwd P/E'],
      [p.d.eps_fy2 > 0 ? (p.d.close / p.d.eps_fy2).toFixed(1) + 'x' : '—',
       'P/E ' + (p.d.fy2 || 'FY2') + 'E'],
+     ...(p.d.pe_2y != null
+        ? [[p.d.pe_2y.toFixed(1) + 'x', '2y fwd (BBG)']] : []),
      [p.d.ttm_pe == null ? '—' : p.d.ttm_pe.toFixed(1) + 'x', 'P/E ttm'],
      [fmtNum(p.d.close), 'close'],
      [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1),
@@ -2416,6 +2422,7 @@ async function loadSector(){
      group's richest PEG while being the only name whose estimates are
      RISING — either half alone would read as a verdict. */
   let estHtml = '';
+  EST_REDRAW = null;   // a sector without a panel must not keep the last one's
   if (d.estimates && (d.estimates.rows || []).length){
     const E = d.estimates;
     const pct = (v, dec=1) => v == null ? '—'
@@ -2425,7 +2432,7 @@ async function loadSector(){
     const rows3 = E.rows.map(r => {
       if (r.withheld) return `<tr>
         <td class="k">${esc(r.id)}</td><td>${esc(shortLabel(r.name))}</td>
-        <td class="k flat" colspan="9">no reading: ${esc(r.withheld)}</td>
+        <td class="k flat" colspan="${E.pe_2y_asof ? 10 : 9}">no reading: ${esc(r.withheld)}</td>
         <td class="k flat">${stateCell(r)}</td></tr>`;
       // peg is null where growth sits under the scorer's floor (the display
       // path relaxes the gate so a 4%-growth large cap still shows its
@@ -2443,6 +2450,8 @@ async function loadSector(){
         <td class="n">${r.n_analysts}</td>
         <td class="n"><b>${r.fwd_pe.toFixed(1)}x</b></td>
         <td class="n">${r.eps_fy2 > 0 ? (r.close / r.eps_fy2).toFixed(1) + 'x' : '—'}</td>
+        ${E.pe_2y_asof ? `<td class="n">${
+          r.pe_2y == null ? '—' : r.pe_2y.toFixed(1) + 'x'}</td>` : ''}
         <td class="n">${r.ttm_pe == null ? '—' : r.ttm_pe.toFixed(1) + 'x'}</td>
         <td class="n">${pct(r.growth, 0)}</td>
         <td class="n">${pegCell}</td>
@@ -2457,22 +2466,33 @@ async function loadSector(){
        the served display group (est_groups; series slots 1..3 in order);
        a sector with no groups draws in slot 1. Identity is never colour
        alone: every point is direct-labelled, and the table below is the
-       same data. */
-    let scatterHtml = '';
-    ESTV = null;   // else a sector without a scatter would keep the last one's
-    const spts = E.rows.filter(r => !r.withheld && r.fwd_pe != null);
+       same data.
+       Two modes since 2026-09-02 (PM: "add a toggle for fy29 ... flipping the
+       switch flips the graph"): '1y' plots the Yahoo-computed 12m-forward
+       multiple; '2y' plots Bloomberg's PE Ratio [2 Yr Fwd] — the BEst blended
+       24-month multiple, which embeds the FY29 consensus that no fetchable
+       source carries. The 2y feed is a hand-captured terminal screenshot
+       (adapters/bbg_pe2y.py), so its button wears its capture date. */
+    const c1y = E.rows.filter(r => !r.withheld && r.fwd_pe != null);
     // The real fiscal pair, not "FY1/FY2": every computable row carries its
     // own fy1/fy2 (today FY27/FY28 across the board). If a mixed-year cross-
     // section ever appears (a non-March closer), the generic label returns
     // rather than one name's pair being asserted for all.
-    const fy1s = new Set(spts.map(r => r.fy1)), fy2s = new Set(spts.map(r => r.fy2));
+    const fy1s = new Set(c1y.map(r => r.fy1)), fy2s = new Set(c1y.map(r => r.fy2));
     const FY1 = fy1s.size === 1 ? [...fy1s][0] : 'FY1';
     const FY2 = fy2s.size === 1 ? [...fy2s][0] : 'FY2';
-    if (spts.length >= 3){
+    const buildEstScatter = mode => {
+      ESTV = null;   // stays null when this returns '' (fewer than 3 points)
+      const two = mode === '2y';
+      const spts = E.rows.filter(r => two
+        ? (r.pe_2y != null && r.growth != null)
+        : (!r.withheld && r.fwd_pe != null));
+      if (spts.length < 3) return '';
+      const yv = r => two ? r.pe_2y : r.fwd_pe;
       const W = 900, H = 380, ml = 48, mr = 26, mt = 14, mb = 42;
       const iw = W - ml - mr, ih = H - mt - mb;
       const xmax = Math.max(0.15, Math.max(...spts.map(p => p.growth)) * 1.18);
-      const ys = spts.map(p => p.fwd_pe);
+      const ys = spts.map(yv);
       const ymin = Math.max(0, Math.floor(Math.min(...ys) * 0.85 / 5) * 5);
       const ymax = Math.ceil(Math.max(...ys) * 1.12 / 5) * 5;
       const sx = g => ml + Math.max(0, g) / xmax * iw;
@@ -2495,8 +2515,11 @@ async function loadSector(){
         s += `<text x="${sx(g)}" y="${H - mb + 18}" text-anchor="middle"
                 font-size="11" fill="var(--faint)">${Math.round(g * 100)}%</text>`;
       }
-      // iso-PEG guides: straight lines PE = PEG * g*100, clipped to the plot
-      [[1, 'PEG 1'], [1.5, 'PEG 1.5'], [2, 'PEG 2'], [3, 'PEG 3']].forEach(([peg, lab]) => {
+      // iso-PEG guides: straight lines PE = PEG * g*100, clipped to the plot.
+      // In 2y mode "PEG" would be a misnomer (PEG is fwd_pe over growth), so
+      // there the guides read as plain multiple-per-growth ratios.
+      [[1, two ? '1×g' : 'PEG 1'], [1.5, two ? '1.5×g' : 'PEG 1.5'],
+       [2, two ? '2×g' : 'PEG 2'], [3, two ? '3×g' : 'PEG 3']].forEach(([peg, lab]) => {
         const gA = Math.max(0.004, ymin / (peg * 100));
         const gB = Math.min(xmax, ymax / (peg * 100));
         if (gB <= gA) return;
@@ -2511,7 +2534,7 @@ async function loadSector(){
       });
       // points, then labels with a greedy vertical de-overlap (the large-cap
       // cluster sits within a multiple point of itself)
-      const labs = spts.map(r => ({r, x: sx(r.growth), y: syy(r.fwd_pe)}))
+      const labs = spts.map(r => ({r, x: sx(r.growth), y: syy(yv(r))}))
         .sort((a, b) => a.y - b.y || a.x - b.x);
       labs.forEach((L, i) => {
         L.ly = L.y + 4;
@@ -2563,7 +2586,17 @@ async function loadSector(){
             fill="var(--surface)" stroke="var(--hair)"/>
           <text x="${ml - 10}" y="4" text-anchor="end" font-size="11"
             font-weight="600" fill="var(--accent)"></text></g>`;
-      scatterHtml = `${legend3}
+      // Names the 1y view carries that the BBG capture lacks — listed, not
+      // silently absent (LTTS and OFSS sat outside the screenshot frame).
+      const miss = two
+        ? E.rows.filter(r => !r.withheld && r.fwd_pe != null && r.pe_2y == null)
+            .map(r => shortLabel(r.name))
+        : [];
+      const missNote = miss.length
+        ? `<p class="note hint">not in the BBG capture: ${esc(miss.join(', '))}
+             — shown on the 1-yr view only.</p>`
+        : '';
+      return `${legend3}
         <div class="scroll"><div class="chartwrap" id="cw-est">
         <svg viewBox="0 0 ${W} ${H}" width="100%"
           style="min-width:640px" role="img" tabindex="0"
@@ -2573,19 +2606,31 @@ async function loadSector(){
             font-size="11" fill="var(--soft)">consensus EPS growth, ${FY1} → ${FY2}</text>
           <text x="12" y="${mt + ih / 2}" font-size="11" fill="var(--soft)"
             transform="rotate(-90 12 ${mt + ih / 2})"
-            text-anchor="middle">12m forward P/E</text>
-        </svg><div class="viztip" role="status"></div></div></div>`;
-    }
+            text-anchor="middle">${two
+              ? `2-yr fwd P/E · BBG ${esc(E.pe_2y_asof || '')}`
+              : '12m forward P/E'}</text>
+        </svg><div class="viztip" role="status"></div></div></div>${missNote}`;
+    };
+    EST_REDRAW = buildEstScatter;
+    const scatterHtml = `<div id="est-scatter-box">${buildEstScatter('1y')}</div>`;
+    const n2y = E.rows.filter(r => r.pe_2y != null && r.growth != null).length;
+    const modeBtns = (E.pe_2y_asof && n2y >= 3) ? `
+      <div class="est-mode" role="group" aria-label="forward horizon"
+        style="display:flex;gap:8px;margin:0 0 8px">
+        <button class="ghost" data-m="1y" aria-pressed="true">1-yr fwd · Yahoo, daily</button>
+        <button class="ghost" data-m="2y" aria-pressed="false">2-yr fwd · BBG ${esc(E.pe_2y_asof)}</button>
+      </div>` : '';
     estHtml = `<h2>Consensus forward P/E · capture ${
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
       <p class="note">Yahoo consensus (cross-checked against broker notes in
         the digests). <b>fwd P/E</b> divides the close by the 12-month-forward
         EPS blend of ${FY1}/${FY2}; <b>P/E ${FY2}E</b> is the multiple on the
-        furthest consensus year — the number broker notes quote, and the
-        longest forward view any free source carries (Yahoo's consensus stops
-        at ${FY2}; no FY-after estimates exist to blend a true 24-month
-        forward from); <b>PEG</b> divides the fwd P/E by
-        ${FY2}-over-${FY1} growth —
+        furthest consensus year Yahoo carries — the number broker notes quote${
+        E.pe_2y_asof ? `; <b>P/E 2y (BBG)</b> is Bloomberg's blended 24-month
+        forward multiple, which embeds FY-after consensus no free feed has —
+        hand-captured from the terminal <b>${esc(E.pe_2y_asof)}</b>, so it
+        goes stale until recaptured (adapters/bbg_pe2y.py)` : ''};
+        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
         P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is
@@ -2594,11 +2639,13 @@ async function loadSector(){
         is the normal trailing multiple every screener quotes — reference
         only, and read it warily here: a one-off can put it BELOW the forward
         (Dixon), a trough TTM far above it (Amber).</p>
+      ${modeBtns}
       ${scatterHtml}
       <div class="scroll"><table><thead><tr>
         <th>id</th><th>name</th><th class="n">close</th>
         <th class="n">EPS ${FY1}E/${FY2}E</th><th class="n">analysts</th>
         <th class="n">fwd P/E</th><th class="n">P/E ${FY2}E</th>
+        ${E.pe_2y_asof ? '<th class="n">P/E 2y·BBG</th>' : ''}
         <th class="n">P/E ttm</th>
         <th class="n">growth</th>
         <th class="n">PEG</th><th class="n">rev 90d</th><th>state</th>
@@ -2670,6 +2717,19 @@ async function loadSector(){
   // was also built-but-never-rendered until the chart landed here.)
   if (chartHtml) wireChart('sectorpx');
   if (ESTV) wireEstScatter();
+  // The 1y/2y horizon toggle: re-draw the scatter box in place, then re-wire
+  // the crosshair (the old SVG and its listeners left with the old DOM).
+  document.querySelectorAll('#s-sector .est-mode button').forEach(b =>
+    b.addEventListener('click', () => {
+      if (!EST_REDRAW) return;
+      document.querySelectorAll('#s-sector .est-mode button').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      const box = document.getElementById('est-scatter-box');
+      if (box){
+        box.innerHTML = EST_REDRAW(b.dataset.m);
+        if (ESTV) wireEstScatter();
+      }
+    }));
 }
 
 let TODAY = null;

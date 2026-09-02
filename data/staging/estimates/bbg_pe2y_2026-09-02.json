@@ -1,0 +1,22 @@
+{
+  "captured": "2026-09-02",
+  "source": "Bloomberg terminal screenshots, PE Ratio [2 Yr Fwd] (BEst blended 24-month forward P/E)",
+  "screenshots": [
+    "OneDrive - PinPOINT/Screenshot 2026-09-02 at 3.37.41 PM.png",
+    "OneDrive - PinPOINT/Screenshot 2026-09-02 at 3.38.47 PM.png"
+  ],
+  "note": "Last table row (09/02/26, highlighted) transcribed by eye from the two screenshots. History 07/03/26-09/02/26 exists in the images but is deliberately NOT transcribed (480 numbers of silent-transcription risk; the screenshots are the record). LTTS and OFSS were not in frame. Consistency-checked before loading: every value sits below our Yahoo FY28E P/E by a margin scaling with growth (~2% on TCS/Wipro, ~7-8% on Persistent/Coforge), the arithmetic signature of a FY28/FY29 blend.",
+  "values": {
+    "coforge":       25.374,
+    "tcs":           14.152,
+    "infosys":       13.831,
+    "wipro":         12.606,
+    "hcl_tech":      16.934,
+    "tech_mahindra": 17.800,
+    "ltimindtree":   19.055,
+    "persistent":    29.889,
+    "mphasis":       18.720,
+    "tata_elxsi":    23.440,
+    "kpit":          17.623
+  }
+}

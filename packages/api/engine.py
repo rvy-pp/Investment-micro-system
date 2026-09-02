@@ -592,6 +592,15 @@ def consensus_panel(sector_id: str) -> dict:
     spec = next((x for x in SECTORS if x["id"] == sector_id), {})
     group_of = {eid: g for g, eids in (spec.get("est_groups") or {}).items()
                 for eid in eids}
+    # Bloomberg 2-yr fwd P/E — a hand-captured screenshot feed (bbg_pe2y.py),
+    # so it rides beside the Yahoo-computed columns with its own capture date:
+    # a screenshot goes stale silently, the Yahoo capture refreshes itself.
+    pe2y_asof = conn.execute(
+        "SELECT MAX(as_of) FROM estimates WHERE broker='bloomberg' "
+        "AND metric='pe_fwd_2y'").fetchone()[0]
+    pe2y = dict(conn.execute(
+        "SELECT entity_id, value_num FROM estimates WHERE broker='bloomberg' "
+        "AND metric='pe_fwd_2y' AND as_of=?", (pe2y_asof,))) if pe2y_asof else {}
     today = _dt.date.today().isoformat()
     rows, pegs = [], []
     for ent in sorted(ents, key=lambda e: e["id"]):
@@ -605,7 +614,8 @@ def consensus_panel(sector_id: str) -> dict:
         if row is None:
             rows.append({"id": ent["id"], "name": ent.get("name") or ent["id"],
                          "scored": scored, "state": state,
-                         "group": group_of.get(ent["id"]), "withheld": why})
+                         "group": group_of.get(ent["id"]),
+                         "pe_2y": pe2y.get(ent["id"]), "withheld": why})
             continue
         if scored and row["peg"] is not None:
             pegs.append(row["peg"])
@@ -613,6 +623,7 @@ def consensus_panel(sector_id: str) -> dict:
             "id": ent["id"], "name": ent.get("name") or ent["id"],
             "scored": scored, "state": state,
             "group": group_of.get(ent["id"]),
+            "pe_2y": pe2y.get(ent["id"]),
             "close": row["close"], "px_date": row["px_date"],
             "fy1": row["fy1"], "fy2": row["fy2"],
             "eps_fy1": round(row["eps_fy1"], 2),
@@ -638,7 +649,10 @@ def consensus_panel(sector_id: str) -> dict:
             "min_analysts": _vpe.MIN_ANALYSTS,
             # display-group order for the scatter's colour assignment; empty
             # for a sector that declares none (EMS)
-            "groups": list((spec.get("est_groups") or {}).keys())}
+            "groups": list((spec.get("est_groups") or {}).keys()),
+            # capture date of the Bloomberg 2-yr fwd screenshot feed (None
+            # when nothing loaded — the toggle then does not render)
+            "pe_2y_asof": pe2y_asof}
 
 
 def sector_list() -> list[dict]:
