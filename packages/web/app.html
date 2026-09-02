@@ -1409,6 +1409,8 @@ function wireEstScatter(){
     tip.appendChild(hd);
     const sgn = (v, dec) => (v >= 0 ? '+' : '') + (v * 100).toFixed(dec) + '%';
     [[p.d.fwd_pe.toFixed(1) + 'x', 'fwd P/E'],
+     [p.d.eps_fy2 > 0 ? (p.d.close / p.d.eps_fy2).toFixed(1) + 'x' : '—',
+      'P/E ' + (p.d.fy2 || 'FY2') + 'E'],
      [p.d.ttm_pe == null ? '—' : p.d.ttm_pe.toFixed(1) + 'x', 'P/E ttm'],
      [fmtNum(p.d.close), 'close'],
      [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1),
@@ -2423,7 +2425,7 @@ async function loadSector(){
     const rows3 = E.rows.map(r => {
       if (r.withheld) return `<tr>
         <td class="k">${esc(r.id)}</td><td>${esc(shortLabel(r.name))}</td>
-        <td class="k flat" colspan="8">no reading: ${esc(r.withheld)}</td>
+        <td class="k flat" colspan="9">no reading: ${esc(r.withheld)}</td>
         <td class="k flat">${stateCell(r)}</td></tr>`;
       // peg is null where growth sits under the scorer's floor (the display
       // path relaxes the gate so a 4%-growth large cap still shows its
@@ -2440,6 +2442,7 @@ async function loadSector(){
         <td class="n">${r.eps_fy1.toFixed(1)} / ${r.eps_fy2.toFixed(1)}</td>
         <td class="n">${r.n_analysts}</td>
         <td class="n"><b>${r.fwd_pe.toFixed(1)}x</b></td>
+        <td class="n">${r.eps_fy2 > 0 ? (r.close / r.eps_fy2).toFixed(1) + 'x' : '—'}</td>
         <td class="n">${r.ttm_pe == null ? '—' : r.ttm_pe.toFixed(1) + 'x'}</td>
         <td class="n">${pct(r.growth, 0)}</td>
         <td class="n">${pegCell}</td>
@@ -2577,7 +2580,11 @@ async function loadSector(){
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
       <p class="note">Yahoo consensus (cross-checked against broker notes in
         the digests). <b>fwd P/E</b> divides the close by the 12-month-forward
-        EPS blend of ${FY1}/${FY2}; <b>PEG</b> divides that by
+        EPS blend of ${FY1}/${FY2}; <b>P/E ${FY2}E</b> is the multiple on the
+        furthest consensus year — the number broker notes quote, and the
+        longest forward view any free source carries (Yahoo's consensus stops
+        at ${FY2}; no FY-after estimates exist to blend a true 24-month
+        forward from); <b>PEG</b> divides the fwd P/E by
         ${FY2}-over-${FY1} growth —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
@@ -2591,7 +2598,8 @@ async function loadSector(){
       <div class="scroll"><table><thead><tr>
         <th>id</th><th>name</th><th class="n">close</th>
         <th class="n">EPS ${FY1}E/${FY2}E</th><th class="n">analysts</th>
-        <th class="n">fwd P/E</th><th class="n">P/E ttm</th>
+        <th class="n">fwd P/E</th><th class="n">P/E ${FY2}E</th>
+        <th class="n">P/E ttm</th>
         <th class="n">growth</th>
         <th class="n">PEG</th><th class="n">rev 90d</th><th>state</th>
       </tr></thead><tbody>${rows3}</tbody></table></div>`;
