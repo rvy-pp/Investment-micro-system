@@ -2436,10 +2436,12 @@ async function loadSector(){
         <td class="k">${esc(r.id)}</td><td>${esc(shortLabel(r.name))}</td>
         <td class="k flat" colspan="${E.pe_2y_asof ? 10 : 9}">no reading: ${esc(r.withheld)}</td>
         <td class="k flat">${stateCell(r)}</td></tr>`;
-      // peg is null where growth sits under the scorer's floor (the display
-      // path relaxes the gate so a 4%-growth large cap still shows its
-      // multiple) — a PEG there would be the exploding ratio, so it is '—'.
+      // Below the scorer's 5% growth floor the PEG is shown FAINT with a
+      // dagger — computable but unstable (at 4% growth a 1pp revision swings
+      // it ~0.7), never coloured against the median and never scored.
+      const lowG = r.growth != null && r.growth < 0.05;
       const pegCell = r.peg == null ? '—'
+        : lowG ? `<span style="color:var(--faint)">${r.peg.toFixed(2)}†</span>`
         : E.peg_median == null ? r.peg.toFixed(2)
         : `<b style="color:${r.peg < E.peg_median ? 'var(--up)'
             : r.peg > E.peg_median ? 'var(--down)' : 'inherit'}">${
@@ -2648,7 +2650,9 @@ async function loadSector(){
         hand-captured <b>${esc(E.pe_2y_asof)}</b> (adapters/bbg_pe2y.py) and
         re-marked on each day's close via the implied 24m EPS; a ⚠ line
         appears when the consensus moves after the capture` : ''};
-        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth —
+        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth
+        (†&nbsp;faint below 5% growth: at 4% a 1pp revision swings the ratio
+        ~0.7, so read those as "growth-starved", not as a peer comparison) —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
         P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is

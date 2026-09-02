@@ -202,7 +202,11 @@ def compute_row(conn, eid: str, as_of: str,
         return None, f"growth {g:+.1%} below {MIN_GROWTH:.0%}; PEG undefined there"
 
     fwd_pe = close / eps_12mf
-    peg = fwd_pe / (g * 100.0) if g >= MIN_GROWTH else None
+    # PEG is computed whenever growth is positive — below MIN_GROWTH it is
+    # DISPLAY-ONLY and flagged unstable (at 4% growth a 1pp revision swings
+    # it ~0.7), and the scoring path never reaches here with low growth
+    # (require_growth returns above). PM 2026-09-02: show it, don't hide it.
+    peg = fwd_pe / (g * 100.0) if g > 0 else None
 
     # Trailing (normal) P/E — DISPLAY ONLY, PM request 2026-08-30. Never in
     # the score: trailing E is distorted exactly where it matters here

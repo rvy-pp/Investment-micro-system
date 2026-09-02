@@ -654,7 +654,10 @@ def consensus_panel(sector_id: str) -> dict:
                          "group": group_of.get(ent["id"]),
                          "pe_2y": pe2y.get(ent["id"]), "withheld": why})
             continue
-        if scored and row["peg"] is not None:
+        # The display median must stay the SCORER's median: a low-growth name
+        # now carries a (flagged) display PEG, but the scorer withholds it,
+        # so it must not tilt the median the green/red colouring compares to.
+        if scored and row["peg"] is not None and row["growth"] >= _vpe.MIN_GROWTH:
             pegs.append(row["peg"])
         p2_live, p2_eps, p2_drift = _pe2y_marked(ent["id"], row)
         rows.append({
