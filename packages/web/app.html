@@ -2528,12 +2528,16 @@ async function loadSector(){
         const gB = Math.min(xmax, ymax / (peg * 100));
         if (gB <= gA) return;
         const exitTop = gB < xmax;   // guide leaves through the top edge
+        // Brighter than the y-grid on purpose (PM 2026-09-02: "make the PEG
+        // lines a bit more visible") — but still dashed and under the marks,
+        // so they read as guides, never as data.
         s += `<line x1="${sx(gA)}" y1="${syy(peg * gA * 100)}"
                 x2="${sx(gB)}" y2="${syy(peg * gB * 100)}"
-                stroke="var(--rule)" stroke-width="1" stroke-dasharray="4 4"/>
+                stroke="var(--faint)" stroke-width="1.3"
+                stroke-dasharray="6 4"/>
               <text x="${sx(gB) + (exitTop ? 4 : -4)}"
-                y="${syy(peg * gB * 100) - 5}" font-size="10"
-                fill="var(--faint)"
+                y="${syy(peg * gB * 100) - 5}" font-size="11"
+                font-weight="600" fill="var(--soft)"
                 text-anchor="${exitTop ? 'start' : 'end'}">${lab}</text>`;
       });
       // points, then labels with a greedy vertical de-overlap (the large-cap
