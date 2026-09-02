@@ -2650,9 +2650,13 @@ async function loadSector(){
         hand-captured <b>${esc(E.pe_2y_asof)}</b> (adapters/bbg_pe2y.py) and
         re-marked on each day's close via the implied 24m EPS; a ⚠ line
         appears when the consensus moves after the capture` : ''};
-        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth
-        (†&nbsp;faint below 5% growth: at 4% a 1pp revision swings the ratio
-        ~0.7, so read those as "growth-starved", not as a peer comparison) —
+        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth.
+        †&nbsp;Sub-5%-growth PEGs are faint for NOISE (at 4% growth a 1pp
+        revision swings the ratio ~0.7), but the cross-cap reading stands —
+        PM 2026-09-02: on a growth basis a ~3 PEG large cap pays you nothing
+        against a ~1.5 mid, and that IS what this chart measures; dividends
+        and buybacks, the reason to own the ~3s, are a different analysis
+        that sits outside it —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
         P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is
