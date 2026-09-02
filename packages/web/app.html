@@ -2639,12 +2639,18 @@ async function loadSector(){
           (r.pe_2y_drift * 100).toFixed(1)}%`).join(', ')} — their 2-yr
         multiples are re-marked on today's close but still carry the
         capture-day estimates. A fresh screenshot resets this.</p>` : '';
-    estHtml = `<h2>Consensus forward P/E · capture ${
-        esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
-      <p class="note">Yahoo consensus (cross-checked against broker notes in
-        the digests). <b>fwd P/E</b> divides the close by the 12-month-forward
-        EPS blend of ${FY1}/${FY2}; <b>P/E ${FY2}E</b> is the multiple on the
-        furthest consensus year Yahoo carries — the number broker notes quote${
+    /* The column glossary lives in a one-line <details> BELOW the graph
+       (PM, 2026-09-02) — the chart leads, the fine print folds away. */
+    const glossary = `
+      <details class="await" style="margin:4px 0 10px">
+        <summary style="cursor:pointer;color:var(--soft);font-size:var(--t-sm)">
+          How to read the columns — fwd P/E, P/E ${FY2}E${
+          E.pe_2y_asof ? ', 2y BBG' : ''}, PEG†, rev 90d</summary>
+        <p class="note" style="margin-top:8px">Yahoo consensus (cross-checked
+        against broker notes in the digests). <b>fwd P/E</b> divides the close
+        by the 12-month-forward EPS blend of ${FY1}/${FY2}; <b>P/E ${FY2}E</b>
+        is the multiple on the furthest consensus year Yahoo carries — the
+        number broker notes quote${
         E.pe_2y_asof ? `; <b>P/E 2y (BBG)</b> is Bloomberg's blended 24-month
         forward multiple, which embeds FY-after consensus no free feed has —
         hand-captured <b>${esc(E.pe_2y_asof)}</b> (adapters/bbg_pe2y.py) and
@@ -2665,9 +2671,13 @@ async function loadSector(){
         is the normal trailing multiple every screener quotes — reference
         only, and read it warily here: a one-off can put it BELOW the forward
         (Dixon), a trough TTM far above it (Amber).</p>
+      </details>`;
+    estHtml = `<h2>Consensus forward P/E · capture ${
+        esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
       ${modeBtns}
       ${warn2y}
       ${scatterHtml}
+      ${glossary}
       <div class="scroll"><table><thead><tr>
         <th>id</th><th>name</th><th class="n">close</th>
         <th class="n">EPS ${FY1}E/${FY2}E</th><th class="n">analysts</th>
