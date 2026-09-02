@@ -1363,6 +1363,116 @@ function lineChart(cfg){
     '</svg><div class="viztip" role="status"></div></div>';
 }
 
+/* The consensus scatter's hover layer (PM, 2026-09-02: "a crosshair of sorts
+   so I can see exact valuation numbers"). Same idiom as wireChart below, but
+   two-dimensional: hairlines on BOTH axes with readout chips showing the
+   growth/multiple under the cursor, and within 30 svg-units of a point the
+   crosshair SNAPS to it — the chips then read the name's exact values and the
+   viztip carries the full row. The scatter is viewBox-scaled (the pair charts
+   are real-pixel), so client coords are mapped through the bounding rect. */
+let ESTV = null;
+function wireEstScatter(){
+  const wrap = document.getElementById('cw-est');
+  if (!wrap || !ESTV) return;
+  const m = ESTV;
+  const svg = wrap.querySelector('svg');
+  const vx = svg.querySelector('.es-vx'), hx = svg.querySelector('.es-hx');
+  const ring = svg.querySelector('.es-ring');
+  const grx = svg.querySelector('.es-rx'), gry = svg.querySelector('.es-ry');
+  const tip = wrap.querySelector('.viztip');
+  const iw = m.W - m.ml - m.mr, ih = m.H - m.mt - m.mb;
+  let sel = -1;
+
+  const hide = () => {
+    [vx, hx, ring, grx, gry].forEach(e => { e.style.display = 'none'; });
+    tip.classList.remove('on'); sel = -1;
+  };
+
+  const readout = (x, y) => {
+    vx.setAttribute('x1', x); vx.setAttribute('x2', x); vx.style.display = '';
+    hx.setAttribute('y1', y); hx.setAttribute('y2', y); hx.style.display = '';
+    grx.setAttribute('transform', `translate(${x},0)`); grx.style.display = '';
+    gry.setAttribute('transform', `translate(0,${y})`); gry.style.display = '';
+    grx.querySelector('text').textContent =
+      ((x - m.ml) / iw * m.xmax * 100).toFixed(1) + '%';
+    gry.querySelector('text').textContent =
+      (m.ymax - (y - m.mt) / ih * (m.ymax - m.ymin)).toFixed(1) + 'x';
+  };
+
+  const showTip = (p, rect) => {
+    ring.setAttribute('cx', p.x); ring.setAttribute('cy', p.y);
+    ring.style.display = '';
+    // textContent throughout — ids/names arrive from the API (untrusted).
+    tip.textContent = '';
+    const hd = document.createElement('div'); hd.className = 'd';
+    hd.textContent = p.d.id + (p.d.group ? ' · ' + p.d.group : '');
+    tip.appendChild(hd);
+    const sgn = (v, dec) => (v >= 0 ? '+' : '') + (v * 100).toFixed(dec) + '%';
+    [[p.d.fwd_pe.toFixed(1) + 'x', 'fwd P/E'],
+     [p.d.ttm_pe == null ? '—' : p.d.ttm_pe.toFixed(1) + 'x', 'P/E ttm'],
+     [fmtNum(p.d.close), 'close'],
+     [p.d.eps_fy1.toFixed(1) + ' / ' + p.d.eps_fy2.toFixed(1), 'EPS FY1/FY2'],
+     [sgn(p.d.growth, 1), 'growth'],
+     [p.d.peg == null ? '—' : p.d.peg.toFixed(2), 'PEG'],
+     [p.d.rev_90d == null ? '—' : sgn(p.d.rev_90d, 1), 'rev 90d'],
+     [String(p.d.n_analysts), 'analysts']].forEach(([v, l]) => {
+      const r = document.createElement('div'); r.className = 'r';
+      const b = document.createElement('b'); b.textContent = v;
+      const em = document.createElement('em'); em.textContent = l;
+      r.appendChild(b); r.appendChild(em); tip.appendChild(r);
+    });
+    tip.classList.add('on');
+    // Tip position in CSS pixels (the svg is viewBox-scaled).
+    const kx = rect.width / m.W, ky = rect.height / m.H;
+    const tw = tip.offsetWidth || 170, th = tip.offsetHeight || 150;
+    let left = p.x * kx + 16;
+    if (left + tw > rect.width) left = p.x * kx - tw - 16;
+    let top = Math.max(4, Math.min(p.y * ky - th / 2, rect.height - th - 4));
+    tip.style.left = Math.max(4, left) + 'px';
+    tip.style.top = top + 'px';
+  };
+
+  const move = ev => {
+    const rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    const x = (ev.clientX - rect.left) * (m.W / rect.width);
+    const y = (ev.clientY - rect.top) * (m.H / rect.height);
+    if (x < m.ml - 8 || x > m.W - m.mr + 8 ||
+        y < m.mt - 8 || y > m.H - m.mb + 8) return hide();
+    let best = -1, bd = Infinity;
+    m.pts.forEach((p, i) => {
+      const d = Math.hypot(p.x - x, p.y - y);
+      if (d < bd){ bd = d; best = i; }
+    });
+    if (best >= 0 && bd <= 30){
+      sel = best; const p = m.pts[best];
+      readout(p.x, p.y); showTip(p, rect);
+    } else {
+      sel = -1; ring.style.display = 'none'; tip.classList.remove('on');
+      readout(Math.max(m.ml, Math.min(x, m.W - m.mr)),
+              Math.max(m.mt, Math.min(y, m.H - m.mb)));
+    }
+  };
+
+  svg.addEventListener('pointermove', move);
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  // Keyboard reaches the same readout: focus lands on the leftmost name,
+  // arrows walk the cross-section. The table below is the full fallback.
+  const select = i => {
+    sel = (i + m.pts.length) % m.pts.length;
+    const p = m.pts[sel];
+    readout(p.x, p.y); showTip(p, svg.getBoundingClientRect());
+  };
+  svg.addEventListener('focus', () => { if (sel < 0 && m.pts.length) select(0); });
+  svg.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape') return hide();
+    if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+    ev.preventDefault();
+    select(sel < 0 ? 0 : sel + (ev.key === 'ArrowRight' ? 1 : -1));
+  });
+}
+
 /* The hover layer. Required rather than optional: an SVG chart in a browser is
    interactive, and the crosshair is how a reader aims at a DATE instead of at a
    2px line. One tooltip lists every series at that x, so the pointer never has
@@ -2345,6 +2455,7 @@ async function loadSector(){
        alone: every point is direct-labelled, and the table below is the
        same data. */
     let scatterHtml = '';
+    ESTV = null;   // else a sector without a scatter would keep the last one's
     const spts = E.rows.filter(r => !r.withheld && r.fwd_pe != null);
     if (spts.length >= 3){
       const W = 900, H = 380, ml = 48, mr = 26, mt = 14, mb = 42;
@@ -2399,39 +2510,60 @@ async function loadSector(){
             L.ly = P.ly + 12;
         }
       });
+      ESTV = {W, H, ml, mr, mt, mb, xmax, ymin, ymax, pts: []};
       labs.forEach(L => {
         const r = L.r;
-        const tip = `${r.id} · fwd ${r.fwd_pe.toFixed(1)}x · ttm ${
-          r.ttm_pe == null ? '—' : r.ttm_pe.toFixed(1) + 'x'} · g ${
-          (r.growth * 100).toFixed(1)}% · PEG ${
-          r.peg == null ? '—' : r.peg.toFixed(2)} · rev90d ${
-          r.rev_90d == null ? '—'
-          : (r.rev_90d >= 0 ? '+' : '') + (r.rev_90d * 100).toFixed(1) + '%'
-          } · n=${r.n_analysts}`;
+        // No <title>: the crosshair layer (wireEstScatter) is the readout —
+        // a native title on top of it would double the tooltip.
         s += `<circle cx="${L.x}" cy="${L.y}" r="6" fill="${colOf(r)}"
-                stroke="var(--surface)" stroke-width="2"><title>${esc(tip)}</title></circle>`;
+                stroke="var(--surface)" stroke-width="2"/>`;
         const anchor = L.x > W - mr - 96 ? 'end' : 'start';
         s += `<text x="${anchor === 'end' ? L.x - 10 : L.x + 10}" y="${L.ly}"
                 font-size="11" font-weight="600" fill="var(--ink)"
                 text-anchor="${anchor}">${esc(shortLabel(r.name))}</text>`;
+        ESTV.pts.push({x: L.x, y: L.y, d: r});
       });
+      ESTV.pts.sort((a, b) => a.x - b.x);   // arrow keys walk left -> right
       const legend3 = groups.length
         ? `<p class="note" style="margin:2px 0 6px">${groups.map((g, i) =>
             `<span style="color:var(--series-${(i % 8) + 1})">●</span> ${esc(g)}`)
             .join(' &nbsp;·&nbsp; ')} &nbsp;— display grouping only; nothing
             scores against it.</p>`
         : '';
+      /* Crosshair layer, painted last so it rides above everything. Two
+         hairlines + axis readout chips follow the pointer; within reach of a
+         point they SNAP to it, so the numbers shown are the name's exact
+         values rather than the pixel under the cursor. Wired by
+         wireEstScatter() after insertion, same lifecycle as wireChart. */
+      const xh = `
+        <line class="xhair es-vx" x1="0" x2="0" y1="${mt}" y2="${H - mb}"
+          style="display:none"/>
+        <line class="xhair es-hx" x1="${ml}" x2="${W - mr}" y1="0" y2="0"
+          style="display:none"/>
+        <circle class="es-ring" r="9.5" fill="none" stroke="var(--accent)"
+          stroke-width="1.5" style="display:none" pointer-events="none"/>
+        <g class="es-rx" style="display:none" pointer-events="none">
+          <rect x="-26" y="${H - mb + 5}" width="52" height="17" rx="3"
+            fill="var(--surface)" stroke="var(--hair)"/>
+          <text y="${H - mb + 18}" text-anchor="middle" font-size="11"
+            font-weight="600" fill="var(--accent)"></text></g>
+        <g class="es-ry" style="display:none" pointer-events="none">
+          <rect x="${ml - 48}" y="-9" width="42" height="17" rx="3"
+            fill="var(--surface)" stroke="var(--hair)"/>
+          <text x="${ml - 10}" y="4" text-anchor="end" font-size="11"
+            font-weight="600" fill="var(--accent)"></text></g>`;
       scatterHtml = `${legend3}
-        <div class="scroll"><svg viewBox="0 0 ${W} ${H}" width="100%"
-          style="min-width:640px" role="img"
-          aria-label="forward P/E against consensus growth — the table below carries the same data">
-          ${s}
+        <div class="scroll"><div class="chartwrap" id="cw-est">
+        <svg viewBox="0 0 ${W} ${H}" width="100%"
+          style="min-width:640px" role="img" tabindex="0"
+          aria-label="forward P/E against consensus growth — hover or use arrow keys for exact values; the table below carries the same data">
+          ${s}${xh}
           <text x="${ml + iw / 2}" y="${H - 4}" text-anchor="middle"
             font-size="11" fill="var(--soft)">consensus EPS growth, FY1 → FY2</text>
           <text x="12" y="${mt + ih / 2}" font-size="11" fill="var(--soft)"
             transform="rotate(-90 12 ${mt + ih / 2})"
             text-anchor="middle">12m forward P/E</text>
-        </svg></div>`;
+        </svg><div class="viztip" role="status"></div></div></div>`;
     }
     estHtml = `<h2>Consensus forward P/E · capture ${
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
@@ -2520,6 +2652,7 @@ async function loadSector(){
   // After insertion — the hover layer needs the SVG in the DOM. (`unc` above
   // was also built-but-never-rendered until the chart landed here.)
   if (chartHtml) wireChart('sectorpx');
+  if (ESTV) wireEstScatter();
 }
 
 let TODAY = null;
