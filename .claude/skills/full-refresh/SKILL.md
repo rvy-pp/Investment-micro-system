@@ -131,6 +131,51 @@ the capture lands in the table minutes later and its log is
 spawn. **It writes to `cement_watch*`, never to `prices`, and no pillar reads
 it.**
 
+## Step 2c — BBG 2-yr forward P/E (screenshots, agent only)
+
+Added 2026-09-02, PM instruction: "keep updating the BBG 2 year numbers daily
+with the full-refresh." The feed is a person with a terminal — the PM drops
+Bloomberg screenshots of **PE Ratio [2 Yr Fwd]** (GF, BEst blended 24-month)
+into the OneDrive root — so the capture is an agent step and everything
+deterministic about it lives in `adapters/bbg_pe2y.py`.
+
+1. Look for screenshots newer than the latest staging file:
+
+   ```bash
+   ls -t "$HOME/OneDrive - PinPOINT"/Screenshot*.png | head -5
+   ls packages/../data/staging/estimates/bbg_pe2y_*.json | tail -1
+   ```
+
+2. **No new screenshot -> do nothing and move on.** This is the normal case
+   and it is fine: the panel re-marks the captured multiple on each day's
+   close (implied 24m EPS = capture-day close / captured P/E), and shows a ⚠
+   line per name whenever the Yahoo consensus has moved ≥1% since the capture
+   — the "EPS might have changed" warning. NEVER write a staging file without
+   a screenshot to read; the multiple must come off a terminal image, not be
+   inferred.
+
+3. New screenshot(s): Read the image(s) and transcribe **the last dated row
+   only** — the daily history in frame stays untranscribed (480 numbers of
+   silent-transcription risk; the images are the record). BBG tickers map
+   COFORGE/TCS/INFO/WPRO/HCLT/TECHM/LTM/PSYS/MPHL/TELX/KPITTECH/LTTS/OFSS →
+   coforge/tcs/infosys/wipro/hcl_tech/tech_mahindra/ltimindtree/persistent/
+   mphasis/tata_elxsi/kpit/ltts/ofss.
+
+4. **Cross-check before staging** (the screenshot equivalent of the name
+   guard): each value must sit BELOW the panel's Yahoo P/E FY28E column by a
+   margin that grows with the name's growth (~2% on TCS/Wipro, ~7-8% on
+   Persistent/Coforge on 2026-09-02). A value ABOVE FY28E, or off by >20%,
+   is a mis-read or the wrong terminal field — stop and say so.
+
+5. Write `data/staging/estimates/bbg_pe2y_<YYYY-MM-DD>.json` (date = the
+   screenshot's last table row, format per the 2026-09-02 file: `captured`,
+   `source`, `screenshots` paths, `note`, `values`). Then load — or skip,
+   Step 3 loads it too:
+
+   ```bash
+   python packages/adapters/bbg_pe2y.py --load
+   ```
+
 ## Step 3 — everything Python
 
 ```bash

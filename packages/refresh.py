@@ -109,6 +109,12 @@ STEPS = [
     # forward-P/E panel. One step, every P/E-watched sector.
     ("Consensus (fetch)", ["packages/adapters/yahoo_estimates.py", "--fetch"], False),
     ("Consensus (load)",  ["packages/adapters/yahoo_estimates.py", "--load"],  False),
+    # BBG 2-yr fwd P/E: loads the latest hand-captured staging file (the
+    # full-refresh skill's screenshot step writes it; this makes sure a
+    # staged-but-unloaded capture always lands). Idempotent per capture; the
+    # panel re-marks the multiple on price daily, so between screenshots this
+    # step is a cheap no-op rather than the update path.
+    ("BBG 2y P/E (staged)", ["packages/adapters/bbg_pe2y.py", "--load"], False),
     # THE PACK IS NO LONGER AN AGENT-ONLY STEP. Promoted 2026-08-24, same shape
     # as westmetall's promotion: the "needs an agent" was inferred from the M365
     # connector's limits and never tested against Outlook itself. Outlook has the

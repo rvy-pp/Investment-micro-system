@@ -592,15 +592,45 @@ def consensus_panel(sector_id: str) -> dict:
     spec = next((x for x in SECTORS if x["id"] == sector_id), {})
     group_of = {eid: g for g, eids in (spec.get("est_groups") or {}).items()
                 for eid in eids}
-    # Bloomberg 2-yr fwd P/E — a hand-captured screenshot feed (bbg_pe2y.py),
-    # so it rides beside the Yahoo-computed columns with its own capture date:
-    # a screenshot goes stale silently, the Yahoo capture refreshes itself.
+    # Bloomberg 2-yr fwd P/E — a hand-captured screenshot feed (bbg_pe2y.py).
+    # THE CAPTURE PINS AN IMPLIED 24-MONTH EPS (close on the capture date /
+    # captured multiple), and the panel re-marks that EPS at each day's close —
+    # so the 2-yr view stays price-current between screenshots (PM instruction
+    # 2026-09-02: "keep updating the BBG 2 year numbers daily"). What CANNOT
+    # self-update is the EPS itself, so each row also carries the drift of the
+    # Yahoo consensus since the capture date: when the street has moved its
+    # numbers, the pinned BBG EPS has probably moved too, and the page warns.
     pe2y_asof = conn.execute(
         "SELECT MAX(as_of) FROM estimates WHERE broker='bloomberg' "
         "AND metric='pe_fwd_2y'").fetchone()[0]
     pe2y = dict(conn.execute(
         "SELECT entity_id, value_num FROM estimates WHERE broker='bloomberg' "
         "AND metric='pe_fwd_2y' AND as_of=?", (pe2y_asof,))) if pe2y_asof else {}
+
+    def _pe2y_marked(eid: str, row: dict) -> tuple[float | None, float | None]:
+        """(re-marked 2-yr multiple, consensus-EPS drift since capture)."""
+        p2 = pe2y.get(eid)
+        if p2 is None:
+            return None, None
+        cap_close = conn.execute(
+            "SELECT close FROM prices WHERE entity_id=? AND date<=? "
+            "ORDER BY date DESC LIMIT 1", (eid, pe2y_asof)).fetchone()
+        live = p2
+        if cap_close and cap_close[0] and row.get("close"):
+            implied_eps = cap_close[0] / p2
+            live = row["close"] / implied_eps
+        drift = None
+        cap_est = _vpe.consensus_asof(conn, eid, pe2y_asof)
+        if cap_est:
+            deltas = []
+            for fy, now in ((row.get("fy1"), row.get("eps_fy1")),
+                            (row.get("fy2"), row.get("eps_fy2"))):
+                old = (cap_est.get(fy) or {}).get("eps")
+                if old and now:
+                    deltas.append(now / old - 1.0)
+            if deltas:
+                drift = max(deltas, key=abs)
+        return live, drift
     today = _dt.date.today().isoformat()
     rows, pegs = [], []
     for ent in sorted(ents, key=lambda e: e["id"]):
@@ -619,11 +649,14 @@ def consensus_panel(sector_id: str) -> dict:
             continue
         if scored and row["peg"] is not None:
             pegs.append(row["peg"])
+        p2_live, p2_drift = _pe2y_marked(ent["id"], row)
         rows.append({
             "id": ent["id"], "name": ent.get("name") or ent["id"],
             "scored": scored, "state": state,
             "group": group_of.get(ent["id"]),
-            "pe_2y": pe2y.get(ent["id"]),
+            "pe_2y": round(p2_live, 1) if p2_live is not None else None,
+            "pe_2y_drift": (round(p2_drift, 4)
+                            if p2_drift is not None else None),
             "close": row["close"], "px_date": row["px_date"],
             "fy1": row["fy1"], "fy2": row["fy2"],
             "eps_fy1": round(row["eps_fy1"], 2),

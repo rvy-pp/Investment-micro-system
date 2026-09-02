@@ -2618,8 +2618,23 @@ async function loadSector(){
       <div class="est-mode" role="group" aria-label="forward horizon"
         style="display:flex;gap:8px;margin:0 0 8px">
         <button class="ghost" data-m="1y" aria-pressed="true">1-yr fwd · Yahoo, daily</button>
-        <button class="ghost" data-m="2y" aria-pressed="false">2-yr fwd · BBG ${esc(E.pe_2y_asof)}</button>
+        <button class="ghost" data-m="2y" aria-pressed="false">2-yr fwd · BBG ${esc(E.pe_2y_asof)}, marked to close</button>
       </div>` : '';
+    /* The EPS-drift warning. The BBG multiple re-marks on price daily, but
+       its EPS is pinned at the capture — so when the YAHOO consensus has
+       moved >=1% since the capture date, the pinned BBG EPS has probably
+       moved too, and the re-marked multiple is quietly wrong for that name.
+       This is the "EPS might have changed" warning the PM asked for
+       (2026-09-02); the fix it calls for is a fresh screenshot. */
+    const drifted = E.rows.filter(r =>
+      r.pe_2y_drift != null && Math.abs(r.pe_2y_drift) >= 0.01);
+    const warn2y = drifted.length ? `
+      <p class="note" style="color:var(--warn)">⚠ consensus EPS has moved
+        since the BBG capture (${esc(E.pe_2y_asof)}): ${drifted.map(r =>
+          `${esc(shortLabel(r.name))} ${(r.pe_2y_drift >= 0 ? '+' : '')}${
+          (r.pe_2y_drift * 100).toFixed(1)}%`).join(', ')} — their 2-yr
+        multiples are re-marked on today's close but still carry the
+        capture-day estimates. A fresh screenshot resets this.</p>` : '';
     estHtml = `<h2>Consensus forward P/E · capture ${
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
       <p class="note">Yahoo consensus (cross-checked against broker notes in
@@ -2628,8 +2643,9 @@ async function loadSector(){
         furthest consensus year Yahoo carries — the number broker notes quote${
         E.pe_2y_asof ? `; <b>P/E 2y (BBG)</b> is Bloomberg's blended 24-month
         forward multiple, which embeds FY-after consensus no free feed has —
-        hand-captured from the terminal <b>${esc(E.pe_2y_asof)}</b>, so it
-        goes stale until recaptured (adapters/bbg_pe2y.py)` : ''};
+        hand-captured <b>${esc(E.pe_2y_asof)}</b> (adapters/bbg_pe2y.py) and
+        re-marked on each day's close via the implied 24m EPS; a ⚠ line
+        appears when the consensus moves after the capture` : ''};
         <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth —
         green is cheaper than the scored group's median (${
         E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
@@ -2640,6 +2656,7 @@ async function loadSector(){
         only, and read it warily here: a one-off can put it BELOW the forward
         (Dixon), a trough TTM far above it (Amber).</p>
       ${modeBtns}
+      ${warn2y}
       ${scatterHtml}
       <div class="scroll"><table><thead><tr>
         <th>id</th><th>name</th><th class="n">close</th>
