@@ -855,7 +855,8 @@ def nav_list() -> list[dict]:
            # morning read; the book will be reworked separately). Same data
            # as before — /api/overview's book block — different address.
            {"id": "book", "kind": "book", "label": "The Book", "live": True},
-           {"id": "flows", "kind": "flows", "label": "Flows", "live": False}]
+           # live since 2026-09-02: F1 computes and persists; F2-F4 still scoped.
+           {"id": "flows", "kind": "flows", "label": "Flows", "live": True}]
     for s in sector_list():
         spec = next(x for x in SECTORS if x["id"] == s["id"])
         out.append({"id": s["id"], "kind": "sector", "label": s["label"],
@@ -1164,16 +1165,19 @@ def flows() -> dict:
          "detail": "no source, no adapter, never probed"},
     ]
 
+    n_mr = scalar("SELECT COUNT(*) FROM market_regime") or 0
+    mr_last = scalar("SELECT MAX(as_of) FROM market_regime")
+
     monitors = [
         {"id": "F1", "monitor": "Risk on / risk off",
          "question": "is the market paying for risk at all today",
-         "scope": "market-wide", "lands_in": "NO TABLE YET",
-         "state": "needs a decision",
-         "detail": ("`sector_regime` is keyed (sector, as_of) so a market-wide "
-                    "row has nowhere to go. FLOWS.md recommends a "
-                    "`market_regime` table over the `sector='*'` convention, "
-                    "because every query would then have to know to exclude a "
-                    "magic row. Open — the PM has not decided")},
+         "scope": "market-wide", "lands_in": "market_regime",
+         "state": f"LIVE, {n_mr} sessions",
+         "detail": (f"Built 2026-09-02 from the coach's framing: sign patterns "
+                    f"of (equity, bond price, gold) -> 8 named states + a quiet "
+                    f"overlay, a SOX-IGV rotation overlay, and a windowed "
+                    f"flow-spell layer. Newest {mr_last}. specs/flows.yaml is "
+                    f"the frozen method; regime.py --backtest is the evidence")},
         {"id": "F2", "monitor": "Sector activity",
          "question": "which sectors are being worked, which are ignored",
          "scope": "per sector", "lands_in": "sector_regime (read by nothing)",
@@ -1194,9 +1198,65 @@ def flows() -> dict:
                     f"{oi_last}. Nothing in `score/` reads it, so crowding is "
                     f"captured and unused")},
     ]
+
+    # ---- F1: the market regime read (built 2026-09-02) --------------------
+    # Read from the PERSISTED table, matrix recomputed over it in-process —
+    # a few ms over ~2.5k rows, and the page must never trigger a fetch.
+    # The transition percentages are EMPIRICAL BASE RATES over the classified
+    # history, not a model.
+    f1 = None
+    try:
+        import datetime as _dt
+
+        import regime as rg
+        mr = conn.execute(
+            "SELECT as_of, state, loud_state, quiet, z_eq, z_bond, z_gold, "
+            "rot_z, rotation, flow_intensity, flow_driver, spell_quiet, "
+            "spec_version FROM market_regime ORDER BY as_of").fetchall()
+        if mr:
+            days = [dict(r) for r in mr]
+            tr = rg.transitions(days)
+            last = days[-1]
+            nxt = sorted(tr["pct"].get(last["state"], {}).items(),
+                         key=lambda kv: -kv[1])
+            spell_run = 0
+            for d in reversed(days):
+                if (d["spell_quiet"] is None
+                        or d["spell_quiet"] != last["spell_quiet"]):
+                    break
+                spell_run += 1
+            # US close T-1/T-2 is normal from India; beyond ~6 calendar days
+            # the read is STALE and the tab must lead with that, not with a
+            # regime nobody refreshed (invariant 3: old and unchanged must be
+            # distinguishable).
+            stale_days = (_dt.date.today()
+                          - _dt.date.fromisoformat(last["as_of"])).days
+            f1 = {
+                **{k: last[k] for k in
+                   ("as_of", "state", "loud_state", "quiet", "z_eq", "z_bond",
+                    "z_gold", "rot_z", "rotation", "flow_intensity",
+                    "flow_driver", "spell_quiet", "spec_version")},
+                "spell_run": spell_run,
+                "stale_days": stale_days,
+                "stale": stale_days > 6,
+                "n_observations": sum(tr["counts"].get(last["state"], {})
+                                      .values()),
+                "next": [{"state": s, "pct": round(v, 1),
+                          "base": round(tr["base"].get(s, 0.0), 1)}
+                         for s, v in nxt],
+                "base": {s: round(v, 1) for s, v in tr["base"].items()},
+                "n_days": tr["n_days"],
+                "first": days[0]["as_of"],
+                "strip": [{k: d[k] for k in
+                           ("as_of", "state", "quiet", "spell_quiet",
+                            "rotation")} for d in days[-15:]],
+            }
+    except Exception as e:  # the readiness tables must render regardless
+        f1 = {"error": str(e)}
     conn.close()
 
     return {
+        "f1": f1,
         "note": ("Flows never sets direction, and since 2026-08-24 it does not "
                  "enter scoring at all - the gate multiplier was removed from "
                  "conviction.py, where it had sat at a permanent 1.0 and printed "

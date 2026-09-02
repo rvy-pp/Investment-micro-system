@@ -39,7 +39,7 @@ So the ordering is: L1 says the economics moved, L2 says whether it is priced,
 
 | # | Monitor | Question | Scope | Lands in |
 |---|---|---|---|---|
-| **F1** | Risk on / risk off | is the market paying for risk at all today | market-wide | **no table yet** |
+| **F1** | Risk on / risk off | is the market paying for risk at all today | market-wide | **`market_regime` — BUILT 2026-09-02** |
 | **F2** | Sector activity | which sectors are being worked, which are ignored | per sector | `sector_regime` |
 | **F3** | Investor sentiment | who is doing it — FII / DII / retail, cash vs derivatives | market + sector | `sector_regime.flow_fii`, else new |
 | **F4** | Crowding | is this specific name already full | per entity | `oi` (loaded, unused by scoring) |
@@ -55,7 +55,57 @@ a single bullish/bearish axis.
 `(sector, as_of)`, so a market-wide reading has nowhere to go. Either a
 `market_regime (as_of, ...)` table, or the convention `sector = '*'`. The second
 is cheaper and worse — every query against the table would then have to know to
-exclude a magic row. Recommend a table. *Open.*
+exclude a magic row. Recommend a table. ~~*Open.*~~ **Decided and built — the
+table won. See the next section.**
+
+---
+
+## F1 is BUILT — 2026-09-02, from the coach's framing
+
+The PM's coach settled open question 1 (2026-09-02 session): read **joint sign
+patterns across a small cross-asset set** daily, name the scenario, carry the
+odds of what follows. Method frozen in `specs/flows.yaml` BEFORE the transition
+matrix was computed; evidence in `python packages/score/regime.py --backtest`.
+
+**Two layers, because the tuning found they are different things:**
+
+1. **Daily state** — signs of (S&P 500, bond price, gold), each move / its own
+   trailing 63d sigma → 8 named states (`risk_on`, `reflation`, `goldilocks`,
+   `liquidity_rally`, `risk_off`, `degross`, `stagflation_scare`,
+   `liquidation`), plus `quiet` when all three |z| < 0.75. Gold's sign is what
+   separates **degross** (liquidated for cash, gold sold) from **risk_off**
+   (flight to safety, gold bid). Rotation is a SOX−IGV overlay, not a state
+   dimension. 2,467 US sessions classified since 2016.
+2. **Flow spell** — the coach's operative regime ("the whole of August the flow
+   has been quiet… fundamentals work during these times") is NOT low daily vol:
+   Aug-2026 ran SOX 1.9%/day and still felt quiet. It is the absence of
+   PERSISTENT directional equity flow. Spell-quiet = 10-session net-flow
+   intensity < 1.25 on each of (S&P, SOX, rotation) AND no ≥2.5σ day in the
+   window. Both legs load-bearing: net/gross alone let Apr-2025 net out its own
+   crash. At those thresholds Aug-2026 reads 65% quiet with the loud patch
+   exactly Aug 6–14, Mar-2020 reads 0%, calm-2023 62%.
+
+**What the backtest showed** (full output: `regime.py --backtest`):
+
+- Every episode check classifies as a trader would tell it: 2024-08-05 yen
+  carry = degross; 2025-04-03 tariff day = degross with a −3σ rotation out of
+  hardware; COVID 2020-03-12 dash-for-cash = liquidation on the gold sign.
+- Persistence lift concentrates in stress states — stagflation_scare 1.67x,
+  liquidation 1.50x, degross 1.25x — while benign states mean-revert
+  (risk_on 0.80x). Bad tapes cluster; good ones don't.
+- After risk_off, risk_on follows 20.1% vs a 13.0% base — the bounce is real
+  but only ~1.5x, never a forecast.
+
+The daily read and next-session odds render at the top of the Flows tab.
+The percentages are **empirical base rates over ten years, not a model**, and
+F1 never sets direction and never enters scoring — the gate question
+(open question 2 below) stays open until the review layer can grade it.
+
+Data path: `flow_series` table (Yahoo, dedicated adapter, NEVER `prices` — the
+bridge-shock and store-clock walls), refreshed by two unattended `refresh.py`
+steps. The newest state is always the last COMPLETED US close (T-1 from India,
+the partial live session is dropped), actionable at the next India open — the
+look-ahead rule below, honoured.
 
 ---
 
@@ -126,9 +176,12 @@ F&O from the start — recommend yes, it is free now and a migration later.*
 
 Nothing below has an answer yet. Listed so the discussion has an agenda.
 
-1. **What is the risk-on/off read actually made of?** India VIX, advance/decline,
-   INR, the gold/copper ratio, small-cap vs large-cap breadth — or one composite.
-   Fewer inputs, honestly sourced, beats a rich index nobody can decompose.
+1. ~~**What is the risk-on/off read actually made of?**~~ **Answered by the
+   coach and built — see "F1 is BUILT" above.** Global series, not India ones,
+   on the theory that global risk appetite drives FII flow into these names and
+   the US close is known before the India open (real lead time). An India-side
+   variant (Nifty sectorals, INR, India 10Y) remains possible as a SECOND read
+   if the global one earns trust.
 2. **Does F1 gate, or only size?** A market-wide risk-off could set
    `can_express = 0` everywhere, or just cut the size multiplier. The spec's pair
    exception already argues a market-neutral pair should survive a regime a naked

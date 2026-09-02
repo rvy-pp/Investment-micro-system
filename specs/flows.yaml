@@ -1,0 +1,118 @@
+# =============================================================================
+# Flows F1 — the market-wide regime read
+# =============================================================================
+# Built 2026-09-02 from the PM's coach's framing: read joint SIGN PATTERNS
+# across a small cross-asset set daily, name the scenario, and carry the
+# empirical odds of what follows. Two worked examples anchor the taxonomy:
+#
+#   rotation: hardware down, software up, gold down, yields down
+#             -> money moved WITHIN equities, still risk-on
+#   degross:  hardware down, software flat/up (shorts covering), GOLD DOWN,
+#             treasuries up -> gross coming down both ways
+#
+# Gold's sign is the tell that separates degross from ordinary risk-off
+# (where gold rises). Three binary signs (equity, bond price, gold) give
+# exactly 8 states; rotation is measured separately on the SOX-IGV spread so
+# the state space stays 8, not 32; QUIET is an overlay on magnitude, because
+# the coach's operative claim is about quietness itself: "the whole of August
+# the flow has been quiet... fundamentals work during these times."
+#
+# METHOD, frozen before the transition matrix was ever computed:
+#   move    = ln(close_t / close_t-1) per series; ust10y moves in BASIS POINTS
+#             (level diff x 100), not returns — a yield is already a rate.
+#   sigma   = stdev of the TRAILING vol_window moves ENDING t-1 (the day must
+#             not normalise itself), requiring >= min_obs.
+#   z       = move / sigma.  z_bond = MINUS z(ust10y): bond PRICE sign.
+#   state   = signs of (z_eq, z_bond, z_gold) -> the 8-state map below;
+#             a sign of exactly 0.0 counts as +.
+#   quiet   = max(|z_eq|, |z_bond|, |z_gold|) < quiet_z  -> state 'quiet'
+#             (loud_state still records what the signs said).
+#   rot_z   = (r_sox - r_igv) / trailing sigma of that spread;
+#             |rot_z| >= rotation_z labels the direction.
+#
+# TUNING PROTOCOL, declared before tuning: thresholds are chosen against
+# (a) the coach's dated anchor — August 2026 read as mostly quiet — and (b) a
+# sanity bound that quiet must not swallow the tape. NOT chosen to maximise
+# transition lift; tuning a threshold on the matrix it feeds would be fitting
+# the taxonomy to its own backtest.
+#
+# WHAT THE TUNING ACTUALLY FOUND (2026-09-02, grid in regime.py --tune):
+# daily-z quietness CANNOT reproduce the coach's August — Aug-2026 reads 20%
+# quiet at quiet_z 0.75 vs 24.6% overall, because trailing-sigma normalisation
+# is self-defeating (calm shrinks sigma, small moves regain normal z) and
+# because Aug-2026 was NOT absolutely calm (SOX 1.9%/day, gold 1.15%/day).
+# The coach's quiet is the absence of PERSISTENT DIRECTIONAL EQUITY FLOW, so
+# it lives in a second, windowed layer — `spell` below. The daily quiet state
+# stays, but it means only "no large cross-asset move today", nothing more.
+#
+# The look-ahead rule (docs/FLOWS.md): as_of is the US close date, complete
+# ~21:00 UTC, actionable from the NEXT India open. The last Yahoo row is
+# dropped when it carries today's UTC date — it is a live partial session,
+# and classifying it would stamp a state on a day that has not happened yet.
+#
+# F1 NEVER SETS DIRECTION and never enters scoring. It tells the reader which
+# tool has edge today: in quiet regimes the pillars carry; in loud ones flows
+# run the tape over fundamentals.
+
+version: f1-2026-09-02.1
+
+series:
+  # ust10y is the yield in PERCENT (verified 2026-09-02: 1.60 in Sep-2016,
+  # 4.79 today — Yahoo's ^TNX is NOT the CBOE x10 convention).
+  sp500:  {symbol: "^GSPC", name_pattern: "S&P 500",            kind: level}
+  sox:    {symbol: "^SOX",  name_pattern: "PHLX Semiconductor", kind: level}
+  igv:    {symbol: "IGV",   name_pattern: "software",           kind: level}
+  gold:   {symbol: "GC=F",  name_pattern: "gold",               kind: level}
+  ust10y: {symbol: "^TNX",  name_pattern: "treasury|10",        kind: yield_pct}
+
+roles:
+  eq: sp500          # broad equity risk appetite — the coach's examples imply
+                     # the BROAD tape; hardware/software live in rotation
+  bond_from: ust10y  # z_bond = -z(ust10y)
+  gold: gold
+  rotation_pair: [sox, igv]   # hardware minus software, his exact pair
+
+# (eq, bond_price, gold) sign triplet -> state. Gold separates degross
+# (liquidated, gold sold for cash) from risk_off (bid, flight to safety).
+states:
+  "+ - -": risk_on            # equities bid, bonds sold, gold sold
+  "+ - +": reflation          # equities and gold up, bonds down — inflation trade
+  "+ + -": goldilocks         # everything risk-friendly: stocks up, yields down
+  "+ + +": liquidity_rally    # everything up — liquidity flood
+  "- + +": risk_off           # classic: stocks down, bonds and gold bid
+  "- + -": degross            # stocks down, bonds bid, GOLD SOLD — gross coming off
+  "- - +": stagflation_scare  # stocks and bonds down, gold bid
+  "- - -": liquidation        # everything sold — margin-call tape
+
+params:
+  vol_window: 63       # trailing trading days for sigma
+  min_obs: 40          # fewer -> the day is not classified (burn-in, gaps)
+  quiet_z: 0.75        # daily joint-|z| floor: 24.6% of days, Mar-2020 0%.
+                       # "Nothing big happened across assets today" — NOT the
+                       # coach's August quiet, which is `spell` below
+  rotation_z: 1.0      # |rot_z| at or above this labels a rotation day
+
+# The FLOW SPELL — the coach's operative regime ("the whole of August the
+# flow has been quiet... fundamentals work during these times"). Quiet spell =
+# no persistent net flow AND no violent day, both measured on the EQUITY
+# complex only (sp500, sox, rotation spread): gold ran +9% in Aug-2026 and the
+# coach still called it quiet — his quiet is about equity sector flows, with
+# gold/bonds as scenario confirmers, not spell inputs.
+#
+#   intensity(s) = |sum of last `window` moves| / (trailing sigma * sqrt(window))
+#                  — a t-stat for net directional flow; chop nets out, trends score
+#   quiet spell  = max intensity < intensity_max
+#                  AND no day in the window had |z| >= violence_z on any leg
+#
+# BOTH LEGS ARE LOAD-BEARING. Net/gross alone let Apr-2025 read 43% quiet —
+# the Apr-9 reversal nets out its own crash inside one window. The violence
+# guard kills that (Apr-2025 -> 29%, Mar-2020 -> 0%) while leaving genuine
+# chop-that-nets-out quiet (Jul-2026 86%, SOX earnings season).
+# Grid verified 2026-09-02: at (1.25, 2.5) Aug-2026 reads 65% quiet with the
+# loud patch exactly Aug 6-14 (a real SOX flow episode), overall 42.5%,
+# calm-2023 62%, yen-carry Aug-2024 18%.
+spell:
+  window: 10           # two trading weeks of net flow
+  series: [sp500, sox, rot]
+  intensity_max: 1.25
+  violence_z: 2.5

@@ -197,6 +197,14 @@ NSE OI fetch             the /oi pipeline. WRITES the vault OI History.md files
 open interest            reads them into the store. Reports NEWEST DATA AGE when
                          skipped, so a dead source is visible, not "pulled"
 FRED coal                iron_ore only in practice; see the note below
+flow series              Flows F1 (2026-09-02): S&P 500, SOX, IGV, gold,
+                         US 10Y via Yahoo into the dedicated flow_series
+                         table — never `prices`. Live partial session
+                         dropped, so the newest row is the last COMPLETED
+                         US close (T-1 from India, by design)
+market regime            classifies the FULL history into the 9 regime
+                         states + flow spell (specs/flows.yaml), writes
+                         market_regime. Deterministic and idempotent
 mining filings (fetch)   CIL production/offtake + SWMA e-auction from
                          coalindia.in, NMDC CMS lists — plain urllib, NO agent.
                          Monthly-cadence work run daily like FRED: one page
@@ -372,7 +380,10 @@ failure mode the doc itself warns about. Current read: `dispersion` ready,
 `rel_strength` / `turnover_pctile` / `flow_fii` blocked — no benchmark index,
 `prices.volume` NULL on all 155,401 rows, and no FII source. `sector_regime` holds
 0 rows. F4 crowding has its data (96 dates x 4 names) and nothing in `score/`
-reads it.
+reads it. **F1 is LIVE since 2026-09-02** — `market_regime` carries ~2,470
+classified US sessions (9 states + the flow-spell layer) and the Flows tab leads
+with the current read and its next-session odds; the readiness tables above
+describe F2-F4 only.
 
 A sector with no `peer_groups` is not an empty tab. It lists the commodity inputs
 already arriving for it, dated and sourced, plus the three steps needed to make it

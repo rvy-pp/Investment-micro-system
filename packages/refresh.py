@@ -86,6 +86,14 @@ STEPS = [
     # Monthly series, but pulled daily because the cost is one request and the
     # failure mode of forgetting is a coal price that silently ages for weeks.
     ("FRED coal",         ["packages/adapters/fred_prices.py", "--load"],     False),
+    # Flows F1 (2026-09-02): cross-asset closes into the dedicated flow_series
+    # table — never `prices`, so nothing becomes bridge-shockable and the store
+    # clock cannot move — then the regime classification recomputed over the
+    # FULL history (deterministic, idempotent, ~3s; a re-run heals any gap the
+    # fetch just filled). Not in SKIP_IF_DONE: the newest US close is what a
+    # second morning double-click is for.
+    ("flow series",       ["packages/adapters/flow_series.py", "--load"],     False),
+    ("market regime",     ["packages/score/regime.py", "--persist"],          False),
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,

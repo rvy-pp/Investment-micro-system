@@ -757,3 +757,67 @@ CREATE TABLE IF NOT EXISTS concall_commitments (
 
 CREATE INDEX IF NOT EXISTS idx_concall_entity
     ON concall_commitments (entity_id, call_period);
+
+-- ---------------------------------------------------------------------------
+-- FLOWS F1: the market-wide regime read (docs/FLOWS.md, built 2026-09-02).
+--
+-- flow_series holds the cross-asset closes the regime is computed from
+-- (S&P 500, SOX, IGV, gold, US 10Y yield). DELIBERATELY NOT `prices`:
+-- anything in `prices` becomes bridge-shockable and a candidate for the
+-- store clock (`latest_daily_date`), and these are neither costs nor
+-- realisations — they are the tape the regime is read off. Same reasoning
+-- that keeps ACN and the SOX in data/morning/*.json rather than the store.
+--
+-- market_regime is the table FLOWS.md recommended over a magic
+-- sector='*' row in sector_regime. One row per US trading day.
+-- The look-ahead rule (FLOWS.md): a flow value carries the date the market
+-- could have known it. `as_of` is the US close date; that close completes
+-- ~21:00 UTC, so the row is actionable from the NEXT India open. Nothing
+-- here may be joined to an India trading day D as if known at D's open.
+--
+-- Flows never sets direction and never enters scoring — this table is read
+-- by the API for display and by the review layer later, nothing else.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS flow_series (
+    series_id    TEXT NOT NULL,             -- 'sp500'|'sox'|'igv'|'gold'|'ust10y'
+    date         TEXT NOT NULL,             -- US trading day
+    close        REAL NOT NULL,             -- level; ust10y is the yield in PERCENT
+    source       TEXT NOT NULL,             -- 'yahoo'
+    captured_at  TEXT NOT NULL,             -- ISO8601 UTC of the fetch
+    PRIMARY KEY (series_id, date),
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    CHECK (close > 0)
+) STRICT;
+
+CREATE TABLE IF NOT EXISTS market_regime (
+    as_of        TEXT NOT NULL PRIMARY KEY, -- US trading day the state describes
+    state        TEXT NOT NULL,             -- quiet overlay applied
+    loud_state   TEXT NOT NULL,             -- the sign state ignoring quietness
+    quiet        INTEGER NOT NULL,          -- 1 = all three |z| under the spec threshold
+    z_eq         REAL NOT NULL,             -- S&P 500 day move / its trailing sigma
+    z_bond       REAL NOT NULL,             -- bond PRICE z = MINUS the yield-move z
+    z_gold       REAL NOT NULL,
+    rot_z        REAL,                      -- (SOX - IGV) day spread / its sigma; NULL if a leg missing
+    rotation     TEXT,                      -- 'into_software'|'into_hardware'|NULL
+    -- The FLOW SPELL layer: the coach's "the whole of August has been quiet"
+    -- is not low daily vol (Aug-2026 SOX ran 1.9%/day) — it is the absence of
+    -- PERSISTENT directional flow in the equity complex. Verified 2026-09-02:
+    -- daily-z quiet reads Aug-2026 at 20%, ordinary; net-flow intensity with a
+    -- violence guard reads it 65% quiet with the loud patch exactly the
+    -- Aug 6-14 SOX episode, and Mar-2020 at 0%. Both legs are needed: net/gross
+    -- alone lets Apr-2025 net out its own crash (43% "quiet").
+    flow_intensity REAL,                    -- max 10d |net|/(sigma*sqrt(w)) over sp500/sox/rot
+    flow_driver  TEXT,                      -- which of the three carries that max
+    spell_quiet  INTEGER,                   -- 1 = intensity < spec cap AND no >=violence_z day in window
+    spec_version TEXT NOT NULL,             -- specs/flows.yaml version that classified it
+    note         TEXT,
+    CHECK (as_of GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    CHECK (quiet IN (0, 1)),
+    CHECK (state IN ('quiet','risk_on','reflation','goldilocks','liquidity_rally',
+                     'risk_off','degross','stagflation_scare','liquidation')),
+    CHECK (loud_state IN ('risk_on','reflation','goldilocks','liquidity_rally',
+                          'risk_off','degross','stagflation_scare','liquidation')),
+    CHECK (rotation IN ('into_software','into_hardware') OR rotation IS NULL),
+    CHECK (spell_quiet IN (0, 1) OR spell_quiet IS NULL),
+    CHECK (flow_driver IN ('sp500','sox','rot') OR flow_driver IS NULL)
+) STRICT;

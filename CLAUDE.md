@@ -63,11 +63,15 @@ A ten-factor model overfits and goes rigid. The PM was explicit about this.
 | **P4** Guidance | Will they hit the quarter? | forward view | scoring |
 | Gate | In flavour / out of flavour — can it express? | permission | schema only |
 
-**Flows** is the fifth section, opened 2026-08-19 and scoped only — investor
-sentiment, which sectors are active, risk on / risk off, crowding. It is NOT a
-fifth pillar: it computes the L3 gate's five specified-but-uncomputed inputs and
-never sets direction. Read `docs/FLOWS.md` before touching `sector_regime`; most
-of it is still open questions for the PM.
+**Flows** is the fifth section, opened 2026-08-19 — investor sentiment, which
+sectors are active, risk on / risk off, crowding. It is NOT a fifth pillar: it
+never sets direction and never enters scoring. **F1 (the market-wide regime
+read) is LIVE since 2026-09-02**: five Yahoo cross-asset series in the dedicated
+`flow_series` table (never `prices`), 8 sign-pattern states + quiet + a windowed
+flow-spell layer in `market_regime`, next-session odds as empirical base rates
+over ten years. Method frozen in `specs/flows.yaml`; evidence via
+`python packages/score/regime.py --backtest`. F2–F4 are still scoped only —
+read `docs/FLOWS.md` before touching `sector_regime`.
 
 P1+P2 is the margin bridge. `market_pct` is the field that does the work: a
 captive input contributes ZERO to cost however far its market price moves.
