@@ -406,7 +406,9 @@ def _india_next_week(weeks: list[dict], spec: dict, min_n: int) -> dict:
     time) simply contributes fewer pairs, never zeros."""
     conn = sqlite3.connect(DB)
     out: dict[str, dict] = {}
-    for sid in (spec.get("india_series") or {}):
+    for sid, scfg in (spec.get("india_series") or {}).items():
+        if not scfg.get("evidence"):
+            continue  # tape-only indices; nine evidence tables would be noise
         px = dict(_series(conn, sid))
         if not px:
             continue
@@ -429,6 +431,49 @@ def _india_next_week(weeks: list[dict], spec: dict, min_n: int) -> dict:
         out[sid] = {"stats": stats, "last_date": max(px)}
     conn.close()
     return out
+
+
+def sector_tape(weeks: list[dict], spec: dict) -> dict:
+    """Per-index weekly performance for the coverage sector tape — the first
+    computed sliver of F2 (which sectors are being worked). All rows are
+    anchored to the SAME ISO week (the regime's last completed one), so a
+    series with no print that week shows a dash and its own last date in
+    amber, never a silently older number. rel = minus the Nifty's same-week
+    move — relative strength, the coach's sector-flow read."""
+    last = weeks[-1]
+    i = _wkidx(*last["_k"])
+    conn = sqlite3.connect(DB)
+    rows = []
+    for sid, scfg in (spec.get("india_series") or {}).items():
+        px = dict(_series(conn, sid))
+        if not px:
+            continue
+        mv = _weekly_moves(px, "level")
+        by_idx = {_wkidx(*k): v for k, v in mv.items()}
+        wk = by_idx.get(i)
+        wk4 = (sum(by_idx[j] for j in range(i - 3, i + 1)) * 100.0
+               if all(j in by_idx for j in range(i - 3, i + 1)) else None)
+        wc = _weekly_closes(px)
+        prev, newest = wc.get(last["_k"]), max(px)
+        wtd = (math.log(px[newest] / prev[1]) * 100.0
+               if prev and newest > prev[0] else None)
+        rows.append({
+            "sid": sid, "label": scfg.get("label", sid),
+            "covers": scfg.get("covers", ""),
+            "wk_pct": None if wk is None else round(wk * 100.0, 2),
+            "wk4_pct": None if wk4 is None else round(wk4, 2),
+            "wtd_pct": None if wtd is None else round(wtd, 2),
+            "last_date": newest,
+            "stale": newest < last["week_end"],
+        })
+    conn.close()
+    bench = next((r["wk_pct"] for r in rows if r["sid"] == "nifty"), None)
+    for r in rows:
+        r["rel_pp"] = (round(r["wk_pct"] - bench, 2)
+                       if (bench is not None and r["wk_pct"] is not None
+                           and r["sid"] != "nifty") else None)
+    rows.sort(key=lambda r: (r["wk_pct"] is None, -(r["wk_pct"] or 0)))
+    return {"week": last["wk"], "week_end": last["week_end"], "rows": rows}
 
 
 def weekly_view() -> dict:
@@ -496,6 +541,7 @@ def weekly_view() -> dict:
         "persistence": {s: round(tr["pct"][s].get(s, 0.0) / tr["base"][s], 2)
                         for s in tr["pct"] if tr["base"].get(s)},
         "india": india,
+        "sector_tape": sector_tape(weeks, spec),
         "strip": [{"wk": w["wk"], "state": w["state"]} for w in weeks[-52:]],
     }
 

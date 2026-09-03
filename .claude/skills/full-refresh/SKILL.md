@@ -201,7 +201,14 @@ flow series              Flows F1 (2026-09-02): S&P 500, SOX, IGV, gold,
                          US 10Y via Yahoo into the dedicated flow_series
                          table — never `prices`. Live partial session
                          dropped, so the newest row is the last COMPLETED
-                         US close (T-1 from India, by design)
+                         US close (T-1 from India, by design). Since
+                         2026-09-03 also nine NSE indices (Nifty 50, Metal,
+                         IT, Auto, Commodities, Infra, Energy, Realty, PSE)
+                         for the weekly panel's sector tape and India
+                         evidence — Yahoo history plus NSE's own EOD API
+                         for the tail Yahoo stopped carrying (its sectoral
+                         daily history froze 2026-07-17; the live quote
+                         kept updating, which is why it looked alive)
 market regime            classifies the FULL history into the 9 regime
                          states + flow spell (specs/flows.yaml), writes
                          market_regime. Deterministic and idempotent

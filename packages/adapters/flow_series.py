@@ -44,6 +44,97 @@ from yahoo_prices import fetch  # noqa: E402
 DB = REPO / "data" / "ims.db"
 SPEC = REPO / "specs" / "flows.yaml"
 
+# NSE's own EOD index history. Answers plain urllib with NO cookie dance
+# (verified 2026-09-03) — the same free ride as nseix's market-rate API, and
+# the same caveat: if it starts returning 403, check whether a token dance
+# became a prerequisite before assuming the endpoint moved. It exists here
+# because YAHOO'S DAILY HISTORY FOR NSE SECTORALS STOPPED AT 2026-07-17 while
+# its live quote kept updating — a series that looks alive and has quietly
+# stopped accruing history, the exact shape the freshness layer exists for.
+NSE_HIST = ("https://www.nseindia.com/api/historicalOR/indicesHistory"
+            "?indexType={q}&from={frm}&to={to}")
+NSE_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+          "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+
+
+def _nse_history(nse_name: str, frm: "dt.date", to: "dt.date") -> list[tuple[str, float]]:
+    """[(iso_date, close)] ascending from NSE's indicesHistory."""
+    import gzip
+    import io as _io
+    import json as _json
+    import urllib.parse
+    import urllib.request
+
+    url = NSE_HIST.format(q=urllib.parse.quote(nse_name),
+                          frm=frm.strftime("%d-%m-%Y"),
+                          to=to.strftime("%d-%m-%Y"))
+    req = urllib.request.Request(url, headers={"User-Agent": NSE_UA,
+                                               "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=25) as r:
+        raw = r.read()
+        if r.headers.get("Content-Encoding") == "gzip":
+            raw = gzip.GzipFile(fileobj=_io.BytesIO(raw)).read()
+    doc = _json.loads(raw)
+    out = []
+    for rec in (doc.get("data") or []):
+        name = str(rec.get("EOD_INDEX_NAME") or "").strip().upper()
+        want = nse_name.upper()
+        # NSE echoes some indices under their SHORT name — 'NIFTY INFRA' comes
+        # back for the index queried as 'NIFTY INFRASTRUCTURE' (hit 2026-09-03).
+        # A prefix match keeps the wrong-index protection: a genuinely different
+        # index is not a prefix of the request. The 0.1% overlap-agreement guard
+        # in nse_gap_fill stays the hard check either way.
+        if not (name == want or want.startswith(name)):
+            raise ValueError(f"asked {nse_name!r}, got {name!r} — wrong index")
+        d = dt.datetime.strptime(rec["EOD_TIMESTAMP"].title(), "%d-%b-%Y").date()
+        close = float(rec["EOD_CLOSE_INDEX_VAL"])
+        if close <= 0 or d.weekday() > 4:
+            continue
+        out.append((d.isoformat(), close))
+    out.sort()
+    return out
+
+
+def nse_gap_fill(conn: sqlite3.Connection, sid: str, nse_name: str,
+                 today_utc: str, captured: str) -> int:
+    """Top up sid's tail from NSE, from the last stored date to yesterday.
+
+    The consistency guard is the load-bearing part: on every date BOTH
+    sources hold, the closes must agree to 0.1% or the whole fill is refused
+    — the failure this catches is fetching the wrong index under a right-
+    looking name, which would otherwise splice two different series."""
+    last = conn.execute("SELECT MAX(date) FROM flow_series WHERE series_id=?",
+                        (sid,)).fetchone()[0]
+    if not last:
+        return 0  # Yahoo backfills first; NSE only ever fills a tail
+    today = dt.date.fromisoformat(today_utc)
+    frm = dt.date.fromisoformat(last) - dt.timedelta(days=7)  # overlap on purpose
+    if last >= (today - dt.timedelta(days=1)).isoformat():
+        return 0
+    rows = _nse_history(nse_name, frm, today)
+    rows = [r for r in rows if r[0] < today_utc]
+    if not rows:
+        return 0
+    stored = dict(conn.execute(
+        "SELECT date, close FROM flow_series WHERE series_id=? AND date>=?",
+        (sid, frm.isoformat())))
+    for d, c in rows:
+        if d in stored and abs(c / stored[d] - 1.0) > 0.001:
+            raise ValueError(f"{sid}: NSE {nse_name!r} disagrees with stored "
+                             f"close on {d} ({c} vs {stored[d]}) — refusing "
+                             f"the whole fill")
+    n = 0
+    for d, c in rows:
+        if d in stored:
+            continue  # agreement verified above; keep the original source row
+        conn.execute(
+            "INSERT INTO flow_series (series_id, date, close, source, captured_at) "
+            "VALUES (?,?,?,?,?)",
+            (sid, d, c, "nse", captured))
+        n += 1
+    conn.commit()
+    return n
+
 
 def load_spec() -> dict:
     with open(SPEC, encoding="utf-8") as f:
@@ -83,6 +174,19 @@ def load(rng: str = "3mo") -> int:
         dropped = f"  (dropped {len(live)} live partial row)" if live else ""
         print(f"  ok   {sid:8s} {s['symbol']:6s} {len(rows):5d} rows "
               f"{rows[0][0]} .. {rows[-1][0]}{dropped}")
+    # NSE tail fill for the India indices Yahoo has stopped carrying daily.
+    for sid, s in todo.items():
+        if not s.get("nse_name"):
+            continue
+        try:
+            n = nse_gap_fill(conn, sid, s["nse_name"], today_utc, captured)
+            if n:
+                last = conn.execute("SELECT MAX(date) FROM flow_series WHERE "
+                                    "series_id=?", (sid,)).fetchone()[0]
+                print(f"  nse  {sid:8s} +{n} rows -> {last}")
+                total += n
+        except Exception as e:
+            print(f"  nse  {sid:8s} gap-fill failed: {e}")
     conn.close()
     return total
 

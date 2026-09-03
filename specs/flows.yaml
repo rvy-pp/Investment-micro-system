@@ -71,10 +71,47 @@ series:
 # quoting a dated one-off backtest. nifty_metal's Yahoo series runs stale for
 # weeks at a time (ended 2026-07-17 as of the 2026-09-03 probe) — the stats
 # code must treat missing recent weeks as absent pairs, never as zeros.
+# `evidence: true` marks the three the next-week evidence table conditions on;
+# the rest feed only the sector tape. `covers` says which coverage sector each
+# index reads on — an imperfect mapping stated rather than implied: cement has
+# NO sectoral index; Nifty Commodities carries the cement names (UltraTech,
+# Shree, Ambuja are constituents) and is the closest listed read.
+# `nse_name` is the index's name on nseindia.com's historicalOR/indicesHistory
+# API — the gap-filler. Verified 2026-09-03: YAHOO'S DAILY HISTORY FOR NSE
+# SECTORALS STOPPED AT 2026-07-17 (it still serves a live quote, which the
+# partial-day guard rightly drops), while ^NSEI and ^CNXIT still update. The
+# NSE endpoint answers plain urllib with no cookie dance and carries the
+# issuer's own EOD closes to T-1; flow_series.py loads Yahoo first (deep
+# history) and NSE on top (the tail), with a cross-source consistency guard.
 india_series:
-  nifty:       {symbol: "^NSEI",     name_pattern: "NIFTY 50", kind: level}
-  nifty_metal: {symbol: "^CNXMETAL", name_pattern: "METAL",    kind: level}
-  nifty_it:    {symbol: "^CNXIT",    name_pattern: "IT",       kind: level}
+  nifty:        {symbol: "^NSEI",      name_pattern: "NIFTY 50",  kind: level,
+                 label: "Nifty 50", covers: "benchmark", evidence: true,
+                 nse_name: "NIFTY 50"}
+  nifty_metal:  {symbol: "^CNXMETAL",  name_pattern: "METAL",     kind: level,
+                 label: "Nifty Metal", covers: "Non-Ferrous / Steel / Mining",
+                 evidence: true, nse_name: "NIFTY METAL"}
+  nifty_it:     {symbol: "^CNXIT",     name_pattern: "IT",        kind: level,
+                 label: "Nifty IT", covers: "IT", evidence: true,
+                 nse_name: "NIFTY IT"}
+  nifty_auto:   {symbol: "^CNXAUTO",   name_pattern: "auto",      kind: level,
+                 label: "Nifty Auto", covers: "Autos (planned) / EMS demand",
+                 nse_name: "NIFTY AUTO"}
+  nifty_cmdt:   {symbol: "^CNXCMDT",   name_pattern: "commodit",  kind: level,
+                 label: "Nifty Commodities",
+                 covers: "closest cement read - carries the cement names + metals + energy",
+                 nse_name: "NIFTY COMMODITIES"}
+  nifty_infra:  {symbol: "^CNXINFRA",  name_pattern: "infra",     kind: level,
+                 label: "Nifty Infra", covers: "cement / steel demand",
+                 nse_name: "NIFTY INFRASTRUCTURE"}
+  nifty_energy: {symbol: "^CNXENERGY", name_pattern: "energy",    kind: level,
+                 label: "Nifty Energy", covers: "coal and power - Coal India complex",
+                 nse_name: "NIFTY ENERGY"}
+  nifty_realty: {symbol: "^CNXREALTY", name_pattern: "realty",    kind: level,
+                 label: "Nifty Realty", covers: "construction demand for cement/steel",
+                 nse_name: "NIFTY REALTY"}
+  nifty_pse:    {symbol: "^CNXPSE",    name_pattern: "PSE|public", kind: level,
+                 label: "Nifty PSE", covers: "PSU complex - SAIL, NMDC, Coal India",
+                 nse_name: "NIFTY PSE"}
 
 roles:
   eq: sp500          # broad equity risk appetite — the coach's examples imply
