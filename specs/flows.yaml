@@ -95,7 +95,7 @@ india_series:
                  nse_name: "NIFTY IT"}
   nifty_auto:   {symbol: "^CNXAUTO",   name_pattern: "auto",      kind: level,
                  label: "Nifty Auto", covers: "Autos (planned) / EMS demand",
-                 nse_name: "NIFTY AUTO"}
+                 evidence: true, nse_name: "NIFTY AUTO"}
   nifty_cmdt:   {symbol: "^CNXCMDT",   name_pattern: "commodit",  kind: level,
                  label: "Nifty Commodities",
                  covers: "closest cement read - carries the cement names + metals + energy",

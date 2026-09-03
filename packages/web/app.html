@@ -2342,7 +2342,8 @@ function w1Panel(w, f){
 
   /* India next-week evidence for THIS state, live from flow_series. A cell
      with too few pairs is withheld by the API — render the withholding. */
-  const LBL = {nifty: 'Nifty 50', nifty_metal: 'Nifty Metal', nifty_it: 'Nifty IT'};
+  const LBL = {nifty: 'Nifty 50', nifty_metal: 'Nifty Metal', nifty_it: 'Nifty IT',
+               nifty_auto: 'Nifty Auto'};
   const india = Object.entries(w.india || {}).map(([sid, blk]) => {
     const s = blk.stats && blk.stats[w.state];
     const staleIdx = blk.last_date < w.week_end
