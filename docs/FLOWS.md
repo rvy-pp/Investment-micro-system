@@ -126,6 +126,17 @@ strong beats extreme — an extreme risk_on day flips negative and gives back
 −1.49% over five sessions (blow-off, same family as goldilocks weeks never
 repeating). Consequence for the desk: the dip-buy instinct is fine except
 precisely on ≥2.5σ flow days, where the move is a warning, not an entry.
+
+**At weekly cadence intensity FLIPS the response rather than scaling it**
+(2026-09-03, pooled over 491 weeks — per-state extreme cells are all n≤9,
+hypotheses only). Up-states: moderate +0.27% → strong +0.55% next Indian week
+(the best pooled cell, t +3.2; +0.92% over two weeks) → extreme −0.41%.
+Down-states: a MODERATE bad week bounces (+0.43%), strong goes nowhere, an
+extreme one keeps falling (−0.51%, −1.08% over two weeks, below significance
+at n=27). Sharpest per-state flip: a moderate liquidation week bounces +0.81%
+while a strong one loses another −1.09% at a 33% hit (corr −0.52, the
+strongest in the table). Ordinary bad weeks are buyable; violent ones are
+not over.
 The percentages are **empirical base rates over ten years, not a model**, and
 F1 never sets direction and never enters scoring — the gate question
 (open question 2 below) stays open until the review layer can grade it.
