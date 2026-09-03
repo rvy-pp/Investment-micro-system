@@ -78,8 +78,13 @@ pillar_3:
     min_group: 3
   note: >
     fwd P/E = close / (time-weighted FY1/FY2 consensus EPS, 12m forward);
-    PEG = fwd P/E / (FY2-over-FY1 growth x 100); raw = ln(PEG / group
-    median). The raw is a LOG-RATIO so a pair spread is ln(PEG_a/PEG_b) —
+    PEG = (close / FY2 consensus EPS) / (FY2-over-FY1 growth x 100) — the
+    PEG numerator changed from the 12m blend to the FY2 multiple on
+    2026-09-03, PM desk convention: numerator and denominator describe the
+    same year. Every PEG quoted elsewhere in this file predates that and is
+    on the OLD formula (~0-10% higher, largest on high growth). raw =
+    ln(PEG / group median). The raw is a LOG-RATIO so a pair spread is
+    ln(PEG_a/PEG_b) —
     the median cancels, satisfying scoring.yaml's score-the-spread rule.
     Consequence to expect: a name's score can move on a PEER's revision with
     no news of its own; peg_median and n_group ride in detail so that is

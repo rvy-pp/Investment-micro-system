@@ -2628,11 +2628,14 @@ async function loadSector(){
         s += `<text x="${sx(g)}" y="${H - mb + 18}" text-anchor="middle"
                 font-size="11" fill="var(--faint)">${Math.round(g * 100)}%</text>`;
       }
-      // iso-PEG guides: straight lines PE = PEG * g*100, clipped to the plot.
-      // In 2y mode "PEG" would be a misnomer (PEG is fwd_pe over growth), so
-      // there the guides read as plain multiple-per-growth ratios.
-      [[1, two ? '1×g' : 'PEG 1'], [1.5, two ? '1.5×g' : 'PEG 1.5'],
-       [2, two ? '2×g' : 'PEG 2'], [3, two ? '3×g' : 'PEG 3']].forEach(([peg, lab]) => {
+      // iso-ratio guides: straight lines PE = k * g*100, clipped to the plot.
+      // Labelled ~PEG on the 1y view: the table's PEG numerator is the FY2
+      // multiple (desk convention, 2026-09-03) while this axis is the 12m
+      // blend, so a point's exact PEG runs up to ~10% below the guide it
+      // sits on. In 2y mode "PEG" would be a plain misnomer, so the guides
+      // read as multiple-per-growth ratios there.
+      [[1, two ? '1×g' : '~PEG 1'], [1.5, two ? '1.5×g' : '~PEG 1.5'],
+       [2, two ? '2×g' : '~PEG 2'], [3, two ? '3×g' : '~PEG 3']].forEach(([peg, lab]) => {
         const gA = Math.max(0.004, ymin / (peg * 100));
         const gB = Math.min(xmax, ymax / (peg * 100));
         if (gB <= gA) return;
@@ -2769,7 +2772,11 @@ async function loadSector(){
         hand-captured <b>${esc(E.pe_2y_asof)}</b> (adapters/bbg_pe2y.py) and
         re-marked on each day's close via the implied 24m EPS; a ⚠ line
         appears when the consensus moves after the capture` : ''};
-        <b>PEG</b> divides the fwd P/E by ${FY2}-over-${FY1} growth.
+        <b>PEG</b> divides the <b>P/E ${FY2}E</b> by ${FY2}-over-${FY1}
+        growth (desk convention, PM 2026-09-03: numerator and denominator
+        describe the same year — you pay the ${FY2} multiple for the growth
+        that delivers ${FY2}); the chart's guide lines sit on the blended
+        axis, hence the ~.
         †&nbsp;Sub-5%-growth PEGs are faint for NOISE (at 4% growth a 1pp
         revision swings the ratio ~0.7), but the cross-cap reading stands —
         PM 2026-09-02: on a growth basis a ~3 PEG large cap pays you nothing

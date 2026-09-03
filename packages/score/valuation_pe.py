@@ -2,11 +2,20 @@
 scored against the peer group.
 
     fwd EPS   = time-weighted blend of FY1/FY2 consensus (12-month-forward)
-    fwd P/E   = close / fwd EPS
-    growth    = FY2 consensus / FY1 consensus - 1
-    PEG       = fwd P/E / (growth x 100)
+    fwd P/E   = close / fwd EPS                      (the headline multiple)
+    growth    = FY2 consensus / FY1 consensus - 1    ("today till next year")
+    PEG       = (close / FY2 EPS) / (growth x 100)
     raw       = ln(PEG / group median PEG)
     score     = hill(-raw)      cheap-for-its-growth scores HIGH
+
+    THE PEG NUMERATOR IS THE FY2 MULTIPLE, NOT THE BLEND — desk convention,
+    PM 2026-09-03 ("the P/E will be FY28E, the growth from today till next
+    year"): you pay the FY2 multiple FOR the growth that delivers FY2, so
+    numerator and denominator describe the same year. Until then it was the
+    12m blend / same growth — a ~0-10% higher PEG, largest on high-growth
+    names (the blend leans on the smaller FY1 EPS). The switch changes the
+    EMS P3 raws from the next persist onward; stored rows keep their own
+    code_sha stamp, which is what the stamp is for.
 
 WHY NOT THE EV/EBITDA MACHINERY. EMS names are converters: they earn a
 conversion margin on a mostly pass-through cost stack, so a commodity margin
@@ -206,7 +215,8 @@ def compute_row(conn, eid: str, as_of: str,
     # DISPLAY-ONLY and flagged unstable (at 4% growth a 1pp revision swings
     # it ~0.7), and the scoring path never reaches here with low growth
     # (require_growth returns above). PM 2026-09-02: show it, don't hide it.
-    peg = fwd_pe / (g * 100.0) if g > 0 else None
+    # Numerator is the FY2 multiple per the docstring's desk convention.
+    peg = (close / e2) / (g * 100.0) if (g > 0 and e2 > 0) else None
 
     # Trailing (normal) P/E — DISPLAY ONLY, PM request 2026-08-30. Never in
     # the score: trailing E is distorted exactly where it matters here
