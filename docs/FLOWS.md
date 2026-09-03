@@ -113,6 +113,19 @@ the flow spell is drawn from it and the review layer will want it.
 The daily state and next-session odds no longer render anywhere — only the
 spell line survives from the daily layer on the tab. They remain in
 `/api/flows` (`f1`) and in `market_regime` for the review layer.
+
+**Intensity grades the reaction (backtested 2026-09-03, in the Regime Atlas).**
+Bucketing loud days by max joint |z| (moderate 0.75–1.5, strong 1.5–2.5,
+extreme ≥2.5): the pooled down-state ladder into the next Indian session is
+monotone (−0.08% → −0.33% → −0.52%), and **extreme days CONTINUE while
+ordinary bad days get absorbed** — by five sessions moderate/strong down days
+are flat-to-positive but extreme ones add another −1.19% (t −2.9). The single
+most decisive cell in any of the backtests: **extreme degross → −1.01% next
+Indian session at a 14% hit rate** (3 up sessions in 22). On the benign side
+strong beats extreme — an extreme risk_on day flips negative and gives back
+−1.49% over five sessions (blow-off, same family as goldilocks weeks never
+repeating). Consequence for the desk: the dip-buy instinct is fine except
+precisely on ≥2.5σ flow days, where the move is a warning, not an entry.
 The percentages are **empirical base rates over ten years, not a model**, and
 F1 never sets direction and never enters scoring — the gate question
 (open question 2 below) stays open until the review layer can grade it.
