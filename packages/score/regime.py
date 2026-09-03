@@ -278,6 +278,228 @@ def latest_view(days: list[dict]) -> dict:
     }
 
 
+# ---------------------------------------------------------------- weekly ----
+# The read the tab leads with (PM ruling 2026-09-03: "daily is of no use,
+# show a weekly analysis in the tab"). Same sign map and quiet threshold as
+# the daily layer; only the sampling changes — last close of each ISO week,
+# sigma over the trailing 52 completed weeks. Computed on demand from
+# flow_series (~500 weeks, a few ms) rather than persisted: it is a pure
+# function of stored prices + this spec, so persistence would only add a
+# staleness mode.
+
+def _wkidx(y: int, w: int) -> int:
+    return dt.date.fromisocalendar(y, w, 1).toordinal() // 7
+
+
+def _weekly_closes(px: dict[str, float]) -> dict[tuple, tuple]:
+    """{(iso_year, iso_week): (last_date_in_week, close)}"""
+    out: dict[tuple, tuple] = {}
+    for d in sorted(px):
+        y, w, _ = dt.date.fromisoformat(d).isocalendar()
+        out[(y, w)] = (d, px[d])
+    return out
+
+
+def _weekly_moves(px: dict[str, float], kind: str) -> dict[tuple, float]:
+    wc = _weekly_closes(px)
+    keys = sorted(wc, key=lambda k: _wkidx(*k))
+    out: dict[tuple, float] = {}
+    for a, b in zip(keys, keys[1:]):
+        if _wkidx(*b) - _wkidx(*a) > 1:
+            continue  # a hole in the series must not fabricate a 2-week move
+        c0, c1 = wc[a][1], wc[b][1]
+        out[b] = (c1 - c0) * 100.0 if kind == "yield_pct" else math.log(c1 / c0)
+    return out
+
+
+def _wsigmas(mv: dict[tuple, float], window: int, min_obs: int) -> dict[tuple, float]:
+    keys = sorted(mv, key=lambda k: _wkidx(*k))
+    out: dict[tuple, float] = {}
+    for i, k in enumerate(keys):
+        past = [mv[x] for x in keys[max(0, i - window):i]]
+        if len(past) < min_obs:
+            continue
+        mu = sum(past) / len(past)
+        sd = math.sqrt(sum((x - mu) ** 2 for x in past) / len(past))
+        if sd > 0:
+            out[k] = sd
+    return out
+
+
+def classify_weeks() -> tuple[list[dict], dict, dict]:
+    """Completed ISO weeks, ascending, plus the raw weekly moves for reuse.
+
+    The newest week bucket is included only when it can take no more closes:
+    its last print is on/after that week's Friday, or today (UTC) is already
+    past that Friday. Otherwise it is the in-progress week — classifying it
+    would stamp a state on a week that has not happened yet, the same
+    partial-day rule one level up.
+    """
+    spec = load_spec()
+    wp = spec["weekly"]
+    conn = sqlite3.connect(DB)
+    raw = {sid: dict(_series(conn, sid)) for sid in spec["series"]}
+    conn.close()
+
+    wmv = {sid: _weekly_moves(raw[sid], spec["series"][sid]["kind"])
+           for sid in raw}
+    eq, bond, gold = (spec["roles"]["eq"], spec["roles"]["bond_from"],
+                      spec["roles"]["gold"])
+    hw, sw = spec["roles"]["rotation_pair"]
+    rot = {k: wmv[hw][k] - wmv[sw][k] for k in wmv[hw] if k in wmv[sw]}
+
+    sig = {sid: _wsigmas(wmv[sid], wp["vol_window"], wp["min_obs"]) for sid in wmv}
+    rsig = _wsigmas(rot, wp["vol_window"], wp["min_obs"])
+
+    wc_eq = _weekly_closes(raw[eq])
+    today = dt.datetime.now(dt.timezone.utc).date()
+
+    weeks = []
+    for k in sorted(set(sig[eq]) & set(sig[bond]) & set(sig[gold]),
+                    key=lambda kk: _wkidx(*kk)):
+        last_d = wc_eq.get(k, (None,))[0]
+        if last_d is None:
+            continue
+        friday = dt.date.fromisocalendar(k[0], k[1], 5)
+        if dt.date.fromisoformat(last_d) < friday and today <= friday:
+            continue  # in-progress week
+        z_eq = wmv[eq][k] / sig[eq][k]
+        z_bond = -(wmv[bond][k] / sig[bond][k])
+        z_gold = wmv[gold][k] / sig[gold][k]
+        key = " ".join("+" if v >= 0 else "-" for v in (z_eq, z_bond, z_gold))
+        loud = spec["states"][key]
+        quiet = max(abs(z_eq), abs(z_bond), abs(z_gold)) < wp["quiet_z"]
+        rz = (rot[k] / rsig[k]) if (k in rot and k in rsig) else None
+        weeks.append({
+            "wk": f"{k[0]}-W{k[1]:02d}", "_k": k, "week_end": last_d,
+            "state": "quiet" if quiet else loud, "loud_state": loud,
+            "quiet": int(quiet),
+            "z_eq": round(z_eq, 2), "z_bond": round(z_bond, 2),
+            "z_gold": round(z_gold, 2),
+            "rot_z": None if rz is None else round(rz, 2),
+        })
+    return weeks, spec, {"moves": wmv, "sig": sig, "rot": rot, "rsig": rsig,
+                         "raw": raw}
+
+
+def weekly_transitions(weeks: list[dict]) -> dict:
+    counts: dict[str, dict[str, int]] = {}
+    for a, b in zip(weeks, weeks[1:]):
+        if _wkidx(*b["_k"]) - _wkidx(*a["_k"]) > 1:
+            continue
+        counts.setdefault(a["state"], {}).setdefault(b["state"], 0)
+        counts[a["state"]][b["state"]] += 1
+    pct = {s: {t: 100.0 * c / sum(r.values()) for t, c in r.items()}
+           for s, r in counts.items()}
+    base = {}
+    for s in STATE_ORDER:
+        n = sum(1 for x in weeks if x["state"] == s)
+        if n:
+            base[s] = 100.0 * n / len(weeks)
+    return {"counts": counts, "pct": pct, "base": base, "n_weeks": len(weeks)}
+
+
+def _india_next_week(weeks: list[dict], spec: dict, min_n: int) -> dict:
+    """Per state, the following ISO week's return on each India index —
+    computed LIVE from flow_series so it heals as data accrues. A series
+    missing recent weeks (nifty_metal goes stale on Yahoo for weeks at a
+    time) simply contributes fewer pairs, never zeros."""
+    conn = sqlite3.connect(DB)
+    out: dict[str, dict] = {}
+    for sid in (spec.get("india_series") or {}):
+        px = dict(_series(conn, sid))
+        if not px:
+            continue
+        mv = _weekly_moves(px, "level")
+        by_idx = {_wkidx(*k): v for k, v in mv.items()}
+        per_state: dict[str, list] = {}
+        for w in weeks:
+            nxt = by_idx.get(_wkidx(*w["_k"]) + 1)
+            if nxt is not None:
+                per_state.setdefault(w["state"], []).append(nxt * 100.0)
+        stats = {}
+        for s, v in per_state.items():
+            if len(v) < min_n:
+                continue
+            m = sum(v) / len(v)
+            sd = math.sqrt(sum((x - m) ** 2 for x in v) / len(v))
+            stats[s] = {"n": len(v), "mean": round(m, 2),
+                        "hit": round(100.0 * sum(1 for x in v if x > 0) / len(v), 0),
+                        "t": round(m / (sd / math.sqrt(len(v))), 1) if sd else None}
+        out[sid] = {"stats": stats, "last_date": max(px)}
+    conn.close()
+    return out
+
+
+def weekly_view() -> dict:
+    """Everything the tab's weekly panel renders. JSON-safe."""
+    weeks, spec, ctx = classify_weeks()
+    if not weeks:
+        return {"error": "no classified weeks - run flow_series.py --load"}
+    tr = weekly_transitions(weeks)
+    last = weeks[-1]
+
+    nxt = sorted(tr["pct"].get(last["state"], {}).items(), key=lambda kv: -kv[1])
+    india = _india_next_week(weeks, spec, spec["weekly"]["min_stat_n"])
+
+    # week-to-date: from the last completed week's close to the newest close,
+    # z against the same trailing completed-week sigmas. Marked partial.
+    wtd = None
+    eq, bond, gold = (spec["roles"]["eq"], spec["roles"]["bond_from"],
+                      spec["roles"]["gold"])
+    raw = ctx["raw"]
+    newest = max(raw[eq])
+    if newest > last["week_end"]:
+        def _mv(sid, kind):
+            wc = _weekly_closes(raw[sid])
+            prev = wc.get(last["_k"])
+            cur_d = max(raw[sid])
+            if not prev or cur_d <= prev[0]:
+                return None
+            c0, c1 = prev[1], raw[sid][cur_d]
+            return (c1 - c0) * 100.0 if kind == "yield_pct" else math.log(c1 / c0)
+        parts = {}
+        ok = True
+        for sid in (eq, bond, gold):
+            m = _mv(sid, spec["series"][sid]["kind"])
+            s = ctx["sig"][sid].get(last["_k"])
+            if m is None or not s:
+                ok = False
+                break
+            parts[sid] = m / s
+        if ok:
+            z_eq, z_bond, z_gold = parts[eq], -parts[bond], parts[gold]
+            key = " ".join("+" if v >= 0 else "-"
+                           for v in (z_eq, z_bond, z_gold))
+            loud = spec["states"][key]
+            quiet = max(abs(z_eq), abs(z_bond), abs(z_gold)) < spec["weekly"]["quiet_z"]
+            n_sess = sum(1 for d in raw[eq] if d > last["week_end"])
+            wtd = {"state": "quiet" if quiet else loud, "loud_state": loud,
+                   "z_eq": round(z_eq, 2), "z_bond": round(z_bond, 2),
+                   "z_gold": round(z_gold, 2), "n_sessions": n_sess,
+                   "through": newest}
+
+    stale_days = (dt.date.today()
+                  - dt.date.fromisoformat(last["week_end"])).days
+    return {
+        "spec_version": spec["version"],
+        "week": last["wk"], "week_end": last["week_end"],
+        "state": last["state"], "loud_state": last["loud_state"],
+        "z_eq": last["z_eq"], "z_bond": last["z_bond"],
+        "z_gold": last["z_gold"], "rot_z": last["rot_z"],
+        "stale_days": stale_days, "stale": stale_days > 10,
+        "wtd": wtd,
+        "next": [{"state": s, "pct": round(v, 1),
+                  "base": round(tr["base"].get(s, 0.0), 1)} for s, v in nxt],
+        "n_observations": sum(tr["counts"].get(last["state"], {}).values()),
+        "n_weeks": tr["n_weeks"], "first": weeks[0]["wk"],
+        "persistence": {s: round(tr["pct"][s].get(s, 0.0) / tr["base"][s], 2)
+                        for s in tr["pct"] if tr["base"].get(s)},
+        "india": india,
+        "strip": [{"wk": w["wk"], "state": w["state"]} for w in weeks[-52:]],
+    }
+
+
 # --------------------------------------------------------------- printing ----
 
 def _fmt_day(d: dict) -> str:
@@ -397,9 +619,33 @@ def main() -> int:
     ap.add_argument("--backtest", action="store_true")
     ap.add_argument("--tune", action="store_true")
     ap.add_argument("--explain", metavar="DATE")
+    ap.add_argument("--weekly", action="store_true",
+                    help="print the week-on-week read the tab leads with")
     args = ap.parse_args()
 
-    if args.tune:
+    if args.weekly:
+        import json as _json
+        v = weekly_view()
+        print(f"last completed week {v['week']} (ended {v['week_end']}): "
+              f"{v['state']}  eq {v['z_eq']:+.2f} bond {v['z_bond']:+.2f} "
+              f"gold {v['z_gold']:+.2f}"
+              + (f" rot {v['rot_z']:+.2f}" if v.get('rot_z') is not None else ""))
+        if v.get("wtd"):
+            w = v["wtd"]
+            print(f"week to date ({w['n_sessions']} sessions, thru {w['through']}): "
+                  f"{w['state']}  eq {w['z_eq']:+.2f} bond {w['z_bond']:+.2f} "
+                  f"gold {w['z_gold']:+.2f}")
+        print(f"\nnext week, from {v['n_observations']} prior "
+              f"{v['state']} weeks:")
+        for x in v["next"][:5]:
+            print(f"  {x['pct']:5.1f}%  {x['state']}  (base {x['base']}%)")
+        print("\nIndia next week given this state:")
+        for sid, blk in v["india"].items():
+            s = blk["stats"].get(v["state"])
+            print(f"  {sid:12s} " + (f"{s['mean']:+.2f}%  hit {s['hit']:.0f}%  "
+                  f"t {s['t']}  n={s['n']}" if s else "withheld (too few pairs)")
+                  + f"   [series thru {blk['last_date']}]")
+    elif args.tune:
         cmd_tune()
     elif args.backtest:
         cmd_backtest()

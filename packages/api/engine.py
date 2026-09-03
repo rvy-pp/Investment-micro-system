@@ -1277,9 +1277,22 @@ def flows() -> dict:
             }
     except Exception as e:  # the readiness tables must render regardless
         f1 = {"error": str(e)}
+
+    # ---- W1: the weekly read the tab LEADS with (PM ruling 2026-09-03:
+    # "daily is of no use, show a weekly analysis in the tab"). Computed on
+    # demand from flow_series — a pure function of stored prices + the spec,
+    # ~500 weeks, a few ms; persisting it would only add a staleness mode.
+    # f1 stays in the payload: the spell lives there and the review layer
+    # will want the daily states, but the page renders weekly first.
+    try:
+        import regime as rg2
+        w1 = rg2.weekly_view()
+    except Exception as e:
+        w1 = {"error": str(e)}
     conn.close()
 
     return {
+        "w1": w1,
         "f1": f1,
         "note": ("Flows never sets direction, and since 2026-08-24 it does not "
                  "enter scoring at all - the gate multiplier was removed from "

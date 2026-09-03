@@ -54,7 +54,7 @@
 # tool has edge today: in quiet regimes the pillars carry; in loud ones flows
 # run the tape over fundamentals.
 
-version: f1-2026-09-02.1
+version: f1-2026-09-03.1   # .1 added india_series + weekly params; daily method unchanged
 
 series:
   # ust10y is the yield in PERCENT (verified 2026-09-02: 1.60 in Sep-2016,
@@ -64,6 +64,17 @@ series:
   igv:    {symbol: "IGV",   name_pattern: "software",           kind: level}
   gold:   {symbol: "GC=F",  name_pattern: "gold",               kind: level}
   ust10y: {symbol: "^TNX",  name_pattern: "treasury|10",        kind: yield_pct}
+
+# Indian indices — NEVER inputs to the regime state (the state is the global
+# read that leads India by one session/week). They exist so the weekly panel
+# can compute the India next-week evidence LIVE from the store instead of
+# quoting a dated one-off backtest. nifty_metal's Yahoo series runs stale for
+# weeks at a time (ended 2026-07-17 as of the 2026-09-03 probe) — the stats
+# code must treat missing recent weeks as absent pairs, never as zeros.
+india_series:
+  nifty:       {symbol: "^NSEI",     name_pattern: "NIFTY 50", kind: level}
+  nifty_metal: {symbol: "^CNXMETAL", name_pattern: "METAL",    kind: level}
+  nifty_it:    {symbol: "^CNXIT",    name_pattern: "IT",       kind: level}
 
 roles:
   eq: sp500          # broad equity risk appetite — the coach's examples imply
@@ -116,3 +127,19 @@ spell:
   series: [sp500, sox, rot]
   intensity_max: 1.25
   violence_z: 2.5
+
+# WEEKLY resolution — the read the PM ruled the tab should lead with
+# (2026-09-03: "daily is of no use, show a weekly analysis in the tab").
+# Same sign map, same quiet_z; only the sampling changes: Friday-to-Friday
+# (last close of each ISO week), sigma over the trailing 52 completed weeks.
+# What the weekly backtest (492 weeks) earned: stress weeks CLUSTER
+# (liquidation repeats at 2.9x base, stagflation 1.9x, goldilocks has never
+# repeated), and a confirmed risk_on week is followed by the strongest India
+# week (+0.67% Nifty, 70% hit, t +3.9). Daily states still persist to
+# market_regime — they feed the spell and the future review layer — but the
+# tab leads weekly.
+weekly:
+  vol_window: 52       # trailing completed weeks for sigma
+  min_obs: 30
+  quiet_z: 0.75
+  min_stat_n: 15       # fewer forward pairs than this -> the cell is withheld

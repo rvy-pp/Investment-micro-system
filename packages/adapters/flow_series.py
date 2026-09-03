@@ -57,7 +57,10 @@ def load(rng: str = "3mo") -> int:
 
     conn = sqlite3.connect(DB)
     total = 0
-    for sid, s in spec["series"].items():
+    # india_series ride along: display/evidence inputs for the weekly panel,
+    # never regime-state inputs. Same table, same partial-day guard.
+    todo = dict(spec["series"]) | dict(spec.get("india_series") or {})
+    for sid, s in todo.items():
         try:
             rows = fetch(s["symbol"], rng=rng, name_pattern=s["name_pattern"])
         except Exception as e:

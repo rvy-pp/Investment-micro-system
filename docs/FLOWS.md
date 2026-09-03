@@ -96,7 +96,23 @@ matrix was computed; evidence in `python packages/score/regime.py --backtest`.
 - After risk_off, risk_on follows 20.1% vs a 13.0% base — the bounce is real
   but only ~1.5x, never a forecast.
 
-The daily read and next-session odds render at the top of the Flows tab.
+**The tab leads WEEKLY since 2026-09-03** — the PM's ruling after the backtests:
+"daily is of no use, show a weekly analysis in the tab." The weekly layer is the
+same sign map sampled Friday-to-Friday (sigma over 52 completed weeks,
+`specs/flows.yaml weekly:`), computed on demand in `regime.weekly_view()` — a
+pure function of `flow_series` + the spec, so nothing persists and nothing can
+go stale separately. What the 492-week backtest earned it: stress weeks CLUSTER
+(a liquidation week repeats at 2.9x base, stagflation 1.9x, goldilocks has
+never repeated), and a confirmed risk_on week precedes the strongest India week
+(Nifty +0.67%, 70% hit, t +3.9). The India evidence rows on the tab are
+computed LIVE from the three `india_series` (evidence inputs only — never
+regime-state inputs; nifty_metal's Yahoo series goes stale for weeks, which
+costs pairs, never correctness). The daily layer still computes and persists —
+the flow spell is drawn from it and the review layer will want it.
+
+The daily state and next-session odds no longer render anywhere — only the
+spell line survives from the daily layer on the tab. They remain in
+`/api/flows` (`f1`) and in `market_regime` for the review layer.
 The percentages are **empirical base rates over ten years, not a model**, and
 F1 never sets direction and never enters scoring — the gate question
 (open question 2 below) stays open until the review layer can grade it.

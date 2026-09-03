@@ -2283,39 +2283,55 @@ const RGM = {
   liquidation:       {c:'var(--down)',   ab:'LQ', g:'everything sold — margin-call tape'},
 };
 
-function f1Panel(f){
-  if (!f) return `<div class="callout accent-amber"><div class="callout-head">
+/* WEEKLY leads, by the PM's ruling (2026-09-03): "daily is of no use, show a
+   weekly analysis in the tab." The daily layer still computes and persists —
+   the spell (the coach's fundamentals-vs-flows gate) is drawn from it — but
+   the state, odds, India evidence and strip here are all week-on-week. */
+function w1Panel(w, f){
+  if (!w) return `<div class="callout accent-amber"><div class="callout-head">
     <span class="ico">⚠</span><span class="t">F1 has no data</span></div>
-    run <code>flow_series.py --load</code> then <code>regime.py --persist</code></div>`;
-  if (f.error) return `<div class="callout accent-amber"><div class="callout-head">
-    <span class="ico">⚠</span><span class="t">F1 failed</span></div>${esc(f.error)}</div>`;
+    run <code>flow_series.py --load</code></div>`;
+  if (w.error) return `<div class="callout accent-amber"><div class="callout-head">
+    <span class="ico">⚠</span><span class="t">F1 weekly failed</span></div>${esc(w.error)}</div>`;
 
-  const m = RGM[f.state] || {c:'var(--soft)', g:''};
+  const m = RGM[w.state] || {c:'var(--soft)', g:''};
   const z = (v, l) => `<b style="color:${v > 0 ? 'var(--up)' : v < 0 ? 'var(--down)' : 'var(--faint)'}">${l} ${v >= 0 ? '+' : ''}${v.toFixed(2)}σ</b>`;
-  const stale = f.stale ? `<div class="callout accent-amber" style="margin-bottom:10px">
-    <div class="callout-head"><span class="ico">⚠</span><span class="t">STALE — newest
-    classified session is ${esc(f.as_of)}, ${f.stale_days} days ago</span></div>
+  const stale = w.stale ? `<div class="callout accent-amber" style="margin-bottom:10px">
+    <div class="callout-head"><span class="ico">⚠</span><span class="t">STALE — last
+    classified week ended ${esc(w.week_end)}, ${w.stale_days} days ago</span></div>
     An old regime and an unchanged one are indistinguishable without this banner.
     Run the refresh before reading anything below.</div>` : '';
 
-  /* The spell is the coach's operative regime: quiet = no persistent equity
-     flow = fundamentals carry. Loud = flows are running the tape. */
-  const spell = f.spell_quiet === 1
+  /* Week to date: partial by construction, so it is a chip, never the lead. */
+  const wtdM = w.wtd ? (RGM[w.wtd.state] || {c:'var(--soft)'}) : null;
+  const wtd = w.wtd ? `<p style="margin:8px 0 0">
+      <span class="pill" style="border-color:${wtdM.c};color:${wtdM.c}">week to date · ${esc(w.wtd.state)}</span>
+      <span style="color:var(--soft);font-size:12.5px"> ${w.wtd.n_sessions} session${w.wtd.n_sessions === 1 ? '' : 's'} thru ${esc(w.wtd.through)} —
+      eq ${w.wtd.z_eq >= 0 ? '+' : ''}${w.wtd.z_eq.toFixed(2)} · bond ${w.wtd.z_bond >= 0 ? '+' : ''}${w.wtd.z_bond.toFixed(2)} · gold ${w.wtd.z_gold >= 0 ? '+' : ''}${w.wtd.z_gold.toFixed(2)} (vs weekly σ, partial)</span></p>` : '';
+
+  /* The spell stays daily-windowed — it IS a ~2-week measure and it is the
+     coach's operative gate. */
+  const spell = f && f.spell_quiet === 1
     ? `<span class="pill ok">quiet spell · ${f.spell_run} session${f.spell_run === 1 ? '' : 's'}</span>
-       no persistent equity flow (10d net-flow intensity ${f.flow_intensity == null ? '—' : f.flow_intensity.toFixed(2)},
-       loudest leg ${esc(f.flow_driver || '—')}) — <b>fundamentals carry; the pillars have the edge</b>`
-    : f.spell_quiet === 0
+       no persistent equity flow — <b>fundamentals carry; the pillars have the edge</b>`
+    : f && f.spell_quiet === 0
     ? `<span class="pill bad">loud flow · ${f.spell_run} session${f.spell_run === 1 ? '' : 's'}</span>
-       persistent flow via <b>${esc(f.flow_driver || '?')}</b> (10d intensity
+       persistent flow via <b>${esc(f.flow_driver || '?')}</b> (intensity
        ${f.flow_intensity == null ? '—' : f.flow_intensity.toFixed(2)}) —
        <b>flows are running the tape; expect them to override fundamentals</b>`
-    : `<span class="pill warn">spell unknown</span> not enough history in the window`;
+    : `<span class="pill warn">spell unknown</span>`;
 
-  const rot = f.rotation
-    ? ` · rotation <b>${f.rotation === 'into_software' ? 'out of hardware, into software' : 'out of software, into hardware'}</b> (${f.rot_z >= 0 ? '+' : ''}${f.rot_z.toFixed(2)}σ)`
+  const rot = w.rot_z != null && Math.abs(w.rot_z) >= 1
+    ? ` · rotation <b>${w.rot_z < 0 ? 'out of hardware, into software' : 'out of software, into hardware'}</b> (${w.rot_z >= 0 ? '+' : ''}${w.rot_z.toFixed(2)}σ)`
     : '';
 
-  const odds = f.next.slice(0, 5).map(x => {
+  const pers = w.persistence ? w.persistence[w.state] : null;
+  const persLine = pers != null && pers >= 1.5
+    ? `<p style="margin:8px 0 0;color:var(--warn);font-size:12.5px">⚠ ${esc(w.state)}
+       weeks cluster: another one follows at <b>${pers.toFixed(1)}×</b> the base rate.
+       Stress arrives in runs.</p>` : '';
+
+  const odds = (w.next || []).slice(0, 5).map(x => {
     const mm = RGM[x.state] || {c:'var(--soft)'};
     const lift = x.base ? x.pct / x.base : null;
     return `<div class="row"><span class="lbl" style="color:${mm.c}">${esc(x.state)}</span>
@@ -2324,30 +2340,52 @@ function f1Panel(f){
       <span class="num">${x.pct.toFixed(1)}% <span style="color:var(--faint)">(base ${x.base.toFixed(1)}${lift ? ', ' + lift.toFixed(2) + 'x' : ''})</span></span></div>`;
   }).join('');
 
-  const strip = (f.strip || []).map(s => {
+  /* India next-week evidence for THIS state, live from flow_series. A cell
+     with too few pairs is withheld by the API — render the withholding. */
+  const LBL = {nifty: 'Nifty 50', nifty_metal: 'Nifty Metal', nifty_it: 'Nifty IT'};
+  const india = Object.entries(w.india || {}).map(([sid, blk]) => {
+    const s = blk.stats && blk.stats[w.state];
+    const staleIdx = blk.last_date < w.week_end
+      ? ` <span style="color:var(--warn)">(series thru ${esc(blk.last_date)})</span>` : '';
+    if (!s) return `<tr><td>${esc(LBL[sid] || sid)}</td>
+      <td colspan="3" class="flat">withheld — too few prior ${esc(w.state)} weeks</td><td>${staleIdx}</td></tr>`;
+    const cls = Math.abs(s.t) >= 2 ? (s.mean > 0 ? 'pos' : 'neg') : '';
+    return `<tr><td>${esc(LBL[sid] || sid)}</td>
+      <td class="n ${cls}">${s.mean > 0 ? '+' : ''}${s.mean.toFixed(2)}%</td>
+      <td class="n">${s.hit.toFixed(0)}% hit</td>
+      <td class="n ${Math.abs(s.t) >= 2 ? cls : 'flat'}">t ${s.t > 0 ? '+' : ''}${s.t}</td>
+      <td class="n flat">n=${s.n}${staleIdx}</td></tr>`;
+  }).join('');
+
+  const strip = (w.strip || []).map(s => {
     const mm = RGM[s.state] || {c:'var(--soft)', ab:'?'};
-    return `<span class="d${s.spell_quiet === 1 ? ' spellq' : ''}"
-      title="${esc(s.as_of)}: ${esc(s.state)}${s.rotation ? ' · ' + esc(s.rotation) : ''}${s.spell_quiet === 1 ? ' · quiet spell' : ''}"
-      style="color:${mm.c};border-color:${mm.c}"><span>${mm.ab}</span><span style="color:var(--faint)">${esc(s.as_of.slice(8))}</span></span>`;
+    return `<span class="d" title="${esc(s.wk)}: ${esc(s.state)}"
+      style="color:${mm.c};border-color:${mm.c}"><span>${mm.ab}</span><span
+      style="color:var(--faint)">${esc(s.wk.slice(5))}</span></span>`;
   }).join('');
 
   return `${stale}
   <div class="callout" style="border-left-color:${m.c}">
-    <div class="callout-head"><span class="t">F1 · Market regime</span>
-      <span class="right">US close ${esc(f.as_of)} · T-${f.stale_days} · actionable this India open</span></div>
-    <div class="f1-state" style="color:${m.c}">${esc(f.state)}</div>
+    <div class="callout-head"><span class="t">F1 · Market regime — week on week</span>
+      <span class="right">week ${esc(w.week)} · ended ${esc(w.week_end)}</span></div>
+    <div class="f1-state" style="color:${m.c}">${esc(w.state)}</div>
     <p style="margin:2px 0 8px">${m.g}${rot}</p>
-    <div class="f1-z">${z(f.z_eq, 'S&P')} · ${z(f.z_bond, 'bond px')} · ${z(f.z_gold, 'gold')}${f.rot_z != null ? ' · ' + z(f.rot_z, 'SOX−IGV') : ''}</div>
+    <div class="f1-z">${z(w.z_eq, 'S&P')} · ${z(w.z_bond, 'bond px')} · ${z(w.z_gold, 'gold')}${w.rot_z != null ? ' · ' + z(w.rot_z, 'SOX−IGV') : ''} <span style="color:var(--faint)">(weekly moves vs trailing 52-week σ)</span></div>
+    ${wtd}
+    ${persLine}
     <p style="margin:10px 0 4px">${spell}</p>
-    <h2 style="margin-top:14px">Next session, from ${f.n_observations} prior ${esc(f.state)} days</h2>
+    <h2 style="margin-top:14px">Next week, from ${w.n_observations} prior ${esc(w.state)} weeks</h2>
     <div class="f1-odds">${odds}</div>
-    <p class="note">Empirical base rates over ${f.n_days} US sessions since ${esc(f.first)} —
-      counts of what actually followed, not a model. Dashed tick = unconditional base rate.
+    <h2 style="margin-top:14px">India, the week after a ${esc(w.state)} week</h2>
+    <div class="scroll"><table><tbody>${india}</tbody></table></div>
+    <p class="note">Following ISO week's close-to-close return, computed live from
+      the store over ${w.n_weeks} classified weeks since ${esc(w.first)} — empirical
+      counts, not a model. Cells failing |t| ≥ 2 are context, not signal.
       F1 never sets direction and never enters scoring.</p>
     <div class="f1-strip">${strip}</div>
-    <p class="note">Last 15 sessions, newest right. Green underline = quiet spell.
-      Method frozen in <code>specs/flows.yaml</code> (${esc(f.spec_version)});
-      evidence: <code>python packages/score/regime.py --backtest</code>.</p>
+    <p class="note">Last 52 completed weeks, newest right. Method
+      <code>specs/flows.yaml</code> (${esc(w.spec_version)}); evidence:
+      <code>python packages/score/regime.py --weekly</code> and the Regime Atlas.</p>
   </div>`;
 }
 
@@ -2373,7 +2411,7 @@ async function loadFlows(){
 
   $('#s-flows').innerHTML = `
     <h3>Flows — who is buying, not what is worth buying</h3>
-    ${f1Panel(d.f1)}
+    ${w1Panel(d.w1, d.f1)}
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
       <p>F1 is live above; the rest is scoped, not built. It is not a fifth
