@@ -558,8 +558,8 @@ SECTORS = [
 UNCLAIMED_HINT = ["lme_lead", "lme_nickel", "gold", "dxy"]
 
 
-def consensus_panel(sector_id: str) -> dict:
-    """The consensus-estimates table for a sector that declares one (EMS).
+def consensus_panel(sector_id: str, as_of: str | None = None) -> dict:
+    """The consensus-estimates table for a sector that declares one (EMS/IT).
 
     LIVE-COMPUTED from `estimates` + latest closes via
     valuation_pe.compute_row — the same arithmetic the scorer persists, so
@@ -570,6 +570,14 @@ def consensus_panel(sector_id: str) -> dict:
     what the tape shows. The unscored names (peer_group null — Syrma,
     Avalon) appear too, flagged: their consensus is captured daily even
     though nothing scores them.
+
+    `as_of` (PM 2026-09-03: "let me view with dates in past") replays the
+    panel POINT-IN-TIME: the consensus capture on or before that date against
+    the close on or before that date, BBG capture and drift likewise. Nothing
+    is snapshotted — the dated captures in `estimates` ARE the history, so a
+    past date is a recomputation, not a saved copy, and it is identical every
+    time. History floor: the first capture (2026-08-29 EMS / 2026-09-01 IT);
+    earlier dates withhold honestly. A bad or future date falls back to today.
     """
     import datetime as _dt
     import valuation_pe as _vpe  # packages/score is on sys.path above
@@ -600,9 +608,16 @@ def consensus_panel(sector_id: str) -> dict:
     # self-update is the EPS itself, so each row also carries the drift of the
     # Yahoo consensus since the capture date: when the street has moved its
     # numbers, the pinned BBG EPS has probably moved too, and the page warns.
+    today = _dt.date.today().isoformat()
+    view = today
+    if as_of:
+        try:
+            view = min(_dt.date.fromisoformat(as_of).isoformat(), today)
+        except ValueError:
+            pass
     pe2y_asof = conn.execute(
         "SELECT MAX(as_of) FROM estimates WHERE broker='bloomberg' "
-        "AND metric='pe_fwd_2y'").fetchone()[0]
+        "AND metric='pe_fwd_2y' AND as_of<=?", (view,)).fetchone()[0]
     pe2y = dict(conn.execute(
         "SELECT entity_id, value_num FROM estimates WHERE broker='bloomberg' "
         "AND metric='pe_fwd_2y' AND as_of=?", (pe2y_asof,))) if pe2y_asof else {}
@@ -638,12 +653,11 @@ def consensus_panel(sector_id: str) -> dict:
             if deltas:
                 drift = max(deltas, key=abs)
         return live, implied_eps, drift
-    today = _dt.date.today().isoformat()
     rows, pegs = [], []
     for ent in sorted(ents, key=lambda e: e["id"]):
         # require_growth=False: the growth floor is a scoring gate; the panel
         # still shows a low-growth name's multiple, with peg=None.
-        row, why = _vpe.compute_row(conn, ent["id"], today,
+        row, why = _vpe.compute_row(conn, ent["id"], view,
                                     require_growth=False)
         scored = bool(ent.get("peer_group")) and not tracked_only
         state = ("tracked" if tracked_only
@@ -684,6 +698,9 @@ def consensus_panel(sector_id: str) -> dict:
                         if row["rev_90d"] is not None else None),
             "capture": row["capture"],
         })
+    _dates = conn.execute(
+        "SELECT DISTINCT as_of FROM estimates WHERE broker='consensus_yahoo' "
+        "ORDER BY as_of").fetchall()
     conn.close()
     med = None
     if len(pegs) >= _vpe.MIN_GROUP:
@@ -697,7 +714,13 @@ def consensus_panel(sector_id: str) -> dict:
             "groups": list((spec.get("est_groups") or {}).keys()),
             # capture date of the Bloomberg 2-yr fwd screenshot feed (None
             # when nothing loaded — the toggle then does not render)
-            "pe_2y_asof": pe2y_asof}
+            "pe_2y_asof": pe2y_asof,
+            # the replayed date (== today unless a past date was asked for)
+            # and the capture dates that exist — the page's date picker uses
+            # the first as its floor
+            "as_of_view": view,
+            "as_of_is_today": view == today,
+            "est_dates": [r[0] for r in _dates]}
 
 
 def sector_list() -> list[dict]:
@@ -707,7 +730,7 @@ def sector_list() -> list[dict]:
              "live": bool(s["peer_groups"])} for s in SECTORS]
 
 
-def sector_detail(sector_id: str) -> dict:
+def sector_detail(sector_id: str, est_date: str | None = None) -> dict:
     """Everything the page needs for one sector tab.
 
     For a sector with no peer_groups this IS the tab: the commodity inputs that
@@ -839,7 +862,7 @@ def sector_detail(sector_id: str) -> dict:
             # cement_watch() opens its own connection, hence after conn.close()
             "watch": cement_watch() if spec.get("watch") else None,
             # consensus_panel() likewise
-            "estimates": (consensus_panel(spec["id"])
+            "estimates": (consensus_panel(spec["id"], est_date)
                           if spec.get("estimates") else None),
             "n_priced": sum(1 for r in rows if r["last"] is not None),
             "n_total": len(rows)}

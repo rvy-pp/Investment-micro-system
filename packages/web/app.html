@@ -1397,6 +1397,7 @@ function lineChart(cfg){
    are real-pixel), so client coords are mapped through the bounding rect. */
 let ESTV = null;       // geometry + rows of the currently drawn scatter
 let EST_REDRAW = null; // buildEstScatter closure for the 1y/2y toggle
+let EST_DATE = null;   // replay date for the consensus panel (null = today)
 function wireEstScatter(){
   const wrap = document.getElementById('cw-est');
   if (!wrap || !ESTV) return;
@@ -2403,7 +2404,8 @@ async function loadFlows(){
 }
 
 async function loadSector(){
-  const d = await (await fetch('/api/sector?id=' + encodeURIComponent(SECTOR))).json();
+  const d = await (await fetch('/api/sector?id=' + encodeURIComponent(SECTOR) +
+    (EST_DATE ? '&est_date=' + encodeURIComponent(EST_DATE) : ''))).json();
   if (d.error) throw new Error(d.error);
   const rows = d.commodities.map(c => {
     const stale = c.date && c.date < (TODAY || c.date);
@@ -2783,8 +2785,30 @@ async function loadSector(){
         only, and read it warily here: a one-off can put it BELOW the forward
         (Dixon), a trough TTM far above it (Amber).</p>
       </details>`;
+    /* The history picker (PM 2026-09-03: "let me view with dates in past").
+       Nothing is snapshotted — the dated captures ARE the history, so a past
+       date is a point-in-time recomputation: that day's capture against that
+       day's close, BBG re-mark and drift included. Floor = first capture. */
+    const histCtl = (E.est_dates || []).length ? `
+      <div class="est-hist" style="display:flex;gap:8px;align-items:center;margin:0 0 8px">
+        <span style="color:var(--soft);font-size:var(--t-sm)">as of</span>
+        <input type="date" id="est-date" value="${esc(E.as_of_view)}"
+          min="${esc(E.est_dates[0])}" max="${esc(TODAY || E.as_of_view)}"
+          style="background:var(--surface);color:var(--ink);
+                 border:1px solid var(--rule);border-radius:6px;
+                 padding:2px 8px;font-family:var(--sans);
+                 font-size:var(--t-sm);color-scheme:dark">
+        ${E.as_of_is_today ? '' :
+          '<button class="ghost" id="est-today">back to today</button>'}
+      </div>
+      ${E.as_of_is_today ? '' : `<p class="note" style="color:var(--accent)">
+        replaying <b>${esc(E.as_of_view)}</b> — the consensus capture and
+        closes as they stood that day, recomputed from the dated store, not a
+        saved copy. History starts ${esc(E.est_dates[0])} (first capture).</p>`}
+      ` : '';
     estHtml = `<h2>Consensus forward P/E · capture ${
         esc((E.rows.find(r => r.capture) || {}).capture || '—')}</h2>
+      ${histCtl}
       ${modeBtns}
       ${warn2y}
       ${scatterHtml}
@@ -2865,6 +2889,18 @@ async function loadSector(){
   // was also built-but-never-rendered until the chart landed here.)
   if (chartHtml) wireChart('sectorpx');
   if (ESTV) wireEstScatter();
+  // The history picker: a changed date refetches the whole sector view with
+  // est_date, so table, scatter, BBG re-mark and drift all replay together.
+  const dp = document.getElementById('est-date');
+  if (dp) dp.addEventListener('change', () => {
+    EST_DATE = dp.value || null;
+    loadSector().catch(e => showErr(String(e)));
+  });
+  const bt = document.getElementById('est-today');
+  if (bt) bt.addEventListener('click', () => {
+    EST_DATE = null;
+    loadSector().catch(e => showErr(String(e)));
+  });
   // The 1y/2y horizon toggle: re-draw the scatter box in place, then re-wire
   // the crosshair (the old SVG and its listeners left with the old DOM).
   document.querySelectorAll('#s-sector .est-mode button').forEach(b =>

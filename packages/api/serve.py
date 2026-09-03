@@ -111,7 +111,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.flows())
             if u.path == "/api/sector":
                 sid = q.get("id", [""])[0]
-                d = engine.sector_detail(sid)
+                # est_date replays the consensus panel as of a past date
+                # (engine validates; bad/future dates fall back to today)
+                d = engine.sector_detail(sid, q.get("est_date", [None])[0])
                 return self._json(d, 404 if d.get("error") else 200)
             if u.path == "/api/version":
                 # What this PROCESS loaded, versus what is on disk right now.
