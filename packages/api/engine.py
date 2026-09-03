@@ -720,6 +720,7 @@ def consensus_panel(sector_id: str, as_of: str | None = None) -> dict:
             # the first as its floor
             "as_of_view": view,
             "as_of_is_today": view == today,
+            "today": today,
             "est_dates": [r[0] for r in _dates]}
 
 

@@ -2789,15 +2789,27 @@ async function loadSector(){
        Nothing is snapshotted — the dated captures ARE the history, so a past
        date is a point-in-time recomputation: that day's capture against that
        day's close, BBG re-mark and drift included. Floor = first capture. */
+    // ◀ ▶ step through the dates that actually have a capture (plus today) —
+    // stepping onto an uncaptured calendar day would just withhold everything.
+    const steps = (E.est_dates || []).slice();
+    if (E.today && !steps.includes(E.today)) steps.push(E.today);
+    const prevD = [...steps].reverse().find(d => d < E.as_of_view) || '';
+    const nextD = steps.find(d => d > E.as_of_view) || '';
     const histCtl = (E.est_dates || []).length ? `
       <div class="est-hist" style="display:flex;gap:8px;align-items:center;margin:0 0 8px">
         <span style="color:var(--soft);font-size:var(--t-sm)">as of</span>
+        <button class="ghost" id="est-prev" data-d="${esc(prevD)}"
+          ${prevD ? '' : 'disabled'} title="previous capture"
+          aria-label="previous capture date">◀</button>
         <input type="date" id="est-date" value="${esc(E.as_of_view)}"
-          min="${esc(E.est_dates[0])}" max="${esc(TODAY || E.as_of_view)}"
+          min="${esc(E.est_dates[0])}" max="${esc(E.today || E.as_of_view)}"
           style="background:var(--surface);color:var(--ink);
                  border:1px solid var(--rule);border-radius:6px;
                  padding:2px 8px;font-family:var(--sans);
                  font-size:var(--t-sm);color-scheme:dark">
+        <button class="ghost" id="est-next" data-d="${esc(nextD)}"
+          ${nextD ? '' : 'disabled'} title="next capture"
+          aria-label="next capture date">▶</button>
         ${E.as_of_is_today ? '' :
           '<button class="ghost" id="est-today">back to today</button>'}
       </div>
@@ -2901,6 +2913,15 @@ async function loadSector(){
     EST_DATE = null;
     loadSector().catch(e => showErr(String(e)));
   });
+  // ◀ ▶ steppers — each carries its target date; disabled at either end.
+  for (const id of ['est-prev', 'est-next']){
+    const b = document.getElementById(id);
+    if (b) b.addEventListener('click', () => {
+      if (!b.dataset.d) return;
+      EST_DATE = b.dataset.d;
+      loadSector().catch(e => showErr(String(e)));
+    });
+  }
   // The 1y/2y horizon toggle: re-draw the scatter box in place, then re-wire
   // the crosshair (the old SVG and its listeners left with the old DOM).
   document.querySelectorAll('#s-sector .est-mode button').forEach(b =>
