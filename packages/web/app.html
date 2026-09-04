@@ -2518,28 +2518,34 @@ async function loadFlows(){
       Every bubble is a sector; its <b>area</b> is that day's stock-futures open
       interest in rupees across all its F&amp;O names (210 underlyings). Fill is
       the day's <b>new positioning</b> — green inflating, red deflating, scaled to
-      that sector's own normal day. Play the year, or click the total strip to
-      jump. OI counts both sides of every contract — an inflating bubble means
-      positioning is building there, not that it is being bought.</p>
+      that sector's own normal day. Step through dates with the arrows, drag the
+      slider, or click the total strip to jump. OI counts both sides of every
+      contract — an inflating bubble means positioning is building there, not
+      that it is being bought.</p>
     <div class="panel" id="f2panel">
       <div class="bub-bar">
+        <button class="bbtn" id="bubprev" title="previous session">‹</button>
         <span class="bdate" id="bubdt">—</span>
-        <span class="btot">book <b id="bubtot">—</b> cr <span id="bubchg"></span></span>
+        <button class="bbtn" id="bubnext" title="next session">›</button>
+        <span class="btot">total OI <b id="bubtot">—</b> cr <span id="bubchg"></span></span>
         <div class="bctl">
-          <button class="bbtn" id="bubplay">▶ play</button>
-          <button class="bbtn" id="bubspeed">1×</button>
-          <button class="bbtn" id="bubabs" aria-pressed="true">absolute</button>
-          <button class="bbtn" id="bubshare" aria-pressed="false">share of book</button>
+          <button class="bbtn" id="bubabs" aria-pressed="true"
+            title="bubble areas and the market total move together">absolute cr</button>
+          <button class="bbtn" id="bubshare" aria-pressed="false"
+            title="every day rescaled to the same total area - only the sector mix moves">% of total</button>
         </div>
       </div>
       <div id="bubwrap"><canvas id="bubcv" height="470"></canvas><div id="bubtip"></div></div>
       <input type="range" id="bubseek" min="0" value="0" step="1" aria-label="day">
       <canvas id="bubstrip"></canvas>
-      <p class="note">Strip = total book (Rs cr) over the loaded year. The expiry
-        sawtooth is contract mechanics, not de-risking. <b>Absolute</b>: pie and
-        bubbles move together. <b>Share of book</b>: constant total area — pure mix.
-        Data: NSE F&amp;O bhavcopy, rupee-value aggregation, refreshed with the
-        morning run.</p>
+      <p class="note">"Total OI" is the WHOLE MARKET's stock-futures open interest
+        (all 210 F&amp;O names) — nothing here is our book. Strip = that market
+        total (Rs cr) over the loaded year; the expiry sawtooth is contract
+        mechanics, not de-risking. <b>Absolute cr</b>: bubbles and the market
+        total move together — the pie itself expands and shrinks. <b>% of
+        total</b>: every day rescaled to the same total area, so only the sector
+        mix moves — the pure rotation view. Data: NSE F&amp;O bhavcopy,
+        rupee-value aggregation, refreshed with the morning run.</p>
     </div>
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
@@ -2575,8 +2581,9 @@ async function loadFlows(){
    Data from /api/oi_bubbles (memoised server-side), fetched once per page
    life. Fixed circle packing at each sector's yearly max radius, so a bubble
    inflates/deflates IN PLACE — repacking per day would read as movement. */
-let BUB = null, bubT = 0, bubRaf = null, bubMode = 'abs', bubSp = 0;
-const BUB_SPEEDS = [[6, '1×'], [14, '2×'], [28, '4×']];
+/* No autoplay by the PM's instruction (2026-09-04) — prev/next steppers and
+   the slider, the same date-toggle grammar as the IT tab's consensus replay. */
+let BUB = null, bubT = 0, bubMode = 'abs';
 const BW = 1000, BH = 470, BRMAX = 108;
 
 async function initBubbles(){
@@ -2689,28 +2696,11 @@ function drawBubStrip(di){
   c.strokeStyle = '#e6edf3'; c.stroke();
 }
 
-function bubStop(){
-  if (bubRaf){ cancelAnimationFrame(bubRaf); bubRaf = null; }
-  const b = $('#bubplay'); if (b) b.textContent = '▶ play';
-}
 function wireBubbles(){
   const N = BUB.dates.length;
-  $('#bubplay').addEventListener('click', () => {
-    if (bubRaf){ bubStop(); return; }
-    if (bubT >= N - 1) bubT = 0;
-    $('#bubplay').textContent = '❚❚ pause';
-    const tick = () => {
-      bubT += BUB_SPEEDS[bubSp][0] / 60;
-      if (bubT >= N - 1){ bubT = N - 1; bubStop(); }
-      drawBubbles();
-      if (bubRaf !== null) bubRaf = requestAnimationFrame(tick);
-    };
-    bubRaf = requestAnimationFrame(tick);
-  });
-  $('#bubspeed').addEventListener('click', () => {
-    bubSp = (bubSp + 1) % BUB_SPEEDS.length;
-    $('#bubspeed').textContent = BUB_SPEEDS[bubSp][1];
-  });
+  const step = k => { bubT = Math.max(0, Math.min(N - 1, Math.round(bubT) + k)); drawBubbles(); };
+  $('#bubprev').addEventListener('click', () => step(-1));
+  $('#bubnext').addEventListener('click', () => step(1));
   for (const [id, m] of [['bubabs', 'abs'], ['bubshare', 'share']])
     $('#' + id).addEventListener('click', () => {
       bubMode = m;
@@ -2718,12 +2708,12 @@ function wireBubbles(){
       $('#bubshare').setAttribute('aria-pressed', String(m === 'share'));
       drawBubbles();
     });
-  $('#bubseek').addEventListener('input', e => { bubStop(); bubT = +e.target.value; drawBubbles(); });
+  $('#bubseek').addEventListener('input', e => { bubT = +e.target.value; drawBubbles(); });
   $('#bubstrip').addEventListener('click', e => {
     const r = e.target.getBoundingClientRect();
     bubT = Math.max(0, Math.min(N - 1,
       Math.round((e.clientX - r.left - 6) / (r.width - 12) * (N - 1))));
-    bubStop(); drawBubbles();
+    drawBubbles();
   });
   const tip = $('#bubtip'), cv = $('#bubcv');
   cv.addEventListener('mousemove', e => {
