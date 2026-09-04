@@ -2325,30 +2325,35 @@ function w1Panel(w, f){
         Adjacent chips share 4 sessions, so read it as one reading evolving.
         ! = strong, ‼ = extreme.</p></div>` : '';
 
-  /* The intensity ladder — pared to the row that applies to THIS week: means
-     only, the current grade highlighted, hit rate and sample size in hover.
-     Nine cells x three numbers read as a table pretending to be a sentence
-     (PM, 2026-09-04: "why are there so many numbers"). */
+  /* The intensity ladder — THIS STATE's own cells (PM, 2026-09-04: "why would
+     I need the full up-family if we are just looking at goldilocks" — and the
+     data agreed: moderate goldilocks weeks run -0.03% vs the family's +0.27%).
+     A cell under 10 weeks shows the pooled family figure instead, explicitly
+     labelled as the fallback it is. Hit rate and sample size live in hover. */
   const lad = w.ladder || {};
+  const slad = w.state_ladder || {};
   const UPFAM = ['risk_on', 'reflation', 'goldilocks', 'liquidity_rally'];
   const fam = UPFAM.includes(w.loud_state) ? 'up' : 'down';
-  const famLabel = fam === 'up' ? 'good-tape (up-family)' : 'bad-tape (down-family)';
-  const ladCell = (c, g) => {
+  const ladCell = g => {
     const cur = g === w.grade;
-    if (!c || c.mean == null)
-      return `<span style="color:var(--faint)">${g}: thin data</span>`;
-    return `<span title="closed up ${c.hit.toFixed(0)}% of the time, over ${c.n} weeks"
-      style="${cur ? 'outline:1px solid var(--rule);border-radius:4px;padding:1px 6px;' : ''}">
-      ${g}: <b style="color:${c.mean > 0 ? 'var(--up)' : 'var(--down)'}">${c.mean > 0 ? '+' : ''}${c.mean.toFixed(2)}%</b>${cur ? ' ← this week' : ''}</span>`;
+    const wrap = inner => `<span style="${cur ? 'outline:1px solid var(--rule);border-radius:4px;padding:1px 6px;' : ''}">${g}: ${inner}${cur ? ' ← this week' : ''}</span>`;
+    const c = slad[g];
+    if (c && c.mean != null)
+      return wrap(`<b style="color:${c.mean > 0 ? 'var(--up)' : 'var(--down)'}"
+        title="closed up ${c.hit.toFixed(0)}% of the time, over ${c.n} ${esc(w.state)} weeks">${c.mean > 0 ? '+' : ''}${c.mean.toFixed(2)}%</b>`);
+    const p = (lad[fam] || {})[g];
+    if (p && p.mean != null)
+      return wrap(`<span style="color:var(--faint)"
+        title="only ${c ? c.n : 0} ${esc(w.state)} weeks at this grade in ten years — this is the ALL-${fam === 'up' ? 'equity-up' : 'equity-down'}-states figure (${p.hit.toFixed(0)}%, n=${p.n}), not a ${esc(w.state)} number">${p.mean > 0 ? '+' : ''}${p.mean.toFixed(2)}%*</span>`);
+    return wrap(`<span style="color:var(--faint)">no data</span>`);
   };
-  const ladder = lad[fam] ? `<p class="note" style="margin-top:8px">
-      <b style="color:var(--soft)">After a ${famLabel} week, the next Indian week
-      has averaged</b> &nbsp;
-      ${ladCell(lad[fam].moderate, 'moderate')} &nbsp;·&nbsp;
-      ${ladCell(lad[fam].strong, 'strong')} &nbsp;·&nbsp;
-      ${ladCell(lad[fam].extreme, 'extreme')}
-      &nbsp;— hover a cell for how often it worked and on how many weeks.
-      Strong is the signal, extreme is the warning.</p>` : '';
+  const ladder = (slad.moderate || slad.strong || slad.extreme) ? `<p class="note" style="margin-top:8px">
+      <b style="color:var(--soft)">After a ${esc(w.state)} week, the next Indian
+      week has averaged</b> &nbsp;
+      ${ladCell('moderate')} &nbsp;·&nbsp; ${ladCell('strong')} &nbsp;·&nbsp; ${ladCell('extreme')}
+      &nbsp;— hover for hit rate and sample. A greyed value with * means too few
+      ${esc(w.state)} weeks at that loudness ever happened; it shows the pooled
+      ${fam === 'up' ? 'equity-up' : 'equity-down'} figure instead.</p>` : '';
 
   /* The spell stays daily-windowed — it IS a ~2-week measure and it is the
      coach's operative gate. */

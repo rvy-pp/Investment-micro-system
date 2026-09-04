@@ -446,6 +446,38 @@ def _rolling_weeks(raw: dict, sig: dict, spec: dict, n_days: int) -> list[dict]:
     return out
 
 
+def _state_ladder(weeks: list[dict], state: str) -> dict:
+    """THE CURRENT STATE's own intensity cells — next Indian week per grade.
+
+    Added 2026-09-04 after the PM rejected the pooled family row rendering
+    under a specific state ("why would I need the full up-family if we are
+    just looking at goldilocks") — and he was right in the data too: moderate
+    goldilocks weeks average -0.03% vs the up-family's +0.27%. Pooling
+    borrowed relevance. Cells under 10 weeks return only their n; the caller
+    may show the pooled figure as a fallback ONLY when labelled as one."""
+    conn = sqlite3.connect(DB)
+    px = dict(_series(conn, "nifty"))
+    conn.close()
+    if not px:
+        return {}
+    nmv = _weekly_moves(px, "level")
+    by_idx = {_wkidx(*k): v * 100.0 for k, v in nmv.items()}
+    out = {}
+    for g in ("moderate", "strong", "extreme"):
+        v = [by_idx.get(_wkidx(*w["_k"]) + 1) for w in weeks
+             if w["state"] == state and w.get("grade") == g]
+        v = [x for x in v if x is not None]
+        if len(v) < 10:
+            out[g] = {"n": len(v)}
+            continue
+        m = sum(v) / len(v)
+        sd = math.sqrt(sum((x - m) ** 2 for x in v) / len(v))
+        out[g] = {"n": len(v), "mean": round(m, 2),
+                  "hit": round(100.0 * sum(1 for x in v if x > 0) / len(v), 0),
+                  "t": round(m / (sd / math.sqrt(len(v))), 1) if sd else None}
+    return out
+
+
 def _intensity_ladder(weeks: list[dict], spec: dict) -> dict:
     """Pooled family ladders, LIVE from the store: next Indian week after an
     up-family / down-family week at each grade. Computed rather than pasted so
@@ -603,6 +635,7 @@ def weekly_view() -> dict:
         "stale_days": stale_days, "stale": stale_days > 10,
         "rolling": rolling,
         "ladder": _intensity_ladder(weeks, spec),
+        "state_ladder": _state_ladder(weeks, last["state"]),
         "next": [{"state": s, "pct": round(v, 1),
                   "base": round(tr["base"].get(s, 0.0), 1)} for s, v in nxt],
         "n_observations": sum(tr["counts"].get(last["state"], {}).values()),
