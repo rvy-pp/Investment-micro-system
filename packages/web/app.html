@@ -284,6 +284,27 @@
                font-family:var(--mono);font-size:9px;line-height:1.15;
                border:1px solid var(--hair);color:var(--soft)}
   .f1-strip .d.spellq{border-bottom:2px solid var(--up)}
+  /* F2 OI bubbles */
+  .bub-bar{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  .bub-bar .bdate{font-family:var(--mono);font-size:18px;font-weight:600}
+  .bub-bar .btot{font-family:var(--mono);font-size:12.5px;color:var(--soft)}
+  .bub-bar .btot b{color:var(--ink)}
+  .bub-bar .bctl{margin-left:auto;display:flex;gap:6px;align-items:center}
+  .bbtn{font-family:var(--mono);font-size:11.5px;background:var(--raised, var(--alt));
+        border:1px solid var(--rule);color:var(--soft);border-radius:5px;
+        padding:4px 11px;cursor:pointer}
+  .bbtn:hover{color:var(--ink);border-color:var(--faint)}
+  .bbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  #bubwrap{position:relative}
+  #bubcv{display:block;width:100%;background:var(--sunken);border:1px solid var(--hair);
+         border-radius:8px}
+  #bubtip{position:absolute;pointer-events:none;display:none;z-index:4;
+         background:var(--sunken);border:1px solid var(--rule);border-radius:6px;
+         padding:7px 10px;font-size:12px;min-width:190px}
+  #bubtip .m{font-family:var(--mono);color:var(--soft);font-size:11.5px;margin-top:2px}
+  #bubseek{width:100%;accent-color:var(--accent);margin:10px 0 2px}
+  #bubstrip{display:block;width:100%;height:56px;background:var(--sunken);
+         border:1px solid var(--hair);border-radius:6px;margin-top:6px;cursor:pointer}
   /* Collapsible tail of the weekly panel. Collapsed by default; the choice
      persists per browser via localStorage (wrapped in try/catch — private
      windows and blocked site data must not break the render). */
@@ -2492,6 +2513,34 @@ async function loadFlows(){
   $('#s-flows').innerHTML = `
     <h3>Flows — who is buying, not what is worth buying</h3>
     ${w1Panel(d.w1, d.f1)}
+    <h2 style="margin-top:26px">F2 · Sector positioning — the OI bubble tape</h2>
+    <p class="lede" style="max-width:80ch;color:var(--soft);font-size:13px">
+      Every bubble is a sector; its <b>area</b> is that day's stock-futures open
+      interest in rupees across all its F&amp;O names (210 underlyings). Fill is
+      the day's <b>new positioning</b> — green inflating, red deflating, scaled to
+      that sector's own normal day. Play the year, or click the total strip to
+      jump. OI counts both sides of every contract — an inflating bubble means
+      positioning is building there, not that it is being bought.</p>
+    <div class="panel" id="f2panel">
+      <div class="bub-bar">
+        <span class="bdate" id="bubdt">—</span>
+        <span class="btot">book <b id="bubtot">—</b> cr <span id="bubchg"></span></span>
+        <div class="bctl">
+          <button class="bbtn" id="bubplay">▶ play</button>
+          <button class="bbtn" id="bubspeed">1×</button>
+          <button class="bbtn" id="bubabs" aria-pressed="true">absolute</button>
+          <button class="bbtn" id="bubshare" aria-pressed="false">share of book</button>
+        </div>
+      </div>
+      <div id="bubwrap"><canvas id="bubcv" height="470"></canvas><div id="bubtip"></div></div>
+      <input type="range" id="bubseek" min="0" value="0" step="1" aria-label="day">
+      <canvas id="bubstrip"></canvas>
+      <p class="note">Strip = total book (Rs cr) over the loaded year. The expiry
+        sawtooth is contract mechanics, not de-risking. <b>Absolute</b>: pie and
+        bubbles move together. <b>Share of book</b>: constant total area — pure mix.
+        Data: NSE F&amp;O bhavcopy, rupee-value aggregation, refreshed with the
+        morning run.</p>
+    </div>
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
       <p>F1 is live above; the rest is scoped, not built. It is not a fifth
@@ -2519,6 +2568,185 @@ async function loadFlows(){
       negative, shorts work. <code>ignored</code> means nobody is looking and
       nothing expresses in either direction however good the economics. Whatever
       computes these must preserve that distinction.</p>`;
+  initBubbles();
+}
+
+/* ================= F2: the OI bubble tape =================
+   Data from /api/oi_bubbles (memoised server-side), fetched once per page
+   life. Fixed circle packing at each sector's yearly max radius, so a bubble
+   inflates/deflates IN PLACE — repacking per day would read as movement. */
+let BUB = null, bubT = 0, bubRaf = null, bubMode = 'abs', bubSp = 0;
+const BUB_SPEEDS = [[6, '1×'], [14, '2×'], [28, '4×']];
+const BW = 1000, BH = 470, BRMAX = 108;
+
+async function initBubbles(){
+  if (!document.querySelector('#bubcv')) return;
+  if (!BUB){
+    try { BUB = await (await fetch('/api/oi_bubbles')).json(); }
+    catch (e) { BUB = {error: String(e)}; }
+    if (BUB.error){
+      $('#f2panel').innerHTML = `<p class="note">F2 has no data: ${esc(BUB.error)}</p>`;
+      BUB = null; return;
+    }
+    const N = BUB.dates.length;
+    for (const s of BUB.sectors){
+      const a = s.flw.map(Math.abs).sort((x, y) => x - y);
+      s.fsig = a[Math.floor(a.length * 0.68)] || 1;
+      s.maxl = Math.max(...s.lvl);
+    }
+    BUB.LVLMAX = Math.max(...BUB.sectors.map(s => s.maxl));
+    BUB.TOTMAX = Math.max(...BUB.total);
+    // pack once, biggest first, spiral placement collision-checked at max radii
+    const placed = [];
+    for (const s of BUB.sectors){
+      const R = Math.max(7, Math.sqrt(s.maxl / BUB.LVLMAX) * BRMAX);
+      if (!placed.length){ s.x = BW * 0.40; s.y = BH * 0.52; s.R = R; placed.push(s); continue; }
+      let best = null;
+      for (let a = 0; a < Math.PI * 28 && !best; a += 0.22){
+        const rad = 36 + a * 9.5;
+        const x = BW * 0.40 + Math.cos(a) * rad * 1.30, y = BH * 0.52 + Math.sin(a) * rad * 0.74;
+        if (x - R < 6 || x + R > BW - 6 || y - R < 6 || y + R > BH - 6) continue;
+        if (placed.every(p => Math.hypot(x - p.x, y - p.y) > R + p.R + 5)) best = {x, y};
+      }
+      if (!best) best = {x: BW - 140, y: 50 + placed.length * 16};
+      s.x = best.x; s.y = best.y; s.R = R; placed.push(s);
+    }
+    bubT = N - 1;
+  }
+  // the tab's DOM is rebuilt on every visit — listeners must re-attach even
+  // when the data is already cached (the fetch above runs once per page life)
+  $('#bubseek').max = BUB.dates.length - 1;
+  wireBubbles();
+  drawBubbles();
+}
+
+function bubLerp(arr, t){
+  const N = arr.length, i = Math.floor(t), f = t - i;
+  return i >= N - 1 ? arr[N - 1] : arr[i] * (1 - f) + arr[i + 1] * f;
+}
+function bubR(s, t){
+  const scale = bubMode === 'share' ? BUB.TOTMAX / bubLerp(BUB.total, t) : 1;
+  return Math.max(3, Math.sqrt(bubLerp(s.lvl, t) * scale / BUB.LVLMAX) * BRMAX);
+}
+const bubFmt = v => Math.round(v).toLocaleString('en-IN');
+
+function drawBubbles(){
+  const cv = $('#bubcv'); if (!cv || !BUB) return;
+  const ctx = cv.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, k = w / BW;
+  cv.width = w * dpr; cv.height = BH * k * dpr;
+  ctx.setTransform(dpr * k, 0, 0, dpr * k, 0, 0);
+  ctx.clearRect(0, 0, BW, BH);
+  const di = Math.round(bubT);
+  for (const s of BUB.sectors){
+    const r = bubR(s, bubT);
+    const z = s.flw[di] / s.fsig, a = Math.min(Math.abs(z) / 2.5, 1);
+    ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, 7);
+    ctx.fillStyle = Math.abs(z) < 0.35 ? 'rgba(48,54,61,.55)'
+      : z > 0 ? `rgba(63,185,80,${(0.13 + a * 0.5).toFixed(3)})`
+              : `rgba(248,81,73,${(0.13 + a * 0.5).toFixed(3)})`;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(230,237,243,.26)'; ctx.lineWidth = 1; ctx.stroke();
+    if (r > 16){
+      ctx.fillStyle = '#e6edf3'; ctx.textAlign = 'center';
+      ctx.font = `600 ${Math.max(10, Math.min(14, r / 4.4))}px system-ui,sans-serif`;
+      ctx.fillText(s.short, s.x, s.y - 1);
+      ctx.fillStyle = '#8b949e';
+      ctx.font = `${Math.max(9, Math.min(11, r / 5))}px ui-monospace,monospace`;
+      ctx.fillText((100 * bubLerp(s.lvl, bubT) / bubLerp(BUB.total, bubT)).toFixed(1) + '%',
+                   s.x, s.y + Math.max(11, r / 4));
+    }
+  }
+  $('#bubdt').textContent = BUB.dates[di];
+  $('#bubtot').textContent = bubFmt(bubLerp(BUB.total, bubT));
+  const chg = di > 0 ? BUB.total[di] - BUB.total[di - 1] : 0;
+  const el = $('#bubchg');
+  el.textContent = ` ${chg >= 0 ? '+' : ''}${bubFmt(chg)} d/d`;
+  el.style.color = chg >= 0 ? 'var(--up)' : 'var(--down)';
+  $('#bubseek').value = di;
+  drawBubStrip(di);
+}
+
+function drawBubStrip(di){
+  const st = $('#bubstrip'); if (!st) return;
+  const c = st.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = st.clientWidth, h = 56, N = BUB.dates.length;
+  st.width = w * dpr; st.height = h * dpr;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const lo = Math.min(...BUB.total) * 0.985, hi = BUB.TOTMAX * 1.01;
+  const x = i => 6 + i / (N - 1) * (w - 12);
+  const y = v => 5 + (1 - (v - lo) / (hi - lo)) * (h - 14);
+  c.beginPath(); c.moveTo(x(0), h - 5);
+  for (let i = 0; i < N; i++) c.lineTo(x(i), y(BUB.total[i]));
+  c.lineTo(x(N - 1), h - 5); c.closePath();
+  c.fillStyle = 'rgba(88,166,255,.13)'; c.fill();
+  c.beginPath();
+  for (let i = 0; i < N; i++) i ? c.lineTo(x(i), y(BUB.total[i])) : c.moveTo(x(i), y(BUB.total[i]));
+  c.strokeStyle = '#58a6ff'; c.lineWidth = 1.3; c.stroke();
+  c.beginPath(); c.moveTo(x(di) + 0.5, 3); c.lineTo(x(di) + 0.5, h - 3);
+  c.strokeStyle = '#e6edf3'; c.stroke();
+}
+
+function bubStop(){
+  if (bubRaf){ cancelAnimationFrame(bubRaf); bubRaf = null; }
+  const b = $('#bubplay'); if (b) b.textContent = '▶ play';
+}
+function wireBubbles(){
+  const N = BUB.dates.length;
+  $('#bubplay').addEventListener('click', () => {
+    if (bubRaf){ bubStop(); return; }
+    if (bubT >= N - 1) bubT = 0;
+    $('#bubplay').textContent = '❚❚ pause';
+    const tick = () => {
+      bubT += BUB_SPEEDS[bubSp][0] / 60;
+      if (bubT >= N - 1){ bubT = N - 1; bubStop(); }
+      drawBubbles();
+      if (bubRaf !== null) bubRaf = requestAnimationFrame(tick);
+    };
+    bubRaf = requestAnimationFrame(tick);
+  });
+  $('#bubspeed').addEventListener('click', () => {
+    bubSp = (bubSp + 1) % BUB_SPEEDS.length;
+    $('#bubspeed').textContent = BUB_SPEEDS[bubSp][1];
+  });
+  for (const [id, m] of [['bubabs', 'abs'], ['bubshare', 'share']])
+    $('#' + id).addEventListener('click', () => {
+      bubMode = m;
+      $('#bubabs').setAttribute('aria-pressed', String(m === 'abs'));
+      $('#bubshare').setAttribute('aria-pressed', String(m === 'share'));
+      drawBubbles();
+    });
+  $('#bubseek').addEventListener('input', e => { bubStop(); bubT = +e.target.value; drawBubbles(); });
+  $('#bubstrip').addEventListener('click', e => {
+    const r = e.target.getBoundingClientRect();
+    bubT = Math.max(0, Math.min(N - 1,
+      Math.round((e.clientX - r.left - 6) / (r.width - 12) * (N - 1))));
+    bubStop(); drawBubbles();
+  });
+  const tip = $('#bubtip'), cv = $('#bubcv');
+  cv.addEventListener('mousemove', e => {
+    const r = cv.getBoundingClientRect(), sc = BW / r.width;
+    const mx = (e.clientX - r.left) * sc, my = (e.clientY - r.top) * sc;
+    const di = Math.round(bubT);
+    let hit = null;
+    for (const s of BUB.sectors)
+      if (Math.hypot(mx - s.x, my - s.y) <= bubR(s, bubT)){ hit = s; break; }
+    if (!hit){ tip.style.display = 'none'; return; }
+    const lv = hit.lvl[di], fl = hit.flw[di];
+    tip.innerHTML = `<b>${esc(hit.name)}</b>
+      <div class="m">OI ${bubFmt(lv)} cr · ${(100 * lv / BUB.total[di]).toFixed(2)}% of book</div>
+      <div class="m">day flow <span style="color:${fl >= 0 ? 'var(--up)' : 'var(--down)'}">${fl >= 0 ? '+' : ''}${bubFmt(fl)} cr</span> (${(fl / hit.fsig).toFixed(1)}× its normal day)</div>`;
+    tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 205) + 'px';
+    tip.style.top = Math.min(e.clientY - r.top + 12, r.height - 66) + 'px';
+  });
+  cv.addEventListener('mouseleave', () => tip.style.display = 'none');
+  if (!window.__bubResize){
+    window.__bubResize = true;
+    window.addEventListener('resize', () => { if ($('#bubcv') && BUB) drawBubbles(); });
+  }
 }
 
 async function loadSector(){

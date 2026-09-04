@@ -1082,6 +1082,69 @@ def overview() -> dict:
     return out
 
 
+_BUBBLES_CACHE: dict = {}
+
+
+def oi_bubbles() -> dict:
+    """F2 sector-positioning bubbles: per-sector daily OI level (Rs cr) and
+    new-positioning flow, full F&O universe, for the Flows tab's animation.
+
+    Aggregates ~55k fo_oi rows; memoised on (max date, row count) so the
+    once-per-morning data change pays the ~80ms and every reload after is a
+    dict lookup — the page must render in ms and identically per reload.
+    """
+    conn = connect()
+    key = conn.execute("SELECT MAX(date), COUNT(*) FROM fo_oi").fetchone()
+    key = (key[0], key[1])
+    if _BUBBLES_CACHE.get("key") == key:
+        conn.close()
+        return _BUBBLES_CACHE["val"]
+
+    smap = {r[0]: r[1] for r in
+            conn.execute("SELECT symbol, sector FROM fo_sector_map")}
+    lvl: dict = {}
+    flw: dict = {}
+    for sym, d, oi, chg, close in conn.execute(
+            "SELECT symbol, date, oi_shares, oi_chg, close FROM fo_oi "
+            "ORDER BY date"):
+        sec = smap.get(sym)
+        if not sec:
+            continue  # names that left the F&O universe — tiny tail
+        lvl.setdefault(d, {}).setdefault(sec, 0.0)
+        flw.setdefault(d, {}).setdefault(sec, 0.0)
+        lvl[d][sec] += oi * close / 1e7
+        flw[d][sec] += chg * close / 1e7
+    conn.close()
+    dates = sorted(lvl)
+    if not dates:
+        return {"error": "fo_oi is empty - run fo_bhavcopy.py --map --load"}
+    sectors = sorted({s for d in lvl.values() for s in d},
+                     key=lambda s: -lvl[dates[-1]].get(s, 0))
+    short = {
+        "Financial Services": "Financials", "Capital Goods": "Cap Goods",
+        "Information Technology": "IT", "Metals & Mining": "Metals",
+        "Oil Gas & Consumable Fuels": "Oil & Gas", "Healthcare": "Health",
+        "Automobile and Auto Components": "Autos",
+        "Telecommunication": "Telecom",
+        "Fast Moving Consumer Goods": "FMCG", "Power": "Power",
+        "Consumer Services": "Cons Svcs", "Consumer Durables": "Durables",
+        "Services": "Services", "Construction Materials": "Cement",
+        "Realty": "Realty", "Construction": "Constr", "Chemicals": "Chems",
+        "Textiles": "Textiles",
+    }
+    val = {
+        "dates": dates,
+        "total": [round(sum(lvl[d].values())) for d in dates],
+        "sectors": [{
+            "name": s, "short": short.get(s, s[:9]),
+            "lvl": [round(lvl[d].get(s, 0)) for d in dates],
+            "flw": [round(flw[d].get(s, 0)) for d in dates],
+        } for s in sectors],
+    }
+    _BUBBLES_CACHE.update(key=key, val=val)
+    return val
+
+
 def morning() -> dict:
     """The morning brief: pre-market globals + broker-mail actionables.
 

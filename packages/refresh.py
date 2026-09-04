@@ -94,6 +94,12 @@ STEPS = [
     # second morning double-click is for.
     ("flow series",       ["packages/adapters/flow_series.py", "--load"],     False),
     ("market regime",     ["packages/score/regime.py", "--persist"],          False),
+    # Flows F2 (2026-09-04): the full F&O universe's OI/volume + cash
+    # deliveries, sector-mapped — feeds the Flows tab's bubble tape and
+    # review/sector_flows.py. --map is one request (roster + N500 industries,
+    # hand-set rows survive); --load tops up missing days, T-1 by publication.
+    ("F&O bhavcopy",      ["packages/adapters/fo_bhavcopy.py", "--map",
+                           "--load", "--days", "7"],                          False),
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,
