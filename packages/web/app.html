@@ -2302,12 +2302,41 @@ function w1Panel(w, f){
     An old regime and an unchanged one are indistinguishable without this banner.
     Run the refresh before reading anything below.</div>` : '';
 
-  /* Week to date: partial by construction, so it is a chip, never the lead. */
-  const wtdM = w.wtd ? (RGM[w.wtd.state] || {c:'var(--soft)'}) : null;
-  const wtd = w.wtd ? `<p style="margin:8px 0 0">
-      <span class="pill" style="border-color:${wtdM.c};color:${wtdM.c}">week to date · ${esc(w.wtd.state)}</span>
-      <span style="color:var(--soft);font-size:12.5px"> ${w.wtd.n_sessions} session${w.wtd.n_sessions === 1 ? '' : 's'} thru ${esc(w.wtd.through)} —
-      eq ${w.wtd.z_eq >= 0 ? '+' : ''}${w.wtd.z_eq.toFixed(2)} · bond ${w.wtd.z_bond >= 0 ? '+' : ''}${w.wtd.z_bond.toFixed(2)} · gold ${w.wtd.z_gold >= 0 ? '+' : ''}${w.wtd.z_gold.toFixed(2)} (vs weekly σ, partial)</span></p>` : '';
+  /* The ROLLING week: each session read as its own 5-session weekly window —
+     the daily quantification of the weekly read. Consecutive chips share 4 of
+     5 sessions, so the strip shows a reading EVOLVING, not fresh samples. */
+  const gradeMark = g => g === 'extreme' ? '‼' : g === 'strong' ? '!' : g === 'moderate' ? '·' : '';
+  const roll = w.rolling && w.rolling.length ? w.rolling : null;
+  const rollCur = roll ? roll[roll.length - 1] : null;
+  const rollChips = roll ? roll.map(r => {
+    const mm = RGM[r.state] || {c:'var(--soft)', ab:'?'};
+    return `<span class="d" title="${esc(r.date)}: ${esc(r.state)} [${esc(r.grade)}, max |z| ${r.intensity.toFixed(2)}] — eq ${r.z_eq >= 0 ? '+' : ''}${r.z_eq} · bond ${r.z_bond >= 0 ? '+' : ''}${r.z_bond} · gold ${r.z_gold >= 0 ? '+' : ''}${r.z_gold}"
+      style="color:${mm.c};border-color:${mm.c};${r.grade === 'extreme' ? 'border-width:2px;' : ''}">
+      <span>${mm.ab}${gradeMark(r.grade)}</span><span style="color:var(--faint)">${esc(r.date.slice(8))}</span></span>`;
+  }).join('') : '';
+  const rollM = rollCur ? (RGM[rollCur.state] || {c:'var(--soft)'}) : null;
+  const rolling = rollCur ? `<div style="margin:10px 0 0">
+      <span class="pill" style="border-color:${rollM.c};color:${rollM.c}">rolling week · ${esc(rollCur.state)} · ${esc(rollCur.grade)}</span>
+      <span style="color:var(--soft);font-size:12.5px"> last 5 sessions thru ${esc(rollCur.date)} —
+      eq ${rollCur.z_eq >= 0 ? '+' : ''}${rollCur.z_eq.toFixed(2)} · bond ${rollCur.z_bond >= 0 ? '+' : ''}${rollCur.z_bond.toFixed(2)} · gold ${rollCur.z_gold >= 0 ? '+' : ''}${rollCur.z_gold.toFixed(2)} · max |z| ${rollCur.intensity.toFixed(2)}</span>
+      <div class="f1-strip" style="margin-top:6px">${rollChips}</div>
+      <p class="note" style="margin-top:4px">Each chip = that day's OWN last 5 US
+        sessions on the weekly σ scale, updated daily — no waiting for Friday.
+        Adjacent chips share 4 sessions, so read it as one reading evolving.
+        ! = strong, ‼ = extreme.</p></div>` : '';
+
+  /* The intensity ladder — pooled families, computed live from the store. */
+  const lad = w.ladder || {};
+  const ladCell = c => c && c.mean != null
+    ? `<b style="color:${c.mean > 0 ? 'var(--up)' : 'var(--down)'}">${c.mean > 0 ? '+' : ''}${c.mean.toFixed(2)}%</b> <span style="color:var(--faint)">(${c.hit.toFixed(0)}%, n=${c.n})</span>`
+    : `<span style="color:var(--faint)">thin${c ? ' n=' + c.n : ''}</span>`;
+  const ladder = (lad.up && lad.down) ? `<p class="note" style="margin-top:8px">
+      <b style="color:var(--soft)">Intensity ladder — next Indian week, pooled:</b>
+      up-family ${ladCell(lad.up.moderate)} / ${ladCell(lad.up.strong)} / ${ladCell(lad.up.extreme)}
+      &nbsp;·&nbsp; down-family ${ladCell(lad.down.moderate)} / ${ladCell(lad.down.strong)} / ${ladCell(lad.down.extreme)}
+      &nbsp;(moderate / strong / extreme). Strong is the signal, extreme is the
+      warning: strong benign weeks carry; extreme weeks flip — blow-off on the
+      upside, continuation on the downside.</p>` : '';
 
   /* The spell stays daily-windowed — it IS a ~2-week measure and it is the
      coach's operative gate. */
@@ -2391,14 +2420,16 @@ function w1Panel(w, f){
   <div class="callout" style="border-left-color:${m.c}">
     <div class="callout-head"><span class="t">F1 · Market regime — week on week</span>
       <span class="right">week ${esc(w.week)} · ended ${esc(w.week_end)}</span></div>
-    <div class="f1-state" style="color:${m.c}">${esc(w.state)}</div>
+    <div class="f1-state" style="color:${m.c}">${esc(w.state)}
+      ${w.grade ? `<span class="pill" style="border-color:${m.c};color:${m.c};font-size:12px;vertical-align:middle;margin-left:8px">${esc(w.grade)} · max |z| ${w.intensity.toFixed(2)}</span>` : ''}</div>
     <p style="margin:2px 0 8px">${m.g}${rot}</p>
     <div class="f1-z">${z(w.z_eq, 'S&P')} · ${z(w.z_bond, 'bond px')} · ${z(w.z_gold, 'gold')}${w.rot_z != null ? ' · ' + z(w.rot_z, 'SOX−IGV') : ''} <span style="color:var(--faint)">(weekly moves vs trailing 52-week σ)</span></div>
-    ${wtd}
+    ${rolling}
     ${persLine}
     <p style="margin:10px 0 4px">${spell}</p>
     <h2 style="margin-top:14px">Next week, from ${w.n_observations} prior ${esc(w.state)} weeks</h2>
     <div class="f1-odds">${odds}</div>
+    ${ladder}
     <h2 style="margin-top:14px">India, the week after a ${esc(w.state)} week</h2>
     <div class="scroll"><table><tbody>${india}</tbody></table></div>
     <p class="note">Following ISO week's close-to-close return, computed live from

@@ -370,6 +370,7 @@ def classify_weeks() -> tuple[list[dict], dict, dict]:
         loud = spec["states"][key]
         quiet = max(abs(z_eq), abs(z_bond), abs(z_gold)) < wp["quiet_z"]
         rz = (rot[k] / rsig[k]) if (k in rot and k in rsig) else None
+        inten = max(abs(z_eq), abs(z_bond), abs(z_gold))
         weeks.append({
             "wk": f"{k[0]}-W{k[1]:02d}", "_k": k, "week_end": last_d,
             "state": "quiet" if quiet else loud, "loud_state": loud,
@@ -377,9 +378,105 @@ def classify_weeks() -> tuple[list[dict], dict, dict]:
             "z_eq": round(z_eq, 2), "z_bond": round(z_bond, 2),
             "z_gold": round(z_gold, 2),
             "rot_z": None if rz is None else round(rz, 2),
+            "intensity": round(inten, 2), "grade": _grade(spec, inten),
         })
     return weeks, spec, {"moves": wmv, "sig": sig, "rot": rot, "rsig": rsig,
                          "raw": raw}
+
+
+def _grade(spec: dict, v: float) -> str:
+    it = spec.get("intensity") or {"moderate": 0.75, "strong": 1.5, "extreme": 2.5}
+    if v >= it["extreme"]:
+        return "extreme"
+    if v >= it["strong"]:
+        return "strong"
+    if v >= it["moderate"]:
+        return "moderate"
+    return "faint"
+
+
+def _rolling_weeks(raw: dict, sig: dict, spec: dict, n_days: int) -> list[dict]:
+    """The last n US sessions, each read as a ROLLING week: the move over that
+    series' own last 5 sessions, z'd against the latest completed-week sigma.
+
+    This is the daily quantification of the weekly read — it does not wait for
+    Friday. Two honesty notes baked in: consecutive readings share 4 of 5
+    sessions (they autocorrelate by construction — display, never a backtest
+    sample), and the sigma is the latest completed week's, so a vol regime
+    change inside the current week shows up in the MOVE, not the divisor."""
+    eq, bond, gold = (spec["roles"]["eq"], spec["roles"]["bond_from"],
+                      spec["roles"]["gold"])
+    p = spec["weekly"]
+    last_sig = {}
+    for sid in (eq, bond, gold):
+        if not sig[sid]:
+            return []
+        last_sig[sid] = sig[sid][max(sig[sid], key=lambda k: _wkidx(*k))]
+
+    cals = {sid: sorted(raw[sid]) for sid in (eq, bond, gold)}
+    out = []
+    for d in cals[eq][-n_days:]:
+        zs = {}
+        ok = True
+        for sid in (eq, bond, gold):
+            cal = cals[sid]
+            import bisect as _b
+            i = _b.bisect_right(cal, d) - 1
+            if i < 5:
+                ok = False
+                break
+            c1, c0 = raw[sid][cal[i]], raw[sid][cal[i - 5]]
+            mv = ((c1 - c0) * 100.0 if spec["series"][sid]["kind"] == "yield_pct"
+                  else math.log(c1 / c0))
+            zs[sid] = mv / last_sig[sid]
+        if not ok:
+            continue
+        z_eq, z_bond, z_gold = zs[eq], -zs[bond], zs[gold]
+        key = " ".join("+" if v >= 0 else "-" for v in (z_eq, z_bond, z_gold))
+        loud = spec["states"][key]
+        inten = max(abs(z_eq), abs(z_bond), abs(z_gold))
+        out.append({
+            "date": d,
+            "state": "quiet" if inten < p["quiet_z"] else loud,
+            "loud_state": loud,
+            "z_eq": round(z_eq, 2), "z_bond": round(z_bond, 2),
+            "z_gold": round(z_gold, 2),
+            "intensity": round(inten, 2), "grade": _grade(spec, inten),
+        })
+    return out
+
+
+def _intensity_ladder(weeks: list[dict], spec: dict) -> dict:
+    """Pooled family ladders, LIVE from the store: next Indian week after an
+    up-family / down-family week at each grade. Computed rather than pasted so
+    the numbers age with the data instead of fossilising a backtest."""
+    conn = sqlite3.connect(DB)
+    px = dict(_series(conn, "nifty"))
+    conn.close()
+    if not px:
+        return {}
+    nmv = _weekly_moves(px, "level")
+    by_idx = {_wkidx(*k): v * 100.0 for k, v in nmv.items()}
+    UP = ("risk_on", "reflation", "goldilocks", "liquidity_rally")
+    DOWN = ("risk_off", "degross", "stagflation_scare", "liquidation")
+    out = {}
+    for fam, group in (("up", UP), ("down", DOWN)):
+        fam_out = {}
+        for g in ("moderate", "strong", "extreme"):
+            v = [by_idx.get(_wkidx(*w["_k"]) + 1) for w in weeks
+                 if w["loud_state"] in group and not w["quiet"]
+                 and w.get("grade") == g]
+            v = [x for x in v if x is not None]
+            if len(v) < 10:
+                fam_out[g] = {"n": len(v)}
+                continue
+            m = sum(v) / len(v)
+            sd = math.sqrt(sum((x - m) ** 2 for x in v) / len(v))
+            fam_out[g] = {"n": len(v), "mean": round(m, 2),
+                          "hit": round(100.0 * sum(1 for x in v if x > 0) / len(v), 0),
+                          "t": round(m / (sd / math.sqrt(len(v))), 1) if sd else None}
+        out[fam] = fam_out
+    return out
 
 
 def weekly_transitions(weeks: list[dict]) -> dict:
@@ -487,42 +584,12 @@ def weekly_view() -> dict:
     nxt = sorted(tr["pct"].get(last["state"], {}).items(), key=lambda kv: -kv[1])
     india = _india_next_week(weeks, spec, spec["weekly"]["min_stat_n"])
 
-    # week-to-date: from the last completed week's close to the newest close,
-    # z against the same trailing completed-week sigmas. Marked partial.
-    wtd = None
-    eq, bond, gold = (spec["roles"]["eq"], spec["roles"]["bond_from"],
-                      spec["roles"]["gold"])
-    raw = ctx["raw"]
-    newest = max(raw[eq])
-    if newest > last["week_end"]:
-        def _mv(sid, kind):
-            wc = _weekly_closes(raw[sid])
-            prev = wc.get(last["_k"])
-            cur_d = max(raw[sid])
-            if not prev or cur_d <= prev[0]:
-                return None
-            c0, c1 = prev[1], raw[sid][cur_d]
-            return (c1 - c0) * 100.0 if kind == "yield_pct" else math.log(c1 / c0)
-        parts = {}
-        ok = True
-        for sid in (eq, bond, gold):
-            m = _mv(sid, spec["series"][sid]["kind"])
-            s = ctx["sig"][sid].get(last["_k"])
-            if m is None or not s:
-                ok = False
-                break
-            parts[sid] = m / s
-        if ok:
-            z_eq, z_bond, z_gold = parts[eq], -parts[bond], parts[gold]
-            key = " ".join("+" if v >= 0 else "-"
-                           for v in (z_eq, z_bond, z_gold))
-            loud = spec["states"][key]
-            quiet = max(abs(z_eq), abs(z_bond), abs(z_gold)) < spec["weekly"]["quiet_z"]
-            n_sess = sum(1 for d in raw[eq] if d > last["week_end"])
-            wtd = {"state": "quiet" if quiet else loud, "loud_state": loud,
-                   "z_eq": round(z_eq, 2), "z_bond": round(z_bond, 2),
-                   "z_gold": round(z_gold, 2), "n_sessions": n_sess,
-                   "through": newest}
+    # ROLLING week (PM, 2026-09-04: "show quantification on a daily basis,
+    # rolling window method"): each of the last N sessions read as a full
+    # 5-session weekly window — replaces the old partial week-to-date chip,
+    # which mixed 1-session and 4-session "weeks" into one z scale.
+    rolling = _rolling_weeks(ctx["raw"], ctx["sig"], spec,
+                             spec["weekly"].get("rolling_days", 10))
 
     stale_days = (dt.date.today()
                   - dt.date.fromisoformat(last["week_end"])).days
@@ -532,8 +599,10 @@ def weekly_view() -> dict:
         "state": last["state"], "loud_state": last["loud_state"],
         "z_eq": last["z_eq"], "z_bond": last["z_bond"],
         "z_gold": last["z_gold"], "rot_z": last["rot_z"],
+        "intensity": last["intensity"], "grade": last["grade"],
         "stale_days": stale_days, "stale": stale_days > 10,
-        "wtd": wtd,
+        "rolling": rolling,
+        "ladder": _intensity_ladder(weeks, spec),
         "next": [{"state": s, "pct": round(v, 1),
                   "base": round(tr["base"].get(s, 0.0), 1)} for s, v in nxt],
         "n_observations": sum(tr["counts"].get(last["state"], {}).values()),
@@ -673,14 +742,24 @@ def main() -> int:
         import json as _json
         v = weekly_view()
         print(f"last completed week {v['week']} (ended {v['week_end']}): "
-              f"{v['state']}  eq {v['z_eq']:+.2f} bond {v['z_bond']:+.2f} "
+              f"{v['state']} [{v['grade']}, max |z| {v['intensity']:.2f}]  "
+              f"eq {v['z_eq']:+.2f} bond {v['z_bond']:+.2f} "
               f"gold {v['z_gold']:+.2f}"
               + (f" rot {v['rot_z']:+.2f}" if v.get('rot_z') is not None else ""))
-        if v.get("wtd"):
-            w = v["wtd"]
-            print(f"week to date ({w['n_sessions']} sessions, thru {w['through']}): "
-                  f"{w['state']}  eq {w['z_eq']:+.2f} bond {w['z_bond']:+.2f} "
-                  f"gold {w['z_gold']:+.2f}")
+        print("\nrolling week (each day = its own last 5 sessions):")
+        for r in v.get("rolling", []):
+            print(f"  {r['date']}  {r['state']:17s} [{r['grade']:8s} "
+                  f"{r['intensity']:4.2f}]  eq {r['z_eq']:+.2f}  "
+                  f"bond {r['z_bond']:+.2f}  gold {r['z_gold']:+.2f}")
+        lad = v.get("ladder") or {}
+        if lad:
+            print("\nintensity ladder (pooled, next Indian week):")
+            for fam in ("up", "down"):
+                cells = " · ".join(
+                    f"{g} {c['mean']:+.2f}% ({c['hit']:.0f}%, n={c['n']})"
+                    if c.get("mean") is not None else f"{g} thin(n={c['n']})"
+                    for g, c in lad[fam].items())
+                print(f"  {fam:4s}: {cells}")
         print(f"\nnext week, from {v['n_observations']} prior "
               f"{v['state']} weeks:")
         for x in v["next"][:5]:

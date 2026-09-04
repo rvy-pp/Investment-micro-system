@@ -54,7 +54,7 @@
 # tool has edge today: in quiet regimes the pillars carry; in loud ones flows
 # run the tape over fundamentals.
 
-version: f1-2026-09-03.1   # .1 added india_series + weekly params; daily method unchanged
+version: f1-2026-09-04.1   # added intensity grades + rolling-week params; daily method unchanged
 
 series:
   # ust10y is the yield in PERCENT (verified 2026-09-02: 1.60 in Sep-2016,
@@ -180,3 +180,15 @@ weekly:
   min_obs: 30
   quiet_z: 0.75
   min_stat_n: 15       # fewer forward pairs than this -> the cell is withheld
+  rolling_days: 10     # how many rolling-week readings the tab shows
+
+# Intensity grades on the max joint |z| — one scale for both cadences, and the
+# lower bound IS quiet_z so the grades partition the loud days exactly.
+# What the grade earned (backtests 2026-09-03, recorded in FLOWS.md and the
+# Regime Atlas): STRONG is the signal, EXTREME is the warning — strong benign
+# days/weeks carry India forward; extreme moves flip (blow-off on the upside,
+# continuation on the downside).
+intensity:
+  moderate: 0.75
+  strong: 1.5
+  extreme: 2.5
