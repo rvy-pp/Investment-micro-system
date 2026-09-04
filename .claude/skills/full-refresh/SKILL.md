@@ -204,8 +204,10 @@ flow series              Flows F1 (2026-09-02): S&P 500, SOX, IGV, gold,
                          US close (T-1 from India, by design). Since
                          2026-09-03 also nine NSE indices (Nifty 50, Metal,
                          IT, Auto, Commodities, Infra, Energy, Realty, PSE)
-                         for the weekly panel's sector tape and India
-                         evidence — Yahoo history plus NSE's own EOD API
+                         for the weekly panel's India evidence (the
+                         sector tape rendered for one day and was removed
+                         at the PM's instruction 2026-09-04; the series
+                         keep accruing so a restore is UI-only) — Yahoo history plus NSE's own EOD API
                          for the tail Yahoo stopped carrying (its sectoral
                          daily history froze 2026-07-17; the live quote
                          kept updating, which is why it looked alive)

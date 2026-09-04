@@ -2411,27 +2411,10 @@ function w1Panel(w, f){
       style="color:var(--faint)">${esc(s.wk.slice(5))}</span></span>`;
   }).join('');
 
-  /* Coverage sector tape — the first computed sliver of F2. All rows are
-     anchored to the same completed week; a series with no print that week
-     shows a dash and its own last date in amber, never an older number. */
-  const pn = v => v == null ? '<td class="n flat">—</td>'
-    : `<td class="n ${v > 0 ? 'pos' : v < 0 ? 'neg' : 'neu'}">${v > 0 ? '+' : ''}${v.toFixed(2)}</td>`;
-  const tape = ((w.sector_tape || {}).rows || []).map(r => `
-    <tr><td title="${esc(r.covers)}">${esc(r.label)}${r.sid === 'nifty' ? ' <span class="n" style="color:var(--faint)">benchmark</span>' : ''}</td>
-      ${pn(r.wk_pct)}${r.sid === 'nifty' ? '<td class="n flat">—</td>' : pn(r.rel_pp)}
-      ${pn(r.wtd_pct)}${pn(r.wk4_pct)}
-      <td class="n ${r.stale ? '' : 'flat'}" ${r.stale ? 'style="color:var(--warn)"' : ''}>${esc(r.last_date)}</td></tr>`).join('');
-  const tapeBlock = tape ? `
-    <h2 style="margin-top:14px">Coverage sector tape · week ${esc((w.sector_tape || {}).week || '')}</h2>
-    <div class="scroll"><table>
-      <thead><tr><th>index</th><th class="n">wk %</th><th class="n">vs Nifty pp</th>
-        <th class="n">wtd %</th><th class="n">4wk %</th><th class="n">thru</th></tr></thead>
-      <tbody>${tape}</tbody></table></div>
-    <p class="note">Same completed week for every row; hover an index for which
-      coverage sector it reads on. Cement has no sectoral index — Nifty
-      Commodities carries the cement names and is the closest listed read.
-      Sorted by the week's move. Sources: Yahoo history + NSE's own EOD API
-      for the tail Yahoo stopped carrying (2026-07-17).</p>` : '';
+  /* The coverage sector tape rendered here 2026-09-03 .. 2026-09-04 and was
+     removed at the PM's instruction ("what use is the sector tape? Remove
+     it"). The nine index series keep accruing in flow_series — restoring the
+     view is a UI change, not a data recovery. */
 
   return `${stale}
   <div class="callout" style="border-left-color:${m.c}">
@@ -2453,7 +2436,6 @@ function w1Panel(w, f){
       the store over ${w.n_weeks} classified weeks since ${esc(w.first)} — empirical
       counts, not a model. Cells failing |t| ≥ 2 are context, not signal.
       F1 never sets direction and never enters scoring.</p>
-    ${tapeBlock}
     <div class="f1-strip">${strip}</div>
     <p class="note">Last 52 completed weeks, newest right. Method
       <code>specs/flows.yaml</code> (${esc(w.spec_version)}); evidence:
