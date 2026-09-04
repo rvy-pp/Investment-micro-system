@@ -821,3 +821,57 @@ CREATE TABLE IF NOT EXISTS market_regime (
     CHECK (spell_quiet IN (0, 1) OR spell_quiet IS NULL),
     CHECK (flow_driver IN ('sp500','sox','rot') OR flow_driver IS NULL)
 ) STRICT;
+
+-- ---------------------------------------------------------------------------
+-- FLOWS F2: sector positioning from the FULL F&O universe (2026-09-04).
+--
+-- The PM's methodology: all ~210 F&O underlyings bucketed by sector; watch
+-- how summed OI behaves daily and how it TRAVELS between sectors; volume the
+-- same way; then the cash market's delivery percentages — who is taking
+-- actual delivery, and why.
+--
+-- UNITS ARE THE TRAP AND ARE FIXED HERE ONCE. In the NSE F&O bhavcopy,
+-- OpnIntrst is in UNDERLYING SHARES while TtlTradgVol is in CONTRACTS and
+-- TtlTrfVal in RUPEES (verified 2026-09-04: ABCAPITAL lot value ~12.3L
+-- reconciles TtlTrfVal/TtlTradgVol). Cross-stock aggregation is therefore
+-- done in RUPEE VALUE (oi x close, and TtlTrfVal directly) — summing shares
+-- would let one cheap large-float name swamp a sector.
+--
+-- No raw zips are archived locally, deliberately: the NSE archive host IS the
+-- immutable record (dated, re-fetchable years back), and 250 days x ~2MB of
+-- zips in data/ would dwarf everything else for no provenance gain.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS fo_oi (
+    symbol       TEXT NOT NULL,             -- NSE ticker, the bhavcopy's TckrSymb
+    date         TEXT NOT NULL,
+    oi_shares    REAL NOT NULL,             -- sum of OpnIntrst across all future expiries
+    oi_chg       REAL NOT NULL,             -- sum of ChngInOpnIntrst
+    vol_contracts REAL NOT NULL,            -- sum of TtlTradgVol
+    turnover     REAL NOT NULL,             -- sum of TtlTrfVal, rupees
+    close        REAL NOT NULL,             -- front (max-volume) expiry close
+    n_expiries   INTEGER NOT NULL,
+    PRIMARY KEY (symbol, date),
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+) STRICT;
+
+CREATE TABLE IF NOT EXISTS deliveries (
+    symbol       TEXT NOT NULL,
+    date         TEXT NOT NULL,
+    ttl_qty      REAL NOT NULL,             -- traded quantity, shares
+    deliv_qty    REAL NOT NULL,             -- delivered quantity, shares
+    deliv_per    REAL NOT NULL,             -- NSE's own percentage
+    turnover_lacs REAL NOT NULL,
+    close        REAL NOT NULL,
+    PRIMARY KEY (symbol, date),
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+) STRICT;
+
+-- Symbol -> sector. Source of truth is the Nifty 500 list's Industry column
+-- (20 NSE macro sectors); F&O names outside the N500 land as 'unmapped'
+-- rather than being guessed. Rebuilt by the adapter's --map, not hand-kept.
+CREATE TABLE IF NOT EXISTS fo_sector_map (
+    symbol       TEXT PRIMARY KEY,
+    sector       TEXT NOT NULL,
+    source       TEXT NOT NULL,             -- 'nifty500' | 'manual'
+    updated_at   TEXT NOT NULL
+) STRICT;
