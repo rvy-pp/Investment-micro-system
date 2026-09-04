@@ -2325,18 +2325,30 @@ function w1Panel(w, f){
         Adjacent chips share 4 sessions, so read it as one reading evolving.
         ! = strong, ‼ = extreme.</p></div>` : '';
 
-  /* The intensity ladder — pooled families, computed live from the store. */
+  /* The intensity ladder — pared to the row that applies to THIS week: means
+     only, the current grade highlighted, hit rate and sample size in hover.
+     Nine cells x three numbers read as a table pretending to be a sentence
+     (PM, 2026-09-04: "why are there so many numbers"). */
   const lad = w.ladder || {};
-  const ladCell = c => c && c.mean != null
-    ? `<b style="color:${c.mean > 0 ? 'var(--up)' : 'var(--down)'}">${c.mean > 0 ? '+' : ''}${c.mean.toFixed(2)}%</b> <span style="color:var(--faint)">(${c.hit.toFixed(0)}%, n=${c.n})</span>`
-    : `<span style="color:var(--faint)">thin${c ? ' n=' + c.n : ''}</span>`;
-  const ladder = (lad.up && lad.down) ? `<p class="note" style="margin-top:8px">
-      <b style="color:var(--soft)">Intensity ladder — next Indian week, pooled:</b>
-      up-family ${ladCell(lad.up.moderate)} / ${ladCell(lad.up.strong)} / ${ladCell(lad.up.extreme)}
-      &nbsp;·&nbsp; down-family ${ladCell(lad.down.moderate)} / ${ladCell(lad.down.strong)} / ${ladCell(lad.down.extreme)}
-      &nbsp;(moderate / strong / extreme). Strong is the signal, extreme is the
-      warning: strong benign weeks carry; extreme weeks flip — blow-off on the
-      upside, continuation on the downside.</p>` : '';
+  const UPFAM = ['risk_on', 'reflation', 'goldilocks', 'liquidity_rally'];
+  const fam = UPFAM.includes(w.loud_state) ? 'up' : 'down';
+  const famLabel = fam === 'up' ? 'good-tape (up-family)' : 'bad-tape (down-family)';
+  const ladCell = (c, g) => {
+    const cur = g === w.grade;
+    if (!c || c.mean == null)
+      return `<span style="color:var(--faint)">${g}: thin data</span>`;
+    return `<span title="closed up ${c.hit.toFixed(0)}% of the time, over ${c.n} weeks"
+      style="${cur ? 'outline:1px solid var(--rule);border-radius:4px;padding:1px 6px;' : ''}">
+      ${g}: <b style="color:${c.mean > 0 ? 'var(--up)' : 'var(--down)'}">${c.mean > 0 ? '+' : ''}${c.mean.toFixed(2)}%</b>${cur ? ' ← this week' : ''}</span>`;
+  };
+  const ladder = lad[fam] ? `<p class="note" style="margin-top:8px">
+      <b style="color:var(--soft)">After a ${famLabel} week, the next Indian week
+      has averaged</b> &nbsp;
+      ${ladCell(lad[fam].moderate, 'moderate')} &nbsp;·&nbsp;
+      ${ladCell(lad[fam].strong, 'strong')} &nbsp;·&nbsp;
+      ${ladCell(lad[fam].extreme, 'extreme')}
+      &nbsp;— hover a cell for how often it worked and on how many weeks.
+      Strong is the signal, extreme is the warning.</p>` : '';
 
   /* The spell stays daily-windowed — it IS a ~2-week measure and it is the
      coach's operative gate. */
