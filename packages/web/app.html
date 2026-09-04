@@ -2377,14 +2377,25 @@ function w1Panel(w, f){
        weeks cluster: another one follows at <b>${pers.toFixed(1)}×</b> the base rate.
        Stress arrives in runs.</p>` : '';
 
-  const odds = (w.next || []).slice(0, 5).map(x => {
+  /* Top 5 of 9 next-states; the cap must not read as a full distribution
+     (PM 2026-09-04 noticed the rows summing to ~80%) — the remainder line
+     names what it hides. Lift = pct/base: 1.0x means the completed week
+     taught you nothing about that state following. */
+  const shown = (w.next || []).slice(0, 5);
+  const restPct = 100 - shown.reduce((a, x) => a + x.pct, 0);
+  const restN = (w.next || []).length - shown.length;
+  const odds = shown.map(x => {
     const mm = RGM[x.state] || {c:'var(--soft)'};
     const lift = x.base ? x.pct / x.base : null;
     return `<div class="row"><span class="lbl" style="color:${mm.c}">${esc(x.state)}</span>
       <span class="track"><span class="base" style="left:${Math.min(x.base * 2.2, 100)}%"></span>
         <span class="bar" style="width:${Math.min(x.pct * 2.2, 100)}%;border-right-color:${mm.c}"></span></span>
-      <span class="num">${x.pct.toFixed(1)}% <span style="color:var(--faint)">(base ${x.base.toFixed(1)}${lift ? ', ' + lift.toFixed(2) + 'x' : ''})</span></span></div>`;
-  }).join('');
+      <span class="num">${x.pct.toFixed(1)}% <span style="color:var(--faint)"
+        title="unconditionally, ${esc(x.state)} is ${x.base.toFixed(1)}% of all weeks; ${lift ? lift.toFixed(2) + 'x means it is that many times as likely as normal after a ' + esc(w.state) + ' week' : ''}">(base ${x.base.toFixed(1)}${lift ? ', ' + lift.toFixed(2) + 'x' : ''})</span></span></div>`;
+  }).join('') + (restN > 0 && restPct > 0.05 ? `<div class="row">
+      <span class="lbl" style="color:var(--faint)">${restN} other states</span>
+      <span class="track"><span class="bar" style="width:${Math.min(restPct * 2.2, 100)}%;background:var(--sunken);border-right-color:var(--faint)"></span></span>
+      <span class="num" style="color:var(--faint)">${restPct.toFixed(1)}% combined</span></div>` : '');
 
   /* India next-week evidence for THIS state, live from flow_series. A cell
      with too few pairs is withheld by the API — render the withholding. */
