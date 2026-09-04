@@ -1,0 +1,84 @@
+{
+  "date": "2026-09-01",
+  "generated_at": "2026-09-01T21:30:00+05:30",
+  "mail": {
+    "window": "24h to 21:29 IST",
+    "n_scanned": 116,
+    "sectors": [
+      {
+        "sector": "Non-ferrous (aluminium/zinc)",
+        "bullets": [
+          {"text": "HZL raised domestic zinc and lead offers on firm sentiment — near-term realisation tailwind for Hindustan Zinc and Vedanta's zinc earnings.", "source": "Kotak — Basic materials - daily news and prices", "received": "09:09"},
+          {"text": "Hindalco is the sole metals name in Kotak's September momentum basket — expect quant flow support into the month.", "source": "Kotak — Quant: Momentum leads", "received": "08:54"},
+          {"text": "Today 15:00: Vedanta Group (Metals) IR meeting at Elara India Dialogue — set questions on durability of the zinc offer hikes.", "source": "Elara — Schedule at Ashwamedh, Elara India Dialogue 2026 Sep 01-03", "received": "00:12"}
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {"text": "Coking coal futures +30-33% since 3-Aug lows; SAIL's +20% rally (vs Nifty Metal +2.5%) exposed given highest coke rate; JPM prefers JSW Steel.", "source": "JP Morgan — India Steel: Cost pressures persist; reiterate being selective; preferred pick: JSW Steel", "received": "10:10"},
+          {"text": "HRC up Rs2K/t to ~Rs60K/t but only 2% below import parity — upside capped; spread recovery seen post-festive (mid-to-end Nov).", "source": "JP Morgan — India Steel: Cost pressures persist", "received": "10:10"},
+          {"text": "NMDC cut lumps/fines Rs200/t to Rs5,250/Rs4,500 wef Aug-26 — iron-ore relief partly offsets coking-coal squeeze for non-integrated mills.", "source": "Nomura — India steel - Steel weekly trends (week ended 28 August 2026)", "received": "10:20 (31 Aug)"}
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {"text": "UltraTech commissioned 1.1mn-km Bharuch wires & cables capacity (BSE filing 31-Aug), on guided timeline — read-through negative for C&W incumbents, not cement-thesis-moving.", "source": "BNP Paribas — BNPP INDIA QUICK NOTES: UTCEM commissions C&W facility", "received": "09:08"}
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {"text": "NMDC cut lump and fines prices Rs200/t each effective Aug-26, to Rs5,250/t and Rs4,500/t — iron ore pricing turning softer.", "source": "Nomura — India steel - Steel weekly trends (week ended 28 August 2026)", "received": "10:20 (31 Aug)"},
+          {"text": "Coal India Aug dispatches +5.5% yoy against production -5.7% yoy — inventory drawdown keeping offtake intact but flagging supply softness.", "source": "Kotak — Coal India | Dispatch volumes increased 5.5% yoy in August 2026", "received": "18:38"},
+          {"text": "Emkay ADD Coal India, TP Rs475 vs CMP Rs402 (18% upside), offtake momentum intact despite August production decline.", "source": "Emkay — Coal India: Offtake momentum intact; ADD; Target: Rs475", "received": "21:05"}
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {"text": "Rs1.27 lakh crore Semicon 2.0 notified; Kaynes among three units already producing (with Micron, CG Power), two more operational by year-end.", "source": "CLSA — India tech hardware: India Semiconductor Mission 2.0", "received": "21:33 (31 Aug)"},
+          {"text": "Dixon (OW) export upside Rs180-200bn (15% to FY29E revenue, not in base case) via MPMS anchor clients; Syrma 1Q exports +62% YY, guidance raised to 25-33%.", "source": "JPMorgan — India EMS: Export growth momentum sustained", "received": "21:01"},
+          {"text": "JPM raises Nan Ya PT to NT$350 on PTFE CCL/copper-foil tailwinds — flags rising CCL input costs for PCB-exposed Kaynes, Syrma, Avalon.", "source": "JPMorgan — Nan Ya Plastics Corp: PTFE CCL, raise PT to NT$350 (+3 more in Outlook)", "received": "20:25"}
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {"text": "Cognizant-CrowdStrike industrial cybersecurity expansion signals Indian IT pushing into higher-margin security services while discretionary demand stays soft.", "source": "Kotak (Kawaljeet Saluja) — Technology News Wrap September 01, 2026", "received": "07:53"},
+          {"text": "BofA IT Forum opens today with TCS AI leadership and TechM COO — near-term catalyst for AI-monetization commentary on large-caps.", "source": "BofA — India IT Insights Virtual Forum", "received": "08:29"},
+          {"text": "GS's sharply raised humanoid-robot forecasts extend the AI capex story beyond datacenters — incremental tailwind for ER&D and embedded-software names.", "source": "Goldman Sachs — AI Series: Framing the Forward Progress of Humanoids", "received": "05:43"}
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {"text": "7.8% 1QFY27 GDP smashed 6.9% prior, but UBS sees inflation reviving FY27 hike risk — capex-led beat supports cement/steel volumes, not multiple expansion.", "source": "UBS — India's GDP growth remains resilient at 7.8% YoY in June quarter", "received": "09:09"},
+          {"text": "USD 844mn FII cash+futures selling with DIIs absent leaves Nifty's 24000 test unsupported — Hindalco's Sep momentum-basket entry offers relative shelter for metals longs.", "source": "Kotak — Quant: Momentum leads; GDP: Resilient; Liquidity: Tightening", "received": "08:54"},
+          {"text": "Into 4Q, gold and copper have already broken major multi-year bases — supports staying long Hindalco/copper proxies through any Nifty-support wobble.", "source": "CLSA — Price Action (Wind up for 4Q) (+4 more in Outlook)", "received": "10:26"}
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {"text": "CLSA sees Power Grid winning Rs325bn of projects (22% of backlog) — a concrete order-inflow catalyst underpinning the O-PF, TP Rs324.", "source": "CLSA — Power Grid (PWGR IB): Fighting back", "received": "07:29"},
+          {"text": "Ambit initiates AFCONS at Sell, TP Rs202 (29% downside), on execution bottlenecks and parent leverage — fresh short candidate in crowded infra longs.", "source": "Ambit — AFCONS Infra (Initiation: Sell)", "received": "14:57"},
+          {"text": "ICICI frames IndiGo's crude-driven correction as an entry (BUY, TP 6,020, 15% upside) — contrarian long if crude stabilizes.", "source": "ICICI Securities — Morning Note 1st September'26 (+6 more in Outlook)", "received": "08:56"}
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "SOX fell 1.30% to 11,385 as the global bond selloff lifted yields (AMD -2.01%, Nvidia -0.47%) — rate-driven, not AI-fundamental, weakness.", "source": "24/7 Wall St."},
+      {"text": "Broadcom held flat (-0.16%) into this week's earnings — the key custom-ASIC AI readthrough, with sell-side previews already staking bold verdicts.", "source": "Morgan Stanley / Zacks previews"},
+      {"text": "BofA flags Nvidia validating MediaTek's ASIC potential and launches a China AI Model Monitor — custom silicon and China AI coverage both broadening.", "source": "BofA Asia Daily (Sheryl Fok)"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

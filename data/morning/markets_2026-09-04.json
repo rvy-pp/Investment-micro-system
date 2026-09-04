@@ -1,0 +1,165 @@
+{
+ "date": "2026-09-04",
+ "fetched_at": "2026-09-04T21:01:41",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-04",
+    "close": 7707.36,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.52
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-04",
+    "close": 26456.76,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.48
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-04",
+    "close": 53307.85,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.7
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-04",
+    "close": 11670.57,
+    "prev_date": "2026-09-03",
+    "chg_pct": 2.81
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-04",
+    "close": 231.56,
+    "prev_date": "2026-09-03",
+    "chg_pct": 1.36
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-04",
+    "close": 469.34,
+    "prev_date": "2026-09-03",
+    "chg_pct": 2.89
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-04",
+    "close": 425.18,
+    "prev_date": "2026-09-03",
+    "chg_pct": 1.96
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-04",
+    "close": 355.61,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.43
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-04",
+    "close": 188.05,
+    "prev_date": "2026-09-03",
+    "chg_pct": -2.63
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-04",
+    "close": 62.66,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.06
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "The Business Accenture Now Mentions In Passing",
+    "publisher": "Trefis",
+    "when": "2026-09-03 22:16Z",
+    "link": "https://finance.yahoo.com/m/d1c1048d-1272-3f0f-ae5c-ffeeec93c9ad/the-business-accenture-now.html"
+   },
+   {
+    "title": "Accenture (ACN) Rises Higher Than Market: Key Facts",
+    "publisher": "Zacks",
+    "when": "2026-09-03 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-rises-higher-market-215001547.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Looks Stretched Following Its 39% Five Year Slump",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-03 08:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-looks-stretched-081844373.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   },
+   {
+    "title": "Cognizant, CrowdStrike Expand Cybersecurity Partnership for Industrial Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-08-31 12:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-crowdstrike-expand-cybersecurity-partnership-124913928.html"
+   },
+   {
+    "title": "Cognizant and CrowdStrike Protect Critical Operations Across Converged IT and OT Environments",
+    "publisher": "PR Newswire",
+    "when": "2026-08-31 12:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-crowdstrike-protect-critical-operations-122000312.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Intel Climbs 4%, AMD Rises 3%, NVIDIA Ticks Up as Chip Stocks Shrug Off Rising Rate Hike Odds",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-04 15:12Z",
+    "link": "https://finance.yahoo.com/m/10a03a61-fa9b-3b89-bb8e-943a4b8c1402/intel-climbs-4%25%2C-amd-rises.html"
+   },
+   {
+    "title": "Cathie Wood Cuts AMD and Puts $53 Million Into Nvidia",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-04 13:34Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cathie-wood-cuts-amd-puts-133412523.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 24000.0,
+  "chg_pct": -0.04,
+  "stamp": "04-Sep-2026 21:01:43",
+  "expiry": "29-Sep-2026",
+  "volume": 45740,
+  "nifty_close": {
+   "close": 23897.7,
+   "stamp": "04-Sep-2026 15:30"
+  },
+  "gap_pts": 102.3,
+  "gap_pct": 0.43
+ }
+}

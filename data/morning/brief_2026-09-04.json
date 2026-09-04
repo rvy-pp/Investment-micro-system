@@ -1,0 +1,187 @@
+{
+  "date": "2026-09-04",
+  "generated_at": "2026-09-04T20:56:00+05:30",
+  "mail": {
+    "window": "24h to 20:54 IST",
+    "n_scanned": 109,
+    "sectors": [
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "India HRC +4% WoW to Rs61.8K/t (+7% since July-end); spot spreads expanded ~5%, now up ~36% from mid-December lows.",
+            "source": "Morgan Stanley — PULSE: India Steel Tracker",
+            "received": "11:43 IST"
+          },
+          {
+            "text": "Australian HCC met coal +3% WoW to ~US$278/t (+28% MoM) on Shanxi disruptions; domestic HRC now only ~1% below import parity.",
+            "source": "Morgan Stanley — PULSE: India Steel Tracker",
+            "received": "11:43 IST"
+          },
+          {
+            "text": "GS cut 2027E China steel earnings 14-41% on lower unit profit; margins seen staying depressed through 2H26 with limited supply discipline.",
+            "source": "Goldman Sachs — GS Sales Note: China commodity 1H26 earnings reviews (Trina Chen)",
+            "received": "07:07 IST"
+          }
+        ]
+      },
+      {
+        "sector": "Non-ferrous (aluminium/zinc)",
+        "bullets": [
+          {
+            "text": "Copper's price spike is pushing Indian appliance makers to substitute aluminium in entry-level ACs, refrigerators and fans, with localisation accelerating.",
+            "source": "Nomura — India Consumer Durables and EMS daily",
+            "received": "09:14 IST"
+          },
+          {
+            "text": "China 1H26 aluminium margins rose on elevated prices though copper/aluminium results mostly missed; GS keeps Sell on Chalco, Buy on Zijin/CMOC.",
+            "source": "Goldman Sachs — GS Sales Note: China commodity 1H26 earnings reviews (Trina Chen)",
+            "received": "07:07 IST"
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "UltraTech launched 'Ultravolt' W&C on 3 Sep with a Rs1,800cr bet, debuting No.2 in wires by capacity, targeting top-2 within 3-5 years.",
+            "source": "Kotak — UltraTech W&C launch: unveils ambitious target to be within top-2 players in 3-5 years",
+            "received": "22:10 IST (3 Sep)"
+          },
+          {
+            "text": "BofA keeps UltraTech BUY, PO Rs13,400: Ultravolt launch ahead of plan, with 2HFY27 cost trajectory the key driver for the stock.",
+            "source": "BofA — UTCEM: 'Ultravolt' launch ahead of plan; BUY",
+            "received": "09:57 IST"
+          },
+          {
+            "text": "JPM reads UTCEM's launch as a sentiment negative for Polycab but sees meaningful business impact as unlikely.",
+            "source": "JPMorgan — Polycab: UTCEM's official launch a sentiment negative (+4 more in Outlook)",
+            "received": "06:10 IST"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "China CFR iron ore (61% Fe) +1% WoW to ~US$99/t; NMDC domestic prices at ~52% discount to parity versus ~56% 5-year average.",
+            "source": "Morgan Stanley — PULSE: India Steel Tracker",
+            "received": "11:43 IST"
+          },
+          {
+            "text": "GS post-1H26 reshuffle: Zhaojin cut to Neutral, GEM to Sell; Ganfeng-H and Huayou upgraded to Neutral; coal still favoured on solid demand.",
+            "source": "Goldman Sachs — GS Sales Note: China commodity 1H26 earnings reviews (Trina Chen)",
+            "received": "07:07 IST"
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "Nomura raises Avalon TP to Rs2,767 (23% upside, Buy) on the Zollner JV, adding EU healthcare/T&M verticals and a ~21% FY29F EPS boost.",
+            "source": "Nomura — Avalon Technologies: Zollner JV to expand into advanced EMS in EU",
+            "received": "09:14 IST"
+          },
+          {
+            "text": "Zollner (~US$3.7bn revenue; supplies BMW, Bosch, Teradyne) holds 51% initially, Avalon can take majority after three years; total investment ~US$30-50mn.",
+            "source": "Avendus Spark — To Put it Briefly: Avalon announces manufacturing JV with Zollner Elektronik AG",
+            "received": "14:14 IST"
+          },
+          {
+            "text": "Commodity squeeze bites EMS/durables: PG Electroplast's cost to build 500k ACs is up ~34% YoY (Rs700cr to Rs940cr), margins now single-digit.",
+            "source": "Nomura — India Consumer Durables and EMS daily",
+            "received": "09:14 IST"
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "CLSA lifts Nvidia TP to US$425 from US$360, FY27-29 EPS up 9-19% on Rubin pricing; ASIC threat called overblown, sovereign AI now 20% of revenue.",
+            "source": "CLSA (Bhavtosh Vajpayee) — Nvidia: The biggest questions",
+            "received": "02:50 IST"
+          },
+          {
+            "text": "Aug-26 India IT deal wins stayed muted m-m; Europe strong, BFSI zero announcements; Infosys led with 3 wins, TCS 2 plus Porsche's MHP acquisition.",
+            "source": "BNP Paribas (Kumar Rakesh) — India Quick Notes: IT Services deal wins muted",
+            "received": "08:40 IST"
+          },
+          {
+            "text": "Persistent shares fell on board-approved $1.25bn fundraise; Hexaware names Vivek Jetley CEO-designate; TCS wins METRO AG and stc Bahrain deals.",
+            "source": "Kotak — Technology News Wrap Sep 04 (+4 more in Outlook)",
+            "received": "11:58 IST"
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "Rs10tn (4% of NDTL) liquidity surplus from $127bn FCNR(B) inflows; RBI expected to absorb Rs7-8tn via flexible VRRRs, sell/buy swaps, CRR hikes, OMO sales.",
+            "source": "CLSA (Nikhil Gupta) — India Economics: Problem of plenty",
+            "received": "14:25 IST"
+          },
+          {
+            "text": "Multi-quarter growth upcycle call: overweight Financials, Consumer Discretionary, Industrials; underweight Energy, Materials, Utilities, Healthcare; de-rating judged cyclical, IT services a dark horse on AI.",
+            "source": "Morgan Stanley (Ridham Desai) — India Equity Strategy Playbook: A Long Way Up",
+            "received": "16:20 IST"
+          },
+          {
+            "text": "$3.2bn August FII inflows (highest since Sep-2024) masked $1.4bn primary-market skew; FIIs bypassing Financials/IT (44% of Nifty), Nifty still 8.2% below January highs.",
+            "source": "BNPP — Weekly Sales Thoughts: FII Inflows vs Index Divergence (+6 more in Outlook)",
+            "received": "12:46 IST"
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "Kotak upgrades NTPC to ADD, FV Rs355 vs CMP Rs331, on inexpensive valuations.",
+            "source": "Kotak — NTPC: Upgrade to ADD on inexpensive valuations",
+            "received": "00:25 IST"
+          },
+          {
+            "text": "United Breweries investor day splits the street — Spark BUY TP Rs1,610, Elara Accumulate TP Rs1,500, Kotak SELL FV Rs1,275 — on double-digit growth, low-teen margin guidance.",
+            "source": "Avendus Spark / Elara / Kotak — United Breweries analyst-meet takeaways (3 mails)",
+            "received": "06:47-09:41 IST"
+          },
+          {
+            "text": "India CV volumes +25% YTD and FY27 seen +10-12%; BofA says Buy Ashok Leyland and Tata Motors CV at sub-20x PE.",
+            "source": "BofA — India CVs: Macro fears, Micro beat. Buy AL & TMCV (+8 more in Outlook)",
+            "received": "08:01 IST"
+          }
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "Semis rallied against the tape: SOX +3.3% (AMD +3.2%, TSMC ADR +2.4%, Nvidia +1.7%) while the S&P 500 fell 0.4%.",
+        "source": "Yahoo Finance closes via morning_markets.py (markets_2026-09-04.json)"
+      },
+      {
+        "text": "CLSA raises Nvidia FY27-29 EPS 9-19% and TP to US$425 from US$360, calling the ASIC threat overblown; sovereign AI now 20% of revenue.",
+        "source": "CLSA broker mail — Nvidia (NVDA US): The biggest questions"
+      },
+      {
+        "text": "US enterprise AI adoption rose to 22.4% in August per GS tracker; GS macro desk separately argues AI capex is now driving US rates higher.",
+        "source": "Goldman Sachs broker mails — AI Adoption Tracker Aug-26; The Macro Call"
+      }
+    ],
+    "bellwethers": [
+      {
+        "name": "Accenture",
+        "reason": null
+      },
+      {
+        "name": "Cognizant",
+        "reason": null
+      }
+    ]
+  }
+}

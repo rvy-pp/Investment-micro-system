@@ -1,0 +1,221 @@
+{
+ "date": "2026-09-01",
+ "fetched_at": "2026-09-01T21:30:58",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-01",
+    "close": 7660.05,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.34
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-01",
+    "close": 26240.81,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.49
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-01",
+    "close": 52975.65,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.4
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-01",
+    "close": 11356.25,
+    "prev_date": "2026-08-31",
+    "chg_pct": -1.55
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-01",
+    "close": 220.13,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-01",
+    "close": 459.77,
+    "prev_date": "2026-08-31",
+    "chg_pct": -2.33
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-01",
+    "close": 415.52,
+    "prev_date": "2026-08-31",
+    "chg_pct": 0.05
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-01",
+    "close": 368.69,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.45
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-01",
+    "close": 188.12,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.86
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-01",
+    "close": 64.12,
+    "prev_date": "2026-08-31",
+    "chg_pct": -0.71
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Obtains EU Approval for VTS Acquisition",
+    "publisher": "MT Newswires",
+    "when": "2026-09-01 10:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-obtains-eu-approval-vts-103054771.html"
+   },
+   {
+    "title": "Accenture Stock: Is ACN Underperforming the Technology Sector?",
+    "publisher": "Barchart",
+    "when": "2026-08-31 14:45Z",
+    "link": "https://finance.yahoo.com/m/3b3bd903-5688-3225-8cec-79afa1e12667/accenture-stock%3A-is-acn.html"
+   },
+   {
+    "title": "The Smaller Customers Accenture's Stock Now Needs",
+    "publisher": "Trefis",
+    "when": "2026-08-28 19:30Z",
+    "link": "https://finance.yahoo.com/m/0ac568d4-dd1c-3073-8b3c-d7b0d062978f/the-smaller-customers.html"
+   },
+   {
+    "title": "Accenture expands Edge for mid-market firms with COMWARE deal",
+    "publisher": "Verdict",
+    "when": "2026-08-28 07:26Z",
+    "link": "https://finance.yahoo.com/m/05e6a288-85a7-32e7-8ee5-9ac1b9a1e70a/accenture-expands-edge-for.html"
+   },
+   {
+    "title": "Accenture Stock And 2 Dividend Compounders for Passive Income",
+    "publisher": "Simply Wall St.",
+    "when": "2026-08-28 04:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-2-dividend-compounders-043428947.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   },
+   {
+    "title": "Cognizant, CrowdStrike Expand Cybersecurity Partnership for Industrial Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-08-31 12:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-crowdstrike-expand-cybersecurity-partnership-124913928.html"
+   },
+   {
+    "title": "Cognizant and CrowdStrike Protect Critical Operations Across Converged IT and OT Environments",
+    "publisher": "PR Newswire",
+    "when": "2026-08-31 12:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-crowdstrike-protect-critical-operations-122000312.html"
+   },
+   {
+    "title": "Why Is Cognizant (CTSH) Up 18.3% Since Last Earnings Report?",
+    "publisher": "Zacks",
+    "when": "2026-08-28 15:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-cognizant-ctsh-18-3-153021845.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "David Booth Says Picking AI Winners Can Backfire: What About Nvidia?",
+    "publisher": "Benzinga Prediction Markets",
+    "when": "2026-09-01 15:57Z",
+    "link": "https://finance.yahoo.com/m/6c8a1328-9ba5-31ab-aaf5-79aa867cd40a/david-booth-says-picking-ai.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Morgan Stanley delivers bold pre-earnings verdict on Broadcom",
+    "publisher": "TheStreet",
+    "when": "2026-09-01 15:12Z",
+    "link": "https://finance.yahoo.com/m/4b3ab512-9741-3205-8400-c3285e01a9d3/morgan-stanley-delivers-bold.html"
+   },
+   {
+    "title": "Broadcom Set to Report Q3 Earnings: Buy, Sell or Hold the Stock?",
+    "publisher": "Zacks",
+    "when": "2026-09-01 15:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-set-report-q3-earnings-150200149.html"
+   },
+   {
+    "title": "The Zacks Analyst Blog Highlights Broadcom, Nvidia, Palantir, Fortinet and Quanta Services",
+    "publisher": "Zacks",
+    "when": "2026-09-01 13:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-analyst-blog-highlights-broadcom-130400276.html"
+   },
+   {
+    "title": "Broadcom Has Floundered For Several Months: A Respected Wall Street Team Expects 80% Returns Ahead",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-01 12:53Z",
+    "link": "https://finance.yahoo.com/m/c0a378e7-888c-386f-ae81-3e7995fe05a9/broadcom-has-floundered-for.html"
+   },
+   {
+    "title": "Custom Silicon Kings: When to Choose Broadcom and When to Choose Marvell Technology",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-01 11:41Z",
+    "link": "https://finance.yahoo.com/m/f0ee7f7d-73f0-384f-8a72-0bb291399af8/custom-silicon-kings%3A-when-to.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD vs. Alphabet: One Stock Could Be the Surprise AI Winner",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-01 15:30Z",
+    "link": "https://finance.yahoo.com/m/9eaedf23-2bab-3a99-804f-8d159dfe8c00/amd-vs.-alphabet%3A-one-stock.html"
+   },
+   {
+    "title": "Semiconductor Stocks Slide as Global Bond Selloff Lifts Yields: Intel Drops 3%, NVIDIA and AMD Slip",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-01 13:15Z",
+    "link": "https://finance.yahoo.com/m/fe371c26-c5dd-3d55-9016-7178a7a165cb/semiconductor-stocks-slide-as.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 24128.0,
+  "chg_pct": 0.32,
+  "stamp": "01-Sep-2026 21:30:55",
+  "expiry": "29-Sep-2026",
+  "volume": 64173,
+  "nifty_close": {
+   "close": 24055.8,
+   "stamp": "01-Sep-2026 15:30"
+  },
+  "gap_pts": 72.2,
+  "gap_pct": 0.3
+ }
+}
