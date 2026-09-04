@@ -303,6 +303,25 @@
          padding:7px 10px;font-size:12px;min-width:190px}
   #bubtip .m{font-family:var(--mono);color:var(--soft);font-size:11.5px;margin-top:2px}
   #bubseek{width:100%;accent-color:var(--accent);margin:10px 0 2px}
+  /* flow movers */
+  .mcols{display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin-top:8px}
+  @media(max-width:860px){.mcols{grid-template-columns:1fr}}
+  .mhead{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+         text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+  .mrow{display:flex;align-items:center;gap:8px;margin:3px 0}
+  .mrow .ml{width:86px;font-size:12px;color:var(--ink);white-space:nowrap;
+            overflow:hidden;text-overflow:ellipsis}
+  .mrow .mtrack{flex:1;height:11px;background:var(--sunken);border-radius:3px;
+            overflow:hidden}
+  .mrow .mbar{display:block;height:100%}
+  .mrow .mbar.g{background:var(--up-soft);border-right:2px solid var(--up)}
+  .mrow .mbar.r{background:var(--down-soft);border-right:2px solid var(--down)}
+  .mrow .mv{width:150px;font-family:var(--mono);font-size:11.5px;color:var(--soft);
+            white-space:nowrap}
+  .mrow .mv .d2{color:var(--faint)}
+  .mstock{font-family:var(--mono);font-size:11.5px;color:var(--soft);
+          line-height:1.9;margin-top:4px}
+  .mstock b{color:var(--ink);font-weight:600}
   #bubstrip{display:block;width:100%;height:56px;background:var(--sunken);
          border:1px solid var(--hair);border-radius:6px;margin-top:6px;cursor:pointer}
   /* Collapsible tail of the weekly panel. Collapsed by default; the choice
@@ -2546,6 +2565,25 @@ async function loadFlows(){
         total</b>: every day rescaled to the same total area, so only the sector
         mix moves — the pure rotation view. Data: NSE F&amp;O bhavcopy,
         rupee-value aggregation, refreshed with the morning run.</p>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px">
+        <h2 style="margin:0">Where the flow moved</h2>
+        <span id="bubexp" class="pill warn" style="display:none">expiry roll —
+          mechanics dominate this day</span>
+        <div class="bctl" style="margin-left:auto">
+          <button class="bbtn bwin" data-w="1" aria-pressed="false">day</button>
+          <button class="bbtn bwin" data-w="5" aria-pressed="true">5 sessions</button>
+          <button class="bbtn bwin" data-w="20" aria-pressed="false">20 sessions</button>
+        </div>
+      </div>
+      <p class="note" id="bubsum" style="margin-top:6px"></p>
+      <div class="mcols" id="bubflows"></div>
+      <div class="mcols" id="bubstocks"></div>
+      <p class="note">Net new positioning (Δ OI × price, Rs cr) over the window
+        ending at the selected date, and each sector's move as a % of its own OI
+        at the window start — the % is the intensity, the cr is the size. The
+        named stocks are what actually carried each side. Windows crossing a
+        monthly expiry net out most of the roll; the single-day view on a roll
+        day is mechanics, and says so.</p>
     </div>
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
@@ -2603,6 +2641,15 @@ async function initBubbles(){
     }
     BUB.LVLMAX = Math.max(...BUB.sectors.map(s => s.maxl));
     BUB.TOTMAX = Math.max(...BUB.total);
+    // expiry-roll days: total daily flow deeply negative on a robust scale
+    const tf = BUB.dates.map((_, i) =>
+      BUB.sectors.reduce((a, s) => a + s.flw[i], 0));
+    const srt = [...tf].sort((a, b) => a - b);
+    const med = srt[Math.floor(srt.length / 2)];
+    const mad = [...tf.map(v => Math.abs(v - med))].sort((a, b) => a - b)
+                [Math.floor(tf.length / 2)] || 1;
+    BUB.totflw = tf;
+    BUB.isExpiry = tf.map(v => (v - med) / (1.4826 * mad) < -4);
     // pack once, biggest first, spiral placement collision-checked at max radii
     const placed = [];
     for (const s of BUB.sectors){
@@ -2673,6 +2720,62 @@ function drawBubbles(){
   el.style.color = chg >= 0 ? 'var(--up)' : 'var(--down)';
   $('#bubseek').value = di;
   drawBubStrip(di);
+  renderMovers();
+}
+
+/* ---- where the flow moved: sector nets over the window + stock movers ---- */
+let bubWin = 5, bubStockTimer = null, bubStockKey = '';
+function renderMovers(){
+  if (!BUB || !$('#bubflows')) return;
+  const di = Math.round(bubT);
+  const i0 = Math.max(0, di - bubWin + 1);
+  $('#bubexp').style.display =
+    (bubWin === 1 && BUB.isExpiry[di]) ? '' : 'none';
+
+  const rows = BUB.sectors.map(s => {
+    let net = 0;
+    for (let i = i0; i <= di; i++) net += s.flw[i];
+    const b = s.lvl[i0];
+    return {short: s.short, name: s.name, net,
+            pct: b ? 100 * net / b : null};
+  }).sort((a, b) => b.net - a.net);
+  const mx = Math.max(...rows.map(r => Math.abs(r.net)), 1);
+  const row = r => `<div class="mrow" title="${esc(r.name)}">
+    <span class="ml">${esc(r.short)}</span>
+    <span class="mtrack"><span class="mbar ${r.net >= 0 ? 'g' : 'r'}"
+      style="width:${(Math.abs(r.net) / mx * 100).toFixed(1)}%"></span></span>
+    <span class="mv">${r.net >= 0 ? '+' : ''}${Math.round(r.net).toLocaleString('en-IN')}
+      <span class="d2">(${r.pct == null ? '—' : (r.pct >= 0 ? '+' : '') + r.pct.toFixed(1) + '% of own OI'})</span></span></div>`;
+  const ins = rows.filter(r => r.net > 0);
+  const outs = rows.filter(r => r.net < 0).reverse();
+  $('#bubflows').innerHTML =
+    `<div><div class="mhead">positioning entered</div>${ins.map(row).join('') || '<p class="note">none</p>'}</div>
+     <div><div class="mhead">positioning left</div>${outs.map(row).join('') || '<p class="note">none</p>'}</div>`;
+  const tin = ins.reduce((a, r) => a + r.net, 0);
+  const tout = outs.reduce((a, r) => a + r.net, 0);
+  $('#bubsum').innerHTML = `${BUB.dates[i0]} → ${BUB.dates[di]}: `
+    + `<b style="color:var(--up)">+${Math.round(tin).toLocaleString('en-IN')} cr</b> entered`
+    + (ins.length ? ` (led by ${ins.slice(0, 3).map(r => esc(r.short)).join(', ')})` : '')
+    + ` · <b style="color:var(--down)">${Math.round(tout).toLocaleString('en-IN')} cr</b> left`
+    + (outs.length ? ` (${outs.slice(0, 3).map(r => esc(r.short)).join(', ')})` : '')
+    + ` · net ${tin + tout >= 0 ? '+' : ''}${Math.round(tin + tout).toLocaleString('en-IN')} cr`
+    + ` — ${tin + tout >= 0 ? 'the pie grew' : 'the pie shrank'}`;
+
+  // stock-level movers, debounced — a fetch per stepper tap would spam
+  const key = BUB.dates[di] + ':' + bubWin;
+  if (key === bubStockKey) return;
+  clearTimeout(bubStockTimer);
+  bubStockTimer = setTimeout(async () => {
+    bubStockKey = key;
+    try {
+      const m = await (await fetch(`/api/oi_movers?date=${BUB.dates[di]}&win=${bubWin}`)).json();
+      const li = x => `<span><b>${esc(x.symbol)}</b> ${x.flow_cr >= 0 ? '+' : ''}${x.flow_cr.toLocaleString('en-IN')}cr
+        <span class="d2" style="color:var(--faint)">(${esc(x.sector)}${x.pct_of_oi != null ? ', ' + (x.pct_of_oi >= 0 ? '+' : '') + x.pct_of_oi + '%' : ''})</span></span>`;
+      $('#bubstocks').innerHTML =
+        `<div class="mstock"><span class="mhead">stocks carrying the inflow</span><br>${(m.in || []).map(li).join('<br>')}</div>
+         <div class="mstock"><span class="mhead">stocks carrying the outflow</span><br>${(m.out || []).map(li).join('<br>')}</div>`;
+    } catch (e) { $('#bubstocks').innerHTML = ''; }
+  }, 250);
 }
 
 function drawBubStrip(di){
@@ -2708,6 +2811,13 @@ function wireBubbles(){
       $('#bubshare').setAttribute('aria-pressed', String(m === 'share'));
       drawBubbles();
     });
+  document.querySelectorAll('.bwin').forEach(b =>
+    b.addEventListener('click', () => {
+      bubWin = +b.dataset.w;
+      document.querySelectorAll('.bwin').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      renderMovers();
+    }));
   $('#bubseek').addEventListener('input', e => { bubT = +e.target.value; drawBubbles(); });
   $('#bubstrip').addEventListener('click', e => {
     const r = e.target.getBoundingClientRect();

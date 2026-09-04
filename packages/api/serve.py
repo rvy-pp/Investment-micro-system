@@ -111,6 +111,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.flows())
             if u.path == "/api/oi_bubbles":
                 return self._json(engine.oi_bubbles())
+            if u.path == "/api/oi_movers":
+                return self._json(engine.oi_movers(
+                    q.get("date", [None])[0], q.get("win", ["5"])[0]))
             if u.path == "/api/sector":
                 sid = q.get("id", [""])[0]
                 # est_date replays the consensus panel as of a past date

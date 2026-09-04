@@ -1145,6 +1145,49 @@ def oi_bubbles() -> dict:
     return val
 
 
+def oi_movers(date: str | None, win: int = 5) -> dict:
+    """Top and bottom stock-level positioning flows over `win` sessions ending
+    at `date` (default: newest). Flow = sum(oi_chg x close)/1e7 — the rupee
+    value of positions actually added or removed, the same measure as the
+    bubbles' fill. pct = that net against the name's OI at the window start,
+    so a 200cr add to a small name reads louder than to HDFC Bank."""
+    win = max(1, min(int(win or 5), 60))
+    conn = connect()
+    dates = [r[0] for r in conn.execute(
+        "SELECT DISTINCT date FROM fo_oi ORDER BY date")]
+    if not dates:
+        conn.close()
+        return {"error": "fo_oi is empty"}
+    if date not in dates:
+        date = dates[-1]
+    i1 = dates.index(date)
+    i0 = max(0, i1 - win + 1)
+    d0, d1 = dates[i0], dates[i1]
+    smap = {r[0]: r[1] for r in
+            conn.execute("SELECT symbol, sector FROM fo_sector_map")}
+    flows: dict[str, float] = {}
+    base: dict[str, float] = {}
+    for sym, d, oi, chg, close in conn.execute(
+            "SELECT symbol, date, oi_shares, oi_chg, close FROM fo_oi "
+            "WHERE date>=? AND date<=?", (d0, d1)):
+        if sym not in smap:
+            continue
+        flows[sym] = flows.get(sym, 0.0) + chg * close / 1e7
+        if d == d0:
+            base[sym] = oi * close / 1e7
+    conn.close()
+    rows = sorted(flows.items(), key=lambda kv: kv[1])
+
+    def fmt(sym, v):
+        b = base.get(sym)
+        return {"symbol": sym, "sector": smap.get(sym, "?"),
+                "flow_cr": round(v),
+                "pct_of_oi": round(100 * v / b, 1) if b else None}
+    return {"date_from": d0, "date_to": d1, "win": win,
+            "in": [fmt(s, v) for s, v in reversed(rows[-6:])],
+            "out": [fmt(s, v) for s, v in rows[:6]]}
+
+
 def morning() -> dict:
     """The morning brief: pre-market globals + broker-mail actionables.
 
