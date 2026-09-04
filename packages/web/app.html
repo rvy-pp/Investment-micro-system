@@ -284,6 +284,16 @@
                font-family:var(--mono);font-size:9px;line-height:1.15;
                border:1px solid var(--hair);color:var(--soft)}
   .f1-strip .d.spellq{border-bottom:2px solid var(--up)}
+  /* Collapsible tail of the weekly panel. Collapsed by default; the choice
+     persists per browser via localStorage (wrapped in try/catch — private
+     windows and blocked site data must not break the render). */
+  details.w1more{margin-top:14px;border-top:1px solid var(--hair);padding-top:10px}
+  details.w1more summary{cursor:pointer;list-style:none;font-size:var(--t-md);
+      font-weight:600;color:var(--soft);user-select:none}
+  details.w1more summary::before{content:'▸ ';color:var(--accent);font-size:11px}
+  details.w1more[open] summary::before{content:'▾ '}
+  details.w1more summary:hover{color:var(--ink)}
+  details.w1more summary::-webkit-details-marker{display:none}
   .plist{list-style:none;margin:6px 0;padding-left:2px;font-size:var(--t-body)}
   .plist li{position:relative;padding-left:14px;margin:3px 0 7px;
             line-height:1.55}
@@ -2443,16 +2453,19 @@ function w1Panel(w, f){
     <h2 style="margin-top:14px">Next week, from ${w.n_observations} prior ${esc(w.state)} weeks</h2>
     <div class="f1-odds">${odds}</div>
     ${ladder}
-    <h2 style="margin-top:14px">India, the week after a ${esc(w.state)} week</h2>
-    <div class="scroll"><table><tbody>${india}</tbody></table></div>
-    <p class="note">Following ISO week's close-to-close return, computed live from
-      the store over ${w.n_weeks} classified weeks since ${esc(w.first)} — empirical
-      counts, not a model. Cells failing |t| ≥ 2 are context, not signal.
-      F1 never sets direction and never enters scoring.</p>
-    <div class="f1-strip">${strip}</div>
-    <p class="note">Last 52 completed weeks, newest right. Method
-      <code>specs/flows.yaml</code> (${esc(w.spec_version)}); evidence:
-      <code>python packages/score/regime.py --weekly</code> and the Regime Atlas.</p>
+    <details class="w1more"${(() => { try { return localStorage.getItem('w1IndiaOpen') === '1' ? ' open' : ''; } catch (e) { return ''; } })()}
+      ontoggle="try{localStorage.setItem('w1IndiaOpen', this.open ? '1' : '0')}catch(e){}">
+      <summary>India, the week after a ${esc(w.state)} week — evidence &amp; 52-week history</summary>
+      <div class="scroll"><table><tbody>${india}</tbody></table></div>
+      <p class="note">Following ISO week's close-to-close return, computed live from
+        the store over ${w.n_weeks} classified weeks since ${esc(w.first)} — empirical
+        counts, not a model. Cells failing |t| ≥ 2 are context, not signal.
+        F1 never sets direction and never enters scoring.</p>
+      <div class="f1-strip">${strip}</div>
+      <p class="note">Last 52 completed weeks, newest right. Method
+        <code>specs/flows.yaml</code> (${esc(w.spec_version)}); evidence:
+        <code>python packages/score/regime.py --weekly</code> and the Regime Atlas.</p>
+    </details>
   </div>`;
 }
 
