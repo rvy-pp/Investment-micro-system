@@ -276,7 +276,7 @@
                 background:var(--accent-soft);border-right:2px solid var(--accent)}
   .f1-odds .base{position:absolute;top:0;bottom:0;width:0;
                 border-left:1px dashed var(--faint)}
-  .f1-odds .num{width:110px;font-family:var(--mono);font-size:var(--t-sm);
+  .f1-odds .num{min-width:110px;max-width:210px;font-family:var(--mono);font-size:var(--t-sm);
                 color:var(--soft);white-space:nowrap}
   .f1-strip{display:flex;gap:3px;flex-wrap:wrap;margin:8px 0 2px}
   .f1-strip .d{width:30px;height:26px;border-radius:4px;display:flex;
@@ -2271,16 +2271,18 @@ async function loadBook(){
 /* The nine regime states: colour + one-line gloss. The gloss states the SIGN
    PATTERN, not advice — F1 never sets direction. Gold's sign is what separates
    degross (liquidated for cash) from risk_off (bid, flight to safety). */
+/* sg = the sign pattern in plain words, for inline use beside a state name.
+   Full prose stays in g; base/lift live in hover only (PM 2026-09-04). */
 const RGM = {
-  quiet:             {c:'var(--faint)',  ab:'·',  g:'nothing big moved across assets'},
-  risk_on:           {c:'var(--up)',     ab:'R+', g:'equities bid, bonds and gold sold — the market is paying for risk'},
-  reflation:         {c:'var(--up)',     ab:'RF', g:'equities and gold up, bonds down — inflation trade'},
-  goldilocks:        {c:'var(--up)',     ab:'G',  g:'stocks up on falling yields'},
-  liquidity_rally:   {c:'var(--accent)', ab:'L+', g:'everything up at once — liquidity flood'},
-  risk_off:          {c:'var(--warn)',   ab:'R-', g:'stocks down, bonds and gold bid — classic flight to safety'},
-  degross:           {c:'var(--down)',   ab:'DG', g:'stocks down, bonds bid, gold SOLD — gross coming off both ways'},
-  stagflation_scare: {c:'var(--warn)',   ab:'SF', g:'stocks and bonds down together, gold bid'},
-  liquidation:       {c:'var(--down)',   ab:'LQ', g:'everything sold — margin-call tape'},
+  quiet:             {c:'var(--faint)',  ab:'·',  sg:'nothing big moved', g:'nothing big moved across assets'},
+  risk_on:           {c:'var(--up)',     ab:'R+', sg:'stocks↑ bonds↓ gold↓', g:'equities bid, bonds and gold sold — the market is paying for risk'},
+  reflation:         {c:'var(--up)',     ab:'RF', sg:'stocks↑ bonds↓ gold↑', g:'equities and gold up, bonds down — inflation trade'},
+  goldilocks:        {c:'var(--up)',     ab:'G',  sg:'stocks↑ bonds↑ gold↓', g:'stocks up on falling yields'},
+  liquidity_rally:   {c:'var(--accent)', ab:'L+', sg:'all three ↑',         g:'everything up at once — liquidity flood'},
+  risk_off:          {c:'var(--warn)',   ab:'R-', sg:'stocks↓ bonds↑ gold↑', g:'stocks down, bonds and gold bid — classic flight to safety'},
+  degross:           {c:'var(--down)',   ab:'DG', sg:'stocks↓ bonds↑ gold↓', g:'stocks down, bonds bid, gold SOLD — gross coming off both ways'},
+  stagflation_scare: {c:'var(--warn)',   ab:'SF', sg:'stocks↓ bonds↓ gold↑', g:'stocks and bonds down together, gold bid'},
+  liquidation:       {c:'var(--down)',   ab:'LQ', sg:'all three ↓',          g:'everything sold — margin-call tape'},
 };
 
 /* WEEKLY leads, by the PM's ruling (2026-09-03): "daily is of no use, show a
@@ -2391,7 +2393,7 @@ function w1Panel(w, f){
       <span class="track"><span class="base" style="left:${Math.min(x.base * 2.2, 100)}%"></span>
         <span class="bar" style="width:${Math.min(x.pct * 2.2, 100)}%;border-right-color:${mm.c}"></span></span>
       <span class="num">${x.pct.toFixed(1)}% <span style="color:var(--faint)"
-        title="unconditionally, ${esc(x.state)} is ${x.base.toFixed(1)}% of all weeks; ${lift ? lift.toFixed(2) + 'x means it is that many times as likely as normal after a ' + esc(w.state) + ' week' : ''}">(base ${x.base.toFixed(1)}${lift ? ', ' + lift.toFixed(2) + 'x' : ''})</span></span></div>`;
+        title="normally ${x.base.toFixed(1)}% of all weeks${lift ? ' — after a ' + esc(w.state) + ' week it is ' + lift.toFixed(2) + 'x as likely as usual' : ''}">(${mm.sg})</span></span></div>`;
   }).join('') + (restN > 0 && restPct > 0.05 ? `<div class="row">
       <span class="lbl" style="color:var(--faint)">${restN} other states</span>
       <span class="track"><span class="bar" style="width:${Math.min(restPct * 2.2, 100)}%;background:var(--sunken);border-right-color:var(--faint)"></span></span>
