@@ -322,25 +322,6 @@
   .mstock{font-family:var(--mono);font-size:11.5px;color:var(--soft);
           line-height:1.9;margin-top:4px}
   .mstock b{color:var(--ink);font-weight:600}
-  /* coverage deliveries */
-  table.dlv{width:100%;border-collapse:collapse;font-size:12.5px}
-  table.dlv th{font-family:var(--mono);font-size:10.5px;font-weight:500;
-      text-transform:uppercase;letter-spacing:.06em;color:var(--faint);
-      text-align:right;padding:5px 8px;border-bottom:1px solid var(--rule)}
-  table.dlv th:first-child,table.dlv th:nth-child(2){text-align:left}
-  table.dlv td{font-family:var(--mono);font-variant-numeric:tabular-nums;
-      text-align:right;padding:4px 8px;border-bottom:1px solid var(--hair);
-      color:var(--soft)}
-  table.dlv td:first-child{text-align:left;color:var(--ink);
-      font-family:var(--sans);white-space:nowrap}
-  table.dlv td.sp{text-align:left;padding:2px 8px}
-  table.dlv tr.sec td{background:var(--sunken);color:var(--soft);
-      font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
-      text-transform:uppercase;text-align:left;padding:5px 8px}
-  .zc{display:inline-block;min-width:44px;text-align:center;border-radius:4px;
-      padding:1px 6px;font-size:11.5px}
-  .zc.hot{background:var(--up-soft);color:var(--up);font-weight:600}
-  .zc.cold{background:var(--down-soft);color:var(--down);font-weight:600}
   #bubstrip{display:block;width:100%;height:56px;background:var(--sunken);
          border:1px solid var(--hair);border-radius:6px;margin-top:6px;cursor:pointer}
   /* Collapsible tail of the weekly panel. Collapsed by default; the choice
@@ -2582,12 +2563,10 @@ async function loadFlows(){
       <div class="mcols" id="bubflows"></div>
       <div class="mcols" id="bubstocks"></div>
     </div>
-    <h2 style="margin-top:26px">Cash deliveries — coverage names</h2>
-    <p class="lede" style="max-width:80ch;color:var(--soft);font-size:13px">
-      Delivery % = the share of traded quantity that actually changed demat
-      accounts. The z's compare the last 5 sessions to that name's own year —
-      value z ≥ 2 with a firm delivery % is someone taking stock home.</p>
-    <div class="panel scroll" id="dlvpanel"><p class="note">loading…</p></div>
+    <!-- A "Cash deliveries - coverage" table rendered here for part of
+         2026-09-05 and was removed the same day at the PM's instruction
+         ("no insights"). The deliveries DATA keeps loading - the review
+         script's delivery-spike screen reads it. -->
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
       <p>F1 is live above; the rest is scoped, not built. It is not a fifth
@@ -2616,71 +2595,8 @@ async function loadFlows(){
       nothing expresses in either direction however good the economics. Whatever
       computes these must preserve that distinction.</p>`;
   initBubbles();
-  initDeliveries();
 }
 
-/* ---- coverage deliveries: table + per-name delivery-% sparklines ---- */
-let DLV = null;
-async function initDeliveries(){
-  const panel = $('#dlvpanel');
-  if (!panel) return;
-  if (!DLV){
-    try { DLV = await (await fetch('/api/deliveries_coverage')).json(); }
-    catch (e) { DLV = {error: String(e)}; }
-  }
-  if (DLV.error || !DLV.rows || !DLV.rows.length){
-    panel.innerHTML = `<p class="note">no delivery data: ${esc(DLV.error || 'store empty')}</p>`;
-    DLV = null; return;
-  }
-  const z = v => v == null ? '<span class="zc">—</span>'
-    : `<span class="zc ${v >= 2 ? 'hot' : v <= -2 ? 'cold' : ''}">${v > 0 ? '+' : ''}${v.toFixed(1)}</span>`;
-  const SEC = {aluminium: 'Non-Ferrous', non_ferrous: 'Non-Ferrous',
-               steel: 'Steel', cement: 'Cement',
-               mining: 'Mining', ems: 'EMS', it: 'IT', other: 'Other'};
-  let html = `<table class="dlv"><thead><tr><th>name</th><th>delivery % · 1y</th>
-    <th>5d dp</th><th>1y dp</th><th>dp z</th>
-    <th>5d cr/day</th><th>1y cr/day</th><th>val z</th></tr></thead><tbody>`;
-  let cur = null, i = 0;
-  for (const r of DLV.rows){
-    if (r.sector !== cur){
-      cur = r.sector;
-      html += `<tr class="sec"><td colspan="8">${esc(SEC[cur] || cur)}</td></tr>`;
-    }
-    html += `<tr><td title="${esc(r.symbol)} · ${r.n} days thru ${esc(r.last)}">${esc(r.name)}</td>
-      <td class="sp"><canvas class="dspark" data-i="${i}" width="130" height="24"
-        style="width:130px;height:24px"></canvas></td>
-      <td>${r.dp5.toFixed(1)}%</td><td class="flat">${r.dp1y.toFixed(1)}%</td>
-      <td>${z(r.dpz)}</td>
-      <td>${r.val5.toFixed(1)}</td><td class="flat">${r.val1y.toFixed(1)}</td>
-      <td>${z(r.valz)}</td></tr>`;
-    i++;
-  }
-  html += `</tbody></table>
-    <p class="note">Names with under 60 stored sessions are withheld. Non-F&O
-      coverage names appear as their delivery history backfills. As of
-      ${esc(DLV.as_of)} · ${DLV.n_names} names.</p>`;
-  panel.innerHTML = html;
-  // sparklines: the year's delivery % with a faint line at the 1y mean
-  panel.querySelectorAll('canvas.dspark').forEach(cvs => {
-    const r = DLV.rows[+cvs.dataset.i];
-    const c = cvs.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    cvs.width = 130 * dpr; cvs.height = 24 * dpr;
-    c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const v = r.spark, n = v.length;
-    const lo = Math.min(...v), hi = Math.max(...v) || 1;
-    const x = k => 1 + k / (n - 1) * 128;
-    const y = q => 2 + (1 - (q - lo) / ((hi - lo) || 1)) * 20;
-    c.strokeStyle = 'rgba(110,118,129,.6)'; c.lineWidth = 1;
-    c.beginPath(); c.moveTo(1, y(r.dp1y)); c.lineTo(129, y(r.dp1y)); c.stroke();
-    c.strokeStyle = '#58a6ff'; c.lineWidth = 1.2;
-    c.beginPath();
-    for (let k = 0; k < n; k++) k ? c.lineTo(x(k), y(v[k])) : c.moveTo(x(k), y(v[k]));
-    c.stroke();
-    c.fillStyle = '#e6edf3';
-    c.beginPath(); c.arc(x(n - 1), y(v[n - 1]), 2, 0, 7); c.fill();
-  });
-}
 
 /* ================= F2: the OI bubble tape =================
    Data from /api/oi_bubbles (memoised server-side), fetched once per page
