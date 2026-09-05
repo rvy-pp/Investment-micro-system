@@ -111,6 +111,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.flows())
             if u.path == "/api/oi_bubbles":
                 return self._json(engine.oi_bubbles())
+            if u.path == "/api/deliveries_coverage":
+                return self._json(engine.deliveries_coverage())
             if u.path == "/api/oi_movers":
                 return self._json(engine.oi_movers(
                     q.get("date", [None])[0], q.get("win", ["5"])[0]))

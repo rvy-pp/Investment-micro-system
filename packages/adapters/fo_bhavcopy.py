@@ -125,18 +125,47 @@ def parse_deliv(raw: bytes, keep: set[str]) -> list[dict]:
 
 # ------------------------------------------------------------------- load ----
 
+# Coverage names OUTSIDE the F&O roster still need delivery rows (the PM's
+# coverage-limited deliveries view, 2026-09-05): Dalmia, LTTS, Hindustan
+# Copper, Jindal Stainless etc. are listed but not in current F&O. Their
+# tickers come from yahoo_prices.CANDIDATES (the .NS entries — the repo's
+# existing id->ticker source of truth) plus the IT watch names.
+IT_TICKERS = {"INFY", "TCS", "HCLTECH", "WIPRO", "TECHM", "LTIM", "COFORGE",
+              "MPHASIS", "PERSISTENT", "OFSS", "TATAELXSI", "KPITTECH", "LTTS"}
+
+
+def coverage_symbols() -> set[str]:
+    syms = set(IT_TICKERS)
+    try:
+        from yahoo_prices import CANDIDATES
+        for cands in CANDIDATES.values():
+            for c in cands:
+                s = c[0] if isinstance(c, tuple) else c
+                if isinstance(s, str) and s.endswith(".NS"):
+                    syms.add(s[:-3])
+                    break
+    except Exception:
+        pass
+    return syms
+
+
 def universe(conn: sqlite3.Connection) -> set[str]:
-    return {r[0] for r in conn.execute("SELECT symbol FROM fo_sector_map")}
+    return ({r[0] for r in conn.execute("SELECT symbol FROM fo_sector_map")}
+            | coverage_symbols())
 
 
-def load(days_back: int = 10) -> None:
+def load(days_back: int = 10, refill_deliv: bool = False) -> None:
     conn = sqlite3.connect(DB)
     keep = universe(conn)
     if not keep:
         print("sector map is empty - run --map first")
         return
     have_fo = {r[0] for r in conn.execute("SELECT DISTINCT date FROM fo_oi")}
-    have_dv = {r[0] for r in conn.execute("SELECT DISTINCT date FROM deliveries")}
+    # refill: re-fetch delivery files for already-loaded dates too — needed
+    # when the keep-set GROWS (coverage names added 2026-09-05); INSERT OR
+    # REPLACE makes it idempotent for the rows that already exist.
+    have_dv = set() if refill_deliv else {
+        r[0] for r in conn.execute("SELECT DISTINCT date FROM deliveries")}
     today = dt.date.today()
     n_fo = n_dv = n_skip = 0
     for k in range(days_back, 0, -1):
@@ -145,7 +174,13 @@ def load(days_back: int = 10) -> None:
             continue
         iso = d.isoformat()
         if iso not in have_fo:
-            raw = _get(FO_URL.format(d=d))
+            # one slow NSE response must not kill a 250-day walk — a
+            # TimeoutError here ended the first refill halfway (2026-09-05)
+            try:
+                raw = _get(FO_URL.format(d=d))
+            except Exception as e:
+                print(f"  {iso} FO fetch failed ({type(e).__name__}), skipped")
+                raw = None
             time.sleep(PAUSE)
             if raw is None:
                 n_skip += 1
@@ -160,7 +195,11 @@ def load(days_back: int = 10) -> None:
                 conn.commit()
                 n_fo += 1
         if iso not in have_dv:
-            raw = _get(DELIV_URL.format(d=d))
+            try:
+                raw = _get(DELIV_URL.format(d=d))
+            except Exception as e:
+                print(f"  {iso} deliv fetch failed ({type(e).__name__}), skipped")
+                raw = None
             time.sleep(PAUSE)
             if raw is not None:
                 for a in parse_deliv(raw, keep):
@@ -237,12 +276,15 @@ def main() -> int:
     ap.add_argument("--map", action="store_true")
     ap.add_argument("--load", action="store_true")
     ap.add_argument("--days", type=int, default=10)
+    ap.add_argument("--refill-deliv", action="store_true",
+                    help="re-fetch delivery files for already-loaded dates "
+                         "(after the keep-set grows)")
     ap.add_argument("--status", action="store_true")
     a = ap.parse_args()
     if a.map:
         build_map()
     if a.load:
-        load(a.days)
+        load(a.days, refill_deliv=a.refill_deliv)
     if a.status or not (a.map or a.load):
         status()
     return 0
