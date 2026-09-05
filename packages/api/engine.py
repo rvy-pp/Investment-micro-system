@@ -1419,3 +1419,61 @@ def flows() -> dict:
         "n_ready": sum(1 for x in inputs if x["state"] == "ready"),
         "n_inputs": len(inputs),
     }
+
+
+def book_view() -> dict:
+    """The PM's ACTUAL book — /api/book. Pair-wise IMS positions from the
+    daily_review skill's snapshots, P&L chained across futures rolls by
+    packages/book/book_io.py. Read-only here; nothing on this path writes.
+
+    Model context is joined per leg through specs/book.yaml's ticker_map
+    (Bloomberg root -> entity_id) — EMPTY until the desk fills it at
+    calibration, because a guessed mapping glues the wrong model to a real
+    position. An unmapped leg shows no composite, not a wrong one.
+    """
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import book_io
+    rep = book_io.pair_report()
+
+    cfg_path = REPO / "specs" / "book.yaml"
+    tmap, carry = {}, {}
+    if cfg_path.exists():
+        import yaml
+        cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+        tmap = cfg.get("ticker_map") or {}
+        carry = cfg.get("carry") or {}
+
+    conn = connect()
+    comp = {}
+    as_of = conn.execute("SELECT MAX(as_of) FROM pillar_scores").fetchone()[0]
+    if as_of:
+        for r in conn.execute(
+                "SELECT entity_id, score FROM pillar_scores "
+                "WHERE as_of=? AND pillar='composite'", (as_of,)):
+            comp[r["entity_id"]] = r["score"]
+
+    last_review = {}
+    for r in conn.execute(
+            "SELECT pair_tag, verdict, review_date, thesis_intact FROM "
+            "book_pair_reviews ORDER BY review_date, id"):
+        last_review[r["pair_tag"]] = {
+            "verdict": r["verdict"], "date": r["review_date"],
+            "thesis_intact": r["thesis_intact"]}
+    conn.close()
+
+    for p in rep["pairs"]:
+        for leg in p["legs"]:
+            eid = tmap.get(leg["root"]) or tmap.get(leg["name"])
+            leg["entity_id"] = eid
+            leg["composite"] = comp.get(eid) if eid else None
+        p["review"] = last_review.get(p["pair"])
+        # carry: desk-stated P&L from before the first snapshot (specs/book.yaml)
+        c = carry.get(p["pair"])
+        if c:
+            p["carry"] = c
+            p["pnl_total_with_carry"] = round(
+                p["pnl_total"] + (c.get("pnl") or 0), 2)
+    rep["scores_as_of"] = as_of
+    rep["n_mapped"] = sum(1 for p in rep["pairs"] for x in p["legs"]
+                          if x.get("entity_id"))
+    return rep

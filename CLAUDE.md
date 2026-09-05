@@ -331,6 +331,56 @@ that nothing divides by. It now requires base_ebitda only where lines exist
 The halt had cost the whole day's scores for every sector — a guard written
 for bridged sectors firing on the first unbridged one.
 
+## The Book tab is the PM's ACTUAL book — `daily_review`, 2026-09-05
+
+The promised rework landed: the tab now leads with the PM's real IMS
+positions, pair-wise, and the model-scores table is demoted to a "model view"
+section beneath. Driven by the **`daily_review` skill** — on demand, on days
+the PM wants, entirely OUTSIDE `refresh.py`/`pipeline.py`. Flow: PM uploads
+the day's IMS snapshot → the skill transcribes it into
+`data/book/staging/YYYY-MM-DD.json` → `packages/book/book_io.py --load`
+persists and computes → `/api/book` (engine.book_view) → the tab. Then the
+review conversation: thesis / sizing / add / trim per pair, verdicts recorded
+in `book_pair_reviews` + `data/book/reviews/`.
+
+**The two things the company IMS cannot show, which is why this exists:**
+
+1. **Pairs.** The IMS lists positions singly; the PM tags each with a pair
+   name ("IT 5") and a tag can carry MORE than two legs. Display is one line
+   per pair — inception, days on, legs, chained P&L, day P&L, gross MV.
+2. **Rollovers.** Bloomberg contract tokens (`=U6`) reset at expiry and the
+   IMS P&L column resets with them. `book_io` strips the token to a stable
+   root and CHAINS P&L: contract change between snapshots freezes the old
+   contract's last-seen P&L into `realized`; total = frozen + live.
+
+**Invariants of the chain, each tested in `--selftest`:**
+
+- **A snapshot is the FULL book.** Absence from a snapshot = closed. That is
+  how re-entries are detected — so the skill must never load a partial
+  transcription (phantom exits are silent).
+- **Segment splits key on STORED SNAPSHOT DATES, never calendar days.** The
+  tool runs on demand; a quiet fortnight between runs must not split a
+  continuously-held contract and double-count its P&L. The first draft used
+  a 10-calendar-day rule and had exactly that bug.
+- **`pnl` is the IMS's own printed figure, never recomputed** — no lot sizes
+  or multipliers exist here, per the silent-arithmetic rule.
+- **`gap_risk`** flags a roll observed across a snapshot gap > 7 calendar
+  days: the dying contract's final P&L may be under-captured. Flagged, not
+  "corrected".
+- **`pnl_basis` is declared per snapshot** (`contract_itd` default vs
+  `daily`) and is UNCALIBRATED until the first real snapshot — the skill's
+  Step 1b asks the PM what the P&L column actually is. A wrong basis is a
+  plausible-looking wrong total.
+
+`specs/book.yaml` holds `ticker_map` (Bloomberg root → entity_id, joins each
+leg to its model composite on the tab) and `carry` (desk-stated pre-capture
+P&L, displayed flagged, never mixed into the chain). **Both empty on purpose
+until confirmed with the PM** — a guessed mapping glues the wrong model to a
+real position. Book tables are `book_*` only; nothing on this path writes to
+`prices` or anything a pillar reads, and position data stays in gitignored
+`data/`. The API server must be RESTARTED after engine changes (it imports
+once — `/api/version` shows staleness); done for this change.
+
 ## Price sources have a precedence order — read before adding a feed
 
 Added 2026-08-21. Four adapters wrote `prices` with `INSERT OR REPLACE` and no

@@ -2242,14 +2242,112 @@ async function loadOverview(){
 }
 
 /* ===================== the book =====================
-   Split out of the Overview 2026-08-30 (PM: the Overview is the morning
-   read; the book gets reworked separately). Same persisted data —
-   /api/overview's book block — rendered under its own tab. Placeholder
-   facts ride HERE, beside the numbers they qualify, as amber-left callouts
-   rather than page-wide banners. */
+   Reworked 2026-09-05 (PM): the tab now leads with the PM's ACTUAL book —
+   daily IMS snapshots ingested by the daily_review skill, displayed ONE LINE
+   PER PAIR (the IMS lists positions singly; the unit of thought here is the
+   pair tag, e.g. "IT 5", and a tag can carry more than two legs). Futures
+   contract tokens (=U6 etc) are stripped to a stable root and P&L is CHAINED
+   across rolls by packages/book/book_io.py, so pair inception and
+   since-inception P&L survive expiry — the two things the company IMS cannot
+   show. The model-scores table stays below as context; placeholder facts
+   still ride beside it. */
+const inr = v => v == null ? '—'
+  : (v < 0 ? '−' : '+') + Math.abs(v).toLocaleString('en-IN', {maximumFractionDigits: 0});
+/* text colour only — .c-up/.c-down are chip classes with soft backgrounds */
+const pnlSty = v => v == null ? '' :
+  `style="color:${v > 0 ? 'var(--up)' : v < 0 ? 'var(--down)' : 'var(--faint)'}"`;
+
+function pairRows(pairs){
+  return pairs.map((p, i) => {
+    const legLine = side => p.legs.filter(l => l.side === side).map(l =>
+      `${esc(l.name)}${l.composite != null
+        ? ` <span class="hint" title="model composite (${esc(l.entity_id)})">${l.composite.toFixed(2)}</span>` : ''}`
+    ).join(' + ') || '—';
+    const flags =
+      (p.gap_risk ? `<span class="pill warn" title="a roll happened across a snapshot gap — the frozen P&L may miss the old contract's last days">gap</span> ` : '') +
+      (p.rolls ? `<span class="pill" title="futures rolls chained into the total">${p.rolls} roll${p.rolls > 1 ? 's' : ''}</span>` : '');
+    const rev = p.review
+      ? `<span class="chip ${p.review.verdict === 'exit' ? 'c-down' : p.review.verdict === 'add' ? 'c-up' : 'c-flat'}"
+           title="last reviewed ${esc(p.review.date)}${p.review.thesis_intact == null ? '' :
+             p.review.thesis_intact ? ' · thesis intact' : ' · THESIS BROKEN'}">${esc(p.review.verdict)}</span>`
+      : '<span class="hint">—</span>';
+    const total = p.pnl_total_with_carry != null ? p.pnl_total_with_carry : p.pnl_total;
+    const carryMark = p.carry
+      ? `<sup title="includes desk-stated carry ${inr(p.carry.pnl)} from before ${esc(p.carry.since || 'first capture')} (specs/book.yaml)">c</sup>` : '';
+    const legs = `<tr id="bklegs${i}" hidden><td colspan="8" style="padding:0">
+      <div class="scroll" style="margin:4px 0 10px 16px"><table><thead><tr>
+        <th>leg</th><th>ticker now</th><th class="n">qty</th><th class="n">avg</th>
+        <th class="n">last</th><th class="n">MV</th><th class="n">P&amp;L live</th>
+        <th class="n">P&amp;L chained</th><th class="n">rolls</th></tr></thead><tbody>
+      ${p.legs.map(l => `<tr>
+        <td><b>${l.side === 'L' ? '▲' : '▼'} ${esc(l.name)}</b></td>
+        <td class="hint">${esc(l.ticker_now)}</td>
+        <td class="n">${l.qty.toLocaleString('en-IN')}</td>
+        <td class="n">${l.avg_price == null ? '—' : l.avg_price.toLocaleString('en-IN')}</td>
+        <td class="n">${l.last_price == null ? '—' : l.last_price.toLocaleString('en-IN')}</td>
+        <td class="n">${l.mv == null ? '—' : Math.round(l.mv).toLocaleString('en-IN')}</td>
+        <td class="n" ${pnlSty(l.pnl_live)}>${inr(l.pnl_live)}</td>
+        <td class="n" ${pnlSty(l.pnl_total)}>${inr(l.pnl_total)}</td>
+        <td class="n">${l.rolls || ''}</td></tr>`).join('')}
+      </tbody></table></div></td></tr>`;
+    return `<tr style="cursor:pointer" onclick="const r=$('#bklegs${i}');r.hidden=!r.hidden">
+      <td><b>${esc(p.pair)}</b></td>
+      <td>${legLine('L')}</td><td>${legLine('S')}</td>
+      <td class="n" title="first snapshot carrying this tag">${esc(p.inception)}
+        <span class="hint">(${p.days}d)</span></td>
+      <td class="n" ${pnlSty(total)}><b>${inr(total)}</b>${carryMark}</td>
+      <td class="n" ${pnlSty(p.pnl_day)}>${inr(p.pnl_day)}</td>
+      <td class="n">${p.gross_mv == null ? '—' : Math.round(p.gross_mv).toLocaleString('en-IN')}</td>
+      <td>${flags} ${rev}</td></tr>` + legs;
+  }).join('');
+}
+
 async function loadBook(){
-  const d = await (await fetch('/api/overview')).json();
+  const [bk, d] = await Promise.all([
+    fetch('/api/book').then(r => r.json()),
+    fetch('/api/overview').then(r => r.json()),
+  ]);
   if (d.error) throw new Error(d.error);
+
+  let posHtml;
+  if (bk.error){
+    posHtml = `<div class="callout accent-amber"><div class="callout-head">
+      <span class="ico">⚠</span><span class="t">book view failed</span></div>${esc(bk.error)}</div>`;
+  } else if (!bk.as_of){
+    posHtml = `<div class="callout"><div class="callout-head">
+      <span class="t">no IMS snapshot loaded yet</span></div>
+      <div class="hint">Run <code>/daily_review</code> with today's IMS positions
+      snapshot — it parses the upload, stores it, and this tab becomes the
+      pair-wise book: one line per pair tag, inception date, and P&amp;L chained
+      across futures rolls.</div></div>`;
+  } else {
+    const untagged = bk.pairs.filter(p => p.pair === 'UNTAGGED').length;
+    posHtml =
+      `<div class="meta-line">IMS snapshot <b>${esc(bk.as_of)}</b>
+         (${bk.snapshots} stored${bk.prev ? `, prev ${esc(bk.prev)}` : ''}) ·
+         basis <code>${esc(bk.pnl_basis)}</code> · contract codes stripped, P&amp;L
+         <b>chained across rolls</b> — the total survives expiry resets ·
+         book P&amp;L <b ${pnlSty(bk.book_pnl_total)}>${inr(bk.book_pnl_total)}</b>
+         · click a pair for its legs</div>`
+      + (untagged ? `<div class="callout accent-amber"><div class="callout-head">
+           <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
+           <div class="hint">rows with no pair name on the IMS snapshot are grouped
+           under UNTAGGED rather than guessed into a pair.</div></div>` : '')
+      + `<div class="panel"><div class="scroll"><table><thead><tr>
+           <th>pair</th><th>long</th><th>short</th><th class="n">since</th>
+           <th class="n">P&amp;L total</th><th class="n">day</th>
+           <th class="n">gross MV</th><th>flags · review</th>
+         </tr></thead><tbody>${pairRows(bk.pairs)}</tbody></table></div></div>`
+      + (bk.closed.length ? `<div class="sechead">closed pairs</div>
+         <div class="panel"><div class="scroll"><table><thead><tr>
+           <th>pair</th><th class="n">opened</th><th class="n">last seen</th>
+           <th class="n">days</th><th class="n">final P&amp;L</th></tr></thead><tbody>
+         ${bk.closed.map(c => `<tr><td><b>${esc(c.pair)}</b></td>
+           <td class="n">${esc(c.inception)}</td><td class="n">${esc(c.last_seen)}</td>
+           <td class="n">${c.days}</td>
+           <td class="n" ${pnlSty(c.pnl_total)}>${inr(c.pnl_total)}</td></tr>`).join('')}
+         </tbody></table></div></div>` : '');
+  }
 
   const bookRows = (d.book || []).map(b => {
     const cls = b.verdict === 'FULL' ? 'c-up'
@@ -2299,7 +2397,9 @@ async function loadBook(){
          3.00 both map to a 1.0 multiplier.</div></div>`).join('');
 
   $('#s-book').innerHTML =
-    `<div class="pgt">The Book</div>
+    `<div class="pgt">The Book</div>`
+    + posHtml
+    + `<div class="sechead">model view</div>
      <div class="meta-line">Persisted <code>pillar_scores</code> ·
        ${esc(d.as_of_scores || '—')} · a dash is a <b>withheld</b> pillar, not a
        3.0 — the composite renormalises over the pillars that exist · SIZE 1.00

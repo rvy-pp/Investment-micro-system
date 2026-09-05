@@ -1,0 +1,25 @@
+# The Book tab / daily_review skill — configuration.
+#
+# ticker_map: Bloomberg ROOT (book_positions.root, i.e. the ticker with the
+# =U6-style contract token stripped) -> entity_id in this system. EMPTY on
+# purpose until the desk confirms each mapping at a daily_review calibration:
+# a guessed mapping silently glues the wrong model context to a real position,
+# which is worse than showing none. An unmapped leg renders a dash.
+#
+#   ticker_map:
+#     "TATA IS Equity": tata_steel        # example shape only — VERIFY first
+#
+# carry: desk-stated P&L earned by a pair BEFORE its first stored snapshot
+# (the chain can only see what was captured). Applied at display, flagged as
+# carry, never mixed into the chained figure.
+#
+#   carry:
+#     "IT 5": {pnl: 125000, since: "2026-07-01", note: "PM figure, pre-capture"}
+#
+# pnl_basis is a per-snapshot field in the staging JSON; the value here is
+# only the default the skill writes until calibration settles what the IMS
+# P&L column actually is (contract_itd = resets at every roll; daily = that
+# day's P&L only).
+pnl_basis: contract_itd
+ticker_map: {}
+carry: {}

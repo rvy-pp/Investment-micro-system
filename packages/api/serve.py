@@ -129,6 +129,10 @@ class Handler(BaseHTTPRequestHandler):
                     "disk": now,
                     "stale": now["newest_mtime"] > BOOT_FINGERPRINT["newest_mtime"],
                 })
+            if u.path == "/api/book":
+                # the PM's actual positions, pair-wise (daily_review skill);
+                # read-only — snapshots load via packages/book/book_io.py
+                return self._json(engine.book_view())
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":
