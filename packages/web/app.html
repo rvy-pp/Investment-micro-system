@@ -2549,14 +2549,6 @@ async function loadFlows(){
       <div id="bubwrap"><canvas id="bubcv" height="470"></canvas><div id="bubtip"></div></div>
       <input type="range" id="bubseek" min="0" value="0" step="1" aria-label="day">
       <canvas id="bubstrip"></canvas>
-      <p class="note">"Total OI" is the WHOLE MARKET's stock-futures open interest
-        (all 210 F&amp;O names) — nothing here is our book. Strip = that market
-        total (Rs cr) over the loaded year; the expiry sawtooth is contract
-        mechanics, not de-risking. <b>Absolute cr</b>: bubbles and the market
-        total move together — the pie itself expands and shrinks. <b>% of
-        total</b>: every day rescaled to the same total area, so only the sector
-        mix moves — the pure rotation view. Data: NSE F&amp;O bhavcopy,
-        rupee-value aggregation, refreshed with the morning run.</p>
       <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px">
         <h2 style="margin:0">Where the flow moved</h2>
         <span id="bubexp" class="pill warn" style="display:none">expiry roll —
@@ -2570,12 +2562,6 @@ async function loadFlows(){
       <p class="note" id="bubsum" style="margin-top:6px"></p>
       <div class="mcols" id="bubflows"></div>
       <div class="mcols" id="bubstocks"></div>
-      <p class="note">Net new positioning (Δ OI × price, Rs cr) over the window
-        ending at the selected date, and each sector's move as a % of its own OI
-        at the window start — the % is the intensity, the cr is the size. The
-        named stocks are what actually carried each side. Windows crossing a
-        monthly expiry net out most of the roll; the single-day view on a roll
-        day is mechanics, and says so.</p>
     </div>
     <div class="await">
       <p><b>${esc(d.note)}</b></p>
