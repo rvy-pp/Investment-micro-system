@@ -3208,8 +3208,11 @@ async function loadSector(){
         and buybacks, the reason to own the ~3s, are a different analysis
         that sits outside it —
         green is cheaper than the scored group's median (${
-        E.peg_median == null ? '—' : E.peg_median.toFixed(2)}), which is what
-        P3 scores (ln-ratio, ${E.anchor_ratio}x reads 2.0). <b>rev 90d</b> is
+        E.peg_median == null ? '—' : E.peg_median.toFixed(2)}). P3 scores a
+        50/50 blend of that ratio with each name's fwd P/E vs its <b>own last
+        60 days</b> (PM 2026-09-05 — the peer ratio alone cancelled every
+        sector-wide move and drew flat lines), so the score also moves when a
+        name re-rates against itself. <b>rev 90d</b> is
         the street moving its own numbers — context, never scored: a cheap PEG
         on falling estimates is cheap because the E is falling. <b>P/E ttm</b>
         is the normal trailing multiple every screener quotes — reference

@@ -71,6 +71,24 @@ pillar_3:
   anchor:
     x_ref_ratio: 1.5            # 1.5x the group's growth-adjusted multiple
     score_ref: 2.0              # ...reads 2.0 (rich); its inverse reads 4.0
+  # THE RAW IS A 50/50 BLEND SINCE 2026-09-05 — PM: "the movements in score
+  # seem dampened ... maybe taking into account more recent valuations". The
+  # peer ratio alone is invariant to everything the group does together, and
+  # its first week proved it: the four names fell -2.6%..-8.8% as a block
+  # and the score lines drew flat. raw is now, in anchor units (hill k=1.0):
+  #     0.5 * ln(PEG/median)/ln(1.5)  +  0.5 * z_own
+  # where z_own is the name's fwd P/E against its OWN last own_window_days,
+  # built from the captures PLUS Yahoo's 7/30/60/90-days-ago lag fields
+  # (point-in-time records, so the window reaches ~90d before the first
+  # capture with no look-ahead). Weights are the PM's volatility knob
+  # (W_REL/W_OWN in valuation_pe.py). KNOWN CONSEQUENCE, observed on the
+  # switch date: the blend RE-RANKS — Dixon's upgrade cycle makes it cheap
+  # vs its own window and lifted it off the group floor; Kaynes took it.
+  own_recent:
+    own_window_days: 60         # calendar; ~40 trading points
+    min_own_points: 15          # thinner -> rel-only, detail.raw_basis says
+    sd_floor_frac: 0.005        # a quiet window is "no signal", not z=30
+    weights: {rel: 0.5, own: 0.5}
   staleness:
     max_est_age_days: 30
     min_analysts: 5

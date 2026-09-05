@@ -5,8 +5,37 @@ scored against the peer group.
     fwd P/E   = close / fwd EPS                      (the headline multiple)
     growth    = FY2 consensus / FY1 consensus - 1    ("today till next year")
     PEG       = (close / FY2 EPS) / (growth x 100)
-    raw       = ln(PEG / group median PEG)
-    score     = hill(-raw)      cheap-for-its-growth scores HIGH
+    rel       = ln(PEG / group median PEG) / ln(1.5)   peer component
+    z_own     = z of fwd P/E vs the name's OWN last 60 days
+    raw       = 0.5*rel + 0.5*z_own                  (anchor units)
+    score     = hill(-raw)      cheap scores HIGH
+
+    THE RAW IS A 50/50 BLEND SINCE 2026-09-05 — PM: "the movements in score
+    seem dampened ... maybe taking into account more recent valuations". The
+    original raw was rel alone, and rel is INVARIANT to everything the group
+    does together: in the first scored week the four names fell -2.6%..-8.8%
+    as a block, every fwd P/E de-rated, and the four score lines drew flat —
+    working exactly as specced and useless to look at. z_own is the piece
+    that moves: each name's fwd P/E against its own recent window, so a
+    sector-wide de-rating now lifts every score and a one-name de-rating
+    lifts one. Both components are in ANCHOR UNITS (1.0 = the act
+    threshold: rel hits 1 at 1.5x the group's growth-adjusted multiple,
+    z_own at one sd rich vs its own window — the same z convention the
+    EV/EBITDA pillar anchors on), so the blend is a plain average and the
+    hill k is 1.0. Pair spreads stay well-defined: raw_a - raw_b =
+    0.5*ln(PEG_a/PEG_b)/ln(1.5) + 0.5*(z_a - z_b); the median cancels.
+
+    WHERE z_own'S HISTORY COMES FROM, since historical consensus cannot be
+    downloaded: every capture carries Yahoo's own 7/30/60/90-days-ago values
+    of each estimate — point-in-time records, dated by offsetting the
+    capture date, NOT reconstructions. Those anchors plus the daily captures
+    give a stepwise forward-EPS series reaching ~90 days before the first
+    capture; daily closes over it give a daily fwd P/E series. Between
+    anchors the EPS is carried (a step series, the store's normal shape) —
+    the multiple still moves every session through the price. The window is
+    OWN_WINDOW_DAYS calendar days, sd floored at SD_FLOOR_FRAC of the mean
+    so a flat window cannot explode the z. If a name's window is too thin,
+    its raw falls back to rel alone and detail says so.
 
     THE PEG NUMERATOR IS THE FY2 MULTIPLE, NOT THE BLEND — desk convention,
     PM 2026-09-03 ("the P/E will be FY28E, the growth from today till next
@@ -41,12 +70,6 @@ production feature.
 CONSEQUENCE OF PEER-RELATIVE, stated because it will be noticed: a name's
 score can move on a PEER's estimate revision with no news of its own. The
 median and group size are carried in `detail` so any such move is auditable.
-
-THE RAW IS A LOG-RATIO AND THAT IS WHAT MAKES IT SPREADABLE. For a pair,
-raw_A - raw_B = ln(PEG_A / PEG_B): the group median cancels, so the pair
-spread depends only on the two legs — the same property the z-raw has for
-EV/EBITDA. Anchor: one leg at 1.5x the other's growth-adjusted multiple is
-the desk's "act" threshold, so |ln(1.5)| reads 4.0 cheap / 2.0 rich.
 
 GATES (withhold rather than guess, invariant 7):
     no consensus capture                -> withheld
@@ -98,6 +121,16 @@ MAX_EST_AGE_DAYS = 30   # capture is daily; older means the feed broke
 MIN_ANALYSTS = 5        # below this, "consensus" is one house's model
 MIN_GROWTH = 0.05       # PEG explodes as g -> 0
 MIN_GROUP = 3           # a median of two is just the other name
+
+# The 50/50 blend of the peer component and the own-recent z (see the
+# docstring). W_OWN is the volatility knob: raise it and the lines move more
+# with each name's own re-rating, lower it and the cross-section dominates.
+# PM-tunable; 50/50 is the starting split, not a finding.
+W_REL, W_OWN = 0.5, 0.5
+OWN_WINDOW_DAYS = 60    # calendar; ~40 trading points of own fwd P/E
+MIN_OWN_POINTS = 15     # thinner than this -> rel-only, flagged in detail
+SD_FLOOR_FRAC = 0.005   # sd floor as a fraction of the window mean — a flat
+                        # window must read "no signal", not z = 30
 
 
 def spec_metrics(peer_group: str) -> list[str]:
@@ -250,6 +283,84 @@ def compute_row(conn, eid: str, as_of: str,
     }, None
 
 
+def _eps_anchors(conn, eid: str, as_of: str) -> dict[str, dict[str, float]]:
+    """date -> {FY label: eps} known AT that date, capture <= as_of only.
+
+    Two sources, one map: direct captures (metric 'eps', dated at their own
+    as_of) and each capture's 7/30/60/90-days-ago lag fields, dated by
+    offsetting the capture date. The lags are Yahoo's own point-in-time
+    record of what the consensus WAS — real dated history, not a
+    reconstruction. A direct capture beats a lag landing on the same date;
+    two captures' lags landing on the same date agree to rounding (the same
+    number remembered on different days) and last-write-wins is fine.
+    """
+    lag_days = {"eps_7d_ago": 7, "eps_30d_ago": 30,
+                "eps_60d_ago": 60, "eps_90d_ago": 90}
+    lagged: dict[str, dict[str, float]] = {}
+    direct: dict[str, dict[str, float]] = {}
+    for cap, period, metric, val in conn.execute(
+            "SELECT as_of, period, metric, value_num FROM estimates "
+            "WHERE entity_id=? AND broker='consensus_yahoo' AND as_of<=? "
+            "AND period LIKE 'FY%'", (eid, as_of)):
+        if metric == "eps":
+            direct.setdefault(cap, {})[period] = val
+        elif metric in lag_days:
+            d = (dt.date.fromisoformat(cap)
+                 - dt.timedelta(days=lag_days[metric])).isoformat()
+            lagged.setdefault(d, {})[period] = val
+    out = {d: dict(v) for d, v in lagged.items()}
+    for d, v in direct.items():
+        out.setdefault(d, {}).update(v)
+    return out
+
+
+def own_history_z(conn, eid: str, as_of: str):
+    """(block, None) or (None, why): today's fwd P/E vs the name's own recent
+    window — the component that makes the score move with recent valuation.
+
+    The series is close(t) / blended-forward-EPS(t) for every trading day in
+    the window, EPS stepped from the anchor map above. Includes as_of itself
+    (the same convention as the EV/EBITDA z, whose window includes today's
+    multiple).
+    """
+    import bisect
+    anchors = _eps_anchors(conn, eid, as_of)
+    if not anchors:
+        return None, "no consensus anchors"
+    adates = sorted(anchors)
+    d0 = dt.date.fromisoformat(as_of)
+    floor_d = (d0 - dt.timedelta(days=OWN_WINDOW_DAYS)).isoformat()
+    px = conn.execute(
+        "SELECT date, close FROM prices WHERE entity_id=? AND date>=? "
+        "AND date<=? AND close IS NOT NULL ORDER BY date",
+        (eid, floor_d, as_of)).fetchall()
+    pts = []
+    for d, close in px:
+        i = bisect.bisect_right(adates, d) - 1
+        if i < 0:
+            continue                      # before the oldest anchor
+        ev = anchors[adates[i]]
+        t = dt.date.fromisoformat(d)
+        labs = sorted((k for k in ev if k.startswith("FY")), key=_fy_end)
+        live = [pl for pl in labs if _fy_end(pl) >= t]
+        if len(live) < 2:
+            continue
+        e1, e2 = ev.get(live[0]), ev.get(live[1])
+        if not e1 or not e2 or e1 <= 0:
+            continue
+        eps, _w = _blend(t, _fy_end(live[0]), e1, e2)
+        if eps > 0:
+            pts.append(close / eps)
+    if len(pts) < MIN_OWN_POINTS:
+        return None, f"own window {len(pts)} pt(s) < {MIN_OWN_POINTS}"
+    mean = statistics.fmean(pts)
+    # The floor is load-bearing: pstdev over a quiet window can be near zero,
+    # and (now - mean)/~0 would let a 0.3% wiggle read as three anchors.
+    sd = max(statistics.pstdev(pts), SD_FLOOR_FRAC * mean)
+    return {"z": (pts[-1] - mean) / sd, "n": len(pts),
+            "mean": mean, "sd": sd}, None
+
+
 def scores_for_group(conn, group_ents: list[dict], as_of: str) -> dict:
     """{eid: (score, raw, detail, withheld)} for one peer group.
 
@@ -275,12 +386,29 @@ def scores_for_group(conn, group_ents: list[dict], as_of: str) -> dict:
         return out
 
     med = statistics.median(r["peg"] for r in rows.values())
-    k = solve_k("hill", X_REF, SCORE_ANCHOR, P)
+    # raw is in ANCHOR UNITS (1.0 = act threshold on either component), so
+    # the hill anchors at x_ref = 1.0 — and k = x_ref for any p, so k is 1.
+    k = solve_k("hill", 1.0, SCORE_ANCHOR, P)
     for eid, r in rows.items():
-        raw = math.log(r["peg"] / med)
-        s = to_score(-raw, k, "hill", P)   # cheap-for-growth scores HIGH
+        rel = math.log(r["peg"] / med) / X_REF
+        own, own_why = own_history_z(conn, eid, as_of)
+        if own is not None:
+            raw = W_REL * rel + W_OWN * own["z"]
+        else:
+            # rel-only fallback — numerically identical to the pre-blend
+            # score (ln-ratio with k=ln(1.5) == rel with k=1), so a thin
+            # window degrades to the old behaviour rather than to nothing.
+            raw = rel
+        s = to_score(-raw, k, "hill", P)   # cheap scores HIGH
         detail = {
             "metric": "pe_forward_peg",
+            "raw_basis": (f"{W_REL}*rel + {W_OWN}*z_own"
+                          if own is not None else f"rel only ({own_why})"),
+            "rel": round(rel, 3),
+            "z_own": (round(own["z"], 2) if own is not None else None),
+            "own_n": (own["n"] if own is not None else None),
+            "own_mean_fwd_pe": (round(own["mean"], 1)
+                                if own is not None else None),
             "fwd_pe": round(r["fwd_pe"], 1),
             "eps_12mf": round(r["eps_12mf"], 2),
             "fy_pair": f"{r['fy1']}/{r['fy2']}",
@@ -318,27 +446,29 @@ def main() -> int:
 
     res = scores_for_group(conn, group, as_of)
     print(f"{a.peer_group} · forward P/E vs growth · as of {as_of}\n")
-    print(f"{'entity':18}{'close':>9}{'EPS 12mf':>10}{'fwdPE':>8}{'growth':>8}"
-          f"{'PEG':>7}{'raw':>8}{'P3':>6}{'rev90d':>8}  note")
-    print("-" * 96)
+    print(f"{'entity':18}{'close':>9}{'fwdPE':>8}{'growth':>8}"
+          f"{'PEG':>7}{'rel':>8}{'z_own':>7}{'raw':>8}{'P3':>6}{'rev90d':>8}  note")
+    print("-" * 104)
     for eid in sorted(res):
         s, raw, det, wh = res[eid]
         if s is None:
-            print(f"{eid:18}{'—':>9}{'—':>10}{'—':>8}{'—':>8}{'—':>7}"
-                  f"{'—':>8}{'—':>6}{'—':>8}  WITHHELD: {wh}")
+            print(f"{eid:18}{'—':>9}{'—':>8}{'—':>8}{'—':>7}"
+                  f"{'—':>8}{'—':>7}{'—':>8}{'—':>6}{'—':>8}  WITHHELD: {wh}")
             continue
         row, _ = compute_row(conn, eid, as_of)
         rev = f"{det['rev_90d']:+.1%}" if det["rev_90d"] is not None else "—"
-        print(f"{eid:18}{row['close']:>9,.0f}{det['eps_12mf']:>10.2f}"
+        zo = f"{det['z_own']:+.2f}" if det["z_own"] is not None else "—"
+        print(f"{eid:18}{row['close']:>9,.0f}"
               f"{det['fwd_pe']:>8.1f}{det['growth']:>8.1%}{det['peg']:>7.2f}"
+              f"{det['rel']:>+8.3f}{zo:>7}"
               f"{raw:>+8.3f}{s:>6.2f}{rev:>8}  n={det['n_analysts']}, "
               f"{det['fy_pair']}")
     med = next((d["peg_median"] for _, _, d, _ in res.values() if d), None)
     if med is not None:
-        print(f"\ngroup median PEG {med:.2f}; raw = ln(PEG/median), so a pair "
-              f"spread is ln(PEG_a/PEG_b) — the median cancels.")
-        print(f"Anchor: {PEG_ANCHOR_RATIO}x the group's growth-adjusted "
-              f"multiple reads {6 - SCORE_ANCHOR:.1f}; its inverse reads "
+        print(f"\ngroup median PEG {med:.2f}; raw = {W_REL}*rel + {W_OWN}*z_own"
+              f" in anchor units — rel = ln(PEG/median)/ln({PEG_ANCHOR_RATIO}),"
+              f" z_own = fwd P/E vs own {OWN_WINDOW_DAYS}d window.")
+        print(f"raw 1.0 reads {6 - SCORE_ANCHOR:.1f}, -1.0 reads "
               f"{SCORE_ANCHOR:.1f}. rev90d is context, not score.")
     conn.close()
     return 0

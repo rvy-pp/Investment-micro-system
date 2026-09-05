@@ -1009,15 +1009,32 @@ cross-validated against the digests before being trusted: PhillipCapital
 "35x FY28E EPS of Rs16" vs Yahoo PGEL FY28 16.56; CLSA "52x FY28 PE" vs
 Dixon FY28 281.6 at CMP. Both agree.
 
-**THE SCORE: PEG log-ratio against the peer median, because own-history is
-IMPOSSIBLE, not dispreferred.** No free source carries HISTORICAL consensus;
-reconstructing it from realised EPS is look-ahead, and freezing today's
-estimate across history degrades to a price z. So: fwd P/E = close /
-(time-weighted FY1/FY2 blend), PEG = fwd P/E / growth, raw =
-ln(PEG/group median) — spreadable, the median cancels pairwise. Anchor:
-1.5x the group's growth-adjusted multiple reads 2.0. The daily captures are
-what make an own-history variant possible in ~6 months; that intent is
-recorded in `specs/sectors/ems.yaml pillar_3.reference`.
+**THE SCORE: since 2026-09-05, a 50/50 BLEND of the peer PEG ratio and an
+own-recent z.** raw = 0.5·ln(PEG/group median)/ln(1.5) + 0.5·z_own, in
+anchor units (1.0 = the act threshold on either component), hill k = 1.0.
+The original raw was the peer ratio alone, and its first week demonstrated
+its blind spot: the four names sold off -2.6%..-8.8% as a block, every
+common move cancelled out of ln(PEG/median), and the PM saw "4 straight
+lines". z_own is each name's fwd P/E against its OWN last 60 days
+(OWN_WINDOW_DAYS), sd floored at 0.5% of the window mean so a quiet window
+reads "no signal" rather than z=30; a window under 15 points falls back to
+the peer ratio alone, flagged in detail.raw_basis. W_REL/W_OWN in
+valuation_pe.py is the PM's volatility knob.
+
+**Where z_own's history comes from — the reason it is honest.** Long
+own-history is still IMPOSSIBLE (no free source carries historical
+consensus; realised-EPS reconstruction is look-ahead), but every capture
+carries Yahoo's own 7/30/60/90-days-ago estimate values — point-in-time
+records, dated by offsetting the capture date. Those anchors plus the daily
+captures give a stepwise forward-EPS series reaching ~90 days before the
+first capture; closes over it give the daily fwd P/E window. **The blend
+RE-RANKED the group on day one, and that is the design speaking:** Dixon's
+upgrade cycle (+10% estimates, 90d) makes it CHEAP against its own window,
+lifting it from the group floor (2.29 old raw) to mid-pack (~3.5); Kaynes,
+which de-rated after its cuts, took the floor. PEG = (close/FY2 EPS)/growth
+per the 2026-09-03 desk convention (numerator and denominator describe the
+same year). The full own-history variant at ~120 captures remains the
+recorded intent in `specs/sectors/ems.yaml pillar_3.reference`.
 
 **`pillar_3.metrics` FINALLY HAS A READER.** It was written in all five
 sector specs and consulted by nothing (the `effective_from` shape).
