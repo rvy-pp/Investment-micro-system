@@ -60,6 +60,13 @@ ticker_map:
   NACL: nalco
   VAML: vaml
 
+# pair_labels: display names the PM dictates per internal tag — beats the
+# auto Long_Short label wherever set. ("First of all, I'll tell you the
+# pairs" — 06-09-2026; fill as the PM names them.)
+#   pair_labels:
+#     "IT 5": "Mphasis vs Elxsi"
+pair_labels: {}
+
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
 names:

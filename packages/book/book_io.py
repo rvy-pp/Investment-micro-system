@@ -500,10 +500,16 @@ def pair_report(conn: sqlite3.Connection | None = None,
                             basis, hist)
             gap_risk = gap_risk or ch["gap_risk"]
             rolls += ch["rolls"]
+            first = next((x for x in rows if x["snap_date"] <= as_of), r)
             legs.append({
                 "name": display_name(r["root"]), "root": r["root"],
                 "ticker_now": r["ticker_raw"], "contract": r["contract"],
                 "cap": r["cap"], "side": r["side"], "qty": r["qty"],
+                # the price anchor for %-since-start: the avg entry cost from
+                # the leg's FIRST capture (the IMS printed it until 09-2026);
+                # None once the export drops the column — consumers fall back
+                # to the close on first_seen
+                "first_seen": first["snap_date"], "entry_cost": first["cost"],
                 "cost": r["cost"], "mv_pct": r["mv_pct"],
                 "mv_usd": (round(r["mv_pct"] * nav, 0)
                            if r["mv_pct"] is not None and nav else None),

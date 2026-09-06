@@ -1436,13 +1436,16 @@ def book_view() -> dict:
     rep = book_io.pair_report()
 
     cfg_path = REPO / "specs" / "book.yaml"
-    tmap, carry, names = {}, {}, {}
+    tmap, carry, names, plabels = {}, {}, {}, {}
     if cfg_path.exists():
         import yaml
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         tmap = cfg.get("ticker_map") or {}
         carry = cfg.get("carry") or {}
         names = cfg.get("names") or {}
+        # pair_labels: the PM dictates display names per tag; auto Long_Short
+        # is only the fallback
+        plabels = cfg.get("pair_labels") or {}
 
     conn = connect()
     comp = {}
@@ -1460,15 +1463,21 @@ def book_view() -> dict:
         last_review[r["pair_tag"]] = {
             "verdict": r["verdict"], "date": r["review_date"],
             "thesis_intact": r["thesis_intact"]}
-    conn.close()
 
     # The page never prints the pair tag (PM, 06-09-2026) — pairs display as
-    # Long_Short built from specs/book.yaml `names` (e.g. Coforge_Persistent).
+    # Long_Short built from specs/book.yaml `names` (e.g. Coforge_Persistent),
+    # unless the PM dictated a label in `pair_labels`.
     def _label(longs: list, shorts: list) -> str:
         L, S = "+".join(longs), "+".join(shorts)
         if L and S:
             return f"{L}_{S}"
         return f"{S} (short)" if S else f"{L} (long)"
+
+    def _close(eid: str, upto: str):
+        r = conn.execute(
+            "SELECT close FROM prices WHERE entity_id=? AND date<=? "
+            "ORDER BY date DESC LIMIT 1", (eid, upto)).fetchone()
+        return r["close"] if r else None
 
     for p in rep["pairs"]:
         for leg in p["legs"]:
@@ -1479,9 +1488,32 @@ def book_view() -> dict:
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
             leg["name"] = names.get(tok, leg["name"])
+            # %-since-start per leg: latest close vs the trade anchor. The
+            # anchor is the leg's avg entry cost as the IMS printed it at
+            # first capture; once the export drops the Cost column, new legs
+            # anchor on the close of their first-seen date. Both are INR
+            # closes against INR anchors — no FX leg here by construction.
+            leg["ret_pct"] = None
+            if eid:
+                base = leg.get("entry_cost") or _close(eid, leg["first_seen"])
+                now = _close(eid, rep["as_of"])
+                if base and now:
+                    leg["ret_pct"] = round((now / base - 1) * 100, 2)
         p["long"] = [x["name"] for x in p["legs"] if x["side"] == "L"]
         p["short"] = [x["name"] for x in p["legs"] if x["side"] == "S"]
-        p["label"] = _label(p["long"], p["short"])
+        p["label"] = plabels.get(p["pair"]) or _label(p["long"], p["short"])
+        # THE PAIR % (PM example: long +10%, short -5% -> pair +15%): average
+        # of long legs' price moves MINUS average of short legs'. Averaging
+        # per side generalises the 1v1 example to 3- and 4-leg pairs without
+        # double-counting a side. None if any leg lacks a price.
+        lr = [x["ret_pct"] for x in p["legs"] if x["side"] == "L"]
+        sr = [x["ret_pct"] for x in p["legs"] if x["side"] == "S"]
+        if all(r is not None for r in lr + sr) and (lr or sr):
+            lm = sum(lr) / len(lr) if lr else 0.0
+            sm = sum(sr) / len(sr) if sr else 0.0
+            p["ret_pct"] = round(lm - sm, 2)
+        else:
+            p["ret_pct"] = None
         p["review"] = last_review.get(p["pair"])
         # carry: desk-stated P&L from before the first snapshot (specs/book.yaml)
         c = carry.get(p["pair"])
@@ -1489,10 +1521,11 @@ def book_view() -> dict:
             p["carry"] = c
             p["pnl_total_with_carry"] = round(
                 p["pnl_total"] + (c.get("pnl") or 0), 2)
+    conn.close()
     for c in rep["closed"]:
         c["long"] = [names.get(n, n) for n in c.get("long") or []]
         c["short"] = [names.get(n, n) for n in c.get("short") or []]
-        c["label"] = _label(c["long"], c["short"])
+        c["label"] = plabels.get(c["pair"]) or _label(c["long"], c["short"])
     rep["scores_as_of"] = as_of
     rep["n_mapped"] = sum(1 for p in rep["pairs"] for x in p["legs"]
                           if x.get("entity_id"))

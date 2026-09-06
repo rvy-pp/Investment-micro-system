@@ -576,18 +576,25 @@
     color:var(--faint);font-weight:600;text-align:right;
     padding:7px 10px;border-bottom:1px solid var(--rule)}
   .bk th.l{text-align:left}
+  /* row rules #3d444d / #4d5560, deliberately LIGHTER than the theme's
+     --rule/--hair — the PM called the token grays "practically invisible" */
   .bk td{font-family:var(--mono);font-size:var(--t-sm);
     font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
-    border-top:1px solid var(--hair);white-space:nowrap}
+    border-top:1px solid #3d444d;white-space:nowrap}
   .bk tbody tr:hover td{background:var(--alt)}
   .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
-    width:104px;border-right:1px solid var(--rule);background:var(--surface);
-    border-top:1px solid var(--rule);padding:6px 12px}
+    width:104px;border-right:1px solid #4d5560;background:var(--surface);
+    border-top:1px solid #4d5560;padding:6px 12px}
   .bk td.sec .t{display:block;font-size:var(--t-label);font-weight:700;
     letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
   .bk td.sec .a{display:block;font-family:var(--mono);font-size:var(--t-micro);
     color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
-  .bk tr.secfirst td{border-top:1px solid var(--rule)}
+  .bk tr.secfirst td{border-top:1px solid #4d5560}
+  .bk tr.total td{border-top:2px solid #4d5560;background:var(--surface);
+    font-weight:700;padding:7px 10px}
+  .bk tr.total td.sec .t{color:var(--ink)}
+  .bk .sub{color:var(--faint);font-size:var(--t-micro);font-weight:400;
+    margin-left:6px}
   .bk td.pair{font-family:var(--sans);text-align:left;font-weight:600;
     color:var(--ink);font-size:var(--t-sm)}
   .bk td.pair .chips{margin-left:6px;font-weight:400}
@@ -2314,10 +2321,9 @@ const industryOf = tag => tag === 'UNTAGGED' ? 'UNTAGGED'
    ONE table for the whole book; the sector is a MERGED (rowspan) cell
    beside its pairs, carrying its mini-aggregates, so no vertical space
    goes to group headers (PM, 06-09-2026). */
-const kfmt = v => v == null ? '—' : Math.abs(v) >= 100000
-  ? (v / 1000).toFixed(0) + 'k' : Math.abs(v) >= 10000
-  ? (v / 1000).toFixed(1) + 'k' : Math.round(v).toLocaleString('en-US');
-function bookSections(pairs){
+const pctf = (v, dp = 1) => v == null ? '—'
+  : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(dp) + '%';
+function bookSections(pairs, nav, bookPnl){
   const groups = new Map();
   pairs.forEach(p => {
     const k = industryOf(p.pair);
@@ -2326,12 +2332,13 @@ function bookSections(pairs){
   });
   const sum = (ps, f) => ps.reduce((s, p) => s + (p[f] || 0), 0);
   const inds = [...groups.keys()]
-    .sort((a, b) => sum(groups.get(b), 'gross_usd') - sum(groups.get(a), 'gross_usd'));
-  const maxGross = Math.max(1, ...pairs.map(p => p.gross_usd || 0));
+    .sort((a, b) => sum(groups.get(b), 'gross_pct') - sum(groups.get(a), 'gross_pct'));
+  const maxGross = Math.max(1e-9, ...pairs.map(p => p.gross_pct || 0));
 
   const body = inds.map(k => {
-    const ps = groups.get(k).sort((a, b) => (b.pnl_total || 0) - (a.pnl_total || 0));
-    const secTip = `${k}: gross ${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')}` +
+    const ps = groups.get(k).sort((a, b) => (b.ret_pct || 0) - (a.ret_pct || 0));
+    const secTip = `${k}: gross ${(sum(ps, 'gross_pct') * 100).toFixed(1)}%` +
+      ` ($${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')})` +
       ` · day ${usd(sum(ps, 'pnl_dtd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}` +
       ` · since start ${usd(sum(ps, 'pnl_total'))}`;
     const secAgg = sum(ps, 'pnl_total');
@@ -2339,6 +2346,7 @@ function bookSections(pairs){
       const total = p.pnl_total_with_carry != null ? p.pnl_total_with_carry : p.pnl_total;
       const legTip = p.legs.map(l =>
         `${l.side === 'L' ? '▲' : '▼'} ${l.name} ×${l.qty}` +
+        `${l.ret_pct != null ? `  px ${pctf(l.ret_pct)}` : ''}` +
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
         `  day ${usd(l.pnl_dtd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
         `  (${l.ticker_now})`).join('\n');
@@ -2351,27 +2359,41 @@ function bookSections(pairs){
         (p.carry ? ` <span class="pill" title="includes desk-stated carry ${usd(p.carry.pnl)} from before ${esc(p.carry.since || 'first capture')} (specs/book.yaml)">carry</span>` : '');
       const sec = i === 0 ? `<td class="sec" rowspan="${ps.length}" title="${esc(secTip)}">
           <span class="t">${esc(k)}</span>
-          <span class="a">${kfmt(sum(ps, 'gross_usd'))} gr</span>
+          <span class="a">${(sum(ps, 'gross_pct') * 100).toFixed(1)}% gr</span>
           <span class="a ${usdCls(secAgg)}">${usd(secAgg)}</span></td>` : '';
       return `<tr title="${esc(legTip)}" class="${i === 0 ? 'secfirst' : ''}">
         ${sec}
         <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
-        <td>${p.gross_usd == null ? '—' : Math.round(p.gross_usd).toLocaleString('en-US')}
-          <span class="bk-bar"><i style="width:${Math.round((p.gross_usd || 0) / maxGross * 100)}%"></i></span></td>
+        <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}
+          <span class="bk-bar"><i style="width:${Math.round((p.gross_pct || 0) / maxGross * 100)}%"></i></span></td>
         <td class="${usdCls(p.pnl_dtd)}">${usd(p.pnl_dtd)}</td>
         <td class="${usdCls(p.pnl_mtd)}">${usd(p.pnl_mtd)}</td>
-        <td class="tot ${usdCls(total)}">${usd(total)}</td>
+        <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span></td>
         <td><span class="date">${dmy(p.inception)}</span> <span class="age">${p.days}d</span></td>
       </tr>`;
     }).join('');
   }).join('');
 
+  // the bottom line: whole-book totals (pairs only — the N.A. cost bucket
+  // rides in the strip, attributed to no pair)
+  const gAll = sum(pairs, 'gross_pct');
+  const navRet = nav ? bookPnl / nav * 100 : null;
+  const totalRow = `<tr class="total">
+    <td class="sec"><span class="t">total</span></td>
+    <td class="pair">${pairs.length} pairs</td>
+    <td>${(gAll * 100).toFixed(1)}%</td>
+    <td class="${usdCls(sum(pairs, 'pnl_dtd'))}">${usd(sum(pairs, 'pnl_dtd'))}</td>
+    <td class="${usdCls(sum(pairs, 'pnl_mtd'))}">${usd(sum(pairs, 'pnl_mtd'))}</td>
+    <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
+      pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
+    <td></td></tr>`;
+
   return `<div class="panel" style="padding:0"><div class="scroll">
     <table class="bk"><thead><tr>
-      <th class="l">sector</th><th class="l">pair</th><th>gross $</th>
+      <th class="l">sector</th><th class="l">pair</th><th>gross</th>
       <th>day</th><th>mtd</th>
-      <th title="chained across futures rolls — survives expiry resets">since start</th>
-      <th>opened</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
+      <th title="avg long price move − avg short price move since trade entry (anchor: avg entry cost at first capture; close-anchored once the export drops Cost) · small figure: chained P&L, USD">since start %</th>
+      <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
 /* The model-scores table, tiles and placeholder callouts came OFF this tab
@@ -2404,8 +2426,9 @@ async function loadBook(){
       `<div class="bk-strip">`
       + cell('snapshot', `${dmy(bk.as_of)} <span class="u">· ${bk.snapshots} stored</span>`)
       + cell('nav', bk.nav == null ? '—' : '$' + Math.round(bk.nav).toLocaleString('en-US'))
-      + cell('gross · net', `${Math.round(S('gross_usd')).toLocaleString('en-US')}
-          <span class="u">${(grossPct * 100).toFixed(1)}% · net ${(netPct * 100).toFixed(1)}%</span>`)
+      + cell('gross · net', `${(grossPct * 100).toFixed(1)}%
+          <span class="u">$${Math.round(S('gross_usd')).toLocaleString('en-US')}
+          · net ${(netPct * 100).toFixed(1)}%</span>`)
       + cell('day', usd(S('pnl_dtd')), usdCls(S('pnl_dtd')))
       + cell('mtd', usd(S('pnl_mtd')), usdCls(S('pnl_mtd')))
       + cell('since start', usd(bk.book_pnl_total), usdCls(bk.book_pnl_total))
@@ -2420,7 +2443,7 @@ async function loadBook(){
            <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
            <div class="hint">rows with no pair name on the IMS snapshot are grouped
            under UNTAGGED rather than guessed into a pair.</div></div>` : '')
-      + bookSections(bk.pairs)
+      + bookSections(bk.pairs, bk.nav, bk.book_pnl_total)
       + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
            <th class="l">closed</th><th>final P&amp;L</th><th>held</th>
