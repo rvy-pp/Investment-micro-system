@@ -476,10 +476,19 @@ def pair_report(conn: sqlite3.Connection | None = None,
         total = pair_total(pair, as_of)
 
         if pair not in live_pairs:
+            # leg names from the last snapshot that carried the pair — the tag
+            # itself is internal bookkeeping and never printed on the page
+            last_legs = conn.execute(
+                "SELECT side, root FROM book_positions WHERE pair_tag=? AND "
+                "snap_date=? ORDER BY side, root", (pair, last_seen)).fetchall()
             closed.append({"pair": pair, "inception": inception,
                            "last_seen": last_seen,
                            "days": (_date(last_seen) - _date(inception)).days,
-                           "pnl_total": round(total, 2)})
+                           "pnl_total": round(total, 2),
+                           "long": [display_name(r["root"]) for r in last_legs
+                                    if r["side"] == "L"],
+                           "short": [display_name(r["root"]) for r in last_legs
+                                     if r["side"] == "S"]})
             continue
 
         legs, rolls, gap_risk = [], 0, False
