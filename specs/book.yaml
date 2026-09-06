@@ -60,4 +60,41 @@ ticker_map:
   NACL: nalco
   VAML: vaml
 
+# names: what the dashboard prints for each ticker token. The pair line is
+# built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
+names:
+  AMBER: Amber
+  SYRMA: Syrma
+  DIXON: Dixon
+  KAYNE: Kaynes
+  TCS: TCS
+  INFO: Infosys
+  WPRO: Wipro
+  HCLT: HCL Tech
+  TECHM: Tech Mahindra
+  LTM: LTIMindtree
+  COFOR: Coforge
+  MPHL: Mphasis
+  PSYS: Persistent
+  TELX: Tata Elxsi
+  LTTS: LTTS
+  KPITT: KPIT
+  SRCM: Shree Cement
+  UTCEM: UltraTech
+  ACEM: Ambuja
+  DALBH: Dalmia
+  DALBHARA: Dalmia
+  TATA: Tata Steel
+  JINDA: Jindal Steel
+  JSTL: JSW Steel
+  SAIL: SAIL
+  APAT: APL Apollo
+  NMDC: NMDC
+  COAL: Coal India
+  HZ: Hind Zinc
+  VEDL: Vedanta
+  HNDL: Hindalco
+  NACL: NALCO
+  VAML: VAML
+
 carry: {}

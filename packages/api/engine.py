@@ -1436,12 +1436,13 @@ def book_view() -> dict:
     rep = book_io.pair_report()
 
     cfg_path = REPO / "specs" / "book.yaml"
-    tmap, carry = {}, {}
+    tmap, carry, names = {}, {}, {}
     if cfg_path.exists():
         import yaml
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         tmap = cfg.get("ticker_map") or {}
         carry = cfg.get("carry") or {}
+        names = cfg.get("names") or {}
 
     conn = connect()
     comp = {}
@@ -1461,6 +1462,14 @@ def book_view() -> dict:
             "thesis_intact": r["thesis_intact"]}
     conn.close()
 
+    # The page never prints the pair tag (PM, 06-09-2026) — pairs display as
+    # Long_Short built from specs/book.yaml `names` (e.g. Coforge_Persistent).
+    def _label(longs: list, shorts: list) -> str:
+        L, S = "+".join(longs), "+".join(shorts)
+        if L and S:
+            return f"{L}_{S}"
+        return f"{S} (short)" if S else f"{L} (long)"
+
     for p in rep["pairs"]:
         for leg in p["legs"]:
             # the map keys on the ticker's first token (IMS-Spec convention);
@@ -1469,6 +1478,10 @@ def book_view() -> dict:
             eid = tmap.get(tok) or tmap.get(leg["root"]) or tmap.get(leg["name"])
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
+            leg["name"] = names.get(tok, leg["name"])
+        p["long"] = [x["name"] for x in p["legs"] if x["side"] == "L"]
+        p["short"] = [x["name"] for x in p["legs"] if x["side"] == "S"]
+        p["label"] = _label(p["long"], p["short"])
         p["review"] = last_review.get(p["pair"])
         # carry: desk-stated P&L from before the first snapshot (specs/book.yaml)
         c = carry.get(p["pair"])
@@ -1476,6 +1489,10 @@ def book_view() -> dict:
             p["carry"] = c
             p["pnl_total_with_carry"] = round(
                 p["pnl_total"] + (c.get("pnl") or 0), 2)
+    for c in rep["closed"]:
+        c["long"] = [names.get(n, n) for n in c.get("long") or []]
+        c["short"] = [names.get(n, n) for n in c.get("short") or []]
+        c["label"] = _label(c["long"], c["short"])
     rep["scores_as_of"] = as_of
     rep["n_mapped"] = sum(1 for p in rep["pairs"] for x in p["legs"]
                           if x.get("entity_id"))
