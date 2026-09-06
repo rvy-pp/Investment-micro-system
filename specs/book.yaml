@@ -1,25 +1,63 @@
 # The Book tab / daily_review skill — configuration.
 #
-# ticker_map: Bloomberg ROOT (book_positions.root, i.e. the ticker with the
-# =U6-style contract token stripped) -> entity_id in this system. EMPTY on
-# purpose until the desk confirms each mapping at a daily_review calibration:
-# a guessed mapping silently glues the wrong model context to a real position,
-# which is worse than showing none. An unmapped leg renders a dash.
+# ticker_map: the IMS ticker's FIRST TOKEN (before '=contract' / 'IS'/'IN') ->
+# entity_id here. Seeded 2026-09-06 from the vault's
+# `Portfolio Management/IMS-Spec.md` ticker table (PM-confirmed 2026-08-09) —
+# a sourced mapping, not a guess. That spec keys the vault's folder names;
+# the values here are THIS system's entity ids. Unrecognized tickers in a
+# future snapshot: flag to the PM, do not guess.
 #
-#   ticker_map:
-#     "TATA IS Equity": tata_steel        # example shape only — VERIFY first
-#
-# carry: desk-stated P&L earned by a pair BEFORE its first stored snapshot
-# (the chain can only see what was captured). Applied at display, flagged as
+# carry: desk-stated P&L a pair earned BEFORE its first stored snapshot (the
+# chain can only see what was captured). Applied at display, flagged as
 # carry, never mixed into the chained figure.
-#
 #   carry:
-#     "IT 5": {pnl: 125000, since: "2026-07-01", note: "PM figure, pre-capture"}
+#     "IT 5": {pnl: 1250, since: "2026-07-01", note: "PM figure, pre-capture"}
 #
-# pnl_basis is a per-snapshot field in the staging JSON; the value here is
-# only the default the skill writes until calibration settles what the IMS
-# P&L column actually is (contract_itd = resets at every roll; daily = that
-# day's P&L only).
+# pnl_basis: contract_itd = the IMS per-ticker YTD PNL column, which resets
+# when the ticker resets (roll) — book_io chains it. 'daily' would sum a
+# day-P&L column instead; not the live convention.
 pnl_basis: contract_itd
-ticker_map: {}
+
+ticker_map:
+  # EMS
+  AMBER: amber
+  SYRMA: syrma_sgs
+  DIXON: dixon
+  KAYNE: kaynes
+  # IT
+  TCS: tcs
+  INFO: infosys
+  WPRO: wipro
+  HCLT: hcl_tech
+  TECHM: tech_mahindra
+  LTM: ltimindtree
+  COFOR: coforge
+  MPHL: mphasis
+  PSYS: persistent
+  TELX: tata_elxsi
+  LTTS: ltts
+  KPITT: kpit
+  # Cement
+  SRCM: shree
+  UTCEM: ultratech
+  ACEM: ambuja
+  DALBH: dalmia
+  DALBHARA: dalmia      # cash line prints the longer code (04-09-2026 export)
+  # Steel
+  TATA: tata_steel
+  JINDA: jindal_steel
+  JSTL: jsw_steel
+  SAIL: sail
+  APAT: apl_apollo      # not in IMS-Spec (predates the position); standard BBG
+                        # code for APL Apollo Tubes, sits in the STEEL bucket
+  # Mining
+  NMDC: nmdc
+  COAL: coal_india
+  # Zinc / Aluminium
+  HZ: hindustan_zinc
+  VEDL: vedanta
+  HNDL: hindalco
+  NACL: nalco
+  VAML: vaml
+
 carry: {}

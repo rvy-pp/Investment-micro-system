@@ -1,6 +1,6 @@
 ---
 name: daily_review
-description: Ingest the PM's daily IMS positions snapshot (screenshot/xlsx/paste), store it pair-wise with futures rollovers chained, refresh the Book tab, then run the position review — thesis intact, sizing right, add/trim/exit — recording verdicts. Use when the PM uploads an IMS snapshot, says daily review / review the book / review pairs, or asks about pair P&L since inception. Runs on demand, independent of the refresh pipeline.
+description: Ingest the PM's daily IMS positions export (tab-separated paste), store it pair-wise with futures rollovers chained, refresh the Book tab, then run the position review — thesis intact, sizing right, add/trim/exit — recording verdicts. Use when the PM pastes/uploads an IMS snapshot, says daily review / review the book / review pairs, or asks about pair P&L since inception. Runs on demand, independent of the refresh pipeline.
 ---
 
 # daily_review — the PM's book, pair-wise, then the review conversation
@@ -8,117 +8,96 @@ description: Ingest the PM's daily IMS positions snapshot (screenshot/xlsx/paste
 Two problems the company IMS cannot solve, and this skill exists for both:
 
 1. **It lists positions singly.** The PM tags each position with a pair name
-   ("IT 5") in a description field — more than two legs can share one tag.
-   The unit of thought is the pair, so everything here displays ONE LINE PER
+   ("IT 5") — more than two legs can share one tag (STEEL 1 runs three,
+   EMS 1 four). The unit of thought is the pair; the display is ONE LINE PER
    PAIR.
-2. **Futures tickers reset at every roll** (`TATASTEEL=U6` → `=V6`) and the
-   IMS P&L column resets with them — pair inception and since-inception P&L
-   are invisible there. `packages/book/book_io.py` strips the contract token
-   to a stable root and CHAINS P&L across rolls.
+2. **Futures tickers reset at every monthly roll** (`TATA=U6` → `=V6`) and
+   the per-ticker YTD P&L resets with them — pair inception and
+   since-inception P&L are invisible there. `packages/book/book_io.py`
+   strips the contract token to a stable root and CHAINS the YTD P&L across
+   rolls.
 
-Division of labour, same as everywhere in this system: **the agent
-transcribes; `book_io.py` computes.** Never do P&L arithmetic in your head —
-no lot sizes or multipliers exist here, the IMS's own printed P&L figure is
-the only P&L input.
+Division of labour, same as everywhere in this system: **the paste is the
+input; `book_io.py` parses and computes.** Never transcribe numbers by hand
+and never compute P&L from prices — the IMS's own printed figures are the
+only P&L input.
 
 ```bash
 cd "C:\Users\rajvaibhav.yadav\Investment-micro-system"
 ```
 
-## Step 1 — parse the snapshot into staging JSON
+## Step 1 — save the paste, parse, load (one command)
 
-The PM uploads the day's IMS positions view (screenshot, xlsx, csv, or a
-paste). Transcribe it into `data/book/staging/YYYY-MM-DD.json`:
-
-```json
-{
-  "date": "2026-09-05",
-  "source_file": "what was uploaded, for the record",
-  "pnl_basis": "contract_itd",
-  "positions": [
-    {"pair": "IT 5", "ticker": "TCS=U6 IS Equity", "qty": 100,
-     "avg_price": 4100.5, "last_price": 4188.0, "mv": 418800,
-     "pnl": 8750, "side": "L"}
-  ]
-}
-```
-
-Rules — each one exists because its violation is silent:
-
-- **Every row, verbatim.** A snapshot is treated as the FULL book: a leg
-  absent from a snapshot is read as CLOSED (that is how re-entries are
-  detected), so a partially transcribed snapshot books phantom exits. If the
-  upload is cropped or ambiguous, ask — do not load half a book.
-- **Ticker exactly as printed**, contract code (`=U6`) included. The code
-  strips it; you do not.
-- **`pair` exactly as the PM wrote it** on the IMS ("IT 5", "MET 2"…). A row
-  with no tag gets NO pair — the loader files it under UNTAGGED and the tab
-  flags it. Never invent or infer a tag.
-- **`pnl` is the IMS's own P&L figure for that row.** Never compute it from
-  prices, never "correct" it.
-- **`qty` signed (long +, short −) or with an explicit `side`.** Both is
-  fine; sign wins.
-- A cell you cannot read → omit the field (avg/last/mv/pnl may be null) and
-  note it; a TICKER or QTY you cannot read → stop and ask.
-- After writing the JSON, **count**: rows in file == rows in the upload, and
-  spot-check 3 rows byte-for-byte (the westmetall transcription lesson —
-  nothing downstream catches 3182 read as 3812).
-
-## Step 1b — FIRST RUN ONLY: calibration (ask, do not assume)
-
-1. **What is the P&L column?** Show the PM one position and ask whether its
-   figure is (a) since the current contract was opened — resets at roll →
-   `pnl_basis: contract_itd` (default), or (b) that day's P&L only →
-   `"daily"`. Set it in the staging JSON and as the default in
-   `specs/book.yaml`. The chain arithmetic differs; a wrong basis is a wrong
-   total that looks plausible.
-2. **Fill `specs/book.yaml ticker_map`** — Bloomberg root → entity_id — for
-   legs covered by this system, confirming each mapping with the PM (a
-   guessed map glues the wrong model context to a real position; leave
-   unknowns unmapped).
-3. **Pre-history**: if a pair was running before the first capture, the PM
-   can state its earned P&L → `carry:` in `specs/book.yaml`. Displayed and
-   flagged as carry, never mixed into the chained figure.
-
-## Step 2 — load (deterministic)
+The PM pastes the IMS export (tab-separated; the format is specified in the
+vault's `Portfolio Management/IMS-Spec.md`, PM-confirmed 2026-08-09 — sector
+aggregate rows, position rows, the N.A. bucket, a book-total row; the Cost
+column is being dropped from the export and the parser accepts both shapes).
+Save it VERBATIM — do not retype, reorder or "fix" anything:
 
 ```bash
-python packages/book/book_io.py --load "data/book/staging/YYYY-MM-DD.json"
+# paste -> data/book/staging/raw_YYYY-MM-DD.tsv  (tabs intact), then:
+python packages/book/book_io.py --parse "data/book/staging/raw_YYYY-MM-DD.tsv" --date YYYY-MM-DD
 ```
 
-Re-upload of a corrected snapshot for the same date: add `--replace`.
-The loader refuses rather than repairs (future date, empty book, dup rows,
-qty 0). A refusal goes back to Step 1 — never edit the loader to accept.
+The date is the TRADING day the export describes, not the day it is pasted.
+Re-load of a corrected paste for the same date: add `--replace`.
 
-Verify: the printed report's position count matches the upload, and every
-pair tag you saw on the sheet appears.
+The parser refuses rather than repairs, and its **cross-foot check is the
+transcription guard**: positions + N.A. must reconcile to the export's own
+total row on MV%, GMV%, DTD, MTD and YTD, so a dropped or mangled line fails
+loudly. NAV is derived per snapshot (`DTD PNL ÷ DTD PNL %`, median across
+rows), never hardcoded. A parse refusal goes back to the paste — never edit
+the loader to accept.
 
-## Step 3 — show the book
+If a row carries a ticker not in `specs/book.yaml ticker_map`, load anyway
+(mapping only affects model context) but flag it to the PM and add the
+mapping once confirmed — never guess it.
 
-Print the pair report inline for the PM (`--report` output is the shape):
-one line per pair — legs, inception, days on, **P&L since inception (chained
-across rolls)**, day P&L, flags. The Book tab (http://127.0.0.1:8770, "The
-Book") now renders the same thing; note `gap` flags out loud — a roll across
-a snapshot gap means the frozen figure may miss the old contract's last days.
+## Step 2 — show the book
 
-## Step 4 — the review (the point of all of it)
+Print the `--report` output inline for the PM: one line per pair — legs,
+inception, days on, **P&L since inception (chained across rolls)**, the
+IMS's own day and MTD figures, flags. The Book tab (http://127.0.0.1:8770,
+"The Book") renders the same thing with per-leg detail and each mapped leg's
+model composite. Say the flags out loud:
 
-For each pair the PM wants to look at (default: all, worst day-P&L first),
-assemble context BEFORE opining:
+- `gap` — a roll happened across a snapshot gap, so the frozen figure may
+  miss the dying contract's last days.
+- `UNTAGGED` — rows with no pair name; never guessed into a pair.
+- N.A. YTD — the cost of carry of the operation (closed positions' realized
+  P&L + currency/rollover/fixed costs). Real P&L, attributed to no pair.
 
-- **Model**: `/api/book` joins each mapped leg's composite; pillar detail via
-  `/api/overview`'s book block or `/api/tape`. Unmapped legs have no model
-  view — say so, don't improvise one.
-- **Positioning**: `/api/oi` for the legs' OI percentile + buildup.
+**⚠ VERIFY ON THE FIRST OBSERVED ROLL** (standing until it happens): when a
+leg's contract changes between snapshots, check the new ticker's YTD starts
+near zero. The chain assumes the old contract's realized P&L falls into
+N.A.; if the new ticker ever CARRIES it, the chain double-counts and the
+split rule must change. Evidence so far (04-09-2026): KAYNE, opened
+in-window, shows DTD == MTD == YTD to the last digit.
+
+**Inception is the first STORED snapshot with the tag** — pairs running
+before capture started show a too-recent inception. The PM can state the
+pre-capture P&L and true start as `carry:` in `specs/book.yaml`; it displays
+flagged, never mixed into the chained figure.
+
+## Step 3 — the review (the point of all of it)
+
+For each pair the PM wants (default: all, worst day first), assemble the
+evidence BEFORE opining:
+
+- **Model**: `/api/book` carries each mapped leg's composite; pillar detail
+  via `/api/overview`'s book block or `/api/tape`. IT legs have no score by
+  the PM's ruling (forward P/E panel instead — the IT tab); say so rather
+  than improvising one.
+- **Positioning**: `/api/oi` for OI percentile + buildup per leg.
 - **Regime**: `/api/flows` weekly state — can the pair express right now?
-- **History**: `book_io.reviews()` — what was said last time, and did it
-  hold? A pair previously marked `thesis_intact: 0` or repeatedly `trim` is
-  a standing candidate for the mistakes review.
+- **History**: `book_io.reviews()` — what was said last time, did it hold?
+  A pair marked `thesis_intact: 0` or repeatedly `trim` is a standing
+  candidate for the mistakes review, as is any closed pair with a negative
+  final P&L.
 
-Then the back-and-forth with the PM: does the thesis hold, is the sizing
-optimal, add or not, exit. Your role is to confront the position with the
-evidence (score moved against the leg, OI says crowded, pair bleeding since
-inception despite thesis) — the CALL is the PM's.
+Then the back-and-forth: does the thesis hold, is the sizing optimal, add or
+not, exit. Confront the position with the evidence (score against the leg,
+OI crowded, pair bleeding since inception) — the CALL is the PM's.
 
 Record every verdict reached:
 
@@ -127,18 +106,18 @@ python -c "import sys; sys.path.insert(0,'packages/book'); import book_io; \
 book_io.add_review('IT 5','hold','one-line reason as agreed with PM',thesis_intact=True)"
 ```
 
-and write the fuller discussion to `data/book/reviews/YYYY-MM-DD.md` (create
-the folder if absent) — pair, evidence considered, decision, what would
-change the mind. Closed pairs with a negative final P&L get a post-mortem
-line there too: what broke, was it visible in the model, what to carry
-forward.
+and write the fuller discussion to `data/book/reviews/YYYY-MM-DD.md` — pair,
+evidence considered, decision, what would change the mind. Closed pairs with
+a negative final P&L get a post-mortem line: what broke, was it visible in
+the model, what to carry forward.
 
 ## What this never does
 
 - Never writes to `prices`, `pillar_scores`, or anything a pillar reads —
   the book tables are `book_*` only.
-- Never computes P&L from prices; the IMS figure is the only P&L input.
+- Never computes P&L from prices; never "corrects" an IMS figure.
 - Never invents a pair tag, a ticker mapping, or a missing cell.
-- Never loads a partial transcription of a snapshot.
+- Never loads a partial paste — a snapshot is the FULL book (absence from
+  one is read as a position CLOSED; that is how re-entries are detected).
 - Position data stays local — `data/` is gitignored; never commit or paste
   the book into anything that leaves the machine.

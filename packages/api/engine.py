@@ -1463,7 +1463,10 @@ def book_view() -> dict:
 
     for p in rep["pairs"]:
         for leg in p["legs"]:
-            eid = tmap.get(leg["root"]) or tmap.get(leg["name"])
+            # the map keys on the ticker's first token (IMS-Spec convention);
+            # full-root fallback covers any hand-added entries
+            tok = (leg["root"].split() or [""])[0]
+            eid = tmap.get(tok) or tmap.get(leg["root"]) or tmap.get(leg["name"])
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
         p["review"] = last_review.get(p["pair"])

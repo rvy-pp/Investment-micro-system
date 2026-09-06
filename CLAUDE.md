@@ -353,30 +353,49 @@ in `book_pair_reviews` + `data/book/reviews/`.
    root and CHAINS P&L: contract change between snapshots freezes the old
    contract's last-seen P&L into `realized`; total = frozen + live.
 
+**The input format is settled — it is `/pm`'s** (2026-09-06, first real
+snapshot loaded the same day: 04-09-2026, 32 positions, 14 pairs, all legs
+mapped). The export is the tab-separated IMS paste specified in the vault's
+`Portfolio Management/IMS-Spec.md` (PM-confirmed 2026-08-09): sector
+aggregate rows, position rows, the N.A. bucket (closed positions' realized
+P&L + currency/rollover/fixed costs — the operation's cost of carry, zero MV
+by construction), a book-total row. Numeric tail after LONG/SHORT is always
+`MV% βMV% DTD DTD% DTD_trading MTD YTD MTD% YTD% GMV%` (USD; % of NAV). The
+Cost column is being dropped from the export; the parser takes both shapes.
+**NAV is derived per snapshot** (`DTD ÷ DTD%`, median), never hardcoded —
+$3,000,965 on 04-09. `book_io.py --parse` stages and loads in one step, and
+its **cross-foot against the export's own total row is the transcription
+guard** (MV/GMV to 1e-9, P&L to 2¢) — a dropped or mangled line refuses.
+
 **Invariants of the chain, each tested in `--selftest`:**
 
 - **A snapshot is the FULL book.** Absence from a snapshot = closed. That is
   how re-entries are detected — so the skill must never load a partial
-  transcription (phantom exits are silent).
+  paste (phantom exits are silent).
 - **Segment splits key on STORED SNAPSHOT DATES, never calendar days.** The
   tool runs on demand; a quiet fortnight between runs must not split a
   continuously-held contract and double-count its P&L. The first draft used
   a 10-calendar-day rule and had exactly that bug.
-- **`pnl` is the IMS's own printed figure, never recomputed** — no lot sizes
-  or multipliers exist here, per the silent-arithmetic rule.
+- **The chain basis is the IMS's per-ticker YTD PNL column, never
+  recomputed** — no lot sizes or multipliers exist here, per the
+  silent-arithmetic rule. A YEAR BOUNDARY also splits a segment: YTD resets
+  Jan 1 with no ticker change on cash lines (futures never span it).
 - **`gap_risk`** flags a roll observed across a snapshot gap > 7 calendar
   days: the dying contract's final P&L may be under-captured. Flagged, not
   "corrected".
-- **`pnl_basis` is declared per snapshot** (`contract_itd` default vs
-  `daily`) and is UNCALIBRATED until the first real snapshot — the skill's
-  Step 1b asks the PM what the P&L column actually is. A wrong basis is a
-  plausible-looking wrong total.
+- **ASSUMED, VERIFY ON THE FIRST OBSERVED ROLL:** a fresh contract's YTD
+  starts near zero (the old contract's realized P&L falls into N.A.). If the
+  new ticker ever CARRIES the old P&L, the chain double-counts. Evidence so
+  far: KAYNE opened in-window shows DTD == MTD == YTD exactly.
+- Options (`XXXX IS MM/DD/YY C1000 Equity`) have no `=` token → each series
+  its own root, matching the PM's no-delta-netting instruction in IMS-Spec.
 
-`specs/book.yaml` holds `ticker_map` (Bloomberg root → entity_id, joins each
-leg to its model composite on the tab) and `carry` (desk-stated pre-capture
-P&L, displayed flagged, never mixed into the chain). **Both empty on purpose
-until confirmed with the PM** — a guessed mapping glues the wrong model to a
-real position. Book tables are `book_*` only; nothing on this path writes to
+`specs/book.yaml` holds `ticker_map` (ticker first token → entity_id, joins
+each leg to its model composite on the tab — SEEDED from IMS-Spec's
+PM-confirmed table, so it is sourced, not guessed; unrecognized tickers are
+flagged, never guessed) and `carry` (desk-stated pre-capture P&L, displayed
+flagged, never mixed into the chain — inception can only be the first STORED
+snapshot). Book tables are `book_*` only; nothing on this path writes to
 `prices` or anything a pillar reads, and position data stays in gitignored
 `data/`. The API server must be RESTARTED after engine changes (it imports
 once — `/api/version` shows staleness); done for this change.

@@ -2274,20 +2274,27 @@ function pairRows(pairs){
     const total = p.pnl_total_with_carry != null ? p.pnl_total_with_carry : p.pnl_total;
     const carryMark = p.carry
       ? `<sup title="includes desk-stated carry ${inr(p.carry.pnl)} from before ${esc(p.carry.since || 'first capture')} (specs/book.yaml)">c</sup>` : '';
-    const legs = `<tr id="bklegs${i}" hidden><td colspan="8" style="padding:0">
+    const pct = v => v == null ? '—' : (v * 100).toFixed(2) + '%';
+    const legs = `<tr id="bklegs${i}" hidden><td colspan="9" style="padding:0">
       <div class="scroll" style="margin:4px 0 10px 16px"><table><thead><tr>
-        <th>leg</th><th>ticker now</th><th class="n">qty</th><th class="n">avg</th>
-        <th class="n">last</th><th class="n">MV</th><th class="n">P&amp;L live</th>
-        <th class="n">P&amp;L chained</th><th class="n">rolls</th></tr></thead><tbody>
+        <th>leg</th><th>ticker now</th><th class="n">qty</th>
+        <th class="n">MV $</th><th class="n">MV%</th><th class="n">βMV%</th>
+        <th class="n">day $</th><th class="n">MTD $</th>
+        <th class="n" title="the IMS's own YTD figure — resets at each roll">YTD (contract)</th>
+        <th class="n" title="chained across rolls — since the leg entered the pair">P&amp;L chained</th>
+        <th class="n">rolls</th></tr></thead><tbody>
       ${p.legs.map(l => `<tr>
-        <td><b>${l.side === 'L' ? '▲' : '▼'} ${esc(l.name)}</b></td>
+        <td><b>${l.side === 'L' ? '▲' : '▼'} ${esc(l.name)}</b>${
+          l.composite != null ? ` <span class="hint" title="model composite (${esc(l.entity_id)})">${l.composite.toFixed(2)}</span>` : ''}</td>
         <td class="hint">${esc(l.ticker_now)}</td>
         <td class="n">${l.qty.toLocaleString('en-IN')}</td>
-        <td class="n">${l.avg_price == null ? '—' : l.avg_price.toLocaleString('en-IN')}</td>
-        <td class="n">${l.last_price == null ? '—' : l.last_price.toLocaleString('en-IN')}</td>
-        <td class="n">${l.mv == null ? '—' : Math.round(l.mv).toLocaleString('en-IN')}</td>
+        <td class="n">${l.mv_usd == null ? '—' : Math.round(l.mv_usd).toLocaleString('en-IN')}</td>
+        <td class="n">${pct(l.mv_pct)}</td>
+        <td class="n">${pct(l.beta_mv_pct)}</td>
+        <td class="n" ${pnlSty(l.pnl_dtd)}>${inr(l.pnl_dtd)}</td>
+        <td class="n" ${pnlSty(l.pnl_mtd)}>${inr(l.pnl_mtd)}</td>
         <td class="n" ${pnlSty(l.pnl_live)}>${inr(l.pnl_live)}</td>
-        <td class="n" ${pnlSty(l.pnl_total)}>${inr(l.pnl_total)}</td>
+        <td class="n" ${pnlSty(l.pnl_total)}><b>${inr(l.pnl_total)}</b></td>
         <td class="n">${l.rolls || ''}</td></tr>`).join('')}
       </tbody></table></div></td></tr>`;
     return `<tr style="cursor:pointer" onclick="const r=$('#bklegs${i}');r.hidden=!r.hidden">
@@ -2296,8 +2303,11 @@ function pairRows(pairs){
       <td class="n" title="first snapshot carrying this tag">${esc(p.inception)}
         <span class="hint">(${p.days}d)</span></td>
       <td class="n" ${pnlSty(total)}><b>${inr(total)}</b>${carryMark}</td>
-      <td class="n" ${pnlSty(p.pnl_day)}>${inr(p.pnl_day)}</td>
-      <td class="n">${p.gross_mv == null ? '—' : Math.round(p.gross_mv).toLocaleString('en-IN')}</td>
+      <td class="n" ${pnlSty(p.pnl_dtd)}>${inr(p.pnl_dtd)}</td>
+      <td class="n" ${pnlSty(p.pnl_mtd)}>${inr(p.pnl_mtd)}</td>
+      <td class="n">${p.gross_usd == null ? '—' :
+        Math.round(p.gross_usd).toLocaleString('en-IN')}
+        <span class="hint">${p.gross_pct == null ? '' : (p.gross_pct * 100).toFixed(1) + '%'}</span></td>
       <td>${flags} ${rev}</td></tr>` + legs;
   }).join('');
 }
@@ -2322,12 +2332,16 @@ async function loadBook(){
       across futures rolls.</div></div>`;
   } else {
     const untagged = bk.pairs.filter(p => p.pair === 'UNTAGGED').length;
+    const na = bk.na || {};
     posHtml =
       `<div class="meta-line">IMS snapshot <b>${esc(bk.as_of)}</b>
          (${bk.snapshots} stored${bk.prev ? `, prev ${esc(bk.prev)}` : ''}) ·
-         basis <code>${esc(bk.pnl_basis)}</code> · contract codes stripped, P&amp;L
-         <b>chained across rolls</b> — the total survives expiry resets ·
-         book P&amp;L <b ${pnlSty(bk.book_pnl_total)}>${inr(bk.book_pnl_total)}</b>
+         NAV ${bk.nav == null ? '—' : '$' + Math.round(bk.nav).toLocaleString('en-IN')}
+         · contract codes stripped, P&amp;L <b>chained across rolls</b> — the
+         total survives expiry resets · chained book P&amp;L
+         <b ${pnlSty(bk.book_pnl_total)}>${inr(bk.book_pnl_total)}</b>${
+         na.pnl_ytd == null ? '' : ` · N.A. (closed + costs) YTD
+         <span ${pnlSty(na.pnl_ytd)}>${inr(na.pnl_ytd)}</span>`}
          · click a pair for its legs</div>`
       + (untagged ? `<div class="callout accent-amber"><div class="callout-head">
            <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
@@ -2335,7 +2349,8 @@ async function loadBook(){
            under UNTAGGED rather than guessed into a pair.</div></div>` : '')
       + `<div class="panel"><div class="scroll"><table><thead><tr>
            <th>pair</th><th>long</th><th>short</th><th class="n">since</th>
-           <th class="n">P&amp;L total</th><th class="n">day</th>
+           <th class="n" title="chained across rolls, all legs, since the pair first appeared">P&amp;L total</th>
+           <th class="n">day</th><th class="n">MTD</th>
            <th class="n">gross MV</th><th>flags · review</th>
          </tr></thead><tbody>${pairRows(bk.pairs)}</tbody></table></div></div>`
       + (bk.closed.length ? `<div class="sechead">closed pairs</div>
