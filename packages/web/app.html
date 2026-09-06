@@ -555,48 +555,49 @@
   .viztip .r .dv{font-family:var(--mono);font-size:var(--t-micro);
        color:var(--warn);white-space:nowrap;margin-left:2px}
 
-  /* ── The Book (bk-*) — pair-per-line, industry-grouped ─────────────────
+  /* ── The Book (bk-*) — one compact table, sector as a merged column ─────
      One row per pair (PM: individual positions stay off the page; legs live
-     in the row tooltip). Numbers are mono/tabular so columns read as
-     columns; gross carries a relative bar so size is visible before it is
-     read. */
-  .bk-strip{display:flex;flex-wrap:wrap;gap:0;margin:0 0 var(--s5);
+     in the row tooltip); the sector spans its pairs with rowspan so no
+     vertical space goes to group headers. Small mono/tabular numerals; the
+     gross bar makes size visible before it is read. */
+  .bk-strip{display:flex;flex-wrap:wrap;gap:0;margin:0 0 var(--s4);
     background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
     overflow:hidden}
-  .bk-strip .cell{flex:1 1 auto;min-width:110px;padding:12px 18px;
+  .bk-strip .cell{flex:1 1 auto;min-width:96px;padding:8px 14px;
     border-left:1px solid var(--hair)}
   .bk-strip .cell:first-child{border-left:0}
   .bk-strip .k{font-size:var(--t-micro);letter-spacing:.09em;
-    text-transform:uppercase;color:var(--faint);margin-bottom:3px}
-  .bk-strip .v{font-family:var(--mono);font-size:var(--t-lg);font-weight:600;
+    text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+  .bk-strip .v{font-family:var(--mono);font-size:var(--t-md);font-weight:600;
     font-variant-numeric:tabular-nums;color:var(--ink)}
-  .bk-strip .v .u{font-size:var(--t-sm);color:var(--faint);font-weight:400}
-  .bk-ind{display:flex;justify-content:space-between;align-items:baseline;
-    margin:var(--s5) 2px var(--s2)}
-  .bk-ind .t{font-size:var(--t-sm);font-weight:700;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--soft)}
-  .bk-ind .agg{font-family:var(--mono);font-size:var(--t-label);
-    color:var(--faint);font-variant-numeric:tabular-nums}
+  .bk-strip .v .u{font-size:var(--t-label);color:var(--faint);font-weight:400}
   table.bk{width:100%;border-collapse:collapse}
   .bk th{font-size:var(--t-micro);letter-spacing:.08em;text-transform:uppercase;
     color:var(--faint);font-weight:600;text-align:right;
-    padding:8px 14px;border-bottom:1px solid var(--rule)}
-  .bk th:first-child{text-align:left}
-  .bk td{font-family:var(--mono);font-size:var(--t-body);
-    font-variant-numeric:tabular-nums;text-align:right;padding:10px 14px;
+    padding:7px 10px;border-bottom:1px solid var(--rule)}
+  .bk th.l{text-align:left}
+  .bk td{font-family:var(--mono);font-size:var(--t-sm);
+    font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
     border-top:1px solid var(--hair);white-space:nowrap}
-  .bk tbody tr:first-child td{border-top:0}
   .bk tbody tr:hover td{background:var(--alt)}
+  .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
+    width:104px;border-right:1px solid var(--rule);background:var(--surface);
+    border-top:1px solid var(--rule);padding:6px 12px}
+  .bk td.sec .t{display:block;font-size:var(--t-label);font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .bk td.sec .a{display:block;font-family:var(--mono);font-size:var(--t-micro);
+    color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
+  .bk tr.secfirst td{border-top:1px solid var(--rule)}
   .bk td.pair{font-family:var(--sans);text-align:left;font-weight:600;
-    color:var(--ink)}
-  .bk td.pair .chips{margin-left:8px;font-weight:400}
-  .bk .date{color:var(--soft);font-size:var(--t-sm)}
-  .bk .age{color:var(--faint);font-size:var(--t-label)}
-  .bk-bar{display:inline-block;vertical-align:middle;width:56px;height:3px;
-    margin-left:10px;background:var(--hair);border-radius:2px;overflow:hidden}
-  .bk-bar i{display:block;height:100%;background:var(--accent);opacity:.75}
+    color:var(--ink);font-size:var(--t-sm)}
+  .bk td.pair .chips{margin-left:6px;font-weight:400}
+  .bk .date{color:var(--soft)}
+  .bk .age{color:var(--faint);font-size:var(--t-micro)}
+  .bk-bar{display:inline-block;vertical-align:middle;width:42px;height:3px;
+    margin-left:8px;background:var(--hair);border-radius:2px;overflow:hidden}
+  .bk-bar i{display:block;height:100%;background:var(--accent);opacity:.7}
   .bk .up{color:var(--up)} .bk .down{color:var(--down)} .bk .flat{color:var(--faint)}
-  .bk td.tot{font-weight:700;font-size:var(--t-md)}
+  .bk td.tot{font-weight:700}
 </style>
 </head>
 <body>
@@ -2309,8 +2310,13 @@ const industryOf = tag => tag === 'UNTAGGED' ? 'UNTAGGED'
   : (tag.replace(/\s*\d+$/, '').trim() || tag);
 
 /* One line per pair: "Coforge_Persistent" then the data (PM, 06-09-2026 —
-   "leave individual stocks alone"). The legs survive only in the row
-   tooltip. */
+   "leave individual stocks alone"). Legs survive only in the row tooltip.
+   ONE table for the whole book; the sector is a MERGED (rowspan) cell
+   beside its pairs, carrying its mini-aggregates, so no vertical space
+   goes to group headers (PM, 06-09-2026). */
+const kfmt = v => v == null ? '—' : Math.abs(v) >= 100000
+  ? (v / 1000).toFixed(0) + 'k' : Math.abs(v) >= 10000
+  ? (v / 1000).toFixed(1) + 'k' : Math.round(v).toLocaleString('en-US');
 function bookSections(pairs){
   const groups = new Map();
   pairs.forEach(p => {
@@ -2323,9 +2329,13 @@ function bookSections(pairs){
     .sort((a, b) => sum(groups.get(b), 'gross_usd') - sum(groups.get(a), 'gross_usd'));
   const maxGross = Math.max(1, ...pairs.map(p => p.gross_usd || 0));
 
-  return inds.map(k => {
+  const body = inds.map(k => {
     const ps = groups.get(k).sort((a, b) => (b.pnl_total || 0) - (a.pnl_total || 0));
-    const rows = ps.map(p => {
+    const secTip = `${k}: gross ${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')}` +
+      ` · day ${usd(sum(ps, 'pnl_dtd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}` +
+      ` · since start ${usd(sum(ps, 'pnl_total'))}`;
+    const secAgg = sum(ps, 'pnl_total');
+    return ps.map((p, i) => {
       const total = p.pnl_total_with_carry != null ? p.pnl_total_with_carry : p.pnl_total;
       const legTip = p.legs.map(l =>
         `${l.side === 'L' ? '▲' : '▼'} ${l.name} ×${l.qty}` +
@@ -2339,7 +2349,12 @@ function bookSections(pairs){
             title="last reviewed ${esc(dmy(p.review.date))}${p.review.thesis_intact == null ? '' :
               p.review.thesis_intact ? ' · thesis intact' : ' · THESIS BROKEN'}">${esc(p.review.verdict)}</span>` : '') +
         (p.carry ? ` <span class="pill" title="includes desk-stated carry ${usd(p.carry.pnl)} from before ${esc(p.carry.since || 'first capture')} (specs/book.yaml)">carry</span>` : '');
-      return `<tr title="${esc(legTip)}">
+      const sec = i === 0 ? `<td class="sec" rowspan="${ps.length}" title="${esc(secTip)}">
+          <span class="t">${esc(k)}</span>
+          <span class="a">${kfmt(sum(ps, 'gross_usd'))} gr</span>
+          <span class="a ${usdCls(secAgg)}">${usd(secAgg)}</span></td>` : '';
+      return `<tr title="${esc(legTip)}" class="${i === 0 ? 'secfirst' : ''}">
+        ${sec}
         <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
         <td>${p.gross_usd == null ? '—' : Math.round(p.gross_usd).toLocaleString('en-US')}
           <span class="bk-bar"><i style="width:${Math.round((p.gross_usd || 0) / maxGross * 100)}%"></i></span></td>
@@ -2349,24 +2364,22 @@ function bookSections(pairs){
         <td><span class="date">${dmy(p.inception)}</span> <span class="age">${p.days}d</span></td>
       </tr>`;
     }).join('');
-    const agg = `gross ${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')}
-      · day ${usd(sum(ps, 'pnl_dtd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}
-      · since start ${usd(sum(ps, 'pnl_total'))}`;
-    return `<div class="bk-ind"><span class="t">${esc(k)}</span>
-        <span class="agg">${agg}</span></div>
-      <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
-        <th>pair</th><th>gross $</th><th>day</th><th>mtd</th>
-        <th title="chained across futures rolls — survives expiry resets">since start</th>
-        <th>opened</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   }).join('');
+
+  return `<div class="panel" style="padding:0"><div class="scroll">
+    <table class="bk"><thead><tr>
+      <th class="l">sector</th><th class="l">pair</th><th>gross $</th>
+      <th>day</th><th>mtd</th>
+      <th title="chained across futures rolls — survives expiry resets">since start</th>
+      <th>opened</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
 }
 
+/* The model-scores table, tiles and placeholder callouts came OFF this tab
+   06-09-2026 (PM: "all this model view and stuff below is waste") — the
+   model still lives on the Overview/sector tabs and per-leg composites ride
+   in the pair tooltips. This tab is the book, nothing else. */
 async function loadBook(){
-  const [bk, d] = await Promise.all([
-    fetch('/api/book').then(r => r.json()),
-    fetch('/api/overview').then(r => r.json()),
-  ]);
-  if (d.error) throw new Error(d.error);
+  const bk = await (await fetch('/api/book')).json();
 
   let posHtml;
   if (bk.error){
@@ -2408,9 +2421,9 @@ async function loadBook(){
            <div class="hint">rows with no pair name on the IMS snapshot are grouped
            under UNTAGGED rather than guessed into a pair.</div></div>` : '')
       + bookSections(bk.pairs)
-      + (bk.closed.length ? `<div class="bk-ind"><span class="t">closed</span></div>
+      + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
-           <th>pair</th><th>final P&amp;L</th><th>held</th>
+           <th class="l">closed</th><th>final P&amp;L</th><th>held</th>
            <th>opened</th><th>closed</th></tr></thead><tbody>
          ${bk.closed.map(c => `<tr>
            <td class="pair">${esc(c.label || c.pair)}</td>
@@ -2421,68 +2434,7 @@ async function loadBook(){
          </tbody></table></div></div>` : '');
   }
 
-  const bookRows = (d.book || []).map(b => {
-    const cls = b.verdict === 'FULL' ? 'c-up'
-      : b.verdict === 'no trade' ? 'c-flat' : 'c-warn';
-    const pil = ['economics','valuation','mood','guidance'].map(k => {
-      const ph = (b.placeholders || {})[k];
-      if (b[k] == null) return `<td class="n"><span class="hint"
-        title="withheld — the composite renormalises over the pillars that exist">—</span></td>`;
-      if (ph) return `<td class="n" style="color:var(--warn)"
-        title="PLACEHOLDER, not measured. ${esc(ph.reason || '')} Granted ${
-          esc(ph.granted || '')} by ${esc(ph.granted_by || '')}; ends on ${
-          esc(ph.review_trigger || '')}.">${b[k].toFixed(2)}<sup>P</sup></td>`;
-      return `<td class="n">${b[k].toFixed(2)}</td>`;
-    }).join('');
-    return `<tr><td><b>${esc(b.entity)}</b></td>
-      <td class="n score">${b.composite == null ? '—' : b.composite.toFixed(2)}</td>
-      ${pil}
-      <td class="n">${b.size == null ? '—' : (b.size >= 0 ? '+' : '') + b.size.toFixed(2)}</td>
-      <td><span class="chip ${cls}">${esc(b.verdict || 'n/a')}</span></td></tr>`;
-  }).join('');
-
-  const nFull = (d.book || []).filter(b => b.verdict === 'FULL').length;
-  const tiles = `<div class="tiles">
-    <div class="tile ${nFull ? 'good' : ''}">
-      <div class="k">at full size</div>
-      <div class="v">${nFull}
-        <span style="font-size:13px;color:var(--faint)">/ ${(d.book || []).length}</span></div>
-      <div class="s">SIZE ≥ 1.00</div>
-    </div>
-    <div class="tile"><div class="k">scored names</div>
-      <div class="v">${(d.book || []).length}</div>
-      <div class="s">as of ${esc(d.as_of_scores || '—')}</div></div>
-    <div class="tile ${(d.placeholders || []).length ? 'warn' : ''}">
-      <div class="k">placeholders</div>
-      <div class="v">${(d.placeholders || []).length}</div>
-      <div class="s">desk decisions, not measurements</div></div>
-  </div>`;
-
-  const phCallouts = (d.placeholders || []).map(x =>
-    `<div class="callout accent-amber">
-       <div class="callout-head"><span class="t">${esc(x.entity)} ·
-         ${esc(x.pillar)} = ${x.value}</span>
-         <span class="pill warn">placeholder${x.overdue ? ' · OVERDUE' : ''}</span></div>
-       <div class="hint">${esc(x.reason || '')} Granted ${esc(x.granted || '')}
-         by ${esc(x.granted_by || '')}; ends on <b>${esc(x.review_trigger || '')}</b>.
-         It changes the composite and <b>not</b> SIZE — a withheld pillar and a
-         3.00 both map to a 1.0 multiplier.</div></div>`).join('');
-
-  $('#s-book').innerHTML =
-    `<div class="pgt">The Book</div>`
-    + posHtml
-    + `<div class="sechead">model view</div>
-     <div class="meta-line">Persisted <code>pillar_scores</code> ·
-       ${esc(d.as_of_scores || '—')} · a dash is a <b>withheld</b> pillar, not a
-       3.0 — the composite renormalises over the pillars that exist · SIZE 1.00
-       is a full position; below 0.28 is under the desk materiality floor</div>`
-    + tiles
-    + `<div class="panel"><div class="scroll"><table><thead><tr>
-         <th>name</th><th class="n">comp</th>
-         <th class="n">econ</th><th class="n">val</th><th class="n">mood</th>
-         <th class="n">guid</th><th class="n">SIZE</th><th>verdict</th>
-       </tr></thead><tbody>${bookRows}</tbody></table></div></div>`
-    + phCallouts;
+  $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + posHtml;
 }
 
 /* ===================== flows =====================
