@@ -52,6 +52,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import time
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 STAGE = REPO / "data" / "staging"
@@ -60,9 +61,28 @@ SUBJECT_HINT = "asic materials"          # 'Basic materials - daily news and pri
 ATTACH_PREFIX = "Daily Metals Pack"      # NOT the cement pack; see docstring
 LOOKBACK_DAYS = 6                        # a long weekend plus a holiday
 
+# COLD-START RETRY — disclaimer per the silent-arithmetic rule. 2026-09-07: the
+# Sep-7 pack mail WAS in the Inbox with the attachment, but the first run of the
+# morning — which cold-started Outlook via New-Object -ComObject — Restrict()'d
+# an item set whose newest pack was Sep-1, and this module reported "NOT TODAY"
+# as if it were a quiet mail day. An IDENTICAL scan minutes later, with Outlook
+# warm, found Sep-7 and saved it. So the OST was synced and the query was right;
+# the freshly-started COM instance simply had not surfaced the newest items yet.
+# Nothing raised — a stale collection is wrong, not empty — and full-refresh
+# scored the book on 4-day-old pack prices (9 series read STALE) until a manual
+# re-run. Caught by a person noticing STALE on a day the mail was visibly there.
+# Therefore: when the newest find predates today AND today is a weekday, wait
+# and re-scan before believing "no mail today". Weekends are excluded because no
+# pack is sent then and the waits would be pure delay. Do NOT remove this on the
+# grounds that one scan "should" suffice — that is exactly what it looks like.
+RETRY_WAITS = (30, 60)                   # seconds before re-scan 1 and 2
+
 # Index-based iteration, deliberately. Piping a Restrict() collection through
 # foreach skipped today's message in testing while a folder walk found it — a
 # known COM foible when the collection is sorted. $r.Item($i) is reliable.
+# A second member of the same foible class lives on the Python side: a scan run
+# immediately after a COLD Outlook start can return a stale item set entirely —
+# see RETRY_WAITS below (the 2026-09-07 incident).
 PS = r"""
 $ErrorActionPreference = 'Stop'
 try   { $ol = New-Object -ComObject Outlook.Application }
@@ -122,19 +142,43 @@ def run(save: bool) -> tuple[str, list[str]]:
     return "ERR", ["no-parseable-output", (p.stderr or p.stdout or "").strip()[:300]]
 
 
+def _stale_on_weekday(kind: str, rest: list[str], today: dt.date) -> bool:
+    """True when the scan's best answer predates today on a weekday — the
+    cold-start signature worth a re-scan. NONE counts: the 2026-09-07 failure
+    would have been NONE with a shorter LOOKBACK_DAYS."""
+    if today.weekday() >= 5:
+        return False
+    if kind == "NONE":
+        return True
+    if kind in ("SAVED", "FOUND"):
+        return rest[0] < today.isoformat()
+    return False                          # ERR retries nothing — exit-code 1 path
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--save", action="store_true",
                     help="write the attachment to data/staging/")
     a = ap.parse_args()
 
-    try:
-        kind, rest = run(a.save)
-    except subprocess.TimeoutExpired:
-        print("Outlook COM timed out after 180s — treating as UNREACHABLE")
-        return 1
+    today_d = dt.date.today()
+    kind, rest = "ERR", ["never-ran"]
+    for n, wait in enumerate((0,) + RETRY_WAITS):
+        if wait:
+            print(f"newest find predates today on a weekday — waiting {wait}s "
+                  f"for Outlook to warm up, then re-scanning "
+                  f"(retry {n}/{len(RETRY_WAITS)}; cold-start COM foible, "
+                  f"see the 2026-09-07 note at RETRY_WAITS)")
+            time.sleep(wait)
+        try:
+            kind, rest = run(a.save)
+        except subprocess.TimeoutExpired:
+            print("Outlook COM timed out after 180s — treating as UNREACHABLE")
+            return 1
+        if not _stale_on_weekday(kind, rest, today_d):
+            break
 
-    today = dt.date.today().isoformat()
+    today = today_d.isoformat()
 
     if kind == "ERR":
         print(f"Outlook UNREACHABLE: {' '.join(rest)}")
@@ -143,7 +187,9 @@ def main() -> int:
         return 1
 
     if kind == "NONE":
-        print(f"no Daily Metals Pack in the last {LOOKBACK_DAYS} days")
+        held = (f" (held across {len(RETRY_WAITS)} warm-up re-scans)"
+                if today_d.weekday() < 5 else "")
+        print(f"no Daily Metals Pack in the last {LOOKBACK_DAYS} days{held}")
         print("Fallback sources (westmetall, Yahoo, FRED) supply what they can; "
               "anything they do not cover keeps its last stored price.")
         return 0
@@ -156,9 +202,11 @@ def main() -> int:
     print(f"  bytes   {int(size):,}")
     print(f"  path    {dest}")
     if stamp != today:
-        print(f"\nNewest pack is {stamp}, not {today}. It still carries full "
-              "history, so loading it tops up any day the store is missing — "
-              "but it cannot contain a price for today.")
+        held = (f" That held across {len(RETRY_WAITS)} warm-up re-scans."
+                if today_d.weekday() < 5 else "")
+        print(f"\nNewest pack is {stamp}, not {today}.{held} It still carries "
+              "full history, so loading it tops up any day the store is "
+              "missing — but it cannot contain a price for today.")
     return 0
 
 
