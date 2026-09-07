@@ -571,19 +571,18 @@
   .bk-strip .v{font-family:var(--mono);font-size:var(--t-md);font-weight:600;
     font-variant-numeric:tabular-nums;color:var(--ink)}
   .bk-strip .v .u{font-size:var(--t-label);color:var(--faint);font-weight:400}
-  table.bk{width:100%;border-collapse:collapse}
+  table.bk{width:100%;border-collapse:collapse;border:2px solid #8b949e}
   .bk th{font-size:var(--t-micro);letter-spacing:.08em;text-transform:uppercase;
-    color:var(--faint);font-weight:600;text-align:right;
-    padding:7px 10px;border-bottom:1px solid var(--rule)}
+    color:var(--faint);font-weight:600;text-align:right;padding:7px 10px;
+    border-bottom:2px solid #8b949e;border-right:2px solid #8b949e}
   .bk th.l{text-align:left}
-  /* grid rules: one uniform color for every bk line, horizontal and
-     vertical, at the theme's --soft (#8b949e). NOTE the header Refresh
-     button re-renders DATA only — style changes need a real browser reload
-     (F5), which is why three rounds of "invisible lines" never appeared on
-     the PM's screen. */
+  /* grid spec (PM, 06-09-2026, final): full outer border, a vertical line
+     after EVERY column, horizontals ONLY at sector boundaries / header /
+     total — NO lines between pairs inside one sector. One color (--soft
+     #8b949e), 2px everywhere (1px dies under Windows display scaling). */
   .bk td{font-family:var(--mono);font-size:var(--t-sm);
     font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
-    border-top:2px solid #8b949e;white-space:nowrap}
+    border-right:2px solid #8b949e;white-space:nowrap}
   .bk tbody tr:hover td{background:var(--alt)}
   .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
     width:104px;border-right:2px solid #8b949e;background:var(--surface);
@@ -2461,7 +2460,7 @@ async function loadBook(){
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
            <th class="l">closed</th><th>final P&amp;L</th><th>held</th>
            <th>opened</th><th>closed</th></tr></thead><tbody>
-         ${bk.closed.map(c => `<tr>
+         ${bk.closed.map(c => `<tr class="secfirst">
            <td class="pair">${esc(c.label || c.pair)}</td>
            <td class="tot ${usdCls(c.pnl_total)}">${usd(c.pnl_total)}</td>
            <td class="age">${c.days}d</td>
