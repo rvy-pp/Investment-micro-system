@@ -604,6 +604,20 @@
   .bk .age{color:var(--faint);font-size:var(--t-micro)}
   .bk .up{color:var(--up)} .bk .down{color:var(--down)} .bk .flat{color:var(--faint)}
   .bk td.tot{font-weight:700}
+  /* the pair meter: a centre-origin bar under the since-entry % — magnitude
+     is width (±10% full scale), direction is side and colour. A pair beyond
+     ±5% glows: it has moved enough that the position deserves a revisit
+     (trim / add / re-underwrite), whichever way it went. */
+  .pmeter{position:relative;height:3px;margin-top:4px;background:var(--border);
+    border-radius:2px;overflow:hidden}
+  .pmeter::before{content:'';position:absolute;left:50%;top:0;bottom:0;
+    width:1px;background:var(--soft);opacity:.6}
+  .pmeter .pm-fill{position:absolute;top:0;bottom:0;border-radius:2px;
+    opacity:.65}
+  .pmeter .pm-fill.up{background:var(--up)}
+  .pmeter .pm-fill.down{background:var(--down)}
+  .pmeter.hot .pm-fill{opacity:1;box-shadow:0 0 4px currentColor}
+  .pmeter.hot .pm-fill.up{color:var(--up)} .pmeter.hot .pm-fill.down{color:var(--down)}
 </style>
 </head>
 <body>
@@ -2368,13 +2382,24 @@ function bookSections(view, order, nav, bookPnl){
           <span class="t">${esc(k)}</span>
           <span class="a">${(sum(ps, 'gross_pct') * 100).toFixed(1)}% gr</span>
           <span class="a ${usdCls(secAgg)}">${usd(secAgg)}</span></td>` : '';
+      /* the meter: centre-origin, ±10% full scale, glows beyond ±5% — a big
+         move EITHER way is the revisit signal (trim the winner / re-underwrite
+         the loser), which is why magnitude, not sign, sets the glow */
+      const meter = p.ret_pct == null ? '' : (() => {
+        const cap = 10, v = Math.max(-cap, Math.min(cap, p.ret_pct));
+        const hot = Math.abs(p.ret_pct) >= 5;
+        return `<div class="pmeter${hot ? ' hot' : ''}" title="pair ${pctf(p.ret_pct)} since entry${
+          hot ? ' — moved a lot: revisit (trim / add / re-underwrite)' : ''}">
+          <div class="pm-fill ${v >= 0 ? 'up' : 'down'}" style="${
+            v >= 0 ? 'left:50%' : 'right:50%'};width:${(Math.abs(v) / cap * 50).toFixed(1)}%"></div></div>`;
+      })();
       return `<tr title="${esc(legTip)}" class="${i === 0 ? 'secfirst' : ''}">
         ${sec}
         <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
+        <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span>${meter}</td>
         <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}</td>
         <td class="${usdCls(p.pnl_dtd)}">${usd(p.pnl_dtd)}</td>
         <td class="${usdCls(p.pnl_mtd)}">${usd(p.pnl_mtd)}</td>
-        <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span></td>
         <td><span class="date">${dmy(p.inception)}</span> <span class="age">${p.days}d</span></td>
       </tr>`;
     }).join('');
@@ -2388,18 +2413,18 @@ function bookSections(view, order, nav, bookPnl){
   const totalRow = `<tr class="total">
     <td class="sec"><span class="t">total</span></td>
     <td class="pair">${view.length} pairs</td>
+    <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
+      pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
     <td>${(gAll * 100).toFixed(1)}%</td>
     <td class="${usdCls(sum(view, 'pnl_dtd'))}">${usd(sum(view, 'pnl_dtd'))}</td>
     <td class="${usdCls(sum(view, 'pnl_mtd'))}">${usd(sum(view, 'pnl_mtd'))}</td>
-    <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
-      pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
     <td></td></tr>`;
 
   return `<div class="panel" style="padding:0"><div class="scroll">
     <table class="bk"><thead><tr>
-      <th class="l">sector</th><th class="l">pair</th><th>gross</th>
-      <th>day</th><th>mtd</th>
-      <th title="avg long price move − avg short price move SINCE TRADE ENTRY — has the pair worked out in thesis since it went on? Each leg anchors on the OPEN of its entry day (PM rule 07-09-2026; fallback when no open could be fetched: IMS avg cost, then the entry-day close — the leg hover names which). The anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book · small figure: chained P&L, USD">since entry %</th>
+      <th class="l">sector</th><th class="l">pair</th>
+      <th title="avg long price move − avg short price move SINCE TRADE ENTRY — has the pair worked out in thesis since it went on? Each leg anchors on the OPEN of its entry day (PM rule 07-09-2026; fallback when no open could be fetched: IMS avg cost, then the entry-day close — the leg hover names which). The anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book · small figure: chained P&L, USD · the bar: ±10% full scale, glows beyond ±5% — moved a lot either way, revisit the pair">since entry %</th>
+      <th>gross</th><th>day</th><th>mtd</th>
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
