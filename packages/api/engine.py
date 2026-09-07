@@ -1488,16 +1488,19 @@ def book_view() -> dict:
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
             leg["name"] = names.get(tok, leg["name"])
-            # %-SINCE-ENTRY per leg: latest close vs the trade anchor. The
-            # anchor is the day-entered price (the IMS Cost column at the
-            # anchor capture; the first-seen close once the export drops the
-            # column) and book_io._entry_anchor keeps it fixed through
-            # resizes and pair-tag changes — it resets only on a direction
-            # flip or a day out of the book (PM rule 2026-09-07). Both are
-            # INR closes against INR anchors — no FX leg by construction.
+            # %-SINCE-ENTRY per leg: latest close vs the trade anchor, in
+            # precedence order entry_open -> entry_cost -> first-seen close.
+            # The anchor is the OPEN of the entry day (PM rule 2026-09-07:
+            # "the purpose is to see if the pair has worked out in thesis" —
+            # the IMS avg cost blends adds and pre-capture history, so it
+            # answers a different question). book_io._entry_anchor keeps the
+            # anchor date fixed through resizes and pair-tag changes; it
+            # resets only on a direction flip or a day out of the book. All
+            # INR against INR — no FX leg by construction.
             leg["ret_pct"] = None
             if eid:
-                base = leg.get("entry_cost") or _close(eid, leg["first_seen"])
+                base = (leg.get("entry_open") or leg.get("entry_cost")
+                        or _close(eid, leg["first_seen"]))
                 now = _close(eid, rep["as_of"])
                 if base and now:
                     leg["ret_pct"] = round((now / base - 1) * 100, 2)
@@ -1551,6 +1554,7 @@ def book_view() -> dict:
                 "pnl_mtd": 0.0, "pnl_total": 0.0,
                 "ret_pct": leg["ret_pct"], "first_seen": leg["first_seen"],
                 "entry_cost": leg["entry_cost"],
+                "entry_open": leg["entry_open"],
                 "ticker_now": leg["ticker_now"], "rolls": 0, "gap": False})
             t["qty"] += leg["qty"] or 0
             t["gross_pct"] += abs(leg["mv_pct"] or 0)

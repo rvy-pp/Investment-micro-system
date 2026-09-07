@@ -399,11 +399,18 @@ short backs three longs) — engine.book_view apportions a shared leg's
 DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
 the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
 Price-%s are never apportioned; the pair's % is SINCE ENTRY — mean(long
-legs' price moves) − mean(short legs'), each leg anchored on its avg entry
-cost (the IMS Cost column at the anchor capture; close of first_seen once
-the export drops the column). **The anchor is fixed at the day entered and
+legs' price moves) − mean(short legs'), each leg anchored on **the OPEN of
+its entry day** (PM rule 2026-09-07: "the purpose is to see if the pair has
+worked out in thesis" — the IMS avg cost blends adds and pre-capture
+history, so it answers a different question). Opens live in
+`book_entry_anchors`, fetched once per streak by `book_io
+--fetch-anchors` (auto-run after every load) from the same Yahoo chart
+endpoint as the closes, and REFUSED unless the fetched close matches the
+stored `prices` close to 0.5% — the wrong-symbol guard. Fallback when no
+open could be fetched: IMS avg cost, then the entry-day close; the leg
+hover names which. **The anchor date is fixed at the day entered and
 survives resizes and pair-tag changes; it resets only on a direction flip
-or a day out of the book** (PM rule 2026-09-07 — `book_io._entry_anchor`,
+or a day out of the book** (same ruling — `book_io._entry_anchor`,
 keyed on root across tags after the 09-07 IT retag silently re-anchored
 MPHL and TELX to 0.0%). Every position event is logged at load time into
 `book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/

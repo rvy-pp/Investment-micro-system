@@ -2351,7 +2351,7 @@ function bookSections(view, order, nav, bookPnl){
         `${l.side === 'L' ? '▲' : '▼'} ${l.name} ×${l.qty}` +
         `${l.share != null && l.share < 1 ? `  (${Math.round(l.share * 100)}% of leg — shared across pairs)` : ''}` +
         `${l.ret_pct != null ? `  px ${pctf(l.ret_pct)}` : ''}` +
-        `${l.entry_cost != null ? `  @${(Math.round(l.entry_cost * 100) / 100).toLocaleString('en-US')} (${dmy(l.first_seen)})` : ''}` +
+        `${(l.entry_open ?? l.entry_cost) != null ? `  @${(Math.round((l.entry_open ?? l.entry_cost) * 100) / 100).toLocaleString('en-US')} ${l.entry_open != null ? 'open' : 'cost'} ${dmy(l.first_seen)}` : ''}` +
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
         `  day ${usd(l.pnl_dtd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
         `  (${l.ticker_now})`).join('\n') +
@@ -2399,7 +2399,7 @@ function bookSections(view, order, nav, bookPnl){
     <table class="bk"><thead><tr>
       <th class="l">sector</th><th class="l">pair</th><th>gross</th>
       <th>day</th><th>mtd</th>
-      <th title="avg long price move − avg short price move SINCE TRADE ENTRY. Each leg anchors on its day-entered price (the IMS avg entry cost; close of first capture once the export dropped Cost) — the anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book (PM rule 07-09-2026) · small figure: chained P&L, USD">since entry %</th>
+      <th title="avg long price move − avg short price move SINCE TRADE ENTRY — has the pair worked out in thesis since it went on? Each leg anchors on the OPEN of its entry day (PM rule 07-09-2026; fallback when no open could be fetched: IMS avg cost, then the entry-day close — the leg hover names which). The anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book · small figure: chained P&L, USD">since entry %</th>
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 

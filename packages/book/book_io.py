@@ -136,6 +136,21 @@ CREATE TABLE IF NOT EXISTS book_anchor_log (
     created_at TEXT NOT NULL
 ) STRICT;
 
+-- Entry-day OPEN per anchor streak — the %-since-entry base (PM 2026-09-07:
+-- "keep average entry cost as the open price on entry day. The purpose is to
+-- see if the pair has worked out in thesis"). Fetched once per (root, entry
+-- day) by fetch_entry_anchors, guarded against the stored close of the same
+-- date. Display falls back to the IMS avg cost, then the entry-day close,
+-- when a row is missing here.
+CREATE TABLE IF NOT EXISTS book_entry_anchors (
+    root        TEXT NOT NULL,
+    anchor_date TEXT NOT NULL,
+    open_price  REAL NOT NULL CHECK (open_price > 0),
+    source      TEXT NOT NULL,       -- the Yahoo symbol the open came from
+    fetched_at  TEXT NOT NULL,
+    PRIMARY KEY (root, anchor_date)
+) STRICT;
+
 CREATE TABLE IF NOT EXISTS book_pair_reviews (
     id            INTEGER PRIMARY KEY,
     review_date   TEXT NOT NULL,
@@ -471,6 +486,120 @@ def rebuild_anchor_log(conn: sqlite3.Connection | None = None) -> int:
     return n
 
 
+def _pick_anchor_open(day: tuple | None, stored_close: float | None) -> float:
+    """Validate a fetched (open, close) for the anchor date, or raise.
+
+    The wrong-symbol class (ZN=F was the T-note): a fetched number being
+    PLAUSIBLE proves nothing. The identity check is the fetched CLOSE
+    matching the close already stored in `prices` for the same entity and
+    date to 0.5% — same instrument, same day, by construction. The open is
+    then also range-checked against that close (a >20% intraday gap on an
+    Indian large/mid cap is a data error, not a market day).
+    """
+    if not day or day[0] is None:
+        raise ValueError("no open printed for the anchor date")
+    o, c = day
+    if stored_close is None:
+        raise ValueError("no stored close to verify the symbol against")
+    if c is None or abs(c / stored_close - 1) > 0.005:
+        raise ValueError(f"fetched close {c} vs stored {stored_close} "
+                         f"— wrong symbol or date, refused")
+    if abs(o / stored_close - 1) > 0.20:
+        raise ValueError(f"open {o} implausible against close {stored_close}")
+    return float(o)
+
+
+def fetch_entry_anchors(conn: sqlite3.Connection | None = None) -> dict:
+    """Fetch and persist the OPEN of each live leg's entry day.
+
+    PM rule 2026-09-07 (superseding the avg-cost anchor of the same day):
+    the %-since-entry base is the OPEN PRICE ON THE ENTRY DAY — the column
+    asks "has the pair worked out in thesis since the trade went on", which
+    the IMS avg cost cannot answer: adds and trims blend into it, and for a
+    position entered before capture it dates from before the book was
+    observed (SYRMA read +18.7% from its long-ago cost, +12.7% from its
+    entry-day open — same trade, different question).
+
+    Opens come from the same Yahoo chart endpoint the closes in `prices`
+    come from, resolved specs/book.yaml ticker_map -> yahoo_prices
+    CANDIDATES, and every row passes _pick_anchor_open's stored-close
+    identity check before persisting. Failures are reported and skipped —
+    the display then falls back to IMS cost, then the entry-day close.
+    Writes book_entry_anchors only; never touches `prices`.
+    """
+    import urllib.request
+    own = conn is None
+    conn = conn or connect()
+    sys.path.insert(0, str(REPO / "packages" / "adapters"))
+    import yahoo_prices as yp
+    import yaml
+    cfg = yaml.safe_load((REPO / "specs" / "book.yaml")
+                         .read_text(encoding="utf-8")) or {}
+    tmap = cfg.get("ticker_map") or {}
+
+    latest = conn.execute(
+        "SELECT MAX(snap_date) FROM book_snapshots").fetchone()[0]
+    out = {"fetched": [], "have": [], "failed": []}
+    if not latest:
+        if own:
+            conn.close()
+        return out
+    snaps = [r[0] for r in conn.execute(
+        "SELECT snap_date FROM book_snapshots ORDER BY 1")]
+    chart_cache: dict[str, dict] = {}
+    for r in conn.execute(
+            "SELECT DISTINCT root FROM book_positions WHERE snap_date=? "
+            "ORDER BY root", (latest,)):
+        root = r["root"]
+        anch = _entry_anchor(conn, root, latest, snaps)
+        adate = anch["snap_date"]
+        if conn.execute("SELECT 1 FROM book_entry_anchors WHERE root=? AND "
+                        "anchor_date=?", (root, adate)).fetchone():
+            out["have"].append(root)
+            continue
+        tok = (root.split() or [""])[0]
+        eid = tmap.get(tok) or tmap.get(root)
+        sym = (yp.CANDIDATES.get(eid) or [(None, None)])[0][0] if eid else None
+        if not sym:
+            out["failed"].append((root, "no entity/symbol mapping"))
+            continue
+        try:
+            if sym not in chart_cache:
+                days_back = (dt.date.today() - _date(adate)).days
+                rng = "3mo" if days_back < 80 else "1y"
+                req = urllib.request.Request(
+                    yp.CHART.format(sym=sym, rng=rng),
+                    headers={"User-Agent": yp.UA})
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    doc = json.load(resp)
+                res = doc["chart"]["result"][0]
+                q = res["indicators"]["quote"][0] or {}
+                byday = {}
+                for ts, o, c in zip(res.get("timestamp") or [],
+                                    q.get("open") or [], q.get("close") or []):
+                    d = dt.datetime.fromtimestamp(
+                        ts, dt.timezone.utc).date().isoformat()
+                    byday[d] = (o, c)
+                chart_cache[sym] = byday
+            stored = conn.execute(
+                "SELECT close FROM prices WHERE entity_id=? AND date=?",
+                (eid, adate)).fetchone()
+            o = _pick_anchor_open(chart_cache[sym].get(adate),
+                                  stored["close"] if stored else None)
+            with conn:
+                conn.execute(
+                    "INSERT INTO book_entry_anchors (root, anchor_date, "
+                    "open_price, source, fetched_at) VALUES (?,?,?,?,?)",
+                    (root, adate, o, sym, dt.datetime.now(dt.timezone.utc)
+                     .isoformat(timespec="seconds")))
+            out["fetched"].append((root, adate, o))
+        except Exception as e:                      # noqa: BLE001 — report, never guess
+            out["failed"].append((root, str(e)))
+    if own:
+        conn.close()
+    return out
+
+
 # --------------------------------------------------------------------------
 # the chain — rollover-proof P&L per (pair, root)
 # --------------------------------------------------------------------------
@@ -622,17 +751,22 @@ def pair_report(conn: sqlite3.Connection | None = None,
             gap_risk = gap_risk or ch["gap_risk"]
             rolls += ch["rolls"]
             anch = _entry_anchor(conn, r["root"], as_of, snaps)
+            ao = conn.execute(
+                "SELECT open_price FROM book_entry_anchors WHERE root=? AND "
+                "anchor_date=?", (r["root"], anch["snap_date"])).fetchone()
             legs.append({
                 "name": display_name(r["root"]), "root": r["root"],
                 "ticker_now": r["ticker_raw"], "contract": r["contract"],
                 "cap": r["cap"], "side": r["side"], "qty": r["qty"],
-                # the price anchor for %-since-entry: the avg entry cost the
-                # IMS printed at the anchor row's capture (the Cost column,
-                # carried until 09-2026); None once the export drops the
-                # column — consumers fall back to the close on first_seen.
-                # _entry_anchor keeps it fixed through resizes and retags,
-                # per the PM's 2026-09-07 rule.
+                # the price anchor for %-since-entry, in precedence order:
+                # entry_open (the entry day's OPEN — PM rule 2026-09-07: "the
+                # purpose is to see if the pair has worked out in thesis"),
+                # then entry_cost (the IMS avg cost at the anchor capture),
+                # then the close on first_seen. _entry_anchor keeps the
+                # anchor DATE fixed through resizes and retags; it resets
+                # only on a flip or a day out of the book.
                 "first_seen": anch["snap_date"], "entry_cost": anch["cost"],
+                "entry_open": ao["open_price"] if ao else None,
                 "cost": r["cost"], "mv_pct": r["mv_pct"],
                 "mv_usd": (round(r["mv_pct"] * nav, 0)
                            if r["mv_pct"] is not None and nav else None),
@@ -925,6 +1059,28 @@ def _selftest() -> None:
         == n_before
     assert r4["anchor_log"] and r4["anchor_log"][0]["event"] == "reopened"
 
+    # ENTRY-DAY OPEN: exposed when stored, keyed to the STREAK's anchor date;
+    # and _pick_anchor_open accepts only a close-verified fetch --------------
+    c4.execute("INSERT INTO book_entry_anchors VALUES "
+               "('MPHL IS Equity','2026-09-01',2400.0,'MPHASIS.NS','t')")
+    c4.execute("INSERT INTO book_entry_anchors VALUES "
+               "('MPHL IS Equity','2026-09-03',9999.0,'MPHASIS.NS','t')")
+    c4.commit()                     # the 09-03 row must NOT win — wrong date
+    mphl = leg(pair_report(c4), "A 2")
+    assert mphl["entry_open"] == 2400.0, mphl["entry_open"]
+    telx = leg(pair_report(c4), "B 1")
+    assert telx["entry_open"] is None               # nothing stored -> fallback
+    assert _pick_anchor_open((2410.0, 2452.0), 2455.0) == 2410.0
+    for day, sc in [(None, 2455.0),                 # no data for the date
+                    ((2410.0, 2452.0), None),       # nothing stored to verify
+                    ((2410.0, 2600.0), 2455.0),     # close mismatch: wrong symbol
+                    ((1500.0, 2455.0), 2455.0)]:    # open implausible vs close
+        try:
+            _pick_anchor_open(day, sc)
+            raise AssertionError(f"accepted bad anchor open: {day} vs {sc}")
+        except ValueError:
+            pass
+
     # refusal paths (the GLOB lesson: accepting AND rejecting cases) ---------
     c2 = sqlite3.connect(":memory:")
     c2.row_factory = sqlite3.Row
@@ -946,7 +1102,8 @@ def _selftest() -> None:
           "NAV derivation, cross-foot accept+reject, roll chain, closed pair, "
           "cadence (no-split + reopen), year boundary, entry anchor "
           "(retag/resize keep, flip/day-out reset), anchor log "
-          "(events + rebuild idempotence), refusal paths, reviews")
+          "(events + rebuild idempotence), entry-day open "
+          "(streak-keyed + fetch guards accept/reject), refusal paths, reviews")
 
 
 if __name__ == "__main__":
@@ -962,12 +1119,30 @@ if __name__ == "__main__":
                     help="print the pair report (default: latest snapshot)")
     ap.add_argument("--rebuild-log", action="store_true",
                     help="replay all stored snapshots into book_anchor_log")
+    ap.add_argument("--fetch-anchors", action="store_true",
+                    help="fetch entry-day opens for live legs (Yahoo)")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
+
+    def _fetch_anchors_step():
+        try:
+            fa = fetch_entry_anchors()
+            for root, adate, o in fa["fetched"]:
+                print(f"  anchor open {display_name(root)}: {o:g} ({adate})")
+            for root, why in fa["failed"]:
+                print(f"  ⚠ anchor open {display_name(root)}: {why} "
+                      f"— falls back to IMS cost / entry-day close")
+            if fa["have"] and not fa["fetched"] and not fa["failed"]:
+                print(f"  anchor opens: all {len(fa['have'])} already stored")
+        except Exception as e:                      # noqa: BLE001
+            print(f"  ⚠ entry-anchor fetch failed entirely: {e}")
+
     if a.selftest:
         _selftest()
     elif a.rebuild_log:
         print(f"rebuilt book_anchor_log: {rebuild_anchor_log()} events")
+    elif a.fetch_anchors:
+        _fetch_anchors_step()
     elif a.parse:
         if not a.date:
             ap.error("--parse needs --date")
@@ -982,6 +1157,7 @@ if __name__ == "__main__":
               f"parsed and loaded {res['n_positions']} positions")
         for w in res["warnings"]:
             print(f"  ⚠ {w}")
+        _fetch_anchors_step()       # new entries need their entry-day open
         _print_report(pair_report())
     elif a.load:
         res = load_snapshot(pathlib.Path(a.load), replace=a.replace)
@@ -989,6 +1165,7 @@ if __name__ == "__main__":
               f"(basis {res['pnl_basis']})")
         for w in res["warnings"]:
             print(f"  ⚠ {w}")
+        _fetch_anchors_step()
         _print_report(pair_report())
     elif a.report:
         _print_report(pair_report(
