@@ -79,10 +79,21 @@ before capture started show a too-recent inception. The PM can state the
 pre-capture P&L and true start as `carry:` in `specs/book.yaml`; it displays
 flagged, never mixed into the chained figure.
 
+**Pairs are DICTATED, not derived.** `specs/book.yaml pairs` is the PM's own
+pair list (06-09-2026), names verbatim (JSTL_TATA, COFORGE_PSYS…) grouped
+under the PM's sector headings — the IMS pair tags ("IT 5") are coarser
+clusters and stay internal. A leg may serve several pairs (TCS long backs
+three shorts); the engine apportions a shared leg's DOLLARS across its pairs
+by the gross of the opposite side it hedges, so book totals still sum —
+price-%s are never apportioned. When a snapshot brings a position that is in
+no dictated pair, the tab flags it: **ask the PM which pair it belongs to and
+add it to the spec — never guess.**
+
 ## Step 3 — the review (the point of all of it)
 
-For each pair the PM wants (default: all, worst day first), assemble the
-evidence BEFORE opining:
+For each pair the PM wants (default: all, worst since-start % first),
+assemble the evidence BEFORE opining. Reviews are keyed by the DICTATED pair
+name (`book_io.add_review('JINDA_SAIL', ...)`).
 
 - **Model**: `/api/book` carries each mapped leg's composite; pillar detail
   via `/api/overview`'s book block or `/api/tape`. IT legs have no score by

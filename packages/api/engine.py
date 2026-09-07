@@ -1443,9 +1443,9 @@ def book_view() -> dict:
         tmap = cfg.get("ticker_map") or {}
         carry = cfg.get("carry") or {}
         names = cfg.get("names") or {}
-        # pair_labels: the PM dictates display names per tag; auto Long_Short
-        # is only the fallback
-        plabels = cfg.get("pair_labels") or {}
+        # THE PM'S DICTATED PAIR LIST (06-09-2026) — the display truth. The
+        # IMS tags are coarser clusters and stay internal.
+        spec_pairs = cfg.get("pairs") or {}
 
     conn = connect()
     comp = {}
@@ -1501,7 +1501,7 @@ def book_view() -> dict:
                     leg["ret_pct"] = round((now / base - 1) * 100, 2)
         p["long"] = [x["name"] for x in p["legs"] if x["side"] == "L"]
         p["short"] = [x["name"] for x in p["legs"] if x["side"] == "S"]
-        p["label"] = plabels.get(p["pair"]) or _label(p["long"], p["short"])
+        p["label"] = _label(p["long"], p["short"])
         # THE PAIR % (PM example: long +10%, short -5% -> pair +15%): average
         # of long legs' price moves MINUS average of short legs'. Averaging
         # per side generalises the 1v1 example to 3- and 4-leg pairs without
@@ -1525,8 +1525,125 @@ def book_view() -> dict:
     for c in rep["closed"]:
         c["long"] = [names.get(n, n) for n in c.get("long") or []]
         c["short"] = [names.get(n, n) for n in c.get("short") or []]
-        c["label"] = plabels.get(c["pair"]) or _label(c["long"], c["short"])
+        c["label"] = _label(c["long"], c["short"])
     rep["scores_as_of"] = as_of
     rep["n_mapped"] = sum(1 for p in rep["pairs"] for x in p["legs"]
                           if x.get("entity_id"))
+
+    # ---- the display view: the PM's dictated pairs over the stored legs ----
+    # A leg may serve several pairs (TCS long vs three shorts). DOLLARS are
+    # apportioned across a shared leg's pairs by the gross of the OPPOSITE
+    # side of each pair (the long splits pro-rata over what it hedges), so
+    # book totals still sum without double counting. PRICE-%s are never
+    # apportioned — a % move is size-free. Falls back to the tag grouping
+    # when no pairs are dictated.
+    tokens: dict = {}
+    for p in rep["pairs"]:
+        for leg in p["legs"]:
+            tok = (leg["root"].split() or [""])[0]
+            t = tokens.setdefault(tok, {
+                "token": tok, "name": leg["name"],
+                "entity_id": leg["entity_id"], "composite": leg["composite"],
+                "book_side": leg["side"], "qty": 0.0,
+                "gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
+                "pnl_mtd": 0.0, "pnl_total": 0.0,
+                "ret_pct": leg["ret_pct"], "first_seen": leg["first_seen"],
+                "ticker_now": leg["ticker_now"], "rolls": 0, "gap": False})
+            t["qty"] += leg["qty"] or 0
+            t["gross_pct"] += abs(leg["mv_pct"] or 0)
+            t["gross_usd"] += abs(leg["mv_usd"] or 0)
+            t["pnl_dtd"] += leg["pnl_dtd"] or 0
+            t["pnl_mtd"] += leg["pnl_mtd"] or 0
+            t["pnl_total"] += leg["pnl_total"] or 0
+            t["rolls"] += leg["rolls"] or 0
+            t["gap"] = t["gap"] or p.get("gap_risk", False)
+            t["first_seen"] = min(t["first_seen"], leg["first_seen"])
+
+    if spec_pairs and tokens:
+        view = []
+        for sector, plist in spec_pairs.items():
+            for sp in plist or []:
+                view.append({"sector": sector, "label": str(sp.get("name")),
+                             "L": [str(x) for x in (sp.get("long") or [])],
+                             "S": [str(x) for x in (sp.get("short") or [])]})
+        for v in view:
+            v["_lg"] = sum(tokens[t]["gross_usd"] for t in v["L"] if t in tokens)
+            v["_sg"] = sum(tokens[t]["gross_usd"] for t in v["S"] if t in tokens)
+        member: dict = {}
+        for v in view:
+            for t in v["L"]:
+                member.setdefault(t, []).append((v, "L"))
+            for t in v["S"]:
+                member.setdefault(t, []).append((v, "S"))
+
+        def _share(tok: str, v: dict, side: str) -> float:
+            mems = member[tok]
+            if len(mems) == 1:
+                return 1.0
+            others = [(m["_sg"] if s == "L" else m["_lg"]) for m, s in mems]
+            mine = v["_sg"] if side == "L" else v["_lg"]
+            tot = sum(others)
+            return (mine / tot) if tot > 0 else 1.0 / len(mems)
+
+        out, assigned = [], set()
+        for v in view:
+            L = [tokens[t] for t in v["L"] if t in tokens]
+            S = [tokens[t] for t in v["S"] if t in tokens]
+            missing = [t for t in v["L"] + v["S"] if t not in tokens]
+            if not L and not S:
+                continue                    # pair fully off the book today
+            assigned |= {t["token"] for t in L + S}
+            agg = {"gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
+                   "pnl_mtd": 0.0, "pnl_total": 0.0}
+            legs = []
+            for side, arr in (("L", L), ("S", S)):
+                for t in arr:
+                    w = _share(t["token"], v, side)
+                    for k in agg:
+                        agg[k] += (t[k] or 0) * w
+                    legs.append({**t, "side": side, "share": round(w, 3),
+                                 "side_mismatch": t["book_side"] != side})
+            lr = [t["ret_pct"] for t in L]
+            sr = [t["ret_pct"] for t in S]
+            ret = None
+            if all(r is not None for r in lr + sr) and (lr or sr):
+                lm = sum(lr) / len(lr) if lr else 0.0
+                sm = sum(sr) / len(sr) if sr else 0.0
+                ret = round(lm - sm, 2)
+            inception = max(t["first_seen"] for t in L + S)
+            c = carry.get(v["label"])
+            out.append({
+                "sector": v["sector"], "label": v["label"],
+                "ret_pct": ret, "inception": inception,
+                "days": (dt_date(rep["as_of"]) - dt_date(inception)).days,
+                "gross_pct": round(agg["gross_pct"], 6),
+                "gross_usd": round(agg["gross_usd"], 0),
+                "pnl_dtd": round(agg["pnl_dtd"], 2),
+                "pnl_mtd": round(agg["pnl_mtd"], 2),
+                "pnl_total": round(agg["pnl_total"], 2),
+                "pnl_total_with_carry": (round(agg["pnl_total"] +
+                    (c.get("pnl") or 0), 2) if c else None),
+                "carry": c,
+                "rolls": sum(t["rolls"] for t in L + S),
+                "gap_risk": any(t["gap"] for t in L + S),
+                "missing": missing, "legs": legs,
+                "review": last_review.get(v["label"]),
+            })
+        rep["view"] = out
+        rep["sectors_order"] = list(spec_pairs.keys())
+        rep["unassigned"] = sorted(
+            [t for k, t in tokens.items() if k not in assigned],
+            key=lambda t: -t["gross_usd"])
+    else:
+        # no dictated pairs: synthesize the view from the tag grouping
+        rep["view"] = [{**p, "sector": (p["pair"].rstrip("0123456789 ") or
+                                        p["pair"]).upper()}
+                       for p in rep["pairs"]]
+        rep["sectors_order"] = []
+        rep["unassigned"] = []
     return rep
+
+
+def dt_date(s: str):
+    import datetime as _dt
+    return _dt.date.fromisoformat(s)

@@ -390,12 +390,25 @@ guard** (MV/GMV to 1e-9, P&L to 2¢) — a dropped or mangled line refuses.
 - Options (`XXXX IS MM/DD/YY C1000 Equity`) have no `=` token → each series
   its own root, matching the PM's no-delta-netting instruction in IMS-Spec.
 
-`specs/book.yaml` holds `ticker_map` (ticker first token → entity_id, joins
-each leg to its model composite on the tab — SEEDED from IMS-Spec's
-PM-confirmed table, so it is sourced, not guessed; unrecognized tickers are
-flagged, never guessed) and `carry` (desk-stated pre-capture P&L, displayed
-flagged, never mixed into the chain — inception can only be the first STORED
-snapshot). Book tables are `book_*` only; nothing on this path writes to
+**Pairs are DICTATED, not derived — `specs/book.yaml pairs` (PM, 06-09-2026,
+names verbatim).** The IMS pair tags ("IT 5") are coarser clusters and stay
+internal (the chain and the store still key on them); the page renders the
+PM's 20 pairs under the PM's sector headings, in dictation order. A leg may
+serve several pairs (TCS long backs the INFO, WPRO and HCLT shorts; DIXON
+short backs three longs) — engine.book_view apportions a shared leg's
+DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
+the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
+Price-%s are never apportioned; the pair's since-start % is mean(long legs'
+price moves) − mean(short legs'), anchored on avg entry cost at first
+capture. A live position in no dictated pair renders as a loud callout —
+ask the PM, never guess it into a pair. Reviews key on the dictated name.
+
+`specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
+joins each leg to its model composite — SEEDED from IMS-Spec's PM-confirmed
+table, so it is sourced, not guessed; unrecognized tickers are flagged,
+never guessed), `names` (print names) and `carry` (desk-stated pre-capture
+P&L, displayed flagged, never mixed into the chain — inception can only be
+the first STORED snapshot). Book tables are `book_*` only; nothing on this path writes to
 `prices` or anything a pillar reads, and position data stays in gitignored
 `data/`. The API server must be RESTARTED after engine changes (it imports
 once — `/api/version` shows staleness); done for this change.

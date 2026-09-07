@@ -60,12 +60,42 @@ ticker_map:
   NACL: nalco
   VAML: vaml
 
-# pair_labels: display names the PM dictates per internal tag — beats the
-# auto Long_Short label wherever set. ("First of all, I'll tell you the
-# pairs" — 06-09-2026; fill as the PM names them.)
-#   pair_labels:
-#     "IT 5": "Mphasis vs Elxsi"
-pair_labels: {}
+# pairs — THE PM'S OWN PAIR LIST, dictated 06-09-2026, names verbatim.
+# This is the display truth: the IMS pair tags ("IT 5") are coarser clusters
+# and stay internal. A leg may serve SEVERAL pairs (TCS long backs three
+# shorts; DIXON short backs three longs) — the engine apportions a shared
+# leg's DOLLARS across its pairs by the gross of the opposite side it hedges
+# (TCS's P&L splits ~pro-rata across WPRO/INFO/HCLT shorts); price-%s need
+# no apportioning. Tokens are the IMS ticker's first token.
+pairs:
+  IT LARGECAP:
+    - {name: TCS_INFO,      long: [TCS],      short: [INFO]}
+    - {name: TECHM_LTM,     long: [TECHM],    short: [LTM]}
+    - {name: TCS_WPRO,      long: [TCS],      short: [WPRO]}
+    - {name: TCS_HCLT,      long: [TCS],      short: [HCLT]}
+  IT MIDCAP:
+    - {name: COFORGE_PSYS,  long: [COFOR],    short: [PSYS]}
+    - {name: LTTS_KPITTECH, long: [LTTS],     short: [KPITT]}
+    - {name: LTTS_TELX,     long: [LTTS],     short: [TELX]}
+    - {name: MPHL_PSYS,     long: [MPHL],     short: [PSYS]}
+  STEEL:
+    - {name: JSTL_TATA,     long: [JSTL],     short: [TATA]}
+    - {name: JINDA_SAIL,    long: [JINDA],    short: [SAIL]}
+    - {name: JSTL_APAT,     long: [JSTL],     short: [APAT]}
+  EMS:
+    - {name: KAYNES_DIXON,  long: [KAYNE],    short: [DIXON]}
+    - {name: SYRMA_DIXON,   long: [SYRMA],    short: [DIXON]}
+    - {name: AMBER_DIXON,   long: [AMBER],    short: [DIXON]}
+  CEMENT:
+    - {name: UTCEM_SRCM,    long: [UTCEM],    short: [SRCM]}
+    - {name: DALBHARA_ACEM, long: [DALBHARA], short: [ACEM]}
+  ZINC:
+    - {name: VEDL_HZ,       long: [VEDL],     short: [HZ]}
+  ALUMINIUM:
+    - {name: HNDL_NACL,     long: [HNDL],     short: [NACL]}
+    - {name: VAML_NACL,     long: [VAML],     short: [NACL]}
+  MINING:
+    - {name: COAL_NMDC,     long: [COAL],     short: [NMDC]}
 
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").

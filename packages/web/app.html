@@ -576,21 +576,22 @@
     color:var(--faint);font-weight:600;text-align:right;
     padding:7px 10px;border-bottom:1px solid var(--rule)}
   .bk th.l{text-align:left}
-  /* row rules #3d444d / #4d5560, deliberately LIGHTER than the theme's
-     --rule/--hair — the PM called the token grays "practically invisible" */
+  /* grid rules #4d5560 / #6e7681, deliberately LIGHTER than the theme's
+     --rule/--hair — the PM called those grays "practically invisible",
+     twice (#3d444d rows were still too dark on the desk monitor) */
   .bk td{font-family:var(--mono);font-size:var(--t-sm);
     font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
-    border-top:1px solid #3d444d;white-space:nowrap}
+    border-top:1px solid #4d5560;white-space:nowrap}
   .bk tbody tr:hover td{background:var(--alt)}
   .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
-    width:104px;border-right:1px solid #4d5560;background:var(--surface);
-    border-top:1px solid #4d5560;padding:6px 12px}
+    width:104px;border-right:1px solid #6e7681;background:var(--surface);
+    border-top:1px solid #6e7681;padding:6px 12px}
   .bk td.sec .t{display:block;font-size:var(--t-label);font-weight:700;
     letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
   .bk td.sec .a{display:block;font-family:var(--mono);font-size:var(--t-micro);
     color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
-  .bk tr.secfirst td{border-top:1px solid #4d5560}
-  .bk tr.total td{border-top:2px solid #4d5560;background:var(--surface);
+  .bk tr.secfirst td{border-top:1px solid #6e7681}
+  .bk tr.total td{border-top:2px solid #6e7681;background:var(--surface);
     font-weight:700;padding:7px 10px}
   .bk tr.total td.sec .t{color:var(--ink)}
   .bk .sub{color:var(--faint);font-size:var(--t-micro);font-weight:400;
@@ -600,9 +601,6 @@
   .bk td.pair .chips{margin-left:6px;font-weight:400}
   .bk .date{color:var(--soft)}
   .bk .age{color:var(--faint);font-size:var(--t-micro)}
-  .bk-bar{display:inline-block;vertical-align:middle;width:42px;height:3px;
-    margin-left:8px;background:var(--hair);border-radius:2px;overflow:hidden}
-  .bk-bar i{display:block;height:100%;background:var(--accent);opacity:.7}
   .bk .up{color:var(--up)} .bk .down{color:var(--down)} .bk .flat{color:var(--faint)}
   .bk td.tot{font-weight:700}
 </style>
@@ -2323,20 +2321,24 @@ const industryOf = tag => tag === 'UNTAGGED' ? 'UNTAGGED'
    goes to group headers (PM, 06-09-2026). */
 const pctf = (v, dp = 1) => v == null ? '—'
   : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(dp) + '%';
-function bookSections(pairs, nav, bookPnl){
+/* view rows come pre-paired from specs/book.yaml (the PM's own list, names
+   verbatim); sectors render in the spec's order, pairs in dictation order */
+function bookSections(view, order, nav, bookPnl){
   const groups = new Map();
-  pairs.forEach(p => {
-    const k = industryOf(p.pair);
+  view.forEach(p => {
+    const k = p.sector || industryOf(p.pair || '');
     if (!groups.has(k)) groups.set(k, []);
     groups.get(k).push(p);
   });
   const sum = (ps, f) => ps.reduce((s, p) => s + (p[f] || 0), 0);
-  const inds = [...groups.keys()]
-    .sort((a, b) => sum(groups.get(b), 'gross_pct') - sum(groups.get(a), 'gross_pct'));
-  const maxGross = Math.max(1e-9, ...pairs.map(p => p.gross_pct || 0));
+  const inds = (order && order.length)
+    ? order.filter(k => groups.has(k)).concat(
+        [...groups.keys()].filter(k => !order.includes(k)))
+    : [...groups.keys()]
+        .sort((a, b) => sum(groups.get(b), 'gross_pct') - sum(groups.get(a), 'gross_pct'));
 
   const body = inds.map(k => {
-    const ps = groups.get(k).sort((a, b) => (b.ret_pct || 0) - (a.ret_pct || 0));
+    const ps = groups.get(k);
     const secTip = `${k}: gross ${(sum(ps, 'gross_pct') * 100).toFixed(1)}%` +
       ` ($${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')})` +
       ` · day ${usd(sum(ps, 'pnl_dtd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}` +
@@ -2346,11 +2348,14 @@ function bookSections(pairs, nav, bookPnl){
       const total = p.pnl_total_with_carry != null ? p.pnl_total_with_carry : p.pnl_total;
       const legTip = p.legs.map(l =>
         `${l.side === 'L' ? '▲' : '▼'} ${l.name} ×${l.qty}` +
+        `${l.share != null && l.share < 1 ? `  (${Math.round(l.share * 100)}% of leg — shared across pairs)` : ''}` +
         `${l.ret_pct != null ? `  px ${pctf(l.ret_pct)}` : ''}` +
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
         `  day ${usd(l.pnl_dtd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
-        `  (${l.ticker_now})`).join('\n');
+        `  (${l.ticker_now})`).join('\n') +
+        (p.missing && p.missing.length ? `\n⚠ leg not on the book today: ${p.missing.join(', ')}` : '');
       const chips =
+        (p.missing && p.missing.length ? ` <span class="pill warn" title="a dictated leg is not on the book today: ${esc(p.missing.join(', '))}">leg off</span>` : '') +
         (p.gap_risk ? ` <span class="pill warn" title="a roll happened across a snapshot gap — the frozen P&L may miss the old contract's last days">gap</span>` : '') +
         (p.review ? ` <span class="chip ${p.review.verdict === 'exit' ? 'c-down' :
             p.review.verdict === 'add' ? 'c-up' : 'c-flat'}"
@@ -2364,8 +2369,7 @@ function bookSections(pairs, nav, bookPnl){
       return `<tr title="${esc(legTip)}" class="${i === 0 ? 'secfirst' : ''}">
         ${sec}
         <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
-        <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}
-          <span class="bk-bar"><i style="width:${Math.round((p.gross_pct || 0) / maxGross * 100)}%"></i></span></td>
+        <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}</td>
         <td class="${usdCls(p.pnl_dtd)}">${usd(p.pnl_dtd)}</td>
         <td class="${usdCls(p.pnl_mtd)}">${usd(p.pnl_mtd)}</td>
         <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span></td>
@@ -2375,15 +2379,16 @@ function bookSections(pairs, nav, bookPnl){
   }).join('');
 
   // the bottom line: whole-book totals (pairs only — the N.A. cost bucket
-  // rides in the strip, attributed to no pair)
-  const gAll = sum(pairs, 'gross_pct');
+  // rides in the strip, attributed to no pair). Apportioned dollars sum back
+  // to the true book figures — shared legs are split, never double-counted.
+  const gAll = sum(view, 'gross_pct');
   const navRet = nav ? bookPnl / nav * 100 : null;
   const totalRow = `<tr class="total">
     <td class="sec"><span class="t">total</span></td>
-    <td class="pair">${pairs.length} pairs</td>
+    <td class="pair">${view.length} pairs</td>
     <td>${(gAll * 100).toFixed(1)}%</td>
-    <td class="${usdCls(sum(pairs, 'pnl_dtd'))}">${usd(sum(pairs, 'pnl_dtd'))}</td>
-    <td class="${usdCls(sum(pairs, 'pnl_mtd'))}">${usd(sum(pairs, 'pnl_mtd'))}</td>
+    <td class="${usdCls(sum(view, 'pnl_dtd'))}">${usd(sum(view, 'pnl_dtd'))}</td>
+    <td class="${usdCls(sum(view, 'pnl_mtd'))}">${usd(sum(view, 'pnl_mtd'))}</td>
     <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
       pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
     <td></td></tr>`;
@@ -2443,7 +2448,13 @@ async function loadBook(){
            <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
            <div class="hint">rows with no pair name on the IMS snapshot are grouped
            under UNTAGGED rather than guessed into a pair.</div></div>` : '')
-      + bookSections(bk.pairs, bk.nav, bk.book_pnl_total)
+      + ((bk.unassigned || []).length ? `<div class="callout accent-amber">
+           <div class="callout-head"><span class="ico">⚠</span>
+           <span class="t">positions on the book but in no dictated pair</span></div>
+           <div class="hint">${esc(bk.unassigned.map(t => t.name).join(', '))} —
+           add them to <code>specs/book.yaml pairs</code> or they stay out of
+           every pair line.</div></div>` : '')
+      + bookSections(bk.view || bk.pairs, bk.sectors_order, bk.nav, bk.book_pnl_total)
       + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
            <th class="l">closed</th><th>final P&amp;L</th><th>held</th>
