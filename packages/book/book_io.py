@@ -428,6 +428,34 @@ def _leg_rows(conn, pair: str, root: str) -> list[sqlite3.Row]:
         "ORDER BY snap_date", (pair, root)).fetchall()
 
 
+def _entry_anchor(conn, root: str, as_of: str,
+                  snaps: list[str]) -> sqlite3.Row:
+    """The row whose date/cost anchor %-since-entry for this root.
+
+    PM rule (2026-09-07): the anchor is the day-entered price and it stays
+    put through resizes and pair-tag changes; it resets only when the
+    direction flips or the root sits out a stored snapshot (closed for a
+    day). Keyed on ROOT across tags ON PURPOSE — the first version keyed on
+    (pair_tag, root), so the 2026-09-07 IT retag (MPHL IT 5->IT 4, TELX
+    IT 5->IT 6) silently re-anchored both legs on that day's close and
+    printed ret 0.0%; caught by the PM reading the pair %s as wrong, not by
+    any test. Absence is judged on STORED SNAPSHOT DATES, the chain's own
+    convention — a quiet fortnight between runs must not reset an anchor.
+    """
+    rows = conn.execute(
+        "SELECT snap_date, side, cost FROM book_positions WHERE root=? "
+        "AND snap_date<=? ORDER BY snap_date", (root, as_of)).fetchall()
+    dates = [d for d in snaps if d <= as_of]
+    anchor = rows[-1]
+    for i in range(len(rows) - 1, 0, -1):
+        cur, prv = rows[i], rows[i - 1]
+        if prv["side"] != cur["side"] or any(
+                prv["snap_date"] < d < cur["snap_date"] for d in dates):
+            break
+        anchor = prv
+    return anchor
+
+
 def pair_report(conn: sqlite3.Connection | None = None,
                 as_of: str | None = None) -> dict:
     """Everything the Book tab and the daily_review chat display need."""
@@ -500,16 +528,18 @@ def pair_report(conn: sqlite3.Connection | None = None,
                             basis, hist)
             gap_risk = gap_risk or ch["gap_risk"]
             rolls += ch["rolls"]
-            first = next((x for x in rows if x["snap_date"] <= as_of), r)
+            anch = _entry_anchor(conn, r["root"], as_of, snaps)
             legs.append({
                 "name": display_name(r["root"]), "root": r["root"],
                 "ticker_now": r["ticker_raw"], "contract": r["contract"],
                 "cap": r["cap"], "side": r["side"], "qty": r["qty"],
-                # the price anchor for %-since-start: the avg entry cost from
-                # the leg's FIRST capture (the IMS printed it until 09-2026);
-                # None once the export drops the column — consumers fall back
-                # to the close on first_seen
-                "first_seen": first["snap_date"], "entry_cost": first["cost"],
+                # the price anchor for %-since-entry: the avg entry cost the
+                # IMS printed at the anchor row's capture (the Cost column,
+                # carried until 09-2026); None once the export drops the
+                # column — consumers fall back to the close on first_seen.
+                # _entry_anchor keeps it fixed through resizes and retags,
+                # per the PM's 2026-09-07 rule.
+                "first_seen": anch["snap_date"], "entry_cost": anch["cost"],
                 "cost": r["cost"], "mv_pct": r["mv_pct"],
                 "mv_usd": (round(r["mv_pct"] * nav, 0)
                            if r["mv_pct"] is not None and nav else None),
@@ -728,6 +758,48 @@ def _selftest() -> None:
     x1 = pair_report(c3)["pairs"][0]
     assert x1["pnl_total"] == 4250.0, x1["pnl_total"]   # 4000 frozen + 250
 
+    # ENTRY ANCHOR: fixed at the day entered, through resizes and retags;
+    # resets only on a direction flip or a day out of the book (PM 2026-09-07)
+    c4 = sqlite3.connect(":memory:")
+    c4.row_factory = sqlite3.Row
+    c4.executescript(DDL)
+    Q = lambda pair, tk, qty, cost=None: {
+        "pair": pair, "ticker": tk, "qty": qty, "cost": cost,
+        "pnl_ytd": 0.0, "pnl_dtd": 0.0, "pnl_mtd": 0.0,
+        "mv_pct": 0.002 * (1 if qty > 0 else -1)}
+    load_snapshot({"date": "2026-09-01", "source_file": "t", "positions": [
+        Q("A 1", "MPHL=U6 IS Equity", 1, 2455.0),     # will be RETAGGED
+        Q("B 1", "TELX=U6 IS Equity", -2, 3711.0),    # will be RESIZED
+        Q("C 1", "SAIL=U6 IS Equity", -1, 176.0),     # will be FLIPPED
+        Q("D 1", "DIXON=U6 IS Equity", -1, 100.0),    # will sit a day OUT
+    ]}, conn=c4)
+    load_snapshot({"date": "2026-09-02", "source_file": "t", "positions": [
+        Q("A 2", "MPHL=U6 IS Equity", 1),             # retag, cost dropped
+        Q("B 1", "TELX=U6 IS Equity", -4),            # resize, cost dropped
+        Q("C 1", "SAIL=U6 IS Equity", 1, 188.0),      # short -> long
+    ]}, conn=c4)                                      # DIXON absent = closed
+    load_snapshot({"date": "2026-09-03", "source_file": "t", "positions": [
+        Q("A 2", "MPHL=U6 IS Equity", 1),
+        Q("B 1", "TELX=U6 IS Equity", -4),
+        Q("C 1", "SAIL=U6 IS Equity", 1),
+        Q("D 1", "DIXON=U6 IS Equity", -1, 120.0),    # reopened
+    ]}, conn=c4)
+    leg = lambda rep, pair: next(
+        p for p in rep["pairs"] if p["pair"] == pair)["legs"][0]
+    r4 = pair_report(c4)
+    mphl = leg(r4, "A 2")
+    assert (mphl["first_seen"], mphl["entry_cost"]) == ("2026-09-01", 2455.0), \
+        f"retag reset the anchor: {mphl['first_seen']} {mphl['entry_cost']}"
+    telx = leg(r4, "B 1")
+    assert (telx["first_seen"], telx["entry_cost"]) == ("2026-09-01", 3711.0), \
+        f"resize reset the anchor: {telx['first_seen']} {telx['entry_cost']}"
+    sail = leg(r4, "C 1")
+    assert (sail["first_seen"], sail["entry_cost"]) == ("2026-09-02", 188.0), \
+        f"flip did NOT reset the anchor: {sail['first_seen']}"
+    dixn = leg(r4, "D 1")
+    assert (dixn["first_seen"], dixn["entry_cost"]) == ("2026-09-03", 120.0), \
+        f"a day out did NOT reset the anchor: {dixn['first_seen']}"
+
     # refusal paths (the GLOB lesson: accepting AND rejecting cases) ---------
     c2 = sqlite3.connect(":memory:")
     c2.row_factory = sqlite3.Row
@@ -747,7 +819,8 @@ def _selftest() -> None:
     assert reviews(conn=conn, pair="IT 5")[0]["verdict"] == "hold"
     print("selftest OK — ticker/option parse, TSV parse (both cost shapes), "
           "NAV derivation, cross-foot accept+reject, roll chain, closed pair, "
-          "cadence (no-split + reopen), year boundary, refusal paths, reviews")
+          "cadence (no-split + reopen), year boundary, entry anchor "
+          "(retag/resize keep, flip/day-out reset), refusal paths, reviews")
 
 
 if __name__ == "__main__":

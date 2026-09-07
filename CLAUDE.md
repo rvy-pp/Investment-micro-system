@@ -398,9 +398,15 @@ serve several pairs (TCS long backs the INFO, WPRO and HCLT shorts; DIXON
 short backs three longs) — engine.book_view apportions a shared leg's
 DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
 the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
-Price-%s are never apportioned; the pair's since-start % is mean(long legs'
-price moves) − mean(short legs'), anchored on avg entry cost at first
-capture. A live position in no dictated pair renders as a loud callout —
+Price-%s are never apportioned; the pair's % is SINCE ENTRY — mean(long
+legs' price moves) − mean(short legs'), each leg anchored on its avg entry
+cost (the IMS Cost column at the anchor capture; close of first_seen once
+the export drops the column). **The anchor is fixed at the day entered and
+survives resizes and pair-tag changes; it resets only on a direction flip
+or a day out of the book** (PM rule 2026-09-07 — `book_io._entry_anchor`,
+keyed on root across tags after the 09-07 IT retag silently re-anchored
+MPHL and TELX to 0.0%). A live position in no dictated pair renders as a
+loud callout —
 ask the PM, never guess it into a pair. Reviews key on the dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
