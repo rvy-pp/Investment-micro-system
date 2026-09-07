@@ -1,0 +1,215 @@
+{
+ "date": "2026-09-07",
+ "fetched_at": "2026-09-07T12:02:48",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-04",
+    "close": 7718.6,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.38
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-04",
+    "close": 26506.99,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-04",
+    "close": 53414.25,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.51
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-04",
+    "close": 11735.26,
+    "prev_date": "2026-09-03",
+    "chg_pct": 3.37
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-04",
+    "close": 230.36,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.84
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-04",
+    "close": 477.57,
+    "prev_date": "2026-09-03",
+    "chg_pct": 4.69
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-04",
+    "close": 428.91,
+    "prev_date": "2026-09-03",
+    "chg_pct": 2.85
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-04",
+    "close": 357.9,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.21
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-04",
+    "close": 186.72,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-04",
+    "close": 62.31,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.6
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "The Business Accenture Now Mentions In Passing",
+    "publisher": "Trefis",
+    "when": "2026-09-03 22:16Z",
+    "link": "https://finance.yahoo.com/m/d1c1048d-1272-3f0f-ae5c-ffeeec93c9ad/the-business-accenture-now.html"
+   },
+   {
+    "title": "Accenture (ACN) Rises Higher Than Market: Key Facts",
+    "publisher": "Zacks",
+    "when": "2026-09-03 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-rises-higher-market-215001547.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Looks Stretched Following Its 39% Five Year Slump",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-03 08:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-looks-stretched-081844373.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   },
+   {
+    "title": "Cognizant, CrowdStrike Expand Cybersecurity Partnership for Industrial Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-08-31 12:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-crowdstrike-expand-cybersecurity-partnership-124913928.html"
+   },
+   {
+    "title": "Cognizant and CrowdStrike Protect Critical Operations Across Converged IT and OT Environments",
+    "publisher": "PR Newswire",
+    "when": "2026-08-31 12:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-crowdstrike-protect-critical-operations-122000312.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia\u2019s $99 Billion Portfolio Is Turning Intel and CoreWeave Into an AI Stress Test",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 03:42Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-99-billion-portfolio-turning-034218904.html"
+   },
+   {
+    "title": "History Says What Nvidia's Last Big Acquisition Became. Hugging Face Will Cost Nearly Twice as Much.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-07 03:38Z",
+    "link": "https://finance.yahoo.com/m/63809085-4b73-3087-9f39-2bf45d57fe04/history-says-what-nvidia%27s.html"
+   },
+   {
+    "title": "Dow Jones Futures Fall With Iran, Apple, Inflation In Focus; Nvidia, Micron, Sandisk Flash Buy Signals",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-07 03:06Z",
+    "link": "https://finance.yahoo.com/m/d5001ca0-1c20-3379-83c3-ddca4526f9c2/dow-jones-futures-fall-with.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom And 2 Top Growth Stocks To Watch",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-06 12:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-2-top-growth-stocks-121016991.html"
+   },
+   {
+    "title": "Nvidia\u2019s Hugging Face Deal Is a Hedge against Broadcom\u2019s Custom Silicon Threat",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-06 10:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-hugging-face-deal-hedge-105111039.html"
+   },
+   {
+    "title": "Broadcom vs. Nvidia: 1 Critical Metric Shows Which Artificial Intelligence (AI) Chipmaker Is the Better Buy After Earnings",
+    "publisher": "Motley Fool",
+    "when": "2026-09-05 19:05Z",
+    "link": "https://finance.yahoo.com/m/35ee28f7-338d-3727-b5bb-411358b0666f/broadcom-vs.-nvidia%3A-1.html"
+   },
+   {
+    "title": "With AI Revenue Set to Surge 400% Over the Next 2 Years, Broadcom Stock Looks Like a Buy on Recent Dip",
+    "publisher": "Motley Fool",
+    "when": "2026-09-05 17:45Z",
+    "link": "https://finance.yahoo.com/m/d5e8f0ea-44a6-32ed-b4f4-1a48a0fba1b9/with-ai-revenue-set-to-surge.html"
+   },
+   {
+    "title": "Broadcom (AVGO) AI Revenue Soars, But Wall Street Wants More",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-05 14:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-ai-revenue-soars-145838390.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Did Nvidia Just Say Checkmate to AMD and Intel?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-06 22:30Z",
+    "link": "https://finance.yahoo.com/m/3ec6ae6a-644b-3ca8-95fd-2aea2df3c889/did-nvidia-just-say-checkmate.html"
+   },
+   {
+    "title": "AMD Committed Up to $5 Billion to Anthropic, and Anthropic's IPO Prospectus Is Reportedly Days Away",
+    "publisher": "Motley Fool",
+    "when": "2026-09-05 22:03Z",
+    "link": "https://finance.yahoo.com/m/c775e846-45ca-31c8-9dcd-3d8dbd532e0c/amd-committed-up-to-%245.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23857.0,
+  "chg_pct": -0.58,
+  "stamp": "07-Sep-2026 12:02:49",
+  "expiry": "29-Sep-2026",
+  "volume": 21069,
+  "nifty_close": {
+   "close": 23897.7,
+   "stamp": "07-Sep-2026 12:02"
+  },
+  "gap_pts": -40.7,
+  "gap_pct": -0.17
+ }
+}
