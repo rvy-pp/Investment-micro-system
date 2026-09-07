@@ -117,6 +117,25 @@ CREATE TABLE IF NOT EXISTS book_positions (
     PRIMARY KEY (snap_date, pair_tag, ticker_raw)
 ) STRICT;
 
+-- The anchor/audit log: one row per position event, written at load time by
+-- diffing each snapshot against its stored predecessor. 'entered', 'reopened'
+-- and 'flipped' RESET the %-since-entry anchor; 'retagged' and 'resized'
+-- explicitly do NOT (logged to prove continuity — the 2026-09-07 IT retag
+-- silently re-anchored two legs before this table existed); 'closed' ends a
+-- streak. Rebuild any time with --rebuild-log; rows are derived, never edited.
+CREATE TABLE IF NOT EXISTS book_anchor_log (
+    id         INTEGER PRIMARY KEY,
+    snap_date  TEXT NOT NULL,
+    root       TEXT NOT NULL,
+    event      TEXT NOT NULL CHECK (event IN
+               ('entered','reopened','flipped','closed','retagged','resized')),
+    side       TEXT CHECK (side IN ('L','S')),   -- after the event; NULL when closed
+    qty        REAL,
+    cost       REAL,                             -- IMS Cost at the event row, if printed
+    detail     TEXT,                             -- 'IT 5 -> IT 4', 'qty 2 -> 4', 'S -> L'
+    created_at TEXT NOT NULL
+) STRICT;
+
 CREATE TABLE IF NOT EXISTS book_pair_reviews (
     id            INTEGER PRIMARY KEY,
     review_date   TEXT NOT NULL,
@@ -371,11 +390,85 @@ def load_snapshot(doc: dict | pathlib.Path, replace: bool = False,
             "root, contract, cap, side, qty, cost, mv_pct, beta_mv_pct, "
             "pnl_dtd, pnl_dtd_trading, pnl_mtd, pnl, note) "
             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", parsed)
+    events = _log_anchor_events(conn, date)
+    nxt = conn.execute("SELECT MIN(snap_date) FROM book_snapshots "
+                       "WHERE snap_date>?", (date,)).fetchone()[0]
+    if nxt:
+        # a backfill load changes the successor's predecessor — re-diff that
+        # seam too, or its logged events describe a gap that no longer exists
+        _log_anchor_events(conn, nxt)
     out = {"date": date, "n_positions": len(parsed), "pnl_basis": basis,
-           "nav": doc.get("nav"), "warnings": warnings}
+           "nav": doc.get("nav"), "warnings": warnings,
+           "anchor_events": events}
     if own:
         conn.close()
     return out
+
+
+def _log_anchor_events(conn: sqlite3.Connection, date: str) -> list[dict]:
+    """Diff snapshot `date` against its stored predecessor and (re)write the
+    book_anchor_log rows for `date`. Idempotent — delete-and-rewrite per
+    date, so --replace and --rebuild-log never duplicate. Returns the events.
+
+    Exists because of the 2026-09-07 IT retag: MPHL (IT 5 -> IT 4) and TELX
+    (IT 5 -> IT 6) moved tags with nothing recording it, and the %-since-entry
+    anchor silently reset. The anchor bug is fixed in _entry_anchor; this log
+    is the audit trail so the NEXT unrecorded change is visible, not inferred.
+    """
+    snaps = [r[0] for r in conn.execute(
+        "SELECT snap_date FROM book_snapshots ORDER BY snap_date")]
+    if date not in snaps:
+        return []
+    i = snaps.index(date)
+    prev = snaps[i - 1] if i else None
+    cur = {r["root"]: r for r in conn.execute(
+        "SELECT * FROM book_positions WHERE snap_date=?", (date,))}
+    prv = {r["root"]: r for r in conn.execute(
+        "SELECT * FROM book_positions WHERE snap_date=?", (prev,))} if prev else {}
+    ev: list[tuple] = []
+    for root, r in sorted(cur.items()):
+        p = prv.get(root)
+        if p is None:
+            seen = conn.execute(
+                "SELECT 1 FROM book_positions WHERE root=? AND snap_date<? "
+                "LIMIT 1", (root, date)).fetchone()
+            ev.append((root, "reopened" if seen else "entered",
+                       r["side"], r["qty"], r["cost"], None))
+            continue
+        if p["side"] != r["side"]:
+            ev.append((root, "flipped", r["side"], r["qty"], r["cost"],
+                       f"{p['side']} -> {r['side']}"))
+        if p["pair_tag"] != r["pair_tag"]:
+            ev.append((root, "retagged", r["side"], r["qty"], r["cost"],
+                       f"{p['pair_tag']} -> {r['pair_tag']}"))
+        if (p["qty"] or 0) != (r["qty"] or 0):
+            ev.append((root, "resized", r["side"], r["qty"], r["cost"],
+                       f"qty {p['qty']:g} -> {r['qty']:g}"))
+    for root, p in sorted(prv.items()):
+        if root not in cur:
+            ev.append((root, "closed", None, None, None,
+                       f"was {p['side']} qty {p['qty']:g}"))
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    with conn:
+        conn.execute("DELETE FROM book_anchor_log WHERE snap_date=?", (date,))
+        conn.executemany(
+            "INSERT INTO book_anchor_log (snap_date, root, event, side, qty, "
+            "cost, detail, created_at) VALUES (?,?,?,?,?,?,?,?)",
+            [(date, *e, now) for e in ev])
+    return [{"root": e[0], "event": e[1], "side": e[2], "qty": e[3],
+             "cost": e[4], "detail": e[5]} for e in ev]
+
+
+def rebuild_anchor_log(conn: sqlite3.Connection | None = None) -> int:
+    """Replay every stored snapshot into book_anchor_log (derived rows only)."""
+    own = conn is None
+    conn = conn or connect()
+    n = 0
+    for r in conn.execute("SELECT snap_date FROM book_snapshots ORDER BY 1"):
+        n += len(_log_anchor_events(conn, r[0]))
+    if own:
+        conn.close()
+    return n
 
 
 # --------------------------------------------------------------------------
@@ -576,7 +669,17 @@ def pair_report(conn: sqlite3.Connection | None = None,
                   "pnl_ytd": meta["na_pnl_ytd"]},
            "snapshots": len(hist), "pairs": pairs, "closed": closed,
            "book_pnl_total": round(sum(p["pnl_total"] for p in pairs)
-                                   + sum(c["pnl_total"] for c in closed), 2)}
+                                   + sum(c["pnl_total"] for c in closed), 2),
+           # the as_of snapshot's position events (entered/reopened/flipped
+           # reset the %-since-entry anchor; retagged/resized do not; closed
+           # ends a streak) — the page and --report say them out loud
+           "anchor_log": [{"root": r["root"], "name": display_name(r["root"]),
+                           "event": r["event"], "side": r["side"],
+                           "qty": r["qty"], "cost": r["cost"],
+                           "detail": r["detail"]}
+                          for r in conn.execute(
+                              "SELECT * FROM book_anchor_log WHERE snap_date=? "
+                              "ORDER BY event, root", (as_of,))]}
     if own:
         conn.close()
     return out
@@ -644,6 +747,12 @@ def _print_report(rep: dict) -> None:
     for c in rep["closed"]:
         print(f"  {c['pair']:<12} CLOSED {c['inception']} → {c['last_seen']} "
               f"({c['days']}d)  final P&L {c['pnl_total']:+,.0f}")
+    log = rep.get("anchor_log") or []
+    if log and rep["snapshots"] > 1:      # first snapshot: every root 'entered'
+        print(f"  events {rep['as_of']}:")
+        for e in log:
+            d = f" ({e['detail']})" if e.get("detail") else ""
+            print(f"    {e['event']:<9} {e['name']}{d}")
 
 
 def _selftest() -> None:
@@ -800,6 +909,22 @@ def _selftest() -> None:
     assert (dixn["first_seen"], dixn["entry_cost"]) == ("2026-09-03", 120.0), \
         f"a day out did NOT reset the anchor: {dixn['first_seen']}"
 
+    # ANCHOR LOG: every event above was recorded at load time ----------------
+    logged = lambda d: {(r["event"], r["root"]) for r in c4.execute(
+        "SELECT event, root FROM book_anchor_log WHERE snap_date=?", (d,))}
+    assert logged("2026-09-02") == {
+        ("retagged", "MPHL IS Equity"), ("resized", "TELX IS Equity"),
+        ("flipped", "SAIL IS Equity"), ("closed", "DIXON IS Equity")}, \
+        logged("2026-09-02")
+    assert logged("2026-09-03") == {("reopened", "DIXON IS Equity")}, \
+        logged("2026-09-03")
+    assert len(logged("2026-09-01")) == 4          # baseline: all 'entered'
+    n_before = c4.execute("SELECT COUNT(*) FROM book_anchor_log").fetchone()[0]
+    rebuild_anchor_log(c4)                          # idempotent — no duplicates
+    assert c4.execute("SELECT COUNT(*) FROM book_anchor_log").fetchone()[0] \
+        == n_before
+    assert r4["anchor_log"] and r4["anchor_log"][0]["event"] == "reopened"
+
     # refusal paths (the GLOB lesson: accepting AND rejecting cases) ---------
     c2 = sqlite3.connect(":memory:")
     c2.row_factory = sqlite3.Row
@@ -820,7 +945,8 @@ def _selftest() -> None:
     print("selftest OK — ticker/option parse, TSV parse (both cost shapes), "
           "NAV derivation, cross-foot accept+reject, roll chain, closed pair, "
           "cadence (no-split + reopen), year boundary, entry anchor "
-          "(retag/resize keep, flip/day-out reset), refusal paths, reviews")
+          "(retag/resize keep, flip/day-out reset), anchor log "
+          "(events + rebuild idempotence), refusal paths, reviews")
 
 
 if __name__ == "__main__":
@@ -834,10 +960,14 @@ if __name__ == "__main__":
                     help="allow overwriting an already-loaded date")
     ap.add_argument("--report", nargs="?", const="latest", metavar="DATE",
                     help="print the pair report (default: latest snapshot)")
+    ap.add_argument("--rebuild-log", action="store_true",
+                    help="replay all stored snapshots into book_anchor_log")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         _selftest()
+    elif a.rebuild_log:
+        print(f"rebuilt book_anchor_log: {rebuild_anchor_log()} events")
     elif a.parse:
         if not a.date:
             ap.error("--parse needs --date")

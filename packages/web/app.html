@@ -2351,6 +2351,7 @@ function bookSections(view, order, nav, bookPnl){
         `${l.side === 'L' ? '▲' : '▼'} ${l.name} ×${l.qty}` +
         `${l.share != null && l.share < 1 ? `  (${Math.round(l.share * 100)}% of leg — shared across pairs)` : ''}` +
         `${l.ret_pct != null ? `  px ${pctf(l.ret_pct)}` : ''}` +
+        `${l.entry_cost != null ? `  @${(Math.round(l.entry_cost * 100) / 100).toLocaleString('en-US')} (${dmy(l.first_seen)})` : ''}` +
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
         `  day ${usd(l.pnl_dtd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
         `  (${l.ticker_now})`).join('\n') +
@@ -2398,7 +2399,7 @@ function bookSections(view, order, nav, bookPnl){
     <table class="bk"><thead><tr>
       <th class="l">sector</th><th class="l">pair</th><th>gross</th>
       <th>day</th><th>mtd</th>
-      <th title="avg long price move − avg short price move since trade entry (anchor: avg entry cost at first capture; close-anchored once the export drops Cost) · small figure: chained P&L, USD">since start %</th>
+      <th title="avg long price move − avg short price move SINCE TRADE ENTRY. Each leg anchors on its day-entered price (the IMS avg entry cost; close of first capture once the export dropped Cost) — the anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book (PM rule 07-09-2026) · small figure: chained P&L, USD">since entry %</th>
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
@@ -2445,6 +2446,23 @@ async function loadBook(){
       + `<div class="meta-line">contract codes stripped and P&amp;L <b>chained
          across rolls</b> — the totals survive expiry resets · hover a pair
          for its legs</div>`
+      /* the day's position events from book_anchor_log — exception-only: a
+         snapshot with no changes renders nothing. entered/reopened/flipped
+         RESET a leg's %-since-entry anchor; retagged/resized do not (they
+         are shown so a tag move is a recorded fact, not an inference — the
+         07-09-2026 IT retag went unrecorded and silently re-anchored two
+         legs). The first-ever snapshot's 32 baseline 'entered' rows are
+         suppressed by the snapshots>1 guard. */
+      + (((bk.anchor_log || []).length && bk.snapshots > 1) ?
+          `<div class="meta-line">position events ${dmy(bk.as_of)}: ` +
+          bk.anchor_log.map(e =>
+            `<span title="${esc(e.detail || e.event)}${
+              ['entered','reopened','flipped'].includes(e.event)
+                ? ' — %-since-entry anchor reset' : ''}"${
+              ['flipped','reopened'].includes(e.event)
+                ? ' style="color:var(--warn)"' : ''}><b>${esc(e.name)}</b> ${
+              esc(e.event)}${e.detail ? ` (${esc(e.detail)})` : ''}</span>`
+          ).join(' · ') + `</div>` : '')
       + (untagged ? `<div class="callout accent-amber"><div class="callout-head">
            <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
            <div class="hint">rows with no pair name on the IMS snapshot are grouped

@@ -405,8 +405,11 @@ the export drops the column). **The anchor is fixed at the day entered and
 survives resizes and pair-tag changes; it resets only on a direction flip
 or a day out of the book** (PM rule 2026-09-07 — `book_io._entry_anchor`,
 keyed on root across tags after the 09-07 IT retag silently re-anchored
-MPHL and TELX to 0.0%). A live position in no dictated pair renders as a
-loud callout —
+MPHL and TELX to 0.0%). Every position event is logged at load time into
+`book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/
+resized do not; closed ends a streak) — the tab and `--report` say the
+day's events out loud, `--rebuild-log` replays history. A live position in
+no dictated pair renders as a loud callout —
 ask the PM, never guess it into a pair. Reviews key on the dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
