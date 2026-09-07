@@ -576,22 +576,24 @@
     color:var(--faint);font-weight:600;text-align:right;
     padding:7px 10px;border-bottom:1px solid var(--rule)}
   .bk th.l{text-align:left}
-  /* grid rules: ALL horizontals match the sector column's vertical line
-     (#6e7681) — PM, 06-09-2026, clarifying the earlier rounds: the row lines
-     under each pair were the invisible ones; one uniform visible grid */
+  /* grid rules: one uniform color for every bk line, horizontal and
+     vertical, at the theme's --soft (#8b949e). NOTE the header Refresh
+     button re-renders DATA only — style changes need a real browser reload
+     (F5), which is why three rounds of "invisible lines" never appeared on
+     the PM's screen. */
   .bk td{font-family:var(--mono);font-size:var(--t-sm);
     font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
-    border-top:1px solid #6e7681;white-space:nowrap}
+    border-top:1px solid #8b949e;white-space:nowrap}
   .bk tbody tr:hover td{background:var(--alt)}
   .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
-    width:104px;border-right:1px solid #6e7681;background:var(--surface);
-    border-top:1px solid #6e7681;padding:6px 12px}
+    width:104px;border-right:1px solid #8b949e;background:var(--surface);
+    border-top:1px solid #8b949e;padding:6px 12px}
   .bk td.sec .t{display:block;font-size:var(--t-label);font-weight:700;
     letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
   .bk td.sec .a{display:block;font-family:var(--mono);font-size:var(--t-micro);
     color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
-  .bk tr.secfirst td{border-top:1px solid #6e7681}
-  .bk tr.total td{border-top:2px solid #6e7681;background:var(--surface);
+  .bk tr.secfirst td{border-top:1px solid #8b949e}
+  .bk tr.total td{border-top:2px solid #8b949e;background:var(--surface);
     font-weight:700;padding:7px 10px}
   .bk tr.total td.sec .t{color:var(--ink)}
   .bk .sub{color:var(--faint);font-size:var(--t-micro);font-weight:400;
