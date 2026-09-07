@@ -583,16 +583,16 @@
      the PM's screen. */
   .bk td{font-family:var(--mono);font-size:var(--t-sm);
     font-variant-numeric:tabular-nums;text-align:right;padding:5px 10px;
-    border-top:1px solid #8b949e;white-space:nowrap}
+    border-top:2px solid #8b949e;white-space:nowrap}
   .bk tbody tr:hover td{background:var(--alt)}
   .bk td.sec{font-family:var(--sans);text-align:left;vertical-align:middle;
-    width:104px;border-right:1px solid #8b949e;background:var(--surface);
-    border-top:1px solid #8b949e;padding:6px 12px}
+    width:104px;border-right:2px solid #8b949e;background:var(--surface);
+    border-top:2px solid #8b949e;padding:6px 12px}
   .bk td.sec .t{display:block;font-size:var(--t-label);font-weight:700;
     letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
   .bk td.sec .a{display:block;font-family:var(--mono);font-size:var(--t-micro);
     color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
-  .bk tr.secfirst td{border-top:1px solid #8b949e}
+  .bk tr.secfirst td{border-top:2px solid #8b949e}
   .bk tr.total td{border-top:2px solid #8b949e;background:var(--surface);
     font-weight:700;padding:7px 10px}
   .bk tr.total td.sec .t{color:var(--ink)}
@@ -3584,20 +3584,19 @@ document.querySelectorAll('.tab').forEach(b =>
   b.addEventListener('click', () => tab(b.dataset.t)));
 $('#win').addEventListener('change', () => loadScores().catch(e => showErr(e.message)));
 $('#reload').addEventListener('click', () => {
-  for (const k in rendered) delete rendered[k];
-  for (const k in TAPE) delete TAPE[k];      // else Refresh cannot see a new run
-  // The visible view is the sector placeholder whenever the sector has no spec;
-  // reading the sub-nav then reloads a view that is not on screen.
-  const e = SECTORS.find(x => x.id === SECTOR) || {};
-  const cur = e.kind === 'overview' ? 'overview'
-    : e.kind === 'book' ? 'book'
-    : e.kind === 'flows' ? 'flows'
-    : e.live ? document.querySelector('.tab[aria-selected=true]').dataset.t
-    : 'sector';
-  render(cur);
+  // A FULL reload, deliberately (06-09-2026). The old handler re-rendered
+  // data against the HTML/CSS the tab was opened with, so front-end changes
+  // were invisible until a manual F5 — three rounds of gridline fixes never
+  // reached the PM's screen. sessionStorage brings the current view back.
+  try { sessionStorage.setItem('ims-view', SECTOR); } catch (e) {}
+  location.reload();
 });
 $('#winwrap').hidden = true;
 $('#fxwrap').hidden = true;
+try {
+  const v = sessionStorage.getItem('ims-view');
+  if (v) { SECTOR = v; sessionStorage.removeItem('ims-view'); }
+} catch (e) {}
 loadSectorNav()
   .then(() => { sector(SECTOR); })
   .catch(e => {
