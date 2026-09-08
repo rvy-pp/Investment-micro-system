@@ -69,12 +69,19 @@ never sets direction and never enters scoring. **F1 (the market-wide regime
 read) is LIVE since 2026-09-02**: five Yahoo cross-asset series in the dedicated
 `flow_series` table (never `prices`), 8 sign-pattern states + quiet + a windowed
 flow-spell layer in `market_regime`, odds as empirical base rates over ten
-years. **The tab leads WEEKLY, by the PM's ruling 2026-09-03 ("daily is of no
-use")** — Friday-to-Friday states, next-week odds, live India next-week
-evidence (`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence
-series, never regime inputs), plus a week-to-date chip. Daily still computes
-and persists (it feeds the spell and the future review layer). Method frozen
-in `specs/flows.yaml`; evidence via `regime.py --backtest` / `--weekly`.
+years. **The tab leads with the ROLLING past week, updated every US session
+(PM 2026-09-08: "update daily... show weekly trend but calculate past week on
+a rolling basis")** — each session read as its own trailing 5-session window
+on the weekly σ scale, superseding the 2026-09-03 Friday-week lead ("daily is
+of no use"), which survives as the trend strip and the evidence base. The two
+rulings agree: the unit is still a week, only the anchor moved off Friday.
+Rolling states flip on 50% of sessions (median run 1) — the grade carries the
+signal; forward evidence at this cadence samples STATE ENTRIES only (adjacent
+readings share 4 of 5 sessions). India next-week evidence stays live
+(`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence series,
+never regime inputs). Daily still computes and persists (it feeds the spell
+and the future review layer). Method frozen in `specs/flows.yaml`; evidence
+via `regime.py --backtest` / `--weekly` / `--rolling-backtest`.
 F2–F4 are still scoped only — read `docs/FLOWS.md` before touching
 `sector_regime`.
 

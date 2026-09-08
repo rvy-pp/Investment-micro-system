@@ -113,7 +113,9 @@ name (`book_io.add_review('JINDA_SAIL', ...)`).
   that meaningful. A widening or narrowing of the PAIR's score spread is
   the pair-level read; a level ranking is not.
 - **Positioning**: `/api/oi` for OI percentile + buildup per leg.
-- **Regime**: `/api/flows` weekly state — can the pair express right now?
+- **Regime**: `/api/flows` — `w1.lead` is the rolling past-week state,
+  updated every US session (the Friday weekly layer is the trend behind
+  it) — can the pair express right now?
 - **History**: `book_io.reviews()` — what was said last time, did it hold?
   A pair marked `thesis_intact: 0` or repeatedly `trim` is a standing
   candidate for the mistakes review, as is any closed pair with a negative

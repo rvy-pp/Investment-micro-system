@@ -1554,12 +1554,15 @@ def flows() -> dict:
     except Exception as e:  # the readiness tables must render regardless
         f1 = {"error": str(e)}
 
-    # ---- W1: the weekly read the tab LEADS with (PM ruling 2026-09-03:
-    # "daily is of no use, show a weekly analysis in the tab"). Computed on
-    # demand from flow_series — a pure function of stored prices + the spec,
-    # ~500 weeks, a few ms; persisting it would only add a staleness mode.
+    # ---- W1: the week-scale read the tab LEADS with. Since 2026-09-08 the
+    # lead is the ROLLING past week, updated every US session (PM: "update
+    # daily... show weekly trend but calculate past week on a rolling
+    # basis"), with the Friday-to-Friday layer kept as the trend strip and
+    # the evidence base — superseding the 2026-09-03 Friday-week lead.
+    # Computed on demand from flow_series — a pure function of stored prices
+    # + the spec, a few ms; persisting it would only add a staleness mode.
     # f1 stays in the payload: the spell lives there and the review layer
-    # will want the daily states, but the page renders weekly first.
+    # will want the daily states.
     try:
         import regime as rg2
         w1 = rg2.weekly_view()
