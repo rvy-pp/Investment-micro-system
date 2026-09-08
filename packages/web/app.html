@@ -504,15 +504,27 @@
   .vdot{stroke:var(--surface)}
   .xhair{stroke:var(--faint);stroke-width:1;pointer-events:none}
 
-  /* Positioning rows expand into an OI-vs-time chart on click. */
-  tr.oirow{cursor:pointer}
-  tr.oirow:hover td{background:var(--sunken)}
-  tr.oirow .oicaret{color:var(--faint);font-size:10px;margin-left:6px;
-       display:inline-block;transition:transform .12s}
-  tr.oirow[aria-expanded=true] .oicaret{transform:rotate(90deg);
+  /* Positioning rows expand into an OI-vs-time chart on click; the
+     Overview's what-moved rows reuse the same grammar for a price chart
+     (PM, 2026-09-08: "one click and it expands, else stays like that"). */
+  tr.oirow, tr.mvrow{cursor:pointer}
+  tr.oirow:hover td, tr.mvrow:hover td{background:var(--sunken)}
+  tr.oirow .oicaret, tr.mvrow .oicaret{color:var(--faint);font-size:10px;
+       margin-left:6px;display:inline-block;transition:transform .12s}
+  tr.oirow[aria-expanded=true] .oicaret,
+  tr.mvrow[aria-expanded=true] .oicaret{transform:rotate(90deg);
        color:var(--accent)}
   tr.oich>td{padding:12px 14px 14px;background:var(--sunken)}
   tr.oich .legend{margin-top:2px}
+
+  /* A mail bullet whose MAIL already appeared in an earlier brief renders
+     greyed with a tag — marked, never dropped (PM, 2026-09-08). The mark is
+     computed server-side (engine._mark_repeated_bullets); the page only
+     says it out loud. */
+  li.seenmail{opacity:.55}
+  li.seenmail .seentag{color:var(--warn);font-size:10px;border:1px solid
+       var(--rule);border-radius:8px;padding:0 6px;margin-left:6px;
+       white-space:nowrap}
 
   .chartwrap{position:relative}
   /* Beat `.chart svg{width:100%}` from the base sheet: these charts are laid
@@ -2174,15 +2186,34 @@ function mailHtml(m){
     <b>morning-brief</b> skill (agent-only: the mailbox is behind the M365
     MCP)</div></div>`;
 
-  const secBlocks = (mail.sectors || []).map(s => `
+  /* A bullet whose mail already appeared in an earlier brief carries
+     `seen_on` (stamped server-side by engine._mark_repeated_bullets — the
+     24h sweep windows overlap day to day, so repeats are structural, not an
+     agent mistake). It renders greyed with a tag: marked, never dropped
+     (PM, 2026-09-08). Fresh bullets count in the header; stale ride below. */
+  const bullet = b => {
+    const stale = !!b.seen_on;
+    return `<li${stale ? ' class="seenmail"' : ''}>${esc(b.text)}
+      <span class="src">${esc(b.source || '')}${
+        b.received ? ' · ' + esc(b.received) : ''}</span>${
+      stale ? `<span class="seentag" title="this mail was already bulleted in
+        the ${esc(b.seen_on)} brief — repeated because the 24h sweep windows
+        overlap">↺ seen ${esc(b.seen_on)}</span>` : ''}</li>`;
+  };
+  const secBlocks = (mail.sectors || []).map(s => {
+    const bs = s.bullets || [];
+    const nStale = bs.filter(b => b.seen_on).length;
+    return `
     <div class="panel">
       <div class="callout-head"><span class="t">${esc(s.sector)}</span>
-        <span class="right">${(s.bullets || []).length} actionable</span></div>
-      <ul class="plist">${(s.bullets || []).map(b => `<li>${esc(b.text)}
-        <span class="src">${esc(b.source || '')}${
-          b.received ? ' · ' + esc(b.received) : ''}</span></li>`).join('')
+        <span class="right">${bs.length - nStale} actionable${
+          nStale ? ` <span class="neu">+ ${nStale} seen before</span>` : ''}</span></div>
+      <ul class="plist">${
+        [...bs.filter(b => !b.seen_on), ...bs.filter(b => b.seen_on)]
+          .map(bullet).join('')
         || '<li class="hint">nothing actionable</li>'}</ul>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   return `<div class="sechead">Broker mail · ${esc(mail.window || 'last 24h')}
       <span class="neu" style="font-weight:400;font-size:12px">(${
@@ -2275,8 +2306,13 @@ async function loadOverview(){
          watch unavailable: ${esc(cw.note || '')}</div>`
     : '';
 
+  /* Each row expands into a 2y price chart on click — the OI-row grammar
+     (PM, 2026-09-08). Unpriced rows have nothing to chart and stay inert. */
   const moverRows = (d.movers || []).map(m =>
-    `<tr><td class="k">${esc(m.id)}</td>
+    `<tr${m.last == null ? '' : ` class="mvrow" data-id="${esc(m.id)}"
+        aria-expanded="false" title="price vs time chart"`}>
+      <td class="k">${esc(m.id)}${m.last == null ? ''
+        : ' <span class="oicaret" aria-hidden="true">▸</span>'}</td>
       <td class="n">${fmtNum(m.last)}</td>
       ${m.chg_pct == null
         ? '<td class="n flat">flat 30d+</td>'
@@ -2300,9 +2336,127 @@ async function loadOverview(){
        <div class="panel"><p class="note" style="margin-top:0">Only series a spec
          <code>price_link</code>s — the parked columns drive nothing, so they are
          not here. Change is against the last close that actually <b>differed</b>.</p>
+       <p class="note">Click a series for its price-vs-time chart (last two
+         years), same as the OI rows.</p>
        <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
          <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
        </tr></thead><tbody>${moverRows}</tbody></table></div></div>`;
+
+  // Property assignment, not addEventListener — loadOverview re-renders this
+  // section wholesale on every visit (same reasoning as the Positioning tab).
+  $('#s-overview').onclick = ev => {
+    const tr = ev.target.closest('tr.mvrow');
+    if (tr) toggleMvRow(tr);
+  };
+}
+
+/* INPUT PRICE CHART — the what-moved rows expand inline into a single-series
+   price line, the Positioning tab's click-to-expand grammar reused verbatim
+   (PM, 2026-09-08). One axis: unlike the OI chart there is no second quantity
+   to overlay. The axis does not start at zero — a commodity's daily range is
+   a few percent of its level, and a zero base flattens every move the table
+   exists to show. The caption names the SOURCE MIX, because a shock whose
+   endpoints have different sources (pack -> westmetall etc.) is worth
+   checking before trusting — the lme_aluminium lesson. */
+const MVH = {};   // entity_id -> /api/input_history payload, fetched once
+
+async function toggleMvRow(tr){
+  const eid = tr.dataset.id;
+  const open = tr.nextElementSibling;
+  if (open && open.classList.contains('oich')){
+    open.remove();
+    tr.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  const ntr = document.createElement('tr');
+  ntr.className = 'oich';
+  const td = document.createElement('td');
+  td.colSpan = tr.children.length;
+  ntr.appendChild(td);
+  tr.after(ntr);
+  tr.setAttribute('aria-expanded', 'true');
+  td.innerHTML = '<div class="hint">loading price history…</div>';
+  if (!MVH[eid]){
+    try {
+      MVH[eid] = await (await fetch(
+        '/api/input_history?id=' + encodeURIComponent(eid))).json();
+    } catch (e){
+      td.textContent = 'fetch failed: ' + e;
+      return;
+    }
+  }
+  const d = MVH[eid];
+  if (d.error){ td.textContent = d.error; return; }
+  const panel = tr.closest('.panel');
+  const w = Math.max(520, Math.min(1100,
+    (panel ? panel.clientWidth : 940) - 32));
+  td.innerHTML = inputChart(eid, d, w);
+}
+
+/* Values span cement's Rs thousands to alumina's dollars; pick the decimals
+   from the magnitude rather than hardcoding either convention. */
+const fmtMvVal = v => v == null ? '—'
+  : Math.abs(v) >= 1000 ? Math.round(v).toLocaleString('en-US')
+  : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2);
+
+function inputChart(eid, d, w){
+  const rows = d.rows.filter(r => r.close != null);
+  if (rows.length < 2)
+    return '<div class="hint">not enough price history for a chart</div>';
+  const h = 240, ML = 64, MR = 20, MT = 18, MB = 30;
+  const T = s => Date.parse(s);
+  const x0 = T(rows[0].date), x1 = T(rows[rows.length - 1].date);
+  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0)) * (w - ML - MR);
+  const lo0 = Math.min(...rows.map(r => r.close));
+  const hi0 = Math.max(...rows.map(r => r.close));
+  const pad = ((hi0 - lo0) || Math.abs(hi0) || 1) * 0.06;
+  const lo = lo0 - pad, hi = hi0 + pad;
+  const Y = v => MT + (1 - (v - lo) / ((hi - lo) || 1)) * (h - MT - MB);
+
+  let grid = '', yax = '';
+  for (const f of [0, 1 / 3, 2 / 3, 1]){
+    const y = (MT + f * (h - MT - MB)).toFixed(1);
+    grid += '<line class="grid" x1="' + ML + '" x2="' + (w - MR) +
+            '" y1="' + y + '" y2="' + y + '"/>';
+    yax += '<text class="ax" x="' + (ML - 8) + '" y="' + y +
+           '" text-anchor="end" dominant-baseline="middle">' +
+           fmtMvVal(hi - f * (hi - lo)) + '</text>';
+  }
+  let xax = '';
+  const seen = new Set();
+  for (let i = 0; i < 6; i++){
+    const k = Math.round(i * (rows.length - 1) / 5);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    xax += '<text class="ax" x="' + X(T(rows[k].date)).toFixed(1) + '" y="' +
+           (h - 9) + '" text-anchor="middle">' +
+           esc(dtick(rows[k].date, true)) + '</text>';
+  }
+
+  const pts = rows.map(r =>
+    X(T(r.date)).toFixed(1) + ',' + Y(r.close).toFixed(1)).join(' ');
+  const lastR = rows[rows.length - 1];
+  const dotX = X(T(lastR.date)).toFixed(1), dotY = Y(lastR.close).toFixed(1);
+
+  // The source mix, in first-seen order — two sources on one line is a fact
+  // the reader should have before trusting a move that spans the seam.
+  const srcs = [];
+  for (const r of rows) if (!srcs.includes(r.source)) srcs.push(r.source);
+
+  return `<div class="chartwrap">
+    <svg width="${w}" height="${h}" role="img"
+         aria-label="price history for ${esc(eid)}">
+      ${grid}${yax}${xax}
+      <polyline points="${pts}" fill="none" style="stroke:var(--accent)"
+        stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${dotX}" cy="${dotY}" r="3" style="fill:var(--accent)"/>
+    </svg></div>
+    <div class="hint">${esc(eid)} · last ${fmtMvVal(lastR.close)}
+      (${esc(lastR.date)}) · 2y range ${fmtMvVal(lo0)}–${fmtMvVal(hi0)} ·
+      ${rows.length} rows shown of ${d.n_ever} since ${esc(d.first_ever)} ·
+      source${srcs.length > 1 ? 's' : ''}: ${esc(srcs.join(' → '))}${
+      srcs.length > 1 ? ' — a move spanning a source seam is worth checking'
+                      : ''}</div>`;
 }
 
 /* ===================== the book =====================
