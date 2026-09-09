@@ -1,5 +1,5 @@
 {
-  "captured": "2026-09-07",
+  "captured": "2026-09-09",
   "source": "yahoo quoteSummary earningsTrend",
   "entities": {
     "dixon": {
@@ -36,7 +36,7 @@
           "growth": 0.5363
         }
       ],
-      "trailing_eps": 307.58
+      "trailing_eps": 305.97
     },
     "amber": {
       "symbol": "AMBER.NS",
@@ -72,7 +72,7 @@
           "growth": 0.8278
         }
       ],
-      "trailing_eps": 26.16
+      "trailing_eps": 25.58
     },
     "kaynes": {
       "symbol": "KAYNES.NS",
@@ -108,7 +108,7 @@
           "growth": 0.5113
         }
       ],
-      "trailing_eps": 51.45
+      "trailing_eps": 51.26
     },
     "pg_electroplast": {
       "symbol": "PGEL.NS",
@@ -144,7 +144,7 @@
           "growth": 0.56439996
         }
       ],
-      "trailing_eps": 7.2
+      "trailing_eps": 7.16
     },
     "syrma_sgs": {
       "symbol": "SYRMA.NS",
@@ -180,7 +180,7 @@
           "growth": 0.3755
         }
       ],
-      "trailing_eps": 19.38
+      "trailing_eps": 19.34
     },
     "avalon": {
       "symbol": "AVALON.NS",
@@ -216,7 +216,7 @@
           "growth": 0.4013
         }
       ],
-      "trailing_eps": 19.99
+      "trailing_eps": 19.47
     },
     "ltimindtree": {
       "symbol": "LTM.NS",
@@ -252,7 +252,7 @@
           "growth": 0.1169
         }
       ],
-      "trailing_eps": 176.24
+      "trailing_eps": 175.43
     },
     "infosys": {
       "symbol": "INFY.NS",
@@ -288,7 +288,7 @@
           "growth": 0.046
         }
       ],
-      "trailing_eps": 76.5
+      "trailing_eps": 76.06
     },
     "tcs": {
       "symbol": "TCS.NS",
@@ -324,7 +324,7 @@
           "growth": 0.0478
         }
       ],
-      "trailing_eps": 137.55
+      "trailing_eps": 136.68
     },
     "hcl_tech": {
       "symbol": "HCLTECH.NS",
@@ -360,7 +360,7 @@
           "growth": 0.094
         }
       ],
-      "trailing_eps": 64.28
+      "trailing_eps": 63.98
     },
     "wipro": {
       "symbol": "WIPRO.NS",
@@ -396,7 +396,7 @@
           "growth": 0.043899998
         }
       ],
-      "trailing_eps": 12.59
+      "trailing_eps": 12.5
     },
     "tech_mahindra": {
       "symbol": "TECHM.NS",
@@ -432,7 +432,7 @@
           "growth": 0.127
         }
       ],
-      "trailing_eps": 57.81
+      "trailing_eps": 57.87
     },
     "persistent": {
       "symbol": "PERSISTENT.NS",
@@ -468,7 +468,7 @@
           "growth": 0.22569999
         }
       ],
-      "trailing_eps": 121.89
+      "trailing_eps": 122.88
     },
     "coforge": {
       "symbol": "COFORGE.NS",
@@ -504,7 +504,7 @@
           "growth": 0.213
         }
       ],
-      "trailing_eps": 48.73
+      "trailing_eps": 49.14
     },
     "mphasis": {
       "symbol": "MPHASIS.NS",
@@ -540,7 +540,7 @@
           "growth": 0.1245
         }
       ],
-      "trailing_eps": 100.03
+      "trailing_eps": 99.38
     },
     "kpit": {
       "symbol": "KPITTECH.NS",
@@ -576,7 +576,7 @@
           "growth": 0.415
         }
       ],
-      "trailing_eps": 21.29
+      "trailing_eps": 21.24
     },
     "tata_elxsi": {
       "symbol": "TATAELXSI.NS",
@@ -612,7 +612,7 @@
           "growth": 0.1907
         }
       ],
-      "trailing_eps": 104.96
+      "trailing_eps": 105.11
     },
     "ofss": {
       "symbol": "OFSS.NS",
@@ -648,7 +648,7 @@
           "growth": 0.0372
         }
       ],
-      "trailing_eps": 390.68
+      "trailing_eps": 388.74
     },
     "ltts": {
       "symbol": "LTTS.NS",

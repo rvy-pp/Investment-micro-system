@@ -70,6 +70,13 @@
    "fines": 4000,
    "basis": "ex_royalty",
    "doc": "NMDC CMS ironoresales id 67"
+  },
+  {
+   "effective": "2026-03-06",
+   "lumps": 4800,
+   "fines": 4050,
+   "basis": "ex_royalty",
+   "doc": "NMDC CMS ironoresales id 68"
   }
  ]
 }

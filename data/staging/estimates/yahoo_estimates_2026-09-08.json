@@ -1,5 +1,5 @@
 {
-  "captured": "2026-09-07",
+  "captured": "2026-09-08",
   "source": "yahoo quoteSummary earningsTrend",
   "entities": {
     "dixon": {
@@ -144,7 +144,7 @@
           "growth": 0.56439996
         }
       ],
-      "trailing_eps": 7.2
+      "trailing_eps": 7.16
     },
     "syrma_sgs": {
       "symbol": "SYRMA.NS",
@@ -252,7 +252,7 @@
           "growth": 0.1169
         }
       ],
-      "trailing_eps": 176.24
+      "trailing_eps": 172.14
     },
     "infosys": {
       "symbol": "INFY.NS",
@@ -288,7 +288,7 @@
           "growth": 0.046
         }
       ],
-      "trailing_eps": 76.5
+      "trailing_eps": 73.62
     },
     "tcs": {
       "symbol": "TCS.NS",
@@ -324,7 +324,7 @@
           "growth": 0.0478
         }
       ],
-      "trailing_eps": 137.55
+      "trailing_eps": 135.52
     },
     "hcl_tech": {
       "symbol": "HCLTECH.NS",
@@ -360,7 +360,7 @@
           "growth": 0.094
         }
       ],
-      "trailing_eps": 64.28
+      "trailing_eps": 63.76
     },
     "wipro": {
       "symbol": "WIPRO.NS",
@@ -396,7 +396,7 @@
           "growth": 0.043899998
         }
       ],
-      "trailing_eps": 12.59
+      "trailing_eps": 12.34
     },
     "tech_mahindra": {
       "symbol": "TECHM.NS",
@@ -432,7 +432,7 @@
           "growth": 0.127
         }
       ],
-      "trailing_eps": 57.81
+      "trailing_eps": 56.62
     },
     "persistent": {
       "symbol": "PERSISTENT.NS",
@@ -468,7 +468,7 @@
           "growth": 0.22569999
         }
       ],
-      "trailing_eps": 121.89
+      "trailing_eps": 119.66
     },
     "coforge": {
       "symbol": "COFORGE.NS",
@@ -576,7 +576,7 @@
           "growth": 0.415
         }
       ],
-      "trailing_eps": 21.29
+      "trailing_eps": 20.8
     },
     "tata_elxsi": {
       "symbol": "TATAELXSI.NS",

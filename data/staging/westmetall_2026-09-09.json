@@ -3,11 +3,11 @@
   "lme_aluminium": "LME Aluminium Cash-Settlement",
   "lme_zinc": "LME Zinc Cash-Settlement"
  },
- "fetched_at": "2026-09-07T14:43:30+00:00",
+ "fetched_at": "2026-09-09T04:30:17+00:00",
  "fetched_by": "packages/adapters/westmetall.py \u2014 direct stdlib urllib, no agent and no MCP",
  "html_sha256_16": {
-  "lme_aluminium": "f6f37adf47c1fad4",
-  "lme_zinc": "41bd4f734db1252a"
+  "lme_aluminium": "676cd5d80152ac81",
+  "lme_zinc": "6dcf918411175048"
  },
  "note": "LME official CASH-SETTLEMENT, day-delayed (newest row is T-1). The 3-month column is deliberately not captured: nothing links to it and an unused series makes _series_in_store() claim coverage the bridge cannot use.",
  "series_cash": {
@@ -182,7 +182,9 @@
    "2026-09-01": 3261.0,
    "2026-09-02": 3255.5,
    "2026-09-03": 3303.0,
-   "2026-09-04": 3292.5
+   "2026-09-04": 3292.5,
+   "2026-09-07": 3310.0,
+   "2026-09-08": 3325.0
   },
   "lme_zinc": {
    "2026-01-02": 3106.0,
@@ -355,7 +357,9 @@
    "2026-09-01": 4115.0,
    "2026-09-02": 4000.0,
    "2026-09-03": 3995.5,
-   "2026-09-04": 4087.0
+   "2026-09-04": 4087.0,
+   "2026-09-07": 4157.0,
+   "2026-09-08": 4110.0
   }
  },
  "source": "westmetall",
