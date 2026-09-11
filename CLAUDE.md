@@ -129,10 +129,17 @@ at it). It refreshes the scores, starts the server on 8770 and opens the page �
 about 18s cold. `launch\Stop.bat` frees the port; `launch\Update Now.bat` runs
 the refresh where you can read it.
 
-**No scheduled task is registered, by the PM's choice 2026-08-21.** The launcher
-refreshes on every double-click, so the scores are current whenever the page is
-open and nothing runs when it is not. `launch\Install Daily Task.bat` is written
-and unrun if that changes.
+**A Claude Desktop scheduled task `daily-full-refresh` runs `/full-refresh` at
+08:00 local daily (PM instruction 2026-09-11; it reversed the 2026-08-21 choice
+of no scheduled task).** It is the desktop app's scheduler, not Windows Task
+Scheduler — it fires only while the app is open (a missed run fires on next
+launch) and needs the machine awake and logged in for Outlook. Its prompt lives
+in `~/.claude/scheduled-tasks/daily-full-refresh/SKILL.md`; the skill files in
+`.claude/skills/` stay the procedure. Known timing caveat: most broker mail and
+the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
+`outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
+The launcher still refreshes on every double-click; `launch\Install Daily
+Task.bat` (Windows Task Scheduler) remains written and unrun.
 
 ### Two halves of the API that must not be merged
 
