@@ -390,9 +390,14 @@ failure mode the doc itself warns about. Current read: `dispersion` ready,
 `prices.volume` NULL on all 155,401 rows, and no FII source. `sector_regime` holds
 0 rows. F4 crowding has its data (96 dates x 4 names) and nothing in `score/`
 reads it. **F1 is LIVE since 2026-09-02** — `market_regime` carries ~2,470
-classified US sessions (9 states + the flow-spell layer) and the Flows tab leads
-with the current read and its next-session odds; the readiness tables above
-describe F2-F4 only.
+classified US sessions (9 states + the flow-spell layer). **Since 2026-09-08 the
+tab LEADS with the ROLLING past week, updated every US session** (PM: "update
+daily... show weekly trend but calculate past week on a rolling basis") — each
+session read as its own trailing 5-session window on the weekly σ scale; the
+Friday-to-Friday weekly layer stays as the trend strip and the evidence base.
+All of it recomputes on demand inside `regime.weekly_view()` from `flow_series`,
+so the flow-series step is the only refresh dependency — nothing new to run.
+The readiness tables above describe F2-F4 only.
 
 A sector with no `peer_groups` is not an empty tab. It lists the commodity inputs
 already arriving for it, dated and sourced, plus the three steps needed to make it

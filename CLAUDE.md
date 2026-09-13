@@ -69,12 +69,19 @@ never sets direction and never enters scoring. **F1 (the market-wide regime
 read) is LIVE since 2026-09-02**: five Yahoo cross-asset series in the dedicated
 `flow_series` table (never `prices`), 8 sign-pattern states + quiet + a windowed
 flow-spell layer in `market_regime`, odds as empirical base rates over ten
-years. **The tab leads WEEKLY, by the PM's ruling 2026-09-03 ("daily is of no
-use")** — Friday-to-Friday states, next-week odds, live India next-week
-evidence (`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence
-series, never regime inputs), plus a week-to-date chip. Daily still computes
-and persists (it feeds the spell and the future review layer). Method frozen
-in `specs/flows.yaml`; evidence via `regime.py --backtest` / `--weekly`.
+years. **The tab leads with the ROLLING past week, updated every US session
+(PM 2026-09-08: "update daily... show weekly trend but calculate past week on
+a rolling basis")** — each session read as its own trailing 5-session window
+on the weekly σ scale, superseding the 2026-09-03 Friday-week lead ("daily is
+of no use"), which survives as the trend strip and the evidence base. The two
+rulings agree: the unit is still a week, only the anchor moved off Friday.
+Rolling states flip on 50% of sessions (median run 1) — the grade carries the
+signal; forward evidence at this cadence samples STATE ENTRIES only (adjacent
+readings share 4 of 5 sessions). India next-week evidence stays live
+(`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence series,
+never regime inputs). Daily still computes and persists (it feeds the spell
+and the future review layer). Method frozen in `specs/flows.yaml`; evidence
+via `regime.py --backtest` / `--weekly` / `--rolling-backtest`.
 F2–F4 are still scoped only — read `docs/FLOWS.md` before touching
 `sector_regime`.
 
@@ -122,10 +129,17 @@ at it). It refreshes the scores, starts the server on 8770 and opens the page �
 about 18s cold. `launch\Stop.bat` frees the port; `launch\Update Now.bat` runs
 the refresh where you can read it.
 
-**No scheduled task is registered, by the PM's choice 2026-08-21.** The launcher
-refreshes on every double-click, so the scores are current whenever the page is
-open and nothing runs when it is not. `launch\Install Daily Task.bat` is written
-and unrun if that changes.
+**A Claude Desktop scheduled task `daily-full-refresh` runs `/full-refresh` at
+08:00 local daily (PM instruction 2026-09-11; it reversed the 2026-08-21 choice
+of no scheduled task).** It is the desktop app's scheduler, not Windows Task
+Scheduler — it fires only while the app is open (a missed run fires on next
+launch) and needs the machine awake and logged in for Outlook. Its prompt lives
+in `~/.claude/scheduled-tasks/daily-full-refresh/SKILL.md`; the skill files in
+`.claude/skills/` stay the procedure. Known timing caveat: most broker mail and
+the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
+`outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
+The launcher still refreshes on every double-click; `launch\Install Daily
+Task.bat` (Windows Task Scheduler) remains written and unrun.
 
 ### Two halves of the API that must not be merged
 
@@ -398,9 +412,25 @@ serve several pairs (TCS long backs the INFO, WPRO and HCLT shorts; DIXON
 short backs three longs) — engine.book_view apportions a shared leg's
 DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
 the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
-Price-%s are never apportioned; the pair's since-start % is mean(long legs'
-price moves) − mean(short legs'), anchored on avg entry cost at first
-capture. A live position in no dictated pair renders as a loud callout —
+Price-%s are never apportioned; the pair's % is SINCE ENTRY — mean(long
+legs' price moves) − mean(short legs'), each leg anchored on **the OPEN of
+its entry day** (PM rule 2026-09-07: "the purpose is to see if the pair has
+worked out in thesis" — the IMS avg cost blends adds and pre-capture
+history, so it answers a different question). Opens live in
+`book_entry_anchors`, fetched once per streak by `book_io
+--fetch-anchors` (auto-run after every load) from the same Yahoo chart
+endpoint as the closes, and REFUSED unless the fetched close matches the
+stored `prices` close to 0.5% — the wrong-symbol guard. Fallback when no
+open could be fetched: IMS avg cost, then the entry-day close; the leg
+hover names which. **The anchor date is fixed at the day entered and
+survives resizes and pair-tag changes; it resets only on a direction flip
+or a day out of the book** (same ruling — `book_io._entry_anchor`,
+keyed on root across tags after the 09-07 IT retag silently re-anchored
+MPHL and TELX to 0.0%). Every position event is logged at load time into
+`book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/
+resized do not; closed ends a streak) — the tab and `--report` say the
+day's events out loud, `--rebuild-log` replays history. A live position in
+no dictated pair renders as a loud callout —
 ask the PM, never guess it into a pair. Reviews key on the dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,

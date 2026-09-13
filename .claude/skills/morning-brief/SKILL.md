@@ -99,6 +99,15 @@ Bullet calibration, from the 2026-08-30 run:
 Sectors with no mail are NOT omitted — they go in `quiet`, because "no mail"
 and "not checked" must stay distinguishable (the mail-fetch empty-array rule).
 
+**Repeats are handled server-side — do not dedup against yesterday's brief
+yourself.** The 24h window overlaps day to day, so a mail bulleted yesterday
+is a legitimate candidate again today; bullet it normally if it is still the
+sector's most tradeable content. `engine._mark_repeated_bullets` (PM,
+2026-09-08) marks any bullet whose MAIL already appeared in an earlier brief
+with `seen_on`, and the tab greys it with a "↺ seen" tag — marked, never
+dropped. Prefer a fresh mail over a repeat when both compete for the third
+slot, but never spend agent time diffing old brief files.
+
 ## 4. The global section
 
 From the markets file plus the swept mail (a broker's overnight tech note

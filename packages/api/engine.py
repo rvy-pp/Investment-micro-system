@@ -901,6 +901,71 @@ def _read_json(path):
         return None
 
 
+def _price_linked_ids() -> set:
+    """Every series some spec price_links — the modelled inputs, nothing else.
+
+    Shared by overview()'s what-moved table and input_history(), so the
+    expandable chart can only ever be asked for a series that table shows.
+    Errors collapse to an empty set: a specs problem must not 500 the page.
+    """
+    try:
+        entities, _u, _f = load_specs()
+    except Exception:
+        return set()
+    linked: set = set()
+
+    def _walk(n):
+        if isinstance(n, dict):
+            if "price_link" in n:
+                linked.add(n["price_link"])
+            for v in n.values():
+                _walk(v)
+        elif isinstance(n, list):
+            for v in n:
+                _walk(v)
+    _walk(entities)
+    return linked
+
+
+def input_history(entity_id: str) -> dict:
+    """Price series for ONE modelled input — the Overview's what-moved rows
+    expand into this chart on click, the OI-row grammar (2026-09-08, PM).
+
+    SCOPE GUARD: only ids the what-moved table itself lists (price_linked in
+    some spec) are served — the endpoint mirrors the table, so it cannot be
+    used to chart a parked column and make it read as if it drives something.
+
+    Two years of rows, not all of them: the table's question is "what moved
+    lately"; a 2011-to-date cement series at monthly cadence renders as a
+    plausible-looking staircase that hides the recent move the click was
+    about. The full span is stated in the payload so the cut is visible.
+
+    `source` rides on every row because several series change custody
+    mid-stream (pack -> westmetall on lme_zinc, NULL -> yahoo on
+    alumina_index) and a shock whose endpoints have different sources is
+    worth checking before trusting — the chart captions the mix.
+    """
+    if entity_id not in _price_linked_ids():
+        return {"error": f"'{entity_id}' is not a modelled input "
+                         "(nothing price_links it)"}
+    conn = connect()
+    span = conn.execute(
+        "SELECT MIN(date) a, MAX(date) b, COUNT(*) n FROM prices "
+        "WHERE entity_id=? AND close IS NOT NULL", (entity_id,)).fetchone()
+    if not span or not span["n"]:
+        conn.close()
+        return {"error": f"no priced rows for '{entity_id}'"}
+    rows = conn.execute(
+        "SELECT date, close, source FROM prices WHERE entity_id=? "
+        "AND close IS NOT NULL AND date >= date(?, '-730 day') "
+        "ORDER BY date", (entity_id, span["b"])).fetchall()
+    conn.close()
+    return {"id": entity_id,
+            "rows": [{"date": r["date"], "close": r["close"],
+                      "source": r["source"] or "legacy"} for r in rows],
+            "first_ever": span["a"], "n_ever": span["n"]}
+
+
 def overview() -> dict:
     """One screen: did the run work, what is stale, where did the book land.
 
@@ -1029,22 +1094,7 @@ def overview() -> dict:
     # ---- what actually moved today --------------------------------------
     # Only series a spec price_links. A "today's movers" list padded with the 27
     # parked steel series would read as though they drive something.
-    try:
-        entities, _u, _f = load_specs()
-        linked = set()
-
-        def _walk(n):
-            if isinstance(n, dict):
-                if "price_link" in n:
-                    linked.add(n["price_link"])
-                for v in n.values():
-                    _walk(v)
-            elif isinstance(n, list):
-                for v in n:
-                    _walk(v)
-        _walk(entities)
-    except Exception:
-        linked = set()
+    linked = _price_linked_ids()
 
     movers = []
     for eid in sorted(linked):
@@ -1193,6 +1243,118 @@ def oi_movers(date: str | None, win: int = 5) -> dict:
             "out": [fmt(s, v) for s, v in rows[:6]]}
 
 
+def _mark_repeated_bullets(brief: dict, mdir, brief_date: str) -> None:
+    """Mark brief bullets whose MAIL already appeared in an earlier brief.
+
+    The sweep window is 24h and the brief runs daily, so the windows overlap:
+    a note received yesterday morning is a legitimate candidate two mornings
+    running, and the agent that writes the brief cannot be trusted to
+    remember what it showed before (a fresh agent writes each brief). This is
+    the deterministic guard — PM instruction 2026-09-08: a mail shown before
+    is MARKED stale, never dropped, so the page greys it rather than hiding
+    that the mail exists.
+
+    IDENTITY IS THE MAIL, NOT THE WORDS ALONE. Bullets are rewritten each
+    day, so neither the text nor the source line identifies a mail by
+    itself; the match combines them. Sources ("Broker — subject") are
+    normalised (case, punctuation, FW:/RE: tokens, the "(+N more in
+    Outlook)" suffix) and compared by prefix either way (>=20 chars) because
+    agents truncate long subjects differently between days. Text overlap is
+    shared-token share against the smaller bullet (words >=3 chars) — the
+    same mail re-bulleted keeps its numbers even when the sentence is
+    rewritten.
+
+    A source is ONE-OFF when it appeared on exactly one previous brief date
+    — dated subjects ("week ended 04 Sep 2026") key each issue separately,
+    so a weekly's new issue is one-off too. A RECURRING source ("Basic
+    materials - daily news and prices") shows up every morning with new
+    content and gets no benefit of the doubt. A bullet is stale when its
+    source matches a previous bullet's and:
+
+      1. received HH:MM also matches — for a recurring source the text must
+         echo too (>=0.25 overlap), because consecutive dailies land minutes
+         apart and can collide on HH:MM; for a one-off source the time match
+         settles it.
+      2. no time match, one-off source, text echoes (>=0.25) — the forwarded
+         copy: yesterday's brief cited the original Nomura steel weekly at
+         03:08, today's agent bulleted the FW: of the same issue at 11:23.
+
+    Calibrated 2026-09-08 against the real 09-07/09-08 pair: marks the
+    repeated Kotak items (same mail, same minute, echoed text), the FW:'d
+    Nomura weekly and the re-run CLSA VRRR note; leaves the NEW day's Kotak
+    daily (08:56 vs 08:53, different content) fresh.
+
+    Writes `seen_on` (the latest earlier brief date) onto matching bullets;
+    everything else is untouched. Marking must never break the page: any
+    failure leaves the brief unmarked.
+    """
+    import re as _re
+    try:
+        sectors = (brief.get("mail") or {}).get("sectors") or []
+        if not sectors:
+            return
+
+        def norm(s):
+            s = (s or "").lower()
+            s = _re.sub(r"\(\+\d+ more[^)]*\)", " ", s)
+            s = _re.sub(r"\b(fw|re|fwd)\b", " ", s)
+            s = _re.sub(r"[^a-z0-9]+", " ", s).strip()
+            return s
+
+        def toks(s):
+            return {w for w in norm(s).split() if len(w) >= 3}
+
+        def match(a, b):
+            return len(a) >= 20 and len(b) >= 20 and (
+                a.startswith(b) or b.startswith(a))
+
+        def echo(a, b):
+            if not a or not b:
+                return False
+            return len(a & b) / min(len(a), len(b)) >= 0.25
+
+        # previous briefs, newest first, at most 7 — the overlap is one day
+        # by construction, the rest is insurance against a skipped morning
+        prev = sorted(
+            (m.group(1) for p in mdir.glob("brief_*.json")
+             if (m := _re.match(r"brief_(\d{4}-\d{2}-\d{2})\.json$", p.name))
+             and m.group(1) < brief_date),
+            reverse=True)[:7]
+        seen = []            # (norm_source, received, text_tokens, brief_date)
+        src_dates: dict = {}  # norm_source -> set of brief dates
+        for d in prev:
+            doc = _read_json(mdir / f"brief_{d}.json") or {}
+            for sec in (doc.get("mail") or {}).get("sectors") or []:
+                for b in sec.get("bullets") or []:
+                    ns = norm(b.get("source"))
+                    if not ns:
+                        continue
+                    seen.append((ns, (b.get("received") or "").strip(),
+                                 toks(b.get("text")), d))
+                    src_dates.setdefault(ns, set()).add(d)
+
+        for sec in sectors:
+            for b in sec.get("bullets") or []:
+                ns = norm(b.get("source"))
+                rc = (b.get("received") or "").strip()
+                tk = toks(b.get("text"))
+                if not ns:
+                    continue
+                hit = None
+                for ps, pr, pt, pd in seen:
+                    if not match(ns, ps):
+                        continue
+                    one_off = len(src_dates.get(ps, ())) == 1
+                    same = ((rc and rc == pr and (one_off or echo(tk, pt)))
+                            or (one_off and echo(tk, pt)))
+                    if same and (hit is None or pd > hit):
+                        hit = pd
+                if hit:
+                    b["seen_on"] = hit
+    except Exception:
+        pass  # a marking failure must never take the brief down with it
+
+
 def morning() -> dict:
     """The morning brief: pre-market globals + broker-mail actionables.
 
@@ -1240,6 +1402,9 @@ def morning() -> dict:
             out["warnings"].append(f"{p.name} exists but does not parse")
             continue
         out[key] = doc
+        if key == "brief":
+            # deterministic repeat-mail marking — see _mark_repeated_bullets
+            _mark_repeated_bullets(doc, mdir, d)
         if d != today:
             out["warnings"].append(
                 f"{prefix} is from {d}, not {today} — run {maker}")
@@ -1389,12 +1554,15 @@ def flows() -> dict:
     except Exception as e:  # the readiness tables must render regardless
         f1 = {"error": str(e)}
 
-    # ---- W1: the weekly read the tab LEADS with (PM ruling 2026-09-03:
-    # "daily is of no use, show a weekly analysis in the tab"). Computed on
-    # demand from flow_series — a pure function of stored prices + the spec,
-    # ~500 weeks, a few ms; persisting it would only add a staleness mode.
+    # ---- W1: the week-scale read the tab LEADS with. Since 2026-09-08 the
+    # lead is the ROLLING past week, updated every US session (PM: "update
+    # daily... show weekly trend but calculate past week on a rolling
+    # basis"), with the Friday-to-Friday layer kept as the trend strip and
+    # the evidence base — superseding the 2026-09-03 Friday-week lead.
+    # Computed on demand from flow_series — a pure function of stored prices
+    # + the spec, a few ms; persisting it would only add a staleness mode.
     # f1 stays in the payload: the spell lives there and the review layer
-    # will want the daily states, but the page renders weekly first.
+    # will want the daily states.
     try:
         import regime as rg2
         w1 = rg2.weekly_view()
@@ -1488,14 +1656,19 @@ def book_view() -> dict:
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
             leg["name"] = names.get(tok, leg["name"])
-            # %-since-start per leg: latest close vs the trade anchor. The
-            # anchor is the leg's avg entry cost as the IMS printed it at
-            # first capture; once the export drops the Cost column, new legs
-            # anchor on the close of their first-seen date. Both are INR
-            # closes against INR anchors — no FX leg here by construction.
+            # %-SINCE-ENTRY per leg: latest close vs the trade anchor, in
+            # precedence order entry_open -> entry_cost -> first-seen close.
+            # The anchor is the OPEN of the entry day (PM rule 2026-09-07:
+            # "the purpose is to see if the pair has worked out in thesis" —
+            # the IMS avg cost blends adds and pre-capture history, so it
+            # answers a different question). book_io._entry_anchor keeps the
+            # anchor date fixed through resizes and pair-tag changes; it
+            # resets only on a direction flip or a day out of the book. All
+            # INR against INR — no FX leg by construction.
             leg["ret_pct"] = None
             if eid:
-                base = leg.get("entry_cost") or _close(eid, leg["first_seen"])
+                base = (leg.get("entry_open") or leg.get("entry_cost")
+                        or _close(eid, leg["first_seen"]))
                 now = _close(eid, rep["as_of"])
                 if base and now:
                     leg["ret_pct"] = round((now / base - 1) * 100, 2)
@@ -1548,6 +1721,8 @@ def book_view() -> dict:
                 "gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
                 "pnl_mtd": 0.0, "pnl_total": 0.0,
                 "ret_pct": leg["ret_pct"], "first_seen": leg["first_seen"],
+                "entry_cost": leg["entry_cost"],
+                "entry_open": leg["entry_open"],
                 "ticker_now": leg["ticker_now"], "rolls": 0, "gap": False})
             t["qty"] += leg["qty"] or 0
             t["gross_pct"] += abs(leg["mv_pct"] or 0)

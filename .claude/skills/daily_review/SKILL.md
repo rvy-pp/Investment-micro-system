@@ -99,8 +99,23 @@ name (`book_io.add_review('JINDA_SAIL', ...)`).
   via `/api/overview`'s book block or `/api/tape`. IT legs have no score by
   the PM's ruling (forward P/E panel instead — the IT tab); say so rather
   than improvising one.
+
+  **Read scores as CHANGES, never as levels (PM ruling, 2026-09-07).**
+  Absolute composites carry no verdict on a position: some names score
+  structurally low or high forever (SAIL's one-rebar-line beta, APL
+  Apollo's converter bridge, VEDL's holdco arithmetic), and the PM may
+  deliberately hold the opposite view of a level. Never present "model
+  prefers the short leg" as evidence against a pair from levels alone.
+  What carries information is a leg's score moving against its OWN recent
+  history — pull the composite series from `/api/tape` (persisted scores,
+  never recomputed) and quote the delta since the last review or over
+  ~5-10 trading days, as a % change of the score where the base makes
+  that meaningful. A widening or narrowing of the PAIR's score spread is
+  the pair-level read; a level ranking is not.
 - **Positioning**: `/api/oi` for OI percentile + buildup per leg.
-- **Regime**: `/api/flows` weekly state — can the pair express right now?
+- **Regime**: `/api/flows` — `w1.lead` is the rolling past-week state,
+  updated every US session (the Friday weekly layer is the trend behind
+  it) — can the pair express right now?
 - **History**: `book_io.reviews()` — what was said last time, did it hold?
   A pair marked `thesis_intact: 0` or repeatedly `trim` is a standing
   candidate for the mistakes review, as is any closed pair with a negative

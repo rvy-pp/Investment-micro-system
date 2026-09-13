@@ -17,44 +17,98 @@
   "including-taxes level from a Morgan Stanley note (they quote ~Rs6,500/5,570",
   "for the same August prices Nomura quotes ex-taxes at 5,250/4,500)."
  ],
-
  "nmdc_prices": [
-  {"effective": "2026-04-01", "lumps": 5300, "fines": 4500, "basis": "ex_royalty",
+  {
+   "effective": "2026-04-01",
+   "lumps": 5300,
+   "fines": 4500,
+   "basis": "ex_royalty",
    "verify": "derived",
-   "source_note": "Derived BACKWARD from the firm June level (5,700/4,850, Kotak 30-06) minus the cited Jun hike (+200/150) and May hike (+200/200). The Kotak 18-08 recap says the Apr hike was +Rs500/450, which from the Feb-10 circular (4,700/4,000) would give 5,200/4,450 — Rs100/50 below this backward derivation. The LEVEL citations (Feb primary circular, June multi-broker) are trusted over the delta recap; the +-Rs100 ambiguity sits entirely inside Feb-Apr 2026 and cannot reach a current scoring window."},
-  {"effective": "2026-05-01", "lumps": 5500, "fines": 4700, "basis": "ex_royalty",
+   "source_note": "Derived BACKWARD from the firm June level (5,700/4,850, Kotak 30-06) minus the cited Jun hike (+200/150) and May hike (+200/200). The Kotak 18-08 recap says the Apr hike was +Rs500/450, which from the Feb-10 circular (4,700/4,000) would give 5,200/4,450 — Rs100/50 below this backward derivation. The LEVEL citations (Feb primary circular, June multi-broker) are trusted over the delta recap; the +-Rs100 ambiguity sits entirely inside Feb-Apr 2026 and cannot reach a current scoring window."
+  },
+  {
+   "effective": "2026-05-01",
+   "lumps": 5500,
+   "fines": 4700,
+   "basis": "ex_royalty",
    "verify": "derived",
-   "source_note": "June level minus the cited June hike of +Rs200/150 (Kotak 18-08 recap: 'May +Rs200 each, Jun +Rs200/150')."},
-  {"effective": "2026-06-01", "lumps": 5700, "fines": 4850, "basis": "ex_royalty",
+   "source_note": "June level minus the cited June hike of +Rs200/150 (Kotak 18-08 recap: 'May +Rs200 each, Jun +Rs200/150')."
+  },
+  {
+   "effective": "2026-06-01",
+   "lumps": 5700,
+   "fines": 4850,
+   "basis": "ex_royalty",
    "verify": "sourced",
-   "source_note": "'NMDC iron ore prices unchanged WoW at INR 5,700/t (lumps) and INR 4,850/t (fines) after Jun hike' (Kotak basic materials daily, digest 30-06-2026). Effective day within June not stated; stamped 06-01."},
-  {"effective": "2026-07-10", "lumps": 5450, "fines": 4700, "basis": "ex_royalty",
+   "source_note": "'NMDC iron ore prices unchanged WoW at INR 5,700/t (lumps) and INR 4,850/t (fines) after Jun hike' (Kotak basic materials daily, digest 30-06-2026). Effective day within June not stated; stamped 06-01."
+  },
+  {
+   "effective": "2026-07-10",
+   "lumps": 5450,
+   "fines": 4700,
+   "basis": "ex_royalty",
    "verify": "sourced",
-   "source_note": "'NMDC cuts iron ore prices by up to INR 500/t for Jul-26 (lumps INR 5,450, fines INR 4,700)' (Kotak, digest 13-07-2026); 'reduced lump/fine prices by Rs250/150/t to Rs5,450/4,700/t' (Nomura Steel Weekly, 20-07-2026). Effective date 10-07: the 08-Aug circular fetched from BSE (SEA202627028) names the prior circular as 'w.e.f. 10.07.2026'."},
-  {"effective": "2026-08-08", "lumps": 5250, "fines": 4500, "basis": "ex_royalty",
+   "source_note": "'NMDC cuts iron ore prices by up to INR 500/t for Jul-26 (lumps INR 5,450, fines INR 4,700)' (Kotak, digest 13-07-2026); 'reduced lump/fine prices by Rs250/150/t to Rs5,450/4,700/t' (Nomura Steel Weekly, 20-07-2026). Effective date 10-07: the 08-Aug circular fetched from BSE (SEA202627028) names the prior circular as 'w.e.f. 10.07.2026'."
+  },
+  {
+   "effective": "2026-08-08",
+   "lumps": 5250,
+   "fines": 4500,
+   "basis": "ex_royalty",
    "verify": "sourced",
-   "source_note": "'NMDC lowered lumps and fines by Rs200/t each effective 08-Aug, to Rs5,250/t and Rs4,500/t ex-taxes' (Nomura, digest 10-08-2026); Morgan Stanley same day quotes the including-taxes equivalents ~Rs6,500/5,570 — the OTHER basis, do not load those."}
+   "source_note": "'NMDC lowered lumps and fines by Rs200/t each effective 08-Aug, to Rs5,250/t and Rs4,500/t ex-taxes' (Nomura, digest 10-08-2026); Morgan Stanley same day quotes the including-taxes equivalents ~Rs6,500/5,570 — the OTHER basis, do not load those."
+  },
+  {
+   "effective": "2026-09-09",
+   "lumps": 5400,
+   "fines": 4500,
+   "basis": "ex_royalty",
+   "verify": "sourced",
+   "source_note": "NMDC circular letter No. SEA202627045 dated 09-09-2026 to BSE/NSE (Reg 30; BSE AttachLive dadf210a-f6b8-40ab-8e78-5fd874ee374c.pdf), linked from Kotak 'Basic materials - daily news and prices' 09-09-2026 08:51 IST: lumps (65.5% Fe, 10-40mm) Rs5,400/t, fines (64% Fe, -10mm) Rs4,500/t w.e.f. 09.09.2026, 'FOR prices that are exclusive of Royalty, DMF, NMET, Cess, Forest Permit Fee, transit fee, GST, environmental Cess and other taxes'. Lumps +Rs150/t vs the 08-Aug circular, fines unchanged. Morgan Stanley PULSE 09-09-2026 quotes the same move as ~Rs185/t incl. taxes (all-in ~Rs6,680/5,570) -- the OTHER basis, do not load those."
+  }
  ],
-
  "nmdc_fy_anchors": [
-  {"fy_end": "2025-03-31", "ttm_sales_mt": 44.40, "verify": "sourced",
-   "source_note": "FY25 total sales from the 'upto March 2025' filing (NMDC CMS productiondetails id 95): cumulative sales 44.40mt vs FY24 44.48mt."},
-  {"fy_end": "2026-03-31", "ttm_sales_mt": 50.14, "verify": "derived",
-   "source_note": "FYTD-Feb26 sales 44.34 (filing id 106) + Mar-26 sales ~5.80 derived: Q4FY26 sales = Q1FY27 11.7mt / 0.77 ('sales 11.7mn t -23% q-q', Kotak 18-08-2026) = 15.19mt, minus Jan 4.79 + Feb 4.60 (filings) = 5.80. Cross-check: Nuvama (02-07-2026) writes FY26 sales as '50mt'. +-0.3mt uncertainty on one TTM step, flagged rather than hidden."}
+  {
+   "fy_end": "2025-03-31",
+   "ttm_sales_mt": 44.4,
+   "verify": "sourced",
+   "source_note": "FY25 total sales from the 'upto March 2025' filing (NMDC CMS productiondetails id 95): cumulative sales 44.40mt vs FY24 44.48mt."
+  },
+  {
+   "fy_end": "2026-03-31",
+   "ttm_sales_mt": 50.14,
+   "verify": "derived",
+   "source_note": "FYTD-Feb26 sales 44.34 (filing id 106) + Mar-26 sales ~5.80 derived: Q4FY26 sales = Q1FY27 11.7mt / 0.77 ('sales 11.7mn t -23% q-q', Kotak 18-08-2026) = 15.19mt, minus Jan 4.79 + Feb 4.60 (filings) = 5.80. Cross-check: Nuvama (02-07-2026) writes FY26 sales as '50mt'. +-0.3mt uncertainty on one TTM step, flagged rather than hidden."
+  }
  ],
-
  "nmdc_months": [
-  {"month": "2026-06", "fytd_sales": 11.70, "fytd_sales_ly": 11.51,
-   "source_note": "Q1FY27 sales 11.7mn t (+1.8% YoY, -23% QoQ) — Kotak, Sumangal Nevatia, digests 17/18-08-2026. LY 11.51 is the Jun-2025 filing's cumulative (staging id 98). Monthly Apr/May/Jun-26 splits were not individually cited, so Q1 lands as one TTM step at quarter end."},
-  {"month": "2026-07", "fytd_sales": 15.10, "fytd_sales_ly": 14.98,
-   "source_note": "July-26 sales 3.4mn t ('production 4.1mn t vs sales 3.4mn t', Kotak 18-08-2026; 'July production 4.06 mn tons', Kotak wrap 04-08-2026) on top of Q1's 11.7. LY 14.98 is the Jul-2025 filing's cumulative (staging id 99)."}
+  {
+   "month": "2026-06",
+   "fytd_sales": 11.7,
+   "fytd_sales_ly": 11.51,
+   "source_note": "Q1FY27 sales 11.7mn t (+1.8% YoY, -23% QoQ) — Kotak, Sumangal Nevatia, digests 17/18-08-2026. LY 11.51 is the Jun-2025 filing's cumulative (staging id 98). Monthly Apr/May/Jun-26 splits were not individually cited, so Q1 lands as one TTM step at quarter end."
+  },
+  {
+   "month": "2026-07",
+   "fytd_sales": 15.1,
+   "fytd_sales_ly": 14.98,
+   "source_note": "July-26 sales 3.4mn t ('production 4.1mn t vs sales 3.4mn t', Kotak 18-08-2026; 'July production 4.06 mn tons', Kotak wrap 04-08-2026) on top of Q1's 11.7. LY 14.98 is the Jul-2025 filing's cumulative (staging id 99)."
+  },
+  {
+   "month": "2026-08",
+   "fytd_sales": 18.72,
+   "fytd_sales_ly": 18.37,
+   "source_note": "NMDC BSE filing No. SEA202627037 dated 01-09-2026 (Reg 30, 'Details of Production & Sales of Iron Ore (Provisional) for and upto August, 2026', BSE AttachLive ac999c7f-dc82-4571-8b76-e072ccd06d24.pdf, linked from Kotak 'Basic materials - daily news and prices' 02-09-2026): August-26 sales 3.58mt (Aug-25 3.39), cumulative sales upto Aug-26 18.72mt vs 18.37mt upto Aug-25; production 4.07mt / cumulative 23.23mt. Primary filing, so it supersedes the digest-derived Jul-26 FYTD 15.1 (15.1 + 3.58 = 18.68, within 0.04 of the filed 18.72); LY reconciles exactly (14.98 + 3.39 = 18.37)."
+  }
  ],
-
  "cil_fsa_realisation": [
-  {"date": "2026-06-30", "value": 1487, "verify": "derived",
-   "source_note": "Backed out of Q1FY27 prints: blended realisation Rs1,595/t on 198mt with e-auction at Rs2,321/t on a 13% share (Kotak, digest 28/29-07-2026) implies FSA ~= (1595 - 0.13x2321)/0.87 = 1,487/t. Moves only on a notified price hike — none has printed in this corpus; CLSA lists 'FSA price hikes' as a watch item (08-07-2026). Update on the next quarterly print or a notified hike, whichever first."}
+  {
+   "date": "2026-06-30",
+   "value": 1487,
+   "verify": "derived",
+   "source_note": "Backed out of Q1FY27 prints: blended realisation Rs1,595/t on 198mt with e-auction at Rs2,321/t on a 13% share (Kotak, digest 28/29-07-2026) implies FSA ~= (1595 - 0.13x2321)/0.87 = 1,487/t. Moves only on a notified price hike — none has printed in this corpus; CLSA lists 'FSA price hikes' as a watch item (08-07-2026). Update on the next quarterly print or a notified hike, whichever first."
+  }
  ],
-
  "cil_months": [],
  "cil_swma_months": []
 }
