@@ -23,6 +23,8 @@ from bridge import (  # noqa: E402
     _series_in_store,
 )
 from scoring import score as to_score  # noqa: E402
+sys.path.insert(0, str(REPO / "packages" / "adapters"))
+from vault_oi import raw_pct_3m  # noqa: E402  — one percentile definition
 
 
 def connect() -> sqlite3.Connection:
@@ -218,6 +220,16 @@ def oi_snapshot() -> list[dict]:
             "SELECT date, oi FROM oi WHERE entity_id=? ORDER BY date",
             (r["entity_id"],)).fetchall()
         r["spark"] = [h[1] for h in hist][-60:]
+        # The 3m percentile is RECOMPUTED here from the same rows the chart
+        # draws, not trusted from the stored column (PM 2026-09-15: raw 3m
+        # rank, never the vault's cycle-normalised frontmatter). The loader
+        # writes the same number, but a stored value can outlive the rows it
+        # was ranked against — Dalmia carried a frontmatter 46th on rows whose
+        # OI is NULL because the vault file stopped at 25-Aug. Same rule as
+        # vault_oi.raw_pct_3m, one definition: strict-below over the last 63
+        # sessions. NULL latest OI ⇒ no rank, not a stale one.
+        r["oi_percentile"] = raw_pct_3m(
+            [{"oi": h[1]} for h in reversed(hist)])
     conn.close()
     return rows
 
@@ -403,7 +415,9 @@ SECTORS = [
         # scored names share a cost stack (same kiln, same bought fuels) and
         # differ by REVENUE REGION, which lives on the entity output lines
         # (regional price_links) rather than in the grouping. Four scored of
-        # nine — ultratech, ambuja, shree, dalmia are the F&O names; the other
+        # nine — ultratech, ambuja, shree, dalmia were the F&O names when
+        # scored (Dalmia left F&O late Aug 2026 and was dropped from OI
+        # tracking 2026-09-15; its scoring stands untouched); the other
         # five are peer_group: null per invariant 7. See
         # specs/sectors/cement.yaml for the validation runs.
         "peer_groups": ["cement"],

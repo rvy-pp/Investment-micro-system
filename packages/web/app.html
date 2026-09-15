@@ -808,10 +808,13 @@ const buChip = b => !b ? '<span class="chip c-flat">—</span>' :
 /* OI POSITIONING — the vault dashboard's viewOI, ported 2026-08-30 on the
    PM's instruction. Same visual grammar: tiles, buildup pills, percentile
    number-over-bar, the z+% magnitude cell, a status pill per row, grouped by
-   sector. Differences forced by the data, stated rather than fudged:
-   - OI/price deltas here are DAY changes (the oi table stores the day row);
-     the vault computed 15d deltas from its dailies. Labelled accordingly.
-   - The 60d sparkline column stays — this store has the history for it.
+   sector. Cut to ONE horizon on 2026-09-15 (PM: "only raw 3 month"): the
+   15d buildup, 15d percentile and the day OI/price delta columns are gone —
+   they added nothing over the 3m read and the chart. The 3m percentile is
+   the RAW rank of today's OI among the last 63 sessions, computed by
+   vault_oi.py from the table itself, never the vault's cycle-normalised
+   frontmatter figure (Coforge: 95th normalised, 41st raw, chart shows raw).
+   The 60d sparkline column stays — this store has the history for it.
    Positioning remains a timing veto: it never flips a fundamental call. */
 function oiPctileBar(p){
   if (p == null) return '<span class="neu">—</span>';
@@ -889,14 +892,6 @@ async function loadPos(){
       <td class="n">${r.oi == null ? '<span class="neu">—</span>'
           : (r.oi / 100000).toFixed(1) + 'L'}<br><span class="neu"
           style="font-size:10px">lot: ${r.lot_size || '—'}</span></td>
-      <td class="n">${r.oi_chg_pct == null ? '<span class="neu">—</span>'
-          : `<span class="${r.oi_chg_pct >= 0 ? 'pos' : 'neg'}">${
-              (r.oi_chg_pct >= 0 ? '+' : '') + r.oi_chg_pct.toFixed(1)}%</span>`}</td>
-      <td class="n">${r.price_chg_pct == null ? '<span class="neu">—</span>'
-          : `<span class="${r.price_chg_pct >= 0 ? 'pos' : 'neg'}">${
-              (r.price_chg_pct >= 0 ? '+' : '') + r.price_chg_pct.toFixed(1)}%</span>`}</td>
-      <td>${oiBuPill(r.buildup_15d)}</td>
-      <td class="n">${oiPctileBar(r.oi_percentile_15d)}</td>
       <td>${oiBuPill(r.buildup)}</td>
       <td class="n">${oiPctileBar(r.oi_percentile)}</td>
       <td class="n">${oiMagCell(r.z_score_3m, r.pct_vs_median_3m)}</td>
@@ -909,8 +904,7 @@ async function loadPos(){
     return `<div class="sechead">${esc(label)}
         <span class="neu" style="font-weight:400;font-size:12px">${cos.length}</span></div>
       <div class="panel"><div class="scroll"><table><thead><tr>
-        <th>Company</th><th class="n">Futures OI</th><th class="n">OI Δ (day)</th>
-        <th class="n">Price Δ (day)</th><th>Buildup (15d)</th><th class="n">15d pctl</th>
+        <th>Company</th><th class="n">Futures OI</th>
         <th>Buildup (3m)</th><th class="n">3m pctl</th><th class="n">Mag (3m)</th>
         <th class="n">Spot</th><th>60d OI</th><th>Status</th>
       </tr></thead><tbody>${trs}</tbody></table></div></div>`;
@@ -918,17 +912,19 @@ async function loadPos(){
 
   $('#s-pos').innerHTML =
     `<div class="pgt">OI Positioning</div>
-     <div class="meta-line">Futures Open Interest · 15-day &amp; 3-month
-       percentile bands · buildup type from OI+price direction · the two
-       horizons routinely disagree, and that disagreement is the state worth
-       seeing — a timing veto, never a fundamental call</div>
+     <div class="meta-line">Futures Open Interest · 3-month horizon only ·
+       percentile is the raw rank of today's OI over the last 63 sessions ·
+       buildup type from OI+price direction — a timing veto, never a
+       fundamental call</div>
      ${tiles}
      <div class="hint" style="margin-bottom:4px">🟢 Long Buildup (OI↑ Price↑) ·
        🔴 Short Buildup (OI↑ Price↓) · 🟡 Short Covering (OI↓ Price↑) ·
        🟡 Long Unwinding (OI↓ Price↓) · click a row for its OI-vs-time chart</div>
      ${secTables || '<div class="panel"><div class="hint">no OI loaded</div></div>'}
-     <div class="hint" style="margin-top:16px">Percentile: 90th+ = crowded trade
-       risk, 25th− = under-positioned. <b>Mag (3m)</b>: Z-score &amp; % vs median —
+     <div class="hint" style="margin-top:16px">Percentile: raw 3-month rank
+       (not expiry-cycle normalised — the chart shows raw OI, so does this).
+       90th+ = crowded trade risk, 25th− = under-positioned.
+       <b>Mag (3m)</b>: Z-score &amp; % vs median —
        how <em>far</em> OI has moved, not just its rank. Z ≤ −1σ / ≤ −15% = light
        positioning (green). Z ≥ +1σ / ≥ +15% = heavy (red). OI is T-1 by design.
        The refresh pulls it daily; <code>--force</code> re-pulls.</div>`;

@@ -303,12 +303,21 @@ layer did not move an inch.
 - **The Book is its own top-level tab** ("The Book", between Daily Overview
   and Flows) — same `/api/overview` book block, new address. The PM plans to
   rework it; the Overview is the morning read.
-- **Positioning is the vault's viewOI, ported:** tiles, buildup pills,
-  percentile number-over-bar, the z+% Mag cell, per-sector grouping, status
-  pills (OI is T-1 by design, so ≤2d = Live). `/api/oi` rows now carry
-  `sector` and `name` from the specs for the grouping. Deltas are DAY
-  changes (that is what the oi table stores) and are labelled so — do not
-  relabel them 15d to match the vault's old header.
+- **Positioning is the vault's viewOI, ported, then cut to ONE horizon
+  (PM, 2026-09-15):** tiles, buildup pill, percentile number-over-bar, the
+  z+% Mag cell, per-sector grouping, status pills (OI is T-1 by design, so
+  ≤2d = Live). `/api/oi` rows carry `sector` and `name` from the specs for
+  the grouping. The 15d buildup, 15d percentile and the day OI/price delta
+  columns are REMOVED — "adds no value", only the 3m read stays. **The 3m
+  percentile is computed by `vault_oi.py` as the raw rank of today's OI over
+  the last 63 table rows, NOT copied from the vault frontmatter.** The
+  vault's `percentile_3m` is expiry-cycle-normalised (rank of OI / own-cycle
+  median), which put Coforge at 95th while its OI sat 8.6% below the 3m
+  median with a -0.7σ z-score in the same block, and 10 of 31 names on the
+  wrong side of 50. The stored columns `oi_percentile_15d`, `oi_chg_pct`,
+  `price_chg_pct` still load (data, cheap); they just are not rendered.
+  **Dalmia is OUT of OI tracking (PM, 2026-09-15: no longer in F&O)** —
+  unmapped in `vault_oi.NAMES`, its `oi` rows deleted; scoring untouched.
 - **IT is OI-ONLY (added 2026-08-31, PM instruction):** 13 names mapped in
   `vault_oi.NAMES` (12 F&O + LTTS not_in_fno), no specs, no pillars, no
   Book rows — `vault_oi.UNMODELLED` ensure-inserts their `entities` rows
