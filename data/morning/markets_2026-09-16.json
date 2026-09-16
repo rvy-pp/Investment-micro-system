@@ -1,0 +1,221 @@
+{
+ "date": "2026-09-16",
+ "fetched_at": "2026-09-16T08:05:56",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-15",
+    "close": 7585.73,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.45
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-15",
+    "close": 25981.57,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.78
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-15",
+    "close": 52093.11,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.63
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-15",
+    "close": 11175.55,
+    "prev_date": "2026-09-14",
+    "chg_pct": 0.4
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-15",
+    "close": 212.17,
+    "prev_date": "2026-09-14",
+    "chg_pct": 0.57
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-15",
+    "close": 504.2,
+    "prev_date": "2026-09-14",
+    "chg_pct": 2.19
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-15",
+    "close": 413.75,
+    "prev_date": "2026-09-14",
+    "chg_pct": -1.02
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-15",
+    "close": 339.27,
+    "prev_date": "2026-09-14",
+    "chg_pct": -1.58
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-15",
+    "close": 193.4,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.82
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-15",
+    "close": 63.28,
+    "prev_date": "2026-09-14",
+    "chg_pct": -1.28
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Agrees To $25 Million DOJ Discrimination Settlement",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-16 01:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-agrees-25-million-011554270.html"
+   },
+   {
+    "title": "Stocks making big moves yesterday: Corning, Baldwin Insurance Group, Gartner, Jabil, and Accenture",
+    "publisher": "StockStory",
+    "when": "2026-09-15 20:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stocks-making-big-moves-yesterday-200731805.html"
+   },
+   {
+    "title": "How Far Can Accenture Stock Move On You In Twelve Months?",
+    "publisher": "Trefis",
+    "when": "2026-09-15 19:09Z",
+    "link": "https://finance.yahoo.com/markets/options/articles/far-accenture-stock-move-twelve-190900181.html"
+   },
+   {
+    "title": "Alleged DEI-motivated hirings and promotions cost Accenture $25M in DOJ settlement",
+    "publisher": "HR Dive",
+    "when": "2026-09-15 14:59Z",
+    "link": "https://finance.yahoo.com/small-business/articles/alleged-dei-motivated-hirings-promotions-145900148.html"
+   },
+   {
+    "title": "Inside Broyhill\u2019s Bearish Exit of Accenture (ACN)",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-15 14:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/inside-broyhill-bearish-exit-accenture-140414781.html"
+   },
+   {
+    "title": "Accenture pays $25 million to settle DOJ diversity discrimination claims",
+    "publisher": "Quartz",
+    "when": "2026-09-15 12:46Z",
+    "link": "https://finance.yahoo.com/small-business/articles/accenture-pays-25-million-settle-124632892.html"
+   },
+   {
+    "title": "Accenture to Announce Fourth-Quarter and Full-Year Fiscal 2026 Results",
+    "publisher": "Business Wire",
+    "when": "2026-09-15 10:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-announce-fourth-quarter-full-105900557.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 44% Below Fair Value After AI Updates",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-15 03:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-could-032258586.html"
+   },
+   {
+    "title": "Cognizant Named to Newsweek's America's Most Admired Workplaces 2027",
+    "publisher": "PR Newswire",
+    "when": "2026-09-14 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-newsweeks-americas-most-130000380.html"
+   },
+   {
+    "title": "Cognizant CFO: AI Pressures IT Spending, but BFSI Growth Stays Strong",
+    "publisher": "MarketBeat",
+    "when": "2026-09-13 17:02Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-cfo-ai-pressures-spending-170200251.html"
+   },
+   {
+    "title": "Cognizant Says AI Creates Jobs, Its Own Restructuring Says Otherwise",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-says-ai-creates-jobs-154755236.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia Spent $26 Billion on Buybacks and Dividends in a Single Quarter. Its Board Is Betting Today's Profits Last 3 More Years.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-16 02:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-spent-26-billion-buybacks-020701793.html"
+   },
+   {
+    "title": "Nvidia Just Reshuffled Its $99 Billion Portfolio, and 1 Stock Moved Up the Ranks",
+    "publisher": "Motley Fool",
+    "when": "2026-09-16 00:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-just-reshuffled-99-billion-002000419.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom CEO Doubles Down on Massive AI Growth Target",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-15 19:28Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-ceo-doubles-down-massive-192839307.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Could Be 47% Below Fair Value On Buybacks And Revenue Guidance",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-15 19:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-could-47-below-191826056.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Is AMD Stock Already Priced For A 2027 Doubling It Has Yet To Deliver?",
+    "publisher": "Trefis",
+    "when": "2026-09-16 00:53Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-already-priced-2027-005331921.html"
+   },
+   {
+    "title": "Bank of America says investors get AMD stock wrong",
+    "publisher": "TheStreet",
+    "when": "2026-09-15 20:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bank-america-says-investors-amd-200700397.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23223.0,
+  "chg_pct": 0.09,
+  "stamp": "16-Sep-2026 08:05:57",
+  "expiry": "29-Sep-2026",
+  "volume": 847,
+  "nifty_close": {
+   "close": 23118.600000000002,
+   "stamp": "15-Sep-2026 15:30"
+  },
+  "gap_pts": 104.4,
+  "gap_pct": 0.45
+ }
+}
