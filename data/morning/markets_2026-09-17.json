@@ -1,0 +1,202 @@
+{
+ "date": "2026-09-17",
+ "fetched_at": "2026-09-17T08:11:26",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-16",
+    "close": 7551.81,
+    "prev_date": "2026-09-15",
+    "chg_pct": -0.45
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-16",
+    "close": 25978.42,
+    "prev_date": "2026-09-15",
+    "chg_pct": -0.01
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-16",
+    "close": 51461.9,
+    "prev_date": "2026-09-15",
+    "chg_pct": -1.21
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-16",
+    "close": 11246.11,
+    "prev_date": "2026-09-15",
+    "chg_pct": 0.63
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-16",
+    "close": 213.9,
+    "prev_date": "2026-09-15",
+    "chg_pct": 0.82
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-16",
+    "close": 512.5,
+    "prev_date": "2026-09-15",
+    "chg_pct": 1.65
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-16",
+    "close": 417.72,
+    "prev_date": "2026-09-15",
+    "chg_pct": 0.96
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-16",
+    "close": 339.51,
+    "prev_date": "2026-09-15",
+    "chg_pct": 0.07
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-16",
+    "close": 189.64,
+    "prev_date": "2026-09-15",
+    "chg_pct": -1.94
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-16",
+    "close": 61.85,
+    "prev_date": "2026-09-15",
+    "chg_pct": -2.26
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Here's Why Accenture (ACN) Fell More Than Broader Market",
+    "publisher": "Zacks",
+    "when": "2026-09-16 22:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-why-accenture-acn-fell-220002733.html"
+   },
+   {
+    "title": "Investor Fears of AI Disintermediation Weigh on Accenture (ACN) Stock",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-16 13:48Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investor-fears-ai-disintermediation-weigh-134808888.html"
+   },
+   {
+    "title": "Accenture (ACN) Agrees To $25 Million DOJ Discrimination Settlement",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-16 01:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-agrees-25-million-011554270.html"
+   },
+   {
+    "title": "Stocks making big moves yesterday: Corning, Baldwin Insurance Group, Gartner, Jabil, and Accenture",
+    "publisher": "StockStory",
+    "when": "2026-09-15 20:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stocks-making-big-moves-yesterday-200731805.html"
+   },
+   {
+    "title": "How Far Can Accenture Stock Move On You In Twelve Months?",
+    "publisher": "Trefis",
+    "when": "2026-09-15 19:09Z",
+    "link": "https://finance.yahoo.com/markets/options/articles/far-accenture-stock-move-twelve-190900181.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Pivots to AI-Driven Outcomes, Digital Labor Model",
+    "publisher": "MarketBeat",
+    "when": "2026-09-16 14:02Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-pivots-ai-driven-outcomes-140226708.html"
+   },
+   {
+    "title": "How Is Cognizant\u2019s Stock Performance Compared to Other Dividend Stocks",
+    "publisher": "Barchart",
+    "when": "2026-09-16 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-stock-performance-compared-other-110231405.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 44% Below Fair Value After AI Updates",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-15 03:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-could-032258586.html"
+   },
+   {
+    "title": "Cognizant Named to Newsweek's America's Most Admired Workplaces 2027",
+    "publisher": "PR Newswire",
+    "when": "2026-09-14 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-newsweeks-americas-most-130000380.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Micron vs. Sandisk: Which AI Memory Stock Benefits More From Nvidia's $279 Billion Warning?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-17 01:41Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/micron-vs-sandisk-ai-memory-014100496.html"
+   },
+   {
+    "title": "More Than a Quarter of Nvidia's Revenue Now Comes From Customers Based in Taiwan. Should Investors Be Worried?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-17 00:54Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/more-quarter-nvidias-revenue-now-005401979.html"
+   },
+   {
+    "title": "Jensen Huang Says Hyperscalers Get This \u2018Almost Always Wrong\u2019 \u2014 Nvidia Has a Workaround",
+    "publisher": "Benzinga",
+    "when": "2026-09-17 00:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/jensen-huang-says-hyperscalers-almost-003032752.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Investors Don\u2019t Have 9 Lives, So Stop Chasing Dead-Count Bounces in Hot Stocks Like Broadcom",
+    "publisher": "Barchart",
+    "when": "2026-09-16 19:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investors-don-t-9-lives-195816669.html"
+   },
+   {
+    "title": "Hock Tan Just Guided Broadcom's AI Revenue to Reach $230 Billion by 2028. Should You Believe Him?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-16 17:05Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/hock-tan-just-guided-broadcoms-170500347.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23222.5,
+  "chg_pct": 0.36,
+  "stamp": "17-Sep-2026 08:10:10",
+  "expiry": "29-Sep-2026",
+  "volume": 1311,
+  "nifty_close": {
+   "close": 23217.600000000002,
+   "stamp": "16-Sep-2026 15:30"
+  },
+  "gap_pts": 4.9,
+  "gap_pct": 0.02
+ }
+}
