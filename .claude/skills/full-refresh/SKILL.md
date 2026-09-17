@@ -93,6 +93,54 @@ Two exit codes, and the distinction is the point:
 Needs the machine **awake and logged in**. Locked is fine; asleep was already
 fatal to the whole run.
 
+### `NOT TODAY` is not the end of the step — PM instruction, 2026-09-17
+
+**The mail lands ~08:50-09:00 IST and the scheduled run starts at 08:00.** So on
+a scheduled run `NOT TODAY` at 08:0x is the EXPECTED first answer, not a fault.
+On 2026-09-17 the pack arrived at 08:58, twenty minutes after the first attempt,
+and the run had already written it off as a four-day sync gap.
+
+So the rule is: **do not stop at `NOT TODAY`. Go and find the newest pack that
+exists, and load it if the store has not seen it.**
+
+1. Run `outlook_pack.py --save`. If it dates today, done.
+2. Otherwise search the mailbox for the latest pack **with no date window** —
+   `outlook_email_search` with `query: "Daily Metals Pack"` and no
+   `afterDateTime`. The 24h sweep is the wrong instrument here; the last pack
+   may be from yesterday morning or older.
+3. Compare that mail's date against the newest `data/staging/metals_pack_*.xlsx`.
+   - **newer than anything staged -> USE IT.** Re-run `outlook_pack.py --save`;
+     the mail may have arrived in the interim, or Outlook may have only just
+     synced it. Then `refresh.py --consume metals` and `run_scores.py`.
+   - **already the newest staged file -> SKIP.** The store has it; re-loading
+     changes nothing and the prices are legitimately as old as the last pack.
+4. Only after BOTH of those fail is the pack genuinely missing. Say so with the
+   date of the newest one that exists.
+
+**Retry `outlook_pack.py --save` once before concluding anything.** It returned
+`Outlook UNREACHABLE` once on 2026-09-17 purely because a separate PowerShell
+COM session was holding the Outlook object; five seconds later the same command
+saved the file. One transient COM error is not a broken capability.
+
+**The M365 connector is NOT a fallback for the metals pack, and here is the
+measurement.** Read on 2026-09-17, `Daily Metals Pack, September 17, 2026.xlsx`
+(1,943,643 bytes) came back as 200,036 characters / 834 lines ending in
+`[truncated: 1 of 5 sheets included]`, and the rows it kept were Excel serials
+**40182 .. 41381 — 2010-01-04 to 2013-04-17**. It truncates from the OLD end, so
+what survives is thirteen years stale and today's prices are exactly what is
+missing. Do not stage it, not even "for history": the store already has that
+history from every prior pack. The cement pack is WIDE and does come through
+whole, which is why step 2b uses the same connector happily.
+
+**Diagnose a persistent COM miss by walking the folders, not by guessing.** A
+read-only PowerShell that recurses `$ns.Folders` and Restricts on
+`[ReceivedTime]` will show, per folder, every `*asic materials*` mail COM can
+see with its attachment names. On 2026-09-17 that walk proved the local store
+genuinely lacked the 09-15 and 09-16 mails while holding 09-07..09-11 and 09-17
+— a real gap, but one today's pack closed by itself, because **every pack
+carries the full history**. That is the reason a missed day costs nothing as
+long as a later pack lands.
+
 ## Step 2b — cement pack (MCP, agent only, and it WORKS here)
 
 Added 2026-08-27. The same Kotak mail carries a **second** attachment,

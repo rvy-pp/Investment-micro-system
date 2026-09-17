@@ -1,6 +1,6 @@
 {
  "date": "2026-09-17",
- "fetched_at": "2026-09-17T08:11:26",
+ "fetched_at": "2026-09-17T11:10:02",
  "quotes": {
   "us": [
    {
@@ -15,7 +15,7 @@
     "symbol": "^IXIC",
     "label": "Nasdaq",
     "date": "2026-09-16",
-    "close": 25978.42,
+    "close": 25978.43,
     "prev_date": "2026-09-15",
     "chg_pct": -0.01
    },
@@ -150,22 +150,10 @@
   ],
   "NVDA": [
    {
-    "title": "Micron vs. Sandisk: Which AI Memory Stock Benefits More From Nvidia's $279 Billion Warning?",
-    "publisher": "Motley Fool",
-    "when": "2026-09-17 01:41Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/micron-vs-sandisk-ai-memory-014100496.html"
-   },
-   {
-    "title": "More Than a Quarter of Nvidia's Revenue Now Comes From Customers Based in Taiwan. Should Investors Be Worried?",
-    "publisher": "Motley Fool",
-    "when": "2026-09-17 00:54Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/more-quarter-nvidias-revenue-now-005401979.html"
-   },
-   {
-    "title": "Jensen Huang Says Hyperscalers Get This \u2018Almost Always Wrong\u2019 \u2014 Nvidia Has a Workaround",
+    "title": "Trump Compares AI Data Centers To Oil Boom \u2014 Nvidia CEO Agrees",
     "publisher": "Benzinga",
-    "when": "2026-09-17 00:30Z",
-    "link": "https://finance.yahoo.com/technology/ai/articles/jensen-huang-says-hyperscalers-almost-003032752.html"
+    "when": "2026-09-17 03:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/trump-compares-ai-data-centers-033007792.html"
    }
   ],
   "AVGO": [
@@ -187,16 +175,16 @@
  },
  "errors": [],
  "gift_nifty": {
-  "last": 23222.5,
-  "chg_pct": 0.36,
-  "stamp": "17-Sep-2026 08:10:10",
+  "last": 23229.0,
+  "chg_pct": 0.38,
+  "stamp": "17-Sep-2026 11:10:04",
   "expiry": "29-Sep-2026",
-  "volume": 1311,
+  "volume": 19003,
   "nifty_close": {
    "close": 23217.600000000002,
-   "stamp": "16-Sep-2026 15:30"
+   "stamp": "17-Sep-2026 11:10"
   },
-  "gap_pts": 4.9,
-  "gap_pct": 0.02
+  "gap_pts": 11.4,
+  "gap_pct": 0.05
  }
 }
