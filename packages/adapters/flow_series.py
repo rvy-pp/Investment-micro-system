@@ -160,6 +160,28 @@ def load(rng: str = "3mo") -> int:
         # Partial-day guard — see module docstring.
         live = [r for r in rows if r[0] >= today_utc]
         rows = [r for r in rows if r[0] < today_utc]
+        # A fetch that SUCCEEDS but leaves nothing usable is not an error, and
+        # must not abort the run. The report line below indexes rows[0] and
+        # rows[-1], so an empty list raised IndexError out of load() and killed
+        # the whole step — including the NSE tail-fill loop underneath, which
+        # is the one mechanism built to cover exactly this case. The `except`
+        # above already handles a FAILED fetch; this is its successful-but-
+        # empty twin and needs the same "report and carry on".
+        #
+        # Caught 2026-09-17: Yahoo stopped serving ANY daily history for the
+        # seven NSE sectoral indices (^CNXMETAL, ^CNXAUTO, ^CNXCMDT, ^CNXINFRA,
+        # ^CNXENERGY, ^CNXREALTY, ^CNXPSE) and returned only the live quote —
+        # 1 row at every range from 3mo to 10y — so the filter above emptied
+        # rows. CLAUDE.md had already recorded the history as FROZEN at
+        # 2026-07-17; it has since gone entirely. The crash landed on the 7th
+        # of 14 series, so the seven after it never loaded and the NSE fill
+        # never ran at all: one dead symbol silently stopped every India
+        # evidence series. Do not "tidy" this back into an unguarded print.
+        if not rows:
+            why = f"{len(live)} live partial only" if live else "nothing returned"
+            print(f"  none {sid:8s} {s['symbol']:6s}     0 usable rows "
+                  f"({why}) — leaving the tail to the NSE fill below")
+            continue
         n = 0
         for d, close in rows:
             cur = conn.execute(
