@@ -294,7 +294,22 @@ layer did not move an inch.
 - **Mail bullets are INSIGHTS, not summaries (PM, 2026-08-31):** one
   sentence, ≤25 words, max 3 per sector, source line as the pointer into
   Outlook — the morning-brief skill carries the calibration example. The
-  renderer does not truncate; the discipline lives at generation time. Run/brief staleness rides in the meta-line;
+  renderer does not truncate; the discipline lives at generation time.
+  **Since 2026-09-18 each bullet also carries a `detail` block** — a
+  ≤60-word summary plus 3–5 number-first points — and CLICKS OPEN into a
+  drawer beneath itself, the what-moved commodity rows' grammar (PM: "similar
+  functionality to a click and expand for the commodities below"). Native
+  `<details>`, no fetch: unlike the price chart the payload is already on the
+  page. **The collapsed bullet is unchanged, and that is the load-bearing
+  part** — the drawer is a second layer, never licence to write a longer
+  bullet, because the collapsed page is still the 08:00 read. A bullet with
+  no `detail` renders flat and WITHOUT a caret (an empty drawer reads as a
+  broken page; a missing caret reads as "the bullet is the whole mail"), and
+  `detail.read` prints `snippet` when the drawer was built off the ~250-char
+  preview rather than the body — provenance, not decoration. The sector
+  agents now read the body of every mail they bullet (≤24 reads/run).
+  `engine.morning()` needed no change: it passes the brief through verbatim
+  and `_mark_repeated_bullets` only touches source/received/text. Run/brief staleness rides in the meta-line;
   frontend problems are a red hint line inside the Run panel; placeholder
   callouts live in the Book tab beside the numbers they qualify. The cement
   watch keeps a callout ONLY in its `live`-with-alerts state; `calibrating`

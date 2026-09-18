@@ -33,6 +33,21 @@ source of truth; this step only fixes where it sits in the sequence. It writes
 `data/morning/brief_<today>.json`: the 24h all-mail sweep, one summarizer agent
 per non-empty sector bucket, the AI/semis bullets and the ACN/CTSH reasons.
 
+**Since 2026-09-18 every mail bullet also carries a `detail` block** — a
+2–3-sentence summary plus 3–5 number-first points, which the Overview renders
+as a click-to-expand drawer under the bullet (the what-moved commodity rows'
+grammar, PM's own comparison). Two consequences for this step, both in
+`morning-brief` §3b and repeated here because they change the run's cost and
+its failure shape:
+
+- The sector agents now `read_resource` the body of **every mail they
+  bullet** rather than a picked few. That is ≤24 body reads, so the step is
+  slower than it was and the token spend sits with the sector agents.
+- **The collapsed bullets must look identical to before.** The drawer is a
+  second layer, not licence to write longer bullets; if the brief comes back
+  with four-line bullets, the expansion has eaten the thing it was added to
+  protect. Check the rendered Overview, not just the JSON.
+
 Run it **here, not later**, for two reasons:
 
 - It needs the same interactively-authenticated M365 MCP as step 1, so both
@@ -472,7 +487,9 @@ State plainly:
 - whether mail staging was written, and how many structural hits it produced
 - whether the morning brief was written: mails scanned, which sectors had
   bullets, which were quiet — and if step 1b failed, that the Overview is
-  showing "no brief yet" for today
+  showing "no brief yet" for today. Name any bullet whose `detail.read` came
+  back `"snippet"`: the drawer is there but it was built off ~250 characters
+  of preview, not the note
 - the composite and SIZE across the scored names (17 across seven peer
   groups as of 2026-08-29)
 - around the 1st-4th of a month: whether the mining filings fetch found the

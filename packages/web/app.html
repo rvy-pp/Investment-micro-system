@@ -526,6 +526,37 @@
        var(--rule);border-radius:8px;padding:0 6px;margin-left:6px;
        white-space:nowrap}
 
+  /* A mail bullet carrying a `detail` block expands in place into a short
+     summary plus number-first points (PM, 2026-09-18: "similar functionality
+     to a click and expand for the commodities below"). Native <details>
+     rather than the tr.mvrow JS toggle, because the payload is ALREADY on the
+     page — unlike the price chart there is nothing to fetch, so a handler
+     would add code and no capability. The caret and the sunken drawer keep
+     the what-moved rows' visual grammar.
+
+     A bullet with NO detail renders flat and unclickable — no caret at all.
+     That is deliberate: an empty drawer reads as a broken page, where a
+     missing caret reads as "the bullet is the whole mail". */
+  li.mailx > details > summary{cursor:pointer;list-style:none;display:block}
+  li.mailx > details > summary::-webkit-details-marker{display:none}
+  li.mailx > details > summary:hover{color:var(--accent)}
+  li.mailx .mailcar{color:var(--faint);font-size:10px;margin-left:6px;
+       display:inline-block;transition:transform .12s}
+  li.mailx > details[open] .mailcar{transform:rotate(90deg);
+       color:var(--accent)}
+  .maildet{margin:7px 0 2px;padding:9px 11px;background:var(--sunken);
+       border:1px solid var(--hair);border-radius:6px}
+  .maildet p{margin:0;font-size:var(--t-body);line-height:1.6;
+       color:var(--soft)}
+  .maildet ul{list-style:none;margin:7px 0 0;padding:0}
+  .maildet ul li{position:relative;padding-left:12px;margin:2px 0;
+       font-family:var(--mono);font-size:11.5px;line-height:1.7;
+       color:var(--ink)}
+  .maildet ul li::before{content:'–';position:absolute;left:0;
+       color:var(--faint)}
+  .maildet .snip{margin-top:7px;font-size:10px;color:var(--warn);
+       font-family:var(--mono)}
+
   .chartwrap{position:relative}
   /* Beat `.chart svg{width:100%}` from the base sheet: these charts are laid
      out in real pixels by lineChart(), and letting the container stretch them
@@ -2187,14 +2218,44 @@ function mailHtml(m){
      24h sweep windows overlap day to day, so repeats are structural, not an
      agent mistake). It renders greyed with a tag: marked, never dropped
      (PM, 2026-09-08). Fresh bullets count in the header; stale ride below. */
+  /* The bullet is the whole collapsed line and it is UNCHANGED by the
+     expansion (PM, 2026-09-18) — one sentence, source, seen-tag. `detail`
+     only adds a drawer beneath it; a brief whose bullets grew because a
+     drawer exists has lost the reason the drawer was added. */
   const bullet = b => {
     const stale = !!b.seen_on;
-    return `<li${stale ? ' class="seenmail"' : ''}>${esc(b.text)}
+    const line = `${esc(b.text)}
       <span class="src">${esc(b.source || '')}${
         b.received ? ' · ' + esc(b.received) : ''}</span>${
       stale ? `<span class="seentag" title="this mail was already bulleted in
         the ${esc(b.seen_on)} brief — repeated because the 24h sweep windows
-        overlap">↺ seen ${esc(b.seen_on)}</span>` : ''}</li>`;
+        overlap">↺ seen ${esc(b.seen_on)}</span>` : ''}`;
+    const d = b.detail || null;
+    const pts = d && Array.isArray(d.points)
+      ? d.points.filter(x => x != null && String(x).trim() !== '') : [];
+    // No summary AND no points is not a drawer. Older briefs (pre-2026-09-18)
+    // carry no `detail` at all and land here too, which is why the flat
+    // branch is the fallback rather than an error.
+    if (!d || (!d.summary && !pts.length))
+      return `<li${stale ? ' class="seenmail"' : ''}>${line}</li>`;
+    return `<li class="mailx${stale ? ' seenmail' : ''}"><details>
+      <summary>${esc(b.text)}<span class="mailcar">▸</span>
+        <span class="src">${esc(b.source || '')}${
+          b.received ? ' · ' + esc(b.received) : ''}</span>${
+        stale ? `<span class="seentag" title="this mail was already bulleted in
+          the ${esc(b.seen_on)} brief — repeated because the 24h sweep windows
+          overlap">↺ seen ${esc(b.seen_on)}</span>` : ''}</summary>
+      <div class="maildet">${
+        d.summary ? `<p>${esc(d.summary)}</p>` : ''}${
+        pts.length ? `<ul>${pts.map(x =>
+          `<li>${esc(String(x))}</li>`).join('')}</ul>` : ''}${
+        /* Provenance, not decoration: a drawer built off the ~250-char
+           preview is a different claim from one built off the note. The
+           skill writes read:"snippet" when read_resource did not return
+           the body, and the page says so rather than letting the two
+           look alike. */
+        d.read === 'snippet' ? `<div class="snip">from the mail preview
+          snippet — full body not read</div>` : ''}</div></details></li>`;
   };
   const secBlocks = (mail.sectors || []).map(s => {
     const bs = s.bullets || [];

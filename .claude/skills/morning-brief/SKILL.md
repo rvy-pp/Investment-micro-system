@@ -80,10 +80,14 @@ only its bucket's records. Instructions to each agent:
   date. A mail with nothing actionable returns nothing.
 - Every bullet carries `source` ("Broker — subject line", enough to find the
   mail in Outlook) and `received` (IST HH:MM).
-- The metadata `summary` field is ~250 chars. Read the full body via
-  `read_resource(uri)` ONLY when the snippet is not enough to state the
-  actionable — typically the 2–5 material notes, not all of them.
-- Return JSON: `{"sector": "...", "bullets": [{"text","source","received"}]}`
+- The metadata `summary` field is ~250 chars — enough to CHOOSE a mail, not
+  enough to expand one. So read the full body via `read_resource(uri)` for
+  **every mail you bullet**, and for nothing else. That is at most 3 per
+  sector, so at most ~24 reads across the whole brief. This REVERSES the
+  older "read only the 2–5 notes the snippet cannot cover" rule, which was
+  correct while the bullet was all there was; §3b is why it changed.
+- Return JSON:
+  `{"sector": "...", "bullets": [{"text","source","received","detail"}]}`
 
 Bullet calibration, from the 2026-08-30 run:
 
@@ -107,6 +111,56 @@ sector's most tradeable content. `engine._mark_repeated_bullets` (PM,
 with `seen_on`, and the tab greys it with a "↺ seen" tag — marked, never
 dropped. Prefer a fresh mail over a repeat when both compete for the third
 slot, but never spend agent time diffing old brief files.
+
+## 3b. The expansion — `detail` on every bullet
+
+PM, 2026-09-18: *"similar functionality to a click and expand for the
+commodities below. Just a brief summary of emails with quick read on important
+points."* So each bullet carries a `detail` block and the Overview renders the
+bullet as a click-to-expand row — the same grammar the what-moved commodity
+rows already use for their price charts.
+
+**THE BULLET ITSELF DOES NOT CHANGE, and that is the load-bearing part of this
+step.** The expansion is a SECOND layer, never permission to relax the
+2026-08-31 ruling: one sentence, ≤25 words, at most three per sector, exactly
+as written above. The collapsed page is still what the PM reads at 08:00, so a
+brief whose bullets grew because a drawer existed has destroyed the thing the
+drawer was added to serve.
+
+```json
+"detail": {
+  "summary": "2-3 sentences: what the note argues, on what basis.",
+  "points": ["<=12-word fragments, 3-5 of them, numbers first"],
+  "read": "body"
+}
+```
+
+- **`summary`** — 2–3 sentences, ≤60 words: the note's ARGUMENT, not its
+  table of contents. What it claims, what it rests on, and where it disagrees
+  with the desk or with its own last note. Never restate the bullet in longer
+  words — the bullet sits directly above it on the page, so a paraphrase
+  costs a click and returns nothing.
+- **`points`** — 3–5 quick-read fragments, **numbers first**: the new target
+  and the old one, the estimate change and its size, the dated event, the
+  volume or price print. Fragments, not sentences; no connectives. This is
+  the block the PM's eye lands on. Three real numbers beat five padded lines.
+- **`read`** — `"body"` when `read_resource(uri)` returned the mail,
+  `"snippet"` when it did not (fetch refused, or the content is only an
+  attachment). **This is not cosmetic.** A detail built from 250 characters
+  of preview is a different claim from one built off the note, and the tab
+  prints which it is. Never write `"body"` for a body you did not read.
+- **Nothing in `detail` may state a number the mail does not.** If the body
+  never carries the old target, the point gives the new one alone. The
+  citation standard does not loosen because the text is one click down.
+
+**Omit `detail` entirely rather than padding one.** A bullet without it
+renders flat and unclickable — no caret — and that reads as "nothing more
+here", which is the honest signal when a mail's whole content is its one
+actionable line. An empty drawer reads as a broken page instead.
+
+**Scope: sector mail bullets only.** `ai_semis` stays one line per bullet —
+its sources are mostly headlines with no body to fetch, so a `detail` there
+would be reconstruction rather than summary.
 
 ## 4. The global section
 
@@ -134,7 +188,12 @@ Write `data/morning/brief_YYYY-MM-DD.json` (today, local):
   "mail": {
     "window": "24h to HH:MM IST",
     "n_scanned": 0,
-    "sectors": [{"sector": "...", "bullets": [{"text","source","received"}]}],
+    "sectors": [{"sector": "...", "bullets": [
+      {"text": "one sentence, <=25 words",
+       "source": "Broker - subject line",
+       "received": "HH:MM",
+       "detail": {"summary": "2-3 sentences", "points": ["..."],
+                  "read": "body|snippet"}}]}],
     "quiet": ["..."]
   },
   "global": {
