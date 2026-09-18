@@ -2567,7 +2567,7 @@ function bookSections(view, order, nav, bookPnl){
     const ps = groups.get(k);
     const secTip = `${k}: gross ${(sum(ps, 'gross_pct') * 100).toFixed(1)}%` +
       ` ($${Math.round(sum(ps, 'gross_usd')).toLocaleString('en-US')})` +
-      ` · day ${usd(sum(ps, 'pnl_dtd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}` +
+      ` · ytd ${usd(sum(ps, 'pnl_ytd'))} · mtd ${usd(sum(ps, 'pnl_mtd'))}` +
       ` · since start ${usd(sum(ps, 'pnl_total'))}`;
     const secAgg = sum(ps, 'pnl_total');
     return ps.map((p, i) => {
@@ -2578,12 +2578,13 @@ function bookSections(view, order, nav, bookPnl){
         `${l.ret_pct != null ? `  px ${pctf(l.ret_pct)}` : ''}` +
         `${(l.entry_open ?? l.entry_cost) != null ? `  @${(Math.round((l.entry_open ?? l.entry_cost) * 100) / 100).toLocaleString('en-US')} ${l.entry_open != null ? 'open' : 'cost'} ${dmy(l.first_seen)}` : ''}` +
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
-        `  day ${usd(l.pnl_dtd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
+        `  ytd ${usd(l.pnl_ytd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
         `  (${l.ticker_now})`).join('\n') +
         (p.missing && p.missing.length ? `\n⚠ leg not on the book today: ${p.missing.join(', ')}` : '');
       const chips =
         (p.missing && p.missing.length ? ` <span class="pill warn" title="a dictated leg is not on the book today: ${esc(p.missing.join(', '))}">leg off</span>` : '') +
         (p.gap_risk ? ` <span class="pill warn" title="a roll happened across a snapshot gap — the frozen P&L may miss the old contract's last days">gap</span>` : '') +
+        (p.ytd_flags && p.ytd_flags.length ? ` <span class="pill warn" title="the YTD ledger hit something that needs a human — it is flagged, never silently corrected:\n${esc(p.ytd_flags.join('\n'))}">ytd?</span>` : '') +
         (p.review ? ` <span class="chip ${p.review.verdict === 'exit' ? 'c-down' :
             p.review.verdict === 'add' ? 'c-up' : 'c-flat'}"
             title="last reviewed ${esc(dmy(p.review.date))}${p.review.thesis_intact == null ? '' :
@@ -2609,7 +2610,7 @@ function bookSections(view, order, nav, bookPnl){
         <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
         <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span>${meter}</td>
         <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}</td>
-        <td class="${usdCls(p.pnl_dtd)}">${usd(p.pnl_dtd)}</td>
+        <td class="${usdCls(p.pnl_ytd)}">${usd(p.pnl_ytd)}</td>
         <td class="${usdCls(p.pnl_mtd)}">${usd(p.pnl_mtd)}</td>
         <td><span class="date">${dmy(p.inception)}</span> <span class="age">${p.days}d</span></td>
       </tr>`;
@@ -2627,7 +2628,7 @@ function bookSections(view, order, nav, bookPnl){
     <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
       pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
     <td>${(gAll * 100).toFixed(1)}%</td>
-    <td class="${usdCls(sum(view, 'pnl_dtd'))}">${usd(sum(view, 'pnl_dtd'))}</td>
+    <td class="${usdCls(sum(view, 'pnl_ytd'))}">${usd(sum(view, 'pnl_ytd'))}</td>
     <td class="${usdCls(sum(view, 'pnl_mtd'))}">${usd(sum(view, 'pnl_mtd'))}</td>
     <td></td></tr>`;
 
@@ -2635,7 +2636,7 @@ function bookSections(view, order, nav, bookPnl){
     <table class="bk"><thead><tr>
       <th class="l">sector</th><th class="l">pair</th>
       <th title="avg long price move − avg short price move SINCE TRADE ENTRY — has the pair worked out in thesis since it went on? Each leg anchors on the OPEN of its entry day (PM rule 07-09-2026; fallback when no open could be fetched: IMS avg cost, then the entry-day close — the leg hover names which). The anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book · small figure: chained P&L, USD · the bar: ±10% full scale, glows beyond ±5% — moved a lot either way, revisit the pair">since entry %</th>
-      <th>gross</th><th>day</th><th>mtd</th>
+      <th>gross</th><th title="CALENDAR year-to-date, USD — a ledger this system maintains itself, NOT the YTD column off the IMS paste. It is seeded once and thereafter only ever advanced by an increment, so a contract roll cannot reset it: normally by the change in the cumulative YTD (which spans sessions that were never snapshotted), and across a roll by the DAY figure, which is not a level and so cannot double count if a fresh ticker turns out to carry the old contract's P&amp;L. Resets on 1 Jan. Replaced the day column, PM 18-09-2026">ytd</th><th>mtd</th>
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
@@ -2672,7 +2673,7 @@ async function loadBook(){
       + cell('gross · net', `${(grossPct * 100).toFixed(1)}%
           <span class="u">$${Math.round(S('gross_usd')).toLocaleString('en-US')}
           · net ${(netPct * 100).toFixed(1)}%</span>`)
-      + cell('day', usd(S('pnl_dtd')), usdCls(S('pnl_dtd')))
+      + cell('ytd', usd(S('pnl_ytd')), usdCls(S('pnl_ytd')))
       + cell('mtd', usd(S('pnl_mtd')), usdCls(S('pnl_mtd')))
       + cell('since start', usd(bk.book_pnl_total), usdCls(bk.book_pnl_total))
       + (na.pnl_ytd == null ? '' :
@@ -2680,8 +2681,10 @@ async function loadBook(){
                usd(na.pnl_ytd), usdCls(na.pnl_ytd)))
       + `</div>`
       + `<div class="meta-line">contract codes stripped and P&amp;L <b>chained
-         across rolls</b> — the totals survive expiry resets · hover a pair
-         for its legs</div>`
+         across rolls</b> — the totals survive expiry resets · <b>ytd is our
+         own ledger</b>, seeded once and advanced by increments, so a roll
+         cannot reset it and an unsnapshotted session is not lost · hover a
+         pair for its legs</div>`
       /* the day's position events from book_anchor_log — exception-only: a
          snapshot with no changes renders nothing. entered/reopened/flipped
          RESET a leg's %-since-entry anchor; retagged/resized do not (they

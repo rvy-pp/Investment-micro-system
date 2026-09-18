@@ -1733,7 +1733,8 @@ def book_view() -> dict:
                 "entity_id": leg["entity_id"], "composite": leg["composite"],
                 "book_side": leg["side"], "qty": 0.0,
                 "gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
-                "pnl_mtd": 0.0, "pnl_total": 0.0,
+                "pnl_mtd": 0.0, "pnl_total": 0.0, "pnl_ytd": 0.0,
+                "ytd_flags": [],
                 "ret_pct": leg["ret_pct"], "first_seen": leg["first_seen"],
                 "entry_cost": leg["entry_cost"],
                 "entry_open": leg["entry_open"],
@@ -1744,6 +1745,8 @@ def book_view() -> dict:
             t["pnl_dtd"] += leg["pnl_dtd"] or 0
             t["pnl_mtd"] += leg["pnl_mtd"] or 0
             t["pnl_total"] += leg["pnl_total"] or 0
+            t["pnl_ytd"] += leg["pnl_ytd"] or 0
+            t["ytd_flags"] += leg.get("ytd_flags") or []
             t["rolls"] += leg["rolls"] or 0
             t["gap"] = t["gap"] or p.get("gap_risk", False)
             t["first_seen"] = min(t["first_seen"], leg["first_seen"])
@@ -1783,7 +1786,7 @@ def book_view() -> dict:
                 continue                    # pair fully off the book today
             assigned |= {t["token"] for t in L + S}
             agg = {"gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
-                   "pnl_mtd": 0.0, "pnl_total": 0.0}
+                   "pnl_mtd": 0.0, "pnl_total": 0.0, "pnl_ytd": 0.0}
             legs = []
             for side, arr in (("L", L), ("S", S)):
                 for t in arr:
@@ -1810,6 +1813,11 @@ def book_view() -> dict:
                 "pnl_dtd": round(agg["pnl_dtd"], 2),
                 "pnl_mtd": round(agg["pnl_mtd"], 2),
                 "pnl_total": round(agg["pnl_total"], 2),
+                # the calendar-YTD ledger book_io maintains — NOT the IMS YTD
+                # column, which resets at every roll (PM 2026-09-18)
+                "pnl_ytd": round(agg["pnl_ytd"], 2),
+                "ytd_flags": sorted({f for t in L + S
+                                     for f in (t["ytd_flags"] or [])}),
                 "pnl_total_with_carry": (round(agg["pnl_total"] +
                     (c.get("pnl") or 0), 2) if c else None),
                 "carry": c,

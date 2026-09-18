@@ -644,6 +644,99 @@ def _chain_leg(rows: list[sqlite3.Row], basis: str,
             "rolls": rolls, "gap_risk": gap_risk, "last": rows[-1]}
 
 
+# YTD_ROLL_TOL: at a roll the ledger below advances by the DAY figure, not by
+# the new contract's YTD. The two AGREE when the roll happened on that very
+# session — a fresh contract's first day IS its whole accrual. A gap between
+# them means one of two things and both need a human, so it is flagged and
+# never corrected: either the roll happened on a session that was never
+# snapshotted (the dying contract's tail is then under-captured, the existing
+# `gap_risk` case), or the new ticker CARRIES the old contract's P&L — the
+# case this repo has always flagged as ASSUMED AND UNVERIFIED, and the one
+# that makes a YTD-column chain silently DOUBLE COUNT.
+YTD_ROLL_TOL = 1.0                          # USD
+
+
+def _ytd_leg(rows: list[sqlite3.Row], all_dates: list[str],
+              basis: str = "contract_itd") -> dict:
+    """A running CALENDAR-year-to-date ledger for one (pair, root) that WE own.
+
+    PM instruction 2026-09-18: the Book tab shows YTD, not the day figure,
+    "which you calculate daily — the input I give expires after rolling."
+
+    The ledger is seeded ONCE from the IMS YTD column and then never reads it
+    as a level again; every later snapshot only ever ADDS an increment. That
+    is what makes it roll-proof: a column that resets cannot reset a number it
+    is no longer being read into.
+
+    Which increment, and why each one:
+
+      same contract, same year -> += (r.pnl - prev.pnl)
+          The YTD column is CUMULATIVE, so its delta spans every session in
+          between INCLUDING ones that were never snapshotted. Measured on the
+          live book: summing the DAY column across the stored snapshots gives
+          +4,124.78 where the cumulative delta gives +3,774.02 — a 350.75 hole
+          that is exactly Monday 2026-09-14, an NSE session with no snapshot.
+          Accumulating the day figure would have lost it silently. Do not.
+
+      contract changed (roll) -> += r.pnl_dtd
+          The new ticker's YTD restarts, so its delta against the old one is
+          meaningless. The DAY figure is not a level and cannot reset, so it
+          is the safe bridge — and unlike the new contract's YTD it CANNOT
+          double count if the fresh ticker turns out to carry the old P&L.
+          Falls back to r.pnl when the day figure is missing.
+
+      leg absent from an intervening snapshot (closed, then REOPENED)
+                              -> += r.pnl
+          Not a roll. The closed position's realized P&L left for the N.A.
+          bucket, so the reopened ticker's YTD is genuinely its own accrual
+          and cannot double count. It also covers more than one day, so here
+          the level beats the day figure.
+
+      year boundary -> the ledger RESETS, because that is what YTD means.
+          Seeds from r.pnl on a cash line (correct: it is the new year's
+          accrual) but from r.pnl_dtd when the contract ALSO changed, so that
+          a December-entered contract cannot import December into January.
+          UNVERIFIED until the first January — flagged, not trusted.
+
+    Returns the ledger plus the flags that a human has to look at.
+    """
+    if basis == "daily":                  # a day-summing basis has no levels
+        return {"ytd": sum(r["pnl"] or 0.0 for r in rows), "flags": []}
+    flags: list[str] = []
+    ledger = rows[0]["pnl"] or 0.0        # seed: carries pre-capture P&L, per
+    prev = rows[0]                        # PM ruling 2026-09-18 (true YTD)
+    for r in rows[1:]:
+        d0, d1 = prev["snap_date"], r["snap_date"]
+        rolled = (r["contract"] or "") != (prev["contract"] or "")
+        absent = any(d0 < d < d1 for d in all_dates)
+        year_reset = d0[:4] != d1[:4]
+        dtd, ytd = r["pnl_dtd"], r["pnl"]
+        if year_reset:
+            ledger = ((dtd if dtd is not None else (ytd or 0.0))
+                      if rolled else (ytd or 0.0))
+            flags.append(f"year_seam:{d1}" + (":+roll" if rolled else ""))
+        elif rolled:
+            step = dtd if dtd is not None else (ytd or 0.0)
+            ledger += step
+            if dtd is None:
+                flags.append(f"roll_no_day_figure:{d1}")
+            elif ytd is not None and abs((ytd or 0.0) - dtd) > YTD_ROLL_TOL:
+                # see YTD_ROLL_TOL — roll off-snapshot, or the new ticker
+                # carries the old contract's P&L. Inspect; do not "fix".
+                flags.append(
+                    f"roll_ytd_ne_day:{d1}:ytd={ytd:+.2f}:day={dtd:+.2f}")
+        elif absent:
+            # closed and REOPENED — not a roll. The old position's realized
+            # P&L left for N.A., so the new ticker's YTD is genuinely its own
+            # accrual since the reopen: no double-count risk, and it covers
+            # more than the day figure does. Take the level, not the day.
+            ledger += (ytd or 0.0)
+        else:
+            ledger += (ytd or 0.0) - (prev["pnl"] or 0.0)
+        prev = r
+    return {"ytd": ledger, "flags": flags}
+
+
 def _leg_rows(conn, pair: str, root: str) -> list[sqlite3.Row]:
     return conn.execute(
         "SELECT * FROM book_positions WHERE pair_tag=? AND root=? "
@@ -748,6 +841,8 @@ def pair_report(conn: sqlite3.Connection | None = None,
             rows = _leg_rows(conn, pair, r["root"])
             ch = _chain_leg([x for x in rows if x["snap_date"] <= as_of],
                             basis, hist)
+            yl = _ytd_leg([x for x in rows if x["snap_date"] <= as_of],
+                          hist, basis)
             gap_risk = gap_risk or ch["gap_risk"]
             rolls += ch["rolls"]
             anch = _entry_anchor(conn, r["root"], as_of, snaps)
@@ -773,6 +868,8 @@ def pair_report(conn: sqlite3.Connection | None = None,
                 "beta_mv_pct": r["beta_mv_pct"],
                 "pnl_dtd": r["pnl_dtd"], "pnl_mtd": r["pnl_mtd"],
                 "pnl_live": r["pnl"], "pnl_total": round(ch["total"], 2),
+                # OUR ledger, not the IMS YTD column — see _ytd_leg
+                "pnl_ytd": round(yl["ytd"], 2), "ytd_flags": yl["flags"],
                 "rolls": ch["rolls"], "note": r["note"],
             })
         gross_pct = sum(abs(x["mv_pct"]) for x in legs
@@ -790,6 +887,10 @@ def pair_report(conn: sqlite3.Connection | None = None,
             # derived from the chain
             "pnl_dtd": round(sum(x["pnl_dtd"] or 0 for x in legs), 2),
             "pnl_mtd": round(sum(x["pnl_mtd"] or 0 for x in legs), 2),
+            # the calendar-YTD ledger we maintain (replaced the day figure on
+            # the page, PM 2026-09-18). Flags ride with it and are printed.
+            "pnl_ytd": round(sum(x["pnl_ytd"] or 0 for x in legs), 2),
+            "ytd_flags": [f for x in legs for f in (x["ytd_flags"] or [])],
             "gross_pct": gross_pct, "net_pct": net_pct,
             "gross_usd": (round(gross_pct * nav, 0)
                           if gross_pct and nav else None),
@@ -872,12 +973,15 @@ def _print_report(rep: dict) -> None:
               f"MTD {na['pnl_mtd']:+,.0f}  YTD {na['pnl_ytd']:+,.0f}")
     for p in rep["pairs"]:
         flags = ("  ⚠gap" if p["gap_risk"] else "") + \
-                (f"  rolls×{p['rolls']}" if p["rolls"] else "")
+                (f"  rolls×{p['rolls']}" if p["rolls"] else "") + \
+                ("  ⚠ytd?" if p.get("ytd_flags") else "")
         print(f"  {p['pair']:<12} L {'/'.join(p['long']) or '—':<24} "
               f"S {'/'.join(p['short']) or '—':<24} "
               f"since {p['inception']} ({p['days']}d)  "
-              f"P&L {p['pnl_total']:+,.0f}  day {p['pnl_dtd']:+,.0f}  "
+              f"P&L {p['pnl_total']:+,.0f}  ytd {p['pnl_ytd']:+,.0f}  "
               f"mtd {p['pnl_mtd']:+,.0f}{flags}")
+        for f in p.get("ytd_flags") or []:
+            print(f"                 ytd ledger flag: {f}")
     for c in rep["closed"]:
         print(f"  {c['pair']:<12} CLOSED {c['inception']} → {c['last_seen']} "
               f"({c['days']}d)  final P&L {c['pnl_total']:+,.0f}")
@@ -990,6 +1094,14 @@ def _selftest() -> None:
     met = next(p for p in rep["pairs"] if p["pair"] == "MET 1")
     assert met["pnl_total"] == 1500.0, met["pnl_total"]
 
+    # THE YTD LEDGER (PM 2026-09-18) — ACCEPTANCE side first: on a BENIGN roll
+    # (fresh contract starts at ~0, day figure == its whole accrual) and on a
+    # reopen, the ledger must land exactly on the chain. If these two ever
+    # disagree the ledger has drifted, not improved.
+    assert it5["pnl_ytd"] == 7400.0, it5["pnl_ytd"]
+    assert met["pnl_ytd"] == 1500.0, met["pnl_ytd"]
+    assert it5["ytd_flags"] == [], it5["ytd_flags"]
+
     # YEAR BOUNDARY: cash position spans Jan 1, same root, YTD resets --------
     c3 = sqlite3.connect(":memory:")
     c3.row_factory = sqlite3.Row
@@ -1000,6 +1112,43 @@ def _selftest() -> None:
                    [P("X 1", "LTTS IN Equity", 100, 250)]}, conn=c3)
     x1 = pair_report(c3)["pairs"][0]
     assert x1["pnl_total"] == 4250.0, x1["pnl_total"]   # 4000 frozen + 250
+    # ...and this is where since-inception and YEAR-to-date must DIVERGE: the
+    # ledger resets on Jan 1 because that is what YTD means. 250, not 4250.
+    assert x1["pnl_ytd"] == 250.0, x1["pnl_ytd"]
+    assert any(f.startswith("year_seam:2026-01-05") for f in x1["ytd_flags"])
+
+    # GAP BRIDGING: a week with no snapshot. The cumulative YTD delta spans
+    # every session in between; SUMMING THE DAY FIGURE would have booked only
+    # the last one. Measured on the live book this was Monday 2026-09-14 and
+    # a 350.75 hole, which is why the day column could not simply be summed.
+    c5 = sqlite3.connect(":memory:"); c5.row_factory = sqlite3.Row
+    c5.executescript(DDL)
+    load_snapshot({"date": "2026-08-03", "source_file": "t", "positions":
+                   [P("G 1", "TCS=U6 IS Equity", 1, 0.0, dtd=0.0)]}, conn=c5)
+    load_snapshot({"date": "2026-08-10", "source_file": "t", "positions":
+                   [P("G 1", "TCS=U6 IS Equity", 1, 5000.0, dtd=200.0)]},
+                  conn=c5)
+    g1 = pair_report(c5)["pairs"][0]
+    assert g1["pnl_ytd"] == 5000.0, g1["pnl_ytd"]       # not 200, not 5200
+    assert g1["ytd_flags"] == []
+
+    # THE DOUBLE-COUNT GUARD — the REJECTION side, and the reason the ledger
+    # bridges a roll with the DAY figure rather than the new contract's YTD.
+    # CLAUDE.md flags it as ASSUMED AND UNVERIFIED that a fresh contract's YTD
+    # starts near zero. Here it does NOT: V6 carries U6's 5,000. The old chain
+    # freezes 5,000 and then adds 5,200 -> 10,200, counting the same P&L
+    # twice. The ledger takes the day figure, lands on 5,200, and FLAGS it.
+    c6 = sqlite3.connect(":memory:"); c6.row_factory = sqlite3.Row
+    c6.executescript(DDL)
+    load_snapshot({"date": "2026-08-03", "source_file": "t", "positions":
+                   [P("H 1", "TCS=U6 IS Equity", 1, 5000.0, dtd=0.0)]}, conn=c6)
+    load_snapshot({"date": "2026-08-04", "source_file": "t", "positions":
+                   [P("H 1", "TCS=V6 IS Equity", 1, 5200.0, dtd=200.0)]},
+                  conn=c6)
+    h1 = pair_report(c6)["pairs"][0]
+    assert h1["pnl_total"] == 10200.0, h1["pnl_total"]  # the chain's failure
+    assert h1["pnl_ytd"] == 5200.0, h1["pnl_ytd"]       # the ledger's answer
+    assert any(f.startswith("roll_ytd_ne_day") for f in h1["ytd_flags"]),         h1["ytd_flags"]
 
     # ENTRY ANCHOR: fixed at the day entered, through resizes and retags;
     # resets only on a direction flip or a day out of the book (PM 2026-09-07)
@@ -1099,8 +1248,12 @@ def _selftest() -> None:
     add_review("IT 5", "hold", "thesis intact; sized right", True, conn=conn)
     assert reviews(conn=conn, pair="IT 5")[0]["verdict"] == "hold"
     print("selftest OK — ticker/option parse, TSV parse (both cost shapes), "
+          "full export shape (FLAT_IN_YEAR + N.A. members + custody alias, "
+          "accept & reject), "
           "NAV derivation, cross-foot accept+reject, roll chain, closed pair, "
-          "cadence (no-split + reopen), year boundary, entry anchor "
+          "cadence (no-split + reopen), year boundary, YTD ledger "
+          "(benign roll == chain, year reset, gap bridge, double-count "
+          "guard), entry anchor "
           "(retag/resize keep, flip/day-out reset), anchor log "
           "(events + rebuild idempotence), entry-day open "
           "(streak-keyed + fetch guards accept/reject), refusal paths, reviews")

@@ -55,14 +55,32 @@ mapping once confirmed — never guess it.
 
 ## Step 2 — show the book
 
+**The money column is YTD, not the day figure (PM, 2026-09-18: "the input I
+give expires after rolling").** `book_io._ytd_leg` keeps a calendar-YTD
+ledger seeded ONCE from the IMS YTD column and thereafter advanced only by
+increments — by the cumulative YTD's delta normally, and by the DAY figure
+across a roll, which cannot reset and cannot double count. Two consequences
+for this step:
+
+- **Never summarise the book by summing the day column.** On the live book
+  that sum was +4,124.78 against a true +3,774.02 — a 350.75 hole that is
+  exactly Monday 2026-09-14, an NSE session with no snapshot. The ledger
+  absorbs such a session whole at the next paste; a day-sum loses it forever.
+- **A partial paste is still fatal and now costs more.** The ledger's
+  increments key on stored snapshots, so a missing leg reads as a close and
+  its reappearance as a reopen. The full-book rule already in Step 1 is what
+  protects the YTD, not just the pair inception.
+
 Print the `--report` output inline for the PM: one line per pair — legs,
 inception, days on, **P&L since inception (chained across rolls)**, the
-IMS's own day and MTD figures, flags. The Book tab (http://127.0.0.1:8770,
-"The Book") renders the same thing with per-leg detail and each mapped leg's
-model composite. Say the flags out loud:
+**calendar-YTD ledger**, the IMS's own MTD figure, flags. The Book tab
+(http://127.0.0.1:8770, "The Book") renders the same thing with per-leg
+detail and each mapped leg's model composite. Say the flags out loud:
 
 - `gap` — a roll happened across a snapshot gap, so the frozen figure may
   miss the dying contract's last days.
+- `ytd?` — the YTD ledger hit a roll or a year seam it cannot verify. Print
+  the flag text; it is deliberately not corrected.
 - `UNTAGGED` — rows with no pair name; never guessed into a pair.
 - N.A. YTD — the cost of carry of the operation (closed positions' realized
   P&L + currency/rollover/fixed costs). Real P&L, attributed to no pair.

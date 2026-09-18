@@ -428,6 +428,54 @@ guard** (MV/GMV to 1e-9, P&L to 2¢) — a dropped or mangled line refuses.
 - Options (`XXXX IS MM/DD/YY C1000 Equity`) have no `=` token → each series
   its own root, matching the PM's no-delta-netting instruction in IMS-Spec.
 
+### The money column is YTD, and it is OUR ledger — 2026-09-18
+
+PM: *"instead of the Day $ that you directly pick from what I input, replace
+it with YTD $, which you calculate daily. The input I give expires after
+rolling."* So the Book tab's `day` column is GONE and `pnl_ytd` sits in its
+place, computed by `book_io._ytd_leg`.
+
+**It is seeded ONCE from the IMS YTD column and thereafter only ever advanced
+by an INCREMENT.** That is the whole mechanism: a column that resets cannot
+reset a number it is no longer being read into. Four increments, each chosen
+against a specific failure:
+
+| situation | increment | why that one |
+|---|---|---|
+| same contract | Δ of the cumulative YTD | cumulative, so it spans sessions never snapshotted |
+| **roll** | the **DAY** figure | not a level, so it cannot reset — and cannot double count |
+| reopen after an absence | the new ticker's YTD | its own accrual; covers more than one day |
+| 1 January | **resets** | that is what YTD means |
+
+**DO NOT "simplify" this by summing the day column.** Measured on the live
+book the day-sum is **+4,124.78** against a true **+3,774.02** — a 350.75 hole
+that is exactly **Monday 2026-09-14, an NSE session with no snapshot**. The
+ledger absorbs such a session whole at the next paste; a day-sum loses it
+permanently and silently. This is the SILENT_BUGS shape: the wrong number is
+plausible and nothing raises.
+
+**The roll bridge is the DAY figure specifically because of the standing
+ASSUMED-AND-UNVERIFIED note above.** If a fresh ticker ever CARRIES the old
+contract's P&L, `_chain_leg` freezes the old YTD and then adds a new YTD that
+already contains it — a double count. A day figure cannot do that. The
+selftest proves the divergence rather than asserting it: on a fixture where
+V6 carries U6's 5,000, the chain says **10,200** and the ledger says **5,200**
+and raises a flag. `pnl_total` (since inception) is left alone; the two are
+IDENTICAL today (4,523.52, reconciling to the raw IMS YTD sum) and diverge
+only at a roll or the year boundary.
+
+**Flagged, never corrected.** A roll whose YTD and day figure disagree by more
+than `YTD_ROLL_TOL`, or any year seam, lands in `ytd_flags` → a `ytd?` chip on
+the pair and a printed line in `--report`.
+
+**It advances only when a snapshot is loaded.** It recomputes from every
+stored snapshot on each request, but `refresh.py`/`pipeline.py` never write a
+`book_*` table, so on a day the PM pastes nothing the tab correctly shows the
+last snapshot's YTD. Marking to market from `prices` instead was considered
+and REJECTED: it needs a per-contract multiplier, which this system
+deliberately does not have (see the chain-basis rule above).
+
+
 **Pairs are DICTATED, not derived — `specs/book.yaml pairs` (PM, 06-09-2026,
 names verbatim).** The IMS pair tags ("IT 5") are coarser clusters and stay
 internal (the chain and the store still key on them); the page renders the
