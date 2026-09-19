@@ -69,12 +69,19 @@ never sets direction and never enters scoring. **F1 (the market-wide regime
 read) is LIVE since 2026-09-02**: five Yahoo cross-asset series in the dedicated
 `flow_series` table (never `prices`), 8 sign-pattern states + quiet + a windowed
 flow-spell layer in `market_regime`, odds as empirical base rates over ten
-years. **The tab leads WEEKLY, by the PM's ruling 2026-09-03 ("daily is of no
-use")** — Friday-to-Friday states, next-week odds, live India next-week
-evidence (`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence
-series, never regime inputs), plus a week-to-date chip. Daily still computes
-and persists (it feeds the spell and the future review layer). Method frozen
-in `specs/flows.yaml`; evidence via `regime.py --backtest` / `--weekly`.
+years. **The tab leads with the ROLLING past week, updated every US session
+(PM 2026-09-08: "update daily... show weekly trend but calculate past week on
+a rolling basis")** — each session read as its own trailing 5-session window
+on the weekly σ scale, superseding the 2026-09-03 Friday-week lead ("daily is
+of no use"), which survives as the trend strip and the evidence base. The two
+rulings agree: the unit is still a week, only the anchor moved off Friday.
+Rolling states flip on 50% of sessions (median run 1) — the grade carries the
+signal; forward evidence at this cadence samples STATE ENTRIES only (adjacent
+readings share 4 of 5 sessions). India next-week evidence stays live
+(`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence series,
+never regime inputs). Daily still computes and persists (it feeds the spell
+and the future review layer). Method frozen in `specs/flows.yaml`; evidence
+via `regime.py --backtest` / `--weekly` / `--rolling-backtest`.
 F2–F4 are still scoped only — read `docs/FLOWS.md` before touching
 `sector_regime`.
 
@@ -122,10 +129,17 @@ at it). It refreshes the scores, starts the server on 8770 and opens the page �
 about 18s cold. `launch\Stop.bat` frees the port; `launch\Update Now.bat` runs
 the refresh where you can read it.
 
-**No scheduled task is registered, by the PM's choice 2026-08-21.** The launcher
-refreshes on every double-click, so the scores are current whenever the page is
-open and nothing runs when it is not. `launch\Install Daily Task.bat` is written
-and unrun if that changes.
+**A Claude Desktop scheduled task `daily-full-refresh` runs `/full-refresh` at
+08:00 local daily (PM instruction 2026-09-11; it reversed the 2026-08-21 choice
+of no scheduled task).** It is the desktop app's scheduler, not Windows Task
+Scheduler — it fires only while the app is open (a missed run fires on next
+launch) and needs the machine awake and logged in for Outlook. Its prompt lives
+in `~/.claude/scheduled-tasks/daily-full-refresh/SKILL.md`; the skill files in
+`.claude/skills/` stay the procedure. Known timing caveat: most broker mail and
+the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
+`outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
+The launcher still refreshes on every double-click; `launch\Install Daily
+Task.bat` (Windows Task Scheduler) remains written and unrun.
 
 ### Two halves of the API that must not be merged
 
@@ -280,7 +294,22 @@ layer did not move an inch.
 - **Mail bullets are INSIGHTS, not summaries (PM, 2026-08-31):** one
   sentence, ≤25 words, max 3 per sector, source line as the pointer into
   Outlook — the morning-brief skill carries the calibration example. The
-  renderer does not truncate; the discipline lives at generation time. Run/brief staleness rides in the meta-line;
+  renderer does not truncate; the discipline lives at generation time.
+  **Since 2026-09-18 each bullet also carries a `detail` block** — a
+  ≤60-word summary plus 3–5 number-first points — and CLICKS OPEN into a
+  drawer beneath itself, the what-moved commodity rows' grammar (PM: "similar
+  functionality to a click and expand for the commodities below"). Native
+  `<details>`, no fetch: unlike the price chart the payload is already on the
+  page. **The collapsed bullet is unchanged, and that is the load-bearing
+  part** — the drawer is a second layer, never licence to write a longer
+  bullet, because the collapsed page is still the 08:00 read. A bullet with
+  no `detail` renders flat and WITHOUT a caret (an empty drawer reads as a
+  broken page; a missing caret reads as "the bullet is the whole mail"), and
+  `detail.read` prints `snippet` when the drawer was built off the ~250-char
+  preview rather than the body — provenance, not decoration. The sector
+  agents now read the body of every mail they bullet (≤24 reads/run).
+  `engine.morning()` needed no change: it passes the brief through verbatim
+  and `_mark_repeated_bullets` only touches source/received/text. Run/brief staleness rides in the meta-line;
   frontend problems are a red hint line inside the Run panel; placeholder
   callouts live in the Book tab beside the numbers they qualify. The cement
   watch keeps a callout ONLY in its `live`-with-alerts state; `calibrating`
@@ -289,12 +318,21 @@ layer did not move an inch.
 - **The Book is its own top-level tab** ("The Book", between Daily Overview
   and Flows) — same `/api/overview` book block, new address. The PM plans to
   rework it; the Overview is the morning read.
-- **Positioning is the vault's viewOI, ported:** tiles, buildup pills,
-  percentile number-over-bar, the z+% Mag cell, per-sector grouping, status
-  pills (OI is T-1 by design, so ≤2d = Live). `/api/oi` rows now carry
-  `sector` and `name` from the specs for the grouping. Deltas are DAY
-  changes (that is what the oi table stores) and are labelled so — do not
-  relabel them 15d to match the vault's old header.
+- **Positioning is the vault's viewOI, ported, then cut to ONE horizon
+  (PM, 2026-09-15):** tiles, buildup pill, percentile number-over-bar, the
+  z+% Mag cell, per-sector grouping, status pills (OI is T-1 by design, so
+  ≤2d = Live). `/api/oi` rows carry `sector` and `name` from the specs for
+  the grouping. The 15d buildup, 15d percentile and the day OI/price delta
+  columns are REMOVED — "adds no value", only the 3m read stays. **The 3m
+  percentile is computed by `vault_oi.py` as the raw rank of today's OI over
+  the last 63 table rows, NOT copied from the vault frontmatter.** The
+  vault's `percentile_3m` is expiry-cycle-normalised (rank of OI / own-cycle
+  median), which put Coforge at 95th while its OI sat 8.6% below the 3m
+  median with a -0.7σ z-score in the same block, and 10 of 31 names on the
+  wrong side of 50. The stored columns `oi_percentile_15d`, `oi_chg_pct`,
+  `price_chg_pct` still load (data, cheap); they just are not rendered.
+  **Dalmia is OUT of OI tracking (PM, 2026-09-15: no longer in F&O)** —
+  unmapped in `vault_oi.NAMES`, its `oi` rows deleted; scoring untouched.
 - **IT is OI-ONLY (added 2026-08-31, PM instruction):** 13 names mapped in
   `vault_oi.NAMES` (12 F&O + LTTS not_in_fno), no specs, no pillars, no
   Book rows — `vault_oi.UNMODELLED` ensure-inserts their `entities` rows
@@ -390,6 +428,54 @@ guard** (MV/GMV to 1e-9, P&L to 2¢) — a dropped or mangled line refuses.
 - Options (`XXXX IS MM/DD/YY C1000 Equity`) have no `=` token → each series
   its own root, matching the PM's no-delta-netting instruction in IMS-Spec.
 
+### The money column is YTD, and it is OUR ledger — 2026-09-18
+
+PM: *"instead of the Day $ that you directly pick from what I input, replace
+it with YTD $, which you calculate daily. The input I give expires after
+rolling."* So the Book tab's `day` column is GONE and `pnl_ytd` sits in its
+place, computed by `book_io._ytd_leg`.
+
+**It is seeded ONCE from the IMS YTD column and thereafter only ever advanced
+by an INCREMENT.** That is the whole mechanism: a column that resets cannot
+reset a number it is no longer being read into. Four increments, each chosen
+against a specific failure:
+
+| situation | increment | why that one |
+|---|---|---|
+| same contract | Δ of the cumulative YTD | cumulative, so it spans sessions never snapshotted |
+| **roll** | the **DAY** figure | not a level, so it cannot reset — and cannot double count |
+| reopen after an absence | the new ticker's YTD | its own accrual; covers more than one day |
+| 1 January | **resets** | that is what YTD means |
+
+**DO NOT "simplify" this by summing the day column.** Measured on the live
+book the day-sum is **+4,124.78** against a true **+3,774.02** — a 350.75 hole
+that is exactly **Monday 2026-09-14, an NSE session with no snapshot**. The
+ledger absorbs such a session whole at the next paste; a day-sum loses it
+permanently and silently. This is the SILENT_BUGS shape: the wrong number is
+plausible and nothing raises.
+
+**The roll bridge is the DAY figure specifically because of the standing
+ASSUMED-AND-UNVERIFIED note above.** If a fresh ticker ever CARRIES the old
+contract's P&L, `_chain_leg` freezes the old YTD and then adds a new YTD that
+already contains it — a double count. A day figure cannot do that. The
+selftest proves the divergence rather than asserting it: on a fixture where
+V6 carries U6's 5,000, the chain says **10,200** and the ledger says **5,200**
+and raises a flag. `pnl_total` (since inception) is left alone; the two are
+IDENTICAL today (4,523.52, reconciling to the raw IMS YTD sum) and diverge
+only at a roll or the year boundary.
+
+**Flagged, never corrected.** A roll whose YTD and day figure disagree by more
+than `YTD_ROLL_TOL`, or any year seam, lands in `ytd_flags` → a `ytd?` chip on
+the pair and a printed line in `--report`.
+
+**It advances only when a snapshot is loaded.** It recomputes from every
+stored snapshot on each request, but `refresh.py`/`pipeline.py` never write a
+`book_*` table, so on a day the PM pastes nothing the tab correctly shows the
+last snapshot's YTD. Marking to market from `prices` instead was considered
+and REJECTED: it needs a per-contract multiplier, which this system
+deliberately does not have (see the chain-basis rule above).
+
+
 **Pairs are DICTATED, not derived — `specs/book.yaml pairs` (PM, 06-09-2026,
 names verbatim).** The IMS pair tags ("IT 5") are coarser clusters and stay
 internal (the chain and the store still key on them); the page renders the
@@ -398,9 +484,25 @@ serve several pairs (TCS long backs the INFO, WPRO and HCLT shorts; DIXON
 short backs three longs) — engine.book_view apportions a shared leg's
 DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
 the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
-Price-%s are never apportioned; the pair's since-start % is mean(long legs'
-price moves) − mean(short legs'), anchored on avg entry cost at first
-capture. A live position in no dictated pair renders as a loud callout —
+Price-%s are never apportioned; the pair's % is SINCE ENTRY — mean(long
+legs' price moves) − mean(short legs'), each leg anchored on **the OPEN of
+its entry day** (PM rule 2026-09-07: "the purpose is to see if the pair has
+worked out in thesis" — the IMS avg cost blends adds and pre-capture
+history, so it answers a different question). Opens live in
+`book_entry_anchors`, fetched once per streak by `book_io
+--fetch-anchors` (auto-run after every load) from the same Yahoo chart
+endpoint as the closes, and REFUSED unless the fetched close matches the
+stored `prices` close to 0.5% — the wrong-symbol guard. Fallback when no
+open could be fetched: IMS avg cost, then the entry-day close; the leg
+hover names which. **The anchor date is fixed at the day entered and
+survives resizes and pair-tag changes; it resets only on a direction flip
+or a day out of the book** (same ruling — `book_io._entry_anchor`,
+keyed on root across tags after the 09-07 IT retag silently re-anchored
+MPHL and TELX to 0.0%). Every position event is logged at load time into
+`book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/
+resized do not; closed ends a streak) — the tab and `--report` say the
+day's events out loud, `--rebuild-log` replays history. A live position in
+no dictated pair renders as a loud callout —
 ask the PM, never guess it into a pair. Reviews key on the dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,

@@ -99,6 +99,12 @@ class Handler(BaseHTTPRequestHandler):
                 if not eid:
                     return self._json({"error": "id required"}, 400)
                 return self._json(engine.oi_history(eid))
+            if u.path == "/api/input_history":
+                eid = q.get("id", [""])[0]
+                if not eid:
+                    return self._json({"error": "id required"}, 400)
+                d = engine.input_history(eid)
+                return self._json(d, 404 if d.get("error") else 200)
             if u.path == "/api/sectors":
                 return self._json(engine.sector_list())
             if u.path == "/api/nav":

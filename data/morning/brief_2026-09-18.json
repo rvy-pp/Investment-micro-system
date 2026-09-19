@@ -1,0 +1,187 @@
+{
+  "date": "2026-09-18",
+  "generated_at": "2026-09-18T08:13:31+05:30",
+  "mail": {
+    "window": "24h to 08:30 IST",
+    "n_scanned": 85,
+    "sectors": [
+      {
+        "sector": "Non-ferrous",
+        "bullets": [
+          {
+            "text": "Kotak trims VAML fair value to Rs540 from Rs584 on Fed/dollar risk but stays BUY on 12-13% FCF yield and deleveraging.",
+            "source": "Kotak - [Kotak] Vedanta Aluminium Metal (CMP: Rs404, FV: Rs540, BUY): Supply fears overdone; earnings growth overlooked",
+            "received": "07:41"
+          },
+          {
+            "text": "Ambit stays cautious on metals into Oct-Nov seasonality and explicitly prefers Hindalco over VAML within the pair.",
+            "source": "Ambit - Ambit Metals: Monthly Chartbook: Macro tightens, China weakens",
+            "received": "07:05"
+          },
+          {
+            "text": "Aditya Birla flags VAML, HZ, Nalco & Vedanta as beneficiaries of a broadening industrial-metals cycle led by record copper.",
+            "source": "Aditya Birla Capital - Metals & Mining: Necessity Cycle, Year Two - Broader and Stronger",
+            "received": "17:57"
+          }
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "Coking coal +$50/t in September has not dented margins: HRC spreads at a 40-month high, rebar at a 5-month high.",
+            "source": "IIFL - [IIFL Metals] India Steel - Flats/Longs spreads highest in 40/5 months despite elevated coal; Reiterate Positive stance",
+            "received": "07:51"
+          },
+          {
+            "text": "IIFL keeps SAIL top of the pecking order at 37% upside, ahead of Tata +34%, JSPL +20% and JSW +14%.",
+            "source": "IIFL - IIFL: The Front Page: Strategy; Insurance; Steel",
+            "received": "07:46"
+          },
+          {
+            "text": "China iron ore holds flat near $95/dmt while Indian sponge iron firms on thin trade - cost side stays benign.",
+            "source": "Kotak - Basic materials - daily news and prices",
+            "received": "08:58"
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "Surprise South price hikes but flat pricing elsewhere and mixed demand favours all-India UltraTech/Ambuja over East-heavy Shree/Dalmia.",
+            "source": "J.P. Morgan - JPM | India Daily: Cement channel checks: Surprise price hikes in the South; demand still mixed",
+            "received": "08:44"
+          },
+          {
+            "text": "JPM sees a weak Sep quarter on monsoon and costs, with no pricing or demand rebound before the late-November festive pickup.",
+            "source": "J.P. Morgan - JPM | India Daily: Cement channel checks: Surprise price hikes in the South; demand still mixed",
+            "received": "08:44"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "Copper near a record $14,200/t as Grasberg and El Teniente outages tighten supply - a direct tailwind to Hindustan Copper.",
+            "source": "Aditya Birla Capital - Metals & Mining: Necessity Cycle, Year Two - Broader and Stronger",
+            "received": "17:57"
+          },
+          {
+            "text": "China iron ore spot holds near $95/dmt, a steady external read against NMDC's own ex-royalty circular sequence.",
+            "source": "Kotak - Basic materials - daily news and prices",
+            "received": "08:58"
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "Kaynes' Sanand OSAT should add Rs2.5-3bn FY27 revenue and scale to 8bn devices under ISM 2.0, pending customer validation.",
+            "source": "Kotak - [Kotak] Electronic Manufacturing Services: Semicon 2026: EMS firms deepen semiconductor exposure",
+            "received": "21:39"
+          },
+          {
+            "text": "Dixon's camera-module margin could roughly double toward 10% by FY28 via QTech scale-up, plus a display line from 4QFY27.",
+            "source": "Kotak - [Kotak] Electronic Manufacturing Services: Semicon 2026: EMS firms deepen semiconductor exposure",
+            "received": "21:39"
+          },
+          {
+            "text": "Syrma's new PCB JV targets ~Rs25bn margin-accretive revenue at maturity but only goes live FY28 - no near-term estimate impact.",
+            "source": "Kotak - [Kotak] Electronic Manufacturing Services: Semicon 2026: EMS firms deepen semiconductor exposure",
+            "received": "21:39"
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "MS, Kotak and IIFL all reaffirm Coforge BUY post analyst-day, framing AI deflation as expansion via outcome-based pricing.",
+            "source": "Kotak - [Kotak] Coforge (CMP: Rs1,793, FV: Rs2,000, BUY): Positioning to usher in enterprise autonomy",
+            "received": "07:20"
+          },
+          {
+            "text": "Kotak puts Coforge at 75% of its 150-FDE target while MS counts 70-75 heads - reconcile before trusting that KPI.",
+            "source": "Kotak - [Kotak] Coforge (CMP: Rs1,793, FV: Rs2,000, BUY): Positioning to usher in enterprise autonomy",
+            "received": "07:20"
+          },
+          {
+            "text": "European software is +30% off Q1 lows with AI-infra winners splitting from application software - the split Indian IT still awaits.",
+            "source": "BNP Paribas - BNPP INDIA QUICK NOTES: IT SERVICES: Is the SaaSpocalypse over or just pausing",
+            "received": "08:56"
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "The Fed's hawkish 25bp hike pulls the RBI toward an October move, tightening liquidity for the rate-sensitive EMS names.",
+            "source": "Emkay - FOMC: Take a hike!",
+            "received": "08:42"
+          },
+          {
+            "text": "Brent above $100/bbl lifts India inflation and the CAD, pressuring INR and the dollar cost lines in aluminium, steel and cement fuel.",
+            "source": "UBS - UBS: India Economic Perspectives: US$100/bbl+ oil is back: What does it mean",
+            "received": "23:55"
+          },
+          {
+            "text": "FTSE's September rebalance is effective on today's close and adds Avalon to the All-Cap index at ~3.7x ADV.",
+            "source": "Kotak - [Kotak] FTSE September Changes (Effective on Close Today)",
+            "received": "05:03"
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "Bharat Forge QIP launched at a Rs1,851 floor, 3.5% discount, up to $209mn - fresh industrials supply lands this morning.",
+            "source": "Kotak - KOTAK DEAL (Reg S) - BHARAT FORGE LTD (BHFC IN Equity) Up to INR 20,000 MM / US$ 209 MM - Qualified Institutional Placement",
+            "received": "19:26"
+          },
+          {
+            "text": "NSE's $2.36bn IPO books 21-22 September and lists on the 24th, a liquidity draw in the same week.",
+            "source": "Avendus Spark - AVENDUS LAUNCHES IPO OF NATIONAL STOCK EXCHANGE OF INDIA (POST ANCHOR) INR 225,616 MM (c.US$ 2,364 MM)",
+            "received": "09:07"
+          }
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX closed +3.14% with AMD +6.36%, TSMC +3.00% and Nvidia +2.54% - a third straight session of semiconductor rebound.",
+        "source": "morning_markets.py - Yahoo closes 2026-09-17"
+      },
+      {
+        "text": "Nasdaq +1.69% and the S&P +1.14% as Mag 7 led; the tape looked through the Fed's hawkish hike.",
+        "source": "morning_markets.py - Yahoo closes 2026-09-17"
+      },
+      {
+        "text": "GS expects another October hike while adding three cuts into 2027 - the rate path, not AI capex, is driving the tape.",
+        "source": "Goldman Sachs - [GS Daily] US equity higher led by Mag 7, GIR expect another Oct hike while add into 3x cuts in 2027",
+        "received": "06:27"
+      }
+    ],
+    "bellwethers": [
+      {
+        "name": "Accenture",
+        "change_pct": 0.34,
+        "reason": null,
+        "headline": "Why Has Accenture Stock Surged With No New Results To Report? (Trefis, 2026-09-17 20:44Z)"
+      },
+      {
+        "name": "Cognizant",
+        "change_pct": 0.05,
+        "reason": null,
+        "headline": "Axis Bank and Cognizant Collaborate to Strengthen Application Management with AMS 2.0 (PR Newswire, 2026-09-17 06:30Z)"
+      }
+    ]
+  }
+}

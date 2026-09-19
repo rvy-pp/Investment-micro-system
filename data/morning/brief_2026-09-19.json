@@ -1,0 +1,358 @@
+{
+ "date": "2026-09-19",
+ "generated_at": "2026-09-19T08:12:51+05:30",
+ "mail": {
+  "window": "24h to 08:30 IST (Saturday run)",
+  "n_scanned": 71,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Kotak cuts VAML fair value to Rs540 from Rs584 (6.5x EV/EBITDA vs 7x) despite a tight-market call and 20% EBITDA CAGR FY26-29E.",
+      "source": "Kotak — Vedanta Aum- Supply Fears overdone; Swiggy - Instamart key; Semicon 2026 - Grand Plans",
+      "received": "08:22",
+      "detail": {
+       "summary": "Kotak revised VAML's fair value down to Rs540 from Rs584 on a lower 6.5x EV/EBITDA target multiple (vs 7x), even while calling supply fears overdone and modelling a tight aluminium market into FY2028-29E.",
+       "points": [
+        "~3 mtpa global capacity adds seen CY2026-28E vs 4-5 mtpa announced, keeping the market tight",
+        "LME price seen supported at US$3,000/t FY2028-29E on 18-year-low inventories",
+        "Bear case still shows 15% upside at US$2,800/t LME, 15% below spot",
+        "Fair value cut to Rs540 from Rs584 as the target multiple was trimmed to 6.5x from 7x EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees VAML net debt falling to Rs110bn by FY2028E from Rs320bn in FY2026 on Rs184-208bn FCF and ~6% dividend yield.",
+      "source": "Kotak — Vedanta Aum- Supply Fears overdone; Swiggy - Instamart key; Semicon 2026 - Grand Plans",
+      "received": "08:22",
+      "detail": {
+       "summary": "Kotak sees VAML's Balco ramp-up and captive alumina/bauxite/coal integration driving a 20% EBITDA CAGR FY26-29E, translating into sharp deleveraging and rising dividends.",
+       "points": [
+        "Net debt seen falling to Rs110bn by FY2028E from Rs320bn in FY2026",
+        "~US$140/t cost reduction expected from the 9 mtpa bauxite mine and 35mtpa+ coal mines by FY2027-28E",
+        "Balco's 0.4 mtpa expansion drives sector-leading ~6% volume CAGR FY2026-29E",
+        "Attributable FCF of Rs184bn/Rs208bn implies 12%/13% yield in FY2027/28E, ~6% dividend yield"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Domestic HRC hit a four-year high at Rs63,800/t (+Rs1,600 WoW); Nomura keeps Buy on Tata Steel, JSW Steel and Jindal Steel.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 18 Sep 2026)",
+      "received": "22:14",
+      "detail": {
+       "summary": "Nomura's weekly note flags an India HRC/rebar rally to multi-year highs even as imported coking coal holds near cycle highs and iron ore stays flat. The EU widened India's tariff-free quota to 2.8MT but CBAM still applies. China output fell while exports held steady in August.",
+       "points": [
+        "HRC +Rs1,600/t WoW to Rs63,800/t, the highest in four years; rebar +Rs2,300/t WoW to Rs60,450/t",
+        "Flat-long spread widens past Rs3,350/t; HRC spot margin ~Rs37,245/t, 2QFY27F margin averaging Rs35,935/t so far",
+        "Imported coking coal flat WoW at $283/t, the highest YTD, vs the Aug-26 average of $232/t",
+        "Iron ore 62% Fe CFR China stable at ~$91/t; NMDC raised lump prices Rs150/t to Rs5,400/t",
+        "China crude steel output -3.7% y-y to 74.61MT in Aug-26; exports still up 0.3% m-m to 10.15MT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coking coal jumped $50/t in September to $283/t, yet aggressive hikes pushed flat spreads to a 40-month high, favouring Tata Steel/JSW.",
+      "source": "IIFL — IIFL Sales: Portfolio tracker | Strategy | Insurance | Steel | FTSE GEIS Sep'26 Qtr Index Review",
+      "received": "10:07",
+      "detail": {
+       "summary": "IIFL's Steel section stays Positive: aggressive domestic price hikes have outrun the September coking-coal spike, pushing flat-product spreads to a 40-month high and long-product spreads to a five-month high, favouring different names on each leg of the book.",
+       "points": [
+        "Australian coking coal rose $50/t in September to $283/t",
+        "Flat-product spreads hit a 40-month high; long-product spreads a five-month high",
+        "Tata Steel/JSW better placed for 2QFY27 on ~75% flats mix and higher-priced auto contracts",
+        "Longs recovery materially improves the outlook for SAIL and Jindal Steel",
+        "Coking-coal supply normalisation flagged as the key trigger; sector stance stays Positive"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "EU widened India's tariff-free steel quota to 2.8MT (vs 1.64MT FTA baseline), but CBAM carbon costs still apply inside the quota.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 18 Sep 2026)",
+      "received": "22:14",
+      "detail": {
+       "summary": "Nomura flags India's expanded EU steel access: a combined 2.8MT tariff-rate quota, well above the FTA's 1.64MT country baseline, covering over 80% of last year's ~3MT EU exports. CBAM still taxes carbon content even within the duty-free quota, so the benefit hinges on mills' carbon intensity.",
+       "points": [
+        "India secured a 1.9MT country-specific EU quota plus 0.9MT residual access, taking total to ~2.8MT",
+        "2.8MT covers over 80% of India's ~3MT EU steel exports last fiscal, above the 1.64MT FTA-text baseline",
+        "Quota allocation skews to flat products; HRC/strips get the largest share",
+        "Within quota: zero duty. Beyond quota: 50% tariff",
+        "CBAM still applies inside the duty-free quota, so carbon intensity determines the real gain"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Rs10-20/bag price hikes across regions in Sep-26, except West Bengal (-~Rs10/bag), on Nuvama's channel check.",
+      "source": "Nuvama — Nuvama Daily: Research Updates: TCOM; TLNGR | Sector Updates: Cement | Alt Research",
+      "received": "08:59",
+      "detail": {
+       "summary": "Nuvama's cement note flags Sep-26 demand as slightly soft MoM on monsoon rains and labour shortages, but pricing still improved: Rs10-20/bag hikes across regions except West Bengal, which cut ~Rs10/bag. Nuvama stays neutral sector-wide, with JK Cement (BUY) its top pick.",
+       "points": [
+        "Rs10-20/bag price hikes across regions in Sep-26, except West Bengal (-~Rs10/bag)",
+        "Demand slightly soft MoM on monsoon rains and labour shortages",
+        "Government capex (Centre + states + CPSEs) up 26% YoY in Apr-Jul'26; residential launches down 10% YoY",
+        "Nuvama neutral on cement; JK Cement (BUY) is the top pick"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Petcoke at ~US$163/t on geopolitical volatility will pressure cement margins across both Q2FY27 and Q3FY27E, Nuvama flags.",
+      "source": "Nuvama — Nuvama Daily: Research Updates: TCOM; TLNGR | Sector Updates: Cement | Alt Research",
+      "received": "08:59",
+      "detail": {
+       "summary": "Petcoke costs have climbed to ~US$163/t amid volatile geopolitical developments, and Nuvama expects the resulting cost pressure to weigh on cement margins across both Q2FY27 and Q3FY27E, not just the current quarter.",
+       "points": [
+        "Petcoke risen to ~US$163/t amid geopolitical volatility",
+        "Cost pressure expected to weigh on margins in Q2FY27 and Q3FY27E",
+        "Lands alongside Rs10-20/bag price hikes across most regions in Sep-26",
+        "Nuvama neutral on cement; JK Cement (BUY) is the top pick"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kaynes plans $1bn incremental OSAT investment under ISM 2.0, 3x ISM 1.0; JPM flags funding as the key open question.",
+      "source": "J.P. Morgan — India EMS: Kaynes planning $1bn OSAT investment under ISM 2.0: Takeaways from day 2 of India Semicon event",
+      "received": "00:25",
+      "detail": {
+       "summary": "Kaynes is weighing a $1bn incremental OSAT investment under ISM 2.0, 3x its ISM 1.0 commitment, with funding the main open question. Unit 1 runs at 3.6mn chips/yr; Unit 2 qualifies by end-Nov/early-Dec. Kaynes guides Rs2.5-3bn OSAT revenue in FY27, of which Rs1bn is booked.",
+       "points": [
+        "$1bn incremental OSAT investment planned under ISM 2.0, 3x the ISM 1.0 outlay",
+        "Unit 1 running at 3.6mn chips/year for client Alpha Omega Semiconductor",
+        "Unit 2 (1.2bn chips/year, for Fujitsu and Infineon) qualifies end-Nov/early-Dec 2026",
+        "FY27 OSAT revenue guided Rs2.5-3bn, of which Rs1bn is already booked",
+        "5 of 12 ISM 1.0 OSAT/ATMP projects (incl. Kaynes) now export as well as sell domestically"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "5 of 12 Semicon 1.0 projects now in commercial production; Semicon 2.0 carries a Rs1.28trn (~$13.5bn) outlay, first fab still due 2028.",
+      "source": "Morgan Stanley — India Industrials: Semicon India 2026: Day One Key Takeaways",
+      "received": "08:10",
+      "detail": {
+       "summary": "Day One of Semicon India 2026 marked the shift from project build-out to commercial production: CDIL and Suchi Semicon started output, taking commercial-production projects to 5 of 12 approved under Semicon 1.0 (cumulative Rs1.64trn). Semicon 2.0 carries a Rs1.28trn approved outlay across six pillars.",
+       "points": [
+        "5 of 12 Semicon 1.0 projects now in commercial production after CDIL (Mohali) and Suchi Semicon (Surat) started",
+        "12 approved Semicon 1.0 projects represent cumulative proposed investment above Rs1.64trn",
+        "Semicon 2.0 carries a Rs1.28trn (~$13.5bn) approved outlay across six pillars",
+        "India's first front-end fab remains scheduled for commissioning in 2028"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak's EMS alert flags Kaynes' OSAT ramp, Dixon's component-manufacturing push and Avalon & Cyient DLM as semicon beneficiaries.",
+      "source": "Kotak — India Daily: Updates - Vedanta Aluminium Metal, Coforge, Swiggy, Electronic Manufacturing Services",
+      "received": "07:58",
+      "detail": {
+       "summary": "Kotak's EMS sector alert names three watch items: Kaynes' OSAT ramp-up and stabilization, Dixon's component-manufacturing push deepening value addition, and Avalon & Cyient DLM as likely beneficiaries of India's semicon build-out. No financial figures appear in the alert text itself.",
+       "points": [
+        "Kaynes' OSAT ramp-up and stabilization called out as the key swing item to watch",
+        "Dixon: new component manufacturing deepens value addition (no metrics given in the alert)",
+        "Avalon & Cyient DLM flagged as likely beneficiaries of semicon development in India",
+        "Alert is a headline teaser linking to Kotak's full PDF, which was not fetched"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA keeps Coforge O-PF; targets the FDE pool to scale from ~70-75 to 150 by FY27-end as open-weight tokens hit 35% of usage.",
+      "source": "CLSA — Coforge (COFORGE IN): Pivoting fast to AI infused services",
+      "received": "15:20",
+      "detail": {
+       "summary": "CLSA kept its Outperform on Coforge after an AI-strategy analyst meeting, citing FDE talent scaling, open-weight model adoption and a shift to outcome-based pricing as the next rerating catalysts, alongside two incoming independent directors and Encora synergies.",
+       "points": [
+        "FDE pool targeted to scale from ~70-75 today to 150 by FY27-end",
+        "35% of all tokens now consumed via open-weight models, vs 11-12% sixteen months ago",
+        "Model capabilities doubling roughly every four months",
+        "7bn tokens is the tipping point where clients consider owning the full stack",
+        "Two new independent directors expected within months; Encora revenue synergies flagged as upside risk"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA's desk relays Coforge calling Time & Material dead but FDE a marketing gimmick; Q&A was restricted to AI topics only.",
+      "source": "CLSA — 26 Indian Cos at CLSA HK Forum Next Week | GOVERNANCE WEBINAR | GCC WEBINAR | COFORGE Sales Note | MMFS | AUTOs",
+      "received": "08:54",
+      "detail": {
+       "summary": "CLSA's sales desk relayed sceptical colour from the same Coforge AI webinar: management concedes the Time & Material model is finished, but sales views the FDE metric as unmodelable marketing, and governance pushback on the PE-controlled board was waved off.",
+       "points": [
+        "Time & Material business model called dead by management",
+        "Sales calls FDE more of a marketing gimmick than a modellable metric",
+        "Q&A was restricted upfront to AI topics only; no questions taken on board changes",
+        "Pushback raised that the board is PE-controlled and independent directors not really independent",
+        "Sales take: the PE's newly aligned interests limit minority harm for now"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA/ANSR webinar frames GCC captive insourcing as a live share threat to IT services; cyclical-vs-structural still unresolved.",
+      "source": "CLSA — 26 Indian Cos at CLSA HK Forum Next Week | GOVERNANCE WEBINAR | GCC WEBINAR | COFORGE Sales Note | MMFS | AUTOs",
+      "received": "08:54",
+      "detail": {
+       "summary": "CLSA and GCC advisory firm ANSR held a same-day webinar asking whether India's Global Capability Center boom is cyclical or structural, explicitly flagging IT-services share loss to captives as a top implication alongside real estate, consumer/autos and the current account deficit.",
+       "points": [
+        "Session framed as IT Sector (Captive Gaining Share??) among top implications",
+        "Also flagged: Real Estate (Office/REIT and Residential), Consumer/Autos, Macro/CAD",
+        "Central question posed: is GCC growth defying AI's impact on white-collar jobs",
+        "Held 18 Sep at 3:30pm IST alongside the Coforge governance webinar"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Metals -4% and realty -4.4% led last week's selloff as the Fed, ECB and BOJ each hiked 25bps in eight days; CPI rose to 4.8%.",
+      "source": "Kotak — Strategy: Friday Flash: Rate hikes",
+      "received": "14:10",
+      "detail": {
+       "summary": "Kotak's weekly flash: global equities weak as the BOJ, ECB and Fed each raised rates 25bps within eight days. Indian markets were broadly weaker, with metals and realty the worst sectors while IT and pharma outperformed; domestic data showed inflation ticking up with trade/BOP still supportive.",
+       "points": [
+        "25bps hikes each from the BOJ, ECB and Fed within the past eight days",
+        "Nifty-50 -0.7%, midcap -1.8%, smallcap -2.3%; metals -4% and realty -4.4% worst, IT +0.8% and pharma +0.6% best",
+        "CPI rose from 4.5% (Jul) to 4.8% (Aug 2026)",
+        "July BOP surplus $21bn, July CAD $7bn, non-oil exports +21% YoY",
+        "FPI outflows $617mn vs DII inflows $1.6bn over the week"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA prices 9 net global hikes over three months; oil +76.1% YTD and diesel-implied 5% CPI top the Q4 risk list.",
+      "source": "BofA — Hartnett's Flow Show: Peaks and shovels | BIG RISKS: 3 Cs (Commods, Credit, China)",
+      "received": "10:15",
+      "detail": {
+       "summary": "BofA's Flow Show frames the regime as peak positioning, peak profits and peak policy, with nine net global hikes expected over three months favouring yield and quality. The standout Q4 risks are the 3Cs: commodities, credit and Chinese deflation.",
+       "points": [
+        "9 net global central-bank hikes priced over the next 3 months - peak policy",
+        "Oil +76.1% YTD; diesel at $6.40 rhymes with over 5% CPI, refineries already at max capacity",
+        "Bull & Bear indicator steady at 9.5, still a sell signal since May 26",
+        "$75.9bn left cash funds this week, the biggest outflow in 9 weeks, while $63.8bn went into US stocks",
+        "Global equity breadth collapsed to 2% of indices above their 50- and 200-day averages, from 66% a week ago"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS: Brent at $100/bbl lifts India FY27 CPI to 5.5% and CAD to ~2% of GDP; a 50bp repo hike from October stays base case.",
+      "source": "UBS — UBS India: US$100/bbl+ oil is back: What does it mean for India's economy",
+      "received": "09:27",
+      "detail": {
+       "summary": "UBS warns a sustained Brent price above $100/bbl is a genuine macro shock for India, lifting inflation above the RBI's forecast, widening the current account deficit and raising retail fuel pass-through risk, even as growth stays resilient for now.",
+       "points": [
+        "Brent sustained above $100/bbl (vs UBS base case $85/bbl for FY27) is the trigger scenario",
+        "FY27 CPI seen rising to 5.5% YoY vs UBS base 5.0% and the RBI's 5.1%",
+        "CAD could widen to ~2% of GDP from a 1.2% base case",
+        "OMCs can absorb $85-90/bbl crude; above $100/bbl raises retail fuel-hike risk",
+        "UBS still expects a cumulative 50bp repo hike cycle in FY27, starting at the October policy meeting"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "RAC/washer/fridge/fan raw-material indices up 39-48% YoY; domestic HRC +3% WoW and +30% YoY - the EMS cost backdrop.",
+      "source": "Kotak — India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+      "received": "17:03",
+      "detail": {
+       "summary": "Kotak's durables/electricals weekly: LME copper flat WoW/+57% YoY, LME aluminium -1% WoW/+35% YoY, domestic HRC +3% WoW/+30% YoY; theoretical raw-material indices for RAC/washers/refrigerators/fans up 39-48% YoY. Monsoon deficit widened to 15% of LPA.",
+       "points": [
+        "Copper flat WoW, +57% YoY; aluminium -1% WoW, +35% YoY; HRC +3% WoW, +30% YoY",
+        "RM indices (copper+aluminium+steel+plastic) for RAC/washers/refrigerators/fans up 39-48% YoY",
+        "Monsoon deficit widened to 15% of LPA (rainfall 17% below LPA last week)",
+        "Weekly moves: Apar +9%, LG Electronics +3%, Havells +1.5% vs Whirlpool -10%, Bajaj Electricals/Orient -4%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Motors lifts CV prices up to 1% from Oct 1, passing steel through; TVS guides only single-digit festive 2W growth.",
+      "source": "Kotak — Kotak Auto News: Tata Motors to hike CV prices by up to 1% from Oct 1; TVS Motor expects single-digit 2W growth this festive season",
+      "received": "09:08",
+      "detail": {
+       "summary": "Kotak's daily auto wrap: Tata Motors to hike commercial-vehicle prices up to 1% from Oct 1, 2026; TVS Motor guides single-digit 2W industry growth this festive season on a high base; auto PLI cumulative investment has crossed Rs450bn.",
+       "points": [
+        "Tata Motors CV price hike of up to 1%, effective Oct 1, 2026",
+        "TVS Motor expects single-digit 2W industry growth this festive season on a high base",
+        "Auto PLI cumulative investment has crossed Rs450bn",
+        "Chinese OEMs (incl. BYD) racing to acquire European car plants ahead of local-content rules"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX closed +2.78% with Broadcom +2.97%, AMD +2.70% and Nvidia +1.34%, against a flat headline tape (S&P +0.17%, Dow -0.18%).",
+    "source": "morning_markets.py - Yahoo closes 2026-09-18"
+   },
+   {
+    "text": "Semis and IT services split hard: SOX +2.78% while Accenture fell 4.73% and Cognizant 3.25% - the divergence is the read of the morning.",
+    "source": "morning_markets.py - Yahoo closes 2026-09-18"
+   },
+   {
+    "text": "Semicon India 2026 put 5 of 12 ISM 1.0 projects into commercial production, with a Rs1.28trn ISM 2.0 outlay behind them.",
+    "source": "Morgan Stanley - India Industrials: Semicon India 2026: Day One Key Takeaways",
+    "received": "08:10"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "change_pct": -4.73,
+    "reason": null,
+    "headline": "Accenture (ACN) Stock Trades Down, Here Is Why (StockStory, 2026-09-18 22:40Z)"
+   },
+   {
+    "name": "Cognizant",
+    "change_pct": -3.25,
+    "reason": null,
+    "headline": "Deutsche Bank Raises Price Target on Cognizant Technology Solutions to $70 From $65, Keeps Buy Rating (MT Newswires, 2026-09-18 11:33Z)"
+   }
+  ]
+ }
+}

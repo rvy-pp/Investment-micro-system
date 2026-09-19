@@ -1,0 +1,215 @@
+{
+ "date": "2026-09-15",
+ "fetched_at": "2026-09-15T08:09:39",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-14",
+    "close": 7619.98,
+    "prev_date": "2026-09-11",
+    "chg_pct": -0.48
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-14",
+    "close": 26186.41,
+    "prev_date": "2026-09-11",
+    "chg_pct": -0.56
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-14",
+    "close": 52421.2,
+    "prev_date": "2026-09-11",
+    "chg_pct": -0.29
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-14",
+    "close": 11131.28,
+    "prev_date": "2026-09-11",
+    "chg_pct": -5.86
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-14",
+    "close": 210.96,
+    "prev_date": "2026-09-11",
+    "chg_pct": -3.36
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-14",
+    "close": 493.41,
+    "prev_date": "2026-09-11",
+    "chg_pct": -4.4
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-14",
+    "close": 418.01,
+    "prev_date": "2026-09-11",
+    "chg_pct": -3.52
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-14",
+    "close": 344.72,
+    "prev_date": "2026-09-11",
+    "chg_pct": -4.77
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-14",
+    "close": 195.0,
+    "prev_date": "2026-09-11",
+    "chg_pct": 6.04
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-14",
+    "close": 64.1,
+    "prev_date": "2026-09-11",
+    "chg_pct": 6.83
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture to pay $25 million to settle US government allegations over DEI",
+    "publisher": "Reuters",
+    "when": "2026-09-15 00:58Z",
+    "link": "https://finance.yahoo.com/small-business/articles/accenture-pay-25-million-settle-004542391.html"
+   },
+   {
+    "title": "Accenture to Pay $25 Million to Resolve DOJ Discrimination Claims",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-09-14 21:36Z",
+    "link": "https://finance.yahoo.com/m/8f6bde0a-3300-3424-a37e-72127ea8ed9f/accenture-to-pay-%2425-million.html"
+   },
+   {
+    "title": "Market Chatter: Accenture to Pay $25 Million to Settle DOJ Discrimination Allegations",
+    "publisher": "MT Newswires",
+    "when": "2026-09-14 19:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/market-chatter-accenture-pay-25-194641594.html"
+   },
+   {
+    "title": "Accenture's Stock Fell Like A Shrinking Business, But Its Revenue Grew",
+    "publisher": "Trefis",
+    "when": "2026-09-14 18:59Z",
+    "link": "https://finance.yahoo.com/m/d5b3b0ab-2ebd-376c-bfb0-81b69f1041f6/accenture%27s-stock-fell-like-a.html"
+   },
+   {
+    "title": "Accenture Services Demand Remains 'Muted' but Stable, Morgan Stanley Says",
+    "publisher": "MT Newswires",
+    "when": "2026-09-14 15:39Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-services-demand-remains-apos-153913275.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Named to Newsweek's America's Most Admired Workplaces 2027",
+    "publisher": "PR Newswire",
+    "when": "2026-09-14 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-newsweeks-americas-most-130000380.html"
+   },
+   {
+    "title": "Cognizant CFO: AI Pressures IT Spending, but BFSI Growth Stays Strong",
+    "publisher": "MarketBeat",
+    "when": "2026-09-13 17:02Z",
+    "link": "https://finance.yahoo.com/m/b0264aab-f9e1-30d5-97cf-ab4569588a03/cognizant-cfo%3A-ai-pressures.html"
+   },
+   {
+    "title": "Cognizant Says AI Creates Jobs, Its Own Restructuring Says Otherwise",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-says-ai-creates-jobs-154755236.html"
+   },
+   {
+    "title": "Cognizant (CTSH): Can 17 AI Agents Turn Productivity Into Revenue?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-10 23:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-17-ai-agents-231307532.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Trump Dismisses AI Risk as \"Hoax\" During Live Call With Nvidia's Huang",
+    "publisher": "MT Newswires",
+    "when": "2026-09-14 23:16Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/trump-dismisses-ai-risk-hoax-231644314.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Drops Over 4% as $21.7 Billion AI Forecast Meets Slowdown Fears",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-14 21:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-drops-over-4-21-210015158.html"
+   },
+   {
+    "title": "Broadcom buys its Irvine office building",
+    "publisher": "LA Times",
+    "when": "2026-09-14 19:49Z",
+    "link": "https://finance.yahoo.com/real-estate/articles/broadcom-buys-irvine-office-building-194945873.html"
+   },
+   {
+    "title": "Is Broadcom Stock in Trouble?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-14 18:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-trouble-180501523.html"
+   },
+   {
+    "title": "Vertiv vs. Broadcom: Which AI Infrastructure Stock Has More Upside?",
+    "publisher": "Zacks",
+    "when": "2026-09-14 16:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/vertiv-vs-broadcom-ai-infrastructure-164700745.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Talk of AI pause slams Nvidia, AMD and Intel as fears of doomsday scenarios spread",
+    "publisher": "LA Times",
+    "when": "2026-09-14 21:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/talk-ai-pause-slams-nvidia-214716918.html"
+   },
+   {
+    "title": "AMD Stock Leads Semiconductor Stocks Lower Amid AI Slowdown Debate",
+    "publisher": "Barchart",
+    "when": "2026-09-14 19:55Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-stock-leads-semiconductor-stocks-195546281.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23521.0,
+  "chg_pct": 0.04,
+  "stamp": "15-Sep-2026 08:09:19",
+  "expiry": "29-Sep-2026",
+  "volume": 1069,
+  "nifty_close": {
+   "close": 23398.100000000002,
+   "stamp": "11-Sep-2026 15:30"
+  },
+  "gap_pts": 122.9,
+  "gap_pct": 0.53
+ }
+}
