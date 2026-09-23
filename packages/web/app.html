@@ -349,6 +349,21 @@
   .dbar{height:3px;border-radius:2px;min-width:2px}
   .dbar.pos{background:var(--up)} .dbar.neg{background:var(--down)}
   .dbar.warn{background:var(--warn)} .dbar.neu{background:var(--soft)}
+  /* Results tab (2026-09-22): sector chips, a metric row that opens into its
+     broker rows — the mail-bullet drawer grammar, native <details>. */
+  .rs-secs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+  .rs-secs .rs-n{margin-left:6px;opacity:.7}
+  .rs-tab td.rs-k{white-space:normal;min-width:190px;vertical-align:top}
+  details.rs-det summary{cursor:pointer;list-style:none;font-family:var(--sans);
+       font-size:var(--t-body);color:var(--ink)}
+  details.rs-det summary::before{content:'\25B8  ';color:var(--accent);font-size:11px}
+  details.rs-det[open] summary::before{content:'\25BE  '}
+  details.rs-det summary::-webkit-details-marker{display:none}
+  details.rs-det summary .hint{margin-left:6px}
+  .rs-list{list-style:none;margin:8px 0 2px;padding:0}
+  .rs-list li{margin:8px 0;font-size:var(--t-sm);font-family:var(--sans)}
+  .rs-list li.rs-act{border-left:2px solid var(--up);padding-left:8px}
+  .rs-q{color:var(--soft);margin:2px 0}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ----------------------------------------------------------- pair view */
@@ -500,7 +515,6 @@
   /* End-of-line labels: ink, not the series colour. Three light-mode slots sit
      under 3:1 on white, so coloured label text would be unreadable — the dot
      and leader carry identity instead. */
-  .vend{fill:var(--ink);font-family:var(--mono);font-size:10px;font-weight:600}
   .vdot{stroke:var(--surface)}
   .xhair{stroke:var(--faint);stroke-width:1;pointer-events:none}
 
@@ -603,6 +617,66 @@
      in the row tooltip); the sector spans its pairs with rowspan so no
      vertical space goes to group headers. Small mono/tabular numerals; the
      gross bar makes size visible before it is read. */
+
+  /* ------------------------------------------- the long/short index charts
+     The Book tab's equal-weighted long and short indices (PM, 2026-09-17),
+     which replaced a portfolio-weighted back-cast and a snapshot-only live
+     index. `bcx` is kept as the class prefix because the geometry, ruler and
+     hover layers are the same ones; see the seriesChart comment. Two stacked
+     charts on ONE y-domain, the ratio on its own. */
+  .bcx-head{display:flex;justify-content:space-between;align-items:flex-start;
+       gap:var(--s4);flex-wrap:wrap;margin:0 0 var(--s2)}
+  .bcx-t{font-size:var(--t-md);font-weight:600;color:var(--ink)}
+  .bcx-rng{display:flex;gap:4px;flex:0 0 auto}
+  .bcx-rng button{padding:3px 10px;font-size:var(--t-label);font-weight:600;
+       font-family:var(--mono)}
+  .bcx-rng button.on{background:var(--accent);color:#fff;
+       border-color:var(--accent)}
+  /* The sign note is a QUIET line, not a callout: it is true on every render,
+     and a permanent amber banner is one a reader stops seeing. */
+  .bcx-note{font-size:var(--t-label);color:var(--soft);margin:0 0 var(--s2)}
+  .bcx-note b{color:var(--ink)}
+  .bcx{position:relative;background:var(--sunken);border:1px solid var(--hair);
+       border-radius:var(--r-sm);padding:2px 0 0;margin:0 0 var(--s2)}
+  .bcx svg{display:block;width:100%;height:auto}
+  .bcx-empty{font-family:var(--mono);font-size:var(--t-label);
+       color:var(--faint);padding:var(--s4);background:var(--sunken);
+       border-radius:var(--r-sm);margin:0 0 var(--s2)}
+  /* `.ls-wick` and `.ls-line` lived here and are GONE: the wick opacity and
+     the close path are set per chart by seriesChart now, because the same
+     renderer draws all three and the ratio needs a fainter wick than the two
+     indices (its wick is a bound built from two bounds and runs about twice
+     an index's own). A class that only ever applied to one of three callers
+     was the wrong place for it. */
+  /* the ruler. Its box is a WASH, not a fill — it sits over candles that
+     still have to be readable through it, which is what the measurement is
+     being made against. */
+  .bcx-rule .rr{opacity:.13}
+  .bcx-rule .rl{stroke-width:1.5;stroke-dasharray:4 3;opacity:.9}
+  .bcx-rule .rd{opacity:.95}
+  .bcx.measuring{cursor:crosshair}
+  .bcx.measuring svg{user-select:none}
+  .bcx-lab{position:absolute;pointer-events:none;z-index:31;opacity:0;
+       background:var(--surface);box-shadow:var(--shadow-2);
+       border-radius:var(--r-sm);padding:6px 10px;min-width:138px;
+       transition:opacity .1s}
+  .bcx-lab.on{opacity:1}
+  .bcx-lab .rb{font-family:var(--mono);font-size:var(--t-lg);font-weight:700;
+       line-height:1.2}
+  /* the pp line is SOFT and the % is loud: they are different quantities and
+     the hierarchy has to say which one answers "how much did it move". */
+  .bcx-lab .rs{font-family:var(--mono);font-size:var(--t-micro);
+       color:var(--soft);line-height:1.5}
+  .bcx-lab .rd-dates{font-family:var(--mono);font-size:var(--t-micro);
+       color:var(--faint);margin-top:3px;letter-spacing:.04em}
+  .bcx-kbd{font-family:var(--mono);font-size:var(--t-micro);
+       background:var(--sunken);color:var(--faint);border:1px solid var(--hair);
+       border-radius:var(--r-sm);padding:1px 6px;margin-left:4px}
+  .bcx-foot{display:flex;flex-direction:column;gap:5px;margin-top:var(--s2);
+       font-size:var(--t-label);color:var(--soft);max-width:var(--measure)}
+  .bcx-foot b{color:var(--ink)}
+  .bcx-foot .u{color:var(--faint)}
+  .bcx-foot .warn{color:var(--warn)}
   .bk-strip{display:flex;flex-wrap:wrap;gap:0;margin:0 0 var(--s4);
     background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
     overflow:hidden}
@@ -697,6 +771,12 @@
            train people to stop clicking tabs. -->
       <button class="tab" role="tab" aria-selected="false" data-t="sector"
               id="vtab-sector" hidden>Prices &amp; Watch</button>
+      <!-- Company historical analysis lives INSIDE each sector (PM
+           2026-09-16: the top-level Company tab "sits out like a sore spot.
+           Keep it within the sectors only"). Shown only for a sector that
+           has at least one dossier under data/companies/. -->
+      <button class="tab" role="tab" aria-selected="false" data-t="company"
+              id="vtab-company" hidden>Company historical analysis</button>
     </nav>
   </div>
 
@@ -709,6 +789,8 @@
   <section id="s-overview"><div class="loading">loading…</div></section>
   <section id="s-book"><div class="loading">loading…</div></section>
   <section id="s-flows"><div class="loading">loading…</div></section>
+  <section id="s-company"><div class="loading">loading…</div></section>
+  <section id="s-results"><div class="loading">loading…</div></section>
 </div>
 
 <script>
@@ -1422,6 +1504,22 @@ function pctSeries(pts, breaks){
 const scoreSeries = pts =>
   pts.filter(p => p.score != null).map(p => ({d: p.d, v: p.score}));
 
+/* THE ECONOMICS CHART PLOTS Rs/TONNE, NOT THE 1-5 SCORE (PM, 2026-09-23:
+   "give raw ebitda/t. Scores make no sense to me").
+
+   The score is untouched — still computed, still persisted, still what the
+   table, the composite and the backtest read. Only this one chart's y-axis
+   changed, because on this pillar the score actively hides the answer: the
+   hill curve anchors 5% of EBITDA at 4.0, and the four steel names sat at
+   1.6x-5.0x that anchor, so a 3.09x spread in the underlying (8.17% ->
+   25.21%) compressed into 0.485 of a 4.00-point scale. Worse, it INVERTED the
+   ranking over the past month — SAIL had the biggest raw improvement
+   (+26.45pp vs Tata's +10.46pp) and the smallest score gain, because it hit
+   the ceiling first. Rs/t has no ceiling and separates the names: SAIL
+   +2,515/t against the pack's +1,394 to +1,486. */
+const perTonneSeries = pts =>
+  pts.filter(p => p.ebitda_per_t != null).map(p => ({d: p.d, v: p.ebitda_per_t}));
+
 const PAIRV = {};        // chart id -> geometry + data, for the hover layer
 
 /* One chart, one y-axis. Sized in REAL PIXELS rather than a fixed viewBox
@@ -1429,7 +1527,11 @@ const PAIRV = {};        // chart id -> geometry + data, for the hover layer
    so every axis label was drawn ~38% wide on a full-width monitor. */
 function lineChart(cfg){
   const {id, w, h, series, yLo, yHi, ticks, fmtY, fmtV, xDom, xTicks, marks, axisLabel} = cfg;
-  const ML = 54, MR = 116, MT = 16, MB = 30;
+  /* MR was 116 to hold the end labels. With those gone it only has to keep the
+     last end-dot and the newest x tick off the edge, so the plot reclaims
+     ~100px — on a 929px chart that is 12% more width for the same data, which
+     is most of what made a flat 1-5 band hard to read in the first place. */
+  const ML = 54, MR = 16, MT = 16, MB = 30;
   const [x0, x1] = xDom;
   const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0) * (w - ML - MR));
   const Y = v => MT + (1 - (v - yLo) / ((yHi - yLo) || 1)) * (h - MT - MB);
@@ -1455,9 +1557,16 @@ function lineChart(cfg){
 
   const wide = (x1 - x0) > 400 * 864e5;
   let xax = '';
-  for (const d of xTicks)
-    xax += '<text class="ax" x="' + X(T(d)).toFixed(1) + '" y="' + (h - 9) +
-           '" text-anchor="middle">' + esc(dtick(d, wide)) + '</text>';
+  for (const d of xTicks){
+    const tx = X(T(d));
+    /* ANCHOR THE EDGE TICKS INWARD. Every tick was centred, which was safe
+       while MR held 116px of label gutter; with MR at 16 a centred "20 Sep" on
+       the newest tick overhangs the svg and gets clipped to "20 Se". Nothing
+       would raise — a truncated axis label just reads as a shorter month. */
+    const anc = tx > w - MR - 22 ? 'end' : (tx < ML + 22 ? 'start' : 'middle');
+    xax += '<text class="ax" x="' + tx.toFixed(1) + '" y="' + (h - 9) +
+           '" text-anchor="' + anc + '">' + esc(dtick(d, wide)) + '</text>';
+  }
 
   let lines = '';
   const ends = [];
@@ -1470,20 +1579,22 @@ function lineChart(cfg){
     ends.push({s: s, yTrue: Y(last.v), y: Y(last.v), x: X(T(last.d))});
   }
 
-  /* De-collide the end labels. Five names inside a 1-5 band overlap routinely,
-     and a stack of unreadable labels is its own anti-pattern. The DOT stays on
-     the true value and a leader connects it to the moved label, so nothing is
-     mis-attributed to the wrong line. */
-  ends.sort((a, b) => a.yTrue - b.yTrue);
-  const GAP = 13;
-  for (let i = 1; i < ends.length; i++)
-    if (ends[i].y - ends[i - 1].y < GAP) ends[i].y = ends[i - 1].y + GAP;
-  if (ends.length){
-    ends[ends.length - 1].y = Math.min(ends[ends.length - 1].y, h - MB);
-    for (let i = ends.length - 2; i >= 0; i--)
-      ends[i].y = Math.min(ends[i].y, ends[i + 1].y - GAP);
-    for (const e of ends) e.y = Math.max(e.y, MT + 5);
-  }
+  /* THE END LABELS ARE GONE (PM, 2026-09-23: "it makes the visualization
+     confusing. I can just hover and see").
+
+     What was here: the last value of each line carried its name in the right
+     margin, de-collided down a 13px ladder with a leader line back to the true
+     value. It was built because five names inside a 1-5 band overlap
+     routinely — but the cure was worse than the disease. On a tight band every
+     label is displaced, so the chart ends in a column of names connected by
+     diagonal leaders to dots they do not sit beside, and the eye has to trace
+     each one. Identity was already available twice over: the LEGEND above each
+     chart pairs every name with its colour, and the HOVER readout lists every
+     series at the crosshair date with its key, value and label. Three answers
+     to one question, and the worst of them owned 116px of chart width.
+
+     The end DOT stays. It marks where each line stops, which is a fact about
+     the data rather than a label, and it cannot be mis-attributed. */
 
   /* Divergence markers. A TRIANGLE POINTING THE WAY THE SCORE WENT: up means
      score rose while price fell, down means score fell while price rose. The
@@ -1504,21 +1615,12 @@ function lineChart(cfg){
     }
   }
 
+  // The end dot only. No text, no leader — see the note above.
   let lab = '';
-  for (const e of ends){
-    const col = inkOf(e.s.slot);
+  for (const e of ends)
     lab += '<circle cx="' + e.x.toFixed(1) + '" cy="' + e.yTrue.toFixed(1) +
-           '" r="3" style="fill:' + col + '" stroke-width="1.5" class="vdot"/>';
-    if (Math.abs(e.y - e.yTrue) > 2)
-      lab += '<line x1="' + (w - MR + 3) + '" x2="' + (w - MR + 8) + '" y1="' +
-             e.yTrue.toFixed(1) + '" y2="' + e.y.toFixed(1) +
-             '" style="stroke:' + col + '" stroke-width="1"/>';
-    // Label text wears INK, never the series colour — the dot and leader beside
-    // it carry identity. On the light surface three of the eight slots sit under
-    // 3:1, so coloured label text would be genuinely unreadable.
-    lab += '<text class="vend" x="' + (w - MR + 12) + '" y="' + e.y.toFixed(1) +
-           '" dominant-baseline="middle">' + esc(e.s.label) + '</text>';
-  }
+           '" r="3" style="fill:' + inkOf(e.s.slot) +
+           '" stroke-width="1.5" class="vdot"/>';
 
   PAIRV[id] = {
     ML: ML, MR: MR, w: w, h: h, MT: MT, MB: MB, x0: x0, x1: x1, X: X,
@@ -1774,6 +1876,17 @@ async function loadPair(){
   $('#asof').textContent = 'store ' + tp.as_of_max;
   showRefresh(tp);
 
+  /* PER-TONNE MODE IS A PROPERTY OF THE CHART, NOT OF A SERIES, and deciding
+     it per entity was a live bug for about ten minutes: apl_apollo's economics
+     is a SPREAD Z-SCORE (detail.basis 'spread_z', no tonnage anywhere), so it
+     has 0 of 174 per-tonne points, fell through to its 1-5 score, and drew a
+     flat line on the rupee axis whose hover read "+2/t". A score rendered as a
+     rupee figure is exactly the plausible-wrong-number shape — so the mode is
+     decided once here, and a name with no Rs/t is DROPPED from the chart and
+     named underneath instead of being silently converted. */
+  const perTonne = P.pillar === 'economics' && Object.values(tp.series || {})
+    .some(s => (s.points || []).some(q => q.ebitda_per_t != null));
+
   const cut = spanCut(tp);
   const rows = tp.order.map(eid => {
     const ser = tp.series[eid] || {};
@@ -1782,12 +1895,24 @@ async function loadPair(){
       ? tp.corporate_actions[eid].confirmed.map(c => c.date) : []);
     const acts = ((tp.corporate_actions[eid] || {}).confirmed || [])
       .filter(c => pts.length && c.date >= pts[0].d && c.date <= pts[pts.length - 1].d);
-    const sc = scoreSeries(pts), px = pctSeries(pts, breaks);
+    // On economics the top chart is Rs/t; every other pillar keeps the score.
+    // No per-entity fallback — see the perTonne note above.
+    const scs = scoreSeries(pts);
+    const sc = perTonne ? perTonneSeries(pts) : scs;
+    const px = pctSeries(pts, breaks);
     // Aligned on date, because score and close can go missing independently.
     const pmap = new Map(px.map(p => [p.d, p.v]));
-    const al = sc.filter(q => pmap.has(q.d))
-                 .map(q => ({d: q.d, s: q.v, p: pmap.get(q.d)}));
-    const divs = P.div > 0 ? divergences(al, P.div) : [];
+    /* DIVERGENCES ARE ALWAYS COMPUTED ON THE SCORE, whatever this chart plots.
+       DIV_S is 0.25 ON THE 1-5 SCALE; run it against Rs/t and every single
+       session clears a threshold meant to be rare, burying the chart in
+       triangles. The marker is then RE-ANCHORED to the plotted series' value
+       at that date so it still sits on the line you can see. */
+    const al = scs.filter(q => pmap.has(q.d))
+                  .map(q => ({d: q.d, s: q.v, p: pmap.get(q.d)}));
+    const vmap = new Map(sc.map(q => [q.d, q.v]));
+    const divs = (P.div > 0 ? divergences(al, P.div) : [])
+      .filter(g => vmap.has(g.d))
+      .map(g => Object.assign({}, g, {v: vmap.get(g.d)}));
     const okS = pts.filter(q => q.score != null);
     const first = okS.length ? okS[0] : null, last = okS.length ? okS[okS.length - 1] : null;
     return {
@@ -1879,12 +2004,30 @@ async function loadPair(){
   const marks = [];
   for (const r of drawn) for (const c of r.acts) marks.push({d: c.date});
 
+  /* The top chart's axis: a FIXED 1-5 for a score, a fitted rupee scale for
+     Rs/t. The 1-5 band must stay fixed — a score chart that rescaled to its
+     own data would make a quiet week look like a violent one. Rs/t has no
+     natural bounds, so it fits, and zero is always on the axis because the
+     sign is the whole point (margin widening vs narrowing). */
+  let sLo = 1, sHi = 5, sTicks = [1, 2, 3, 4, 5],
+      sFmtY = v => String(v), sFmtV = v => v.toFixed(2),
+      sLabel = esc(tp.pillar) + ' score 1-5';
+  if (perTonne){
+    let lo = 0, hi = 0;
+    for (const r of drawn) for (const q of r.sc){ if (q.v < lo) lo = q.v; if (q.v > hi) hi = q.v; }
+    const step = niceCeil((hi - lo || 1) / 5);
+    sLo = Math.floor(lo / step) * step; sHi = Math.ceil(hi / step) * step;
+    sTicks = [];
+    for (let v = sLo; v <= sHi + 1e-9; v += step) sTicks.push(v);
+    sFmtY = v => (v > 0 ? '+' : '') + Math.round(v).toLocaleString('en-IN');
+    sFmtV = v => (v >= 0 ? '+' : '') + Math.round(v).toLocaleString('en-IN') + '/t';
+    sLabel = 'economics · ₹/tonne of EBITDA change (raw, not scored)';
+  }
   const drawScore = availW => lineChart({
     id: 'score', w: availW, h: H, series: mkSeries('sc', true),
-    yLo: 1, yHi: 5, ticks: [1, 2, 3, 4, 5], fmtY: v => String(v),
-    fmtV: v => v.toFixed(2),
+    yLo: sLo, yHi: sHi, ticks: sTicks, fmtY: sFmtY, fmtV: sFmtV,
     xDom: xDom, xTicks: xTicks, allDates: all,
-    axisLabel: esc(tp.pillar) + ' score 1-5'
+    axisLabel: sLabel
   });
   const drawPrice = availW => lineChart({
     id: 'price', w: availW, h: H, series: mkSeries('px', false),
@@ -1895,6 +2038,11 @@ async function loadPair(){
     axisLabel: 'price · % change in span'
   });
 
+  /* Name what the Rs/t axis cannot carry, rather than leaving a silent gap in
+     the legend. apl_apollo is the standing case: a converter scored on the
+     HRC-tube SPREAD, which has no tonnage basis and therefore no Rs/t. */
+  const noPerT = perTonne
+    ? rows.filter(r => r.sc.length < 2 && r.px.length > 1).map(r => r.eid) : [];
   const nDiv = drawn.reduce((a, r) => a + r.divs.length, 0);
   const legend = '<div class="lgd">' + drawn.map(r =>
     '<span><i style="border-top-color:' + inkOf(r.slot) + '"></i>' + esc(r.eid) +
@@ -1954,6 +2102,14 @@ async function loadPair(){
     + '<h2>' + esc(tp.pillar) + ' · ' + drawn.length + ' names</h2>'
     + legend
     + '<div class="chart" id="ch-score" style="min-height:' + (H + 24) + 'px"></div>'
+    /* THE INDIAMART ASK CHART, cement only, BETWEEN the two (PM, 2026-09-20:
+       "below the score graph, above the stock price"). It is a placeholder
+       here and filled after the width pass like the other two, and it renders
+       nothing at all on every other sector — a dealer-ask panel exists for one
+       sector and an empty box on the others would read as a broken query. */
+    + (SECTOR === 'cement'
+        ? '<div class="chart" id="ch-cement" style="min-height:' + (H + 24) + 'px"></div>'
+        : '')
     + '<div class="chart" id="ch-price" style="min-height:' + (H + 24) + 'px"></div>'
     + '<h2>By name</h2>'
     + '<div class="scroll"><table><thead><tr><th>Entity</th><th>Peer group</th>'
@@ -1962,13 +2118,32 @@ async function loadPair(){
     + '</tbody></table></div>'
     + '<h2>Notes</h2>'
     + actNote
-    + '<p class="note">Two charts, one measure each. <b>Score</b> on the fixed 1-5 '
-    + 'axis; <b>price</b> as % change from the start of the span, which is what '
+    + (noPerT.length
+        ? '<p class="note"><b>' + noPerT.map(esc).join(', ') + '</b> '
+          + (noPerT.length === 1 ? 'is' : 'are') + ' not on the ₹/t chart: '
+          + 'scored on a price SPREAD rather than a margin bridge, so there is no '
+          + 'tonnage to divide by. Still on the price chart and in the table below.</p>'
+        : '')
+    + '<p class="note">Two charts, one measure each. '
+    + (perTonne
+        ? '<b>Economics</b> is plotted as the RAW <b>₹ per tonne</b> change in '
+          + 'EBITDA, not as the 1-5 score (PM, 2026-09-23). The score is unchanged '
+          + 'and still drives the table below, the composite and the backtest — '
+          + 'it is just a poor <i>picture</i> here, because it anchors 5% of EBITDA '
+          + 'at 4.0 and these names spend the strong weeks pinned against the top of '
+          + 'the curve, where a 3x spread in the underlying shows as a few tenths. '
+          + 'Tonnage basis is the current spec’s, applied across the whole '
+          + 'line so one denominator covers every point.'
+        : '<b>Score</b> on the fixed 1-5 axis')
+    + '; <b>price</b> as % change from the start of the span, which is what '
     + 'lets names on very different price levels share an axis. A name keeps its '
     + 'colour in both. Newest date ' + esc(tp.as_of_max) + '.</p>'
     + (P.div > 0
       ? '<p class="note"><b>' + nDiv + ' divergence' + (nDiv === 1 ? '' : 's') +
-        '</b> marked on the score line: over ' + P.div + ' sessions the score moved '
+        '</b> marked on the ' + (perTonne ? '₹/t' : 'score') + ' line'
+        + (perTonne ? ' (still computed on the SCORE — the ±0.25 threshold '
+                    + 'is on the 1-5 scale)' : '')
+        + ': over ' + P.div + ' sessions the score moved '
         + '\u2265' + DIV_S.toFixed(2) + ' and the price \u2265' + DIV_P.toFixed(0) +
         '% in the <i>opposite</i> direction. One marker per episode, not per '
         + 'session. Hover a marker for both legs.</p>'
@@ -1993,7 +2168,213 @@ async function loadPair(){
   const availW = pairWidth();
   document.getElementById('ch-score').innerHTML = drawScore(availW);
   document.getElementById('ch-price').innerHTML = drawPrice(availW);
+  if (document.getElementById('ch-cement')) await drawCementAsks(availW, H);
   wirePair();
+}
+
+/* The IndiaMART dealer-ask level, one line per region, drawn with the same
+   lineChart() as the score and price charts above and below it so the three
+   read as one stack.
+
+   THE LINE IS A MEAN, NOT A MEDIAN (PM, 2026-09-20: "why can't you just put
+   the average of all bags in a region"). Measured over the first 20 captures
+   the mean is both more informative and smoother — south's median is pinned at
+   exactly 300 on every single day while its mean moves 308.1-312.8, and
+   north's median jumps to 350 where its mean stays inside 336.0-345.5. The
+   panel carries only ~100 distinct price points, so a median lands on a round
+   number and sits there.
+
+   IT IS NOT A PRICE SERIES AND THE CAPTION SAYS SO on every render: marketplace
+   ASKS off promoted listings, never in `prices`, never read by a pillar. The
+   Kotak pack is the priced reference and is ~15 days behind, which is the only
+   reason this panel exists. */
+async function drawCementAsks(availW, H){
+  const host = document.getElementById('ch-cement');
+  if (!host) return;
+  let d;
+  try { d = await (await fetch('/api/cement_watch')).json(); }
+  catch (e) { host.innerHTML = '<div class="hint">ask panel unavailable</div>'; return; }
+  const s = d && d.series;
+  if (!s || !s.dates || s.dates.length < 2){
+    // A capture panel too short to draw is a real state, not an error: it says
+    // so rather than leaving an empty box that reads as a failed fetch.
+    host.innerHTML = '<div class="hint">IndiaMART ask panel: '
+      + ((s && s.dates ? s.dates.length : 0)) + ' capture(s) — needs 2 to draw</div>';
+    return;
+  }
+  const names = Object.keys(s.regions);
+  const series = names.map((r, i) => ({
+    label: r, slot: (i % 8) + 1,
+    pts: s.dates.map((dt, k) => ({d: dt, v: s.regions[r].mean[k]}))
+                .filter(p => p.v != null)
+  })).filter(x => x.pts.length > 1);
+  if (!series.length){ host.innerHTML = '<div class="hint">no ask levels stored</div>'; return; }
+
+  const vals = series.flatMap(x => x.pts.map(p => p.v));
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  // Pad to whole rupees so the ticks are readable numbers, and never a zero
+  // span — five flat lines would otherwise divide by zero in lineChart's Y().
+  const pad = Math.max((hi - lo) * 0.12, 2);
+  const yLo = Math.floor((lo - pad) / 5) * 5, yHi = Math.ceil((hi + pad) / 5) * 5;
+  const ticks = [];
+  const step = Math.max(Math.round((yHi - yLo) / 5 / 5) * 5, 5);
+  for (let v = yLo; v <= yHi + 0.001; v += step) ticks.push(v);
+
+  const xs = s.dates.map(x => Date.parse(x));
+  const xDom = [Math.min(...xs), Math.max(...xs)];
+  const every = Math.max(1, Math.ceil(s.dates.length / 6));
+  const xTicks = s.dates.filter((_, i) => i % every === 0);
+
+  host.innerHTML = '<div class="lgd">' + series.map(x =>
+      '<span><i style="border-top-color:' + inkOf(x.slot) + '"></i>' + esc(x.label)
+      + '</span>').join('') + '</div>'
+    + lineChart({id: 'cementasks', w: availW, h: H, series: series,
+        yLo: yLo, yHi: yHi, ticks: ticks, fmtY: v => Math.round(v) + '',
+        fmtV: v => '₹' + v.toFixed(1), xDom: xDom, xTicks: xTicks,
+        allDates: s.dates,
+        /* THE SPAN IS IN THE AXIS LABEL, not only in the note below. This
+           chart is sandwiched between two that share a much longer x-domain
+           (the score and price charts run the selected span, often months),
+           and three stacked charts read as one shared time axis unless told
+           otherwise. Capture began 2026-08-28 and nothing before it exists or
+           can be backfilled, so the axes genuinely cannot be made to match. */
+        axisLabel: 'IndiaMART dealer asks · Rs/bag (mean) · own span '
+          + esc(dtick(s.dates[0], false)) + '–'
+          + esc(dtick(s.dates[s.dates.length - 1], false))
+          + ', shorter than the charts above and below'})
+    + '<p class="note">Marketplace <b>asks</b> off IndiaMART’s promoted '
+    + 'listings, ~' + (s.regions[names[0]].n.slice(-1)[0] || '?') + '-'
+    + Math.max(...names.map(r => s.regions[r].n.slice(-1)[0] || 0))
+    + ' listings a region — not transactions, and <b>never in '
+    + '<code>prices</code></b>: no pillar reads this. The Kotak pack is the '
+    + 'priced reference and runs ~15 days behind, which is the only reason this '
+    + 'panel exists. Mean of the per-listing prices, so a listing syndicated '
+    + 'across cities counts once. Starts ' + esc(s.dates[0]) + ' — there is '
+    + 'no history before capture began and none can be backfilled.</p>';
+}
+
+/* ---------------------------------------------------------------------------
+   VAHAN MAKER SHARE — the Auto tab, three segments, F&O names as lines.
+
+   TWO MODES, AND THE TOGGLE IS NOT COSMETIC. `monthly` is share of each
+   completed month and runs 13 months back; `daily` is the share of the running
+   month-to-date, one point per capture, and it STARTS the day capture started
+   because Vahan publishes no daily granularity on the open API (the report
+   builder that does is CAPTCHA-gated). So the daily view is one point today
+   and cannot be backfilled — it says so rather than drawing a single dot that
+   reads as a flat market. Monthly is the default for exactly that reason.
+
+   OTHERS IS DRAWN IN GREY AND LAST. It is a residual, not a company, and
+   giving it a series colour would put it in the same visual class as the five
+   names the PM actually trades. On CV it is the LARGEST line — Tata Motors' CV
+   arm left F&O at the 2025-10 demerger — which is the rule applied faithfully
+   rather than a missing series, and the per-segment note says so under the
+   chart it applies to.
+--------------------------------------------------------------------------- */
+let AUTOSHARE = null, AUTOMODE = 'monthly';
+
+const MONTH_IX = {January:0, February:1, March:2, April:3, May:4, June:5,
+  July:6, August:7, September:8, October:9, November:10, December:11};
+function monthToISO(p){
+  const [y, m] = p.split('-');
+  return y + '-' + String(MONTH_IX[m] + 1).padStart(2, '0') + '-01';
+}
+
+async function drawAutoShare(){
+  const host = document.getElementById('autoshare-box');
+  if (!host) return;
+  let d;
+  try { d = await (await fetch('/api/auto_share')).json(); }
+  catch (e) { host.innerHTML = '<div class="hint">maker share unavailable</div>'; return; }
+  AUTOSHARE = d;
+  if (d.state !== 'live'){
+    host.innerHTML = '<p class="note hint">' + esc(d.note || 'no Vahan capture yet')
+      + '</p>';
+    return;
+  }
+  const W = Math.max((host.clientWidth || 900) - 8, 520), H = 200;
+  const canDaily = d.segments.some(s => s.daily.has_change);
+
+  let html = '<div class="est-mode" style="margin-bottom:var(--s4)">'
+    + '<button data-m="monthly" aria-pressed="' + (AUTOMODE === 'monthly') + '">'
+    + 'Monthly share</button>'
+    + '<button data-m="daily" aria-pressed="' + (AUTOMODE === 'daily') + '">'
+    + 'Daily (month-to-date)</button></div>';
+
+  if (AUTOMODE === 'daily' && !canDaily){
+    /* A one-point series is a real state and says so. Drawing it would render
+       a flat line across the panel, which reads as "share did not move" — the
+       one thing a single capture cannot tell you. */
+    html += '<p class="note" style="color:var(--warn)"><b>Daily needs two '
+      + 'captures and there ' + (d.captures === 1 ? 'is 1' : 'are ' + d.captures)
+      + '.</b> The series began ' + esc(d.first_capture) + ' and cannot be '
+      + 'backfilled: Vahan publishes no daily history on the open dashboard, so '
+      + 'a month-to-date level for a past date was never available. The next '
+      + 'capture produces the first change.</p>';
+  }
+
+  for (const s of d.segments){
+    const src = AUTOMODE === 'daily' ? s.daily : s.monthly;
+    const xs = AUTOMODE === 'daily' ? src.dates : src.periods.map(monthToISO);
+    const labels = s.fno.map(f => f.label).concat([s.others_label]);
+    const series = labels.map((lab, i) => ({
+      label: lab,
+      // Others takes slot 0 (grey) deliberately — it is a residual, not a name.
+      slot: lab === s.others_label ? 0 : (i % 8) + 1,
+      pts: xs.map((x, k) => ({d: x, v: (src.series[lab] || [])[k]}))
+             .filter(p => p.v != null)
+    })).filter(x => x.pts.length > 0);
+
+    const drawable = series.filter(x => x.pts.length > 1);
+    html += '<h3 style="margin-top:var(--s5)">' + esc(s.label) + '</h3>';
+    if (!drawable.length){
+      html += '<p class="note hint">not enough points to draw yet</p>';
+    } else {
+      const vals = drawable.flatMap(x => x.pts.map(p => p.v));
+      const lo = Math.min(...vals), hi = Math.max(...vals);
+      const pad = Math.max((hi - lo) * 0.12, 1);
+      const yLo = Math.max(0, Math.floor((lo - pad) / 5) * 5);
+      const yHi = Math.min(100, Math.ceil((hi + pad) / 5) * 5);
+      const ticks = [];
+      const step = Math.max(Math.round((yHi - yLo) / 5 / 5) * 5, 5);
+      for (let v = yLo; v <= yHi + 0.001; v += step) ticks.push(v);
+      const ts = xs.map(x => Date.parse(x));
+      const every = Math.max(1, Math.ceil(xs.length / 6));
+      html += '<div class="lgd">' + drawable.map(x =>
+          '<span><i style="border-top-color:' + inkOf(x.slot) + '"></i>'
+          + esc(x.label) + '</span>').join('') + '</div>'
+        + lineChart({id: 'aut' + s.id, w: W, h: H, series: drawable,
+            yLo: yLo, yHi: yHi, ticks: ticks,
+            fmtY: v => v + '%', fmtV: v => v.toFixed(2) + '%',
+            xDom: [Math.min(...ts), Math.max(...ts)],
+            xTicks: xs.filter((_, i) => i % every === 0), allDates: xs,
+            axisLabel: AUTOMODE === 'daily'
+              ? 'share of ' + esc(src.month) + ' month-to-date · one point per capture'
+              : 'share of each month · newest is ' + esc(src.current)
+                + ', still month-to-date'});
+    }
+    html += '<p class="note">' + esc(s.note) + '</p>';
+  }
+
+  html += '<p class="note"><b>Registrations, not dispatches.</b> Vahan counts '
+    + 'what a buyer registered; company results report wholesales to dealers, '
+    + 'and the two differ by channel inventory. Lines are the '
+    + '<b>F&amp;O names only</b> — the roster is read from contracts that '
+    + 'actually traded, never hardcoded — and every other maker is inside '
+    + '<b>Others</b>, so the lines always sum to 100%. Vahan <b>backdates</b>, '
+    + 'so a recent month keeps growing for days: treat the newest points as '
+    + 'provisional. Volumes only — this reaches no pillar and is never in '
+    + '<code>prices</code>.</p>';
+
+  host.innerHTML = html;
+  for (const s of d.segments){
+    if (document.getElementById('cw-aut' + s.id)) wireChart('aut' + s.id);
+  }
+  host.querySelectorAll('.est-mode button').forEach(b =>
+    b.addEventListener('click', () => {
+      AUTOMODE = b.dataset.m;
+      drawAutoShare();
+    }));
 }
 
 let PAIR_RO = null, PAIR_W = 0, PAIR_BUSY = false, PAIR_FIX = 0;
@@ -2026,6 +2407,9 @@ function wirePair(){
   if (dv) dv.onchange = () => { P.div = +dv.value; go(); };
   wireChart('score');
   wireChart('price');
+  // Guarded rather than unconditional: wireChart on an id that was not drawn
+  // would bind a hover layer to nothing on every non-cement sector.
+  if (document.getElementById('cw-cementasks')) wireChart('cementasks');
 
   /* Belt and braces, NOT the mechanism — loadPair now measures the panel
      directly (see the two-pass note there). This only catches a width that
@@ -2109,16 +2493,32 @@ function sector(id){
   if (e.kind === 'overview'){ $('#vnav').hidden = true; tab('overview'); return; }
   if (e.kind === 'book'){ $('#vnav').hidden = true; tab('book'); return; }
   if (e.kind === 'flows'){ $('#vnav').hidden = true; tab('flows'); return; }
-  $('#vnav').hidden = !e.live;
+  // Results (PM 2026-09-22, "in the end"): its own sector/company picker, so
+  // the sector sub-view bar is hidden like the other run-level tabs.
+  if (e.kind === 'results'){ $('#vnav').hidden = true; tab('results'); return; }
   // The Prices & Watch sub-view exists only where the sector declares content
   // for it (nav carries has_chart/has_watch). If the remembered view was
   // 'sector' and this sector has no such tab, fall back to the pair view
   // rather than showing a hidden section.
   const extra = !!(e.has_chart || e.has_watch || e.has_estimates);
+  // Company historical analysis is a sub-view of the SECTOR (PM 2026-09-16),
+  // shown only where the sector has a dossier. A sector that scores nothing
+  // (IT) used to hide the whole bar and render its panel directly; once it
+  // carries a dossier the bar has to show, with the scoring tabs hidden and
+  // the panel reachable as Prices & Watch.
+  const hasCo = !!e.has_company;
+  $('#vnav').hidden = !e.live && !hasCo;
+  document.querySelectorAll('#vnav .tab[data-t="pair"], #vnav .tab[data-t="scores"], '
+    + '#vnav .tab[data-t="pos"]').forEach(b => { b.hidden = !e.live; });
   const vt = document.getElementById('vtab-sector');
-  if (vt) vt.hidden = !e.live || !extra;
-  if (e.live){ tab(LAST_VIEW === 'sector' && !extra ? 'pair' : LAST_VIEW); }
-  else { tab('sector'); }   // per-sector; tab() refetches on a sector change
+  if (vt) vt.hidden = e.live ? !extra : !hasCo;
+  const vc = document.getElementById('vtab-company');
+  if (vc) vc.hidden = !hasCo;
+  let want = LAST_VIEW;
+  if (want === 'sector' && !extra) want = 'pair';
+  if (want === 'company' && !hasCo) want = 'pair';
+  if (e.live){ tab(want); }
+  else { tab(LAST_VIEW === 'company' && hasCo ? 'company' : 'sector'); }
 }
 
 /* The morning brief halves. Everything here is READ from the two dated files
@@ -2713,6 +3113,13 @@ async function loadBook(){
            add them to <code>specs/book.yaml pairs</code> or they stay out of
            every pair line.</div></div>` : '')
       + bookSections(bk.view || bk.pairs, bk.sectors_order, bk.nav, bk.book_pnl_total)
+      /* The index sits BELOW the pair table (PM, 2026-09-11, on the
+         charts this one replaced: "keep it below"). The pairs are the
+         substance of this tab; the index is the picture that follows
+         them, the same ordering the Overview uses when it reads the
+         morning's words before the tape. Filled asynchronously by
+         loadIndex() once this innerHTML has landed. */
+      + `<div id="bix-host" class="panel" style="padding:var(--s4);margin:var(--s4) 0"></div>`
       + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
            <th class="l">closed</th><th>final P&amp;L</th><th>held</th>
@@ -2727,6 +3134,600 @@ async function loadBook(){
   }
 
   $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + posHtml;
+  if (!bk.error && bk.as_of) loadIndex(BIX_RANGE);
+}
+
+/* ============== the book's equal-weighted long and short indices ==========
+   PM, 2026-09-17: "Create an equal weighted index for longs, equal for
+   shorts... Keep VAML out, use 2007 onwards. Once VAML starts to exist, add
+   VAML to the long index. Till 16th sep 2026, we keep the index same. Post
+   that, as and when the positions change, we change the index on a daily
+   basis."
+
+   ONE BLOCK, AND IT REPLACED TWO. This tab used to carry a portfolio-weighted
+   back-cast (loadBaskets) and a snapshot-only live index (loadBookIndex).
+   Both are deleted, not hidden: "Let's rebuild the whole thing again. We get
+   rid of both graph methods." The reason two existed — one could show years
+   but was survivorship-biased, the other was honest but nine sessions long —
+   is settled inside the single series instead, by freezing membership at a
+   spec date rather than at today.
+
+   THREE CHARTS: long index, short index, then long ÷ short. The third is the
+   only one that answers "are the longs beating the shorts", and it is a RATIO
+   — a true percent, because it divides by where the short index actually is.
+   The pp difference between the two charts above is a different quantity and
+   is labelled pp wherever it appears; over the full window they read +17.59%
+   and +430.66pp, which is why the distinction is not pedantry.
+
+   EVERY WINDOW IS CANDLES; THE BAR PERIOD IS WHAT CHANGES (PM, 2026-09-17:
+   "can you make candles since you have ohlc?"). A DAILY candle over 19 years
+   is a fifth of a pixel, so long windows aggregate to weekly or monthly bars
+   — daily to 320 sessions, weekly to 1,600, monthly beyond — which puts every
+   window between 3.8 and 9.3 px a candle. The aggregation is EXACT (first
+   open, max high, min low, last close): every session still contributes, and
+   the period high is still the same kind of bound the daily high was, because
+   the max of upper bounds is an upper bound. Thinning the series was the
+   alternative and was rejected — dropping every fifth bar is a silent lie
+   about the path.
+
+   COLOUR IS PRICE DIRECTION, NOT P&L. Green = closed above its open. On the
+   SHORT chart that is a drag on the book, and the header says so on every
+   render: the PM's convention is raw price moves, so nothing here silently
+   re-means green.
+
+   WICKS ARE FAINTER THAN BODIES. The body is exact — all NSE legs open and
+   close together, so the mean of the opens IS the index's open. The wicks are
+   outer bounds, because the constituents do not print their highs at the same
+   moment, and the bound holds for any weights so 1/n changes nothing. Same
+   ink weight would assert a precision the high and low do not have. */
+let BIX = null;            /* last payload, for the hover and ruler layers */
+let BIX_RANGE = '5y';
+let BCX_DOM = {};          /* y domains, by chart key */
+let BCX_BARS = {};         /* key -> bars[], for the hover/ruler layers */
+let BCX_BASE = {};         /* key -> the date the window is rebased on */
+let BCX_ESC = false;       /* the Esc handler is attached once, not per render */
+
+/* PM, 2026-09-17: "Lets remove 10 and max, add 6 months, 3 months, 1 month."
+   The button order is the API's RANGES order (shortest first) — this map only
+   supplies labels, so a range added server-side appears without a frontend
+   change, and one removed cannot leave an orphaned button behind. */
+const BIX_LABEL = {'1mo': '1M', '3mo': '3M', '6mo': '6M', '1y': '1Y',
+                   '2y': '2Y', '3y': '3Y', '5y': '5Y'};
+
+/* ONE geometry, used by the renderer AND the hover/ruler maths. They were
+   separate copies for about an hour once and that is precisely how a
+   crosshair ends up half a candle off the candle it names. */
+const BCX = {W: 1000, H: 236, ML: 52, MR: 14, MT: 20, MB: 24};
+const bcxInner = () => ({iw: BCX.W - BCX.ML - BCX.MR,
+                         ih: BCX.H - BCX.MT - BCX.MB});
+const bcxY = (v, key) => {
+  const {ih} = bcxInner(), d = BCX_DOM[key];
+  return BCX.MT + (d.hi - v) / (d.hi - d.lo || 1) * ih;
+};
+const bcxSlot = n => bcxInner().iw / n;
+
+/* ---------------------------------------------------------------- the ruler
+   PM, 2026-09-11: "a tool for measuring % change from one point to another
+   (like we have in tradingview, the ruler tool)". Drag across any chart.
+
+   THE ONE THING THIS TOOL MUST NOT GET WRONG. The y axis is ALREADY a
+   percentage, so the gap between two points is measured in percentage POINTS,
+   and that is NOT the index's percent change over the span — the % change
+   divides by THE LEVEL WHERE YOU STARTED, not by the rebase date. Read +3.00%
+   on the axis and +8.00% later: the axis gap is 5.00pp but the move is
+       1.08 / 1.03 - 1  =  +4.85%
+   and from +40% to +50% the axis reads 10pp against a +7.14% move. Reporting
+   the axis gap as "%" would be wrong by a third there, in the flattering
+   direction, with nothing to raise — the silent-arithmetic shape exactly
+   (docs/SILENT_BUGS.md). On a 19-year window the two diverge enormously.
+
+   So BOTH are shown and both are labelled: the % change leads (it is what
+   TradingView's ruler means, and what the PM asked for) and the pp gap
+   follows as the axis reading. They agree only at the rebase date, where the
+   level is 1.00.
+
+   IT MEASURES CLOSE TO CLOSE, and the readout says so. Snapping to a
+   session's close makes the number reproducible — two drags between the same
+   bars give the same answer — where a free-floating level returns whatever
+   the mouse was over. The wick extremes are deliberately NOT snappable: they
+   are outer bounds, not prices anything traded at, so a high-to-low
+   "drawdown" measured off them would overstate by construction. */
+const bLevel = v => 1 + v / 100;      /* plotted % -> index level relative */
+
+function rulerStats(bars, i0, i1){
+  const a = bars[i0].c, b = bars[i1].c, la = bLevel(a);
+  const lo = Math.min(i0, i1), hi = Math.max(i0, i1);
+  /* BARS AND SESSIONS ARE NOT THE SAME NUMBER once a window aggregates, and
+     the readout printed the bar count as "sessions" — on a monthly chart 90
+     bars is ninety MONTHS, about 1,890 sessions, so the span read twenty times
+     short. Both are reported now: `n` is what was dragged across, `sessions`
+     is what it covers, summed from each bar's own count rather than assumed. */
+  let sess = 0;
+  for (let i = lo + 1; i <= hi; i++) sess += (bars[i].sessions || 1);
+  return {
+    pct: la > 0 ? (bLevel(b) / la - 1) * 100 : null,  /* the % change */
+    pp: b - a,                                        /* the axis gap, points */
+    n: hi - lo,                                       /* BARS spanned */
+    sessions: sess,
+    from: bars[lo].d, to: bars[hi].d,
+    a: a, b: b,
+  };
+}
+
+/* ONE renderer for all three charts. It replaced a candleChart/lsChart pair
+   whose only real differences were wick opacity and an overlaid close path —
+   two copies of the same axis, grid and geometry code, which is exactly the
+   duplication the note on BCX warns about. */
+function seriesChart(S, key, id, title, opts){
+  opts = opts || {};
+  const bars = (S || {}).bars || [];
+  const {W, H, ML, MR, MT, MB} = BCX;
+  if (bars.length < 2)
+    return `<div class="bcx-empty">not enough sessions in this window</div>`;
+  const dom = BCX_DOM[key];
+  const slot = bcxSlot(bars.length);
+  const bw = Math.max(1.2, Math.min(11, slot * 0.62));
+  const px = i => ML + slot * (i + 0.5);
+
+  /* gridlines on round percentages, ~5 of them */
+  const rawStep = (dom.hi - dom.lo) / 5;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag)
+                 .find(x => x >= rawStep) || mag * 10;
+  let grid = '', gv = Math.ceil(dom.lo / step) * step;
+  const dp = step < 1 ? 1 : 0;
+  for (; gv <= dom.hi + 1e-9; gv += step){
+    const y = bcxY(gv, key).toFixed(1);
+    grid += `<line class="${Math.abs(gv) < 1e-9 ? 'zero' : 'grid'}" x1="${ML}" x2="${
+      W - MR}" y1="${y}" y2="${y}"/>`
+          + `<text class="ax" x="${ML - 7}" y="${y}" text-anchor="end"
+              dominant-baseline="middle">${(gv > 0 ? '+' : '') + gv.toFixed(dp)}%</text>`;
+  }
+
+  let wicks = '', bodies = '';
+  bars.forEach((b, i) => {
+    const cx = px(i);
+    /* A BAR WITH NO OPEN IS DRAWN AS A CLOSE TICK, NOT A CANDLE. It means no
+       member had an intraday bar in that period, so the open and the range
+       were never measured. A doji there would claim a range of zero, which is
+       a measurement — the truth is an absence. In practice only the index's
+       very first bar can hit this. */
+    if (b.o == null){
+      const y = bcxY(b.c, key);
+      bodies += `<line x1="${(cx - bw / 2).toFixed(2)}" x2="${
+        (cx + bw / 2).toFixed(2)}" y1="${y.toFixed(2)}" y2="${y.toFixed(2)}"
+        stroke="var(--soft)" stroke-width="1.6"/>`;
+      return;
+    }
+    const col = b.c >= b.o ? 'var(--up)' : 'var(--down)';
+    if (b.h != null && b.l != null)
+      wicks += `<line x1="${cx.toFixed(2)}" x2="${cx.toFixed(2)}" y1="${
+        bcxY(b.h, key).toFixed(2)}" y2="${bcxY(b.l, key).toFixed(2)}"
+        stroke="${col}" stroke-width="1" opacity="${opts.faintWicks ? '.24' : '.5'}"/>`;
+    const y0 = bcxY(Math.max(b.o, b.c), key), y1 = bcxY(Math.min(b.o, b.c), key);
+    bodies += `<rect x="${(cx - bw / 2).toFixed(2)}" y="${y0.toFixed(2)}" width="${
+      bw.toFixed(2)}" height="${Math.max(1, y1 - y0).toFixed(2)}" fill="${col}"/>`;
+  });
+
+  /* the close path, overlaid on the RATIO only: its body is tiny inside a
+     doubly-loose bound, so the bodies alone do not read as a path and the
+     path is the question that chart answers. */
+  let path = '';
+  if (opts.closeLine){
+    const pts = bars.map((b, i) => `${px(i).toFixed(2)},${bcxY(b.c, key).toFixed(2)}`);
+    path = `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--ink)"
+      stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"
+      opacity=".85"/>`;
+  }
+
+  /* x labels: ~6, always including the last session */
+  let xax = '';
+  const every = Math.max(1, Math.round(bars.length / 6));
+  bars.forEach((b, i) => {
+    if (i % every && i !== bars.length - 1) return;
+    /* a weekly or monthly bar spans more than a day, so DD-MM would name one
+       session out of five or twenty-one. Those windows get YYYY-MM, which is
+       also what a multi-year x axis needs. */
+    const lab = (S.period && S.period !== 'daily')
+                  ? b.d.slice(0, 7) : dmy(b.d).slice(0, 5);
+    xax += `<text class="ax" x="${px(i).toFixed(1)}" y="${H - 8}"
+      text-anchor="middle">${esc(lab)}</text>`;
+  });
+
+  const lastCol = (S.last || 0) >= 0 ? 'var(--up)' : 'var(--down)';
+  return `<div class="chartwrap bcx" id="${id}" data-side="${key}">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" role="img"
+         aria-label="${esc(title || key)}">
+      ${grid}
+      <line class="bcx-hair" x1="0" x2="0" y1="${MT}" y2="${H - MB}"
+            stroke="var(--soft)" stroke-width="1" opacity=".5" style="display:none"/>
+      ${wicks}${bodies}${path}${xax}
+      <g class="bcx-rule" style="display:none">
+        <rect class="rr" x="0" y="0" width="0" height="0"/>
+        <line class="rl" x1="0" y1="0" x2="0" y2="0"/>
+        <circle class="rd rd0" r="3.2"/><circle class="rd rd1" r="3.2"/>
+      </g>
+      <text class="axl" x="${ML}" y="11">${esc(title || '')}</text>
+      <text class="ax" x="${W - MR}" y="11" text-anchor="end"
+            fill="${lastCol}">${(S.last >= 0 ? '+' : '')}${
+              (S.last == null ? '—' : S.last.toFixed(2) + '%')}</text>
+    </svg><div class="viztip" role="status"></div>
+    <div class="bcx-lab" role="status"></div></div>`;
+}
+
+/* hover readout + the drag ruler. Both live on the svg element itself rather
+   than on window, so they die with the node when the block re-renders —
+   window listeners would pile up one set per range click and keep pointing at
+   detached charts. The cost is that releasing outside the chart cannot be
+   heard, so mouseleave FINALISES the measurement instead of dropping it. */
+function wireCandles(){
+  document.querySelectorAll('.bcx').forEach(wrap => {
+    const side = wrap.dataset.side, bars = BCX_BARS[side] || [];
+    if (bars.length < 2) return;
+    const svg = wrap.querySelector('svg');
+    const hair = svg.querySelector('.bcx-hair');
+    const rule = svg.querySelector('.bcx-rule');
+    const rr = rule.querySelector('.rr'), rl = rule.querySelector('.rl');
+    const rd0 = rule.querySelector('.rd0'), rd1 = rule.querySelector('.rd1');
+    const tip = wrap.querySelector('.viztip');
+    const lab = wrap.querySelector('.bcx-lab');
+    const {W, ML} = BCX;
+    const slot = bcxSlot(bars.length);
+    let drag = null;
+
+    const idxAt = ev => {
+      const rect = svg.getBoundingClientRect();
+      const vx = (ev.clientX - rect.left) / rect.width * W;
+      return Math.max(0, Math.min(bars.length - 1,
+                                  Math.floor((vx - ML) / slot)));
+    };
+    const cxOf = i => ML + slot * (i + 0.5);
+    const clearRule = () => { rule.style.display = 'none';
+                              lab.classList.remove('on'); };
+    const hideTip = () => { hair.style.display = 'none';
+                            tip.classList.remove('on'); };
+
+    const drawRule = (i0, i1) => {
+      const st = rulerStats(bars, i0, i1);
+      const x0 = cxOf(i0), x1 = cxOf(i1);
+      const y0 = bcxY(st.a, side), y1 = bcxY(st.b, side);
+      const col = (st.pct ?? 0) >= 0 ? 'var(--up)' : 'var(--down)';
+      rr.setAttribute('x', Math.min(x0, x1));
+      rr.setAttribute('y', Math.min(y0, y1));
+      rr.setAttribute('width', Math.max(1, Math.abs(x1 - x0)));
+      rr.setAttribute('height', Math.max(1, Math.abs(y1 - y0)));
+      rr.setAttribute('fill', col);
+      rl.setAttribute('x1', x0); rl.setAttribute('y1', y0);
+      rl.setAttribute('x2', x1); rl.setAttribute('y2', y1);
+      rl.setAttribute('stroke', col);
+      rd0.setAttribute('cx', x0); rd0.setAttribute('cy', y0);
+      rd1.setAttribute('cx', x1); rd1.setAttribute('cy', y1);
+      rd0.setAttribute('fill', col); rd1.setAttribute('fill', col);
+      rule.style.display = '';
+
+      lab.textContent = '';               /* textContent: dates come from the API */
+      const big = document.createElement('div');
+      big.className = 'rb'; big.style.color = col;
+      big.textContent = st.pct == null ? '—'
+        : (st.pct >= 0 ? '+' : '') + st.pct.toFixed(2) + '%';
+      lab.appendChild(big);
+      const mk = (t, cls) => {
+        const e = document.createElement('div');
+        if (cls) e.className = cls;
+        e.textContent = t; lab.appendChild(e);
+      };
+      mk((st.pp >= 0 ? '+' : '') + st.pp.toFixed(2) + ' pp on the axis', 'rs');
+      const per = (BIX && BIX.period) || 'daily';
+      const unit = per === 'monthly' ? 'month' : per === 'weekly' ? 'week'
+                                               : 'session';
+      mk(st.n + ' ' + unit + (st.n === 1 ? '' : 's')
+         + (per === 'daily' ? ''
+            : ' (' + st.sessions.toLocaleString() + ' sessions)'), 'rs');
+      mk(dmy(st.from) + ' → ' + dmy(st.to), 'rd-dates');
+      /* named explicitly: the ruler snaps to CLOSES, so the figure cannot be
+         mistaken for a wick-to-wick drawdown. */
+      mk('close to close', 'rd-dates');
+      lab.classList.add('on');
+
+      const wr = wrap.getBoundingClientRect();
+      const lx = ((x0 + x1) / 2 / W) * wr.width;
+      const ly = (Math.min(y0, y1) / BCX.H) * wr.height;
+      lab.style.left = Math.min(Math.max(lx - 68, 4), wr.width - 150) + 'px';
+      lab.style.top = Math.max(4, ly - 82) + 'px';
+    };
+
+    const showTip = i => {
+      const b = bars[i], cx = cxOf(i);
+      hair.setAttribute('x1', cx); hair.setAttribute('x2', cx);
+      hair.style.display = '';
+      tip.textContent = '';
+      const hd = document.createElement('div');
+      hd.className = 'd'; hd.textContent = dmy(b.d);
+      tip.appendChild(hd);
+      const row = (k, v, colr) => {
+        const r = document.createElement('div'); r.className = 'r';
+        const a = document.createElement('b');
+        a.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+        if (colr) a.style.color = colr;
+        const s = document.createElement('span'); s.textContent = k;
+        r.appendChild(a); r.appendChild(s); tip.appendChild(r);
+      };
+      const col = (b.o == null || b.c >= b.o) ? 'var(--up)' : 'var(--down)';
+      if (b.o != null) row('open', b.o);
+      row('close', b.c, col);
+      /* "loose bound" on the ratio, plain "bound" on the two indices: the
+         ratio's wick is a bound built from two bounds and runs about twice an
+         index's own, so they must not read as the same claim. */
+      const wb = side === 'ratio' ? ' (loose bound)' : ' (bound)';
+      if (b.h != null) row('high' + wb, b.h);
+      if (b.l != null) row('low' + wb, b.l);
+      const mk = t => {
+        const e = document.createElement('div');
+        e.className = 'd'; e.style.marginTop = '5px'; e.style.marginBottom = '0';
+        e.textContent = t; tip.appendChild(e);
+      };
+      /* a weekly or monthly candle is not a session, and the tooltip has to
+         say which it is or "close" reads as one day's close. */
+      if (b.sessions > 1)
+        mk(b.sessions + ' sessions, ' + dmy(b.from) + ' → ' + dmy(b.d));
+      if (b.n != null)
+        mk(b.n + ' legs at the close');
+      /* the chain skips a session whose members did not all price, so this
+         bar can absorb more than one session. The API marks the bar
+         (`skipped`) rather than the browser inferring it: a skipped session
+         leaves NO bar, so `span` is the previous bar's date either way and
+         cannot reveal the gap. Saying it stops a two-day move being read as a
+         one-day one. */
+      if ((b.skipped || []).length)
+        mk('absorbs ' + b.skipped.map(dmy).join(', ')
+           + ' — no price for every leg that session');
+      if (BIX && BIX.period && BIX.period !== 'daily')
+        mk(BIX.period + ' bar: first open, max high, min low, last close');
+      mk('vs ' + dmy(BCX_BASE[side] || '') + ' close');
+      tip.classList.add('on');
+      const wr = wrap.getBoundingClientRect();
+      const pxx = (cx / W) * wr.width;
+      tip.style.left = Math.min(Math.max(pxx + 14, 4), wr.width - 172) + 'px';
+      tip.style.top = '10px';
+    };
+
+    svg.addEventListener('mousedown', ev => {
+      ev.preventDefault();              /* no text-selection smear on drag */
+      drag = {i0: idxAt(ev)};
+      clearRule(); hideTip();
+      wrap.classList.add('measuring');
+    });
+    svg.addEventListener('mousemove', ev => {
+      const i = idxAt(ev);
+      if (drag){ if (i !== drag.i0) drawRule(drag.i0, i); return; }
+      showTip(i);
+    });
+    const finish = () => {
+      if (!drag) return;
+      drag = null; wrap.classList.remove('measuring');
+    };
+    svg.addEventListener('mouseup', finish);
+    svg.addEventListener('mouseleave', () => {
+      finish(); hideTip();               /* the ruler PERSISTS, the tip does not */
+    });
+    /* a click that never moved is a clear, the same gesture TradingView uses */
+    svg.addEventListener('click', ev => {
+      if (rule.style.display !== 'none' && !drag){
+        const i = idxAt(ev);
+        if (lab.dataset.lastClick === String(i)) clearRule();
+      }
+      lab.dataset.lastClick = String(idxAt(ev));
+    });
+  });
+
+  if (!BCX_ESC){
+    BCX_ESC = true;
+    document.addEventListener('keydown', ev => {
+      if (ev.key !== 'Escape') return;
+      document.querySelectorAll('.bcx-rule').forEach(g => {
+        g.style.display = 'none';
+      });
+      document.querySelectorAll('.bcx-lab').forEach(l => l.classList.remove('on'));
+    });
+  }
+}
+
+const bixDom = (arrs, zeroInFrame) => {
+  const v = [];
+  arrs.forEach(bars => (bars || []).forEach(b =>
+    [b.o, b.h, b.l, b.c].forEach(x => { if (x != null) v.push(x); })));
+  if (!v.length) return {lo: -1, hi: 1};
+  let lo = Math.min(...v), hi = Math.max(...v);
+  const pad = (hi - lo) * 0.07 || 1;
+  lo -= pad; hi += pad;
+  /* ZERO IS ALWAYS IN FRAME on the ratio. It is a spread about parity, and a
+     window that crops parity out hides whether the book is winning at all. */
+  return zeroInFrame ? {lo: Math.min(0, lo), hi: Math.max(0, hi)} : {lo, hi};
+};
+
+async function loadIndex(rng){
+  BIX_RANGE = rng || BIX_RANGE;
+  const host = document.getElementById('bix-host');
+  if (!host) return;
+  host.innerHTML = '<div class="loading">loading…</div>';
+  let ix;
+  try {
+    ix = await (await fetch('/api/book_index?range='
+                            + encodeURIComponent(BIX_RANGE))).json();
+  } catch (e) {
+    host.innerHTML = '<div class="hint">index unavailable</div>';
+    return;
+  }
+  BIX = ix;
+  const tabs = (ix.ranges || Object.keys(BIX_LABEL)).map(r =>
+    `<button class="ghost bcx-r${r === BIX_RANGE ? ' on' : ''}" data-r="${r}"
+      ${r === BIX_RANGE ? 'aria-pressed="true"' : ''}>${BIX_LABEL[r] || r}</button>`
+  ).join('');
+  const wire = () => host.querySelectorAll('.bcx-r').forEach(b =>
+    b.addEventListener('click', () => loadIndex(b.dataset.r)));
+
+  if (ix.error){
+    host.innerHTML = `<div class="bcx-head"><div><div class="bcx-t">Long and
+      short indices</div></div><div class="bcx-rng">${tabs}</div></div>
+      <div class="callout accent-amber"><div class="callout-head">
+      <span class="ico">⚠</span><span class="t">no index for this window</span>
+      </div><div class="hint">${esc(ix.error)}</div></div>`;
+    wire();
+    return;
+  }
+
+  /* ONE domain across BOTH indices — per-chart autoscaling would make a -1%
+     side and a -10% side look identical, and which side moved further is the
+     whole comparison. The ratio gets its own: it is a different quantity on a
+     different scale, and forcing it onto the indices' axis over a 19-year
+     window flattens it to a straight line. */
+  const shared = bixDom([ix.long.bars, ix.short.bars], false);
+  BCX_DOM.long = shared; BCX_DOM.short = shared;
+  BCX_DOM.ratio = bixDom([ix.ratio.bars], true);
+  BCX_BARS.long = ix.long.bars || []; BCX_BARS.short = ix.short.bars || [];
+  BCX_BARS.ratio = ix.ratio.bars || [];
+  BCX_BASE.long = ix.long.base_date; BCX_BASE.short = ix.short.base_date;
+  BCX_BASE.ratio = ix.ratio.base_date;
+
+  const pc = v => (v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(2) + '%');
+  const nJoin = (ix.joins || []).filter(j => j.date > ix.start).length;
+
+  host.innerHTML =
+    `<div class="bcx-head">
+       <div>
+         <div class="bcx-t">Long and short indices · equal weighted</div>
+         <div class="meta-line">1/n a side, rebalanced every session ·
+           <b>${esc(ix.period)}</b> candles · ${ix.window_bars} bars over
+           ${ix.window_sessions} of ${ix.n_sessions} sessions, rebased to the
+           ${esc(dmy(ix.long.base_date))} close ·
+           <b>long ${pc(ix.long.last)}</b> vs <b>short ${pc(ix.short.last)}</b> ·
+           long / short <b style="color:${
+             (ix.ratio.last || 0) >= 0 ? 'var(--up)' : 'var(--down)'}">${
+             pc(ix.ratio.last)}</b>
+           <span class="u">(${pc(ix.spread_last).replace('%', '')} pp apart)</span>
+           · index levels ${ix.long.level_last} / ${ix.short.level_last}
+           <span class="u">(100 at ${esc(dmy(ix.start))})</span></div>
+       </div>
+       <div class="bcx-rng">${tabs}</div>
+     </div>
+     <div class="bcx-note">↑ <b>direction only — position size is ignored.</b>
+       Every leg counts 1/n whatever it is worth, so this is the book's
+       DIRECTION, not its shape. Up is a price rise, not a profit: a green
+       candle on the short index means those stocks rose, which is a drag.
+       <span class="bcx-kbd">Drag to measure</span> close to close; Esc clears.</div>
+     ${seriesChart(ix.long, 'long', 'bix-long',
+        `LONG index · ${ix.long.n} legs today, equal weighted`)}
+     ${seriesChart(ix.short, 'short', 'bix-short',
+        `SHORT index · ${ix.short.n} legs today, equal weighted`)}
+     ${seriesChart(ix.ratio, 'ratio', 'bix-ratio',
+        'LONG / SHORT · are the longs beating the shorts',
+        {faintWicks: true, closeLine: true})}
+     <div class="bcx-foot">
+       <div><b>Membership is frozen at ${esc(dmy(ix.freeze))} and follows the
+         book after it.</b> On or before that date the roster is that
+         snapshot's, held constant — so everything left of it is a
+         <b>back-cast</b>, and survivorship-biased by construction: these are
+         the legs the book holds <em>today</em>, run backwards through years in
+         which it did not hold them. After that date the roster comes from each
+         new snapshot, so the index follows positions on and off.
+         ${(ix.changes || []).length
+           ? `<b>${ix.changes.length} change${ix.changes.length === 1 ? '' : 's'}
+              since:</b> ` + ix.changes.map(c => `${esc(dmy(c.date))}
+              ${esc(c.name)} <span class="u">${c.event === 'in' ? 'in' : 'out'},
+              ${c.side === 'L' ? 'long' : 'short'}</span>`).join(' · ')
+           : `No position has changed since, so the live half of the series is
+              ${ix.snapshots} snapshot${ix.snapshots === 1 ? '' : 's'} long and
+              has not yet been exercised.`}</div>
+       <div><b>Each leg joins on its own listing date, and never contributes a
+         return on its first day.</b> ${nJoin} of the legs list after
+         ${esc(dmy(ix.start))}, so <b>n grows</b> across the window —
+         ${(ix.composition || []).length
+            ? `${ix.composition[0].long} long / ${ix.composition[0].short} short
+               at the start, ${ix.long.n} / ${ix.short.n} now`
+            : ''}. When a leg joins, every other leg's weight falls: this is
+         <b>not a constant-composition index</b> and must not be read as one.
+         A leg counts from the session AFTER its first close, or a listing-day
+         pop at a price nobody in the book paid would enter as performance.</div>
+       <div><b>Long / short is a ratio, not the gap between the two charts.</b>
+         It divides by where the short index actually is, so it is a true
+         percent; the two being ${pc(ix.spread_last).replace('%', '')} pp apart
+         is a different quantity and is labelled pp. Over the full history
+         those read <b>+17.6%</b> and <b>+431pp</b> — the same distinction the
+         ruler makes, at the scale that makes it matter.</div>
+       <div><b>Bodies are exact, wicks are bounds.</b> The legs open and close
+         together, so the mean of the opens is the index's own; their highs are
+         not simultaneous, so the mean of the highs is an upper bound on the
+         index's true high. It holds for any weights, so 1/n changes nothing —
+         and the ruler will not snap to them. The ratio's wick is a bound built
+         from two bounds and is drawn fainter still.</div>
+       ${ix.period === 'daily' ? '' : `<div><b>These are ${esc(ix.period)}
+         candles, and the aggregation is exact.</b> ${ix.window_sessions}
+         sessions roll into ${ix.window_bars} bars — open is the period's first
+         open, high the max, low the min, close the last. <b>Every session
+         still contributes</b>; nothing is sampled or thinned, which would be a
+         silent lie about the path. A daily candle over this window would be
+         ${(934 / ix.window_sessions).toFixed(2)}px wide. The wick means what
+         it meant daily: the max of upper bounds is still an upper bound.</div>`}
+       <div><b>The ruler's % is not the axis gap.</b> The axis is already a
+         percentage, so the distance between two points is percentage POINTS.
+         The % change divides by the level where you started, not by the rebase
+         date — +3% to +8% is 5.00pp but a <b>+4.85%</b> move, and the two
+         diverge further the further the chart has travelled. Both are shown,
+         both labelled.</div>
+       <div><b>History starts ${esc(dmy(ix.start))} on purpose.</b> Before 2007
+         the Yahoo history for these names carries unadjusted corporate actions
+         and bad prints — Tata Steel −86.8% (2004-04-27), UltraTech −75.6%
+         (the 2004 Grasim cement demerger), Hindustan Zinc +5,575% (2006-11-21),
+         and five <em>identical</em> +949.6% jumps in Tata Steel between 1996
+         and 1999. From 2007 the only one-day move above 35% anywhere in the
+         book is VEDL's real 2026-04-30 demerger.</div>
+       ${(ix.actions_dropped || []).length ? `<div><b>Confirmed corporate
+         actions dropped from the day's mean (${ix.actions_dropped.length}):</b>
+         ${ix.actions_dropped.map(a => `${esc(dmy(a.date))} ${esc(a.name)}`)
+            .join(' · ')}. The allow-list is hand-verified, so an
+         <b>unverified</b> jump is still a real market move and is drawn
+         through — the 2008 crash and the 2020 COVID moves stay in.</div>` : ''}
+       ${(ix.phantom_sessions || []).length ? `<div><b>Dropped as
+         non-sessions (${ix.phantom_sessions.length}):</b>
+         ${ix.phantom_sessions.map(x => esc(dmy(x.date))).join(', ')} — every
+         member priced with <b>no range and zero volume</b>, i.e. the exchange
+         was shut and the feed answered anyway. Left in, each injects a
+         guaranteed flat session, and the names with no placeholder would then
+         measure the next session over two days while the rest measured one.
+         <b>The rows are still in <code>prices</code></b> — this cleans only
+         what the index reads.</div>` : ''}
+       ${(ix.thin_sessions || []).length ? `<div><b>Below the session quorum
+         (${ix.thin_sessions.length}):</b> ${ix.thin_sessions.map(x =>
+           `${esc(dmy(x.date))} <span class="u">${x.printed} of ${x.listed}
+            legs priced</span>`).join(' · ')} — not enough of the book traded
+         for the date to be a session at all. ${esc(dmy(ix.thin_sessions[0].date))}
+         is a Saturday special session that one name carries.</div>` : ''}
+       ${(ix.skipped_sessions || []).length ? `<div><b>Sessions skipped for a
+         missing price (${ix.skipped_sessions.length}):</b>
+         ${ix.skipped_sessions.map(x => `${esc(dmy(x.date))}
+            <span class="u">${x.side === 'L' ? 'long' : 'short'} — ${
+            esc((x.missing || []).join(', '))}</span>`).join(' · ')}. A session
+         is all-or-nothing: if one listed member has no close the bar is not
+         drawn and the chain runs on to the next session where every member
+         prices, so the interval widens but stays common to all of them.
+         Averaging over whoever happened to print would move the index on a
+         data gap rather than on a price. <b>These are holes in Yahoo's data,
+         not fetches that failed.</b></div>` : ''}
+       ${(ix.no_history || []).length ? `<div class="warn"><b>In the book but
+         priced by nothing (${ix.no_history.length}):</b>
+         ${esc(ix.no_history.join(', '))} — mapped to an entity with no symbol
+         in <code>yahoo_prices.CANDIDATES</code>, so the index cannot include
+         them and <b>would otherwise drop them in silence</b>: a leg with no
+         price is skipped as "not yet listed", which holds up no session and
+         records no gap. Add the symbol and backfill with
+         <code>--load --only &lt;id&gt; --range 2007-01-01</code>.</div>` : ''}
+       ${(ix.unmapped || []).length ? `<div class="warn"><b>Unmapped legs:</b>
+         ${esc(ix.unmapped.join(', '))} — add them to
+         <code>specs/book.yaml ticker_map</code> or they stay out of the
+         index.</div>` : ''}
+     </div>`;
+  wire();
+  wireCandles();
 }
 
 /* ===================== flows =====================
@@ -3361,6 +4362,23 @@ async function loadSector(){
      morning after it says yes. Calibrating is rendered as a state, not as
      absence: an empty panel would read as "no move", which is the one thing
      an uncalibrated watch cannot claim. */
+  /* VAHAN MAKER SHARE — auto only (PM, 2026-09-23: "in the auto tab, I need a
+     graph for market share change on a daily basis. Different for PV, 2
+     wheelers and CV. Only include fno names in the graph lines, keep rest as
+     others"). Three stacked charts, one per segment, drawn with the same
+     lineChart() as everything else.
+
+     It renders on `auto` ALONE. An empty box on the other sectors would read
+     as a broken query — the cement-ask rule.
+
+     The placeholders are filled after the width pass, like the price chart, so
+     the scrollbar state is settled before the measurement is taken. */
+  let autoHtml = '';
+  if (SECTOR === 'auto'){
+    autoHtml = '<h2>Maker share · Vahan registrations</h2>'
+      + '<div id="autoshare-box"><div class="hint">loading…</div></div>';
+  }
+
   let watchHtml = '';
   if (d.watch && d.watch.state !== 'no_data' && d.watch.state !== 'error'){
     const w = d.watch;
@@ -3767,6 +4785,7 @@ async function loadSector(){
   $('#s-sector').innerHTML = `
     ${buildNote}
     ${estHtml}
+    ${autoHtml}
     ${chartHtml}
     ${watchHtml}
     <h2>${esc(d.label)} inputs · ${d.n_priced}/${d.n_total} priced</h2>
@@ -3783,6 +4802,7 @@ async function loadSector(){
   // After insertion — the hover layer needs the SVG in the DOM. (`unc` above
   // was also built-but-never-rendered until the chart landed here.)
   if (chartHtml) wireChart('sectorpx');
+  if (autoHtml) await drawAutoShare();
   if (ESTV) wireEstScatter();
   // The history picker: a changed date refetches the whole sector view with
   // est_date, so table, scatter, BBG re-mark and drift all replay together.
@@ -3822,14 +4842,742 @@ async function loadSector(){
 
 let TODAY = null;
 
+
+/* ------------------------------------------------------------------ Company
+   Per-company coverage, built from earnings-call transcripts ALONE. It feeds
+   no pillar and no score — it is the read-in-depth surface, deliberately kept
+   off every scoring path (invariant 7 is untouched because nothing here
+   reaches pillar_scores). Since 2026-09-16 it is the "Company historical
+   analysis" sub-view of EACH SECTOR, never a top-level tab (PM: "sits out
+   like a sore spot. Keep it within the sectors only"); the roster the
+   picker offers is the current sector's dossiers alone.
+
+   Three rules the layout encodes:
+   - THE GUIDANCE LEDGER LEADS. What management promised and whether it landed
+     is the one thing a transcript archive can say that a price series cannot.
+   - A FLAG IS RENDERED, NEVER SWALLOWED. Where two calls state the same
+     figure differently the dossier carries both and the page prints the
+     conflict; a quietly-picked number is the silent-arithmetic shape.
+   - WHAT IS MISSING IS NAMED. Shareholding, market share and valuation are
+     absent because a transcript cannot carry them — shown as a list of holes
+     with the document that would fill each, never omitted. */
+/* Remembered pick PER SECTOR, so switching Steel -> EMS -> Steel comes back
+   to the same name; a slug from another sector is never sent for this one
+   (the API would fall back silently to the sector's first, hiding the mix). */
+const COMPANY_SLUG_BY_SECTOR = {};
+
+const VERDICT_CHIP = {beat:'c-up', met:'c-up', miss:'c-down', pending:'c-flat'};
+
+function cNum(v, d=0){
+  return v == null ? '—'
+    : v.toLocaleString('en-IN', {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function cPct(v, d=1){
+  return v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(d) + '%';
+}
+function flagMark(f){
+  return f ? ' <span class="chip c-warn" title="' + esc(f) + '">flagged</span>' : '';
+}
+
+/* A sparkline over a numeric series. Hand-rolled SVG, same as everything else
+   on this page — no CDN. Returns '' for a series too short to have a shape,
+   because a two-point "trend" line asserts more than it knows. */
+function cSpark(vals, w=132, h=30){
+  const v = vals.filter(x => x != null);
+  if (v.length < 3) return '';
+  const lo = Math.min(...v), hi = Math.max(...v), rng = (hi - lo) || 1;
+  const pts = v.map((y,i) =>
+    (i/(v.length-1)*(w-2)+1).toFixed(1) + ',' +
+    (h-1-((y-lo)/rng)*(h-2)).toFixed(1)).join(' ');
+  const up = v[v.length-1] >= v[0];
+  return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '"'
+    + ' aria-hidden="true" style="vertical-align:middle"><polyline points="' + pts + '"'
+    + ' fill="none" stroke="' + (up ? 'var(--up)' : 'var(--down)') + '"'
+    + ' stroke-width="1.5" stroke-linejoin="round"/></svg>';
+}
+
+
+/* ---------------------------------------------------- Company: the narrative
+   PM instruction 2026-09-14: *"a backward looking company analysis over the
+   history of the company. Any relevant news and earnings or raw material
+   change can look to somehow explain the share price movement."*
+
+   So the price is the SPINE and everything else hangs off it. The chart is
+   annotated with the eight chapters; each chapter says what happened, what
+   the market did, and how confident the attribution is.
+
+   TWO HONESTY RULES, both visible on the page:
+   - An unattributed move is LISTED as unattributed. Seven sessions moved 8%+
+     with nothing in the transcript archive to explain them, because calls
+     happen four times a year and news flow does not. Inventing a reason for
+     those would devalue the eleven that are real.
+   - A market-wide move is labelled as one. The deepest drawdown here
+     (-39.7%) carried zero company information; a dossier that only reads
+     company documents would have mistaken it for a signal. */
+
+function chapterChart(d){
+  const ps = d.price_series || [];
+  const ch = ((d.narrative || {}).chapters) || [];
+  if (ps.length < 10) return '';
+  const W = 900, H = 240, PL = 52, PR = 12, PT = 14, PB = 26;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const t0 = Date.parse(ps[0][0]), t1 = Date.parse(ps[ps.length-1][0]);
+  const lo = 0, hi = Math.max(...ps.map(p => p[1])) * 1.04;
+  const X = t => PL + (Date.parse(t) - t0) / (t1 - t0) * iw;
+  const Y = v => PT + ih - (v - lo) / (hi - lo) * ih;
+
+  // Chapter bands, alternating so the eye can separate them without colour
+  // carrying meaning - an up chapter and a down chapter must not be told
+  // apart by the band, only by the line inside it.
+  const bands = ch.map((c,i) =>
+    '<rect x="' + X(c.from).toFixed(1) + '" y="' + PT + '" width="'
+    + Math.max(0, X(c.to) - X(c.from)).toFixed(1) + '" height="' + ih
+    + '" fill="' + (i % 2 ? 'var(--sunken)' : 'transparent') + '" opacity=".55"/>'
+    + '<text x="' + (X(c.from) + 3).toFixed(1) + '" y="' + (PT + 11)
+    + '" font-size="9" fill="var(--faint)" font-family="var(--mono)">' + c.n + '</text>').join('');
+
+  const path = ps.map((p,i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' '
+    + Y(p[1]).toFixed(1)).join(' ');
+
+  // Earnings markers: a tick per call, coloured by the one-day reaction, and
+  // sized by it - a +-20% day must not look like a +-1% day.
+  const marks = ((d.narrative || {}).earnings_reactions || []).map(r => {
+    const x = X(r.date), big = Math.abs(r.d1) >= 8;
+    const col = r.d1 > 0 ? 'var(--up)' : 'var(--down)';
+    return '<line x1="' + x.toFixed(1) + '" y1="' + (PT + ih) + '" x2="' + x.toFixed(1)
+      + '" y2="' + (PT + ih - (big ? 16 : 7)) + '" stroke="' + col
+      + '" stroke-width="' + (big ? 2.2 : 1) + '" opacity="' + (big ? .95 : .5) + '">'
+      + '<title>' + esc(r.q + ' ' + r.date + '  1d ' + (r.d1 >= 0 ? '+' : '')
+      + r.d1.toFixed(1) + '%\n' + r.note) + '</title></line>';
+  }).join('');
+
+  // Ticks are DERIVED from the series, not a fixed ladder. The first company
+  // here traded in the hundreds, so 0/500/1000/1500/2000 read fine; a name
+  // trading near 180 got a single tick at zero and an axis that said nothing.
+  const tickStep = [1,2,5,10,20,25,50,100,200,250,500,1000,2000,5000]
+    .find(s => hi / s <= 6) || 10000;
+  const ticks = Array.from({length: Math.floor(hi / tickStep) + 1},
+    (_, i) => i * tickStep).map(v =>
+    '<line x1="' + PL + '" y1="' + Y(v).toFixed(1) + '" x2="' + (W - PR)
+    + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--hair)" stroke-width="1"/>'
+    + '<text x="' + (PL - 6) + '" y="' + (Y(v) + 3).toFixed(1)
+    + '" text-anchor="end" font-size="10" fill="var(--faint)"'
+    + ' font-family="var(--mono)">' + v + '</text>').join('');
+
+  // Year gridlines likewise come from the window actually plotted.
+  const y0 = new Date(t0).getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
+  const yrs = Array.from({length: Math.max(0, y1 - y0 + 1)},
+    (_, i) => (y0 + i) + '-01-01').filter(
+    y => Date.parse(y) > t0 && Date.parse(y) < t1).map(y =>
+    '<text x="' + X(y).toFixed(1) + '" y="' + (H - 8)
+    + '" text-anchor="middle" font-size="10" fill="var(--faint)"'
+    + ' font-family="var(--mono)">' + y.slice(0,4) + '</text>');
+
+  return '<div class="panel"><svg viewBox="0 0 ' + W + ' ' + H
+    + '" style="width:100%;height:auto" role="img"'
+    + ' aria-label="' + esc(d.company || 'Share') + ' price, annotated by chapter">'
+    + bands + ticks
+    + '<path d="' + path + '" fill="none" stroke="var(--accent)" stroke-width="1.6"'
+    + ' stroke-linejoin="round"/>' + marks + yrs.join('')
+    + '</svg><div class="hint">Weekly closes, INR. Numbered bands are the '
+    + 'chapters below. Ticks on the axis are earnings calls, coloured by the '
+    + 'one-day reaction and thickened where it exceeded 8% — hover for the '
+    + 'quarter. ' + esc(((d.narrative || {}).chart_note)
+        || 'The price is unadjusted and there has been no corporate action '
+         + 'in this window.') + '</div></div>';
+}
+
+function companyNarrative(d){
+  const n = d.narrative;
+  if (!n) return '';
+  const h = n.headline || {};
+
+  const ev = (n.the_central_evidence || {});
+  const evRows = (ev.rows || []).map(r =>
+    '<tr><td class="k">' + esc(r.year) + '</td>'
+    + '<td class="n">' + (r.revenue_growth_pct == null ? '—'
+        : cPct(r.revenue_growth_pct)) + '</td>'
+    + '<td class="n" style="color:' + (r.share_return_pct >= 0 ? 'var(--up)' : 'var(--down)')
+    + '">' + cPct(r.share_return_pct) + '</td>'
+    + '<td>' + esc(r.read) + '</td></tr>').join('');
+
+  const rm = n.raw_materials_verdict || {};
+  const rmRows = (rm.correlations_21d || []).map(r =>
+    '<tr><td class="k">' + esc(r.series) + '</td><td class="n">'
+    + r.corr.toFixed(3) + '</td></tr>').join('');
+
+  const ATTR = {high:'c-up', partial:'c-warn'};
+  const chapters = (n.chapters || []).map(c => {
+    const cls = ATTR[c.attribution] || 'c-flat';
+    return '<div class="panel" style="margin-bottom:12px">'
+      + '<div class="callout-head"><span class="ico">' + c.n + '</span>'
+      + '<span class="t">' + esc(c.title) + '</span>'
+      + '<span class="right" style="color:'
+      + (c.move_pct >= 0 ? 'var(--up)' : 'var(--down)') + '">'
+      + cPct(c.move_pct) + '</span></div>'
+      + '<div class="hint">' + esc(c.from) + ' → ' + esc(c.to) + ' · '
+      + cNum(c.px_from) + ' → ' + cNum(c.px_to) + ' · ' + c.sessions + ' sessions · '
+      + 'attribution <span class="chip ' + cls + '">' + esc(c.attribution) + '</span></div>'
+      + '<ul class="plist">'
+      + '<li><b>What happened.</b> ' + esc(c.what_happened) + '</li>'
+      + '<li><b>What the market did.</b> ' + esc(c.what_the_market_did) + '</li>'
+      + '<li><b>The lesson.</b> ' + esc(c.lesson) + '</li></ul></div>';
+  }).join('');
+
+  const reacts = (n.earnings_reactions || []).map(r =>
+    '<tr><td class="k">' + esc(r.q) + '</td><td class="k">' + esc(r.date) + '</td>'
+    + ['d1','d5','d20'].map(k => '<td class="n" style="color:'
+        + (r[k] >= 0 ? 'var(--up)' : 'var(--down)') + '">' + cPct(r[k]) + '</td>').join('')
+    + '<td>' + esc(r.note) + '</td></tr>').join('');
+
+  const unex = (n.big_moves_unexplained || []).map(r =>
+    '<tr><td class="k">' + esc(r.date) + '</td>'
+    + '<td class="n" style="color:' + (r.move_pct >= 0 ? 'var(--up)' : 'var(--down)')
+    + '">' + cPct(r.move_pct) + '</td><td>' + esc(r.note) + '</td></tr>').join('');
+
+  const lessons = (n.standing_lessons || []).map(x =>
+    '<li>' + esc(x) + '</li>').join('');
+
+  return '<div class="sechead">The price, and what explains it</div>'
+    + '<div class="meta-line">' + esc(h.span_label || 'Listed') + ' '
+    + esc(h.listed) + ' at INR ' + cNum(h.first_close,1)
+    + ' · last INR ' + cNum(h.last_close,1) + ' (' + esc(h.last_date) + ') · '
+    + '<b style="color:var(--up)">' + cPct(h.total_return_pct,1) + '</b> over '
+    + h.sessions + ' sessions · high INR ' + cNum(h.all_time_high,1)
+    + ' on ' + esc(h.all_time_high_date) + '</div>'
+    + '<div class="callout accent-green"><div class="callout-head">'
+    + '<span class="ico">&#9670;</span><span class="t">The thesis in one paragraph</span></div>'
+    + '<div style="font-size:var(--t-body)">' + esc(n.thesis) + '</div></div>'
+    + chapterChart(d)
+
+    + '<div class="sechead">' + esc(ev.heading
+        || 'Delivery versus the share price — they barely relate') + '</div>'
+    + '<div class="meta-line">' + esc(ev.claim || '') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>year</th>'
+    + '<th class="n">' + esc(ev.metric_label || 'revenue growth') + '</th>'
+    + '<th class="n">share return</th>'
+    + '<th>read</th></tr></thead><tbody>' + evRows + '</tbody></table></div></div>'
+
+    + '<div class="sechead">The history, chapter by chapter</div>'
+    + '<div class="meta-line">' + esc(n.chapters_note
+        || ((n.chapters || []).length + ' windows, each bounded by a real turning '
+            + 'point in the price rather than by the calendar.')) + '</div>'
+    + chapters
+
+    + '<div class="sechead">Every earnings reaction</div>'
+    + '<div class="meta-line">' + esc(n.reactions_note
+        || 'Move from the close BEFORE the call.') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>quarter</th>'
+    + '<th>call date</th><th class="n">1d</th><th class="n">5d</th>'
+    + '<th class="n">20d</th><th>what it was</th></tr></thead><tbody>'
+    + reacts + '</tbody></table></div></div>'
+
+    + '<div class="sechead">' + esc(rm.heading
+        || 'Raw materials: tested, and they do not explain it') + '</div>'
+    + '<div class="callout"><div class="callout-head"><span class="ico">&#8709;</span>'
+    + '<span class="t">' + esc(rm.finding || '') + '</span></div>'
+    + '<div style="font-size:var(--t-body)">' + esc(rm.regime_test || '') + '</div>'
+    + '<ul class="plist"><li><b>Why.</b> ' + esc(rm.mechanism || '') + '</li>'
+    + '<li><b>The two mild negatives.</b> ' + esc(rm.the_two_negatives || '') + '</li>'
+    + '<li><b>Watch instead.</b> ' + esc(rm.what_to_watch_instead || '') + '</li></ul></div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr>'
+    + '<th>input series</th><th class="n">corr. with 21d share return</th>'
+    + '</tr></thead><tbody>' + rmRows + '</tbody></table></div></div>'
+
+    + '<div class="sechead">Moves this archive cannot explain</div>'
+    + '<div class="meta-line">' + esc(n.big_moves_note || '') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>date</th>'
+    + '<th class="n">move</th><th>note</th></tr></thead><tbody>' + unex
+    + '</tbody></table></div></div>'
+
+    + '<div class="sechead">What this name teaches</div>'
+    + '<div class="callout accent-green"><ul class="plist">' + lessons + '</ul></div>';
+}
+
+function companyGuidance(g, calls){
+  if (!g || !g.length) return '';
+  const order = {miss:0, pending:1, beat:2, met:3};
+  const rows = g.slice().sort((a,b) => (order[a.verdict]??9) - (order[b.verdict]??9))
+    .map(x => {
+      const rev = (x.revisions || []).map(r =>
+        '<div class="hint" style="margin-left:2px">&#8627; ' + esc(r.on) + ': ' + esc(r.to)
+        + (r.why ? ' — ' + esc(r.why) : '') + '</div>').join('');
+      return '<tr>'
+        + '<td class="k">' + esc(x.id) + '</td>'
+        + '<td>' + esc(x.metric)
+        + '<div class="hint">guided ' + esc(x.guided_on) + ' · resolves ' + esc(x.resolves) + '</div></td>'
+        + '<td>' + esc(x.guided) + rev + '</td>'
+        + '<td>' + (x.actual == null ? '<span class="hint">not yet</span>' : esc(x.actual)) + '</td>'
+        + '<td><span class="chip ' + (VERDICT_CHIP[x.verdict] || 'c-flat') + '">'
+        + esc(x.verdict) + '</span></td></tr>'
+        + (x.note ? '<tr><td></td><td colspan="4" class="hint" style="padding-top:0">'
+            + esc(x.note) + '</td></tr>' : '');
+    }).join('');
+  const n = v => g.filter(x => x.verdict === v).length;
+  return '<div class="sechead">Guidance ledger — what was promised, and what landed</div>'
+    + '<div class="meta-line">' + g.length + ' commitments harvested from '
+    + (calls || 14) + ' calls · <span class="chip c-down">' + n('miss') + ' miss</span> '
+    + '<span class="chip c-up">' + n('beat') + ' beat</span> '
+    + '<span class="chip c-up">' + n('met') + ' met</span> '
+    + '<span class="chip c-flat">' + n('pending') + ' pending</span>'
+    + ' — misses first. A commitment that was revised is graded against the '
+    + 'ORIGINAL, never against the reset.</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>id</th>'
+    + '<th>metric</th><th>guided</th><th>actual</th><th>verdict</th></tr></thead>'
+    + '<tbody>' + rows + '</tbody></table></div></div>';
+}
+
+function companyPnl(d){
+  const q = d.qoq_pnl || [];
+  const rows = q.map(r =>
+    '<tr><td class="k">' + esc(r.period) + flagMark(r.flag) + '</td>'
+    + '<td class="n">' + cNum(r.revenue) + '</td>'
+    + '<td class="n">' + cNum(r.gross_margin_pct,1) + '</td>'
+    + '<td class="n">' + cNum(r.ebitda,1) + '</td>'
+    + '<td class="n">' + cNum(r.ebitda_margin_pct,1) + '</td>'
+    + '<td class="n" style="color:' + (r.pat>=0?'var(--up)':'var(--down)') + '">'
+    + cNum(r.pat,1) + '</td>'
+    + '<td class="n">' + cNum(r.pat_margin_pct,1) + '</td></tr>'
+    + '<tr><td></td><td colspan="6" class="hint" style="padding-top:0">'
+    + esc(r.call_highlights || '') + '</td></tr>').join('');
+  const fy = (d.fy_pnl || []).map(r =>
+    '<tr><td class="k">' + esc(r.period) + flagMark(r.flag) + '</td>'
+    + '<td class="n">' + cNum(r.revenue) + '</td>'
+    + '<td class="n">' + (r.yoy_pct==null?'—':cPct(r.yoy_pct)) + '</td>'
+    + '<td class="n">' + cNum(r.gross_margin_pct,1) + '</td>'
+    + '<td class="n">' + cNum(r.ebitda_margin_pct,1) + '</td>'
+    + '<td class="n">' + cNum(r.pat,0) + '</td>'
+    + '<td class="n">' + cNum(r.pat_margin_pct,1) + '</td></tr>').join('');
+  // The margin column is named by the dossier. Indian IT reports EBIT /
+  // operating margin, not EBITDA; the columns keep their `ebitda*` keys for
+  // the store's sake, but a heading that says EBITDA over an EBIT number is
+  // the silent-mislabel shape (IT dossiers, 2026-09-16). Default keeps the
+  // Avalon/steel behaviour unchanged.
+  const ml = d.pnl_margin_label || 'EBITDA';
+  return '<div class="sechead">P&amp;L, call to call</div>'
+    // Unit comes from the dossier where given: Avalon reports in INR cr,
+    // Coforge in USD m. A hardcoded label would have relabelled $278m as cr.
+    + '<div class="meta-line">' + esc(d.pnl_unit || 'INR cr')
+    + ', consolidated as stated on each call. '
+    + cSpark(q.map(r=>r.revenue)) + ' revenue · '
+    + cSpark(q.map(r=>r.ebitda_margin_pct)) + ' ' + esc(ml) + ' margin</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>quarter</th>'
+    + '<th class="n">revenue</th><th class="n">GM %</th><th class="n">' + esc(ml) + '</th>'
+    + '<th class="n">' + esc(ml) + ' %</th><th class="n">PAT</th><th class="n">PAT %</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table></div></div>'
+    + '<div class="sechead">Full years</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>year</th>'
+    + '<th class="n">revenue</th><th class="n">YoY</th><th class="n">GM %</th>'
+    + '<th class="n">' + esc(ml) + ' %</th><th class="n">PAT</th><th class="n">PAT %</th>'
+    + '</tr></thead><tbody>' + fy + '</tbody></table></div></div>';
+}
+
+function companySeries(d){
+  const ob = d.order_book || [];
+  const obRows = ob.map(r => '<tr><td class="k">' + esc(r.date) + '</td>'
+    + '<td class="n">' + cNum(r.firm) + '</td>'
+    + '<td class="n">' + (r.long_term==null?'—':cNum(r.long_term)) + '</td></tr>').join('');
+  const wc = d.working_capital || [];
+  const wcRows = wc.map(r => '<tr><td class="k">' + esc(r.date) + flagMark(r.flag) + '</td>'
+    + '<td class="n">' + cNum(r.nwc) + '</td><td class="n">' + cNum(r.inventory) + '</td>'
+    + '<td class="n">' + cNum(r.receivables) + '</td>'
+    + '<td class="n">' + cNum(r.payables) + '</td></tr>').join('');
+  const ms = d.manufacturing_split || [];
+  const msRows = ms.map(r => '<tr><td class="k">' + esc(r.period) + '</td>'
+    + '<td class="n">' + cNum(r.india_pct,0) + '</td>'
+    + '<td class="n">' + cNum(r.us_pct,0) + '</td>'
+    + '<td class="n">' + (r.india_ebitda_pct==null?'—':cNum(r.india_ebitda_pct,1)) + '</td>'
+    + '<td class="n" style="color:var(--down)">'
+    + (r.us_loss_cr==null?'—':cNum(r.us_loss_cr,1)) + '</td></tr>').join('');
+  // Each block renders only when the company HAS that series. Order books and
+  // an India/US manufacturing split are real for a contract manufacturer and
+  // meaningless for an integrated steelmaker; an empty table with a confident
+  // heading over it is worse than no section at all.
+  return (ob.length ? '<div class="sechead">Order book</div>'
+    + '<div class="meta-line">INR cr. ' + cSpark(ob.map(r=>r.firm)) + ' '
+    + esc(d.order_book_note || '') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>as of</th>'
+    + '<th class="n">firm (12–14m)</th><th class="n">long-term (15–36m)</th>'
+    + '</tr></thead><tbody>' + obRows + '</tbody></table></div></div>' : '')
+    + (wc.length ? '<div class="sechead">Working capital, days</div>'
+    + '<div class="meta-line">' + cSpark(wc.map(r=>r.nwc)) + ' '
+    + esc(d.working_capital_note
+        || '148 → 112 days over the series. The one operational promise management '
+         + 'has beaten every year since FY25.') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>as of</th>'
+    + '<th class="n">NWC</th><th class="n">inventory</th><th class="n">receivables</th>'
+    + '<th class="n">payables</th></tr></thead><tbody>' + wcRows
+    + '</tbody></table></div></div>' : '')
+    + (ms.length ? '<div class="sechead">Where it is manufactured</div>'
+    + '<div class="callout accent-amber"><div class="callout-head"><span class="ico">&#9888;</span>'
+    + '<span class="t">' + esc(d.manufacturing_split_heading
+        || 'The strategy reversed, and no call said so') + '</span></div>'
+    + '<div style="font-size:var(--t-body)">' + esc(d.manufacturing_split_note || '')
+    + '</div></div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>period</th>'
+    + '<th class="n">India mfg %</th><th class="n">US mfg %</th>'
+    + '<th class="n">India EBITDA %</th><th class="n">US loss (cr)</th>'
+    + '</tr></thead><tbody>' + msRows + '</tbody></table></div></div>' : '');
+}
+
+/* Where the EBITDA actually comes from, by geography. Added for the second
+   company in this repo: for a group whose earnings recovery was mostly an
+   overseas loss going away, no other table says what happened. Local currency
+   as reported per leg — deliberately NOT converted, because the conversion
+   would invent precision the calls never gave. */
+function companyGeography(d){
+  const g = d.geography_pnl || [];
+  if (!g.length) return '';
+  const legs = d.geography_legs || [];
+  const rows = g.map(r =>
+    '<tr><td class="k">' + esc(r.period) + '</td>'
+    + legs.map(l => {
+        const v = r[l.key];
+        return '<td class="n" style="color:' + (v == null ? 'var(--faint)'
+          : v >= 0 ? 'var(--up)' : 'var(--down)') + '">'
+          + (v == null ? '—' : cNum(v, l.dp == null ? 0 : l.dp)) + '</td>';
+      }).join('')
+    + '<td>' + esc(r.note || '') + '</td></tr>').join('');
+  return '<div class="sechead">' + esc(d.geography_heading
+      || 'EBITDA by geography') + '</div>'
+    + '<div class="meta-line">' + esc(d.geography_note || '') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>period</th>'
+    + legs.map(l => '<th class="n">' + esc(l.label) + '</th>').join('')
+    + '<th>what moved it</th></tr></thead><tbody>' + rows
+    + '</tbody></table></div></div>';
+}
+
+function companyTimelines(d){
+  const risk = (d.risks_trends || []).map(r => {
+    const cls = {rising:'c-up', resolved:'c-flat', fading:'c-flat', stable:'c-flat'}[r.trajectory]
+      || (r.kind === 'risk' ? 'c-down' : 'c-flat');
+    const ev = (r.evidence || []).map(e =>
+      '<li>' + esc(e.period) + ' — &ldquo;' + esc(e.quote) + '&rdquo;</li>').join('');
+    return '<div style="margin:0 0 14px"><div><b>' + esc(r.item) + '</b> '
+      + '<span class="chip ' + (r.kind==='risk'?'c-down':'c-up') + '">' + esc(r.kind) + '</span> '
+      + '<span class="chip ' + cls + '">' + esc(r.trajectory) + '</span> '
+      + '<span class="hint">' + esc(r.first_seen) + ' → ' + esc(r.last_seen) + '</span></div>'
+      + '<ul class="plist">' + ev + '</ul></div>';
+  }).join('');
+
+  const st = (d.strategy_timeline || []).map(r => {
+    const cls = {realised:'c-up', commissioned:'c-up', announced:'c-warn',
+                 abandoned:'c-down'}[r.realisation] || 'c-flat';
+    return '<tr><td class="k">' + esc(r.date) + '</td><td>' + esc(r.title)
+      + '<div class="hint">' + esc(r.detail||'') + '</div>'
+      + (r.note ? '<div class="hint" style="color:var(--warn)">' + esc(r.note) + '</div>' : '')
+      + '</td><td class="k">' + esc(r.type) + '</td>'
+      + '<td><span class="chip ' + cls + '">' + esc(r.realisation) + '</span></td></tr>';
+  }).join('');
+
+  const ev = (d.industry_events || []).map(r => {
+    const cls = {positive:'c-up', negative:'c-down', mixed:'c-warn'}[r.impact] || 'c-flat';
+    return '<tr><td class="k">' + esc(r.date) + '</td><td>' + esc(r.title)
+      + '<div class="hint">' + esc(r.detail||'') + '</div></td>'
+      + '<td><span class="chip ' + cls + '">' + esc(r.impact) + '</span></td></tr>';
+  }).join('');
+
+  return '<div class="sechead">Risks &amp; trends — what kept being flagged</div>'
+    + '<div class="meta-line">Trajectory is justified by the evidence trail below it — '
+    + 'count and tone of mentions across the '
+    + (((d.narrative || {}).earnings_reactions || []).length || 14)
+    + ' calls, never a judgement typed over the top.</div>'
+    + '<div class="panel">' + risk + '</div>'
+    + '<div class="sechead">Strategy — what the company chose to do</div>'
+    + '<div class="meta-line">Tracked to REALISATION, not announcement. An item stuck '
+    + 'at &ldquo;announced&rdquo; is the finding.</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>date</th>'
+    + '<th>event</th><th>type</th><th>status</th></tr></thead><tbody>' + st
+    + '</tbody></table></div></div>'
+    + '<div class="sechead">Industry events — what happened to it</div>'
+    + '<div class="meta-line">Exogenous only. The test: could management have decided '
+    + 'otherwise? If yes it sits in the strategy table instead.</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>date</th>'
+    + '<th>event</th><th>impact</th></tr></thead><tbody>' + ev
+    + '</tbody></table></div></div>';
+}
+
+function companyMixAndGaps(d){
+  // Vertical labels come from the dossier where given; the fallback is the
+  // EMS set the first company used.
+  const cols = d.segment_mix_cols || [
+    {key:'industrial', label:'industrial'}, {key:'mobility', label:'mobility'},
+    {key:'rail', label:'rail'}, {key:'aerospace', label:'aerospace'},
+    {key:'clean_energy', label:'clean energy'},
+    {key:'communication', label:'comms'}, {key:'medical', label:'medical'}];
+  const mix = (d.segment_mix || []).map(r =>
+    '<tr><td class="k">' + esc(r.period) + '</td>'
+    + cols.map(c => '<td class="n">' + (r[c.key]==null?'—':r[c.key]+'%') + '</td>').join('')
+    + '</tr>').join('');
+
+  const bbRow = (d.box_build_pct || []).map(r =>
+    '<span class="pill">' + esc(r.period) + ' ' + r.value + '%</span>').join(' ');
+
+  const ce = (d.capital_efficiency || []).map(r =>
+    '<tr><td class="k">' + esc(r.period) + '</td>'
+    + '<td class="n">' + (r.asset_turns==null?'—':r.asset_turns.toFixed(1)+'x') + '</td>'
+    + '<td class="n">' + (r.roce==null?'—':r.roce.toFixed(1)+'%') + '</td></tr>').join('');
+
+  const un = d.unavailable || {};
+  const holes = Object.keys(un).map(k =>
+    '<li><b>' + esc(k) + '</b> — ' + esc(un[k]) + '</li>').join('');
+
+  const rm = d.raw_materials || {};
+  const rmRows = (rm.items || []).map(i =>
+    '<li><b>' + esc(i.material) + '</b> — '
+    + (i.salience_pct_cogs == null ? 'salience not disclosed'
+       : i.salience_pct_cogs + '% of the ' + esc(i.scope || 'bill of materials'))
+    + '<div class="hint">&ldquo;' + esc(i.quote || '') + '&rdquo;</div></li>').join('');
+
+  return ((d.segment_mix || []).length
+    ? '<div class="sechead">' + esc(d.segment_mix_heading
+        || 'Revenue mix by vertical') + '</div>'
+    + '<div class="meta-line">' + esc(d.segment_mix_note || '') + '</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>period</th>'
+    + cols.map(c => '<th class="n">' + esc(c.label) + '</th>').join('')
+    + '</tr></thead><tbody>'
+    + mix + '</tbody></table></div>'
+    + (bbRow ? '<div style="margin-top:12px"><span class="hint">box build, % of '
+        + 'revenue:</span><br>' + bbRow + '</div>' : '') + '</div>' : '')
+    + ((d.capital_efficiency || []).length
+    ? '<div class="sechead">Capital efficiency</div>'
+    + (d.capital_efficiency_note ? '<div class="meta-line">'
+        + esc(d.capital_efficiency_note) + '</div>' : '')
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>period</th>'
+    + '<th class="n">' + esc(d.capital_efficiency_cols
+        ? d.capital_efficiency_cols[0] : 'asset turns') + '</th>'
+    + '<th class="n">' + esc(d.capital_efficiency_cols
+        ? d.capital_efficiency_cols[1] : 'ROCE') + '</th></tr></thead><tbody>'
+    + ce + '</tbody></table></div></div>' : '')
+    + '<div class="sechead">Raw materials</div>'
+    + '<div class="meta-line">Status <b>' + esc(rm.status || 'unavailable') + '</b> — '
+    + esc(rm.reason || '') + '</div>'
+    + '<div class="panel"><ul class="plist">' + rmRows + '</ul>'
+    + '<div class="hint">' + esc(rm.note || '') + '</div></div>'
+    + '<div class="sechead">What a transcript cannot tell you</div>'
+    + '<div class="callout"><div class="callout-head"><span class="ico">&#9675;</span>'
+    + '<span class="t">Open holes, and the document that closes each</span></div>'
+    + '<ul class="plist">' + holes + '</ul></div>';
+}
+
+function companyDocs(d){
+  const base = '/data/companies/' + encodeURIComponent(d.selected) + '/sources/';
+  const rows = (d.documents || []).map(x =>
+    '<tr><td class="k"><a href="' + base + encodeURIComponent(x.file)
+    + '" target="_blank">' + esc(x.file) + '</a></td>'
+    + '<td class="n">' + cNum(x.size_kb) + ' KB</td><td>'
+    + (x.note ? '<a href="' + base + 'summaries/' + encodeURIComponent(x.note)
+        + '" target="_blank">note</a>'
+       : '<span class="hint">no note yet</span>') + '</td></tr>').join('');
+  return '<div class="sechead">Document archive</div>'
+    + '<div class="meta-line">Listed FROM DISK, not from the dossier — a filed '
+    + 'source the dossier forgot to claim still has to be visible.</div>'
+    + '<div class="panel"><div class="scroll"><table><thead><tr><th>document</th>'
+    + '<th class="n">size</th><th>long-form note</th></tr></thead><tbody>'
+    + rows + '</tbody></table></div></div>';
+}
+
+/* Dossiers whose sector could not be resolved (no `sector` key, no matching
+   nse_symbol in any spec or the entities table). They render under NO sector
+   tab, so the only way to know they exist is to say so here. */
+function companyUnplaced(list){
+  if (!list || !list.length) return '';
+  return '<div class="hint" style="margin-top:6px">&#9888; '
+    + list.length + ' dossier' + (list.length > 1 ? 's' : '')
+    + ' under data/companies/ resolve to no sector and render nowhere: '
+    + list.map(c => esc(c.company) + ' (' + esc(c.slug) + ')').join(', ')
+    + ' — add a <code>sector</code> key to each dossier.json.</div>';
+}
+
+async function loadCompany(){
+  const sec = SECTOR;
+  const slug = COMPANY_SLUG_BY_SECTOR[sec];
+  const qs = '?sector=' + encodeURIComponent(sec)
+    + (slug ? '&slug=' + encodeURIComponent(slug) : '');
+  const d = await (await fetch('/api/company' + qs)).json();
+  const secLabel = (SECTORS.find(s => s.id === sec) || {}).label || sec;
+  if (d.error){
+    $('#s-company').innerHTML = '<div class="pgt">Company historical analysis'
+      + ' <span class="pill">' + esc(secLabel) + '</span></div>'
+      + '<div class="callout accent-amber"><div class="callout-head">'
+      + '<span class="ico">&#9888;</span><span class="t">No dossier</span></div>'
+      + '<div>' + esc(d.error) + '</div>' + companyUnplaced(d.unplaced) + '</div>';
+    return;
+  }
+  COMPANY_SLUG_BY_SECTOR[sec] = d.selected;
+  const picker = (d.companies || []).map(c =>
+    '<option value="' + esc(c.slug) + '"' + (c.slug===d.selected?' selected':'') + '>'
+    + esc(c.company) + (c.nse ? ' (' + esc(c.nse) + ')' : '') + '</option>').join('');
+
+  $('#s-company').innerHTML =
+    '<div class="pgt">' + esc(d.company)
+    + ' <span class="pill">' + esc((d.tickers||{}).nse || '') + '</span>'
+    + ' <span class="pill">' + esc(secLabel) + '</span>'
+    + (d.fno === false ? ' <span class="pill warn">not in F&amp;O</span>' : '') + '</div>'
+    + '<div class="meta-line"><select id="cpick" style="margin-right:10px">' + picker
+    + '</select>as of ' + esc(d.as_of || '—') + ' · ' + (d.qoq_pnl||[]).length
+    + ' quarters · ' + (d.documents||[]).length + ' filed documents · '
+    + (d.companies||[]).length + ' ' + esc(secLabel) + ' dossier'
+    + ((d.companies||[]).length === 1 ? '' : 's') + '</div>'
+    + companyUnplaced(d.unplaced)
+    + '<div class="callout"><div class="callout-head"><span class="ico">&#128196;</span>'
+    + '<span class="t">Built from</span></div><div style="font-size:var(--t-body)">'
+    + esc(d.built_from || '') + '</div>'
+    + '<div class="hint" style="margin-top:6px">' + esc(d.coverage_note || '') + '</div></div>'
+    + companyNarrative(d)
+    + companyGuidance(d.guidance_ledger,
+        ((d.narrative || {}).earnings_reactions || []).length)
+    + companyPnl(d)
+    + companyGeography(d)
+    + companySeries(d)
+    + companyTimelines(d)
+    + companyMixAndGaps(d)
+    + companyDocs(d);
+
+  const sel = document.getElementById('cpick');
+  if (sel) sel.addEventListener('change', () => {
+    COMPANY_SLUG_BY_SECTOR[sec] = sel.value;
+    delete rendered['company'];
+    render('company');
+  });
+}
+
+/* ---------------------------------------------------------------- Results
+   The Results tab (PM 2026-09-22): sector -> company -> quarter, sell-side
+   estimates against the reported print, and the calendar of prints to come.
+   Everything here is READ from /api/results; the store is fed by
+   packages/results/results_io.py from staged, cited JSON (the /results-ingest
+   skill writes those). Not SECTOR_SCOPED: it carries its own picker, so a
+   sector switch elsewhere must not refetch it. */
+const RES_SEL = {sector: null, entity: null};
+// The "in line" band. A judgement, so it is a named constant and the page
+// prints it in the meta-line rather than implying a beat at +0.3%.
+const RS_INLINE_PCT = 1.0, RS_INLINE_PP = 0.2;
+
+function rsNum(v){
+  if (v == null) return '—';
+  const a = Math.abs(v);
+  return cNum(v, a >= 1000 ? 0 : a >= 100 ? 1 : 2);
+}
+function rsSurprise(s){
+  if (!s) return '<td class="n">—</td><td></td>';
+  const v = s.kind === 'pp' ? (s.value >= 0 ? '+' : '') + s.value.toFixed(2) + 'pp'
+                            : cPct(s.value, 1);
+  const inline = s.kind === 'pp' ? Math.abs(s.value) < RS_INLINE_PP
+                                 : Math.abs(s.value) < RS_INLINE_PCT;
+  let chip;
+  if (s.beat == null) chip = '<span class="chip c-flat" title="this metric carries no beat/miss direction (capex)">no verdict</span>';
+  else if (inline) chip = '<span class="chip c-flat">in line</span>';
+  else chip = s.beat ? '<span class="chip c-up">beat</span>' : '<span class="chip c-down">miss</span>';
+  const col = s.beat == null ? 'var(--soft)' : s.beat ? 'var(--up)' : 'var(--down)';
+  return '<td class="n" style="color:' + col + '">' + v + '</td><td>' + chip + '</td>';
+}
+function rsSrc(x){
+  const s = x.source || {};
+  const where = s.raw_path || x.source_id || '';
+  return '<span class="src">' + esc(x.as_of) + (s.origin ? ' · ' + esc(s.origin) : '')
+    + (s.title ? ' · ' + esc(s.title) : '') + (where ? ' · ' + esc(where) : '') + '</span>';
+}
+function rsDrawer(m){
+  const rows = (m.estimates || []).map(r => '<li><b>' + esc(r.broker) + '</b> '
+    + '<span class="mono">' + rsNum(r.value) + '</span> ' + esc(r.unit || '')
+    + (r.post_print ? ' <span class="chip c-warn" title="dated after the print: shown, but excluded from the consensus the print is graded against">post-print</span>' : '')
+    + '<div class="rs-q">' + esc(r.quote) + '</div>' + rsSrc(r) + '</li>').join('');
+  const act = m.actual ? '<li class="rs-act"><b>Actual</b> <span class="mono">' + rsNum(m.actual.value)
+    + '</span> ' + esc(m.actual.unit || '') + '<div class="rs-q">' + esc(m.actual.quote) + '</div>'
+    + rsSrc(m.actual) + '</li>' : '';
+  const flag = m.actual_flag ? '<div class="hint" style="color:var(--warn)">⚠ ' + esc(m.actual_flag) + '</div>' : '';
+  return '<ul class="rs-list">' + act + rows + '</ul>' + flag;
+}
+function rsMetricRow(m){
+  const c = m.consensus;
+  const nEst = (m.estimates || []).length;
+  const label = '<details class="rs-det"><summary>' + esc(m.label)
+    + '<span class="hint">' + (nEst ? nEst + ' est' : 'no estimate') + (m.actual ? ' · print' : '')
+    + (m.n_post_print ? ' · ' + m.n_post_print + ' post-print' : '') + '</span></summary>'
+    + rsDrawer(m) + '</details>';
+  const cons = c
+    ? '<td class="n" title="median of each broker\'s latest pre-print estimate">' + rsNum(c.median) + '</td>'
+      + '<td class="n">' + c.n + '</td>'
+      + '<td class="n hint">' + (c.n > 1 ? rsNum(c.low) + ' – ' + rsNum(c.high) : '') + '</td>'
+    : '<td class="n">—</td><td class="n">—</td><td class="n"></td>';
+  const act = m.actual
+    ? '<td class="n"><b>' + rsNum(m.actual.value) + '</b>' + (m.actual_flag ? ' <span class="chip c-warn">flag</span>' : '') + '</td>'
+    : '<td class="n">—</td>';
+  return '<tr><td class="k rs-k">' + label + '</td><td class="hint">' + esc(m.unit || '') + '</td>'
+    + cons + act + rsSurprise(m.surprise) + '</tr>';
+}
+function rsPeriod(p){
+  const st = {reported:'c-up', scheduled:'c-warn', 'estimates only':'c-flat', 'calendar only':'c-flat'}[p.status] || 'c-flat';
+  const cal = p.calendar
+    ? ' <span class="pill' + (p.calendar.status === 'confirmed' ? '' : ' warn') + '" title="' + esc(p.calendar.quote) + '">print '
+      + esc(p.calendar.event_date) + ' · ' + esc(p.calendar.status) + '</span>' : '';
+  const brokers = (p.brokers || []).length ? ' <span class="hint">' + p.brokers.map(esc).join(', ') + '</span>' : '';
+  const y = p.yahoo_eps
+    ? '<div class="hint" style="margin-top:6px">Yahoo consensus EPS ' + rsNum(p.yahoo_eps.eps) + ' (capture '
+      + esc(p.yahoo_eps.as_of) + ') — machine consensus from the daily feed, reference only; it never enters the broker median above.</div>'
+    : '';
+  const body = p.metrics.length
+    ? '<div class="panel"><div class="scroll"><table class="rs-tab"><thead><tr>'
+      + '<th>metric</th><th>unit</th><th class="n">consensus</th><th class="n">n</th><th class="n">range</th>'
+      + '<th class="n">actual</th><th class="n">surprise</th><th>verdict</th></tr></thead><tbody>'
+      + p.metrics.map(rsMetricRow).join('') + '</tbody></table></div>' + y + '</div>'
+    : '<div class="panel hint">Only a result date so far — no estimate stored for this period.' + y + '</div>';
+  return '<div class="sechead">' + esc(p.period) + ' <span class="chip ' + st + '">' + esc(p.status) + '</span>'
+    + cal + brokers + '</div>' + body;
+}
+async function loadResults(){
+  const qs = [];
+  if (RES_SEL.sector) qs.push('sector=' + encodeURIComponent(RES_SEL.sector));
+  if (RES_SEL.entity) qs.push('entity=' + encodeURIComponent(RES_SEL.entity));
+  const d = await (await fetch('/api/results' + (qs.length ? '?' + qs.join('&') : ''))).json();
+  if (d.error) throw new Error(d.error);
+  RES_SEL.sector = d.sector; RES_SEL.entity = d.selected;
+  const chips = d.sectors.map(s => '<button class="bbtn rs-sec" data-s="' + esc(s.id) + '" aria-pressed="'
+    + (s.id === d.sector) + '" title="' + s.n_with_data + ' of ' + s.n_names + ' names hold estimates or prints">'
+    + esc(s.label) + '<span class="rs-n">' + s.n_with_data + '/' + s.n_names + '</span></button>').join('');
+  const pick = d.companies.map(c => '<option value="' + esc(c.id) + '"' + (c.id === d.selected ? ' selected' : '') + '>'
+    + esc(c.name) + (c.nse ? ' (' + esc(c.nse) + ')' : '') + (c.unit_of ? ' — unit of ' + esc(c.unit_of) : '')
+    + (c.has_data
+        ? ' · ' + (c.latest_period || '') + (c.n_estimates ? ' · ' + c.n_estimates + ' est' : '')
+          + (c.n_actuals ? ' · ' + c.n_actuals + ' print' : '')
+        : ' · nothing stored') + '</option>').join('');
+  const co = d.company;
+  let body;
+  if (!co) body = '<div class="callout accent-amber"><div class="callout-head"><span class="ico">&#9888;</span>'
+    + '<span class="t">No names</span></div>This sector has no roster entry yet — a name reaches the picker '
+    + 'through its spec, the entities table or a company dossier, never by being typed here.</div>';
+  else if (!d.periods.length) body = '<div class="callout"><div class="callout-head"><span class="ico">&#128203;</span>'
+    + '<span class="t">Nothing stored for ' + esc(co.name) + '</span></div>'
+    + 'No estimate, print or result date has been loaded for this name. Stage a cited JSON under '
+    + '<span class="mono">data/results/staging/</span> and run <span class="mono">' + esc(d.loader) + '</span> '
+    + '(the <span class="mono">/results-ingest</span> skill does both from a broker note or a digest line).</div>';
+  else body = d.periods.map(rsPeriod).join('');
+  const nextEv = co && co.next_event ? ' · next print ' + esc(co.next_event.date) + ' (' + esc(co.next_event.period) + ')' : '';
+  $('#s-results').innerHTML =
+    '<div class="pgt">Results <span class="pill">' + d.totals.n_with_data + ' of ' + d.totals.n_names + ' covered names hold data</span></div>'
+    + '<div class="meta-line">Sell-side estimates against the reported print, per company per quarter. '
+    + 'Consensus is the <b>median of each broker\'s latest pre-print estimate</b>; an estimate dated after the print is shown but excluded. '
+    + 'Beat/miss follows the metric\'s direction (a lower cost/t beats); "in line" is within ' + RS_INLINE_PCT + '% ('
+    + RS_INLINE_PP + 'pp on margins). Every number opens to its quote and source. as of ' + esc(d.as_of) + '</div>'
+    + '<div class="rs-secs">' + chips + '</div>'
+    + '<div class="meta-line" style="margin-top:10px"><select id="rpick" style="margin-right:10px">' + pick + '</select>'
+    + (co ? esc(co.name) + (co.scored ? '' : ' <span class="pill">not scored</span>') + nextEv : '') + '</div>'
+    + body;
+  document.querySelectorAll('.rs-sec').forEach(b => b.addEventListener('click', () => {
+    RES_SEL.sector = b.dataset.s; RES_SEL.entity = null; render('results'); }));
+  const sel = document.getElementById('rpick');
+  if (sel) sel.addEventListener('change', () => { RES_SEL.entity = sel.value; render('results'); });
+}
+
 const loaders = {pair:loadPair, scores:loadScores, pos:loadPos,
                 sector:loadSector, overview:loadOverview, book:loadBook,
-                flows:loadFlows};
+                flows:loadFlows, company:loadCompany, results:loadResults};
 
 /* Which views render SECTOR-SPECIFIC content. The other three are global —
    Positioning is the whole F&O table, Overview and Flows are run-level — so
    their DOM stays valid across a sector switch and must not be refetched. */
-const SECTOR_SCOPED = {pair:1, scores:1, sector:1};
+const SECTOR_SCOPED = {pair:1, scores:1, sector:1, company:1};
 
 /* view -> the sector whose content is currently IN THAT SECTION'S DOM, or '*'
    for a global view. NOT "has this view loaded": there is one #s-<view> node
@@ -3857,7 +5605,7 @@ function tab(name){
   // top-level tabs, so recording them here would send you to a hidden section
   // the next time you picked a live sector.
   if (name === 'pair' || name === 'scores' || name === 'pos'
-      || name === 'sector') LAST_VIEW = name;
+      || name === 'sector' || name === 'company') LAST_VIEW = name;
   const live = (name === 'scores');
   $('#winwrap').hidden = !live;
   $('#fxwrap').hidden = !live;

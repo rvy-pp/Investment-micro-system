@@ -138,7 +138,9 @@ def check() -> dict:
 
     # /api/inputs and /api/guidance - the editable panels
     for name, fn in (("/api/inputs", engine.inputs_for_ui),
-                     ("/api/guidance", engine.guidance_rows)):
+                     ("/api/guidance", engine.guidance_rows),
+                     # the Results tab's default view (2026-09-22)
+                     ("/api/results", engine.results_view)):
         d, _ = route(name, fn)
         if d is not None:
             r["routes"].append({"route": name, "ok": True,
@@ -158,6 +160,22 @@ def check() -> dict:
         if state == "error":
             r["problems"].append("/api/cement_watch: " + str(cw.get("note")))
         r["routes"].append({"route": "/api/cement_watch",
+                            "ok": state != "error", "detail": det})
+
+    # /api/auto_share - the Auto tab's maker-share charts. Same rule as the
+    # cement watch: `no_data` is the correct report on a store with no Vahan
+    # capture yet, and one capture with no daily CHANGE is the expected state
+    # on day one (the monthly series still draws). Only `error` is a defect.
+    au, _ = route("/api/auto_share", engine.auto_share)
+    if au is not None:
+        state = au.get("state")
+        segs = au.get("segments") or []
+        det = (f"{state}, {au.get('captures', 0)} capture(s), "
+               f"{len(segs)} segment(s), "
+               f"daily change on {sum(1 for s in segs if s['daily']['has_change'])}")
+        if state == "error":
+            r["problems"].append("/api/auto_share: " + str(au.get("note")))
+        r["routes"].append({"route": "/api/auto_share",
                             "ok": state != "error", "detail": det})
 
     # /api/morning - the Overview's morning brief. Missing or yesterday's

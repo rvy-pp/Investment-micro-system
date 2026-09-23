@@ -13,7 +13,7 @@ import json
 import pathlib
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 WEB = REPO / "packages" / "web"
@@ -113,6 +113,32 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.overview())
             if u.path == "/api/morning":
                 return self._json(engine.morning())
+            # Read-only passthrough for filed company documents, so a
+            # citation on the Company tab can link AT the PDF and its note.
+            # Confined to data/companies/ AFTER normalisation - a path that
+            # escapes the folder is refused rather than resolved.
+            if u.path.startswith("/data/companies/"):
+                rel = unquote(u.path[len("/data/"):])
+                base = (engine.REPO / "data").resolve()
+                tgt = (base / rel).resolve()
+                if not str(tgt).startswith(str(base / "companies"))                         or not tgt.is_file():
+                    return self._send(404, b"not found", "text/plain")
+                ext = tgt.suffix.lower()
+                ct = {".pdf": "application/pdf",
+                      # .md as text/plain so a note opens in the tab rather
+                      # than landing in Downloads.
+                      ".md": "text/plain; charset=utf-8",
+                      ".txt": "text/plain; charset=utf-8",
+                      ".json": "application/json"}.get(ext,
+                                                       "application/octet-stream")
+                return self._send(200, tgt.read_bytes(), ct)
+            if u.path == "/api/company":
+                # slug is optional; engine falls back to the first company
+                # (of the sector, when one is given) rather than erroring, so
+                # a stale remembered slug cannot render the tab empty.
+                return self._json(
+                    engine.company_view(q.get("slug", [""])[0] or None,
+                                        q.get("sector", [""])[0] or None))
             if u.path == "/api/flows":
                 return self._json(engine.flows())
             if u.path == "/api/oi_bubbles":
@@ -139,10 +165,32 @@ class Handler(BaseHTTPRequestHandler):
                 # the PM's actual positions, pair-wise (daily_review skill);
                 # read-only — snapshots load via packages/book/book_io.py
                 return self._json(engine.book_view())
+            if u.path == "/api/book_index":
+                # The book's equal-weighted long and short indices, from 2007
+                # (PM, 2026-09-17). THIS REPLACED /api/book_ohlc and the first
+                # /api/book_index; both are gone and neither should return.
+                # Membership is frozen at specs/book.yaml index.freeze_before
+                # and follows the snapshots after it — packages/book/
+                # basket_index.py carries the rules and the selftest.
+                d = engine.book_index(q.get("range", ["5y"])[0])
+                return self._json(d, 404 if d.get("error") else 200)
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":
                 return self._json(engine.cement_watch())
+            if u.path == "/api/auto_share":
+                # Vahan maker share by segment, for the Auto tab. Read-only:
+                # `vahan_share` is a VOLUME table and nothing here reaches
+                # `prices` or any pillar.
+                return self._json(engine.auto_share())
+            if u.path == "/api/results":
+                # The Results tab (2026-09-22): sector -> company -> quarter,
+                # sell-side estimates vs the print. Both params optional;
+                # engine falls back rather than erroring so a remembered
+                # selection cannot render the tab empty.
+                return self._json(engine.results_view(
+                    q.get("sector", [""])[0] or None,
+                    q.get("entity", [""])[0] or None))
             return self._json({"error": "not found"}, 404)
         except Exception as exc:                    # surface, do not swallow
             import traceback

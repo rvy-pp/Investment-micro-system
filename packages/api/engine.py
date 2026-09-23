@@ -349,10 +349,129 @@ def cement_watch() -> dict:
                 "note": f"cement watch unavailable: {type(e).__name__}: {e}"}
     conn = connect()
     try:
-        return mod.report(conn)
+        rep = mod.report(conn)
+        # THE LEVEL SERIES, for the chart on the Cement tab (PM, 2026-09-20:
+        # the ask chart sits under the score chart and above the price chart).
+        # It rides on THIS route rather than a new one, because it is the same
+        # table and the Overview already fetches this — and because a new route
+        # would have to be added to export_static.py's enumeration or the vault
+        # copy would render that panel empty.
+        #
+        # MEAN, not median: see indiamart_cement.summarize(). ~20 dates x 5
+        # regions, so the whole series is cheaper than a second round trip.
+        by: dict[str, dict] = {}
+        dates: list[str] = []
+        for d, r, m, n in conn.execute(
+                "SELECT capture_date, region, mean_bag, n_listings "
+                "FROM cement_watch ORDER BY capture_date, region"):
+            if d not in dates:
+                dates.append(d)
+            by.setdefault(r, {})[d] = (m, n)
+        rep["series"] = {
+            "dates": dates,
+            "regions": {r: {"mean": [round(v[d][0], 2) if d in v else None
+                                     for d in dates],
+                            "n": [v[d][1] if d in v else None for d in dates]}
+                        for r, v in sorted(by.items())},
+        }
+        return rep
     except Exception as e:
         return {"state": "error", "regions": [], "alerts": [],
                 "note": f"cement watch failed: {type(e).__name__}: {e}"}
+    finally:
+        conn.close()
+
+
+def auto_share() -> dict:
+    """Vahan maker share by segment for the Auto tab — 2W / PV / CV.
+
+    PM, 2026-09-23: *"in the auto tab, I need a graph for market share change
+    on a daily basis. Different for PV, 2 wheelers and CV. Only include fno
+    names in the graph lines, keep rest as others."*
+
+    TWO SERIES, AND THE PAGE MUST NOT BLUR THEM, because they have different
+    lengths for a reason that is not fixable:
+
+      `monthly` — share of each completed month. Long, available immediately,
+                  read at the LATEST capture so backdated revisions are
+                  reflected rather than frozen at first sight.
+      `daily`   — share of the running month-to-date, one point per capture.
+                  FORWARD-ONLY. Vahan publishes no daily granularity on the
+                  open API (see vahan_share.py: the report builder that does is
+                  CAPTCHA-gated), so a day's share simply did not exist before
+                  we started reading it. It cannot be backfilled, and on the
+                  first day it is a single point with no change to show.
+
+    The reason both are here: a chart carrying only `daily` would have been
+    empty on the day it was asked for, and a chart carrying only `monthly`
+    would not answer the question. `daily.has_change` is false until there are
+    two captures, and the page says which state it is in rather than drawing a
+    one-point line that reads as a flat market.
+
+    Others is DERIVED in vahan_share.shares() as total - sum(named), so the
+    lines always sum to 100% and every unlisted maker is inside it. Read
+    SEGMENTS[*]['note'] before interpreting a chart — on CV especially, where
+    Tata Motors sits in Others because its CV entity left F&O at the demerger.
+    """
+    import importlib.util as _u
+    try:
+        sp = _u.spec_from_file_location(
+            "_vs", REPO / "packages" / "adapters" / "vahan_share.py")
+        mod = _u.module_from_spec(sp)
+        sp.loader.exec_module(mod)
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"vahan share unavailable: {type(e).__name__}: {e}"}
+    conn = connect()
+    try:
+        caps = [r[0] for r in conn.execute(
+            "SELECT DISTINCT capture_date FROM vahan_share ORDER BY capture_date")]
+        if not caps:
+            return {"state": "no_data", "segments": [], "captures": 0,
+                    "note": "no Vahan capture yet — run "
+                            "packages/adapters/vahan_share.py --capture"}
+        cur = mod._recent_months(1)[0]      # the in-progress month
+        out = []
+        for seg, cfg in mod.SEGMENTS.items():
+            labels = list(cfg["fno"].keys()) + [mod.OTHERS]
+
+            # MONTHLY — each period at its most recent capture.
+            periods = mod._months_sorted({r[0] for r in conn.execute(
+                "SELECT DISTINCT period FROM vahan_share WHERE segment=?", (seg,))})
+            mseries = {k: [] for k in labels}
+            mtotal = []
+            for p in periods:
+                s = mod.shares(conn, seg, period=p)
+                mtotal.append(s.get("total") if s else None)
+                for k in labels:
+                    mseries[k].append(round(s["share_pct"][k], 3)
+                                      if s and k in s["share_pct"] else None)
+
+            # DAILY — the running month's MTD share, one point per capture.
+            dseries = {k: [] for k in labels}
+            dtotal = []
+            for cd in caps:
+                s = mod.shares(conn, seg, period=cur, capture_date=cd)
+                dtotal.append(s.get("total") if s else None)
+                for k in labels:
+                    dseries[k].append(round(s["share_pct"][k], 3)
+                                      if s and k in s["share_pct"] else None)
+
+            out.append({
+                "id": seg, "label": cfg["label"], "note": cfg["note"],
+                "fno": [{"label": k, "symbol": v[0]} for k, v in cfg["fno"].items()],
+                "others_label": mod.OTHERS,
+                "monthly": {"periods": periods, "series": mseries,
+                            "total": mtotal, "current": cur},
+                "daily": {"dates": caps, "series": dseries, "total": dtotal,
+                          "month": cur, "has_change": len(caps) > 1},
+            })
+        return {"state": "live", "segments": out, "captures": len(caps),
+                "first_capture": caps[0], "last_capture": caps[-1],
+                "current_month": cur}
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"vahan share failed: {type(e).__name__}: {e}"}
     finally:
         conn.close()
 
@@ -561,6 +680,63 @@ SECTORS = [
                              "tech_mahindra", "ltimindtree"],
             "IT Mid Cap":   ["persistent", "coforge", "mphasis", "ofss"],
             "IT ER&D":      ["kpit", "tata_elxsi", "ltts"],
+        },
+    },
+    {
+        "id": "auto",
+        "label": "Auto",
+        # Added 2026-09-19 on PM instruction, together with Ather Energy's
+        # dossier. It is a READ tab and deliberately nothing else: no specs,
+        # no peer groups, no pillars, no consensus panel. The only content is
+        # the Company historical analysis sub-view plus the context chart
+        # below — exactly the state IT was in on 2026-08-31, and the honest
+        # one, because nothing here has been through a scoring design.
+        #
+        # `peer_groups: []` is what keeps it out of every scoring path, and
+        # invariant 7 does the rest: `ather` lands in `entities` via
+        # yahoo_prices.EQUITIES with peer_group NULL, so no pillar, no pair
+        # and no backtest can reach it. Do NOT add a peer group here to make
+        # the tab look finished.
+        "peer_groups": [],
+        # Context only, linked from no spec — and the reason the list looks
+        # thin is the finding, not an omission. See the raw-materials verdict
+        # in data/companies/ather-energy/dossier.json: the input that
+        # actually moved Ather's margins is LITHIUM and the NMC cathode
+        # complex (management: $8/kg -> $24/kg, cells +30-50%, a commodity
+        # index +46% over five quarters, a 5.6pp hit to Q1FY27 gross margin)
+        # and NONE of it has a series in this store. In that same quarter
+        # every series listed here FELL — aluminium -12.8%, nickel -4.9%,
+        # HRC -2.2%, brent -43.7%. A cost overlay built on these would have
+        # read the worst commodity quarter in the company's listed life as a
+        # TAILWIND. They are displayed so a reader can see that for
+        # themselves; they are not a cost model and must not become one.
+        "commodities": [
+            "lme_aluminium", "lme_copper", "lme_nickel",
+            "hrc_india_inr", "brent", "usdinr",
+        ],
+        # BRENT, not a cost series — and that is the point of this chart.
+        # For an ICE maker crude is an input; for an EV two-wheeler maker it
+        # is the DEMAND driver, and it is the one management names first
+        # (Q1FY27: petrol/diesel availability fears and rising pump prices as
+        # structural tailwinds). Charting a cost series here would assert the
+        # cost story the evidence refuses.
+        "chart": {
+            "ids": ["brent"],
+            "divide": 1.0,
+            "unit": "USD/bbl",
+            "title": "Brent · USD/bbl · the demand driver, not a cost",
+            "caption": "Crude is displayed because for an electric "
+                       "two-wheeler maker it sits on the REVENUE side: "
+                       "Ather's Q1FY27 call names petrol availability fears "
+                       "and rising pump prices among four structural "
+                       "tailwinds, and brent is +102% over Ather's listed "
+                       "life against the stock's +442%. The caution is that "
+                       "the tape does not corroborate it at short horizons — "
+                       "21-day returns correlate -0.149, the generic "
+                       "risk-off sign, so this is a stated driver with level "
+                       "evidence and no short-horizon evidence. Nothing "
+                       "here is linked from a spec and nothing scores.",
+            "marks": [],
         },
     },
 ]
@@ -895,15 +1071,40 @@ def nav_list() -> list[dict]:
            {"id": "book", "kind": "book", "label": "The Book", "live": True},
            # live since 2026-09-02: F1 computes and persists; F2-F4 still scoped.
            {"id": "flows", "kind": "flows", "label": "Flows", "live": True}]
+    # Company coverage (2026-09-14) is NOT a sector and NOT a scoring path:
+    # dossiers are built from earnings-call transcripts alone and feed no
+    # pillar; invariant 7 is untouched because nothing here reaches
+    # pillar_scores. It WAS a top-level tab. PM 2026-09-16: "sits out like a
+    # sore spot. Keep it within the sectors only" — so each sector carries
+    # its own dossiers and the page renders them as a "Company historical
+    # analysis" sub-view of that sector. A dossier whose sector cannot be
+    # resolved is listed on `company_unplaced` (on the overview entry) rather
+    # than dropped: a company that vanished from the page because a key was
+    # missing is the silent shape.
+    companies = company_list()
     for s in sector_list():
         spec = next(x for x in SECTORS if x["id"] == s["id"])
+        mine = [c for c in companies if c["sector"] == s["id"]]
         out.append({"id": s["id"], "kind": "sector", "label": s["label"],
                     "live": s["live"], "peer_groups": s["peer_groups"],
                     # The page shows the Prices & Watch sub-view only where a
                     # sector declares content for it — cement and ems today.
                     "has_chart": bool(spec.get("chart")),
                     "has_watch": bool(spec.get("watch")),
-                    "has_estimates": bool(spec.get("estimates"))})
+                    "has_estimates": bool(spec.get("estimates")),
+                    "has_company": bool(mine),
+                    "companies": mine})
+    unplaced = [c for c in companies if c["sector"] is None]
+    if unplaced:
+        out[0]["company_unplaced"] = unplaced
+    # Results — LAST, per the PM (2026-09-22: "add a Results tab in the end").
+    # Sell-side estimates against reported prints, sector -> company -> quarter.
+    # A read surface over `estimates` + `observations`(actual) +
+    # `results_calendar`; packages/results/results_io.py owns the arithmetic
+    # and the loader. Not a sector (no peer groups, no pillars) and not
+    # sector-scoped in the page: it carries its own sector/company picker.
+    out.append({"id": "results", "kind": "results", "label": "Results",
+                "live": True})
     return out
 
 
@@ -1841,6 +2042,293 @@ def book_view() -> dict:
     return rep
 
 
+# ---------------------------------------------------------------------------
+# the book's equal-weighted long and short indices — /api/book_index
+# ---------------------------------------------------------------------------
+#
+# ONE METHOD, AND IT REPLACED TWO. Until 2026-09-17 this file carried
+# `book_ohlc` (a portfolio-weighted back-cast of today's roster over a chosen
+# window) and a first `book_index` (membership straight off the stored
+# snapshots, so it could not begin before 2026-09-04). The PM's verdict on
+# having both: "Let's rebuild the whole thing again. We get rid of both graph
+# methods." Do not reintroduce either — the survivorship caveat that made two
+# charts seem necessary is handled inside the one that replaced them, by
+# freezing membership at a spec date instead of at today.
+#
+# The arithmetic lives in packages/book/basket_index.py, which owns the
+# docstring, the guards and the selftest. This is a transport shim: everything
+# here is a window onto a series computed there.
+
+
+def book_index(rng: str = "5y") -> dict:
+    """Equal-weighted long/short indices, windowed for display.
+
+    Recomputed per request from `prices` and `book_positions` — there is no
+    index table, so nothing here can be stale relative to the store. See
+    basket_index.build for why that is cheap enough to prefer.
+    """
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import basket_index
+    if rng not in basket_index.RANGES:
+        return {"error": f"unknown range {rng!r}; known: "
+                         + ", ".join(basket_index.RANGES)}
+    conn = connect()
+    try:
+        payload = basket_index.build(conn, rng)
+    finally:
+        conn.close()
+    return basket_index.window(payload, rng)
+
+
 def dt_date(s: str):
     import datetime as _dt
     return _dt.date.fromisoformat(s)
+
+
+# ---------------------------------------------------------------- company
+# One company = one folder under data/companies/<slug>/, holding dossier.json
+# plus the filed sources it was built from. Nothing here is hardcoded: the
+# universe IS the set of folders, so adding a company is a directory, never a
+# code change. Read-only; no adapter writes to it and no pillar reads it.
+COMPANIES = REPO / "data" / "companies"
+
+
+def _company_sector(doc: dict) -> tuple[str | None, str]:
+    """Which sector tab a dossier renders under, and how that was decided.
+
+    Order: the dossier's own `sector` key (the skill writes it since
+    2026-09-16); else the entity spec whose `nse_symbol` matches the
+    dossier's NSE ticker; else the `entities` table on the same symbol (the
+    IT roster lives only there). Anything else is None — UNPLACED, surfaced
+    on the nav, never guessed into a sector. Only ids in SECTORS count: a
+    typo in the key must show up as unplaced, not as a tab nobody can open.
+    """
+    known = {x["id"] for x in SECTORS}
+    sec = doc.get("sector")
+    if sec in known:
+        return sec, "dossier"
+    nse = ((doc.get("tickers") or {}).get("nse") or "").strip().upper()
+    if nse:
+        try:
+            entities, _u, _f = load_specs()
+            for e in entities.values():
+                if str(e.get("nse_symbol") or "").upper() == nse \
+                        and e.get("sector") in known:
+                    return e["sector"], "spec"
+        except Exception:
+            pass
+        try:
+            conn = connect()
+            row = conn.execute(
+                "SELECT sector FROM entities WHERE upper(nse_symbol)=? "
+                "AND sector IS NOT NULL", (nse,)).fetchone()
+            conn.close()
+            if row and row[0] in known:
+                return row[0], "entities"
+        except Exception:
+            pass
+    return None, "unresolved"
+
+
+def company_list(sector: str | None = None) -> list[dict]:
+    """Every company folder holding a readable dossier.json, in folder order.
+
+    `sector` filters to one tab's roster. Each row carries the sector it
+    resolved to (None = unplaced) and `sector_via` naming the source.
+    """
+    if not COMPANIES.is_dir():
+        return []
+    out = []
+    for d in sorted(COMPANIES.iterdir()):
+        f = d / "dossier.json"
+        if not f.is_file():
+            continue
+        doc = _read_json(f)
+        if not doc:
+            continue
+        sec, via = _company_sector(doc)
+        if sector is not None and sec != sector:
+            continue
+        out.append({"slug": doc.get("slug", d.name),
+                    "company": doc.get("company", d.name),
+                    "nse": (doc.get("tickers") or {}).get("nse"),
+                    "sector": sec, "sector_via": via,
+                    "as_of": doc.get("as_of"),
+                    "quarters": len(doc.get("qoq_pnl") or [])})
+    return out
+
+
+def company_view(slug: str | None = None, sector: str | None = None) -> dict:
+    """The dossier for one company, plus the roster so the picker can render.
+
+    `sector` scopes the roster to one sector tab (PM 2026-09-16: company
+    analysis lives inside the sectors only). An unknown slug falls back to
+    the first company IN THAT SECTOR rather than erroring: the tab must never
+    render empty because a remembered slug was deleted or belongs elsewhere.
+    Dossiers with no resolvable sector ride along as `unplaced` so the page
+    can say they exist.
+    """
+    roster = company_list(sector)
+    if not roster:
+        return {"error": ("no company dossier for sector %r" % sector
+                          if sector else
+                          "no company dossiers under data/companies/"),
+                "companies": [], "sector_tab": sector,
+                "unplaced": [c for c in company_list() if c["sector"] is None]}
+    slugs = [c["slug"] for c in roster]
+    pick = slug if slug in slugs else slugs[0]
+    doc = _read_json(COMPANIES / pick / "dossier.json") or {}
+    # Documents are listed FROM DISK, not from the dossier — a filed source the
+    # dossier forgot to claim still has to be visible, per the archive rule.
+    src = COMPANIES / pick / "sources"
+    docs = []
+    if src.is_dir():
+        for f in sorted(src.glob("*.pdf")):
+            note = src / "summaries" / (f.name + ".md")
+            docs.append({"file": f.name,
+                         "size_kb": round(f.stat().st_size / 1024),
+                         "note": note.name if note.is_file() else None})
+    doc["documents"] = docs
+    doc["companies"] = roster
+    doc["selected"] = pick
+    doc["sector_tab"] = sector
+    doc["unplaced"] = [c for c in company_list() if c["sector"] is None]
+    return doc
+
+
+# ---------------------------------------------------------------------------
+# The Results tab — 2026-09-22. Sector -> company -> quarter; sell-side
+# estimates against the reported print, and the calendar of prints to come.
+#
+# Transport shim over packages/results/results_io.py, which owns the
+# consensus/surprise arithmetic, the loader and the selftest — the same split
+# as book_index over basket_index. Nothing here writes; nothing here reaches
+# `prices` or `pillar_scores`.
+# ---------------------------------------------------------------------------
+sys.path.insert(0, str(REPO / "packages" / "results"))
+
+
+def _results_roster() -> dict[str, dict]:
+    """Every covered name, keyed by entity id, with the sector TAB it sits
+    under — or None when nothing can place it.
+
+    The roster is the UNION of three places a name can be known from,
+    because no single one covers the book: the entity specs (the five scored
+    sectors; a reporting unit such as Novelis takes its PARENT's sector), the
+    `entities` table (IT lives only there), and the company dossiers (Ather
+    and Eicher have no spec and a NULL sector in the table — the dossier's
+    `sector` key is what puts them under Auto, joined on the NSE symbol via
+    yahoo_prices.CANDIDATES). Nothing is guessed: a name none of the three
+    places lands in `other`, listed rather than dropped.
+    """
+    from yahoo_prices import CANDIDATES as _CANDS  # adapters path is on sys.path
+    known = {s["id"] for s in SECTORS}
+    # A scored name's PEER GROUP names its tab. The spec `sector` key is the
+    # coverage bucket and does not always match a tab id — aluminium.yaml says
+    # `sector: aluminium` for six names whose tab is `non_ferrous` (and for
+    # the two zinc names, whose peer group is `zinc`). Resolving through the
+    # peer group first is what SECTORS itself does for scoring.
+    pg2sec = {pg: s["id"] for s in SECTORS for pg in s["peer_groups"]}
+
+    def place(peer_group, sector):
+        return pg2sec.get(peer_group) or (sector if sector in known else None)
+
+    rows: dict[str, dict] = {}
+    entities, _u, _f = load_specs()
+    for e in entities.values():
+        if e.get("kind") not in ("company", "reporting_unit"):
+            continue
+        sec = place(e.get("peer_group"), e.get("sector"))
+        par = e.get("parent_id")
+        if e.get("kind") == "reporting_unit" and par in entities:
+            p = entities[par]
+            sec = place(p.get("peer_group"), p.get("sector")) or sec
+        rows[e["id"]] = {"id": e["id"], "name": e.get("name") or e["id"],
+                         "sector": sec,
+                         "nse": e.get("nse_symbol"),
+                         "unit_of": par if e.get("kind") == "reporting_unit" else None,
+                         "scored": bool(e.get("peer_group"))}
+    conn = connect()
+    for r in conn.execute(
+            "SELECT id, name, sector, nse_symbol, kind, parent_id, peer_group "
+            "FROM entities WHERE kind IN ('company','reporting_unit') AND active=1"):
+        if r["id"] in rows:
+            if rows[r["id"]]["sector"] is None:
+                rows[r["id"]]["sector"] = place(r["peer_group"], r["sector"])
+            continue
+        rows[r["id"]] = {"id": r["id"], "name": r["name"] or r["id"],
+                         "sector": place(r["peer_group"], r["sector"]),
+                         "nse": r["nse_symbol"],
+                         "unit_of": r["parent_id"] if r["kind"] == "reporting_unit" else None,
+                         "scored": bool(r["peer_group"])}
+    conn.close()
+    sym2eid = {}
+    for eid, cands in _CANDS.items():
+        for sym, _pat in cands or []:
+            sym2eid.setdefault(sym.split(".")[0].upper(), eid)
+    for c in company_list():
+        eid = sym2eid.get(str(c.get("nse") or "").upper())
+        if eid in rows:
+            if not rows[eid]["nse"]:
+                rows[eid]["nse"] = c.get("nse")
+            if rows[eid]["sector"] is None and c["sector"] in known:
+                rows[eid]["sector"] = c["sector"]
+    return rows
+
+
+def results_view(sector: str | None = None, entity: str | None = None) -> dict:
+    """Payload for the Results tab.
+
+    Always returns EVERY sector chip (a sector with nothing stored reads
+    "0 of N names" rather than vanishing) and the full roster of the chosen
+    sector (a name with no estimates yet is still offered, flagged, so the
+    picker is the coverage list and not a list of what happens to be loaded).
+    An unknown sector or entity falls back — first to the one holding data,
+    then to the first — so a remembered selection can never render empty.
+    """
+    import datetime as _dt
+    import results_io as _rio
+
+    roster = _results_roster()
+    conn = connect()
+    sm = _rio.summary(conn, list(roster))
+    secs = []
+    for s in SECTORS:
+        mine = [r for r in roster.values() if r["sector"] == s["id"]]
+        secs.append({"id": s["id"], "label": s["label"], "n_names": len(mine),
+                     "n_with_data": sum(1 for r in mine if sm[r["id"]]["has_data"])})
+    other = [r for r in roster.values() if r["sector"] is None]
+    if other:
+        secs.append({"id": "other", "label": "Unplaced", "n_names": len(other),
+                     "n_with_data": sum(1 for r in other if sm[r["id"]]["has_data"])})
+    ids = [s["id"] for s in secs]
+    if sector not in ids:
+        sector = next((s["id"] for s in secs if s["n_with_data"]), ids[0])
+    mine = [r for r in roster.values()
+            if (r["sector"] == sector) or (sector == "other" and r["sector"] is None)]
+    companies = []
+    for r in sorted(mine, key=lambda x: (bool(x["unit_of"]), x["name"].lower())):
+        s = sm[r["id"]]
+        companies.append({**r, "has_data": s["has_data"],
+                          "n_estimates": s["n_estimates"], "n_actuals": s["n_actuals"],
+                          "latest_period": s["latest_period"],
+                          "next_event": s["next_event"], "brokers": s["brokers"]})
+    cids = [c["id"] for c in companies]
+    if entity not in cids:
+        entity = next((c["id"] for c in companies if c["has_data"]),
+                      cids[0] if cids else None)
+    periods = _rio.periods_for(conn, entity) if entity else []
+    conn.close()
+    sel = next((c for c in companies if c["id"] == entity), None)
+    return {
+        "as_of": _dt.date.today().isoformat(),
+        "sectors": secs, "sector": sector,
+        "companies": companies, "selected": entity, "company": sel,
+        "periods": periods,
+        "metrics": {m: {"label": lab, "better": bet}
+                    for m, (lab, bet) in _rio.METRICS.items()},
+        "totals": {"n_names": len(roster),
+                   "n_with_data": sum(1 for v in sm.values() if v["has_data"])},
+        "loader": "python packages/results/results_io.py --load "
+                  "data/results/staging/<file>.json",
+    }
