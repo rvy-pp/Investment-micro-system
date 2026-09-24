@@ -2319,6 +2319,35 @@ segment's monthly TOTAL. It REFUSES the current month — its stored total is a
 month-to-DATE, and a partial over a partial gives a fraction near 1.0, a
 "no skew" reading that is pure arithmetic on the one month that matters.
 
+**EACH CHART HAS A LIVE TABLE BESIDE IT** (PM, 2026-09-24, with a mock):
+OEM · LIVE VOL (month) · LIVE SHARE · **YOY (PP)**. The chart gives up its
+right-hand 40% for it. **YoY is in SHARE POINTS, not % of volume** — that is
+the whole point of the column, because a maker can grow volume 20% and still be
+losing its market. Green is share GAINED; a move under 0.005pp gets NO arrow,
+since a green triangle on a flat share is a claim the number does not make.
+
+The comparator is the prior-year same month, looked up **BY NAME** in
+`monthly.periods` and not by index — the 13-entry window means `periods[0]` is
+September-to-September today, and an index would silently compare the wrong two
+months the day `MONTHS_KEPT` changes. **A basis mismatch is accepted and
+stated**: this month is month-to-DATE against a completed month last year.
+Share barely drifts inside a month (±0.3pp on 2W, worst case +0.93pp on Tata
+PV), but on a column denominated in tenths of a point that is not nothing, so
+the header carries the note. Comparing against last year's same-DAY MTD is only
+possible for the two segments whose shape was harvested, and a column meaning
+different things on different charts is worse than one meaning a single
+slightly imperfect thing everywhere.
+
+**THE FIRST DRAW MEASURES ZERO AND IS RECONCILED ONCE.** `#autoshare-box`
+reported `clientWidth` 0 while its children had real rects — the whole document
+did, `window.innerWidth` included — so `W` fell back to 892 and rendered a
+535px chart beside an 826px table on a 1377px panel. Same hidden-section
+problem `loadPair()` already solves. `drawAutoShare` re-measures after paint and
+redraws ONCE, guarded by a `_retry` flag so a still-wrong measurement cannot
+loop. The chart pane is also PINNED to `W`: `flex:0 0 auto` sized it to its
+widest child, which is the LEGEND and not the plot, pushing the table past the
+wrap point and under the graph.
+
 **IT RENDERS AS A DOTTED CONTINUATION OF EACH SHARE LINE, NOT A TABLE** (PM,
 2026-09-24: *"just add a dotted line to show forecast, no need for a whole
 table"*) — solid through the last completed month (or last capture), dotted

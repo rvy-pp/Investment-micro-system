@@ -2294,7 +2294,71 @@ function monthToISO(p){
   return y + '-' + String(MONTH_IX[m] + 1).padStart(2, '0') + '-01';
 }
 
-async function drawAutoShare(){
+/* THE LIVE MONTH TABLE — month-to-date volume, share, and the YoY move in
+   SHARE POINTS, beside each chart.
+
+   YOY IS pp OF SHARE, NOT % OF VOLUME, and that is the whole point of the
+   column: a maker can grow volume 20% and still be losing its market, which
+   is what a share book cares about. Green is share GAINED.
+
+   THE COMPARATOR IS THE PRIOR-YEAR SAME MONTH, taken from the series' own
+   first period — `monthly.periods` holds 13 entries ending at the current
+   month, so periods[0] IS September-to-September. It is looked up BY NAME
+   rather than by index anyway, because MONTHS_KEPT is a constant somebody will
+   change and an index would then compare the wrong two months while still
+   printing a plausible number.
+
+   A BASIS MISMATCH IS ACCEPTED AND STATED: this month is month-to-DATE while
+   last year's is a completed month. Share is a ratio inside one segment, so it
+   barely drifts across a month — measured at ±0.3pp on two-wheelers, worst
+   case +0.93pp on Tata PV — but on a column denominated in tenths of a point
+   that is not nothing, and the header carries the note. The alternative,
+   comparing against last year's same-day month-to-date, is only available for
+   the two segments whose shape was harvested, and a column that means
+   different things on different charts is worse than one that means one
+   slightly imperfect thing everywhere. */
+function liveTable(seg, labels){
+  const m = seg.monthly, fc = seg.forecast || {};
+  if (!m || !m.periods || !m.periods.length) return '';
+  const cur = m.periods[m.periods.length - 1];
+  const [y, mon] = cur.split('-');
+  const prev = (parseInt(y, 10) - 1) + '-' + mon;
+  const pi = m.periods.indexOf(prev);
+  const ci = m.periods.length - 1;
+  const short = mon.slice(0, 3).toUpperCase();
+  let rows = '';
+  for (const lab of labels){
+    const ser = m.series[lab] || [];
+    const nowS = ser[ci], prvS = pi >= 0 ? ser[pi] : null;
+    const vol = ((fc.by_label || {})[lab] || {}).mtd;
+    if (nowS == null && vol == null) continue;
+    let yoy = '<td class="n hint">—</td>';
+    if (nowS != null && prvS != null){
+      const d = nowS - prvS;
+      // Exactly 0.00 is neither a gain nor a loss and gets no arrow: a green
+      // triangle on a flat share would be a claim the number does not make.
+      const col = d > 0.005 ? 'var(--up)' : (d < -0.005 ? 'var(--down)' : 'var(--faint)');
+      const arr = d > 0.005 ? '\u25B2 ' : (d < -0.005 ? '\u25BC ' : '');
+      yoy = '<td class="n" style="color:' + col + '">' + arr
+          + (d >= 0 ? '+' : '') + d.toFixed(2) + 'pp</td>';
+    }
+    rows += '<tr><td>' + esc(lab) + '</td>'
+      + '<td class="n">' + (vol == null ? '—' : vol.toLocaleString('en-IN')) + '</td>'
+      + '<td class="n">' + (nowS == null ? '—' : nowS.toFixed(1) + '%') + '</td>'
+      + yoy + '</tr>';
+  }
+  if (!rows) return '';
+  return '<div style="flex:1 1 240px;min-width:230px">'
+    + '<table style="width:100%"><thead><tr>'
+    + '<th>OEM</th><th class="n">LIVE VOL (' + esc(short) + ')</th>'
+    + '<th class="n">LIVE SHARE</th>'
+    + '<th class="n" title="Change in share against ' + esc(prev)
+    + ', in percentage points. This month is month-to-date; last year is a '
+    + 'completed month.">YOY (PP)</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+async function drawAutoShare(_retry){
   const host = document.getElementById('autoshare-box');
   if (!host) return;
   let d;
@@ -2306,7 +2370,17 @@ async function drawAutoShare(){
       + '</p>';
     return;
   }
-  const W = Math.max((host.clientWidth || 900) - 8, 520), H = 200;
+  /* The chart gives up its right-hand third to the live table (PM,
+     2026-09-24: "Shrink the graphs a bit from the right and place this table
+     next to the graph"). Floor at 380px so the plot never collapses to a
+     sliver on a narrow window — below that the two stack instead. */
+  /* MEASURE THE SECTION, NOT THE BOX. #autoshare-box reported clientWidth 0
+     while its children had real rects, so a fallback of 900 was silently
+     driving the layout. The section is always laid out by this point. */
+  const sect = document.getElementById('s-sector');
+  const HOSTW = (host.clientWidth || (sect && sect.clientWidth) || 900) - 8;
+  const SIDE = HOSTW >= 820;
+  const W = Math.max(SIDE ? Math.floor(HOSTW * 0.60) : HOSTW, 360), H = 200;
   let html = '';
 
   /* THE FORECAST IS A DOTTED CONTINUATION OF EACH LINE, not a table
@@ -2417,7 +2491,13 @@ async function drawAutoShare(){
          keeps the "(forecast)" suffix — it is what the HOVER reads out, and
          there the distinction is the whole point, since a dashed and a solid
          point can sit on the same date. */
-      html += '<div class="lgd">' + drawable.filter(x => !x.dash).map(x =>
+      html += '<div style="display:flex;gap:var(--s4);align-items:flex-start;'
+        + 'flex-wrap:wrap">'
+        /* PINNED TO W. flex:0 0 auto sizes the pane to its WIDEST child, and
+           that is the legend, not the plot — 649px against a 567px chart,
+           which pushed the table past the wrap point and under the graph. */
+        + '<div style="flex:0 0 ' + W + 'px;max-width:' + W + 'px;min-width:0">'
+        + '<div class="lgd">' + drawable.filter(x => !x.dash).map(x =>
           '<span><i style="border-top-color:' + inkOf(x.slot) + '"></i>'
           + esc(x.label) + '</span>').join('') + '</div>'
         + lineChart({id: 'aut' + s.id, w: W, h: H, series: drawable,
@@ -2432,11 +2512,25 @@ async function drawAutoShare(){
                        .concat(fSeries.length ? [fSeries[0].pts[1].d] : []))],
             allDates: [...new Set(allX)],
             axisLabel: 'share of each completed month · ' + esc(src.current)
-              + ' is the dotted forecast'});
+              + ' is the dotted forecast'})
+        + '</div>' + liveTable(s, labels) + '</div>';
     }
   }
 
   host.innerHTML = html;
+
+  /* ONE RECONCILIATION PASS, the same problem loadPair() already solves.
+     The first draw can land while #s-sector is still hidden, where
+     clientWidth is 0 — measured here: the whole document reported width 0 and
+     W fell back to 892, rendering a 535px chart beside an 826px table on a
+     1377px panel. Re-measure after paint and redraw ONCE if the real width
+     differs materially. `_retry` guards it: a redraw that measured wrong again
+     would otherwise loop forever. */
+  if (!_retry){
+    const real = (host.clientWidth || 0) - 8;
+    if (real > 200 && Math.abs(real - HOSTW) > 24) return drawAutoShare(true);
+  }
+
   for (const s of d.segments){
     if (document.getElementById('cw-aut' + s.id)) wireChart('aut' + s.id);
   }
