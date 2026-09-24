@@ -2384,7 +2384,13 @@ async function drawAutoShare(){
       for (let v = yLo; v <= yHi + 0.001; v += step) ticks.push(v);
       const ts = [...new Set(allX)].map(x => Date.parse(x));
       const every = Math.max(1, Math.ceil(xs.length / 6));
-      html += '<div class="lgd">' + drawable.map(x =>
+      /* SOLID SERIES ONLY (PM, 2026-09-24: "remove (forecast). I can see
+         colors"). The dashed forecast shares its maker's colour, so listing it
+         printed every name twice for no added information. The label itself
+         keeps the "(forecast)" suffix — it is what the HOVER reads out, and
+         there the distinction is the whole point, since a dashed and a solid
+         point can sit on the same date. */
+      html += '<div class="lgd">' + drawable.filter(x => !x.dash).map(x =>
           '<span><i style="border-top-color:' + inkOf(x.slot) + '"></i>'
           + esc(x.label) + '</span>').join('') + '</div>'
         + lineChart({id: 'aut' + s.id, w: W, h: H, series: drawable,
