@@ -2262,13 +2262,21 @@ async function drawCementAsks(availW, H){
 /* ---------------------------------------------------------------------------
    VAHAN MAKER SHARE — the Auto tab, three segments, F&O names as lines.
 
-   TWO MODES, AND THE TOGGLE IS NOT COSMETIC. `monthly` is share of each
-   completed month and runs 13 months back; `daily` is the share of the running
-   month-to-date, one point per capture, and it STARTS the day capture started
-   because Vahan publishes no daily granularity on the open API (the report
-   builder that does is CAPTCHA-gated). So the daily view is one point today
-   and cannot be backfilled — it says so rather than drawing a single dot that
-   reads as a flat market. Monthly is the default for exactly that reason.
+   ONE VIEW: share of each completed month, 13 months back, with the current
+   month drawn as a dotted forecast.
+
+   THE MONTHLY/DAILY TOGGLE IS GONE (PM, 2026-09-24: "there is this ugly blue
+   button for toggling at the top, get rid of it"). The daily view it offered
+   was share of the running MONTH-TO-DATE, one point per capture — and that is
+   a CUMULATIVE average, not a daily rate. Its denominator only grows, so by
+   the back half of a month it cannot move much whatever happens: it reads flat
+   by construction rather than because share is stable. The monthly chart
+   carries the same information better, because its dotted endpoint IS the
+   month-to-date re-read every morning — it moves daily without pretending a
+   cumulative average is a daily print.
+
+   `/api/auto_share` still returns the `daily` block. It is stored data and
+   costs nothing to serve; only the rendering of it went.
 
    OTHERS IS DRAWN IN GREY AND LAST. It is a residual, not a company, and
    giving it a series colour would put it in the same visual class as the five
@@ -2277,7 +2285,7 @@ async function drawCementAsks(availW, H){
    rather than a missing series, and the per-segment note says so under the
    chart it applies to.
 --------------------------------------------------------------------------- */
-let AUTOSHARE = null, AUTOMODE = 'monthly';
+let AUTOSHARE = null;
 
 const MONTH_IX = {January:0, February:1, March:2, April:3, May:4, June:5,
   July:6, August:7, September:8, October:9, November:10, December:11};
@@ -2299,25 +2307,7 @@ async function drawAutoShare(){
     return;
   }
   const W = Math.max((host.clientWidth || 900) - 8, 520), H = 200;
-  const canDaily = d.segments.some(s => s.daily.has_change);
-
-  let html = '<div class="est-mode" style="margin-bottom:var(--s4)">'
-    + '<button data-m="monthly" aria-pressed="' + (AUTOMODE === 'monthly') + '">'
-    + 'Monthly share</button>'
-    + '<button data-m="daily" aria-pressed="' + (AUTOMODE === 'daily') + '">'
-    + 'Daily (month-to-date)</button></div>';
-
-  if (AUTOMODE === 'daily' && !canDaily){
-    /* A one-point series is a real state and says so. Drawing it would render
-       a flat line across the panel, which reads as "share did not move" — the
-       one thing a single capture cannot tell you. */
-    html += '<p class="note" style="color:var(--warn)"><b>Daily needs two '
-      + 'captures and there ' + (d.captures === 1 ? 'is 1' : 'are ' + d.captures)
-      + '.</b> The series began ' + esc(d.first_capture) + ' and cannot be '
-      + 'backfilled: Vahan publishes no daily history on the open dashboard, so '
-      + 'a month-to-date level for a past date was never available. The next '
-      + 'capture produces the first change.</p>';
-  }
+  let html = '';
 
   /* THE FORECAST IS A DOTTED CONTINUATION OF EACH LINE, not a table
      (PM, 2026-09-24: "just add a dotted line to show forecast, no need for a
@@ -2331,8 +2321,8 @@ async function drawAutoShare(){
      runs 0.830 against Maruti's 0.912 at the same cut, and that gap is the
      whole forecast. */
   for (const s of d.segments){
-    const src = AUTOMODE === 'daily' ? s.daily : s.monthly;
-    const xs = AUTOMODE === 'daily' ? src.dates : src.periods.map(monthToISO);
+    const src = s.monthly;
+    const xs = src.periods.map(monthToISO);
     const labels = s.fno.map(f => f.label).concat([s.others_label]);
     const series = labels.map((lab, i) => ({
       label: lab,
@@ -2354,19 +2344,16 @@ async function drawAutoShare(){
       for (const x of series){
         const v = (fc.by_label[x.label] || {}).share_pct;
         if (v == null || !x.pts.length) continue;
-        const anchor = AUTOMODE === 'daily'
-          ? x.pts[x.pts.length - 1]                       // last real capture
-          : x.pts[x.pts.length - 2];                      // last COMPLETED month
+        const anchor = x.pts[x.pts.length - 2];         // last COMPLETED month
         if (!anchor) continue;
-        const endX = AUTOMODE === 'daily' ? fc.month_end : x.pts[x.pts.length - 1].d;
+        const endX = x.pts[x.pts.length - 1].d;           // the month being forecast
         fSeries.push({label: x.label + ' (forecast)', slot: x.slot, dash: true,
                       pts: [{d: anchor.d, v: anchor.v}, {d: endX, v: v}]});
       }
-      // On the monthly view the partial month is now DRAWN by the dash, so the
-      // solid line must stop at the last completed month or the two overlap
-      // and the chart shows the same month twice at two different values.
-      if (AUTOMODE !== 'daily')
-        for (const x of series) if (x.pts.length > 1) x.pts = x.pts.slice(0, -1);
+      // The partial month is now DRAWN by the dash, so the solid line must stop
+      // at the last completed month or the two overlap and the chart shows the
+      // same month twice at two different values.
+      for (const x of series) if (x.pts.length > 1) x.pts = x.pts.slice(0, -1);
     }
     const drawable = series.filter(x => x.pts.length > 1).concat(fSeries);
     html += '<h3 style="margin-top:var(--s5)">' + esc(s.label) + '</h3>';
@@ -2404,10 +2391,8 @@ async function drawAutoShare(){
             xTicks: [...new Set(xs.filter((_, i) => i % every === 0)
                        .concat(fSeries.length ? [fSeries[0].pts[1].d] : []))],
             allDates: [...new Set(allX)],
-            axisLabel: AUTOMODE === 'daily'
-              ? 'share of ' + esc(src.month) + ' month-to-date · one point per capture'
-              : 'share of each month · newest is ' + esc(src.current)
-                + ', still month-to-date'});
+            axisLabel: 'share of each completed month · ' + esc(src.current)
+              + ' is the dotted forecast'});
     }
     if (fc.state === 'live'){
       const basis = fc.skew_basis === 'none'
@@ -2436,11 +2421,6 @@ async function drawAutoShare(){
   for (const s of d.segments){
     if (document.getElementById('cw-aut' + s.id)) wireChart('aut' + s.id);
   }
-  host.querySelectorAll('.est-mode button').forEach(b =>
-    b.addEventListener('click', () => {
-      AUTOMODE = b.dataset.m;
-      drawAutoShare();
-    }));
 }
 
 let PAIR_RO = null, PAIR_W = 0, PAIR_BUSY = false, PAIR_FIX = 0;
