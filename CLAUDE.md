@@ -2155,8 +2155,43 @@ fails loudly:
   (44.8%), and the per-segment note says why, under the chart it applies to —
   a CV chart whose residual leads reads as a bug otherwise.
 
-**SEGMENTS ARE `vehicleCategoryGroup`, AND THE BUCKETS WERE CHECKED RATHER THAN
-ASSUMED:** `2W = Two Wheeler`, `PV = Four Wheeler`, `CV = Goods Vehicle + Bus`.
+**CV WAS SPLIT INTO M&HCV AND LCV ON 2026-09-24** (PM: *"Mahindra is in LCV,
+only Ashok, TMCV, VECV and eicher are MHCV. Forcemotor is also different"*),
+and **the split is `vehicleSubCategories`, not a list of makers.** Assigning
+tiers by hand would have put Ashok Leyland's 6,595 Dost units into M&HCV and
+Tata's whole book into one tier; the tape already carries HEAVY/MEDIUM/LIGHT,
+so makers fall where they belong instead of where a spec asserts. Confirmed
+before building — Aug-26 MHCV/LCV: Mahindra 746/23,887, Force 171/3,019, Ashok
+Leyland 10,495/6,595, Tata 14,021/17,920, VECV 5,948/1,409. Ashok Leyland and
+Tata STRADDLE both tiers, which a maker list could not have expressed.
+
+  - **`EICHER MOTORS LTD` REGISTERS ZERO VEHICLES.** Every Eicher truck files
+    as `VE COMMERCIAL VEHICLES LTD`, so "VECV and Eicher" is ONE line. Drawing
+    both would put a permanent flat zero beside a real series, which reads as a
+    collapsed business rather than a naming fact. Three MHCV lines, not four.
+  - **`LIGHT PASSENGER VEHICLE` IS TAXI-REGISTERED CARS**, not LCV product —
+    Maruti alone is 23,592 of Aug-26's 43,182. LCV includes it on the PM's
+    choice because it is the only place Force Motors' Traveller appears (95
+    goods against 2,924 passenger); the cost is Maruti at ~27% of the LCV
+    chart, inside Others. The tooltip says so.
+  - **M&HCV DRAWS NO OTHERS LINE** (PM). Its three lines are ~89% and
+    deliberately do NOT sum to 100 — suppressing the residual must not rebase
+    the rest onto a smaller universe, which would inflate every share.
+  - **TMCV IS IN `FNO_EXEMPT`.** Listed (TMCV.NS, "Tata Motors Limited") but
+    absent from the live NSE roster — a demerged entity still in its
+    qualification period. The roster guard correctly dropped it on the first
+    run, leaving Others at 54% of M&HCV and 70% of LCV, the exact complaint
+    that started the rework. Drawn on instruction, the Hindustan Copper
+    precedent: cash-only, never a pair leg. `--selftest` checks the exemption
+    has not ROTTED — the day TMCV enters F&O it stops being an exception.
+  - The CV tiers have **no harvested month shape**: the exports are a
+    maker x category-GROUP pivot and cannot carve sub-categories. `load_shape`
+    SKIPS them and reports it; their skew is basis `none`, so the forecast is
+    plain working-day extrapolation and the tooltip says so. One export with
+    X-Axis = **Sub-Category** would fit them.
+
+**THE OTHER SEGMENTS ARE `vehicleCategoryGroup`, AND THE BUCKETS WERE CHECKED
+RATHER THAN ASSUMED:** `2W = Two Wheeler`, `PV = Four Wheeler`.
 Four Wheeler is PASSENGER — Maruti 168,502 there in Aug-26 against Ashok
 Leyland's **1** (0.0059% of its own 16,861 CV registrations), while the CV
 entity Tata Motors Ltd sits at 36 in Four Wheeler against 3,547+618 in
@@ -2167,6 +2202,15 @@ The eleven groups OVERLAP ~0.6% so they are not a partition — which does not
 touch a share, because every share is computed INSIDE one segment against that
 segment's own separately-fetched total. Tractors and 3W are deliberately out;
 the PM named three segments.
+
+**THE EMPTY-BODY RULE, THIRD AND FINAL FORM.** TRAP 2 is a ROW-COUNT
+short-circuit, and every call here carries a filter that keeps the result set
+under it. So **under a filter an empty body means NO REGISTRATIONS**, not a
+refusal. Treating it as one broke the CV split on its first run:
+`ASHOK LEYLAND LTD.` — the trailing-period duplicate holding 36 vehicles in its
+whole life — has no MEDIUM GOODS VEHICLE row and the entire capture aborted.
+Narrow the query enough and every maker eventually has an honest zero. `strict`
+is reserved for the SEGMENT TOTAL, where an empty body cannot be real.
 
 **ALL-INDIA IS SAFE ONLY WITH A SEGMENT FILTER — and that is measured.**
 Unfiltered, `stateCode=""` short-circuits to an empty body for the largest
