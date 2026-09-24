@@ -457,8 +457,19 @@ def auto_share() -> dict:
                     dseries[k].append(round(s["share_pct"][k], 3)
                                       if s and k in s["share_pct"] else None)
 
+            # THE MONTH-END FORECAST. Cheap now that the skew fit reads
+            # `vahan_share` rather than the network (~0.3s for all three), so
+            # it rides on this route rather than a second one — the
+            # cement_watch precedent, and a new route would have to be added
+            # to export_static.py or the vault copy would render it empty.
+            try:
+                fc = mod.forecast(conn, seg)
+            except Exception as e:                      # noqa: BLE001
+                fc = {"state": "error", "note": f"{type(e).__name__}: {e}"}
+
             out.append({
                 "id": seg, "label": cfg["label"], "note": cfg["note"],
+                "forecast": fc,
                 "fno": [{"label": k, "symbol": v[0]} for k, v in cfg["fno"].items()],
                 "others_label": mod.OTHERS,
                 "monthly": {"periods": periods, "series": mseries,

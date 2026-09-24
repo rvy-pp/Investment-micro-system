@@ -446,9 +446,31 @@ def load_shape(conn: sqlite3.Connection, path) -> dict:
             "segments": out, "source": path.name}
 
 
-def _full_month(segment: str, period: str) -> int:
-    """The month's total, from the OPEN dashboard — no CAPTCHA needed for this
-    half. Only the partial-month numerator has to be harvested by hand."""
+def _full_month(conn: sqlite3.Connection, segment: str, period: str) -> int:
+    """The month's completed total. Only the partial-month NUMERATOR ever needs
+    a human; this half is ordinary data.
+
+    READ FROM `vahan_share` FIRST, network second. The daily capture already
+    stores each segment's TOTAL for the last 13 months, so the number is
+    usually sitting in the store — and fitting the skew over the network cost
+    20-30 HTTP round trips on every page load, which is not a page. Falling
+    back to the fetch keeps a month older than MONTHS_KEPT usable.
+
+    REFUSES THE CURRENT MONTH. Its stored TOTAL is a month-to-DATE, and
+    dividing a partial by a partial would produce a fraction near 1.0 — a
+    "no skew" reading that is pure arithmetic, on the one month where the
+    answer matters most.
+    """
+    if period == _recent_months(1)[0]:
+        raise ValueError(f"{period} is the current month — its total is a "
+                         "month-to-date and cannot be a denominator")
+    row = conn.execute(
+        "SELECT SUM(registrations) FROM vahan_share WHERE segment=? AND period=? "
+        "AND label=? AND capture_date=(SELECT MAX(capture_date) FROM vahan_share "
+        "WHERE segment=? AND period=?)",
+        (segment, period, TOTAL, segment, period)).fetchone()
+    if row and row[0]:
+        return int(row[0])
     return sum(_fetch("", [g], {period}).get(period, 0)
                for g in SEGMENTS[segment]["groups"])
 
@@ -485,7 +507,7 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
                 (sg, cut_day, per)).fetchone()
             if not row:
                 continue
-            t = _full_month(sg, per)
+            t = _full_month(conn, sg, per)
             if not t:
                 continue
             rr = (row[0] / t) / _wd_fraction(per, cut_day)
@@ -495,7 +517,7 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
 
     used, dropped = [], []
     for period, partial in rows:
-        tot = _full_month(segment, period)
+        tot = _full_month(conn, segment, period)
         if not tot or partial > tot:
             dropped.append(f"{period} (partial exceeds the month total)")
             continue
@@ -689,7 +711,7 @@ def selftest() -> int:
                   f"PV d15={s15['skew']:.3f} d24={s24['skew']:.3f}")
         # Plausibility: the forecast must sit inside the YoY band July/August set.
         f2 = forecast(conn, "2W", dt.date(2026, 9, 24))
-        sep25 = _full_month("2W", "2025-September")
+        sep25 = _full_month(conn, "2W", "2025-September")
         yoy = f2["forecast_total"] / sep25 - 1
         check("2W forecast YoY is inside the Jul/Aug band (+15%..+40%)",
               0.15 < yoy < 0.40, f"{100*yoy:+.1f}%")

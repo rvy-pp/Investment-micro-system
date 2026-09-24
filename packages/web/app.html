@@ -2313,6 +2313,80 @@ async function drawAutoShare(){
       + 'capture produces the first change.</p>';
   }
 
+  /* THE MONTH-END FORECAST TABLE, above the charts.
+
+     forecast = MTD / (working-day fraction x segment skew). Both factors are
+     PRINTED, not just the answer, because each is a judgement someone will
+     want to argue with: the working-day fraction counts Sundays only (no
+     holiday calendar, deliberately) and the skew is fitted from hand-harvested
+     months in data/staging/vahan/.
+
+     `skew_basis: none` means no month was harvested at today's cut day, so the
+     factor falls back to 1.0 — plain working-day extrapolation with NO
+     back-loading. That is a materially weaker number and it is labelled as one
+     rather than rendered identically to a fitted row. */
+  html += '<div class="panel" style="margin-bottom:var(--s5)">'
+    + '<div class="sechead">Month-end forecast · ' + esc(d.current_month) + '</div>';
+  const anyNone = d.segments.some(s => (s.forecast||{}).skew_basis === 'none');
+  html += '<div class="scroll"><table><thead><tr><th>Segment</th>'
+    + '<th class="n">MTD</th><th class="n">Forecast</th>'
+    + '<th class="n">Working-day</th><th class="n">Skew</th><th class="n">Fraction</th>'
+    + '<th>Fitted on</th></tr></thead><tbody>';
+  for (const s of d.segments){
+    const f = s.forecast || {};
+    if (f.state !== 'live'){
+      html += '<tr><td>' + esc(s.label) + '</td><td colspan="6" class="hint">'
+        + esc(f.note || f.state || 'no forecast') + '</td></tr>';
+      continue;
+    }
+    const none = f.skew_basis === 'none';
+    html += '<tr><td><b>' + esc(s.label) + '</b></td>'
+      + '<td class="n">' + f.mtd_total.toLocaleString('en-IN') + '</td>'
+      + '<td class="n"><b>' + f.forecast_total.toLocaleString('en-IN') + '</b></td>'
+      + '<td class="n">' + f.wd_fraction + '</td>'
+      + '<td class="n"' + (none ? ' style="color:var(--warn)"' : '') + '>'
+      + f.skew + (none ? ' (none)' : '') + '</td>'
+      + '<td class="n">' + f.fraction + '</td>'
+      + '<td class="hint">' + esc((f.skew_months||[]).join(', ') || '—') + '</td></tr>';
+    for (const [k, v] of Object.entries(f.by_label || {})){
+      html += '<tr><td style="padding-left:18px">' + esc(k) + '</td>'
+        + '<td class="n">' + v.mtd.toLocaleString('en-IN') + '</td>'
+        + '<td class="n">' + v.forecast.toLocaleString('en-IN') + '</td>'
+        + '<td colspan="4"></td></tr>';
+    }
+  }
+  html += '</tbody></table></div>';
+  /* Grouped BY MONTH, not by segment. The exclusion is a property of the month
+     — that is the whole point of the month-wide festive test — so listing it
+     once per segment would print the same finding three times and imply three
+     separate exclusions. Each segment's own ratio still shows, because the
+     spread across them (2W 0.722 vs CV 0.873) is the evidence that commercial
+     buyers care less about an auspicious date than retail ones. */
+  const byMonth = {};
+  for (const s of d.segments)
+    for (const t of ((s.forecast||{}).skew_dropped || [])){
+      const per = t.split(' ')[0];
+      const m = t.match(/\(([\d.]+)/);
+      (byMonth[per] = byMonth[per] || []).push(s.id + ' ' + (m ? m[1] : '?'));
+    }
+  const dropped = Object.entries(byMonth).map(([per, v]) => per + ' (' + v.join(', ') + ')');
+  if (dropped.length){
+    /* Named, not silently filtered. A month excluded from the fit is the most
+       interesting thing about the fit — Sep-2025 was dropped because Navratri
+       fell in its last nine days, and a forecast built on it read +75% YoY
+       against a market running +20-30%. */
+    html += '<p class="note">Excluded from the fit: <b>' + esc(dropped.join('; '))
+      + '</b>. A festive month is back-loaded far beyond the normal range, and '
+      + 'the festive window moves between months year to year — so its shape '
+      + 'cannot be carried into a non-festive one.</p>';
+  }
+  if (anyNone){
+    html += '<p class="note" style="color:var(--warn)">No month has been '
+      + 'harvested at this cut day, so the skew falls back to 1.0 — that row is '
+      + 'plain working-day extrapolation with <b>no back-loading applied</b>.</p>';
+  }
+  html += '</div>';
+
   for (const s of d.segments){
     const src = AUTOMODE === 'daily' ? s.daily : s.monthly;
     const xs = AUTOMODE === 'daily' ? src.dates : src.periods.map(monthToISO);

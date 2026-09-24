@@ -2215,6 +2215,72 @@ so the charts are right; anyone querying that maker string WITHOUT a segment
 filter gets a blend. `vahan.py`'s illustrative `GROUPS` map is exactly that
 trap and is labelled "NOT a spec".
 
+#### The month-end forecast — on the tab since 2026-09-24
+
+PM: *"Given the sales from the start of the month, can we extrapolate it from
+the 1st till whatever is today and extend that to month end? ... I just know
+sales increase in the second half of the month usually."* Both halves true;
+neither true the way the naive method assumes.
+`forecast = MTD / (working-day fraction x segment skew)`, a panel above the
+share charts, printing BOTH factors rather than only the answer.
+
+**CALENDAR DAYS FLIP THE SIGN.** Hero, Sep-2026: days 20-23 ran
+13,466/CALENDAR day against 14,188 over days 1-19 — a slowdown. Per WORKING
+day the same window is **17,955 against 15,857, a 13% ACCELERATION**. The whole
+apparent slowdown was one Sunday. Public holidays are deliberately NOT
+modelled (basket_index's holiday-calendar ruling); whatever they do is absorbed
+into the measured skew.
+
+**THE MONTH IS BACK-LOADED, BY SEGMENT, AND MILDLY** — harvested from the
+CAPTCHA-gated report builder, four exports now VERSIONED in
+`data/staging/vahan/` because they are the only record of numbers no automated
+step can re-fetch. `observed / working-day`, 1.00 = no skew:
+
+| cut | 2W | PV | CV |
+|---|---|---|---|
+| Jul-26 d15 | 0.995 | 0.927 | 1.006 |
+| Aug-26 d15 | 0.911 | 0.846 | 0.940 |
+| Aug-26 d24 | **0.983** | **0.912** | **0.983** |
+
+**PV is the most back-loaded in EVERY month** — month-end dealer push shows up
+in cars far more than two-wheelers — so the skew is per segment, never one
+market number. And **it is a CURVE**: it relaxes toward 1.0 as the cut nears
+month end, because the late surge has by then been counted. `cut_day` is a KEY
+in `vahan_month_shape`, never averaged over; a cut with no harvested month
+returns skew 1.0 with `basis: none` and the panel labels that row amber, since
+it is plain working-day extrapolation with no back-loading at all.
+
+**THE FESTIVE MONTHS BROKE THE METHOD RECOMMENDED FIRST.** Sep-2025 at d24 is
+0.722/0.659/0.873, far outside the normal band; Navratri began 22 Sep 2025 and
+October-2025 2W then printed **+140.7% m/m**. Year-on-year anchoring cancels
+intra-month shape ONLY WHEN THE SHAPE REPEATS, and the festive effect keys on
+the LUNAR calendar — so it forecast Sep-2026 at +75%/+77%/+41% against a market
+running +20-30% in Jul/Aug. Not used. The working-day method lands +28.6% /
++27.9% / +25.4%, inside the band, which is the plausibility check the other
+failed.
+
+**FESTIVITY IS A PROPERTY OF THE MONTH, NOT OF ONE SEGMENT.** The first
+`skew()` tested each segment alone and KEPT Sep-2025 for CV (0.873, inside the
+band) while dropping it for 2W and PV — so CV's factor blended a festive month
+with a normal one, **0.928 instead of 0.983**, and nothing about it looked
+wrong. Commercial buyers genuinely care less about an auspicious date than
+retail ones, which is why the per-segment test passed and exactly why it must
+not be the test. A period is now judged across ALL segments and excluded from
+every one together; the panel names the excluded month ONCE with each
+segment's own ratio, because that spread is the evidence.
+
+**`_full_month()` reads `vahan_share` before the network.** Fitting over HTTP
+cost 20-30 round trips per page load; the daily capture already stores every
+segment's monthly TOTAL. It REFUSES the current month — its stored total is a
+month-to-DATE, and a partial over a partial gives a fraction near 1.0, a
+"no skew" reading that is pure arithmetic on the one month that matters.
+
+`--forecast` and `--load-shape GLOB` on the CLI; 11 selftest checks, acceptance
+beside rejection (a range not starting on the 1st is refused, a cross-foot
+failure refuses the file, the skew must relax toward 1.0 at a later cut).
+**KNOWN: n=1 at d24** — one normal month per segment. The daily captures
+supply the curve empirically from October without another CAPTCHA.
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed
