@@ -86,6 +86,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import pathlib
 import sqlite3
 import sys
 import urllib.parse
@@ -306,6 +307,233 @@ def shares(conn: sqlite3.Connection, segment: str, period: str | None = None,
             "counts": {**rows, OTHERS: others}, "share_pct": out}
 
 
+# ---------------------------------------------------------------------------
+# MONTH SHAPE — the intra-month accrual curve, and the forecast built on it.
+#
+# THE QUESTION: given registrations from the 1st to today, what will the month
+# finish at? The naive answer is MTD/days * days_in_month, and it is wrong in
+# two separate ways that pull in opposite directions.
+#
+# 1. CALENDAR DAYS ARE THE WRONG UNIT. RTOs shut on Sunday. Measured on Hero in
+#    September 2026: days 20-23 ran 13,466/CALENDAR day against 14,188 over
+#    days 1-19, which reads as a slowdown. Per WORKING day the same window is
+#    17,955 against 15,857 — a 13% ACCELERATION. The entire apparent slowdown
+#    was one Sunday. Always work in working days; the SIGN of the trend depends
+#    on it.
+#
+# 2. THE MONTH IS BACK-LOADED, BY SEGMENT, AND MILDLY. Harvested from the
+#    CAPTCHA-gated report builder (the files in data/staging/vahan/), as
+#    observed_fraction / working_day_fraction, where 1.00 = no skew:
+#
+#        cut          2W      PV      CV
+#        Jul-26 d15   0.995   0.927   1.006
+#        Aug-26 d15   0.911   0.846   0.940
+#        Aug-26 d24   0.983   0.912   0.983
+#
+#    PV is the most back-loaded in EVERY month — month-end dealer push shows up
+#    in cars far more than in two-wheelers — which is why the skew is per
+#    segment and not one market-wide number.
+#
+#    THE SKEW IS A CURVE, NOT A CONSTANT: it relaxes toward 1.0 as the cut-off
+#    approaches month end, because by then the late surge has already been
+#    counted. 2W goes 0.911 at d15 to 0.983 at d24. Applying a d15 factor on
+#    day 24 over-forecasts, so cut_day is a KEY here and never averaged over.
+#
+# *** AND THE FESTIVE MONTHS ARE A DIFFERENT ANIMAL ENTIRELY. ***
+# Sep-2025 at d24 reads 0.722 / 0.659 / 0.873 — far outside the normal-month
+# range above. Navratri began 22 Sep 2025, so that month's last nine days were
+# the festive ramp; October 2025 two-wheelers then printed +140.7% m/m. A
+# forecast built on Sep-2025's shape said Sep-2026 would be +75% YoY against a
+# market running +20-30% in July and August. THE FESTIVE EFFECT KEYS ON THE
+# LUNAR CALENDAR, NOT THE GREGORIAN MONTH, so year-on-year anchoring — which
+# cancels shape only when the shape repeats — BREAKS whenever the festival
+# moves between months. skew() REFUSES such a month rather than averaging it
+# into the normal-month fit, and names the one it dropped.
+# ---------------------------------------------------------------------------
+
+SHAPE_DDL = """
+CREATE TABLE IF NOT EXISTS vahan_month_shape (
+    period   TEXT NOT NULL,          -- '2026-August', the month measured
+    cut_day  INTEGER NOT NULL,       -- counted from the 1st THROUGH this day
+    segment  TEXT NOT NULL,
+    partial  INTEGER NOT NULL CHECK (partial >= 0),
+    source   TEXT NOT NULL CHECK (length(source) > 0),  -- provenance
+    PRIMARY KEY (period, cut_day, segment)
+);
+"""
+
+# Outside this band a month is treated as festive-distorted and excluded from
+# the normal-month fit. Set from the observed normal months (0.846..1.006) with
+# room either side; Sep-2025's 0.659 sits far outside it.
+SKEW_NORMAL = (0.80, 1.15)
+
+
+def _wd_fraction(period: str, cut: int) -> float:
+    """Working days (ex-Sunday) through `cut`, over the month's total.
+
+    Sundays only. Public holidays are NOT modelled and that is deliberate — a
+    holiday calendar is one more thing to maintain and wrong the first year
+    nobody updates it, the same call basket_index.py made about exchange
+    holidays. Whatever a holiday does to the shape is absorbed into the
+    measured skew instead, which is fitted from real months.
+    """
+    import calendar as _c
+    y = int(period.split("-")[0])
+    mn = list(_c.month_name).index(period.split("-")[1])
+    dim = _c.monthrange(y, mn)[1]
+    first = dt.date(y, mn, 1)
+
+    def w(n):
+        return sum(1 for i in range(n) if (first + dt.timedelta(i)).weekday() != 6)
+    return w(min(cut, dim)) / w(dim)
+
+
+def load_shape(conn: sqlite3.Connection, path) -> dict:
+    """Parse one report-builder export into `vahan_month_shape`.
+
+    A maker x vehicleCategoryGroup pivot whose TITLE ROW carries its own date
+    range — which is read from the file rather than the filename, because the
+    filename is whatever the browser called the download and four of these
+    arrived as `..._all_records (2).xlsx`.
+
+    Guarded: the file's own Total column must equal the sum of its segment
+    cells on EVERY row. A shifted or mis-parsed column fails there rather than
+    becoming a plausible skew factor nobody can re-check.
+    """
+    import re
+    import openpyxl
+    path = pathlib.Path(path)
+    ws = openpyxl.load_workbook(path, read_only=True, data_only=True)["Maker Report"]
+    rows = list(ws.iter_rows(values_only=True))
+    title = rows[0][0] or ""
+    m = re.search(r"\((\d{2} \w{3} \d{4}) to (\d{2} \w{3} \d{4})\)", title)
+    if not m:
+        raise ValueError(f"{path.name}: no date range in the title row: {title!r}")
+    a = dt.datetime.strptime(m.group(1), "%d %b %Y").date()
+    b = dt.datetime.strptime(m.group(2), "%d %b %Y").date()
+    if a.day != 1:
+        raise ValueError(f"{path.name}: range starts {a}, not the 1st — the shape "
+                         "fit needs a CUMULATIVE month-to-date")
+    if (a.year, a.month) != (b.year, b.month):
+        raise ValueError(f"{path.name}: range spans two months ({a}..{b})")
+    period = f"{a.year}-{MONTH_NAMES[a.month - 1]}"
+
+    hdr = rows[2]
+    col = {h: i for i, h in enumerate(hdr) if h}
+    body = [r for r in rows[3:] if r and r[0]]
+    if "Total" not in col:
+        raise ValueError(f"{path.name}: no Total column — wrong report?")
+    bad = sum(1 for r in body
+              if sum(r[i] or 0 for h, i in col.items() if h not in ("Maker", "Total"))
+              != (r[col["Total"]] or 0))
+    if bad:
+        raise ValueError(f"{path.name}: cross-foot FAILED on {bad} of {len(body)} "
+                         "rows — segments do not sum to the file's own Total")
+
+    conn.executescript(SHAPE_DDL)
+    out = {}
+    for seg, cfg in SEGMENTS.items():
+        missing = [g for g in cfg["groups"] if g not in col]
+        if missing:
+            raise ValueError(f"{path.name}: missing column(s) {missing} for {seg}")
+        part = sum(sum(r[col[g]] or 0 for g in cfg["groups"]) for r in body)
+        conn.execute("INSERT OR REPLACE INTO vahan_month_shape "
+                     "(period, cut_day, segment, partial, source) VALUES (?,?,?,?,?)",
+                     (period, b.day, seg, part, path.name))
+        out[seg] = part
+    conn.commit()
+    return {"period": period, "cut_day": b.day, "makers": len(body),
+            "segments": out, "source": path.name}
+
+
+def _full_month(segment: str, period: str) -> int:
+    """The month's total, from the OPEN dashboard — no CAPTCHA needed for this
+    half. Only the partial-month numerator has to be harvested by hand."""
+    return sum(_fetch("", [g], {period}).get(period, 0)
+               for g in SEGMENTS[segment]["groups"])
+
+
+def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
+    """observed / working-day fraction, fitted at THIS cut day.
+
+    Returns 1.0 with `basis: none` when no month was harvested at this cut. That
+    is the honest fallback — it degrades to plain working-day extrapolation —
+    and it is REPORTED rather than interpolated across a curve we hold two
+    points on.
+    """
+    conn.executescript(SHAPE_DDL)
+    rows = conn.execute(
+        "SELECT period, partial FROM vahan_month_shape "
+        "WHERE segment=? AND cut_day=? ORDER BY period", (segment, cut_day)).fetchall()
+    # FESTIVITY IS A PROPERTY OF THE MONTH, NOT OF ONE SEGMENT, so a period is
+    # judged across ALL segments and excluded from every one of them together.
+    # The first draft tested each segment on its own and kept Sep-2025 for CV
+    # (0.873, inside the band) while dropping it for 2W (0.722) and PV (0.659) —
+    # so CV's skew was fitted on a festive month and a normal one averaged
+    # together, 0.928 instead of 0.983. Nothing about the number looked wrong.
+    # Commercial buyers genuinely care less about an auspicious date than
+    # retail ones do, which is exactly why the per-segment test passed and is
+    # exactly why it must not be the test.
+    festive = set()
+    for per, in conn.execute(
+            "SELECT DISTINCT period FROM vahan_month_shape WHERE cut_day=?",
+            (cut_day,)).fetchall():
+        for sg in SEGMENTS:
+            row = conn.execute(
+                "SELECT partial FROM vahan_month_shape "
+                "WHERE segment=? AND cut_day=? AND period=?",
+                (sg, cut_day, per)).fetchone()
+            if not row:
+                continue
+            t = _full_month(sg, per)
+            if not t:
+                continue
+            rr = (row[0] / t) / _wd_fraction(per, cut_day)
+            if not (SKEW_NORMAL[0] <= rr <= SKEW_NORMAL[1]):
+                festive.add(per)
+                break
+
+    used, dropped = [], []
+    for period, partial in rows:
+        tot = _full_month(segment, period)
+        if not tot or partial > tot:
+            dropped.append(f"{period} (partial exceeds the month total)")
+            continue
+        r = (partial / tot) / _wd_fraction(period, cut_day)
+        if period in festive:
+            dropped.append(f"{period} ({r:.3f}, festive month)")
+            continue
+        used.append((period, r))
+    if not used:
+        return {"skew": 1.0, "basis": "none", "n": 0, "months": [],
+                "dropped": dropped, "cut_day": cut_day}
+    return {"skew": sum(r for _, r in used) / len(used), "basis": "fitted",
+            "n": len(used), "months": [f"{p} {r:.3f}" for p, r in used],
+            "dropped": dropped, "cut_day": cut_day}
+
+
+def forecast(conn: sqlite3.Connection, segment: str,
+             asof: dt.date | None = None) -> dict:
+    """Project the current month from its month-to-date level."""
+    asof = asof or dt.date.today()
+    period = f"{asof.year}-{MONTH_NAMES[asof.month - 1]}"
+    s = shares(conn, segment, period=period)
+    if not s:
+        return {"state": "no_data", "segment": segment, "period": period}
+    fw = _wd_fraction(period, asof.day)
+    sk = skew(conn, segment, asof.day)
+    f = fw * sk["skew"]
+    return {"state": "live", "segment": segment, "period": period,
+            "capture_date": s["capture_date"], "asof_day": asof.day,
+            "wd_fraction": round(fw, 4), "skew": round(sk["skew"], 4),
+            "skew_basis": sk["basis"], "skew_n": sk["n"],
+            "skew_months": sk["months"], "skew_dropped": sk["dropped"],
+            "fraction": round(f, 4), "mtd_total": s["total"],
+            "forecast_total": round(s["total"] / f),
+            "by_label": {k: {"mtd": v, "forecast": round(v / f)}
+                         for k, v in s["counts"].items()}}
+
+
 def _months_sorted(periods) -> list[str]:
     def key(p):
         y, m = p.split("-")
@@ -426,6 +654,80 @@ def selftest() -> int:
           m[0] == "2026-January" and m[1] == "2025-December" and len(m) == 13,
           f"{m[0]} .. {m[-1]}")
 
+    print("\nMONTH SHAPE + FORECAST")
+    # Working-day fraction: the unit that flips the sign of the observed trend.
+    # Sep-2026 has 26 working days (ex-Sun); 21 have passed by the 24th.
+    check("working-day fraction is not the calendar fraction",
+          abs(_wd_fraction("2026-September", 24) - 21 / 26) < 1e-9
+          and abs(_wd_fraction("2026-September", 24) - 24 / 30) > 0.005,
+          f"wd={_wd_fraction('2026-September', 24):.4f} vs calendar={24/30:.4f}")
+    check("a full month is fraction 1.0",
+          abs(_wd_fraction("2026-August", 31) - 1.0) < 1e-9)
+
+    shp = conn.execute("SELECT COUNT(*) FROM vahan_month_shape").fetchone()[0] \
+        if conn.execute("SELECT name FROM sqlite_master WHERE name='vahan_month_shape'"
+                        ).fetchone() else 0
+    check("harvested month shapes are loaded", shp >= 3, f"{shp} rows")
+
+    if shp:
+        # THE FESTIVE EXCLUSION, which is the whole reason the forecast is not
+        # +75%. Sep-2025 must be dropped from EVERY segment, including CV whose
+        # own ratio (0.873) sits inside the normal band.
+        for sg in SEGMENTS:
+            sk = skew(conn, sg, 24)
+            drop = " ".join(sk["dropped"])
+            check(f"{sg}: Sep-2025 excluded as festive", "2025-September" in drop,
+                  drop or "NOT dropped")
+        sk = skew(conn, "2W", 24)
+        check("2W skew@24 is the normal-month value, not a blend",
+              abs(sk["skew"] - 0.983) < 0.01, f"{sk['skew']:.4f}")
+        # The skew is a CURVE: d15 must be further from 1.0 than d24.
+        s15, s24 = skew(conn, "PV", 15), skew(conn, "PV", 24)
+        if s15["n"] and s24["n"]:
+            check("skew relaxes toward 1.0 as the cut approaches month end",
+                  abs(1 - s15["skew"]) > abs(1 - s24["skew"]),
+                  f"PV d15={s15['skew']:.3f} d24={s24['skew']:.3f}")
+        # Plausibility: the forecast must sit inside the YoY band July/August set.
+        f2 = forecast(conn, "2W", dt.date(2026, 9, 24))
+        sep25 = _full_month("2W", "2025-September")
+        yoy = f2["forecast_total"] / sep25 - 1
+        check("2W forecast YoY is inside the Jul/Aug band (+15%..+40%)",
+              0.15 < yoy < 0.40, f"{100*yoy:+.1f}%")
+
+    # REJECTION: a range not starting on the 1st is not a month-to-date and the
+    # whole fit is meaningless on it. Must refuse rather than mis-date.
+    import tempfile
+    try:
+        import openpyxl
+        wb = openpyxl.Workbook(); ws = wb.active; ws.title = "Maker Report"
+        ws["A1"] = "Maker and Vehicle Category Group Data for All State (05 Aug 2026 to 24 Aug 2026)"
+        ws.append([]) if False else None
+        for c, v in zip("ABCD", ["Maker", "Two Wheeler", "Four Wheeler", "Total"]):
+            ws[f"{c}3"] = v
+        ws["A4"], ws["B4"], ws["C4"], ws["D4"] = "X LTD", 1, 1, 2
+        p2 = pathlib.Path(tempfile.gettempdir()) / "_vs_bad_start.xlsx"
+        wb.save(p2)
+        try:
+            load_shape(sqlite3.connect(":memory:"), p2)
+            check("a range not starting on the 1st is refused", False)
+        except ValueError as e:
+            check("a range not starting on the 1st is refused", "not the 1st" in str(e))
+
+        # REJECTION: a cross-foot failure must refuse the file, not load a
+        # plausible-but-wrong partial.
+        ws["A1"] = "Maker and Vehicle Category Group Data for All State (01 Aug 2026 to 24 Aug 2026)"
+        ws["D4"] = 99
+        p3 = pathlib.Path(tempfile.gettempdir()) / "_vs_bad_foot.xlsx"
+        wb.save(p3)
+        try:
+            load_shape(sqlite3.connect(":memory:"), p3)
+            check("a cross-foot failure refuses the file", False)
+        except ValueError as e:
+            check("a cross-foot failure refuses the file", "cross-foot" in str(e))
+    except ImportError:
+        print("  SKIP  openpyxl not available for the rejection fixtures")
+
+
     print(f"\n{len(fails)} failure(s)" + (f": {fails}" if fails else ""))
     return 1 if fails else 0
 
@@ -434,11 +736,50 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--capture", action="store_true")
     ap.add_argument("--report", action="store_true")
+    ap.add_argument("--forecast", action="store_true",
+                    help="project the current month from its month-to-date level")
+    ap.add_argument("--load-shape", metavar="GLOB",
+                    help="load report-builder exports (data/staging/vahan/*.xlsx)")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     conn = _conn()
+    if a.load_shape:
+        import glob as _g
+        n = 0
+        for f in sorted(_g.glob(a.load_shape)):
+            r = load_shape(conn, f)
+            print(f"  {r['source']:44} {r['period']:16} d{r['cut_day']:<3} "
+                  f"{r['makers']} makers")
+            n += 1
+        print(f"loaded {n} file(s)")
+        return 0
+    if a.forecast:
+        for seg, cfg in SEGMENTS.items():
+            f = forecast(conn, seg)
+            if f["state"] != "live":
+                print(f"{cfg['label']}: {f['state']}")
+                continue
+            print("")
+            print(f"### {cfg['label']} — {f['period']} "
+                  f"(MTD to day {f['asof_day']}, captured {f['capture_date']})")
+            print(f"    fraction = working-day {f['wd_fraction']} x skew "
+                  f"{f['skew']} = {f['fraction']}   [{f['skew_basis']}, "
+                  f"n={f['skew_n']}]")
+            if f["skew_months"]:
+                print(f"    fitted on : {', '.join(f['skew_months'])}")
+            if f["skew_dropped"]:
+                print(f"    dropped   : {', '.join(f['skew_dropped'])}")
+            if f["skew_basis"] == "none":
+                print("    NO MONTH HARVESTED AT THIS CUT DAY — this is plain "
+                      "working-day extrapolation, with no back-loading applied.")
+            print(f"    {'':18}{'MTD':>11}{'FORECAST':>11}")
+            print(f"    {'= segment total':18}{f['mtd_total']:>11,}"
+                  f"{f['forecast_total']:>11,}")
+            for k, v in f["by_label"].items():
+                print(f"    {k:18}{v['mtd']:>11,}{v['forecast']:>11,}")
+        return 0
     if a.capture:
         r = capture(conn)
         print(f"captured {r['capture_date']}: {r['rows']} rows "
