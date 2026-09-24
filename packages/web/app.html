@@ -2324,7 +2324,13 @@ async function drawAutoShare(){
     const src = s.monthly;
     const fc0 = s.forecast || {};
     const xs = src.periods.map(monthToISO);
-    const labels = s.fno.map(f => f.label).concat([s.others_label]);
+    /* MHCV carries no residual line (PM: "no others in MHCV graph"). The
+       shares are still computed against the full segment, so these lines
+       deliberately sum to ~89% rather than 100 — dropping the line must not
+       silently rebase the rest onto a smaller universe, which would inflate
+       every remaining share. */
+    const labels = s.fno.map(f => f.label)
+                        .concat(s.no_others ? [] : [s.others_label]);
     const series = labels.map((lab, i) => ({
       label: lab,
       // Others takes slot 0 (grey) deliberately — it is a residual, not a name.

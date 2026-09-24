@@ -469,6 +469,11 @@ def auto_share() -> dict:
 
             out.append({
                 "id": seg, "label": cfg["label"], "note": cfg["note"],
+                # MHCV draws no residual line (PM). The share arithmetic still
+                # uses the FULL segment as its denominator, so the drawn lines
+                # deliberately do not sum to 100 — suppressing the line must
+                # not quietly rebase the others onto a smaller universe.
+                "no_others": bool(cfg.get("no_others")),
                 "forecast": fc,
                 "fno": [{"label": k, "symbol": v[0]} for k, v in cfg["fno"].items()],
                 "others_label": mod.OTHERS,

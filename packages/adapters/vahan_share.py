@@ -102,6 +102,22 @@ DB = REPO / "data" / "ims.db"
 MONTHS_KEPT = 13          # enough for YoY and to watch backdating revise
 FNO_LOOKBACK_DAYS = 30    # a symbol absent this long is out of F&O
 
+# DELIBERATE NON-F&O INCLUSIONS. The roster guard exists so a name that leaves
+# F&O stops drawing its own line, and it correctly dropped TMCV on the first
+# run of the CV split. But the PM asked for Tata's CV arm by name, and a CV
+# chart without the segment leader is not a CV chart: TMCV is 39% of M&HCV and
+# 25% of light goods, and without it Others was 54% of M&HCV and 70% of LCV,
+# which is the exact complaint that started this rework.
+#
+# This is the Hindustan Copper precedent — CLAUDE.md records it as the PM's
+# explicit invariant-7 exception, "cash-only expression: long/avoid signal,
+# never a pair leg". TMCV is listed (TMCV.NS) and simply has not completed the
+# F&O qualification period after the 2025-10 demerger; the live NSE roster
+# carries TMPV and not TMCV. An EXEMPTION, not a hole in the guard: every
+# other symbol is still checked, and this set is the place to look when asking
+# why a non-F&O name has a line.
+FNO_EXEMPT = {"TMCV"}
+
 MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July",
                "August", "September", "October", "November", "December"]
 
@@ -138,10 +154,43 @@ SEGMENTS = {
         "note": "Others is Toyota, Kia, Skoda-VW, JSW MG, Honda Cars, Renault "
                 "and Nissan — all unlisted in India.",
     },
-    "CV": {
-        "label": "Commercial vehicles",
-        "groups": ["Goods Vehicle", "Bus"],
+    # *** CV IS SPLIT INTO MHCV AND LCV (PM, 2026-09-24). ***
+    # "Mahindra is in LCV, only Ashok, TMCV, VECV and eicher are MHCV.
+    #  Forcemotor is also different." Confirmed against the tape rather than
+    #  taken on trust — Aug-2026 by sub-category, MHCV vs LCV:
+    #     Mahindra      746 / 23,887   -> LCV, overwhelmingly
+    #     Force Motors  171 /  3,019   -> LCV (the Traveller, a passenger van)
+    #     Ashok Leyland 10,495 / 6,595 -> MHCV, but a real LCV book (Dost)
+    #     Tata Motors   14,021 / 17,920 -> BOTH, and bigger in LCV
+    #     VECV           5,948 /  1,409 -> MHCV
+    #
+    # THE SPLIT IS `vehicleSubCategories`, NOT A LIST OF MAKERS. Assigning
+    # makers to tiers by hand would have put Ashok Leyland's 6,595 Dost units
+    # into MHCV and Tata's whole book into whichever tier it was filed under.
+    # The tape already carries the distinction; the makers then fall where they
+    # belong instead of where a spec asserts they do.
+    #
+    # *** EICHER MOTORS LTD REGISTERS ZERO VEHICLES. *** Every Eicher truck
+    # files as VE COMMERCIAL VEHICLES LTD, so "VECV and Eicher" is ONE line.
+    # Carrying both would have drawn a permanent flat zero next to a real
+    # series, which reads as a collapsed business rather than a naming fact.
+    "MHCV": {
+        "label": "Commercial vehicles · M&HCV",
+        "subcats": ["HEAVY GOODS VEHICLE", "MEDIUM GOODS VEHICLE",
+                    "HEAVY PASSENGER VEHICLE", "MEDIUM PASSENGER VEHICLE"],
+        # NO Others line, per the PM. The three below are 85.2% of MHCV; the
+        # rest is Daimler/BharatBenz (5.1%, unlisted here so never a trade),
+        # Mahindra, SML and small importers. The shares are still computed
+        # against the FULL segment, so these three do not sum to 100 — that is
+        # the instruction, and the tooltip says what is missing.
+        "no_others": True,
         "fno": {
+            # TMCV is NOT in F&O — the live NSE roster (217 names, re-fetched
+            # 2026-09-24) carries TMPV and not TMCV, a demerged entity waiting
+            # out its qualification period. It is drawn anyway on the PM's
+            # instruction, the Hindustan Copper precedent: cash-only
+            # expression, never a pair leg.
+            "Tata Motors": ("TMCV", ["TATA MOTORS LTD"]),
             "Ashok Leyland": ("ASHOKLEY", ["ASHOK LEYLAND LTD",
                                            # same company, trailing period, a
                                            # data-entry artefact: 36 vehicles
@@ -149,14 +198,32 @@ SEGMENTS = {
                                            "ASHOK LEYLAND LTD."]),
             "VE Commercial": ("EICHERMOT", ["VE COMMERCIAL VEHICLES LTD",
                                             "VE COMMERCIAL VEHICLES LTD (VOLVO BUSES DIVISION)"]),
+        },
+        "note": "Three lines covering ~89% of M&HCV; they do NOT sum to 100 "
+                "because there is no Others line here by instruction. The gap "
+                "is Daimler/BharatBenz (~5%), Mahindra, SML and importers. "
+                "Eicher registers as VE Commercial — one company, one line. "
+                "TMCV is listed but not in F&O.",
+    },
+    "LCV": {
+        "label": "Commercial vehicles · LCV",
+        # Light goods AND light passenger, per the PM. Worth knowing what that
+        # second bucket is: LIGHT PASSENGER VEHICLE is dominated by
+        # TAXI-REGISTERED CARS — Maruti alone is 23,592 of Aug-2026's 43,182 —
+        # so it is commercial REGISTRATION rather than commercial PRODUCT.
+        # It is included because it is the only place Force Motors' Traveller
+        # appears (95 goods units against 2,924 passenger).
+        "subcats": ["LIGHT GOODS VEHICLE", "LIGHT PASSENGER VEHICLE"],
+        "fno": {
             "Mahindra": ("M&M", ["MAHINDRA & MAHINDRA LIMITED",
                                  "SML MAHINDRA LTD"]),
+            "Tata Motors": ("TMCV", ["TATA MOTORS LTD"]),
             "Force Motors": ("FORCEMOT", ["FORCE MOTORS LIMITED"]),
         },
-        "note": "TATA MOTORS — the largest CV maker — is INSIDE Others: its CV "
-                "entity left F&O at the 2025-10 demerger (TATAMOTORS last "
-                "traded 2025-10-23, only the PV arm TMPV carries futures). "
-                "Others is therefore the biggest line here by construction.",
+        "note": "Light goods + light passenger. MARUTI is ~27% of this and "
+                "sits in Others — its light-passenger volume is taxi-registered "
+                "cars, not an LCV product. Ashok Leyland's Dost (~6.5%) is in "
+                "Others too. TMCV is listed but not in F&O.",
     },
 }
 
@@ -208,22 +275,57 @@ def _fno_live(conn: sqlite3.Connection, asof: dt.date | None = None) -> set[str]
     return {r[0] for r in rows}
 
 
-def _fetch(maker: str, groups: list[str], months: set[str]) -> dict[str, int]:
+def _filters(cfg: dict) -> list[tuple[str, str]]:
+    """The dashboard parameter that carves this segment out.
+
+    Two different axes: `vehicleCategoryGroup` for the retail segments (Two
+    Wheeler, Four Wheeler) and `vehicleSubCategories` for the CV tiers, where
+    HEAVY/MEDIUM/LIGHT is the only thing that separates M&HCV from LCV. A
+    segment declares one or the other and never both.
+    """
+    if "subcats" in cfg:
+        return [("vehicleSubCategories", v) for v in cfg["subcats"]]
+    return [("vehicleCategoryGroup", v) for v in cfg["groups"]]
+
+
+def _fetch(maker: str, groups: list[str], months: set[str],
+           param: str = "vehicleCategoryGroup",
+           strict: bool = False) -> dict[str, int]:
     """Segment-filtered all-India monthly counts, summed over `groups`.
 
-    ALL-INDIA IS ONLY SAFE BECAUSE OF THE SEGMENT FILTER — see the module
-    docstring. An empty body here would be vahan.TRAP 2 and `vahan.series`
-    raises on it rather than returning a zero.
+    THE EMPTY-BODY RULE, THIRD AND FINAL FORM. vahan.TRAP 2 is a ROW-COUNT
+    short-circuit: the server gives up on the largest UNFILTERED queries and
+    returns `[]` in 0.3s saying nothing. Every call here carries a segment or
+    sub-category filter, which is exactly what keeps the result set under that
+    threshold — measured, not hoped: Hero/2W and ALL/Four-Wheeler both
+    reconcile to the 36-state sum with zero difference, and `--selftest`
+    re-runs it.
+
+    So under a filter, an empty body means NO REGISTRATIONS. Treating it as a
+    refusal was wrong and it broke the CV split on its first run:
+    `ASHOK LEYLAND LTD.` — the trailing-period duplicate holding 36 vehicles in
+    its entire life — has no MEDIUM GOODS VEHICLE row, and the whole capture
+    aborted. That is the same mistake this file already made once, when a
+    state-scoped zero was read as a refusal and eight OEMs reported zero
+    12-month volume. Narrow the query enough and every maker eventually has an
+    honest zero somewhere.
+
+    `strict` is reserved for the SEGMENT TOTAL query, where an empty body
+    cannot be a real zero — a segment with no registrations at all means the
+    fetch broke, and that must still refuse.
     """
     out: dict[str, int] = {}
     for g in groups:
         p = vahan._params(maker, "", vahan.CALENDAR["month"], "2026", "2026")
-        p["vehicleCategoryGroup"] = g
+        p[param] = g
         rows = vahan._get(
             f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}")
         if not rows:
-            raise vahan.VahanRefused(
-                f"empty body: maker={maker!r} group={g!r} — a refusal, not a zero")
+            if strict:
+                raise vahan.VahanRefused(
+                    f"empty body on the SEGMENT TOTAL: {param}={g!r} — a segment "
+                    "cannot genuinely have no registrations, so this is a refusal")
+            continue
         for r in rows:
             k = r.get("yearAsString")
             if k in months:
@@ -238,21 +340,23 @@ def capture(conn: sqlite3.Connection, capture_date: str | None = None,
     live = _fno_live(conn)
     jobs, meta = [], []
     for seg, cfg in SEGMENTS.items():
-        jobs.append(("", cfg["groups"]))
+        f = _filters(cfg)
+        param, vals = f[0][0], [v for _, v in f]
+        jobs.append(("", vals, param, True))     # segment total: strict
         meta.append((seg, TOTAL, None))
         for label, (sym, makers) in cfg["fno"].items():
             for mk in makers:
-                jobs.append((mk, cfg["groups"]))
+                jobs.append((mk, vals, param, False))
                 meta.append((seg, label, sym))
 
     def run(j):
-        return _fetch(j[0], j[1], months)
+        return _fetch(j[0], j[1], months, j[2], j[3])
 
     agg: dict[tuple[str, str, str], int] = {}
     dropped: list[str] = []
     with ThreadPoolExecutor(max_workers=workers) as ex:
         for (seg, label, sym), d in zip(meta, ex.map(run, jobs)):
-            if sym is not None and sym not in live:
+            if sym is not None and sym not in live and sym not in FNO_EXEMPT:
                 # Out of F&O as of this capture: it belongs in Others, and the
                 # run SAYS so rather than quietly still drawing its line.
                 if label not in dropped:
@@ -440,13 +544,26 @@ def load_shape(conn: sqlite3.Connection, path) -> dict:
     by_maker = {str(r[0]).strip().upper(): r for r in body}
     conn.executescript(SHAPE_DDL)
     out = {}
+    skipped = []
     for seg, cfg in SEGMENTS.items():
+        # THIS EXPORT IS A maker x vehicleCategoryGroup PIVOT, so it can fill
+        # the segments carved by category group and NOT the CV tiers, which are
+        # carved by sub-category. Skipping is the honest outcome: MHCV and LCV
+        # then have no harvested month, skew() returns basis "none", and the
+        # forecast degrades to plain working-day extrapolation with the panel
+        # saying so. Raising instead would refuse a file that is perfectly good
+        # for two of the four segments; silently zeroing them would be worse
+        # still. To fit the CV tiers, re-run the report with X-Axis =
+        # Sub-Category and load that file too.
+        if "subcats" in cfg:
+            skipped.append(seg)
+            continue
         missing = [g for g in cfg["groups"] if g not in col]
         if missing:
             raise ValueError(f"{path.name}: missing column(s) {missing} for {seg}")
 
-        def cell(row):
-            return sum(row[col[g]] or 0 for g in cfg["groups"])
+        def cell(row, _c=cfg):
+            return sum(row[col[g]] or 0 for g in _c["groups"])
 
         seg_part = sum(cell(r) for r in body)
         rows_out = [(TOTAL, seg_part)]
@@ -469,7 +586,7 @@ def load_shape(conn: sqlite3.Connection, path) -> dict:
         out[seg] = seg_part
     conn.commit()
     return {"period": period, "cut_day": b.day, "makers": len(body),
-            "segments": out, "source": path.name}
+            "segments": out, "skipped": skipped, "source": path.name}
 
 
 def _full_month(conn: sqlite3.Connection, segment: str, period: str,
@@ -507,8 +624,8 @@ def _full_month(conn: sqlite3.Connection, segment: str, period: str,
         return int(row[0])
     if label != TOTAL:
         return 0
-    return sum(_fetch("", [g], {period}).get(period, 0)
-               for g in SEGMENTS[segment]["groups"])
+    f = _filters(SEGMENTS[segment])
+    return sum(_fetch("", [v], {period}, k, True).get(period, 0) for k, v in f)
 
 
 def skew(conn: sqlite3.Connection, segment: str, cut_day: int,
@@ -665,8 +782,16 @@ def selftest() -> int:
     check("TATAMOTORS (CV) is NOT in F&O", "TATAMOTORS" not in live,
           "if this fails, re-read SEGMENTS['CV']['note']")
     for seg, cfg in SEGMENTS.items():
-        missing = [s for (s, _) in cfg["fno"].values() if s not in live]
+        missing = [s for (s, _) in cfg["fno"].values()
+                   if s not in live and s not in FNO_EXEMPT]
         check(f"{seg}: every mapped symbol still trades", not missing, str(missing))
+    # THE EXEMPTION LIST MUST NOT ROT. Every entry is there because the name is
+    # NOT in F&O; the day one of them is admitted, the exemption stops being an
+    # exception and the reader should be told rather than left with a stale
+    # comment explaining a condition that no longer holds.
+    stale = [s for s in FNO_EXEMPT if s in live]
+    check("FNO_EXEMPT entries are still genuinely outside F&O", not stale,
+          f"{stale} now trade(s) — drop from FNO_EXEMPT" if stale else str(sorted(FNO_EXEMPT)))
 
     print("\nSEGMENT FILTER")
     # A RATIO, not a zero. Ashok Leyland registers exactly ONE four-wheeler
@@ -757,6 +882,17 @@ def selftest() -> int:
         # own ratio (0.873) sits inside the normal band.
         for sg in SEGMENTS:
             sk = skew(conn, sg, 24)
+            # The CV tiers are carved by SUB-CATEGORY and the harvested exports
+            # are a category-GROUP pivot, so they legitimately have no fitted
+            # month. Asserting the festive exclusion on them would be testing a
+            # fit that does not exist; what must hold there is that the absence
+            # is REPORTED as basis "none" rather than silently becoming 1.0
+            # with a confident face.
+            if "subcats" in SEGMENTS[sg]:
+                check(f"{sg}: no harvest at this axis, and says so",
+                      sk["basis"] == "none" and sk["skew"] == 1.0,
+                      f"basis={sk['basis']} skew={sk['skew']}")
+                continue
             drop = " ".join(sk["dropped"])
             check(f"{sg}: Sep-2025 excluded as festive", "2025-September" in drop,
                   drop or "NOT dropped")
