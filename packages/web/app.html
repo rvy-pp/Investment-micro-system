@@ -2322,6 +2322,7 @@ async function drawAutoShare(){
      whole forecast. */
   for (const s of d.segments){
     const src = s.monthly;
+    const fc0 = s.forecast || {};
     const xs = src.periods.map(monthToISO);
     const labels = s.fno.map(f => f.label).concat([s.others_label]);
     const series = labels.map((lab, i) => ({
@@ -2356,7 +2357,40 @@ async function drawAutoShare(){
       for (const x of series) if (x.pts.length > 1) x.pts = x.pts.slice(0, -1);
     }
     const drawable = series.filter(x => x.pts.length > 1).concat(fSeries);
-    html += '<h3 style="margin-top:var(--s5)">' + esc(s.label) + '</h3>';
+    /* THE CAVEATS MOVE ONTO THE HEADING AS title=, THEY DO NOT DISAPPEAR
+       (PM, 2026-09-24: "I know how to use the graphs. Get rid of all of this
+       text in gray, only the graphs should remain"). Nothing grey renders, but
+       the two facts a reader cannot get from the picture stay one hover away:
+       what is inside Others — on CV that is TATA MOTORS, the largest maker in
+       the segment, which is why its residual line leads — and that these are
+       retail REGISTRATIONS rather than the wholesale dispatches a company
+       reports. Deleting them outright would leave the CV chart looking simply
+       wrong to anyone who had not been told. */
+    /* Built with statements, not a nested ternary. The first draft read
+         '... fitted on ' + months + dropped.length ? ' (excludes …)' : ''
+       and `+` binds tighter than `?:`, so the condition was the whole
+       concatenated STRING — always truthy — and the ternary collapsed to just
+       the excludes clause, silently discarding the working-day and fitted-on
+       text. It rendered a plausible shorter tooltip and raised nothing. */
+    let fcTxt = '';
+    if (fc0.state === 'live'){
+      if (fc0.skew_basis === 'none'){
+        fcTxt = 'Forecast: no month harvested at day ' + fc0.asof_day
+              + ', so no back-loading is applied.';
+      } else {
+        fcTxt = 'Forecast: working-day ' + fc0.wd_fraction
+              + ' x per-maker skew, fitted on '
+              + (fc0.skew_months || []).join(', ');
+        const dr = fc0.skew_dropped || [];
+        if (dr.length) fcTxt += ' (excludes ' + dr.join('; ') + ')';
+        fcTxt += '.';
+      }
+    }
+    const cav = [s.note, fcTxt,
+                 'Retail registrations, not wholesale dispatches.'
+                ].filter(Boolean).join(' ');
+    html += '<h3 style="margin-top:var(--s5)" title="' + esc(cav) + '">'
+      + esc(s.label) + '</h3>';
     if (!drawable.length){
       html += '<p class="note hint">not enough points to draw yet</p>';
     } else {
@@ -2394,28 +2428,7 @@ async function drawAutoShare(){
             axisLabel: 'share of each completed month · ' + esc(src.current)
               + ' is the dotted forecast'});
     }
-    if (fc.state === 'live'){
-      const basis = fc.skew_basis === 'none'
-        ? '<b style="color:var(--warn)">no month harvested at day ' + fc.asof_day
-          + ', so no back-loading is applied</b>'
-        : 'working-day ' + fc.wd_fraction + ' x per-maker skew, fitted on '
-          + esc((fc.skew_months || []).join(', '));
-      html += '<p class="note"><b>Dotted = forecast to ' + esc(fc.month_end)
-        + '</b> · segment ' + fc.mtd_total.toLocaleString('en-IN') + ' \u2192 '
-        + fc.forecast_total.toLocaleString('en-IN') + ' · ' + basis + '.</p>';
-    }
-    html += '<p class="note">' + esc(s.note) + '</p>';
   }
-
-  html += '<p class="note"><b>Registrations, not dispatches.</b> Vahan counts '
-    + 'what a buyer registered; company results report wholesales to dealers, '
-    + 'and the two differ by channel inventory. Lines are the '
-    + '<b>F&amp;O names only</b> — the roster is read from contracts that '
-    + 'actually traded, never hardcoded — and every other maker is inside '
-    + '<b>Others</b>, so the lines always sum to 100%. Vahan <b>backdates</b>, '
-    + 'so a recent month keeps growing for days: treat the newest points as '
-    + 'provisional. Volumes only — this reaches no pillar and is never in '
-    + '<code>prices</code>.</p>';
 
   host.innerHTML = html;
   for (const s of d.segments){
