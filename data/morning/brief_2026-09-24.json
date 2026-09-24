@@ -1,0 +1,348 @@
+{
+ "date": "2026-09-24",
+ "generated_at": "2026-09-24T08:15:11",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 78,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "CLSA keeps Hindalco O-PF, TP Rs1,240: EBITDA guided to more than double by FY32, Novelis Bay Minette to 5mt+ at $600/t.",
+      "source": "CLSA - CLSA India Research - Larsen & Toubro| Adani Ports| Hindalco| Mahindra Finance| India Consumer Durables",
+      "received": "08:57",
+      "detail": {
+       "summary": "CLSA hosted Hindalco at IF26; management laid out an FY32 EBITDA-doubling path from Novelis debottlenecking, India upstream capacity and coal projects even at LME $2,750, and downstream EBITDA rising sharply from a thin base.",
+       "points": [
+        "EBITDA to more than double by FY32 vs FY26",
+        "Novelis Bay Minette: 5mt+ volumes, $600/t profitability",
+        "India upstream EBITDA to double, even at LME $2,750",
+        "India downstream EBITDA to $1bn, from $200m",
+        "Novelis net debt to peak by 4QFY27; consol leverage <2x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM: LME aluminium range-bound $3,100-3,300/t for 3 months; Hindalco investor feedback mixed with no clear catalyst, still a JPM top pick.",
+      "source": "JPM - India Metals & Logistics: India Conference takeaways & investor feedback. Key theme: Steel > Aluminum",
+      "received": "13:57",
+      "detail": {
+       "summary": "JPM's investor-conference wrap says aluminium sentiment is directionless - LME range-bound with no positive catalyst - and Hindalco feedback was mixed even as JPM keeps it a top pick; Novelis scrap spreads are seen weakening as new capacity ramps.",
+       "points": [
+        "LME aluminium range-bound $3,100-3,300/t past 3 months",
+        "Hindalco: mixed, cautiously optimistic investor feedback",
+        "No catalyst - Fed, Section 232 tariff delay, Indonesia ramp",
+        "Novelis scrap spreads to weaken on new US capacity ramps",
+        "JPM top picks: JSW Steel, Hindalco, Exide, Aegis"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNP trims 2026/27E China aluminium to RMB24,000/22,000/t but sees a 2027 global deficit, against the Street's oversupply view.",
+      "source": "BNP Paribas - BNPP INDIA QUICK NOTES: VOLT - Buying opportunity | ... | CHINA ALUMNIUM - Looking good",
+      "received": "08:34",
+      "detail": {
+       "summary": "BNP Paribas argues the Street is too bearish on supply, expecting a 2027 deficit versus consensus oversupply, while trimming its own price forecasts and flagging that current stock prices already imply even lower spot aluminium.",
+       "points": [
+        "2026/27E price forecast trimmed to RMB24,000/22,000/t",
+        "Expects 2027 supply deficit vs Street oversupply",
+        "Stocks imply RMB21,000-21,500/t, below forecast",
+        "Middle East, Indonesia supply seen slower",
+        "China's 45mt production cap remains enforced"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Domestic HRC at its highest since mid-2022 while coking coal futures start declining; JPM's investors prefer steel to aluminium, top pick JSW Steel.",
+      "source": "JPM - India Metals & Logistics: India Conference takeaways & investor feedback. Key theme: Steel > Aluminum",
+      "received": "13:57",
+      "detail": {
+       "summary": "JPM's India conference takeaways find investors favouring steel over aluminium, with HRC rallying to multi-year highs even as coking coal costs rose; JPM argues the coal spike is cyclical and is already being offset by higher steel prices, with Tata Steel's European DRI-EAF plans back in focus.",
+       "points": [
+        "HRC prices highest since mid-2022, rally continuing",
+        "Coking coal costs surged, futures now declining",
+        "3QFY27 coal cost impact largely offset by steel prices",
+        "JPM top picks: JSW Steel, Hindalco, Exide, Aegis",
+        "Tata Steel reassessing Netherlands DRI-EAF"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara flags steel prices at a 4-year high, expecting the uptrend to continue through H2.",
+      "source": "Elara - Elara Stinger: EV, CNG gain ground as auto fuel mix steadily shifts",
+      "received": "09:51"
+     },
+     {
+      "text": "Welspun Corp's associate won a Rs2,000cr Aramco steel-pipe contract, while China's steel industry weakened further in Aug-26.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "08:50",
+      "detail": {
+       "summary": "Kotak's daily wrap pairs a large Middle East order win with soft Chinese steel data: Gulf infrastructure demand for pipe versus continued domestic demand weakness in China.",
+       "points": [
+        "Rs2,000cr Aramco steel-pipe contract to Welspun associate",
+        "China steel industry weakened further in Aug-26",
+        "China domestic demand under pressure, per BigMint"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "All-India cement prices +2.2% mom in Sep-26, led by East +3.5% and South +3.0%; Kotak stays cautious, prefers Nuvoco.",
+      "source": "Kotak - [Kotak] Construction Materials: Prices firm up, trail cost pressures",
+      "received": "08:49",
+      "detail": {
+       "summary": "Kotak's channel checks show all-India cement prices firming on receding monsoons and renewed hike attempts, with East and South leading after a weak August. It still expects festive-season seasonality (3Q qoq average -0.5% over 25 years) to cap further large hikes.",
+       "points": [
+        "+2.2% mom all-India in Sep-26 (+0.5% qoq)",
+        "East +3.5%, South +3.0%, West +2.1% mom",
+        "North +1.3%, Central +1.0% mom",
+        "~7% yoy FY2027E demand growth expected",
+        "Nuvoco top pick, sub-$60 EV/ton FY2028E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees ~3-4% downside to FY27E consensus EBITDA with petcoke/coal 33%/28% above pre-war levels; Ramco (TRCL) top SELL.",
+      "source": "Kotak - [Kotak] Construction Materials: Prices firm up, trail cost pressures",
+      "received": "08:49",
+      "detail": {
+       "summary": "Kotak argues persistent cost inflation from the Middle East conflict is pushing margin recovery further out, with diesel up 8-9% since May-26 on top of elevated petcoke and coal; valuations offer limited upside given the earnings pressure.",
+       "points": [
+        "~3-4% downside to FY2027E consensus EBITDA",
+        "Petcoke/coal 33%/28% above pre-war levels",
+        "Diesel +8-9% since May-26",
+        "2QFY27E margins likely down qoq on lagged costs",
+        "TRCL remains top SELL"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Sep MTD power demand +14.7% YoY and coal generation +17.2% YoY, with a record September peak of 269GW - supportive for Coal India offtake.",
+      "source": "Nuvama - Daily Power Demand",
+      "received": "08:44",
+      "detail": {
+       "summary": "Nuvama's tracker (data to 21 Sep) shows power demand and coal-fired generation both running well ahead of last year, with September peak demand the highest ever recorded for the month and IEX spot prices sharply higher.",
+       "points": [
+        "+14.7% YoY Sep MTD power demand",
+        "+17.17% YoY coal generation, +10.76% YTD",
+        "269,063MW Sep peak, +17.4% YoY",
+        "IEX full-day average price +118.5% YoY",
+        "IEX peak-hours price +46.8% YoY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Voltas holds off RAC price hikes despite RM headwinds, absorbing cost via channel-scheme cuts; Kotak cuts FY27-29E EPS 6-9% - pricing flag for Amber/PGEL.",
+      "source": "Kotak - Kotak : Curious case INDUSTOW vs IDEA; INITIATE SHADOWFAX ADD; Jubilant Ingrevia - On track ; Voltas - No cheer; 360 one - Mgmt Meet (+4 more in Outlook)",
+      "received": "08:50",
+      "detail": {
+       "summary": "Voltas will offset commodity inflation through cuts to channel margins and promotional schemes rather than a headline price hike, despite 15-20% industry secondary RAC growth and continued share gains. Kotak trims fair value to Rs1,070 - a caution on pricing power across the room-AC value chain.",
+       "points": [
+        "15-20% industry secondary RAC growth",
+        "No headline price hike despite RM headwinds",
+        "FY2027-29E EPS cut 6-9%, FV Rs1,070",
+        "Cost absorbed via channel margin and scheme cuts"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak stays BUY on TechM, FV Rs1,750, after the CEO chat: turnaround called structural, demand steady with no signs of deterioration.",
+      "source": "Kotak - [Kotak] Tech Mahindra (CMP: Rs1,557, FV: Rs1,750, BUY): Building the enterprise of the future",
+      "received": "06:29",
+      "detail": {
+       "summary": "Kotak hosted CEO Mohit Joshi and CFO Rohit Anand and concludes the turnaround's hard yards are done, with focus shifting to sustaining momentum. TechM has defended telecom wallet share through vendor consolidation and positions for AI-led spend via a senior-heavy talent structure; automotive stays weak.",
+       "points": [
+        "92% of revenue on one common ERP platform",
+        "3-5% historical underperformance flipped to outperformance",
+        "6-7% of annual revenue from new clients",
+        "45-50% productivity now demanded over 5-year deals, from 35-40%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL upgrades Tata Technologies to BUY, TP Rs840 from Rs780, on converted vehicle-program wins and the $100mn+ Tenneco ramp.",
+      "source": "IIFL - IIFL: The Front Page: Banking; NBFC; Insurance; Auto; TATATECH; VMM",
+      "received": "07:53",
+      "detail": {
+       "summary": "IIFL argues Tata Technologies' deal engine is firing: two full-vehicle-program wins converted, four more in the pipeline, plus the Tenneco ramp. It forecasts 15-16.6% cc revenue growth and 22% EPS growth over FY26-28, among the fastest in its IT coverage.",
+       "points": [
+        "TP Rs840 from Rs780, 17% upside",
+        "Two full-vehicle-program deals converted; four in pipeline",
+        "$100mn+ Tenneco deal ramping",
+        "22% EPS CAGR FY26-28",
+        "60%+ embedded revenue CAGR FY23-26"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "US 10Y +14bp to 5.11% and Brent +4.6% to $103.59 on a hot September PMI and Iran rhetoric; JPM turns tactically cautious.",
+      "source": "JPM - JPM Overnight Brief! 9/24 - Sep PMI drove a sharp spike in bond yields, stock lower",
+      "received": "06:06",
+      "detail": {
+       "summary": "A hot September flash composite PMI showed the largest monthly input-cost jump since 2020, triggering a broad bond selloff alongside a fresh leg up in Brent on Iran/Hormuz tension and a weak 5Y auction. JPM flags hawkish Fedspeak and Middle East escalation as this week's key risks.",
+       "points": [
+        "10Y +14bp to 5.11%, 30Y +9bp to 5.40%",
+        "Brent +4.6% to $103.59",
+        "5Y auction tailed 3.20bp",
+        "Composite PMI cost inflation worst since 2020",
+        "JPM tactically cautious/neutral on equities"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MSCI Nov-26 review: BNP rates LICI and Coforge HIGH-probability standard-index adds (~$501mn/~$579mn flows); PI Industries flagged for deletion.",
+      "source": "BNP Paribas - BNP PARIBAS INDIA INDEX PERISCOPE | MSCI November 2026 Review",
+      "received": "09:11",
+      "detail": {
+       "summary": "BNP's index-flow desk assigns high probability to LICI (fresh add) and Coforge (small-to-standard migration), while PI Industries and ICICI Prudential Life carry deletion risk; Biocon and Meesho sit mid-to-high pending price action into the cutoff.",
+       "points": [
+        "LICI: fresh add, ~$501mn, 15x ADV",
+        "Coforge: migration, ~$579mn, 11x ADV",
+        "PI Industries: deletion, -$166mn",
+        "ICICI Pru Life: mid-to-high deletion risk, -$188mn",
+        "Cutoff 16-30 Oct; announcement 11 Nov"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India's official gold imports have fallen sharply since May-26; Kotak sees a CAD/BoP benefit but warns of diversion to unofficial channels.",
+      "source": "Kotak - [Kotak] Strategy: Sharp decline in reported gold imports—good, bad or ugly? (+7 more in Outlook)",
+      "received": "19:26",
+      "detail": {
+       "summary": "Kotak frames the unexplained drop as a genuine demand reset, a pause ahead of feared duty cuts, or diversion to unofficial channels that would understate true imports and cost GST/customs revenue.",
+       "points": [
+        "Imports falling sharply since May-26",
+        "13-May-26 duty hike lifted domestic gold ~9% over global",
+        "Positive for CAD/BoP if genuine",
+        "Risk: unofficial channels understate imports",
+        "Kotak repeats call for higher GST, lower duty"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Exide commissioned its 6GWh lithium-ion cell plant on 23-Sep, in homologation with three 2W EV OEMs covering 80-85% of the market.",
+      "source": "JPM - Exide Industries: Lithium ion cell manufacturing facility commissioned; details awaited",
+      "received": "20:27",
+      "detail": {
+       "summary": "The plant went live in line with 1Q commentary that revenue starts in 3QFY27; customer names remain undisclosed. JPM stays Overweight, PT Rs514, with the stock down 13% since its 12-Aug peak.",
+       "points": [
+        "6GWh Li-ion cell facility commissioned 23-Sep-26",
+        "3 EV OEMs covering 80-85% of 2W market",
+        "Revenue from 3QFY27 per July AGM",
+        "Stock -13% since 12-Aug vs Nifty -4%",
+        "JPM OW, PT Rs514"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW Group enters electric CVs targeting ~100,000 units of capacity by 2030; govt to weigh auto PLI applications with Chinese investment.",
+      "source": "Elara - Elara Stinger: EV, CNG gain ground as auto fuel mix steadily shifts",
+      "received": "09:51",
+      "detail": {
+       "summary": "Trade-press items compiled in Elara's digest and Kotak's auto wrap: JSW's entry into electric commercial mobility, Nexperia's India expansion with Tata after losing its China unit, and a PLI window for Chinese-invested auto applicants.",
+       "points": [
+        "~100,000-unit EV CV capacity by 2030",
+        "JSW new entrant in electric CVs",
+        "Nexperia expands into India with Tata",
+        "Auto PLI applications with Chinese investment under review"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IRDAI's Sept-26 paper cuts expense-of-management limits and caps commissions from FY28; NBFC credit-protect distributors (LTF) hit hardest, SBI Life best placed.",
+      "source": "PhillipCapital - IRDAI Distribution Reforms – Consultation Paper Sept'26 | First cut - PhillipCapital India (+7 more in Outlook)",
+      "received": "22:59",
+      "detail": {
+       "summary": "The two-part paper combines hard commission caps with lower EOM limits (life to 12.5% in five years, general insurance to 20% from 30%), phased from FY28 with comments due 25-Oct. Brokers see NBFC credit-life distributors worst hit and SBI Life, HDFC Life, ICICI Lombard and Star Health best placed.",
+       "points": [
+        "Life EOM to 15% (2yr) / 12.5% (5yr)",
+        "General insurance EOM 25%/20% from 30%",
+        "NBFC credit-life commissions capped at 2-2.5%",
+        "Comments close 25-Oct-26"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Broadcom -2.6% overnight on reports China may steer data centres away from its hardware toward domestic chips.",
+    "source": "JPM - Overnight Brief 9/24 - Sep PMI drove a sharp spike in bond yields, stock lower"
+   },
+   {
+    "text": "GS sees the AI-driven battery backup unit market growing 23x to $50.2bn by 2030; raises Panasonic HD TP to Y6,300.",
+    "source": "Goldman Sachs - [GS Daily] ... Panasonic TP raise on BBU market expansion ..."
+   },
+   {
+    "text": "Meta's Muse AI agent hit #1 on the App Store, driving Meta's largest monthly share-price move since 2013.",
+    "source": "CLSA - Best Charts of X"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
