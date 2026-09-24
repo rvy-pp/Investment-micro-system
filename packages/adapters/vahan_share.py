@@ -356,9 +356,10 @@ CREATE TABLE IF NOT EXISTS vahan_month_shape (
     period   TEXT NOT NULL,          -- '2026-August', the month measured
     cut_day  INTEGER NOT NULL,       -- counted from the 1st THROUGH this day
     segment  TEXT NOT NULL,
+    label    TEXT NOT NULL,          -- print name, or '__TOTAL__'
     partial  INTEGER NOT NULL CHECK (partial >= 0),
     source   TEXT NOT NULL CHECK (length(source) > 0),  -- provenance
-    PRIMARY KEY (period, cut_day, segment)
+    PRIMARY KEY (period, cut_day, segment, label)
 );
 """
 
@@ -430,23 +431,49 @@ def load_shape(conn: sqlite3.Connection, path) -> dict:
         raise ValueError(f"{path.name}: cross-foot FAILED on {bad} of {len(body)} "
                          "rows — segments do not sum to the file's own Total")
 
+    # PER-MAKER, not just per-segment. A segment-wide skew applied to every
+    # maker in it CANCELS OUT of a share: forecast_share = (mtd/f)/(total/f) =
+    # mtd/total, so the projected share would equal today's share exactly and a
+    # forecast line on the share chart would be flat by construction. The
+    # makers genuinely differ — Aug-2026 d24 runs Tata Motors PV 0.830 against
+    # Maruti 0.912, a 10pp spread — and that difference IS the forecast.
+    by_maker = {str(r[0]).strip().upper(): r for r in body}
     conn.executescript(SHAPE_DDL)
     out = {}
     for seg, cfg in SEGMENTS.items():
         missing = [g for g in cfg["groups"] if g not in col]
         if missing:
             raise ValueError(f"{path.name}: missing column(s) {missing} for {seg}")
-        part = sum(sum(r[col[g]] or 0 for g in cfg["groups"]) for r in body)
-        conn.execute("INSERT OR REPLACE INTO vahan_month_shape "
-                     "(period, cut_day, segment, partial, source) VALUES (?,?,?,?,?)",
-                     (period, b.day, seg, part, path.name))
-        out[seg] = part
+
+        def cell(row):
+            return sum(row[col[g]] or 0 for g in cfg["groups"])
+
+        seg_part = sum(cell(r) for r in body)
+        rows_out = [(TOTAL, seg_part)]
+        named = 0
+        for lab, (_sym, makers) in cfg["fno"].items():
+            v = sum(cell(by_maker[m.upper()]) for m in makers if m.upper() in by_maker)
+            named += v
+            rows_out.append((lab, v))
+        # Others is the RESIDUAL here too, exactly as in shares(), so the parts
+        # always add back to the segment and no maker can be double counted.
+        if named > seg_part:
+            raise ValueError(f"{path.name}: {seg} named makers ({named:,}) exceed "
+                             f"the segment total ({seg_part:,})")
+        rows_out.append((OTHERS, seg_part - named))
+        for lab, v in rows_out:
+            conn.execute("INSERT OR REPLACE INTO vahan_month_shape "
+                         "(period, cut_day, segment, label, partial, source) "
+                         "VALUES (?,?,?,?,?,?)",
+                         (period, b.day, seg, lab, v, path.name))
+        out[seg] = seg_part
     conn.commit()
     return {"period": period, "cut_day": b.day, "makers": len(body),
             "segments": out, "source": path.name}
 
 
-def _full_month(conn: sqlite3.Connection, segment: str, period: str) -> int:
+def _full_month(conn: sqlite3.Connection, segment: str, period: str,
+                label: str = TOTAL) -> int:
     """The month's completed total. Only the partial-month NUMERATOR ever needs
     a human; this half is ordinary data.
 
@@ -464,18 +491,28 @@ def _full_month(conn: sqlite3.Connection, segment: str, period: str) -> int:
     if period == _recent_months(1)[0]:
         raise ValueError(f"{period} is the current month — its total is a "
                          "month-to-date and cannot be a denominator")
+    if label == OTHERS:
+        # Others is a residual on both sides; derive it rather than storing a
+        # second version that could drift from the one shares() computes.
+        tot = _full_month(conn, segment, period, TOTAL)
+        named = sum(_full_month(conn, segment, period, k)
+                    for k in SEGMENTS[segment]["fno"])
+        return max(tot - named, 0)
     row = conn.execute(
         "SELECT SUM(registrations) FROM vahan_share WHERE segment=? AND period=? "
         "AND label=? AND capture_date=(SELECT MAX(capture_date) FROM vahan_share "
         "WHERE segment=? AND period=?)",
-        (segment, period, TOTAL, segment, period)).fetchone()
+        (segment, period, label, segment, period)).fetchone()
     if row and row[0]:
         return int(row[0])
+    if label != TOTAL:
+        return 0
     return sum(_fetch("", [g], {period}).get(period, 0)
                for g in SEGMENTS[segment]["groups"])
 
 
-def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
+def skew(conn: sqlite3.Connection, segment: str, cut_day: int,
+         label: str = TOTAL) -> dict:
     """observed / working-day fraction, fitted at THIS cut day.
 
     Returns 1.0 with `basis: none` when no month was harvested at this cut. That
@@ -486,7 +523,8 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
     conn.executescript(SHAPE_DDL)
     rows = conn.execute(
         "SELECT period, partial FROM vahan_month_shape "
-        "WHERE segment=? AND cut_day=? ORDER BY period", (segment, cut_day)).fetchall()
+        "WHERE segment=? AND cut_day=? AND label=? ORDER BY period",
+        (segment, cut_day, label)).fetchall()
     # FESTIVITY IS A PROPERTY OF THE MONTH, NOT OF ONE SEGMENT, so a period is
     # judged across ALL segments and excluded from every one of them together.
     # The first draft tested each segment on its own and kept Sep-2025 for CV
@@ -503,8 +541,8 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
         for sg in SEGMENTS:
             row = conn.execute(
                 "SELECT partial FROM vahan_month_shape "
-                "WHERE segment=? AND cut_day=? AND period=?",
-                (sg, cut_day, per)).fetchone()
+                "WHERE segment=? AND cut_day=? AND period=? AND label=?",
+                (sg, cut_day, per, TOTAL)).fetchone()
             if not row:
                 continue
             t = _full_month(conn, sg, per)
@@ -517,7 +555,7 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
 
     used, dropped = [], []
     for period, partial in rows:
-        tot = _full_month(conn, segment, period)
+        tot = _full_month(conn, segment, period, label)
         if not tot or partial > tot:
             dropped.append(f"{period} (partial exceeds the month total)")
             continue
@@ -528,10 +566,10 @@ def skew(conn: sqlite3.Connection, segment: str, cut_day: int) -> dict:
         used.append((period, r))
     if not used:
         return {"skew": 1.0, "basis": "none", "n": 0, "months": [],
-                "dropped": dropped, "cut_day": cut_day}
+                "dropped": dropped, "cut_day": cut_day, "label": label}
     return {"skew": sum(r for _, r in used) / len(used), "basis": "fitted",
             "n": len(used), "months": [f"{p} {r:.3f}" for p, r in used],
-            "dropped": dropped, "cut_day": cut_day}
+            "dropped": dropped, "cut_day": cut_day, "label": label}
 
 
 def forecast(conn: sqlite3.Connection, segment: str,
@@ -543,17 +581,39 @@ def forecast(conn: sqlite3.Connection, segment: str,
     if not s:
         return {"state": "no_data", "segment": segment, "period": period}
     fw = _wd_fraction(period, asof.day)
-    sk = skew(conn, segment, asof.day)
-    f = fw * sk["skew"]
+    seg_sk = skew(conn, segment, asof.day)
+    by = {}
+    for k, v in s["counts"].items():
+        sk = skew(conn, segment, asof.day, k)
+        # Fall back to the SEGMENT skew when a maker has no fit of its own —
+        # better than 1.0, which would assert this maker alone is not
+        # back-loaded when every one of its peers is.
+        use = sk if sk["basis"] == "fitted" else seg_sk
+        by[k] = {"mtd": v, "forecast": round(v / (fw * use["skew"])),
+                 "skew": round(use["skew"], 4),
+                 "skew_basis": "own" if sk["basis"] == "fitted"
+                               else ("segment" if seg_sk["basis"] == "fitted" else "none")}
+    # THE TOTAL IS THE SUM OF THE PARTS, never the segment fitted separately —
+    # otherwise the forecast SHARES would not add to 100% and the chart would
+    # be drawing an arithmetic impossibility.
+    tot = sum(x["forecast"] for x in by.values())
+    for k in by:
+        by[k]["share_pct"] = round(100.0 * by[k]["forecast"] / tot, 3) if tot else None
     return {"state": "live", "segment": segment, "period": period,
             "capture_date": s["capture_date"], "asof_day": asof.day,
-            "wd_fraction": round(fw, 4), "skew": round(sk["skew"], 4),
-            "skew_basis": sk["basis"], "skew_n": sk["n"],
-            "skew_months": sk["months"], "skew_dropped": sk["dropped"],
-            "fraction": round(f, 4), "mtd_total": s["total"],
-            "forecast_total": round(s["total"] / f),
-            "by_label": {k: {"mtd": v, "forecast": round(v / f)}
-                         for k, v in s["counts"].items()}}
+            "month_end": _month_end(period),
+            "wd_fraction": round(fw, 4), "skew": round(seg_sk["skew"], 4),
+            "skew_basis": seg_sk["basis"], "skew_n": seg_sk["n"],
+            "skew_months": seg_sk["months"], "skew_dropped": seg_sk["dropped"],
+            "fraction": round(fw * seg_sk["skew"], 4), "mtd_total": s["total"],
+            "forecast_total": tot, "by_label": by}
+
+
+def _month_end(period: str) -> str:
+    import calendar as _c
+    y = int(period.split("-")[0])
+    mn = list(_c.month_name).index(period.split("-")[1])
+    return dt.date(y, mn, _c.monthrange(y, mn)[1]).isoformat()
 
 
 def _months_sorted(periods) -> list[str]:
@@ -715,6 +775,25 @@ def selftest() -> int:
         yoy = f2["forecast_total"] / sep25 - 1
         check("2W forecast YoY is inside the Jul/Aug band (+15%..+40%)",
               0.15 < yoy < 0.40, f"{100*yoy:+.1f}%")
+
+        # THE DOTTED FORECAST LINE ONLY SAYS ANYTHING IF THESE DIFFER. A
+        # segment-wide skew cancels out of a share — (mtd/f)/(total/f) =
+        # mtd/total — so the projected share would equal today's exactly and
+        # the line would be flat BY CONSTRUCTION, reading as "share will not
+        # move" rather than "this cannot tell you". Measured spread at d24:
+        # PV runs Tata 0.830 to Others 0.934.
+        fp = forecast(conn, "PV", dt.date(2026, 9, 24))
+        sk = {k: v["skew"] for k, v in fp["by_label"].items()}
+        check("per-maker skews differ inside a segment",
+              max(sk.values()) - min(sk.values()) > 0.02,
+              f"spread {max(sk.values()) - min(sk.values()):.3f} over {len(sk)} names")
+        check("every PV maker has its OWN fit, not the segment fallback",
+              all(v["skew_basis"] == "own" for v in fp["by_label"].values()),
+              str({k: v["skew_basis"] for k, v in fp["by_label"].items()}))
+        # The total is the SUM of the parts, so the projected shares must add
+        # to 100 — a chart drawing shares that do not is an arithmetic lie.
+        tot = sum(v["share_pct"] for v in fp["by_label"].values())
+        check("forecast shares sum to 100", abs(tot - 100.0) < 0.05, f"{tot:.3f}")
 
     # REJECTION: a range not starting on the 1st is not a month-to-date and the
     # whole fit is meaningless on it. Must refuse rather than mis-date.

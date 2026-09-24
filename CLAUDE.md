@@ -2275,9 +2275,31 @@ segment's monthly TOTAL. It REFUSES the current month — its stored total is a
 month-to-DATE, and a partial over a partial gives a fraction near 1.0, a
 "no skew" reading that is pure arithmetic on the one month that matters.
 
-`--forecast` and `--load-shape GLOB` on the CLI; 11 selftest checks, acceptance
+**IT RENDERS AS A DOTTED CONTINUATION OF EACH SHARE LINE, NOT A TABLE** (PM,
+2026-09-24: *"just add a dotted line to show forecast, no need for a whole
+table"*) — solid through the last completed month (or last capture), dotted
+across the interval that has not happened yet. On the monthly view the dash
+REPLACES the current month's point, which was a partial month standing beside
+full ones.
+
+**THE SKEW HAD TO BECOME PER MAKER FOR THAT LINE TO SAY ANYTHING.** A
+segment-wide factor CANCELS out of a share — (mtd/f)/(total/f) = mtd/total — so
+the projected share would have equalled today's exactly and the dotted line
+would have been flat BY CONSTRUCTION, reading as "share will not move" rather
+than "this chart cannot tell you". The makers genuinely differ: at Aug-26 d24,
+PV runs **Tata Motors PV 0.830 against Maruti 0.912 and Others 0.934**, and
+that spread IS the forecast — Tata's share drifts **+0.93pp** into month end,
+Mahindra CV **+0.74pp**, while 2W barely moves (±0.27pp), which is itself the
+finding that 2W share is stable late in the month. `vahan_month_shape` is
+therefore keyed on `label` too, Others is the residual on both sides, and the
+segment forecast is the SUM OF THE PARTS so the projected shares add to 100%.
+A maker with no fit of its own falls back to the SEGMENT skew, never to 1.0 —
+which would assert that one maker alone is not back-loaded while every peer is.
+
+`--forecast` and `--load-shape GLOB` on the CLI; 15 selftest checks, acceptance
 beside rejection (a range not starting on the 1st is refused, a cross-foot
-failure refuses the file, the skew must relax toward 1.0 at a later cut).
+failure refuses the file, the skew must relax toward 1.0 at a later cut,
+per-maker skews must DIFFER, and forecast shares must sum to 100).
 **KNOWN: n=1 at d24** — one normal month per segment. The daily captures
 supply the curve empirically from October without another CAPTCHA.
 

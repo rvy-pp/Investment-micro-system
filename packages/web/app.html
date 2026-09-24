@@ -1573,8 +1573,14 @@ function lineChart(cfg){
   for (const s of series){
     if (s.pts.length < 2) continue;
     const pl = s.pts.map(p => X(T(p.d)).toFixed(1) + ',' + Y(p.v).toFixed(1)).join(' ');
+    /* `dash` marks a series as PROJECTED rather than observed. It also skips
+       the end dot: the dot means "the data stops here", and putting one at the
+       end of a forecast would assert a measurement where there is an
+       estimate. The dash carries the whole claim. */
     lines += '<polyline points="' + pl + '" fill="none" style="stroke:' + inkOf(s.slot) +
-             '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+             '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"' +
+             (s.dash ? ' stroke-dasharray="5 4" opacity=".8"' : '') + '/>';
+    if (s.dash) continue;
     const last = s.pts[s.pts.length - 1];
     ends.push({s: s, yTrue: Y(last.v), y: Y(last.v), x: X(T(last.d))});
   }
@@ -2313,80 +2319,17 @@ async function drawAutoShare(){
       + 'capture produces the first change.</p>';
   }
 
-  /* THE MONTH-END FORECAST TABLE, above the charts.
+  /* THE FORECAST IS A DOTTED CONTINUATION OF EACH LINE, not a table
+     (PM, 2026-09-24: "just add a dotted line to show forecast, no need for a
+     whole table").
 
-     forecast = MTD / (working-day fraction x segment skew). Both factors are
-     PRINTED, not just the answer, because each is a judgement someone will
-     want to argue with: the working-day fraction counts Sundays only (no
-     holiday calendar, deliberately) and the skew is fitted from hand-harvested
-     months in data/staging/vahan/.
-
-     `skew_basis: none` means no month was harvested at today's cut day, so the
-     factor falls back to 1.0 — plain working-day extrapolation with NO
-     back-loading. That is a materially weaker number and it is labelled as one
-     rather than rendered identically to a fitted row. */
-  html += '<div class="panel" style="margin-bottom:var(--s5)">'
-    + '<div class="sechead">Month-end forecast · ' + esc(d.current_month) + '</div>';
-  const anyNone = d.segments.some(s => (s.forecast||{}).skew_basis === 'none');
-  html += '<div class="scroll"><table><thead><tr><th>Segment</th>'
-    + '<th class="n">MTD</th><th class="n">Forecast</th>'
-    + '<th class="n">Working-day</th><th class="n">Skew</th><th class="n">Fraction</th>'
-    + '<th>Fitted on</th></tr></thead><tbody>';
-  for (const s of d.segments){
-    const f = s.forecast || {};
-    if (f.state !== 'live'){
-      html += '<tr><td>' + esc(s.label) + '</td><td colspan="6" class="hint">'
-        + esc(f.note || f.state || 'no forecast') + '</td></tr>';
-      continue;
-    }
-    const none = f.skew_basis === 'none';
-    html += '<tr><td><b>' + esc(s.label) + '</b></td>'
-      + '<td class="n">' + f.mtd_total.toLocaleString('en-IN') + '</td>'
-      + '<td class="n"><b>' + f.forecast_total.toLocaleString('en-IN') + '</b></td>'
-      + '<td class="n">' + f.wd_fraction + '</td>'
-      + '<td class="n"' + (none ? ' style="color:var(--warn)"' : '') + '>'
-      + f.skew + (none ? ' (none)' : '') + '</td>'
-      + '<td class="n">' + f.fraction + '</td>'
-      + '<td class="hint">' + esc((f.skew_months||[]).join(', ') || '—') + '</td></tr>';
-    for (const [k, v] of Object.entries(f.by_label || {})){
-      html += '<tr><td style="padding-left:18px">' + esc(k) + '</td>'
-        + '<td class="n">' + v.mtd.toLocaleString('en-IN') + '</td>'
-        + '<td class="n">' + v.forecast.toLocaleString('en-IN') + '</td>'
-        + '<td colspan="4"></td></tr>';
-    }
-  }
-  html += '</tbody></table></div>';
-  /* Grouped BY MONTH, not by segment. The exclusion is a property of the month
-     — that is the whole point of the month-wide festive test — so listing it
-     once per segment would print the same finding three times and imply three
-     separate exclusions. Each segment's own ratio still shows, because the
-     spread across them (2W 0.722 vs CV 0.873) is the evidence that commercial
-     buyers care less about an auspicious date than retail ones. */
-  const byMonth = {};
-  for (const s of d.segments)
-    for (const t of ((s.forecast||{}).skew_dropped || [])){
-      const per = t.split(' ')[0];
-      const m = t.match(/\(([\d.]+)/);
-      (byMonth[per] = byMonth[per] || []).push(s.id + ' ' + (m ? m[1] : '?'));
-    }
-  const dropped = Object.entries(byMonth).map(([per, v]) => per + ' (' + v.join(', ') + ')');
-  if (dropped.length){
-    /* Named, not silently filtered. A month excluded from the fit is the most
-       interesting thing about the fit — Sep-2025 was dropped because Navratri
-       fell in its last nine days, and a forecast built on it read +75% YoY
-       against a market running +20-30%. */
-    html += '<p class="note">Excluded from the fit: <b>' + esc(dropped.join('; '))
-      + '</b>. A festive month is back-loaded far beyond the normal range, and '
-      + 'the festive window moves between months year to year — so its shape '
-      + 'cannot be carried into a non-festive one.</p>';
-  }
-  if (anyNone){
-    html += '<p class="note" style="color:var(--warn)">No month has been '
-      + 'harvested at this cut day, so the skew falls back to 1.0 — that row is '
-      + 'plain working-day extrapolation with <b>no back-loading applied</b>.</p>';
-  }
-  html += '</div>';
-
+     IT ONLY SAYS ANYTHING BECAUSE THE SKEW IS PER MAKER. A segment-wide factor
+     cancels out of a share — (mtd/f)/(total/f) = mtd/total — so a forecast
+     built on one would reproduce today's share exactly and the dotted line
+     would be flat BY CONSTRUCTION, which reads as "share will not move" rather
+     than "this chart cannot tell you". The makers do differ: Tata Motors PV
+     runs 0.830 against Maruti's 0.912 at the same cut, and that gap is the
+     whole forecast. */
   for (const s of d.segments){
     const src = AUTOMODE === 'daily' ? s.daily : s.monthly;
     const xs = AUTOMODE === 'daily' ? src.dates : src.periods.map(monthToISO);
@@ -2399,12 +2342,39 @@ async function drawAutoShare(){
              .filter(p => p.v != null)
     })).filter(x => x.pts.length > 0);
 
-    const drawable = series.filter(x => x.pts.length > 1);
+    /* MONTHLY: the newest point is a PARTIAL month standing beside full ones,
+       which flatters or flatters-not depending only on the date. The forecast
+       replaces it — solid through the last completed month, dotted to the
+       projection. DAILY: the solid line runs to the last capture and the dash
+       carries it to month end. Either way the dash spans exactly the interval
+       that has not happened yet. */
+    const fc = s.forecast || {};
+    const fSeries = [];
+    if (fc.state === 'live' && fc.by_label){
+      for (const x of series){
+        const v = (fc.by_label[x.label] || {}).share_pct;
+        if (v == null || !x.pts.length) continue;
+        const anchor = AUTOMODE === 'daily'
+          ? x.pts[x.pts.length - 1]                       // last real capture
+          : x.pts[x.pts.length - 2];                      // last COMPLETED month
+        if (!anchor) continue;
+        const endX = AUTOMODE === 'daily' ? fc.month_end : x.pts[x.pts.length - 1].d;
+        fSeries.push({label: x.label + ' (forecast)', slot: x.slot, dash: true,
+                      pts: [{d: anchor.d, v: anchor.v}, {d: endX, v: v}]});
+      }
+      // On the monthly view the partial month is now DRAWN by the dash, so the
+      // solid line must stop at the last completed month or the two overlap
+      // and the chart shows the same month twice at two different values.
+      if (AUTOMODE !== 'daily')
+        for (const x of series) if (x.pts.length > 1) x.pts = x.pts.slice(0, -1);
+    }
+    const drawable = series.filter(x => x.pts.length > 1).concat(fSeries);
     html += '<h3 style="margin-top:var(--s5)">' + esc(s.label) + '</h3>';
     if (!drawable.length){
       html += '<p class="note hint">not enough points to draw yet</p>';
     } else {
       const vals = drawable.flatMap(x => x.pts.map(p => p.v));
+      const allX = drawable.flatMap(x => x.pts.map(p => p.d));
       const lo = Math.min(...vals), hi = Math.max(...vals);
       const pad = Math.max((hi - lo) * 0.12, 1);
       const yLo = Math.max(0, Math.floor((lo - pad) / 5) * 5);
@@ -2412,7 +2382,7 @@ async function drawAutoShare(){
       const ticks = [];
       const step = Math.max(Math.round((yHi - yLo) / 5 / 5) * 5, 5);
       for (let v = yLo; v <= yHi + 0.001; v += step) ticks.push(v);
-      const ts = xs.map(x => Date.parse(x));
+      const ts = [...new Set(allX)].map(x => Date.parse(x));
       const every = Math.max(1, Math.ceil(xs.length / 6));
       html += '<div class="lgd">' + drawable.map(x =>
           '<span><i style="border-top-color:' + inkOf(x.slot) + '"></i>'
@@ -2421,11 +2391,27 @@ async function drawAutoShare(){
             yLo: yLo, yHi: yHi, ticks: ticks,
             fmtY: v => v + '%', fmtV: v => v.toFixed(2) + '%',
             xDom: [Math.min(...ts), Math.max(...ts)],
-            xTicks: xs.filter((_, i) => i % every === 0), allDates: xs,
+            /* The dash ends at month end, so month end must be a TICK.
+               Without it the projection trails off to the right of the last
+               labelled date and the reader cannot see where it lands — the
+               axis would silently disagree with the line. */
+            xTicks: [...new Set(xs.filter((_, i) => i % every === 0)
+                       .concat(fSeries.length ? [fSeries[0].pts[1].d] : []))],
+            allDates: [...new Set(allX)],
             axisLabel: AUTOMODE === 'daily'
               ? 'share of ' + esc(src.month) + ' month-to-date · one point per capture'
               : 'share of each month · newest is ' + esc(src.current)
                 + ', still month-to-date'});
+    }
+    if (fc.state === 'live'){
+      const basis = fc.skew_basis === 'none'
+        ? '<b style="color:var(--warn)">no month harvested at day ' + fc.asof_day
+          + ', so no back-loading is applied</b>'
+        : 'working-day ' + fc.wd_fraction + ' x per-maker skew, fitted on '
+          + esc((fc.skew_months || []).join(', '));
+      html += '<p class="note"><b>Dotted = forecast to ' + esc(fc.month_end)
+        + '</b> · segment ' + fc.mtd_total.toLocaleString('en-IN') + ' \u2192 '
+        + fc.forecast_total.toLocaleString('en-IN') + ' · ' + basis + '.</p>';
     }
     html += '<p class="note">' + esc(s.note) + '</p>';
   }
