@@ -2095,6 +2095,15 @@ def book_view() -> dict:
         rep["unassigned"] = sorted(
             [t for k, t in tokens.items() if k not in assigned],
             key=lambda t: -t["gross_usd"])
+        # Kelly sizing over the dictated pairs (PM, 2026-09-25). Risk from
+        # `prices`, edge from specs/book.yaml kelly.edges — packages/book/
+        # kelly.py owns the rules and the selftest. A failure here must not
+        # take the Book tab down with it, so it lands as an error block.
+        try:
+            import kelly
+            rep["kelly"] = kelly.build(out, rep.get("nav") or 0.0)
+        except Exception as e:                       # noqa: BLE001
+            rep["kelly"] = {"error": f"{type(e).__name__}: {e}"}
     else:
         # no dictated pairs: synthesize the view from the tag grouping
         rep["view"] = [{**p, "sector": (p["pair"].rstrip("0123456789 ") or

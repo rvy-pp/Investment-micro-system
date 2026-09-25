@@ -184,3 +184,24 @@ names:
   VAML: VAML
 
 carry: {}
+
+# ---------------------------------------------------------------------------
+# kelly: Kelly sizing over the dictated pairs (PM, 2026-09-25). The RISK is
+# measured by packages/book/kelly.py from `prices` (each pair's spread =
+# mean long-leg return - mean short-leg return; covariance across pairs,
+# shrunk toward its diagonal). The EDGE is the PM's and only the PM's —
+# nothing the system computes is used as one (no composite is validated).
+#
+# Sizes are notional PER SIDE as a fraction of NAV; gross = 2x that.
+kelly:
+  fraction: 0.5          # half Kelly (PM, 2026-09-25)
+  lookback_days: 730     # calendar days of price history for sigma / correlation
+  min_sessions: 120      # fewer -> standalone only, kept out of the joint solve
+  horizon_weeks: 13      # default horizon for an edge, and for the implied-edge read
+  shrink: auto           # Schafer-Strimmer intensity; or pin a number in [0, 1]
+  # edges: expected PAIR return (long minus short, %) over horizon_weeks.
+  # Keys are the dictated pair names above. `note` is REQUIRED — an edge
+  # with no provenance is refused, not defaulted. A pair with no edge is not
+  # sized; its implied edge (what today's size assumes) is still shown.
+  #   HZ_VEDL: {ret_pct: 6, horizon_weeks: 13, note: "PM 2026-09-25: holdco discount closes on ..."}
+  edges: {}

@@ -713,6 +713,37 @@ Range tokens hold `1d` up to and including `20y` and break at `max`. Tested
 both directions: the date and `1mo`/`1y` accept, `max` is refused on both the
 monthly and the hourly flavour.
 
+### Kelly sizing — a block on the Book tab, 2026-09-25
+
+PM: *"Let's start with applying kelly criterion to the book."* The **edge is
+the PM's**, typed into `specs/book.yaml kelly.edges` as `{ret_pct,
+horizon_weeks, note}` per dictated pair, and **an edge with no note is
+refused**. The **risk is measured**: each pair's spread (mean long return −
+mean short return) over `lookback_days`, and the covariance across pairs
+shrunk toward its diagonal (Schäfer–Strimmer δ, 0.12 today). The default is
+**half Kelly**. `packages/book/kelly.py` owns the arithmetic and the
+`--selftest` (21 checks); `engine.book_view` attaches it as `kelly`, so there
+is no new route and the vault copy picks it up for free.
+
+**Nothing the system computes is used as an edge.** The composite gap was
+refused because no composite is validated, and the spread's own drift was
+refused because it is a survivorship back-cast. Do not "helpfully" default
+the edge from either.
+
+The block gives three reads. The first is **implied edge**: what today's size
+assumes you expect over 13w, which needs no edge entered. The second is **½K
+alone vs joint**: joint splits a shared-leg bet (DIXON backs three longs), and
+a negative joint weight is flagged `flip`, never clipped. The third is **at
+today's gross**: the joint Kelly proportions scaled to today's combined gross
+for the edged pairs.
+
+**The scale finding, measured on the live book:** every implied edge comes
+out at **+0.02% to +0.05% over 13 weeks**. Put the other way, a plausible
++5%/13w edge on a 19%-vol spread asks for ~270% of NAV per side at half Kelly.
+So on any real edge the book sits at roughly 0.004× Kelly. Absolute Kelly
+size is never the binding constraint here, and the allocation column is the
+part to read.
+
 ## Price sources have a precedence order — read before adding a feed
 
 Added 2026-08-21. Four adapters wrote `prices` with `INSERT OR REPLACE` and no

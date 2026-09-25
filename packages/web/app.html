@@ -3313,6 +3313,70 @@ function bookSections(view, order, nav, bookPnl){
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
+/* ============== Kelly sizing (PM, 2026-09-25) ==============================
+   Risk is MEASURED (each pair's spread σ and the covariance across pairs,
+   from prices); the EDGE is the PM's own, typed into specs/book.yaml
+   kelly.edges with a note. packages/book/kelly.py owns the arithmetic.
+   Three reads, left to right, because each answers a different question:
+     implied   what today's size assumes you expect (needs no edge at all)
+     ½K        the size your edge asks for — standalone, then joint (joint
+               splits a shared bet: DIXON backs three longs)
+     at today's gross   the joint Kelly PROPORTIONS inside today's budget —
+               the part of Kelly that survives any leverage limit */
+function kellyBlock(k){
+  if (!k) return '';
+  if (k.error) return `<div class="callout accent-amber"><div class="callout-head">
+    <span class="ico">⚠</span><span class="t">Kelly sizing failed</span></div>${esc(k.error)}</div>`;
+  const j = k.joint || {};
+  const fr = k.fraction === 0.5 ? '½' : k.fraction === 0.25 ? '¼' : k.fraction + '×';
+  const g = v => v == null ? '—' : v.toFixed(Math.abs(v) >= 10 ? 0 : 2) + '%';
+  const flagTip = {short_history: `under ${k.min_sessions} sessions — standalone only, kept out of the joint solve`,
+    flip: 'joint Kelly is NEGATIVE: given the correlated pairs, this one works as a hedge for the others',
+    pre_demerger_history: 'part of the σ window predates a confirmed demerger (VEDL 30-04-2026) — a different company'};
+  const rows = k.rows.map(r => {
+    const e = r.edge;
+    const chips = (r.flags || []).map(f =>
+      ` <span class="pill warn" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('');
+    const d = r.gross_budget_pct == null ? null : r.gross_budget_pct - r.gross_now_pct;
+    return `<tr class="secfirst" title="long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} (Kelly assumes a dollar-neutral pair) · ${r.n_sessions} sessions${
+        e ? `
+edge: ${e.ret_pct}% over ${e.horizon_weeks}w — ${esc(e.note)}` : ''}">
+      <td class="pair">${esc(r.label)}<span class="chips">${chips}</span></td>
+      <td>${r.sigma_ann_pct == null ? '—' : r.sigma_ann_pct.toFixed(1) + '%'}</td>
+      <td>${g(r.gross_now_pct)}</td>
+      <td>${pctf(r.implied_edge_pct, 2)}<span class="sub">joint ${pctf(r.implied_edge_joint_pct, 2)}</span></td>
+      <td class="${usdCls(e && e.ret_pct)}">${e ? pctf(e.ret_pct, 1) + `<span class="sub">${e.horizon_weeks}w</span>` : '<span class="age">none</span>'}</td>
+      <td>${g(r.gross_standalone_pct)}</td>
+      <td class="${r.gross_joint_pct < 0 ? 'neg' : ''}">${g(r.gross_joint_pct)}</td>
+      <td class="tot">${g(r.gross_budget_pct)}${d == null ? '' : `<span class="sub ${usdCls(d)}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}pp</span>`}</td>
+    </tr>`;
+  }).join('');
+  const problems = [...(k.bad_edges || []).map(b => 'refused: ' + b),
+    ...(k.unknown_edges || []).map(u => `edge for "${u}" names no dictated pair`),
+    ...(k.skipped || []).map(s => `${s.label} not sized: ${s.why}`)];
+  const summary = j.members && j.members.length
+    ? ` · on your ${j.members.length} edges today's book is <b>${(j.effective_fraction ?? 0).toFixed(4)}× Kelly</b>
+       (exp ${pctf(j.now_exp_ret_ann_pct, 2)}/yr, vol ${(j.now_vol_ann_pct ?? 0).toFixed(2)}%)
+       against ${fr}K at ${g(j.gross_pct)} gross (exp ${pctf(j.exp_ret_ann_pct, 1)}/yr, vol ${(j.vol_ann_pct ?? 0).toFixed(1)}%)`
+    : ` · <b>no edges entered</b> — add them under <code>specs/book.yaml kelly.edges</code> (ret_pct, horizon_weeks, note); until then only the implied column is live`;
+  return `<div class="sechead" style="margin-top:var(--s4)">Kelly sizing</div>
+    <div class="meta-line">${fr} Kelly · σ and correlation over ${dmy(k.window[0])}–${dmy(k.window[1])}
+      (${j.n_common || 0} common sessions, covariance shrink δ ${j.delta == null ? '—' : j.delta.toFixed(2)})
+      · gross = both sides, % of NAV${summary}</div>
+    ${problems.length ? `<div class="callout accent-amber"><div class="callout-head"><span class="ico">⚠</span>
+      <span class="t">edges not used</span></div><div class="hint">${problems.map(esc).join('<br>')}</div></div>` : ''}
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+      <th class="l">pair</th>
+      <th title="annualised σ of the pair spread (mean long return − mean short return), daily closes">spread vol</th>
+      <th>gross now</th>
+      <th title="the expected pair return over ${k.horizon_weeks}w at which TODAY'S size is exactly ${fr} Kelly — arithmetic on the current size, not a forecast. Joint: accounting for the other pairs' overlap">implied ${k.horizon_weeks}w edge</th>
+      <th title="your expected pair return, from specs/book.yaml kelly.edges">your edge</th>
+      <th title="${fr} Kelly gross for this pair on its own, μ/σ² — overcounts where pairs share a leg">${fr}K alone</th>
+      <th title="${fr} Kelly gross solved jointly (Σ⁻¹μ) across every pair with an edge — correlated pairs split one bet">${fr}K joint</th>
+      <th title="the joint Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross — the reallocation Kelly asks for inside today's risk budget; small figure: change vs today">at today's gross</th>
+    </tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
 /* The model-scores table, tiles and placeholder callouts came OFF this tab
    06-09-2026 (PM: "all this model view and stuff below is waste") — the
    model still lives on the Overview/sector tabs and per-leg composites ride
@@ -3392,6 +3456,7 @@ async function loadBook(){
          them, the same ordering the Overview uses when it reads the
          morning's words before the tape. Filled asynchronously by
          loadIndex() once this innerHTML has landed. */
+      + kellyBlock(bk.kelly)
       + `<div id="bix-host" class="panel" style="padding:var(--s4);margin:var(--s4) 0"></div>`
       + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>

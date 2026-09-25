@@ -107,6 +107,90 @@ price-%s are never apportioned. When a snapshot brings a position that is in
 no dictated pair, the tab flags it: **ask the PM which pair it belongs to and
 add it to the spec — never guess.**
 
+## Step 2b — the index, and the ONE case where it needs you
+
+The Book tab's **equal-weighted long and short indices** (`/api/book_index`,
+`packages/book/basket_index.py`) recompute from `prices` and `book_positions`
+on every request. **There is no index table and no refresh step: loading the
+snapshot in Step 1 IS the update.** Membership is frozen at
+`specs/book.yaml index.freeze_before` and follows the snapshots after it, so a
+position that went on or came off today shows up in the index as soon as the
+paste is loaded.
+
+**The one thing that does need a command: a leg that is NEW to the book.** Its
+history in `prices` only goes back as far as the daily 3mo window, so the index
+would read it as having "listed" three months ago and the back-cast would show
+it joining there — a leg with fifteen years of history appearing to start in
+June. Backfill it once, deep:
+
+```bash
+python packages/adapters/yahoo_prices.py --load --only <entity_id> --range 2007-01-01
+```
+
+`--only` is not optional in practice: a deep range over the whole candidate
+list would rewrite years of commodity closes as a side effect of wanting equity
+bars. And **use an ISO date, never `--range max`** — Yahoo silently returns
+monthly bars for a long history and hourly for a short one, and `fetch_bars`
+now refuses anything whose `dataGranularity` is not `1d` rather than storing
+month-end candles as sessions (docs/SILENT_BUGS.md entry 10).
+
+Then read the index block's footer back to the PM if any of these appear — each
+is a real exclusion, not a cosmetic note:
+
+- **"In the book but priced by nothing"** — the leg maps to an entity with no
+  symbol in `yahoo_prices.CANDIDATES`. This is the only failure the index
+  cannot see by itself: a leg with no price is skipped as "not yet listed",
+  which holds up no session and records no gap, so **it would sit outside the
+  index in silence**. Add the symbol, backfill, tell the PM.
+- **"Unmapped legs"** — the ticker is not in `ticker_map`. Same Step 1 rule:
+  flag, never guess.
+- **"Sessions skipped for a missing price"** — a listed leg had no close, so
+  the bar was not drawn and the chain widened its interval. These are holes in
+  Yahoo's data, not fetches that failed; nothing to fix, but say it.
+- **Membership changes since the freeze** — the footer lists them. Confirm they
+  match what the PM actually did; a change the PM does not recognise means the
+  paste was partial, which Step 1's "never load a partial paste" rule exists to
+  prevent.
+
+**What NOT to do to it.** Do not move `freeze_before` forward to today's date
+to "keep it current" — it is a constant on purpose, and advancing it re-writes
+the whole back-cast to whatever the book looks like now, which is the
+survivorship bias the freeze exists to bound. Do not add an index table. Do not
+re-weight it by position size: the PM asked for **direction only**, so every
+leg counts 1/n whatever it is worth.
+
+## Step 2c — re-export the vault copy (ALWAYS, after a snapshot loads)
+
+```bash
+python packages/web/export_static.py
+```
+
+~1.5 min, foreground. Run it once Step 1 has loaded and Step 2b's backfill (if
+any) is done.
+
+**Why it is a step here and not left to tomorrow's refresh.** The offline copy
+in OneDrive — `Obsidian Vault\Investment Micro-System\Investment
+Micro-System.html` — is a FROZEN snapshot of every API payload, rebuilt by
+`refresh.py` as its last step. But **this skill runs outside `refresh.py` on
+purpose**, and it is the only thing that writes `book_*`. So a review that
+loads a new paste at 16:00 changes the Book tab on the desk and leaves the
+vault copy showing the PREVIOUS snapshot's positions, pairs, YTD ledger and
+long/short index until the next morning's 08:00 run.
+
+**That is the one staleness the snapshot bar cannot catch.** The bar counts
+weekdays since the export, so a copy exported this morning reads "today" and
+green — correctly, for everything that came out of `refresh.py`, and wrongly
+for the book, which moved after it. Nothing on the page can tell the two
+apart. Re-exporting is the whole fix and it costs 90 seconds.
+
+Same reasoning applies to `book_io.add_review(...)` in Step 3 if the verdicts
+are to show in the vault copy: **export after the review, not before it.** One
+run at the end covers both.
+
+Tell the PM it re-exported, with the route count and the timestamp the command
+prints. If OneDrive is signed out the command fails and says so — report it and
+move on, never fatal.
+
 ## Step 3 — the review (the point of all of it)
 
 For each pair the PM wants (default: all, worst since-start % first),
@@ -164,4 +248,9 @@ the model, what to carry forward.
 - Never loads a partial paste — a snapshot is the FULL book (absence from
   one is read as a position CLOSED; that is how re-entries are detected).
 - Position data stays local — `data/` is gitignored; never commit or paste
-  the book into anything that leaves the machine.
+  the book into anything that leaves the machine. **ONE deliberate exception,
+  PM-sanctioned 2026-09-20:** the vault copy (Step 2c) bakes the Book tab into
+  the HTML file in the PM's own PinPOINT OneDrive, so he can read the book off
+  this machine. That is the firm's storage, not a third party, and the git
+  remote is still untouched. `export_static.py --no-book` excludes it if the
+  PM ever wants it out — the tab then says so rather than rendering empty.

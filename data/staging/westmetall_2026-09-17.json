@@ -3,7 +3,7 @@
   "lme_aluminium": "LME Aluminium Cash-Settlement",
   "lme_zinc": "LME Zinc Cash-Settlement"
  },
- "fetched_at": "2026-09-17T05:40:13+00:00",
+ "fetched_at": "2026-09-17T06:21:13+00:00",
  "fetched_by": "packages/adapters/westmetall.py \u2014 direct stdlib urllib, no agent and no MCP",
  "html_sha256_16": {
   "lme_aluminium": "cc46165c9c431011",

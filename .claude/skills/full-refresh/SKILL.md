@@ -126,7 +126,16 @@ exists, and load it if the store has not seen it.**
 3. Compare that mail's date against the newest `data/staging/metals_pack_*.xlsx`.
    - **newer than anything staged -> USE IT.** Re-run `outlook_pack.py --save`;
      the mail may have arrived in the interim, or Outlook may have only just
-     synced it. Then `refresh.py --consume metals` and `run_scores.py`.
+     synced it. Then `refresh.py --consume metals`, `run_scores.py`, **and
+     `packages/web/export_static.py`.**
+
+     The export is the one people will forget, so it is spelled out: `--consume`
+     returns before the STEPS list, so **it does not re-run the vault copy** —
+     and on a normal 08:00 morning the pack lands AFTER the main `refresh.py`,
+     which means the vault copy was built off pre-pack scores. Without this it
+     holds yesterday's commodity prices until tomorrow, under a green snapshot
+     bar. Rescoring without re-exporting is how the offline copy and the desk
+     quietly stop agreeing.
    - **already the newest staged file -> SKIP.** The store has it; re-loading
      changes nothing and the prices are legitimately as old as the last pack.
 4. Only after BOTH of those fail is the pack genuinely missing. Say so with the
@@ -308,6 +317,12 @@ corporate actions
 score + persist          HALT on failure
 front end                build_frontend.py — step 4, run here so the run
                          verifies what the page will render
+vault copy               export_static.py — the whole front end frozen into
+                         ONE self-contained HTML in OneDrive so the PM can
+                         read it off this machine. Spawned DETACHED (~1.5
+                         min, ~920 payloads, ~11MB); log ->
+                         data/refresh/vault_copy_last.log. AFTER the front-end
+                         check on purpose, and never fatal
 ```
 
 This block is the ACTUAL `STEPS` list in `packages/refresh.py` — if the two
@@ -468,6 +483,54 @@ live — so the tab shows what a build would have to work with rather than a
 placeholder. Its change column measures against the last close that actually
 **differed**, not the previous row, because the pack pre-creates the current day
 and carries the prior session forward until the next file backfills it.
+
+## Step 4b — the vault copy (PM, 2026-09-20)
+
+```bash
+python packages/web/export_static.py            # -> the vault, ~1.5 min
+python packages/web/export_static.py --selftest
+```
+
+Step 3 already spawns this DETACHED as its last step; the command is here for a
+by-hand run. It writes ONE self-contained HTML file —
+
+    OneDrive - PinPOINT\Obsidian Vault\Investment Micro-System\
+        Investment Micro-System.html
+
+— which OneDrive syncs, so the page is readable on the phone and on any other
+signed-in machine. There is no server and no port; that is the whole point.
+
+**It is a photograph of the app, not a second app.** `app.html` is copied
+through byte-identical with ONE `<script>` inserted before `</head>`; every
+`/api/*` payload the page can ask for (~920 of them) is computed once by
+importing `engine` directly and baked into that script, and a shim in front of
+`window.fetch` answers from the map. The day this exporter starts editing
+app.html is the day the vault copy and the desk copy can disagree about what
+the system says.
+
+**Three things cannot survive the freeze, and each is loud rather than blank:**
+
+- **A missed route** lands in `window.__IMS_MISSES` and turns the snapshot bar
+  amber with the route named. This is not theoretical — the first build trimmed
+  `/api/tape?pillar=…` with no `groups`, reasoning that the Pair tab is hidden
+  on `live:false` sectors; the click-through missed it three times, because
+  `pair` is SECTOR_SCOPED and re-renders for IT and Auto anyway. It costs 3.7MB
+  of the 11MB and it is baked.
+- **Staleness.** The in-page refresh light reads the FROZEN `status.json`, so it
+  stays green forever once the file stops being rewritten. The snapshot bar
+  therefore counts **weekdays** in the viewer's own browser against the export
+  stamp — the only clock in the file that still moves — and goes amber at 2.
+- **Filed PDFs** (~20MB, not in git) stay on the desk machine. The citation
+  links remain, and a click says where the document actually is.
+
+**The Book is included, `--no-book` excludes it.** The vault is the PM's own
+OneDrive inside PinPOINT, not a third party; CLAUDE.md's "position data stays in
+gitignored `data/`" is a rule about the git remote and this file writes nothing
+into the repo. Excluded, the Book tab says so instead of rendering empty.
+
+`--selftest` checks the key normaliser both ways, the `</script>` break-out, and
+**route parity with serve.py** — a route app.html fetches that the exporter does
+not know about fails the test, rather than becoming a blank tab in the vault.
 
 ## Step 5 — report, and be specific about what did NOT land
 

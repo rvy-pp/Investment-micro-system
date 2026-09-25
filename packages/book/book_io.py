@@ -164,11 +164,37 @@ CREATE TABLE IF NOT EXISTS book_pair_reviews (
 
 RE_CONTRACT = re.compile(r"=([FGHJKMNQUVXZ]\d{1,2}|\d{1,2})(?=\s|$)")
 
+# CUSTODY-WRAPPER ALIASES — hand-verified, and an ALLOW-LIST on purpose.
+#
+# On 2026-09-09 the IMS relabelled the four cash CFD legs without the
+# positions changing at all: 'VAML IN Equity' -> 'VAML IN CFD PPB PTF',
+# same for DALBHARA, SYRMA and LTTS. Same qty, same side, same pair tag,
+# and — the decisive evidence — a CONTINUOUS YTD: VAML ran -236.74 (09-08)
+# -> +11.65 (09-09) on a +252.41 day. A genuine close-and-reopen resets YTD
+# to that day's DTD, and none of the four did.
+#
+# WHAT IT COST BEFORE THIS EXISTED (caught by diffing the live roster
+# against the stored snapshot, not by any test): the root is the chain's
+# identity, so four relabelled legs read as four CLOSES plus four ENTRIES —
+# the since-inception P&L restarts at zero and _entry_anchor re-anchors the
+# %-since-entry to today, the exact failure the 2026-09-07 IT retag caused.
+#
+# It is an allow-list, like tape.CONFIRMED_ACTIONS, and must stay one: a
+# generic "strip any trailing venue words" rule would cheerfully merge two
+# genuinely different instruments, and nothing downstream would complain.
+# ticker_raw keeps the verbatim string, so the CFD fact is never lost.
+ROOT_ALIASES = {"CFD PPB PTF": "Equity"}
+
 
 def normalise_ticker(raw: str) -> tuple[str, str | None]:
     """'TATA=U6 IS Equity' -> ('TATA IS Equity', 'U6'). Option tickers carry
-    no '=' token and pass through whole — each series its own identity."""
+    no '=' token and pass through whole — each series its own identity.
+    A ROOT_ALIASES custody wrapper is folded back to its canonical form."""
     raw = " ".join(str(raw).split())
+    for wrapper, canon in ROOT_ALIASES.items():
+        if raw.upper().endswith(" " + wrapper.upper()):
+            raw = raw[: -len(wrapper)].rstrip() + " " + canon
+            break
     m = RE_CONTRACT.search(raw)
     if not m:
         return raw, None
@@ -208,6 +234,20 @@ def connect() -> sqlite3.Connection:
 # parse — the IMS tab-separated export -> canonical staging doc
 # --------------------------------------------------------------------------
 
+# The IMS direction flag. FLAT_IN_YEAR arrived with the full export on
+# 2026-09-09 and is NOT a position — see the row-kind note in
+# parse_ims_tsv, which is where the reasoning lives.
+#
+# FLAT arrived on 2026-09-21, THE FIRST OBSERVED ROLL: HZ=U6 and VEDL=U6
+# printed as `0  FLAT` with DTD/MTD/YTD all non-zero (they traded that
+# session), beside the fresh HZ=V6 / VEDL=V6 rows. It is the SAME-DAY form
+# of FLAT_IN_YEAR — a contract that is no longer a position but still
+# carries its final realised P&L, and it cross-foots. The only difference
+# is that DTD and MTD are not yet zero. Routed identically; refusing it
+# would have blocked the one snapshot the roll check exists for.
+DIRECTIONS = ("LONG", "SHORT", "FLAT_IN_YEAR", "FLAT")
+FLAT_FLAGS = ("FLAT_IN_YEAR", "FLAT")
+
 NUM_TAIL = ["mv_pct", "beta_mv_pct", "pnl_dtd", "pnl_dtd_pct",
             "pnl_dtd_trading", "pnl_mtd", "pnl_ytd", "pnl_mtd_pct",
             "pnl_ytd_pct", "gmv_pct"]
@@ -228,6 +268,7 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
       book total no ticker, no label, 10 nums — used for the cross-foot
     """
     positions, na_row, total_row, sector_rows = [], None, None, []
+    flat, na_members = [], []
     warnings: list[str] = []
     for lineno, line in enumerate(text.splitlines(), 1):
         if not line.strip():
@@ -237,17 +278,18 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
         if first:                                   # ---- position row
             up = [c.strip().upper() for c in cells]
             try:
-                i = next(k for k, c in enumerate(up) if c in ("LONG", "SHORT"))
+                i = next(k for k, c in enumerate(up) if c in DIRECTIONS)
             except StopIteration:
-                raise ValueError(f"line {lineno}: ticker row without "
-                                 f"LONG/SHORT flag: {first!r}")
+                raise ValueError(f"line {lineno}: ticker row without a "
+                                 f"direction flag ({'/'.join(DIRECTIONS)}): "
+                                 f"{first!r}")
             nums = _floats(cells[i + 1:])
             if len(nums) == len(NUM_TAIL) + 1:
                 nums = nums[:len(NUM_TAIL)]         # Momentum MV% present
             if len(nums) != len(NUM_TAIL):
                 raise ValueError(f"line {lineno} ({first}): {len(nums)} "
-                                 f"numeric cells after LONG/SHORT, expected "
-                                 f"{len(NUM_TAIL)}")
+                                 f"numeric cells after the direction flag, "
+                                 f"expected {len(NUM_TAIL)}")
             qty = float(cells[i - 1])
             pair = cells[i - 2].strip()
             cap = cells[i - 3].strip()
@@ -257,11 +299,50 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
                 raise ValueError(f"line {lineno} ({first}): {len(mid)} numeric "
                                  f"cells before CAP, expected Cost or nothing")
             d = dict(zip(NUM_TAIL, nums))
-            positions.append({
-                "ticker": first, "cap": cap, "pair": pair, "qty": qty,
-                "side": "L" if up[i] == "LONG" else "S",
-                "cost": mid[0] if mid else None, **d,
-            })
+            rec = {"ticker": first, "cap": cap, "pair": pair, "qty": qty,
+                   "cost": mid[0] if mid else None, **d}
+
+            # --- THREE ROW KINDS, AND ONLY THE FIRST IS A POSITION --------
+            #
+            # The 2026-09-09 paste is the FULL IMS sheet; the first three
+            # snapshots were positions-only. Two extra kinds arrived with
+            # it, and both must stay OUT of `positions`, because a snapshot
+            # is the FULL BOOK and absence from it means CLOSED — anything
+            # admitted here becomes a live leg of a pair.
+            #
+            # FLAT_IN_YEAR: a contract closed EARLIER THIS YEAR. qty 0,
+            #   MV 0, DTD 0, MTD 0, and a non-zero YTD that is its final
+            #   realised P&L. Mostly the pre-capture monthly rolls (=N6 Jul
+            #   and =Q6 Aug against the live =U6 Sep), plus expired options.
+            #   Real money, and it does cross-foot — but it is PRE-CAPTURE
+            #   CARRY, so it is recorded and never mixed into the chained
+            #   since-inception figure (the `carry:` rule in book.yaml). It
+            #   would also fail the schema outright: qty > 0, side in L/S.
+            #
+            #   IT ALSO SETTLES THE STANDING WARNING IN THE DOCSTRING ABOVE.
+            #   HNDL=U6 carries YTD -417.44 while HNDL=Q6 (-2,212.65) and
+            #   HNDL=N6 (-321.52) sit on their own rows: a fresh contract
+            #   does NOT inherit the dead one's P&L, so the chain does not
+            #   double-count. One correction to that docstring — the dead
+            #   contract's P&L does not fall into N.A. either. N.A. YTD is
+            #   -285.44 against +430.32 of FLAT_IN_YEAR; it stays on its own
+            #   row, which the earlier exports simply did not print.
+            #
+            # N.A. MEMBERS: the constituents of the costs bucket (USD/INR
+            #   Curncy; the $3.0m cash line alone is 99.8% of book MV%).
+            #   The N.A. AGGREGATE row already equals them to machine
+            #   precision, so counting both double-counts the whole bucket.
+            if pair.upper() == "N.A.":
+                na_members.append(rec)
+            elif up[i] in FLAT_FLAGS:
+                # FLAT (closed TODAY, DTD/MTD non-zero) and FLAT_IN_YEAR
+                # (closed earlier, DTD 0) are one kind: not a position,
+                # real money, cross-foots. The `flat_kind` is kept so the
+                # roll check can tell a same-day close from old carry.
+                flat.append({**rec, "flat_kind": up[i]})
+            else:
+                positions.append(
+                    {**rec, "side": "L" if up[i] == "LONG" else "S"})
         else:                                       # ---- aggregate rows
             label = next((c.strip() for c in cells[1:] if c.strip() and
                           not _is_num(c)), None)
@@ -289,7 +370,12 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
     if total_row:
         for k, tol in (("mv_pct", 1e-9), ("gmv_pct", 1e-9),
                        ("pnl_dtd", 0.02), ("pnl_mtd", 0.02), ("pnl_ytd", 0.02)):
-            got = sum(p[k] for p in positions) + ((na_row or {}).get(k) or 0)
+            # positions + FLAT_IN_YEAR + the N.A. AGGREGATE — never the
+            # N.A. members, which the aggregate already sums. Verified on
+            # the 2026-09-09 export: all five keys reconcile, ~1e-13 on the
+            # dollar columns.
+            got = (sum(p[k] for p in positions) + sum(f[k] for f in flat)
+                   + ((na_row or {}).get(k) or 0))
             want = total_row[k]
             if abs(got - want) > tol:
                 raise ValueError(f"cross-foot FAILED on {k}: positions+N.A. "
@@ -298,6 +384,32 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
     else:
         warnings.append("no book-total row — cross-foot skipped")
 
+    if flat:
+        same_day = [f for f in flat if f.get("flat_kind") == "FLAT"]
+        older = [f for f in flat if f.get("flat_kind") != "FLAT"]
+        if older:
+            warnings.append(
+                f"{len(older)} FLAT_IN_YEAR rows (contracts closed earlier "
+                f"this year), YTD {sum(f['pnl_ytd'] for f in older):+,.0f} — "
+                f"recorded as pre-capture carry, NOT chained")
+        if same_day:
+            warnings.append(
+                f"{len(same_day)} FLAT rows (contracts closed TODAY: "
+                + ", ".join(f['ticker'] for f in same_day)
+                + f"), final YTD {sum(f['pnl_ytd'] for f in same_day):+,.0f}"
+                f" — recorded, NOT chained; the chain freezes the LAST-SEEN"
+                f" YTD, so compare the two on a roll")
+    if na_members:
+        warnings.append(
+            f"{len(na_members)} N.A. member rows folded into the bucket "
+            f"aggregate (counting both would double-count it)")
+    aliased = sorted({p['ticker'] for p in positions
+                      if normalise_ticker(p['ticker'])[0] != p['ticker']
+                      and RE_CONTRACT.search(p['ticker']) is None})
+    if aliased:
+        warnings.append("custody wrapper aliased to keep one chain root: "
+                        + ", ".join(aliased))
+
     return {
         "date": date, "source_file": source_file,
         "pnl_basis": "contract_itd", "nav": nav,
@@ -305,6 +417,8 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
                ("pnl_dtd", "pnl_mtd", "pnl_ytd")} if na_row else None,
         "positions": positions, "warnings": warnings,
         "n_sector_rows": len(sector_rows),
+        # Recorded, never chained — see the row-kind note above.
+        "flat_in_year": flat, "na_members": na_members,
     }
 
 
@@ -1043,6 +1157,80 @@ def _selftest() -> None:
         raise AssertionError("cross-foot passed with a missing row")
     except ValueError as e:
         assert "cross-foot" in str(e)
+
+    # ---- the FULL export shape (arrived 2026-09-09) -----------------------
+    # FLAT_IN_YEAR rows, N.A. member rows and a custody-wrapper rename all
+    # landed in one paste. ACCEPTANCE tests, not only rejection ones: the
+    # GLOB lesson is that a guard which only ever refuses looks correct
+    # while silently refusing everything valid.
+    fl = [0, 0, 0, 0, 0, 0, 77.0, 0, 0.000026, 0]   # closed earlier in year
+    m1 = [0.5, 0, -1.0, -0.0000003, 0, -2.0, -4.0, -0.0000007, -0.0000013, 0.5]
+    m2 = [0.25, 0, -2.0, -0.0000007, 0, -4.0, -5.0, -0.0000013, -0.0000017, 0.25]
+    nab = [a + b for a, b in zip(m1, m2)]           # bucket == its members
+    tot2 = [a + b + c + d for a, b, c, d in zip(n1, n2, fl, nab)]
+    full = "\n".join([
+        row("TCS=U6 IS Equity", None, "LARGE CAP", "IT 9", 2, "LONG", n1),
+        row("TCS=Q6 IS Equity", None, "LARGE CAP", "IT 9", 0, "FLAT_IN_YEAR", fl),
+        row("WPRO=U6 IS Equity", None, "LARGE CAP", "IT 9", -4, "SHORT", n2),
+        "\t".join(["", "N.A.", "", "", "", "", ""] + [repr(x) for x in nab]),
+        row("USD Curncy", None, "N.A.", "N.A.", 3000000, "LONG", m1),
+        row("INR Curncy", None, "N.A.", "N.A.", 1000, "LONG", m2),
+        "\t".join(["", "", "", "", "", "", ""] + [repr(x) for x in tot2]),
+    ])
+    d2 = parse_ims_tsv(full, "2026-09-09", "selftest")   # must ACCEPT
+    assert len(d2["positions"]) == 2, d2["positions"]    # not 3, not 5
+    assert len(d2["flat_in_year"]) == 1 and len(d2["na_members"]) == 2
+    assert d2["flat_in_year"][0]["pnl_ytd"] == 77.0
+    assert d2["na"]["pnl_ytd"] == -9.0                   # bucket, once
+    assert {p["ticker"] for p in d2["positions"]} == {
+        "TCS=U6 IS Equity", "WPRO=U6 IS Equity"}
+    # ...and the cross-foot must still BITE with the new kinds present
+    try:
+        parse_ims_tsv("\n".join(full.splitlines()[1:]), "2026-09-09")
+        raise AssertionError("cross-foot passed with the FLAT row dropped")
+    except ValueError as e:
+        assert "cross-foot" in str(e)
+
+    # ---- the SAME-DAY FLAT row (arrived 2026-09-21, the first roll) -------
+    # A contract closed on the paste's own session prints `0  FLAT` with
+    # DTD/MTD/YTD all NON-ZERO — unlike FLAT_IN_YEAR, whose DTD is 0. It
+    # must be accepted, kept OUT of positions, and counted in the
+    # cross-foot; and a ticker row with no flag at all must still refuse.
+    fd = [0, 0, 5.22, 0.0000017, 217.68, 475.35, 1659.09, 0.00016, 0.00055, 0]
+    tot3 = [a + b + c + d for a, b, c, d in zip(n1, n2, fd, nab)]
+    roll = "\n".join([
+        row("TCS=U6 IS Equity", None, "LARGE CAP", "IT 9", 2, "LONG", n1),
+        row("HZ=U6 IS Equity", None, "LARGE CAP", "ZINC 1", 0, "FLAT", fd),
+        row("WPRO=U6 IS Equity", None, "LARGE CAP", "IT 9", -4, "SHORT", n2),
+        "\t".join(["", "N.A.", "", "", "", "", ""] + [repr(x) for x in nab]),
+        "\t".join(["", "", "", "", "", "", ""] + [repr(x) for x in tot3]),
+    ])
+    d3 = parse_ims_tsv(roll, "2026-09-21", "selftest")   # must ACCEPT
+    assert len(d3["positions"]) == 2, d3["positions"]
+    assert len(d3["flat_in_year"]) == 1
+    assert d3["flat_in_year"][0]["flat_kind"] == "FLAT"
+    assert d3["flat_in_year"][0]["pnl_ytd"] == 1659.09
+    assert d3["flat_in_year"][0]["pnl_dtd"] == 5.22      # same-day: DTD != 0
+    assert any("closed TODAY" in w for w in d3["warnings"]), d3["warnings"]
+    try:   # drop the FLAT row: the cross-foot must bite on DTD as well as YTD
+        parse_ims_tsv("\n".join(roll.splitlines()[:1] + roll.splitlines()[2:]),
+                      "2026-09-21")
+        raise AssertionError("cross-foot passed with the same-day FLAT row dropped")
+    except ValueError as e:
+        assert "cross-foot" in str(e)
+    try:   # REJECTION: a flag the IMS has never printed is still refused
+        parse_ims_tsv(roll.replace("\tFLAT\t", "\tCLOSED\t"), "2026-09-21")
+        raise AssertionError("accepted a ticker row with an unknown flag")
+    except ValueError as e:
+        assert "direction flag" in str(e)
+
+    # the custody-wrapper alias: same root, so no close/reopen and no
+    # re-anchor. 'VAML IN Equity' -> 'VAML IN CFD PPB PTF' on 2026-09-09.
+    assert normalise_ticker("VAML IN CFD PPB PTF") == ("VAML IN Equity", None)
+    assert normalise_ticker("VAML IN Equity") == ("VAML IN Equity", None)
+    assert normalise_ticker("TATA=U6 IS Equity") == ("TATA IS Equity", "U6")
+    # an UNKNOWN wrapper must NOT be folded — the allow-list is the point
+    assert normalise_ticker("VAML IN SWAP XYZ") == ("VAML IN SWAP XYZ", None)
 
     # chained P&L over an in-memory store ------------------------------------
     conn = sqlite3.connect(":memory:")
