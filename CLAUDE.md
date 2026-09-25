@@ -2233,10 +2233,14 @@ about the market rather than a bug report. Tested both ways.
 
 **Wired into `refresh.py` AFTER the F&O bhavcopy step** — the roster is read
 from `fo_oi`, so running first would classify against yesterday's F&O universe,
-and silently on exactly the day a name enters or leaves. **Deliberately NOT in
-`SKIP_IF_DONE`**, same reasoning as the equity load: the capture is an MTD
-LEVEL keyed on capture_date, so a 15:00 re-run overwrites the 08:00 row with a
-fuller count of the same day — re-running is an improvement, not a duplicate.
+and silently on exactly the day a name enters or leaves. **Not in `SKIP_IF_DONE`,
+but the reason first written here was wrong**: it claimed a 15:00 re-run
+captures "a fuller count of the same day". Measured 2026-09-25, **Vahan's
+month-to-date does not update intraday** — 2W read 1,444,108 at the 08:10
+refresh and exactly 1,444,108 hours later, M&HCV 32,797 both times. It refreshes
+once, overnight, so a same-day re-run gains nothing; it is harmless (same
+capture_date, identical values) and lets a failed 08:00 run retry. It also
+means the newest point is genuinely T-1 whenever it is read.
 `export_static.py` enumerates the route and its parity selftest knows it (20
 checks pass), or the vault copy would render the panel empty.
 

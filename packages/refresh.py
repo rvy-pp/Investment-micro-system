@@ -112,10 +112,15 @@ STEPS = [
     # backfilled — the same "history you cannot recover" logic as the
     # consensus capture and the IndiaMART sweep. ~18 requests, ~15s.
     #
-    # DELIBERATELY NOT IN SKIP_IF_DONE, same reasoning as the equity load: the
-    # capture is a month-to-date LEVEL keyed on capture_date, so a second
-    # double-click at 15:00 overwrites the 08:00 row with a fuller count of the
-    # same day. Re-running is an improvement, not a duplicate.
+    # NOT IN SKIP_IF_DONE — but the reason originally written here was WRONG.
+    # It said a 15:00 re-run "overwrites the 08:00 row with a fuller count of
+    # the same day". Measured 2026-09-25: Vahan's month-to-date does NOT update
+    # intraday. The 2W total read 1,444,108 at the 08:10 refresh and exactly
+    # 1,444,108 hours later; M&HCV 32,797 both times. It refreshes ONCE, in an
+    # overnight batch, so a later same-day re-run gains nothing. It stays out of
+    # SKIP_IF_DONE only because re-running is harmless — same capture_date,
+    # INSERT OR REPLACE, identical values — and a day whose 08:00 run FAILED
+    # still gets a second chance on the next double-click.
     ("vahan share",       ["packages/adapters/vahan_share.py", "--capture"],  False),
     # SIAM wholesale + Vahan segment retail -> the Auto tab's Inventory view.
     # Daily although SIAM publishes monthly (~15 days after month end): the
