@@ -178,6 +178,19 @@ def check() -> dict:
         r["routes"].append({"route": "/api/auto_share",
                             "ok": state != "error", "detail": det})
 
+    # /api/auto_inventory - the Auto tab's channel-inventory view. `no_data` is
+    # a correct state on a fresh store; only `error` is a defect.
+    ai, _ = route("/api/auto_inventory", engine.auto_inventory)
+    if ai is not None:
+        state = ai.get("state")
+        segs = ai.get("segments") or []
+        det = (f"{state}, latest {ai.get('latest')}, "
+               + ", ".join(f"{s['id']} {len(s['months'])}mo" for s in segs))
+        if state == "error":
+            r["problems"].append("/api/auto_inventory: " + str(ai.get("note")))
+        r["routes"].append({"route": "/api/auto_inventory",
+                            "ok": state != "error", "detail": det})
+
     # /api/morning - the Overview's morning brief. Missing or yesterday's
     # files are WARNINGS the payload itself carries (the tab renders them),
     # not route failures: on a fresh machine, or before the agent has run the

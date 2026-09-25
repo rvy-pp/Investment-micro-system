@@ -793,43 +793,56 @@ def selftest() -> int:
     check("FNO_EXEMPT entries are still genuinely outside F&O", not stale,
           f"{stale} now trade(s) — drop from FNO_EXEMPT" if stale else str(sorted(FNO_EXEMPT)))
 
-    print("\nSEGMENT FILTER")
-    # A RATIO, not a zero. Ashok Leyland registers exactly ONE four-wheeler
-    # nationally in Aug-26 — an asserted == 0 failed on that single stray
-    # vehicle. The claim worth testing is not "no CV maker ever appears in
-    # Four Wheeler" (untrue, and untrue in a way that does not matter) but
-    # "Four Wheeler is passenger, so a pure CV maker is negligible there".
-    m = "2026-August"
-    mh = _fetch("MARUTI SUZUKI INDIA LTD", ["Four Wheeler"], {m})
-    al4 = _fetch("ASHOK LEYLAND LTD", ["Four Wheeler"], {m}).get(m, 0)
-    alcv = _fetch("ASHOK LEYLAND LTD", ["Goods Vehicle", "Bus"], {m}).get(m, 0)
-    check("Four Wheeler is passenger-only",
-          mh.get(m, 0) > 100_000 and alcv > 1000 and al4 / alcv < 0.001,
-          f"maruti4W={mh.get(m,0):,} ashokley 4W={al4} vs CV={alcv:,} "
-          f"({100*al4/max(alcv,1):.4f}%)")
+    # THE TWO CHECKS BELOW HIT THE LIVE SERVER, and a server fault must not read
+    # as a code fault. On 2026-09-25 Vahan returned HTTP 500 for specific makers
+    # (Ashok Leyland, Ola, BMW) at every scope while serving segment totals
+    # fine, and this selftest CRASHED on it — a partial outage presenting as a
+    # broken adapter. They now report SKIP with the reason, counted apart from
+    # failures, so a red run means the code and a skip means the source.
+    skipped = []
+    try:
+        print("\nSEGMENT FILTER")
+        # A RATIO, not a zero. Ashok Leyland registers exactly ONE four-wheeler
+        # nationally in Aug-26 — an asserted == 0 failed on that single stray
+        # vehicle. The claim worth testing is not "no CV maker ever appears in
+        # Four Wheeler" (untrue, and untrue in a way that does not matter) but
+        # "Four Wheeler is passenger, so a pure CV maker is negligible there".
+        m = "2026-August"
+        mh = _fetch("MARUTI SUZUKI INDIA LTD", ["Four Wheeler"], {m})
+        al4 = _fetch("ASHOK LEYLAND LTD", ["Four Wheeler"], {m}).get(m, 0)
+        alcv = _fetch("ASHOK LEYLAND LTD", ["Goods Vehicle", "Bus"], {m}).get(m, 0)
+        check("Four Wheeler is passenger-only",
+              mh.get(m, 0) > 100_000 and alcv > 1000 and al4 / alcv < 0.001,
+              f"maruti4W={mh.get(m,0):,} ashokley 4W={al4} vs CV={alcv:,} "
+              f"({100*al4/max(alcv,1):.4f}%)")
 
-    print("\nRECONCILIATION — segment-filtered all-India == sum of 36 states")
-    # The measured basis for skipping the 36-state sum. If the server's
-    # short-circuit threshold moves, this is what catches it; without it the
-    # capture would silently under-count the largest makers.
-    direct = _fetch("HERO MOTOCORP LTD", ["Two Wheeler"], {"2026-August", "2026-July"})
-    tot: dict[str, int] = {}
+        print("\nRECONCILIATION — segment-filtered all-India == sum of 36 states")
+        # The measured basis for skipping the 36-state sum. If the server's
+        # short-circuit threshold moves, this is what catches it; without it the
+        # capture would silently under-count the largest makers.
+        direct = _fetch("HERO MOTOCORP LTD", ["Two Wheeler"], {"2026-August", "2026-July"})
+        tot: dict[str, int] = {}
 
-    def one(st):
-        p = vahan._params("HERO MOTOCORP LTD", st, "3", "2026", "2026")
-        p["vehicleCategoryGroup"] = "Two Wheeler"
-        rows = vahan._get(
-            f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}")
-        return {r["yearAsString"]: r["registeredVehicleCount"] for r in rows
-                if r.get("yearAsString") in ("2026-August", "2026-July")}
+        def one(st):
+            p = vahan._params("HERO MOTOCORP LTD", st, "3", "2026", "2026")
+            p["vehicleCategoryGroup"] = "Two Wheeler"
+            rows = vahan._get(
+                f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}")
+            return {r["yearAsString"]: r["registeredVehicleCount"] for r in rows
+                    if r.get("yearAsString") in ("2026-August", "2026-July")}
 
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        for part in ex.map(one, vahan.STATES):
-            for k, v in part.items():
-                tot[k] = tot.get(k, 0) + v
-    diffs = {m: tot.get(m, 0) - direct.get(m, 0) for m in direct}
-    check("hero/2W all-India == state-sum", all(v == 0 for v in diffs.values()),
-          str(diffs))
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            for part in ex.map(one, vahan.STATES):
+                for k, v in part.items():
+                    tot[k] = tot.get(k, 0) + v
+        diffs = {m: tot.get(m, 0) - direct.get(m, 0) for m in direct}
+        check("hero/2W all-India == state-sum", all(v == 0 for v in diffs.values()),
+              str(diffs))
+
+    except (RuntimeError, vahan.VahanRefused) as e:
+        skipped.append("live Vahan checks")
+        print(f"  SKIP  live Vahan checks — source unavailable: "
+              f"{str(e).splitlines()[-1][:80]}")
 
     print("\nSHARE ARITHMETIC")
     tmp = sqlite3.connect(":memory:")
@@ -965,7 +978,8 @@ def selftest() -> int:
         print("  SKIP  openpyxl not available for the rejection fixtures")
 
 
-    print(f"\n{len(fails)} failure(s)" + (f": {fails}" if fails else ""))
+    print(f"\n{len(fails)} failure(s)" + (f": {fails}" if fails else "")
+          + (f"  |  SKIPPED: {skipped}" if skipped else ""))
     return 1 if fails else 0
 
 

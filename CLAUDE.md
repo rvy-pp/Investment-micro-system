@@ -2376,6 +2376,80 @@ per-maker skews must DIFFER, and forecast shares must sum to 100).
 **KNOWN: n=1 at d24** — one normal month per segment. The daily captures
 supply the curve empirically from October without another CAPTCHA.
 
+### SIAM, and the Inventory sub-tab — 2026-09-25
+
+The original auto plan had **SIAM supplying vehicle ASP. It does not, free or
+paid.** Every statistics page and the full subscription catalogue were read:
+the only "price" product is a raw-material **commodity** report. SIAM is a
+VOLUME source. For ASP use company results (revenue / reported wholesale).
+
+**What SIAM gives free is three numbers a month** — PV, 2W, 3W domestic sales
+(plus a production total), in a press release ~15 days after month end. No
+company split (paid, INR 53,350/yr), no model split (paid, 47,300), no
+cars-vs-UVs, no monthly CV at all. Company-wise **growth rates** arrive free in
+Kotak's monthly auto note (~2nd of the month); absolute units are in its linked
+PDF. BSE's announcements API returns **403** to automated requests (bot
+protection — not routed around), and the morning brief has **no Auto bucket**,
+so neither currently captures OEM monthly dispatches.
+
+**Why SIAM is still worth having: it is WHOLESALE and Vahan is RETAIL.**
+`packages/adapters/siam_wholesale.py` stores both (`siam_wholesale`,
+`vahan_retail_monthly`) and `channel()` joins them; dispatch minus registration
+is what went into dealer stock. The **Inventory** sub-tab (Auto only, between
+Prices & Watch and Company historical analysis) draws it as monthly BARS —
+green built, red drawn — beside a 12-month table. The festive cycle reads
+straight off it: 2W +814,785 into stock in Sep-2025, then -1,029,867 and
+-702,423 as Oct/Nov retail drew it down.
+
+**MONTHLY, PV AND 2W — THE FLOOR THE DATA SETS.** Wholesale is monthly and
+~15 days late, so the newest bar is always last month; a daily flow would need
+a daily wholesale, which exists nowhere free. CV is absent (no monthly SIAM
+CV); **3W is out by design** — Vahan's three-wheeler count is dominated by
+e-rickshaw makers who are not SIAM members, so retail would exceed wholesale
+permanently.
+
+**FLOW, NEVER A LEVEL — there is deliberately no cumulative.** Retail counts
+makers SIAM does not: **Ola Electric is not a SIAM member** (nor Kinetic
+Green, Okinawa, Revolt, Hero Electric), and BMW/Mercedes/JLR/Volvo are members
+whose data is "not available". So every month reads slightly LOW — Ola alone
+~8-16k/month. That is 1-2% of a festive swing, so one bar is sound; summed over
+thirty it drifts ~150k a year into destocking that never happened. Correcting
+it needs those makers' Vahan series, and on 2026-09-25 exactly those queries
+(Ola, BMW) plus the whole 3W category returned **HTTP 500 at every scope** — a
+partial server-side outage — so the correction is deferred, not half-applied.
+
+**Four parse/discovery traps, all silent, all met on the first run:**
+
+  - **A QUARTER READ AS A MONTH.** Sep-2025 prints `84,077units` with no
+    space; a regex wanting `([\d,]+) units` skipped it and took the NEXT
+    figure — the Jul-Sep QUARTERLY total, 229,239, 3x high and plausible. The
+    monthly block is now cut at the quarterly heading so a quarter is out of
+    reach, and `_plausible()` refuses a month over 2.2x its neighbours' median.
+  - **The source's own typo**, `were units 19,02,209 units` (May/Jul-26).
+  - **An unused pid is HTTP 200, never 404** — SIAM serves bare site chrome
+    for pid 623, 700 or 9999, so "scan until 404" never terminates.
+  - **AND THE FIRST EMPTINESS TEST DROPPED TWO MONTHS IN THREE.** A fixed
+    "<6,000 characters is empty" threshold was calibrated against a convention
+    write-up (12,693) — but an ordinary monthly release is 4,898-5,319, so only
+    quarter-end releases (~9,585, with an extra section) survived. The backfill
+    stored ten months, Dec/Mar/Jun/Sep, reported success, and looked like a
+    feed that simply publishes quarterly. Emptiness is now read against the
+    chrome MEASURED each run (pid 999999, 3,557 characters). A threshold
+    calibrated on the wrong sample; regression-tested at 4,898.
+
+**SIAM reused a number:** Dec-2025's "PV without Tata" is 270,704, identical to
+Dec-2024's and implying Tata sold 128,512 PVs that month. The ex-Tata column is
+therefore not stored. Tata IS in the headline PV in all 31 months — there is no
+basis break (a hypothesis tested and rejected before it reached the page).
+
+`vahan_share --selftest` now reports its two LIVE checks as **SKIP** when
+Vahan is down rather than crashing: on 2026-09-25 it crashed on an Ashok
+Leyland 500, a partial source outage presenting as a broken adapter.
+
+The "Auto is not scored…" line is removed from the Auto tab (PM); **IT still
+carries the identical line.** Refresh step `SIAM wholesale` runs after `vahan
+share`; route `/api/auto_inventory` is in the exporter and the verifier.
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed

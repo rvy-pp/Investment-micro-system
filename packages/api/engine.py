@@ -492,6 +492,53 @@ def auto_share() -> dict:
         conn.close()
 
 
+def auto_inventory() -> dict:
+    """Channel inventory flow for the Auto tab: SIAM wholesale minus Vahan retail.
+
+    PM, 2026-09-25: "Create a subtab ... for inventory tracking as frequent as
+    the data gets for whatever granularity is available."
+
+    MONTHLY, PV AND 2W, AND THAT IS THE FLOOR THE DATA SETS. Wholesale arrives
+    once a month from SIAM, ~15 days after month end; retail is daily but a
+    daily flow needs a daily wholesale, which does not exist anywhere free. CV
+    is absent because SIAM publishes no monthly CV; 3W because Vahan's count is
+    dominated by e-rickshaw makers who are not SIAM members.
+
+    FLOW, NOT A LEVEL. Each month's `net` is what went into (or out of) dealer
+    stock. There is deliberately NO running cumulative: retail includes makers
+    SIAM does not (Ola Electric ~8-16k/month), so every month reads slightly low
+    and a cumulative would drift ~150k a year into apparent destocking that did
+    not happen. The monthly flow is 1-2% biased; the cumulative would be wrong.
+    """
+    import importlib.util as _u
+    try:
+        sp = _u.spec_from_file_location(
+            "_sw", REPO / "packages" / "adapters" / "siam_wholesale.py")
+        mod = _u.module_from_spec(sp)
+        sp.loader.exec_module(mod)
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"channel unavailable: {type(e).__name__}: {e}"}
+    conn = connect()
+    try:
+        segs = []
+        labels = {"2W": "Two-wheelers", "PV": "Passenger vehicles"}
+        for seg in ("2W", "PV"):
+            ch = mod.channel(conn, seg)
+            segs.append({"id": seg, "label": labels[seg], "months": ch})
+        latest = max((c["months"][-1]["period"] for c in segs if c["months"]),
+                     key=mod._key, default=None)
+        if not any(c["months"] for c in segs):
+            return {"state": "no_data", "segments": segs,
+                    "note": "no SIAM wholesale or Vahan retail stored yet"}
+        return {"state": "live", "segments": segs, "latest": latest}
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"channel failed: {type(e).__name__}: {e}"}
+    finally:
+        conn.close()
+
+
 # ---------------------------------------------------------------------------
 # SECTORS — the front end's top-level navigation, defined here rather than in
 # the page so adding one is a data edit, not a JavaScript edit.

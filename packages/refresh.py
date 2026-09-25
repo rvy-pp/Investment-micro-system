@@ -117,6 +117,13 @@ STEPS = [
     # double-click at 15:00 overwrites the 08:00 row with a fuller count of the
     # same day. Re-running is an improvement, not a duplicate.
     ("vahan share",       ["packages/adapters/vahan_share.py", "--capture"],  False),
+    # SIAM wholesale + Vahan segment retail -> the Auto tab's Inventory view.
+    # Daily although SIAM publishes monthly (~15 days after month end): the
+    # scan costs ~15 requests on a quiet day and picks the release up the day
+    # it appears. Retail is re-read too, because Vahan backdates and a later
+    # read of a month is the more complete one. A Vahan failure keeps the
+    # stored retail rather than blanking it.
+    ("SIAM wholesale",    ["packages/adapters/siam_wholesale.py", "--fetch"], False),
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,

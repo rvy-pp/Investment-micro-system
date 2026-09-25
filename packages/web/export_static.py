@@ -128,6 +128,7 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
     # x 13 months, already aggregated in the DB) so the whole thing
     # rides in one payload like cement_watch.
     put("/api/auto_share", engine.auto_share())
+    put("/api/auto_inventory", engine.auto_inventory())
     put("/api/flows", engine.flows())
     put("/api/oi", engine.oi_snapshot())
     bub = engine.oi_bubbles()
@@ -441,7 +442,7 @@ def selftest() -> None:
                 "/api/flows", "/api/oi", "/api/oi_bubbles", "/api/book",
                 "/api/book_index", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
-                "/api/oi_movers", "/api/results", "/api/auto_share"}
+                "/api/oi_movers", "/api/results", "/api/auto_share", "/api/auto_inventory"}
     missing = (app & served) - exported
     assert not missing, f"app.html fetches {missing} and the export skips it"
     ok += 1

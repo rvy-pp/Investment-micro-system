@@ -771,6 +771,10 @@
            train people to stop clicking tabs. -->
       <button class="tab" role="tab" aria-selected="false" data-t="sector"
               id="vtab-sector" hidden>Prices &amp; Watch</button>
+      <!-- Channel inventory (PM 2026-09-25). Auto only: SIAM wholesale minus
+           Vahan retail exists for no other sector. -->
+      <button class="tab" role="tab" aria-selected="false" data-t="inventory"
+              id="vtab-inventory" hidden>Inventory</button>
       <!-- Company historical analysis lives INSIDE each sector (PM
            2026-09-16: the top-level Company tab "sits out like a sore spot.
            Keep it within the sectors only"). Shown only for a sector that
@@ -786,6 +790,7 @@
   <section id="s-scores"><div class="loading">loading…</div></section>
   <section id="s-pos"><div class="loading">loading…</div></section>
   <section id="s-sector"><div class="loading">loading…</div></section>
+  <section id="s-inventory"><div class="loading">loading…</div></section>
   <section id="s-overview"><div class="loading">loading…</div></section>
   <section id="s-book"><div class="loading">loading…</div></section>
   <section id="s-flows"><div class="loading">loading…</div></section>
@@ -2358,6 +2363,109 @@ function liveTable(seg, labels){
     + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
+/* ---------------------------------------------------------------------------
+   CHANNEL INVENTORY — SIAM wholesale minus Vahan retail, monthly, PV and 2W.
+
+   BARS, because each value is a FLOW into or out of dealer stock, not a level:
+   green = dispatches ran ahead of registrations (stock BUILT), red = retail
+   ran ahead (stock DRAWN). There is deliberately no running total — retail
+   counts makers SIAM does not (Ola Electric ~8-16k/month), so each month reads
+   slightly low, and a cumulative line would drift ~150k a year into destocking
+   that never happened. One bar is 1-2% biased; a sum of thirty would not be.
+--------------------------------------------------------------------------- */
+function flowBars(months, W, H){
+  const ML = 52, MR = 10, MT = 10, MB = 26;
+  const pw = W - ML - MR, ph = H - MT - MB;
+  const vals = months.map(m => m.net);
+  const hi = Math.max(0, ...vals), lo = Math.min(0, ...vals);
+  const span = (hi - lo) || 1;
+  const Y = v => MT + ph * (hi - v) / span;
+  const bw = pw / months.length;
+  const k = v => (Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1) + 'm'
+                 : Math.round(v / 1e3) + 'k');
+  // Ticks on round numbers either side of zero, so zero is always a gridline.
+  const step = Math.pow(10, Math.floor(Math.log10(span / 3)));
+  const unit = [1, 2, 5, 10].map(m => m * step).find(u => span / u <= 5) || step * 10;
+  let grid = '';
+  for (let v = Math.ceil(lo / unit) * unit; v <= hi + 1e-9; v += unit){
+    const y = Y(v).toFixed(1);
+    grid += '<line x1="' + ML + '" x2="' + (W - MR) + '" y1="' + y + '" y2="' + y
+      + '" style="stroke:var(--rule);stroke-width:' + (v === 0 ? 1.2 : .5) + '"/>'
+      + '<text class="ax" x="' + (ML - 6) + '" y="' + (+y + 3) + '" text-anchor="end">'
+      + (v > 0 ? '+' : '') + k(v) + '</text>';
+  }
+  let bars = '', xl = '';
+  months.forEach((m, i) => {
+    const x = ML + i * bw + bw * 0.14, w = bw * 0.72;
+    const y0 = Y(Math.max(m.net, 0)), y1 = Y(Math.min(m.net, 0));
+    const col = m.net >= 0 ? 'var(--up)' : 'var(--down)';
+    bars += '<rect x="' + x.toFixed(1) + '" y="' + y0.toFixed(1) + '" width="'
+      + w.toFixed(1) + '" height="' + Math.max(y1 - y0, 1).toFixed(1)
+      + '" style="fill:' + col + '"><title>' + esc(m.period) + '\n'
+      + 'wholesale ' + m.wholesale.toLocaleString('en-IN') + '\n'
+      + 'retail ' + m.retail.toLocaleString('en-IN') + '\n'
+      + (m.net >= 0 ? '+' : '') + m.net.toLocaleString('en-IN') + ' into stock'
+      + '</title></rect>';
+    // A label every third month, always including the last.
+    if (i % 3 === 0 || i === months.length - 1){
+      const [yy, mm] = m.period.split('-');
+      xl += '<text class="ax" x="' + (ML + (i + .5) * bw).toFixed(1) + '" y="' + (H - 8)
+        + '" text-anchor="middle">' + esc(mm.slice(0, 3) + " '" + yy.slice(2)) + '</text>';
+    }
+  });
+  return '<svg width="' + W + '" height="' + H + '" role="img">' + grid + bars + xl + '</svg>';
+}
+
+function flowTable(months){
+  const rows = months.slice(-12).reverse().map(m => {
+    const col = m.net >= 0 ? 'var(--up)' : 'var(--down)';
+    return '<tr><td>' + esc(m.period) + '</td>'
+      + '<td class="n">' + m.wholesale.toLocaleString('en-IN') + '</td>'
+      + '<td class="n">' + m.retail.toLocaleString('en-IN') + '</td>'
+      + '<td class="n" style="color:' + col + '">' + (m.net >= 0 ? '▲ +' : '▼ ')
+      + m.net.toLocaleString('en-IN') + '</td></tr>';
+  }).join('');
+  return '<table style="width:100%"><thead><tr><th>MONTH</th>'
+    + '<th class="n" title="SIAM domestic sales: dispatches to dealers">WHOLESALE</th>'
+    + '<th class="n" title="Vahan registrations, all-India">RETAIL</th>'
+    + '<th class="n" title="Wholesale minus retail. Retail includes makers SIAM does not '
+    + 'cover (Ola Electric; BMW/Mercedes/JLR/Volvo), so this reads slightly low.">INTO STOCK</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function drawInventory(_retry){
+  const host = document.getElementById('s-inventory');
+  if (!host) return;
+  let d;
+  try { d = await (await fetch('/api/auto_inventory')).json(); }
+  catch (e) { host.innerHTML = '<div class="hint">inventory unavailable</div>'; return; }
+  if (d.state !== 'live'){
+    host.innerHTML = '<div class="hint">' + esc(d.note || d.state) + '</div>'; return;
+  }
+  const HOSTW = (host.clientWidth || 900) - 8;
+  const SIDE = HOSTW >= 820;
+  const W = Math.max(SIDE ? Math.floor(HOSTW * 0.60) : HOSTW, 360), H = 220;
+  let html = '';
+  for (const s of d.segments){
+    if (!s.months.length) continue;
+    html += '<h3 style="margin-top:var(--s5)" title="Monthly. SIAM publishes wholesale '
+      + '~15 days after month end, so the newest bar is last month. Latest: '
+      + esc(d.latest) + '.">' + esc(s.label) + '</h3>'
+      + '<div style="display:flex;gap:var(--s4);align-items:flex-start;flex-wrap:wrap">'
+      + '<div style="flex:0 0 ' + W + 'px;max-width:' + W + 'px;min-width:0">'
+      + flowBars(s.months, W, H) + '</div>'
+      + '<div style="flex:1 1 240px;min-width:230px">' + flowTable(s.months) + '</div>'
+      + '</div>';
+  }
+  host.innerHTML = html;
+  // Same one-shot reconciliation as the share panel: if the first measure was
+  // taken before layout settled, redraw once at the real width.
+  if (!_retry){
+    const real = (host.clientWidth || 0) - 8;
+    if (real > 200 && Math.abs(real - HOSTW) > 24) return drawInventory(true);
+  }
+}
+
 async function drawAutoShare(_retry){
   const host = document.getElementById('autoshare-box');
   if (!host) return;
@@ -2673,11 +2781,17 @@ function sector(id){
   if (vt) vt.hidden = e.live ? !extra : !hasCo;
   const vc = document.getElementById('vtab-company');
   if (vc) vc.hidden = !hasCo;
+  const vi = document.getElementById('vtab-inventory');
+  if (vi) vi.hidden = (SECTOR !== 'auto');
   let want = LAST_VIEW;
   if (want === 'sector' && !extra) want = 'pair';
   if (want === 'company' && !hasCo) want = 'pair';
+  if (want === 'inventory' && SECTOR !== 'auto') want = 'pair';
   if (e.live){ tab(want); }
-  else { tab(LAST_VIEW === 'company' && hasCo ? 'company' : 'sector'); }
+  else {
+    tab(LAST_VIEW === 'company' && hasCo ? 'company'
+        : (LAST_VIEW === 'inventory' && SECTOR === 'auto') ? 'inventory' : 'sector');
+  }
 }
 
 /* The morning brief halves. Everything here is READ from the two dated files
@@ -4917,7 +5031,8 @@ async function loadSector(){
   // A LIVE sector reaches this view through the Prices & Watch sub-tab, and
   // the not-scored disclaimer would then be false — its pillars live on the
   // other three tabs. Both notes key on d.live.
-  const buildNote = d.live ? '' : `
+  /* Not on Auto (PM, 2026-09-25: "remove this text"). IT still carries it. */
+  const buildNote = (d.live || d.id === 'auto') ? '' : `
     <p class="note hint">${esc(d.label)} is <b>not scored</b> — prices land
       daily, but no spec links them, so no pillar exists and nothing is
       withheld either.</p>`;
@@ -5764,7 +5879,11 @@ function tab(name){
   // top-level tabs, so recording them here would send you to a hidden section
   // the next time you picked a live sector.
   if (name === 'pair' || name === 'scores' || name === 'pos'
-      || name === 'sector' || name === 'company') LAST_VIEW = name;
+      || name === 'sector' || name === 'company' || name === 'inventory') LAST_VIEW = name;
+  /* DRAWN ON SHOW, not on sector load. A hidden section measures clientWidth
+     0 — the share panel met exactly that and rendered a 535px chart beside an
+     826px table — so the width is read only once the section is visible. */
+  if (name === 'inventory') drawInventory().catch(e => showErr(String(e)));
   const live = (name === 'scores');
   $('#winwrap').hidden = !live;
   $('#fxwrap').hidden = !live;
