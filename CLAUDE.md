@@ -715,34 +715,50 @@ monthly and the hourly flavour.
 
 ### Kelly sizing — a block on the Book tab, 2026-09-25
 
-PM: *"Let's start with applying kelly criterion to the book."* The **edge is
-the PM's**, typed into `specs/book.yaml kelly.edges` as `{ret_pct,
-horizon_weeks, note}` per dictated pair, and **an edge with no note is
-refused**. The **risk is measured**: each pair's spread (mean long return −
-mean short return) over `lookback_days`, and the covariance across pairs
-shrunk toward its diagonal (Schäfer–Strimmer δ, 0.12 today). The default is
-**half Kelly**. `packages/book/kelly.py` owns the arithmetic and the
-`--selftest` (21 checks); `engine.book_view` attaches it as `kelly`, so there
-is no new route and the vault copy picks it up for free.
+PM: *"Let's start with applying kelly criterion to the book."* Then, the
+same day: *"just put returns and comments then and there and the fraction
+gets calculated there."* So **the edge is typed on the Book tab**. Each pair
+gets an expected 13-week return (long minus short, %) and a comment, and
+13 weeks is fixed as the horizon. **A return with no comment previews but
+never saves.** Edges are stored append-only in **`book_kelly_edges`**
+(latest row per pair is live, a NULL return is a clear, and history is
+kept), via the one write route on the server, `POST /api/kelly_edge`.
+**Edges do not live in `specs/book.yaml`**; they did for an hour, and a
+non-empty `kelly.edges` key there is now reported rather than read.
+
+**The risk is measured**: each pair's spread (mean long return − mean short
+return) over `lookback_days`, plus the covariance across pairs shrunk toward
+its diagonal (Schäfer–Strimmer δ, 0.12 today). The parameters (fraction ½,
+lookback, min_sessions, horizon, shrink) stay in the spec.
+`packages/book/kelly.py` is the tested reference (`--selftest`, 25 checks).
+`engine.book_view` attaches it as `kelly`, including a full-precision
+`calc` block (shrunk Σ, variances, today's sizes). **app.html's
+`kellyCalc()` recomputes from that block on every keystroke and must mirror
+`compute()`.** It was checked on four edges and matched to the displayed
+digit (e.g. JSTL_TATA 409% / 391% / 2.88%, book 0.0037× Kelly). The vault
+copy has no server: it previews and says it cannot save.
 
 **Nothing the system computes is used as an edge.** The composite gap was
 refused because no composite is validated, and the spread's own drift was
-refused because it is a survivorship back-cast. Do not "helpfully" default
-the edge from either.
+refused because it is a survivorship back-cast. Do not default the edge
+from either.
 
-The block gives three reads. The first is **implied edge**: what today's size
-assumes you expect over 13w, which needs no edge entered. The second is **½K
-alone vs joint**: joint splits a shared-leg bet (DIXON backs three longs), and
-a negative joint weight is flagged `flip`, never clipped. The third is **at
-today's gross**: the joint Kelly proportions scaled to today's combined gross
+The block gives three reads. The first is **implied edge**: what today's
+size assumes you expect over 13w, which needs no edge. The second is **½K
+alone vs joint**: joint splits a shared-leg bet (DIXON backs three longs),
+and a negative joint weight is flagged `flip`, never clipped. The third is
+**at today's gross**: the joint proportions scaled to today's combined gross
 for the edged pairs.
 
 **The scale finding, measured on the live book:** every implied edge comes
-out at **+0.02% to +0.05% over 13 weeks**. Put the other way, a plausible
-+5%/13w edge on a 19%-vol spread asks for ~270% of NAV per side at half Kelly.
-So on any real edge the book sits at roughly 0.004× Kelly. Absolute Kelly
-size is never the binding constraint here, and the allocation column is the
-part to read.
+out at **+0.02% to +0.05% over 13 weeks**, while a +5%/13w edge on a 19%-vol
+spread asks for ~270% of NAV per side at half Kelly. Absolute Kelly size is
+never the binding constraint here, and the allocation column is the part to
+read.
+
+**A saved edge reaches the vault copy at the next refresh**, not
+immediately. An export per keystroke-save would be ~90s each, which is why
+it was left out.
 
 ## Price sources have a precedence order — read before adding a feed
 

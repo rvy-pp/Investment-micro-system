@@ -3315,66 +3315,228 @@ function bookSections(view, order, nav, bookPnl){
 
 /* ============== Kelly sizing (PM, 2026-09-25) ==============================
    Risk is MEASURED (each pair's spread σ and the covariance across pairs,
-   from prices); the EDGE is the PM's own, typed into specs/book.yaml
-   kelly.edges with a note. packages/book/kelly.py owns the arithmetic.
+   from prices); the EDGE is the PM's own, TYPED HERE — a return and a
+   comment per pair (PM, same day: "just put returns and comments then and
+   there and the fraction gets calculated there"). Horizon fixed at 13w.
+   Every keystroke recomputes in the browser from `kelly.calc` (full-precision
+   shrunk covariance, variances, today's sizes) — kellyCalc() mirrors
+   packages/book/kelly.py compute(), which stays the tested reference.
+   Leaving a field (or Enter) SAVES via POST /api/kelly_edge into the
+   append-only book_kelly_edges table. A return with no comment previews but
+   does NOT save — no edge without provenance. The vault copy has no server:
+   it previews and says so.
    Three reads, left to right, because each answers a different question:
      implied   what today's size assumes you expect (needs no edge at all)
      ½K        the size your edge asks for — standalone, then joint (joint
                splits a shared bet: DIXON backs three longs)
      at today's gross   the joint Kelly PROPORTIONS inside today's budget —
                the part of Kelly that survives any leverage limit */
+let KELLY = null;
+
+function kellySolve(A, b){
+  const n = b.length, M = A.map((r, i) => [...r, b[i]]);
+  for (let c = 0; c < n; c++){
+    let p = c;
+    for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    if (Math.abs(M[p][c]) < 1e-18) return null;
+    [M[c], M[p]] = [M[p], M[c]];
+    for (let r = c + 1; r < n; r++){
+      const f = M[r][c] / M[c][c];
+      if (f) for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k];
+    }
+  }
+  const x = new Array(n).fill(0);
+  for (let r = n - 1; r >= 0; r--){
+    let s = M[r][n];
+    for (let k = r + 1; k < n; k++) s -= M[r][k] * x[k];
+    x[r] = s / M[r][r];
+  }
+  return x;
+}
+
+/* edges: {label: ret_pct}. Returns per-label f's (notional per side / NAV)
+   and the joint summary — the same quantities kelly.compute() returns. */
+function kellyCalc(c, edges){
+  const H = c.horizon_weeks * c.sessions_per_week, fr = c.fraction, Y = c.sessions_per_year;
+  const mu = l => edges[l] / 100 / H;
+  const rows = {}, joint = {members: []};
+  Object.keys(c.var).forEach(l => {
+    rows[l] = {};
+    if (edges[l] != null && c.var[l] > 0) rows[l].sa = fr * mu(l) / c.var[l];
+  });
+  const ed = (c.pool || []).map((l, i) => [l, i]).filter(([l]) => edges[l] != null);
+  if (ed.length && c.cov){
+    const A = ed.map(([, i]) => ed.map(([, j]) => c.cov[i][j]));
+    const m = ed.map(([l]) => mu(l));
+    const x = kellySolve(A, m);
+    if (!x) joint.error = 'covariance singular over the edged pairs';
+    else {
+      const f = x.map(v => fr * v), fn = ed.map(([l]) => c.f_now[l]);
+      const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+      const quad = v => dot(v, A.map(r => dot(r, v)));
+      const kg = f.reduce((s, v) => s + Math.abs(v), 0);
+      const sc = kg > 0 ? fn.reduce((s, v) => s + Math.abs(v), 0) / kg : null;
+      ed.forEach(([l], i) => {
+        rows[l].joint = f[i];
+        if (sc != null) rows[l].budget = f[i] * sc;
+      });
+      const er = dot(f, m), vr = quad(f), en = dot(fn, m), vn = quad(fn);
+      Object.assign(joint, {
+        members: ed.map(([l]) => l), effective_fraction: sc == null ? null : fr * sc,
+        gross_pct: kg * 200, exp_ret_ann_pct: er * Y * 100,
+        vol_ann_pct: Math.sqrt(Math.max(vr, 0) * Y) * 100,
+        now_exp_ret_ann_pct: en * Y * 100,
+        now_vol_ann_pct: Math.sqrt(Math.max(vn, 0) * Y) * 100});
+    }
+  }
+  return {rows, joint};
+}
+
 function kellyBlock(k){
   if (!k) return '';
   if (k.error) return `<div class="callout accent-amber"><div class="callout-head">
     <span class="ico">⚠</span><span class="t">Kelly sizing failed</span></div>${esc(k.error)}</div>`;
+  const offline = !!window.__IMS_SNAP;
+  KELLY = {k, offline, inp: {}};
+  k.rows.forEach(r => {
+    const e = r.edge;
+    KELLY.inp[r.label] = {ret: e ? String(e.ret_pct) : '', note: e ? e.note : '',
+      savedRet: e ? String(e.ret_pct) : '', savedNote: e ? e.note : '',
+      status: e ? 'saved' : ''};
+  });
   const j = k.joint || {};
   const fr = k.fraction === 0.5 ? '½' : k.fraction === 0.25 ? '¼' : k.fraction + '×';
   const g = v => v == null ? '—' : v.toFixed(Math.abs(v) >= 10 ? 0 : 2) + '%';
   const flagTip = {short_history: `under ${k.min_sessions} sessions — standalone only, kept out of the joint solve`,
-    flip: 'joint Kelly is NEGATIVE: given the correlated pairs, this one works as a hedge for the others',
     pre_demerger_history: 'part of the σ window predates a confirmed demerger (VEDL 30-04-2026) — a different company'};
   const rows = k.rows.map(r => {
-    const e = r.edge;
-    const chips = (r.flags || []).map(f =>
-      ` <span class="pill warn" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('');
-    const d = r.gross_budget_pct == null ? null : r.gross_budget_pct - r.gross_now_pct;
-    return `<tr class="secfirst" title="long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} (Kelly assumes a dollar-neutral pair) · ${r.n_sessions} sessions${
-        e ? `
-edge: ${e.ret_pct}% over ${e.horizon_weeks}w — ${esc(e.note)}` : ''}">
-      <td class="pair">${esc(r.label)}<span class="chips">${chips}</span></td>
+    const I = KELLY.inp[r.label], L = esc(r.label);
+    const chips = (r.flags || []).filter(f => f !== 'flip').map(f =>
+      ` <span class="pill warn" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('')
+      + ` <span class="pill warn kflip" data-k="${L}" style="display:none" title="joint Kelly is NEGATIVE: given the correlated pairs, this one works as a hedge for the others">flip</span>`;
+    return `<tr class="secfirst" title="long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} (Kelly assumes a dollar-neutral pair) · ${r.n_sessions} sessions">
+      <td class="pair">${L}<span class="chips">${chips}</span></td>
       <td>${r.sigma_ann_pct == null ? '—' : r.sigma_ann_pct.toFixed(1) + '%'}</td>
       <td>${g(r.gross_now_pct)}</td>
       <td>${pctf(r.implied_edge_pct, 2)}<span class="sub">joint ${pctf(r.implied_edge_joint_pct, 2)}</span></td>
-      <td class="${usdCls(e && e.ret_pct)}">${e ? pctf(e.ret_pct, 1) + `<span class="sub">${e.horizon_weeks}w</span>` : '<span class="age">none</span>'}</td>
-      <td>${g(r.gross_standalone_pct)}</td>
-      <td class="${r.gross_joint_pct < 0 ? 'neg' : ''}">${g(r.gross_joint_pct)}</td>
-      <td class="tot">${g(r.gross_budget_pct)}${d == null ? '' : `<span class="sub ${usdCls(d)}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}pp</span>`}</td>
+      <td><input type="number" step="0.5" class="kin kret" data-k="${L}" value="${esc(I.ret)}"
+           placeholder="—" style="width:60px;text-align:right" title="expected pair return over ${k.horizon_weeks}w, % (long minus short)"></td>
+      <td style="text-align:left"><input type="text" class="kin knote" data-k="${L}" value="${esc(I.note)}"
+           placeholder="why — required to save" style="width:100%;min-width:140px"></td>
+      <td data-c="sa" data-k="${L}">—</td>
+      <td data-c="joint" data-k="${L}">—</td>
+      <td class="tot" data-c="budget" data-k="${L}">—</td>
+      <td class="kst" data-k="${L}" style="text-align:left;font-family:var(--sans);white-space:nowrap"></td>
     </tr>`;
   }).join('');
   const problems = [...(k.bad_edges || []).map(b => 'refused: ' + b),
-    ...(k.unknown_edges || []).map(u => `edge for "${u}" names no dictated pair`),
+    ...(k.unknown_edges || []).map(u => `stored edge for "${u}" names no dictated pair`),
     ...(k.skipped || []).map(s => `${s.label} not sized: ${s.why}`)];
-  const summary = j.members && j.members.length
-    ? ` · on your ${j.members.length} edges today's book is <b>${(j.effective_fraction ?? 0).toFixed(4)}× Kelly</b>
-       (exp ${pctf(j.now_exp_ret_ann_pct, 2)}/yr, vol ${(j.now_vol_ann_pct ?? 0).toFixed(2)}%)
-       against ${fr}K at ${g(j.gross_pct)} gross (exp ${pctf(j.exp_ret_ann_pct, 1)}/yr, vol ${(j.vol_ann_pct ?? 0).toFixed(1)}%)`
-    : ` · <b>no edges entered</b> — add them under <code>specs/book.yaml kelly.edges</code> (ret_pct, horizon_weeks, note); until then only the implied column is live`;
   return `<div class="sechead" style="margin-top:var(--s4)">Kelly sizing</div>
-    <div class="meta-line">${fr} Kelly · σ and correlation over ${dmy(k.window[0])}–${dmy(k.window[1])}
-      (${j.n_common || 0} common sessions, covariance shrink δ ${j.delta == null ? '—' : j.delta.toFixed(2)})
-      · gross = both sides, % of NAV${summary}</div>
+    <div class="meta-line">${fr} Kelly · ${k.horizon_weeks}-week horizon · σ and correlation over
+      ${dmy(k.window[0])}–${dmy(k.window[1])} (${j.n_common || 0} common sessions, covariance shrink δ
+      ${j.delta == null ? '—' : j.delta.toFixed(2)}) · gross = both sides, % of NAV ·
+      type a return and a comment; it recalculates as you type and ${offline
+        ? '<b style="color:var(--warn)">this offline copy cannot save</b> — enter edges on the desk'
+        : 'saves when you leave the field'}<br><span id="k-sum"></span></div>
     ${problems.length ? `<div class="callout accent-amber"><div class="callout-head"><span class="ico">⚠</span>
       <span class="t">edges not used</span></div><div class="hint">${problems.map(esc).join('<br>')}</div></div>` : ''}
-    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk" id="kelly-t"><thead><tr>
       <th class="l">pair</th>
       <th title="annualised σ of the pair spread (mean long return − mean short return), daily closes">spread vol</th>
       <th>gross now</th>
       <th title="the expected pair return over ${k.horizon_weeks}w at which TODAY'S size is exactly ${fr} Kelly — arithmetic on the current size, not a forecast. Joint: accounting for the other pairs' overlap">implied ${k.horizon_weeks}w edge</th>
-      <th title="your expected pair return, from specs/book.yaml kelly.edges">your edge</th>
+      <th title="your expected pair return over ${k.horizon_weeks}w, % — long minus short">your ${k.horizon_weeks}w return</th>
+      <th class="l">comment</th>
       <th title="${fr} Kelly gross for this pair on its own, μ/σ² — overcounts where pairs share a leg">${fr}K alone</th>
       <th title="${fr} Kelly gross solved jointly (Σ⁻¹μ) across every pair with an edge — correlated pairs split one bet">${fr}K joint</th>
       <th title="the joint Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross — the reallocation Kelly asks for inside today's risk budget; small figure: change vs today">at today's gross</th>
+      <th class="l"></th>
     </tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function kellyRefresh(){
+  if (!KELLY) return;
+  const {k} = KELLY, c = k.calc, edges = {};
+  Object.entries(KELLY.inp).forEach(([l, I]) => {
+    const v = parseFloat(I.ret);
+    if (I.ret !== '' && isFinite(v)) edges[l] = v;
+  });
+  const res = kellyCalc(c, edges);
+  const g = v => v == null ? '—' : v.toFixed(Math.abs(v) >= 10 ? 0 : 2) + '%';
+  const now = {};
+  k.rows.forEach(r => now[r.label] = r.gross_now_pct);
+  document.querySelectorAll('#kelly-t td[data-c]').forEach(td => {
+    const l = td.dataset.k, f = (res.rows[l] || {})[td.dataset.c];
+    const pct = f == null ? null : 2 * f * 100;
+    if (td.dataset.c === 'budget' && pct != null){
+      const d = pct - now[l];
+      td.innerHTML = `${g(pct)}<span class="sub ${usdCls(d)}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}pp</span>`;
+    } else td.textContent = g(pct);
+    td.classList.toggle('neg', td.dataset.c === 'joint' && pct != null && pct < 0);
+  });
+  document.querySelectorAll('#kelly-t .kflip').forEach(s => {
+    const f = (res.rows[s.dataset.k] || {}).joint;
+    s.style.display = f != null && f < 0 ? '' : 'none';
+  });
+  document.querySelectorAll('#kelly-t .kst').forEach(td => {
+    const I = KELLY.inp[td.dataset.k], dirty = I.ret !== I.savedRet || I.note !== I.savedNote;
+    let t = '', col = 'var(--soft)';
+    if (I.status === 'saving') t = 'saving…';
+    else if (I.status && I.status.startsWith('error')){ t = I.status; col = 'var(--down)'; }
+    else if (dirty && I.ret !== '' && !I.note.trim()){ t = 'needs a comment to save'; col = 'var(--warn)'; }
+    else if (dirty && KELLY.offline){ t = 'preview only'; col = 'var(--warn)'; }
+    else if (dirty) { t = 'unsaved'; col = 'var(--warn)'; }
+    else if (I.savedRet !== '') t = '✓ saved';
+    td.textContent = t; td.style.color = col;
+  });
+  const j = res.joint, fr = k.fraction === 0.5 ? '½' : k.fraction + '×';
+  const sum = document.getElementById('k-sum');
+  if (sum) sum.innerHTML = j.error ? `<span style="color:var(--down)">${esc(j.error)}</span>`
+    : j.members.length
+      ? `on your ${j.members.length} edge${j.members.length > 1 ? 's' : ''} today's book is
+         <b>${(j.effective_fraction ?? 0).toFixed(4)}× Kelly</b> (exp ${pctf(j.now_exp_ret_ann_pct, 2)}/yr,
+         vol ${j.now_vol_ann_pct.toFixed(2)}%) against ${fr}K at ${g(j.gross_pct)} gross
+         (exp ${pctf(j.exp_ret_ann_pct, 1)}/yr, vol ${j.vol_ann_pct.toFixed(1)}%)`
+      : (Object.keys(edges).length
+          ? 'the edged pairs are all short-history — standalone sizes only'
+          : '<b>no edges entered</b> — only the implied column is live');
+}
+
+async function kellySave(l){
+  const I = KELLY.inp[l];
+  if (KELLY.offline) return kellyRefresh();
+  if (I.ret === I.savedRet && I.note === I.savedNote) return kellyRefresh();
+  if (I.ret !== '' && !I.note.trim()) return kellyRefresh();     // previews, never saves
+  I.status = 'saving'; kellyRefresh();
+  try {
+    const r = await fetch('/api/kelly_edge', {method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({pair: l, ret_pct: I.ret === '' ? null : parseFloat(I.ret), note: I.note})});
+    const d = await r.json();
+    if (d.error) I.status = 'error: ' + d.error;
+    else { I.savedRet = I.ret; I.savedNote = I.ret === '' ? '' : I.note;
+           if (I.ret === '') I.note = ''; I.status = 'saved';
+           const n = document.querySelector(`#kelly-t .knote[data-k="${CSS.escape(l)}"]`);
+           if (n) n.value = I.note; }
+  } catch (e) { I.status = 'error: ' + e.message; }
+  kellyRefresh();
+}
+
+function wireKelly(){
+  const t = document.getElementById('kelly-t');
+  if (!t || !KELLY) return;
+  t.querySelectorAll('.kin').forEach(el => {
+    const l = el.dataset.k, fld = el.classList.contains('kret') ? 'ret' : 'note';
+    el.addEventListener('input', () => {
+      KELLY.inp[l][fld] = el.value.trim() === '' && fld === 'ret' ? '' : el.value;
+      if ((KELLY.inp[l].status || '').startsWith('error')) KELLY.inp[l].status = '';
+      kellyRefresh();
+    });
+    el.addEventListener('change', () => kellySave(l));
+    el.addEventListener('keydown', ev => { if (ev.key === 'Enter') el.blur(); });
+  });
+  kellyRefresh();
 }
 
 /* The model-scores table, tiles and placeholder callouts came OFF this tab
@@ -3472,7 +3634,7 @@ async function loadBook(){
   }
 
   $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + posHtml;
-  if (!bk.error && bk.as_of) loadIndex(BIX_RANGE);
+  if (!bk.error && bk.as_of){ wireKelly(); loadIndex(BIX_RANGE); }
 }
 
 /* ============== the book's equal-weighted long and short indices ==========

@@ -199,9 +199,6 @@ kelly:
   min_sessions: 120      # fewer -> standalone only, kept out of the joint solve
   horizon_weeks: 13      # default horizon for an edge, and for the implied-edge read
   shrink: auto           # Schafer-Strimmer intensity; or pin a number in [0, 1]
-  # edges: expected PAIR return (long minus short, %) over horizon_weeks.
-  # Keys are the dictated pair names above. `note` is REQUIRED — an edge
-  # with no provenance is refused, not defaulted. A pair with no edge is not
-  # sized; its implied edge (what today's size assumes) is still shown.
-  #   HZ_VEDL: {ret_pct: 6, horizon_weeks: 13, note: "PM 2026-09-25: holdco discount closes on ..."}
-  edges: {}
+  # EDGES ARE NOT HERE. They are typed on the Book tab (return + comment per
+  # pair, recomputed live) and stored append-only in book_kelly_edges
+  # (PM, 2026-09-25). An `edges:` key here is reported, not read.

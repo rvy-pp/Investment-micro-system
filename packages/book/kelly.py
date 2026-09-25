@@ -1,9 +1,17 @@
 """Kelly sizing for the book's dictated pairs.
 
 PM, 2026-09-25: *"Let's start with applying kelly criterion to the book."*
-Settled the same day: the EDGE is the PM's, entered per pair in
-`specs/book.yaml kelly.edges`; the RISK is measured here from `prices`; the
-default fraction is HALF Kelly.
+Settled the same day: the EDGE is the PM's, entered per pair ON THE BOOK TAB
+(PM, same day: "just put returns and comments then and there") and stored
+append-only in `book_kelly_edges`; the RISK is measured here from `prices`;
+the default fraction is HALF Kelly and the horizon is fixed at 13 weeks.
+
+The page recomputes live in the browser as a return is typed — `calc` in the
+payload carries the shrunk covariance, the per-pair variances and today's
+sizes at full precision, and app.html's kellyCalc() mirrors compute() here.
+Saving POSTs /api/kelly_edge -> save_edge(). The edges briefly lived in
+specs/book.yaml kelly.edges; that key is no longer read, and a non-empty one
+is reported rather than silently ignored.
 
 THE SPLIT IS THE WHOLE DESIGN, and it is this repo's inversion again
 ---------------------------------------------------------------------
@@ -123,8 +131,64 @@ def _spec() -> dict:
     import yaml
     cfg = yaml.safe_load(SPEC.read_text(encoding="utf-8")) or {}
     k = {**DEFAULTS, **(cfg.get("kelly") or {})}
-    k["edges"] = k.get("edges") or {}
+    k["spec_edges"] = k.pop("edges", None) or {}
     return k
+
+
+def _book_conn():
+    import book_io
+    return book_io.connect()          # runs the DDL, so the table exists
+
+
+def stored_edges(conn) -> dict:
+    """{pair: {ret_pct, horizon_weeks, note, set_at}} — latest row per pair,
+    cleared pairs (ret_pct NULL) omitted."""
+    out = {}
+    for r in conn.execute(
+            "SELECT pair, ret_pct, horizon_weeks, note, set_at FROM "
+            "book_kelly_edges ORDER BY id"):
+        if r[1] is None:
+            out.pop(r[0], None)
+        else:
+            out[r[0]] = {"ret_pct": r[1], "horizon_weeks": r[2],
+                         "note": r[3], "set_at": r[4]}
+    return out
+
+
+def save_edge(pair: str, ret_pct, note: str, known: set,
+              conn=None) -> dict:
+    """Validate and append one edge. ret_pct None/'' clears it.
+
+    Same refusals as parse_edges — a note is required to SET an edge — plus
+    the pair must be a dictated one TODAY: an edge filed under a pair name
+    that no longer exists would sit in the table reading as live.
+    """
+    if pair not in known:
+        return {"error": f"{pair!r} is not a dictated pair"}
+    note = (note or "").strip()
+    H = float(_spec()["horizon_weeks"])
+    if ret_pct in (None, ""):
+        # the clear row must not carry the old thesis as if it were current
+        ret, note = None, "cleared on the Book tab"
+    else:
+        ok, bad = parse_edges({pair: {"ret_pct": ret_pct, "note": note,
+                                      "horizon_weeks": H}}, H)
+        if bad:
+            return {"error": bad[0]}
+        ret = ok[pair]["ret_pct"]
+    own = conn is None
+    conn = conn or _book_conn()
+    try:
+        conn.execute(
+            "INSERT INTO book_kelly_edges (pair, ret_pct, horizon_weeks, "
+            "note, set_at) VALUES (?,?,?,?,?)",
+            (pair, ret, H, note,
+             dt.datetime.now().isoformat(timespec="seconds")))
+        conn.commit()
+    finally:
+        if own:
+            conn.close()
+    return {"ok": True, "pair": pair, "ret_pct": ret, "note": note}
 
 
 def parse_edges(raw: dict, default_h: float) -> tuple[dict, list]:
@@ -319,6 +383,7 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
             series = [[rets[l][d] for d in common] for l in pool]
             Sig, delta = covariance(series, shrink)
             joint["delta"] = delta
+            joint["_pool"], joint["_cov"] = pool, Sig
             # the REVERSE read over the whole book: Σ f_now / fraction
             fnow = [rows[l]["f_now"] for l in pool]
             mu_imp = _matvec(Sig, fnow)
@@ -379,7 +444,7 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
         for k in ("f_standalone", "f_joint", "f_now", "f_budget"):
             if r.get(k) is not None:
                 r[k.replace("f_", "gross_") + "_pct"] = 2 * r[k] * 100
-        r.pop("var_d", None)
+        r["_var"] = r.pop("var_d", None)
         r.pop("sigma_d", None)
     return {"rows": [rows[p["label"]] for p in pairs], "joint": joint}
 
@@ -391,7 +456,15 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
     spec = spec or _spec()
     fraction = float(spec["fraction"])
     H = float(spec["horizon_weeks"])
-    edges, bad = parse_edges(spec["edges"], H)
+    econn = _book_conn()
+    try:
+        raw = stored_edges(econn)
+    finally:
+        econn.close()
+    edges, bad = parse_edges(raw, H)
+    if spec.get("spec_edges"):
+        bad.append("specs/book.yaml kelly.edges is no longer read — enter "
+                   "edges on the Book tab (" + ", ".join(spec["spec_edges"]) + ")")
     own = conn is None
     if own:
         conn = sqlite3.connect(DB)
@@ -442,6 +515,17 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
 
     out = compute(pairs, rets, edges, fraction, int(spec["min_sessions"]), H,
                   spec.get("shrink", "auto"))
+    # full-precision inputs for the browser's live recompute: rounding a
+    # variance of ~1.4e-4 to 4dp below would zero it
+    j = out["joint"]
+    out["calc"] = {
+        "fraction": fraction, "horizon_weeks": H,
+        "sessions_per_week": SESSIONS_PER_WEEK,
+        "sessions_per_year": SESSIONS_PER_YEAR,
+        "pool": j.pop("_pool", []), "cov": j.pop("_cov", None),
+        "var": {r["label"]: r.pop("_var") for r in out["rows"]},
+        "f_now": {r["label"]: r["f_now"] for r in out["rows"]},
+    }
     meta = {p["label"]: p for p in pairs}
     for r in out["rows"]:
         m = meta[r["label"]]
@@ -460,6 +544,7 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
         "min_sessions": int(spec["min_sessions"]),
         "shrink": spec.get("shrink", "auto"),
         "n_edges": len([e for e in edges if e in known]),
+        "edges_set_at": {k_: raw[k_]["set_at"] for k_ in edges if k_ in raw},
         "bad_edges": bad,
         "unknown_edges": sorted(e for e in edges if e not in known),
         "skipped": skipped,
@@ -621,6 +706,24 @@ def _selftest() -> None:
           "day after an action measured from the post-action close")
     check(abs(r10["2026-01-02"] - 0.01) < 1e-12,
           "ordinary session: long ret minus short ret (acceptance)")
+
+    # 11. the edge store: append-only, latest wins, clear removes ---------
+    import book_io
+    mem = sqlite3.connect(":memory:")
+    mem.executescript(book_io.DDL)
+    known = {"HZ_VEDL", "JSTL_TATA"}
+    check("error" in save_edge("TYPO", 5, "x", known, mem),
+          "save refuses a pair that is not dictated")
+    check("error" in save_edge("HZ_VEDL", 5, "  ", known, mem),
+          "save refuses an edge with no comment")
+    check(save_edge("HZ_VEDL", 5, "first view", known, mem).get("ok")
+          and save_edge("HZ_VEDL", 7, "revised", known, mem).get("ok")
+          and stored_edges(mem)["HZ_VEDL"]["ret_pct"] == 7,
+          "a revised edge replaces the live one (acceptance)")
+    save_edge("HZ_VEDL", None, "", known, mem)
+    n_rows = mem.execute("SELECT COUNT(*) FROM book_kelly_edges").fetchone()[0]
+    check("HZ_VEDL" not in stored_edges(mem) and n_rows == 3,
+          "clearing removes the live edge and keeps the history")
 
     print(f"\nkelly selftest: {ok} checks pass")
 

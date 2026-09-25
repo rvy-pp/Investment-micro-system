@@ -228,6 +228,32 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": f"{type(exc).__name__}: {exc}"}, 500)
 
 
+# ---------------- POST ----------------
+# One write route, and it is narrow on purpose: this server is the book's
+# research view and has no auth, so the only thing it may write is a Kelly
+# edge the PM typed on the Book tab (packages/book/kelly.py save_edge
+# validates it — a note is required, the pair must be a dictated one).
+def _do_POST(self):
+    u = urlparse(self.path)
+    try:
+        if u.path != "/api/kelly_edge":
+            return self._json({"error": "not found"}, 404)
+        n = int(self.headers.get("Content-Length") or 0)
+        if n <= 0 or n > 10_000:
+            return self._json({"error": "bad body"}, 400)
+        body = json.loads(self.rfile.read(n).decode("utf-8"))
+        d = engine.kelly_save_edge(body.get("pair"), body.get("ret_pct"),
+                                   body.get("note"))
+        return self._json(d, 400 if d.get("error") else 200)
+    except Exception as exc:                      # noqa: BLE001
+        import traceback
+        traceback.print_exc()
+        return self._json({"error": f"{type(exc).__name__}: {exc}"}, 500)
+
+
+Handler.do_POST = _do_POST
+
+
 if __name__ == "__main__":
     import argparse
     import socket

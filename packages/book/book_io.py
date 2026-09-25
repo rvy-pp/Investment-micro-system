@@ -160,6 +160,19 @@ CREATE TABLE IF NOT EXISTS book_pair_reviews (
     note          TEXT NOT NULL CHECK (length(note) > 0),
     created_at    TEXT NOT NULL
 ) STRICT;
+
+-- Kelly edges, entered on the Book tab (PM, 2026-09-25). Append-only: the
+-- latest row per pair is the live edge, earlier rows are what the edge WAS
+-- and when. ret_pct NULL = the edge was cleared. packages/book/kelly.py
+-- reads and writes it; nothing a pillar reads.
+CREATE TABLE IF NOT EXISTS book_kelly_edges (
+    id            INTEGER PRIMARY KEY,
+    pair          TEXT NOT NULL CHECK (length(pair) > 0),
+    ret_pct       REAL,
+    horizon_weeks REAL NOT NULL CHECK (horizon_weeks > 0),
+    note          TEXT NOT NULL CHECK (length(note) > 0),
+    set_at        TEXT NOT NULL
+) STRICT;
 """
 
 RE_CONTRACT = re.compile(r"=([FGHJKMNQUVXZ]\d{1,2}|\d{1,2})(?=\s|$)")

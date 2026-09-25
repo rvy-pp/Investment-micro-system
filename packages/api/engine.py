@@ -2114,6 +2114,19 @@ def book_view() -> dict:
     return rep
 
 
+def kelly_save_edge(pair, ret_pct, note) -> dict:
+    """POST /api/kelly_edge — the Book tab's edge inputs. The pair must be
+    one of the dictated pairs in specs/book.yaml today."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import kelly
+    import yaml
+    cfg = yaml.safe_load((REPO / "specs" / "book.yaml").read_text(
+        encoding="utf-8")) or {}
+    known = {str(sp.get("name")) for plist in (cfg.get("pairs") or {}).values()
+             for sp in plist or []}
+    return kelly.save_edge(str(pair or ""), ret_pct, note, known)
+
+
 # ---------------------------------------------------------------------------
 # the book's equal-weighted long and short indices — /api/book_index
 # ---------------------------------------------------------------------------
