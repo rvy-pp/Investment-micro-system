@@ -30,6 +30,21 @@ data/staging/mining/*
 !data/staging/estimates/
 data/staging/estimates/*
 !data/staging/estimates/*.json
+
+# Vahan month-shape harvests. VERSIONED, unlike most staging: these are the
+# only record of numbers behind a CAPTCHA, so they cannot be re-fetched by any
+# automated step. They are the citation for the intra-month skew factors.
+data/staging/vahan/*
+!data/staging/vahan/
+!data/staging/vahan/*.xlsx
+# The Results tab's staged files: hand-extracted, cited sell-side estimates,
+# reported prints and result dates (packages/results/results_io.py). Same
+# descend rule: the directory chain must be un-excluded before the files.
+!data/results/
+data/results/*
+!data/results/staging/
+data/results/staging/*
+!data/results/staging/*.json
 # The morning brief's two dated halves are captures too: a GIFT Nifty print
 # and a 24h mail-window summary can never be re-fetched for a past date.
 !data/morning/

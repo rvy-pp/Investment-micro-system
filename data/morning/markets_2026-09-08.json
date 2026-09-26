@@ -1,0 +1,184 @@
+{
+ "date": "2026-09-08",
+ "fetched_at": "2026-09-08T09:07:57",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-04",
+    "close": 7718.6,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.38
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-04",
+    "close": 26506.99,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-04",
+    "close": 53414.25,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.51
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-04",
+    "close": 11735.26,
+    "prev_date": "2026-09-03",
+    "chg_pct": 3.37
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-04",
+    "close": 230.36,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.84
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-04",
+    "close": 477.57,
+    "prev_date": "2026-09-03",
+    "chg_pct": 4.69
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-04",
+    "close": 428.91,
+    "prev_date": "2026-09-03",
+    "chg_pct": 2.85
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-04",
+    "close": 357.9,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.21
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-04",
+    "close": 186.72,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-04",
+    "close": 62.31,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.6
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Burry\u2019s Palantir Warning Is Back. Accenture Shows What Investors Should Check",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 20:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/burry-palantir-warning-back-accenture-204332089.html"
+   },
+   {
+    "title": "The Business Accenture Now Mentions In Passing",
+    "publisher": "Trefis",
+    "when": "2026-09-03 22:16Z",
+    "link": "https://finance.yahoo.com/m/d1c1048d-1272-3f0f-ae5c-ffeeec93c9ad/the-business-accenture-now.html"
+   },
+   {
+    "title": "Accenture (ACN) Rises Higher Than Market: Key Facts",
+    "publisher": "Zacks",
+    "when": "2026-09-03 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-rises-higher-market-215001547.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   },
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   },
+   {
+    "title": "Cognizant, CrowdStrike Expand Cybersecurity Partnership for Industrial Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-08-31 12:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-crowdstrike-expand-cybersecurity-partnership-124913928.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [
+   {
+    "title": "Broadcom\u2019s AI Forecast Suggests Hyperscalers Want More Than Just Nvidia GPUs",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 21:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-ai-forecast-suggests-hyperscalers-211102090.html"
+   },
+   {
+    "title": "Broadcom Inc. (AVGO)\u2019s AI Opportunity Expands Across AI Infrastructure",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 18:18Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-inc-avgo-ai-opportunity-181909723.html"
+   },
+   {
+    "title": "Broadcom Drops 10% in 3 Months: Buy, Sell or Hold the Stock?",
+    "publisher": "Zacks",
+    "when": "2026-09-07 17:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-drops-10-3-months-174000124.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stock Jumps After Unveiling $100,000-Plus AI Workstation for 2027",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-07 21:36Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-stock-jumps-unveiling-100-213621532.html"
+   },
+   {
+    "title": "AMD Is Behind The AI Chip Shift Nobody Is Talking About",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-07 14:40Z",
+    "link": "https://finance.yahoo.com/m/2f52e95e-5a7f-3e45-bd92-4324d9283ee5/amd-is-behind-the-ai-chip.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23782.5,
+  "chg_pct": -0.07,
+  "stamp": "08-Sep-2026 09:08:01",
+  "expiry": "29-Sep-2026",
+  "volume": 1333,
+  "nifty_close": {
+   "close": 23779.15,
+   "stamp": "08-Sep-2026 09:08"
+  },
+  "gap_pts": 3.3,
+  "gap_pct": 0.01
+ }
+}

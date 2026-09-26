@@ -1,0 +1,187 @@
+{
+ "date": "2026-09-10",
+ "generated_at": "2026-09-10T09:11:11",
+ "mail": {
+  "window": "24h to 09:05 IST",
+  "n_scanned": 90,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Ambit prefers Hindalco (SELL) over VAML for downside protection; Cu/Al ratio above 4x favours aluminium substitution.",
+      "source": "Ambit — Ambit Sales: Metals: Copper's US Inventories scaling",
+      "received": "09:38"
+     },
+     {
+      "text": "CLSA exits all demerged Vedanta stocks except Vedanta Aluminium in its model portfolio, redeploying into banks.",
+      "source": "CLSA — CLSA India Research | India Cement | India Strategy",
+      "received": "09:09"
+     },
+     {
+      "text": "Vedanta Resources raises $400 million via a bond tap issue.",
+      "source": "Kotak — BFSI Daily Wrap: September 10, 2026 (+1 more in Outlook)",
+      "received": "06:39"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Indian sponge iron prices at a two-year high on costly coal imports and domestic shortages (Reuters).",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     },
+     {
+      "text": "LME launches its first Chinese-linked steel futures contract on 27 October.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Ambit: Dalmia (BUY, TP Rs2,150) and Nuvoco (BUY, TP Rs390) over SELL-rated UltraTech/Shree/Ambuja as Kutch rail cuts logistics Rs250-350/t to Ahmedabad.",
+      "source": "Ambit — Ambit Sales: Cement: Kutch Rail cld pose challenge for North Mfg",
+      "received": "09:38"
+     },
+     {
+      "text": "Kotak trims Nuvoco FV to Rs435 (from Rs440): FY27E EBITDA/t Rs895 vs Rs1,064 in 1QFY27, petcoke near 3-yr highs; BUY kept.",
+      "source": "Kotak — Semaglutide – Many Winners; Nuvoco – Back on Growth",
+      "received": "09:29"
+     },
+     {
+      "text": "Delhi HC dismisses appeal against BAI's inclusion in the CCI grey-cement probe; Emkay keeps UltraTech BUY, TP Rs13,000.",
+      "source": "Emkay — Cement Corner: UltraTech News (+3 more in Outlook)",
+      "received": "09:04"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Steel Exchange India signs a four-year iron ore sourcing MoU with NMDC.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     },
+     {
+      "text": "Ambit: a US copper tariff step-up (15%→30%, Jan-27 decision) could push copper to $15-16k/t; delay/exemption implies $11-13.5k/t.",
+      "source": "Ambit — Ambit Sales: Metals: Copper's US Inventories scaling",
+      "received": "09:38"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Smartphone retail sales fell 30-40% in late August and 40-50% since Sep 1; OEMs cut Q3 volumes 25-30%, negative for Dixon (Nuvama HOLD).",
+      "source": "Nuvama — Nuvama Daily: Actionable: EMS space (Dixon), APSEZ",
+      "received": "08:44"
+     },
+     {
+      "text": "Cumulative smartphone price hikes already 60%, two more expected before the festive season (Counterpoint).",
+      "source": "Nuvama — Nuvama Daily: Actionable: EMS space (Dixon), APSEZ",
+      "received": "08:44"
+     },
+     {
+      "text": "Samsung India cut 80-100 TV/appliance executives after memory-chip prices more than doubled — cost read-through for EMS assemblers.",
+      "source": "Nomura — India Consumer Durables and EMS: Samsung India pays the price of costlier chips",
+      "received": "09:41"
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Coforge chairman O.P. Bhatt's exit follows a governance-audit process, not a lapse; CLSA reiterates Outperform, top pick on Encora synergies.",
+      "source": "CLSA — Coforge (COFORGE IN): Chairman resignation, not a red flag",
+      "received": "18:08"
+     },
+     {
+      "text": "TCS wins a Rs122cr deal to build an AI-enabled digital governance platform for the Odisha government.",
+      "source": "Kotak — TECHNOLOGY NEWS WRAP SEPTEMBER 09, 2026",
+      "received": "11:12"
+     },
+     {
+      "text": "HCLTech launches a Rs185cr semiconductor testing lab, positioning for AI/semi test demand.",
+      "source": "Kotak — TECHNOLOGY NEWS WRAP SEPTEMBER 09, 2026",
+      "received": "11:12"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Brent broke $100/bbl on Iran escalation; US 10Y +5bp to 4.84% after an underwhelming Treasury buyback.",
+      "source": "JPM — JPM Overnight Brief! 9/10 - underwhelming Treasury buyback drove market weakness",
+      "received": "06:53"
+     },
+     {
+      "text": "FII net sold $61mn cash on 9-Sep (MTD -$745mn, YTD -$24.97bn); DII net bought $159mn (MTD +$2,323mn).",
+      "source": "Morgan Stanley — MS India Trends & Themes: Asia Public Finances; India Energy Demand",
+      "received": "08:48"
+     },
+     {
+      "text": "CLSA Macrometer: 56% of 35+ July indicators track above RBI's 6.4% GDP forecast, 29% below; early-August readings cooling MoM.",
+      "source": "CLSA — India strategy: A good start to the quarter (Macrometer) (+7 more in Outlook)",
+      "received": "01:18"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "GMR Airports (BUY, FV Rs121): Adani Airports' $1bn raise implies ~25x FY28 EV/EBITDA vs GMR at 18x/23x.",
+      "source": "Kotak — GMR Airports (BUY, FV: Rs121): Adani Airport's to raise US$1 bn",
+      "received": "10:24"
+     },
+     {
+      "text": "Cochin Shipyard board approves a 50:50 ISRF JV with Drydocks World Dubai, valued Rs18bn; agreement signs Sep 11.",
+      "source": "PhillipCapital — Cochin Shipyard Ltd | Board approves 50:50 JV with Drydocks World Dubai for ISRF",
+      "received": "15:48"
+     },
+     {
+      "text": "Nexus Select Trust buys a Guwahati mall for ~Rs16bn; Emkay BUY TP Rs190, BofA BUY PO Rs175 (+6 more in Outlook).",
+      "source": "Emkay — Nexus Select Trust: Guwahati mall acquisition strengthens portfolio expansion; BUY; Target: Rs190",
+      "received": "23:21"
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Broadcom and Qualcomm flag AI datacenter supply tighter in land/power/shells than in chips, with customer visibility now beyond two years.",
+    "source": "GS Daily — Day 2 for US Communacopia // Nebius key takes"
+   },
+   {
+    "text": "Nebius says AI demand still outpaces supply with visibility into 2028, holding back 2027 capacity for strategic customers.",
+    "source": "GS Daily — Day 2 for US Communacopia // Nebius key takes"
+   },
+   {
+    "text": "Semis outperformed again — AMD +3.0%, Micron +2.8%, Marvell +4.3% — as flows rotated out of AI-vulnerable software.",
+    "source": "JPM — JPM Overnight Brief! 9/10"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": "US suspended Cognizant's green-card filings amid a fraud probe on Sep 9 (Kotak Technology News Wrap)."
+   }
+  ]
+ }
+}

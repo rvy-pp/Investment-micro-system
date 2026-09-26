@@ -23,6 +23,8 @@ from bridge import (  # noqa: E402
     _series_in_store,
 )
 from scoring import score as to_score  # noqa: E402
+sys.path.insert(0, str(REPO / "packages" / "adapters"))
+from vault_oi import raw_pct_3m  # noqa: E402  — one percentile definition
 
 
 def connect() -> sqlite3.Connection:
@@ -218,6 +220,16 @@ def oi_snapshot() -> list[dict]:
             "SELECT date, oi FROM oi WHERE entity_id=? ORDER BY date",
             (r["entity_id"],)).fetchall()
         r["spark"] = [h[1] for h in hist][-60:]
+        # The 3m percentile is RECOMPUTED here from the same rows the chart
+        # draws, not trusted from the stored column (PM 2026-09-15: raw 3m
+        # rank, never the vault's cycle-normalised frontmatter). The loader
+        # writes the same number, but a stored value can outlive the rows it
+        # was ranked against — Dalmia carried a frontmatter 46th on rows whose
+        # OI is NULL because the vault file stopped at 25-Aug. Same rule as
+        # vault_oi.raw_pct_3m, one definition: strict-below over the last 63
+        # sessions. NULL latest OI ⇒ no rank, not a stale one.
+        r["oi_percentile"] = raw_pct_3m(
+            [{"oi": h[1]} for h in reversed(hist)])
     conn.close()
     return rows
 
@@ -337,10 +349,192 @@ def cement_watch() -> dict:
                 "note": f"cement watch unavailable: {type(e).__name__}: {e}"}
     conn = connect()
     try:
-        return mod.report(conn)
+        rep = mod.report(conn)
+        # THE LEVEL SERIES, for the chart on the Cement tab (PM, 2026-09-20:
+        # the ask chart sits under the score chart and above the price chart).
+        # It rides on THIS route rather than a new one, because it is the same
+        # table and the Overview already fetches this — and because a new route
+        # would have to be added to export_static.py's enumeration or the vault
+        # copy would render that panel empty.
+        #
+        # MEAN, not median: see indiamart_cement.summarize(). ~20 dates x 5
+        # regions, so the whole series is cheaper than a second round trip.
+        by: dict[str, dict] = {}
+        dates: list[str] = []
+        for d, r, m, n in conn.execute(
+                "SELECT capture_date, region, mean_bag, n_listings "
+                "FROM cement_watch ORDER BY capture_date, region"):
+            if d not in dates:
+                dates.append(d)
+            by.setdefault(r, {})[d] = (m, n)
+        rep["series"] = {
+            "dates": dates,
+            "regions": {r: {"mean": [round(v[d][0], 2) if d in v else None
+                                     for d in dates],
+                            "n": [v[d][1] if d in v else None for d in dates]}
+                        for r, v in sorted(by.items())},
+        }
+        return rep
     except Exception as e:
         return {"state": "error", "regions": [], "alerts": [],
                 "note": f"cement watch failed: {type(e).__name__}: {e}"}
+    finally:
+        conn.close()
+
+
+def auto_share() -> dict:
+    """Vahan maker share by segment for the Auto tab — 2W / PV / CV.
+
+    PM, 2026-09-23: *"in the auto tab, I need a graph for market share change
+    on a daily basis. Different for PV, 2 wheelers and CV. Only include fno
+    names in the graph lines, keep rest as others."*
+
+    TWO SERIES, AND THE PAGE MUST NOT BLUR THEM, because they have different
+    lengths for a reason that is not fixable:
+
+      `monthly` — share of each completed month. Long, available immediately,
+                  read at the LATEST capture so backdated revisions are
+                  reflected rather than frozen at first sight.
+      `daily`   — share of the running month-to-date, one point per capture.
+                  FORWARD-ONLY. Vahan publishes no daily granularity on the
+                  open API (see vahan_share.py: the report builder that does is
+                  CAPTCHA-gated), so a day's share simply did not exist before
+                  we started reading it. It cannot be backfilled, and on the
+                  first day it is a single point with no change to show.
+
+    The reason both are here: a chart carrying only `daily` would have been
+    empty on the day it was asked for, and a chart carrying only `monthly`
+    would not answer the question. `daily.has_change` is false until there are
+    two captures, and the page says which state it is in rather than drawing a
+    one-point line that reads as a flat market.
+
+    Others is DERIVED in vahan_share.shares() as total - sum(named), so the
+    lines always sum to 100% and every unlisted maker is inside it. Read
+    SEGMENTS[*]['note'] before interpreting a chart — on CV especially, where
+    Tata Motors sits in Others because its CV entity left F&O at the demerger.
+    """
+    import importlib.util as _u
+    try:
+        sp = _u.spec_from_file_location(
+            "_vs", REPO / "packages" / "adapters" / "vahan_share.py")
+        mod = _u.module_from_spec(sp)
+        sp.loader.exec_module(mod)
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"vahan share unavailable: {type(e).__name__}: {e}"}
+    conn = connect()
+    try:
+        caps = [r[0] for r in conn.execute(
+            "SELECT DISTINCT capture_date FROM vahan_share ORDER BY capture_date")]
+        if not caps:
+            return {"state": "no_data", "segments": [], "captures": 0,
+                    "note": "no Vahan capture yet — run "
+                            "packages/adapters/vahan_share.py --capture"}
+        cur = mod._recent_months(1)[0]      # the in-progress month
+        out = []
+        for seg, cfg in mod.SEGMENTS.items():
+            labels = list(cfg["fno"].keys()) + [mod.OTHERS]
+
+            # MONTHLY — each period at its most recent capture.
+            periods = mod._months_sorted({r[0] for r in conn.execute(
+                "SELECT DISTINCT period FROM vahan_share WHERE segment=?", (seg,))})
+            mseries = {k: [] for k in labels}
+            mtotal = []
+            for p in periods:
+                s = mod.shares(conn, seg, period=p)
+                mtotal.append(s.get("total") if s else None)
+                for k in labels:
+                    mseries[k].append(round(s["share_pct"][k], 3)
+                                      if s and k in s["share_pct"] else None)
+
+            # DAILY — the running month's MTD share, one point per capture.
+            dseries = {k: [] for k in labels}
+            dtotal = []
+            for cd in caps:
+                s = mod.shares(conn, seg, period=cur, capture_date=cd)
+                dtotal.append(s.get("total") if s else None)
+                for k in labels:
+                    dseries[k].append(round(s["share_pct"][k], 3)
+                                      if s and k in s["share_pct"] else None)
+
+            # THE MONTH-END FORECAST. Cheap now that the skew fit reads
+            # `vahan_share` rather than the network (~0.3s for all three), so
+            # it rides on this route rather than a second one — the
+            # cement_watch precedent, and a new route would have to be added
+            # to export_static.py or the vault copy would render it empty.
+            try:
+                fc = mod.forecast(conn, seg)
+            except Exception as e:                      # noqa: BLE001
+                fc = {"state": "error", "note": f"{type(e).__name__}: {e}"}
+
+            out.append({
+                "id": seg, "label": cfg["label"], "note": cfg["note"],
+                # MHCV draws no residual line (PM). The share arithmetic still
+                # uses the FULL segment as its denominator, so the drawn lines
+                # deliberately do not sum to 100 — suppressing the line must
+                # not quietly rebase the others onto a smaller universe.
+                "no_others": bool(cfg.get("no_others")),
+                "forecast": fc,
+                "fno": [{"label": k, "symbol": v[0]} for k, v in cfg["fno"].items()],
+                "others_label": mod.OTHERS,
+                "monthly": {"periods": periods, "series": mseries,
+                            "total": mtotal, "current": cur},
+                "daily": {"dates": caps, "series": dseries, "total": dtotal,
+                          "month": cur, "has_change": len(caps) > 1},
+            })
+        return {"state": "live", "segments": out, "captures": len(caps),
+                "first_capture": caps[0], "last_capture": caps[-1],
+                "current_month": cur}
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"vahan share failed: {type(e).__name__}: {e}"}
+    finally:
+        conn.close()
+
+
+def auto_inventory() -> dict:
+    """Channel inventory flow for the Auto tab: SIAM wholesale minus Vahan retail.
+
+    PM, 2026-09-25: "Create a subtab ... for inventory tracking as frequent as
+    the data gets for whatever granularity is available."
+
+    MONTHLY, PV AND 2W, AND THAT IS THE FLOOR THE DATA SETS. Wholesale arrives
+    once a month from SIAM, ~15 days after month end; retail is daily but a
+    daily flow needs a daily wholesale, which does not exist anywhere free. CV
+    is absent because SIAM publishes no monthly CV; 3W because Vahan's count is
+    dominated by e-rickshaw makers who are not SIAM members.
+
+    FLOW, NOT A LEVEL. Each month's `net` is what went into (or out of) dealer
+    stock. There is deliberately NO running cumulative: retail includes makers
+    SIAM does not (Ola Electric ~8-16k/month), so every month reads slightly low
+    and a cumulative would drift ~150k a year into apparent destocking that did
+    not happen. The monthly flow is 1-2% biased; the cumulative would be wrong.
+    """
+    import importlib.util as _u
+    try:
+        sp = _u.spec_from_file_location(
+            "_sw", REPO / "packages" / "adapters" / "siam_wholesale.py")
+        mod = _u.module_from_spec(sp)
+        sp.loader.exec_module(mod)
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"channel unavailable: {type(e).__name__}: {e}"}
+    conn = connect()
+    try:
+        segs = []
+        labels = {"2W": "Two-wheelers", "PV": "Passenger vehicles"}
+        for seg in ("2W", "PV"):
+            ch = mod.channel(conn, seg)
+            segs.append({"id": seg, "label": labels[seg], "months": ch})
+        latest = max((c["months"][-1]["period"] for c in segs if c["months"]),
+                     key=mod._key, default=None)
+        if not any(c["months"] for c in segs):
+            return {"state": "no_data", "segments": segs,
+                    "note": "no SIAM wholesale or Vahan retail stored yet"}
+        return {"state": "live", "segments": segs, "latest": latest}
+    except Exception as e:
+        return {"state": "error", "segments": [],
+                "note": f"channel failed: {type(e).__name__}: {e}"}
     finally:
         conn.close()
 
@@ -403,7 +597,9 @@ SECTORS = [
         # scored names share a cost stack (same kiln, same bought fuels) and
         # differ by REVENUE REGION, which lives on the entity output lines
         # (regional price_links) rather than in the grouping. Four scored of
-        # nine — ultratech, ambuja, shree, dalmia are the F&O names; the other
+        # nine — ultratech, ambuja, shree, dalmia were the F&O names when
+        # scored (Dalmia left F&O late Aug 2026 and was dropped from OI
+        # tracking 2026-09-15; its scoring stands untouched); the other
         # five are peer_group: null per invariant 7. See
         # specs/sectors/cement.yaml for the validation runs.
         "peer_groups": ["cement"],
@@ -547,6 +743,63 @@ SECTORS = [
                              "tech_mahindra", "ltimindtree"],
             "IT Mid Cap":   ["persistent", "coforge", "mphasis", "ofss"],
             "IT ER&D":      ["kpit", "tata_elxsi", "ltts"],
+        },
+    },
+    {
+        "id": "auto",
+        "label": "Auto",
+        # Added 2026-09-19 on PM instruction, together with Ather Energy's
+        # dossier. It is a READ tab and deliberately nothing else: no specs,
+        # no peer groups, no pillars, no consensus panel. The only content is
+        # the Company historical analysis sub-view plus the context chart
+        # below — exactly the state IT was in on 2026-08-31, and the honest
+        # one, because nothing here has been through a scoring design.
+        #
+        # `peer_groups: []` is what keeps it out of every scoring path, and
+        # invariant 7 does the rest: `ather` lands in `entities` via
+        # yahoo_prices.EQUITIES with peer_group NULL, so no pillar, no pair
+        # and no backtest can reach it. Do NOT add a peer group here to make
+        # the tab look finished.
+        "peer_groups": [],
+        # Context only, linked from no spec — and the reason the list looks
+        # thin is the finding, not an omission. See the raw-materials verdict
+        # in data/companies/ather-energy/dossier.json: the input that
+        # actually moved Ather's margins is LITHIUM and the NMC cathode
+        # complex (management: $8/kg -> $24/kg, cells +30-50%, a commodity
+        # index +46% over five quarters, a 5.6pp hit to Q1FY27 gross margin)
+        # and NONE of it has a series in this store. In that same quarter
+        # every series listed here FELL — aluminium -12.8%, nickel -4.9%,
+        # HRC -2.2%, brent -43.7%. A cost overlay built on these would have
+        # read the worst commodity quarter in the company's listed life as a
+        # TAILWIND. They are displayed so a reader can see that for
+        # themselves; they are not a cost model and must not become one.
+        "commodities": [
+            "lme_aluminium", "lme_copper", "lme_nickel",
+            "hrc_india_inr", "brent", "usdinr",
+        ],
+        # BRENT, not a cost series — and that is the point of this chart.
+        # For an ICE maker crude is an input; for an EV two-wheeler maker it
+        # is the DEMAND driver, and it is the one management names first
+        # (Q1FY27: petrol/diesel availability fears and rising pump prices as
+        # structural tailwinds). Charting a cost series here would assert the
+        # cost story the evidence refuses.
+        "chart": {
+            "ids": ["brent"],
+            "divide": 1.0,
+            "unit": "USD/bbl",
+            "title": "Brent · USD/bbl · the demand driver, not a cost",
+            "caption": "Crude is displayed because for an electric "
+                       "two-wheeler maker it sits on the REVENUE side: "
+                       "Ather's Q1FY27 call names petrol availability fears "
+                       "and rising pump prices among four structural "
+                       "tailwinds, and brent is +102% over Ather's listed "
+                       "life against the stock's +442%. The caution is that "
+                       "the tape does not corroborate it at short horizons — "
+                       "21-day returns correlate -0.149, the generic "
+                       "risk-off sign, so this is a stated driver with level "
+                       "evidence and no short-horizon evidence. Nothing "
+                       "here is linked from a spec and nothing scores.",
+            "marks": [],
         },
     },
 ]
@@ -881,15 +1134,40 @@ def nav_list() -> list[dict]:
            {"id": "book", "kind": "book", "label": "The Book", "live": True},
            # live since 2026-09-02: F1 computes and persists; F2-F4 still scoped.
            {"id": "flows", "kind": "flows", "label": "Flows", "live": True}]
+    # Company coverage (2026-09-14) is NOT a sector and NOT a scoring path:
+    # dossiers are built from earnings-call transcripts alone and feed no
+    # pillar; invariant 7 is untouched because nothing here reaches
+    # pillar_scores. It WAS a top-level tab. PM 2026-09-16: "sits out like a
+    # sore spot. Keep it within the sectors only" — so each sector carries
+    # its own dossiers and the page renders them as a "Company historical
+    # analysis" sub-view of that sector. A dossier whose sector cannot be
+    # resolved is listed on `company_unplaced` (on the overview entry) rather
+    # than dropped: a company that vanished from the page because a key was
+    # missing is the silent shape.
+    companies = company_list()
     for s in sector_list():
         spec = next(x for x in SECTORS if x["id"] == s["id"])
+        mine = [c for c in companies if c["sector"] == s["id"]]
         out.append({"id": s["id"], "kind": "sector", "label": s["label"],
                     "live": s["live"], "peer_groups": s["peer_groups"],
                     # The page shows the Prices & Watch sub-view only where a
                     # sector declares content for it — cement and ems today.
                     "has_chart": bool(spec.get("chart")),
                     "has_watch": bool(spec.get("watch")),
-                    "has_estimates": bool(spec.get("estimates"))})
+                    "has_estimates": bool(spec.get("estimates")),
+                    "has_company": bool(mine),
+                    "companies": mine})
+    unplaced = [c for c in companies if c["sector"] is None]
+    if unplaced:
+        out[0]["company_unplaced"] = unplaced
+    # Results — LAST, per the PM (2026-09-22: "add a Results tab in the end").
+    # Sell-side estimates against reported prints, sector -> company -> quarter.
+    # A read surface over `estimates` + `observations`(actual) +
+    # `results_calendar`; packages/results/results_io.py owns the arithmetic
+    # and the loader. Not a sector (no peer groups, no pillars) and not
+    # sector-scoped in the page: it carries its own sector/company picker.
+    out.append({"id": "results", "kind": "results", "label": "Results",
+                "live": True})
     return out
 
 
@@ -899,6 +1177,71 @@ def _read_json(path):
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return None
+
+
+def _price_linked_ids() -> set:
+    """Every series some spec price_links — the modelled inputs, nothing else.
+
+    Shared by overview()'s what-moved table and input_history(), so the
+    expandable chart can only ever be asked for a series that table shows.
+    Errors collapse to an empty set: a specs problem must not 500 the page.
+    """
+    try:
+        entities, _u, _f = load_specs()
+    except Exception:
+        return set()
+    linked: set = set()
+
+    def _walk(n):
+        if isinstance(n, dict):
+            if "price_link" in n:
+                linked.add(n["price_link"])
+            for v in n.values():
+                _walk(v)
+        elif isinstance(n, list):
+            for v in n:
+                _walk(v)
+    _walk(entities)
+    return linked
+
+
+def input_history(entity_id: str) -> dict:
+    """Price series for ONE modelled input — the Overview's what-moved rows
+    expand into this chart on click, the OI-row grammar (2026-09-08, PM).
+
+    SCOPE GUARD: only ids the what-moved table itself lists (price_linked in
+    some spec) are served — the endpoint mirrors the table, so it cannot be
+    used to chart a parked column and make it read as if it drives something.
+
+    Two years of rows, not all of them: the table's question is "what moved
+    lately"; a 2011-to-date cement series at monthly cadence renders as a
+    plausible-looking staircase that hides the recent move the click was
+    about. The full span is stated in the payload so the cut is visible.
+
+    `source` rides on every row because several series change custody
+    mid-stream (pack -> westmetall on lme_zinc, NULL -> yahoo on
+    alumina_index) and a shock whose endpoints have different sources is
+    worth checking before trusting — the chart captions the mix.
+    """
+    if entity_id not in _price_linked_ids():
+        return {"error": f"'{entity_id}' is not a modelled input "
+                         "(nothing price_links it)"}
+    conn = connect()
+    span = conn.execute(
+        "SELECT MIN(date) a, MAX(date) b, COUNT(*) n FROM prices "
+        "WHERE entity_id=? AND close IS NOT NULL", (entity_id,)).fetchone()
+    if not span or not span["n"]:
+        conn.close()
+        return {"error": f"no priced rows for '{entity_id}'"}
+    rows = conn.execute(
+        "SELECT date, close, source FROM prices WHERE entity_id=? "
+        "AND close IS NOT NULL AND date >= date(?, '-730 day') "
+        "ORDER BY date", (entity_id, span["b"])).fetchall()
+    conn.close()
+    return {"id": entity_id,
+            "rows": [{"date": r["date"], "close": r["close"],
+                      "source": r["source"] or "legacy"} for r in rows],
+            "first_ever": span["a"], "n_ever": span["n"]}
 
 
 def overview() -> dict:
@@ -1029,22 +1372,7 @@ def overview() -> dict:
     # ---- what actually moved today --------------------------------------
     # Only series a spec price_links. A "today's movers" list padded with the 27
     # parked steel series would read as though they drive something.
-    try:
-        entities, _u, _f = load_specs()
-        linked = set()
-
-        def _walk(n):
-            if isinstance(n, dict):
-                if "price_link" in n:
-                    linked.add(n["price_link"])
-                for v in n.values():
-                    _walk(v)
-            elif isinstance(n, list):
-                for v in n:
-                    _walk(v)
-        _walk(entities)
-    except Exception:
-        linked = set()
+    linked = _price_linked_ids()
 
     movers = []
     for eid in sorted(linked):
@@ -1193,6 +1521,118 @@ def oi_movers(date: str | None, win: int = 5) -> dict:
             "out": [fmt(s, v) for s, v in rows[:6]]}
 
 
+def _mark_repeated_bullets(brief: dict, mdir, brief_date: str) -> None:
+    """Mark brief bullets whose MAIL already appeared in an earlier brief.
+
+    The sweep window is 24h and the brief runs daily, so the windows overlap:
+    a note received yesterday morning is a legitimate candidate two mornings
+    running, and the agent that writes the brief cannot be trusted to
+    remember what it showed before (a fresh agent writes each brief). This is
+    the deterministic guard — PM instruction 2026-09-08: a mail shown before
+    is MARKED stale, never dropped, so the page greys it rather than hiding
+    that the mail exists.
+
+    IDENTITY IS THE MAIL, NOT THE WORDS ALONE. Bullets are rewritten each
+    day, so neither the text nor the source line identifies a mail by
+    itself; the match combines them. Sources ("Broker — subject") are
+    normalised (case, punctuation, FW:/RE: tokens, the "(+N more in
+    Outlook)" suffix) and compared by prefix either way (>=20 chars) because
+    agents truncate long subjects differently between days. Text overlap is
+    shared-token share against the smaller bullet (words >=3 chars) — the
+    same mail re-bulleted keeps its numbers even when the sentence is
+    rewritten.
+
+    A source is ONE-OFF when it appeared on exactly one previous brief date
+    — dated subjects ("week ended 04 Sep 2026") key each issue separately,
+    so a weekly's new issue is one-off too. A RECURRING source ("Basic
+    materials - daily news and prices") shows up every morning with new
+    content and gets no benefit of the doubt. A bullet is stale when its
+    source matches a previous bullet's and:
+
+      1. received HH:MM also matches — for a recurring source the text must
+         echo too (>=0.25 overlap), because consecutive dailies land minutes
+         apart and can collide on HH:MM; for a one-off source the time match
+         settles it.
+      2. no time match, one-off source, text echoes (>=0.25) — the forwarded
+         copy: yesterday's brief cited the original Nomura steel weekly at
+         03:08, today's agent bulleted the FW: of the same issue at 11:23.
+
+    Calibrated 2026-09-08 against the real 09-07/09-08 pair: marks the
+    repeated Kotak items (same mail, same minute, echoed text), the FW:'d
+    Nomura weekly and the re-run CLSA VRRR note; leaves the NEW day's Kotak
+    daily (08:56 vs 08:53, different content) fresh.
+
+    Writes `seen_on` (the latest earlier brief date) onto matching bullets;
+    everything else is untouched. Marking must never break the page: any
+    failure leaves the brief unmarked.
+    """
+    import re as _re
+    try:
+        sectors = (brief.get("mail") or {}).get("sectors") or []
+        if not sectors:
+            return
+
+        def norm(s):
+            s = (s or "").lower()
+            s = _re.sub(r"\(\+\d+ more[^)]*\)", " ", s)
+            s = _re.sub(r"\b(fw|re|fwd)\b", " ", s)
+            s = _re.sub(r"[^a-z0-9]+", " ", s).strip()
+            return s
+
+        def toks(s):
+            return {w for w in norm(s).split() if len(w) >= 3}
+
+        def match(a, b):
+            return len(a) >= 20 and len(b) >= 20 and (
+                a.startswith(b) or b.startswith(a))
+
+        def echo(a, b):
+            if not a or not b:
+                return False
+            return len(a & b) / min(len(a), len(b)) >= 0.25
+
+        # previous briefs, newest first, at most 7 — the overlap is one day
+        # by construction, the rest is insurance against a skipped morning
+        prev = sorted(
+            (m.group(1) for p in mdir.glob("brief_*.json")
+             if (m := _re.match(r"brief_(\d{4}-\d{2}-\d{2})\.json$", p.name))
+             and m.group(1) < brief_date),
+            reverse=True)[:7]
+        seen = []            # (norm_source, received, text_tokens, brief_date)
+        src_dates: dict = {}  # norm_source -> set of brief dates
+        for d in prev:
+            doc = _read_json(mdir / f"brief_{d}.json") or {}
+            for sec in (doc.get("mail") or {}).get("sectors") or []:
+                for b in sec.get("bullets") or []:
+                    ns = norm(b.get("source"))
+                    if not ns:
+                        continue
+                    seen.append((ns, (b.get("received") or "").strip(),
+                                 toks(b.get("text")), d))
+                    src_dates.setdefault(ns, set()).add(d)
+
+        for sec in sectors:
+            for b in sec.get("bullets") or []:
+                ns = norm(b.get("source"))
+                rc = (b.get("received") or "").strip()
+                tk = toks(b.get("text"))
+                if not ns:
+                    continue
+                hit = None
+                for ps, pr, pt, pd in seen:
+                    if not match(ns, ps):
+                        continue
+                    one_off = len(src_dates.get(ps, ())) == 1
+                    same = ((rc and rc == pr and (one_off or echo(tk, pt)))
+                            or (one_off and echo(tk, pt)))
+                    if same and (hit is None or pd > hit):
+                        hit = pd
+                if hit:
+                    b["seen_on"] = hit
+    except Exception:
+        pass  # a marking failure must never take the brief down with it
+
+
 def morning() -> dict:
     """The morning brief: pre-market globals + broker-mail actionables.
 
@@ -1240,6 +1680,9 @@ def morning() -> dict:
             out["warnings"].append(f"{p.name} exists but does not parse")
             continue
         out[key] = doc
+        if key == "brief":
+            # deterministic repeat-mail marking — see _mark_repeated_bullets
+            _mark_repeated_bullets(doc, mdir, d)
         if d != today:
             out["warnings"].append(
                 f"{prefix} is from {d}, not {today} — run {maker}")
@@ -1389,12 +1832,15 @@ def flows() -> dict:
     except Exception as e:  # the readiness tables must render regardless
         f1 = {"error": str(e)}
 
-    # ---- W1: the weekly read the tab LEADS with (PM ruling 2026-09-03:
-    # "daily is of no use, show a weekly analysis in the tab"). Computed on
-    # demand from flow_series — a pure function of stored prices + the spec,
-    # ~500 weeks, a few ms; persisting it would only add a staleness mode.
+    # ---- W1: the week-scale read the tab LEADS with. Since 2026-09-08 the
+    # lead is the ROLLING past week, updated every US session (PM: "update
+    # daily... show weekly trend but calculate past week on a rolling
+    # basis"), with the Friday-to-Friday layer kept as the trend strip and
+    # the evidence base — superseding the 2026-09-03 Friday-week lead.
+    # Computed on demand from flow_series — a pure function of stored prices
+    # + the spec, a few ms; persisting it would only add a staleness mode.
     # f1 stays in the payload: the spell lives there and the review layer
-    # will want the daily states, but the page renders weekly first.
+    # will want the daily states.
     try:
         import regime as rg2
         w1 = rg2.weekly_view()
@@ -1488,14 +1934,19 @@ def book_view() -> dict:
             leg["entity_id"] = eid
             leg["composite"] = comp.get(eid) if eid else None
             leg["name"] = names.get(tok, leg["name"])
-            # %-since-start per leg: latest close vs the trade anchor. The
-            # anchor is the leg's avg entry cost as the IMS printed it at
-            # first capture; once the export drops the Cost column, new legs
-            # anchor on the close of their first-seen date. Both are INR
-            # closes against INR anchors — no FX leg here by construction.
+            # %-SINCE-ENTRY per leg: latest close vs the trade anchor, in
+            # precedence order entry_open -> entry_cost -> first-seen close.
+            # The anchor is the OPEN of the entry day (PM rule 2026-09-07:
+            # "the purpose is to see if the pair has worked out in thesis" —
+            # the IMS avg cost blends adds and pre-capture history, so it
+            # answers a different question). book_io._entry_anchor keeps the
+            # anchor date fixed through resizes and pair-tag changes; it
+            # resets only on a direction flip or a day out of the book. All
+            # INR against INR — no FX leg by construction.
             leg["ret_pct"] = None
             if eid:
-                base = leg.get("entry_cost") or _close(eid, leg["first_seen"])
+                base = (leg.get("entry_open") or leg.get("entry_cost")
+                        or _close(eid, leg["first_seen"]))
                 now = _close(eid, rep["as_of"])
                 if base and now:
                     leg["ret_pct"] = round((now / base - 1) * 100, 2)
@@ -1546,8 +1997,11 @@ def book_view() -> dict:
                 "entity_id": leg["entity_id"], "composite": leg["composite"],
                 "book_side": leg["side"], "qty": 0.0,
                 "gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
-                "pnl_mtd": 0.0, "pnl_total": 0.0,
+                "pnl_mtd": 0.0, "pnl_total": 0.0, "pnl_ytd": 0.0,
+                "ytd_flags": [],
                 "ret_pct": leg["ret_pct"], "first_seen": leg["first_seen"],
+                "entry_cost": leg["entry_cost"],
+                "entry_open": leg["entry_open"],
                 "ticker_now": leg["ticker_now"], "rolls": 0, "gap": False})
             t["qty"] += leg["qty"] or 0
             t["gross_pct"] += abs(leg["mv_pct"] or 0)
@@ -1555,6 +2009,8 @@ def book_view() -> dict:
             t["pnl_dtd"] += leg["pnl_dtd"] or 0
             t["pnl_mtd"] += leg["pnl_mtd"] or 0
             t["pnl_total"] += leg["pnl_total"] or 0
+            t["pnl_ytd"] += leg["pnl_ytd"] or 0
+            t["ytd_flags"] += leg.get("ytd_flags") or []
             t["rolls"] += leg["rolls"] or 0
             t["gap"] = t["gap"] or p.get("gap_risk", False)
             t["first_seen"] = min(t["first_seen"], leg["first_seen"])
@@ -1594,7 +2050,7 @@ def book_view() -> dict:
                 continue                    # pair fully off the book today
             assigned |= {t["token"] for t in L + S}
             agg = {"gross_pct": 0.0, "gross_usd": 0.0, "pnl_dtd": 0.0,
-                   "pnl_mtd": 0.0, "pnl_total": 0.0}
+                   "pnl_mtd": 0.0, "pnl_total": 0.0, "pnl_ytd": 0.0}
             legs = []
             for side, arr in (("L", L), ("S", S)):
                 for t in arr:
@@ -1621,6 +2077,11 @@ def book_view() -> dict:
                 "pnl_dtd": round(agg["pnl_dtd"], 2),
                 "pnl_mtd": round(agg["pnl_mtd"], 2),
                 "pnl_total": round(agg["pnl_total"], 2),
+                # the calendar-YTD ledger book_io maintains — NOT the IMS YTD
+                # column, which resets at every roll (PM 2026-09-18)
+                "pnl_ytd": round(agg["pnl_ytd"], 2),
+                "ytd_flags": sorted({f for t in L + S
+                                     for f in (t["ytd_flags"] or [])}),
                 "pnl_total_with_carry": (round(agg["pnl_total"] +
                     (c.get("pnl") or 0), 2) if c else None),
                 "carry": c,
@@ -1634,6 +2095,15 @@ def book_view() -> dict:
         rep["unassigned"] = sorted(
             [t for k, t in tokens.items() if k not in assigned],
             key=lambda t: -t["gross_usd"])
+        # Kelly sizing over the dictated pairs (PM, 2026-09-25). Risk from
+        # `prices`, edge from specs/book.yaml kelly.edges — packages/book/
+        # kelly.py owns the rules and the selftest. A failure here must not
+        # take the Book tab down with it, so it lands as an error block.
+        try:
+            import kelly
+            rep["kelly"] = kelly.build(out, rep.get("nav") or 0.0)
+        except Exception as e:                       # noqa: BLE001
+            rep["kelly"] = {"error": f"{type(e).__name__}: {e}"}
     else:
         # no dictated pairs: synthesize the view from the tag grouping
         rep["view"] = [{**p, "sector": (p["pair"].rstrip("0123456789 ") or
@@ -1644,6 +2114,306 @@ def book_view() -> dict:
     return rep
 
 
+def kelly_save_edge(pair, ret_pct, note) -> dict:
+    """POST /api/kelly_edge — the Book tab's edge inputs. The pair must be
+    one of the dictated pairs in specs/book.yaml today."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import kelly
+    import yaml
+    cfg = yaml.safe_load((REPO / "specs" / "book.yaml").read_text(
+        encoding="utf-8")) or {}
+    known = {str(sp.get("name")) for plist in (cfg.get("pairs") or {}).values()
+             for sp in plist or []}
+    return kelly.save_edge(str(pair or ""), ret_pct, note, known)
+
+
+# ---------------------------------------------------------------------------
+# the book's equal-weighted long and short indices — /api/book_index
+# ---------------------------------------------------------------------------
+#
+# ONE METHOD, AND IT REPLACED TWO. Until 2026-09-17 this file carried
+# `book_ohlc` (a portfolio-weighted back-cast of today's roster over a chosen
+# window) and a first `book_index` (membership straight off the stored
+# snapshots, so it could not begin before 2026-09-04). The PM's verdict on
+# having both: "Let's rebuild the whole thing again. We get rid of both graph
+# methods." Do not reintroduce either — the survivorship caveat that made two
+# charts seem necessary is handled inside the one that replaced them, by
+# freezing membership at a spec date instead of at today.
+#
+# The arithmetic lives in packages/book/basket_index.py, which owns the
+# docstring, the guards and the selftest. This is a transport shim: everything
+# here is a window onto a series computed there.
+
+
+def book_index(rng: str = "5y") -> dict:
+    """Equal-weighted long/short indices, windowed for display.
+
+    Recomputed per request from `prices` and `book_positions` — there is no
+    index table, so nothing here can be stale relative to the store. See
+    basket_index.build for why that is cheap enough to prefer.
+    """
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import basket_index
+    if rng not in basket_index.RANGES:
+        return {"error": f"unknown range {rng!r}; known: "
+                         + ", ".join(basket_index.RANGES)}
+    conn = connect()
+    try:
+        payload = basket_index.build(conn, rng)
+    finally:
+        conn.close()
+    return basket_index.window(payload, rng)
+
+
 def dt_date(s: str):
     import datetime as _dt
     return _dt.date.fromisoformat(s)
+
+
+# ---------------------------------------------------------------- company
+# One company = one folder under data/companies/<slug>/, holding dossier.json
+# plus the filed sources it was built from. Nothing here is hardcoded: the
+# universe IS the set of folders, so adding a company is a directory, never a
+# code change. Read-only; no adapter writes to it and no pillar reads it.
+COMPANIES = REPO / "data" / "companies"
+
+
+def _company_sector(doc: dict) -> tuple[str | None, str]:
+    """Which sector tab a dossier renders under, and how that was decided.
+
+    Order: the dossier's own `sector` key (the skill writes it since
+    2026-09-16); else the entity spec whose `nse_symbol` matches the
+    dossier's NSE ticker; else the `entities` table on the same symbol (the
+    IT roster lives only there). Anything else is None — UNPLACED, surfaced
+    on the nav, never guessed into a sector. Only ids in SECTORS count: a
+    typo in the key must show up as unplaced, not as a tab nobody can open.
+    """
+    known = {x["id"] for x in SECTORS}
+    sec = doc.get("sector")
+    if sec in known:
+        return sec, "dossier"
+    nse = ((doc.get("tickers") or {}).get("nse") or "").strip().upper()
+    if nse:
+        try:
+            entities, _u, _f = load_specs()
+            for e in entities.values():
+                if str(e.get("nse_symbol") or "").upper() == nse \
+                        and e.get("sector") in known:
+                    return e["sector"], "spec"
+        except Exception:
+            pass
+        try:
+            conn = connect()
+            row = conn.execute(
+                "SELECT sector FROM entities WHERE upper(nse_symbol)=? "
+                "AND sector IS NOT NULL", (nse,)).fetchone()
+            conn.close()
+            if row and row[0] in known:
+                return row[0], "entities"
+        except Exception:
+            pass
+    return None, "unresolved"
+
+
+def company_list(sector: str | None = None) -> list[dict]:
+    """Every company folder holding a readable dossier.json, in folder order.
+
+    `sector` filters to one tab's roster. Each row carries the sector it
+    resolved to (None = unplaced) and `sector_via` naming the source.
+    """
+    if not COMPANIES.is_dir():
+        return []
+    out = []
+    for d in sorted(COMPANIES.iterdir()):
+        f = d / "dossier.json"
+        if not f.is_file():
+            continue
+        doc = _read_json(f)
+        if not doc:
+            continue
+        sec, via = _company_sector(doc)
+        if sector is not None and sec != sector:
+            continue
+        out.append({"slug": doc.get("slug", d.name),
+                    "company": doc.get("company", d.name),
+                    "nse": (doc.get("tickers") or {}).get("nse"),
+                    "sector": sec, "sector_via": via,
+                    "as_of": doc.get("as_of"),
+                    "quarters": len(doc.get("qoq_pnl") or [])})
+    return out
+
+
+def company_view(slug: str | None = None, sector: str | None = None) -> dict:
+    """The dossier for one company, plus the roster so the picker can render.
+
+    `sector` scopes the roster to one sector tab (PM 2026-09-16: company
+    analysis lives inside the sectors only). An unknown slug falls back to
+    the first company IN THAT SECTOR rather than erroring: the tab must never
+    render empty because a remembered slug was deleted or belongs elsewhere.
+    Dossiers with no resolvable sector ride along as `unplaced` so the page
+    can say they exist.
+    """
+    roster = company_list(sector)
+    if not roster:
+        return {"error": ("no company dossier for sector %r" % sector
+                          if sector else
+                          "no company dossiers under data/companies/"),
+                "companies": [], "sector_tab": sector,
+                "unplaced": [c for c in company_list() if c["sector"] is None]}
+    slugs = [c["slug"] for c in roster]
+    pick = slug if slug in slugs else slugs[0]
+    doc = _read_json(COMPANIES / pick / "dossier.json") or {}
+    # Documents are listed FROM DISK, not from the dossier — a filed source the
+    # dossier forgot to claim still has to be visible, per the archive rule.
+    src = COMPANIES / pick / "sources"
+    docs = []
+    if src.is_dir():
+        for f in sorted(src.glob("*.pdf")):
+            note = src / "summaries" / (f.name + ".md")
+            docs.append({"file": f.name,
+                         "size_kb": round(f.stat().st_size / 1024),
+                         "note": note.name if note.is_file() else None})
+    doc["documents"] = docs
+    doc["companies"] = roster
+    doc["selected"] = pick
+    doc["sector_tab"] = sector
+    doc["unplaced"] = [c for c in company_list() if c["sector"] is None]
+    return doc
+
+
+# ---------------------------------------------------------------------------
+# The Results tab — 2026-09-22. Sector -> company -> quarter; sell-side
+# estimates against the reported print, and the calendar of prints to come.
+#
+# Transport shim over packages/results/results_io.py, which owns the
+# consensus/surprise arithmetic, the loader and the selftest — the same split
+# as book_index over basket_index. Nothing here writes; nothing here reaches
+# `prices` or `pillar_scores`.
+# ---------------------------------------------------------------------------
+sys.path.insert(0, str(REPO / "packages" / "results"))
+
+
+def _results_roster() -> dict[str, dict]:
+    """Every covered name, keyed by entity id, with the sector TAB it sits
+    under — or None when nothing can place it.
+
+    The roster is the UNION of three places a name can be known from,
+    because no single one covers the book: the entity specs (the five scored
+    sectors; a reporting unit such as Novelis takes its PARENT's sector), the
+    `entities` table (IT lives only there), and the company dossiers (Ather
+    and Eicher have no spec and a NULL sector in the table — the dossier's
+    `sector` key is what puts them under Auto, joined on the NSE symbol via
+    yahoo_prices.CANDIDATES). Nothing is guessed: a name none of the three
+    places lands in `other`, listed rather than dropped.
+    """
+    from yahoo_prices import CANDIDATES as _CANDS  # adapters path is on sys.path
+    known = {s["id"] for s in SECTORS}
+    # A scored name's PEER GROUP names its tab. The spec `sector` key is the
+    # coverage bucket and does not always match a tab id — aluminium.yaml says
+    # `sector: aluminium` for six names whose tab is `non_ferrous` (and for
+    # the two zinc names, whose peer group is `zinc`). Resolving through the
+    # peer group first is what SECTORS itself does for scoring.
+    pg2sec = {pg: s["id"] for s in SECTORS for pg in s["peer_groups"]}
+
+    def place(peer_group, sector):
+        return pg2sec.get(peer_group) or (sector if sector in known else None)
+
+    rows: dict[str, dict] = {}
+    entities, _u, _f = load_specs()
+    for e in entities.values():
+        if e.get("kind") not in ("company", "reporting_unit"):
+            continue
+        sec = place(e.get("peer_group"), e.get("sector"))
+        par = e.get("parent_id")
+        if e.get("kind") == "reporting_unit" and par in entities:
+            p = entities[par]
+            sec = place(p.get("peer_group"), p.get("sector")) or sec
+        rows[e["id"]] = {"id": e["id"], "name": e.get("name") or e["id"],
+                         "sector": sec,
+                         "nse": e.get("nse_symbol"),
+                         "unit_of": par if e.get("kind") == "reporting_unit" else None,
+                         "scored": bool(e.get("peer_group"))}
+    conn = connect()
+    for r in conn.execute(
+            "SELECT id, name, sector, nse_symbol, kind, parent_id, peer_group "
+            "FROM entities WHERE kind IN ('company','reporting_unit') AND active=1"):
+        if r["id"] in rows:
+            if rows[r["id"]]["sector"] is None:
+                rows[r["id"]]["sector"] = place(r["peer_group"], r["sector"])
+            continue
+        rows[r["id"]] = {"id": r["id"], "name": r["name"] or r["id"],
+                         "sector": place(r["peer_group"], r["sector"]),
+                         "nse": r["nse_symbol"],
+                         "unit_of": r["parent_id"] if r["kind"] == "reporting_unit" else None,
+                         "scored": bool(r["peer_group"])}
+    conn.close()
+    sym2eid = {}
+    for eid, cands in _CANDS.items():
+        for sym, _pat in cands or []:
+            sym2eid.setdefault(sym.split(".")[0].upper(), eid)
+    for c in company_list():
+        eid = sym2eid.get(str(c.get("nse") or "").upper())
+        if eid in rows:
+            if not rows[eid]["nse"]:
+                rows[eid]["nse"] = c.get("nse")
+            if rows[eid]["sector"] is None and c["sector"] in known:
+                rows[eid]["sector"] = c["sector"]
+    return rows
+
+
+def results_view(sector: str | None = None, entity: str | None = None) -> dict:
+    """Payload for the Results tab.
+
+    Always returns EVERY sector chip (a sector with nothing stored reads
+    "0 of N names" rather than vanishing) and the full roster of the chosen
+    sector (a name with no estimates yet is still offered, flagged, so the
+    picker is the coverage list and not a list of what happens to be loaded).
+    An unknown sector or entity falls back — first to the one holding data,
+    then to the first — so a remembered selection can never render empty.
+    """
+    import datetime as _dt
+    import results_io as _rio
+
+    roster = _results_roster()
+    conn = connect()
+    sm = _rio.summary(conn, list(roster))
+    secs = []
+    for s in SECTORS:
+        mine = [r for r in roster.values() if r["sector"] == s["id"]]
+        secs.append({"id": s["id"], "label": s["label"], "n_names": len(mine),
+                     "n_with_data": sum(1 for r in mine if sm[r["id"]]["has_data"])})
+    other = [r for r in roster.values() if r["sector"] is None]
+    if other:
+        secs.append({"id": "other", "label": "Unplaced", "n_names": len(other),
+                     "n_with_data": sum(1 for r in other if sm[r["id"]]["has_data"])})
+    ids = [s["id"] for s in secs]
+    if sector not in ids:
+        sector = next((s["id"] for s in secs if s["n_with_data"]), ids[0])
+    mine = [r for r in roster.values()
+            if (r["sector"] == sector) or (sector == "other" and r["sector"] is None)]
+    companies = []
+    for r in sorted(mine, key=lambda x: (bool(x["unit_of"]), x["name"].lower())):
+        s = sm[r["id"]]
+        companies.append({**r, "has_data": s["has_data"],
+                          "n_estimates": s["n_estimates"], "n_actuals": s["n_actuals"],
+                          "latest_period": s["latest_period"],
+                          "next_event": s["next_event"], "brokers": s["brokers"]})
+    cids = [c["id"] for c in companies]
+    if entity not in cids:
+        entity = next((c["id"] for c in companies if c["has_data"]),
+                      cids[0] if cids else None)
+    periods = _rio.periods_for(conn, entity) if entity else []
+    conn.close()
+    sel = next((c for c in companies if c["id"] == entity), None)
+    return {
+        "as_of": _dt.date.today().isoformat(),
+        "sectors": secs, "sector": sector,
+        "companies": companies, "selected": entity, "company": sel,
+        "periods": periods,
+        "metrics": {m: {"label": lab, "better": bet}
+                    for m, (lab, bet) in _rio.METRICS.items()},
+        "totals": {"n_names": len(roster),
+                   "n_with_data": sum(1 for v in sm.values() if v["has_data"])},
+        "loader": "python packages/results/results_io.py --load "
+                  "data/results/staging/<file>.json",
+    }

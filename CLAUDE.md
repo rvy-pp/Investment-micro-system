@@ -69,12 +69,19 @@ never sets direction and never enters scoring. **F1 (the market-wide regime
 read) is LIVE since 2026-09-02**: five Yahoo cross-asset series in the dedicated
 `flow_series` table (never `prices`), 8 sign-pattern states + quiet + a windowed
 flow-spell layer in `market_regime`, odds as empirical base rates over ten
-years. **The tab leads WEEKLY, by the PM's ruling 2026-09-03 ("daily is of no
-use")** — Friday-to-Friday states, next-week odds, live India next-week
-evidence (`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence
-series, never regime inputs), plus a week-to-date chip. Daily still computes
-and persists (it feeds the spell and the future review layer). Method frozen
-in `specs/flows.yaml`; evidence via `regime.py --backtest` / `--weekly`.
+years. **The tab leads with the ROLLING past week, updated every US session
+(PM 2026-09-08: "update daily... show weekly trend but calculate past week on
+a rolling basis")** — each session read as its own trailing 5-session window
+on the weekly σ scale, superseding the 2026-09-03 Friday-week lead ("daily is
+of no use"), which survives as the trend strip and the evidence base. The two
+rulings agree: the unit is still a week, only the anchor moved off Friday.
+Rolling states flip on 50% of sessions (median run 1) — the grade carries the
+signal; forward evidence at this cadence samples STATE ENTRIES only (adjacent
+readings share 4 of 5 sessions). India next-week evidence stays live
+(`^NSEI`/`^CNXMETAL`/`^CNXIT` ride along in flow_series as evidence series,
+never regime inputs). Daily still computes and persists (it feeds the spell
+and the future review layer). Method frozen in `specs/flows.yaml`; evidence
+via `regime.py --backtest` / `--weekly` / `--rolling-backtest`.
 F2–F4 are still scoped only — read `docs/FLOWS.md` before touching
 `sector_regime`.
 
@@ -122,10 +129,17 @@ at it). It refreshes the scores, starts the server on 8770 and opens the page �
 about 18s cold. `launch\Stop.bat` frees the port; `launch\Update Now.bat` runs
 the refresh where you can read it.
 
-**No scheduled task is registered, by the PM's choice 2026-08-21.** The launcher
-refreshes on every double-click, so the scores are current whenever the page is
-open and nothing runs when it is not. `launch\Install Daily Task.bat` is written
-and unrun if that changes.
+**A Claude Desktop scheduled task `daily-full-refresh` runs `/full-refresh` at
+08:00 local daily (PM instruction 2026-09-11; it reversed the 2026-08-21 choice
+of no scheduled task).** It is the desktop app's scheduler, not Windows Task
+Scheduler — it fires only while the app is open (a missed run fires on next
+launch) and needs the machine awake and logged in for Outlook. Its prompt lives
+in `~/.claude/scheduled-tasks/daily-full-refresh/SKILL.md`; the skill files in
+`.claude/skills/` stay the procedure. Known timing caveat: most broker mail and
+the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
+`outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
+The launcher still refreshes on every double-click; `launch\Install Daily
+Task.bat` (Windows Task Scheduler) remains written and unrun.
 
 ### Two halves of the API that must not be merged
 
@@ -280,7 +294,22 @@ layer did not move an inch.
 - **Mail bullets are INSIGHTS, not summaries (PM, 2026-08-31):** one
   sentence, ≤25 words, max 3 per sector, source line as the pointer into
   Outlook — the morning-brief skill carries the calibration example. The
-  renderer does not truncate; the discipline lives at generation time. Run/brief staleness rides in the meta-line;
+  renderer does not truncate; the discipline lives at generation time.
+  **Since 2026-09-18 each bullet also carries a `detail` block** — a
+  ≤60-word summary plus 3–5 number-first points — and CLICKS OPEN into a
+  drawer beneath itself, the what-moved commodity rows' grammar (PM: "similar
+  functionality to a click and expand for the commodities below"). Native
+  `<details>`, no fetch: unlike the price chart the payload is already on the
+  page. **The collapsed bullet is unchanged, and that is the load-bearing
+  part** — the drawer is a second layer, never licence to write a longer
+  bullet, because the collapsed page is still the 08:00 read. A bullet with
+  no `detail` renders flat and WITHOUT a caret (an empty drawer reads as a
+  broken page; a missing caret reads as "the bullet is the whole mail"), and
+  `detail.read` prints `snippet` when the drawer was built off the ~250-char
+  preview rather than the body — provenance, not decoration. The sector
+  agents now read the body of every mail they bullet (≤24 reads/run).
+  `engine.morning()` needed no change: it passes the brief through verbatim
+  and `_mark_repeated_bullets` only touches source/received/text. Run/brief staleness rides in the meta-line;
   frontend problems are a red hint line inside the Run panel; placeholder
   callouts live in the Book tab beside the numbers they qualify. The cement
   watch keeps a callout ONLY in its `live`-with-alerts state; `calibrating`
@@ -289,12 +318,21 @@ layer did not move an inch.
 - **The Book is its own top-level tab** ("The Book", between Daily Overview
   and Flows) — same `/api/overview` book block, new address. The PM plans to
   rework it; the Overview is the morning read.
-- **Positioning is the vault's viewOI, ported:** tiles, buildup pills,
-  percentile number-over-bar, the z+% Mag cell, per-sector grouping, status
-  pills (OI is T-1 by design, so ≤2d = Live). `/api/oi` rows now carry
-  `sector` and `name` from the specs for the grouping. Deltas are DAY
-  changes (that is what the oi table stores) and are labelled so — do not
-  relabel them 15d to match the vault's old header.
+- **Positioning is the vault's viewOI, ported, then cut to ONE horizon
+  (PM, 2026-09-15):** tiles, buildup pill, percentile number-over-bar, the
+  z+% Mag cell, per-sector grouping, status pills (OI is T-1 by design, so
+  ≤2d = Live). `/api/oi` rows carry `sector` and `name` from the specs for
+  the grouping. The 15d buildup, 15d percentile and the day OI/price delta
+  columns are REMOVED — "adds no value", only the 3m read stays. **The 3m
+  percentile is computed by `vault_oi.py` as the raw rank of today's OI over
+  the last 63 table rows, NOT copied from the vault frontmatter.** The
+  vault's `percentile_3m` is expiry-cycle-normalised (rank of OI / own-cycle
+  median), which put Coforge at 95th while its OI sat 8.6% below the 3m
+  median with a -0.7σ z-score in the same block, and 10 of 31 names on the
+  wrong side of 50. The stored columns `oi_percentile_15d`, `oi_chg_pct`,
+  `price_chg_pct` still load (data, cheap); they just are not rendered.
+  **Dalmia is OUT of OI tracking (PM, 2026-09-15: no longer in F&O)** —
+  unmapped in `vault_oi.NAMES`, its `oi` rows deleted; scoring untouched.
 - **IT is OI-ONLY (added 2026-08-31, PM instruction):** 13 names mapped in
   `vault_oi.NAMES` (12 F&O + LTTS not_in_fno), no specs, no pillars, no
   Book rows — `vault_oi.UNMODELLED` ensure-inserts their `entities` rows
@@ -390,6 +428,54 @@ guard** (MV/GMV to 1e-9, P&L to 2¢) — a dropped or mangled line refuses.
 - Options (`XXXX IS MM/DD/YY C1000 Equity`) have no `=` token → each series
   its own root, matching the PM's no-delta-netting instruction in IMS-Spec.
 
+### The money column is YTD, and it is OUR ledger — 2026-09-18
+
+PM: *"instead of the Day $ that you directly pick from what I input, replace
+it with YTD $, which you calculate daily. The input I give expires after
+rolling."* So the Book tab's `day` column is GONE and `pnl_ytd` sits in its
+place, computed by `book_io._ytd_leg`.
+
+**It is seeded ONCE from the IMS YTD column and thereafter only ever advanced
+by an INCREMENT.** That is the whole mechanism: a column that resets cannot
+reset a number it is no longer being read into. Four increments, each chosen
+against a specific failure:
+
+| situation | increment | why that one |
+|---|---|---|
+| same contract | Δ of the cumulative YTD | cumulative, so it spans sessions never snapshotted |
+| **roll** | the **DAY** figure | not a level, so it cannot reset — and cannot double count |
+| reopen after an absence | the new ticker's YTD | its own accrual; covers more than one day |
+| 1 January | **resets** | that is what YTD means |
+
+**DO NOT "simplify" this by summing the day column.** Measured on the live
+book the day-sum is **+4,124.78** against a true **+3,774.02** — a 350.75 hole
+that is exactly **Monday 2026-09-14, an NSE session with no snapshot**. The
+ledger absorbs such a session whole at the next paste; a day-sum loses it
+permanently and silently. This is the SILENT_BUGS shape: the wrong number is
+plausible and nothing raises.
+
+**The roll bridge is the DAY figure specifically because of the standing
+ASSUMED-AND-UNVERIFIED note above.** If a fresh ticker ever CARRIES the old
+contract's P&L, `_chain_leg` freezes the old YTD and then adds a new YTD that
+already contains it — a double count. A day figure cannot do that. The
+selftest proves the divergence rather than asserting it: on a fixture where
+V6 carries U6's 5,000, the chain says **10,200** and the ledger says **5,200**
+and raises a flag. `pnl_total` (since inception) is left alone; the two are
+IDENTICAL today (4,523.52, reconciling to the raw IMS YTD sum) and diverge
+only at a roll or the year boundary.
+
+**Flagged, never corrected.** A roll whose YTD and day figure disagree by more
+than `YTD_ROLL_TOL`, or any year seam, lands in `ytd_flags` → a `ytd?` chip on
+the pair and a printed line in `--report`.
+
+**It advances only when a snapshot is loaded.** It recomputes from every
+stored snapshot on each request, but `refresh.py`/`pipeline.py` never write a
+`book_*` table, so on a day the PM pastes nothing the tab correctly shows the
+last snapshot's YTD. Marking to market from `prices` instead was considered
+and REJECTED: it needs a per-contract multiplier, which this system
+deliberately does not have (see the chain-basis rule above).
+
+
 **Pairs are DICTATED, not derived — `specs/book.yaml pairs` (PM, 06-09-2026,
 names verbatim).** The IMS pair tags ("IT 5") are coarser clusters and stay
 internal (the chain and the store still key on them); the page renders the
@@ -398,9 +484,25 @@ serve several pairs (TCS long backs the INFO, WPRO and HCLT shorts; DIXON
 short backs three longs) — engine.book_view apportions a shared leg's
 DOLLARS across its pairs by the gross of the OPPOSITE side of each pair, so
 the pair dollars sum exactly to the book (verified: 749.5 vs 749.52).
-Price-%s are never apportioned; the pair's since-start % is mean(long legs'
-price moves) − mean(short legs'), anchored on avg entry cost at first
-capture. A live position in no dictated pair renders as a loud callout —
+Price-%s are never apportioned; the pair's % is SINCE ENTRY — mean(long
+legs' price moves) − mean(short legs'), each leg anchored on **the OPEN of
+its entry day** (PM rule 2026-09-07: "the purpose is to see if the pair has
+worked out in thesis" — the IMS avg cost blends adds and pre-capture
+history, so it answers a different question). Opens live in
+`book_entry_anchors`, fetched once per streak by `book_io
+--fetch-anchors` (auto-run after every load) from the same Yahoo chart
+endpoint as the closes, and REFUSED unless the fetched close matches the
+stored `prices` close to 0.5% — the wrong-symbol guard. Fallback when no
+open could be fetched: IMS avg cost, then the entry-day close; the leg
+hover names which. **The anchor date is fixed at the day entered and
+survives resizes and pair-tag changes; it resets only on a direction flip
+or a day out of the book** (same ruling — `book_io._entry_anchor`,
+keyed on root across tags after the 09-07 IT retag silently re-anchored
+MPHL and TELX to 0.0%). Every position event is logged at load time into
+`book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/
+resized do not; closed ends a streak) — the tab and `--report` say the
+day's events out loud, `--rebuild-log` replays history. A live position in
+no dictated pair renders as a loud callout —
 ask the PM, never guess it into a pair. Reviews key on the dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
@@ -412,6 +514,251 @@ the first STORED snapshot). Book tables are `book_*` only; nothing on this path 
 `prices` or anything a pillar reads, and position data stays in gitignored
 `data/`. The API server must be RESTARTED after engine changes (it imports
 once — `/api/version` shows staleness); done for this change.
+
+### The long/short index — rebuilt from scratch 2026-09-17, and it replaced TWO charts
+
+PM: *"Let's rebuild the whole thing again. We get rid of both graph
+methods."* Then the spec, verbatim: *"Create an equal weighted index for
+longs, equal for shorts... Keep VAML out, use 2007 onwards. Once VAML starts
+to exist, add VAML to the long index. Till 16th sep 2026, we keep the index
+same. Post that, as and when the positions change, we change the index on a
+daily basis."*
+
+**`engine.book_ohlc` and the first `engine.book_index` ARE DELETED. Do not
+reintroduce either.** The first was a portfolio-weighted back-cast of today's
+roster over a chosen window — years long, survivorship-biased by
+construction. The second read the roster straight off the stored snapshots, so
+it was honest and **nine sessions long**, and with membership unchanged across
+all eight snapshots it was a re-weighted copy of the first. Carrying both was
+the problem; the reason they both existed is settled inside the replacement,
+by freezing membership at a **spec date** instead of at today.
+
+`packages/book/basket_index.py` owns the arithmetic, the guards and the
+selftest. `engine.book_index(rng)` is a transport shim; `/api/book_index?range=`
+serves it; one block on the Book tab renders three charts — long index, short
+index, long ÷ short.
+
+**Parameters live in `specs/book.yaml index`, not in code**, because each one
+is a judgement that would otherwise have to be found again: `start:
+2007-01-01`, `freeze_before: 2026-09-16`, `session_quorum: 0.5`.
+
+**Membership has two regimes and the boundary is a CONSTANT.** On or before
+the freeze, the roster is that snapshot's, held constant — the back-cast.
+After it, the roster of the latest snapshot on or before the previous close,
+so the index follows positions on and off. **Deriving the freeze from "the
+latest snapshot" would advance it every morning and silently re-write the
+whole back-cast to whatever the book looks like today**, which is exactly the
+bias the split exists to bound.
+
+**Thirteen of the thirty-two legs list after 2007**, so `n` grows from **9
+longs / 10 shorts to 16 / 16** — VAML 2026-06-15, Kaynes, Syrma, KPIT, Dalmia,
+Amber, Dixon, LTTS, LTIMindtree, APL Apollo, Coal India, Persistent, NMDC. The
+PM's VAML rule generalises to all of them or the index cannot start in 2007 at
+all. **This is NOT a constant-composition index** and the page says so: when a
+leg joins, every other leg's weight falls. And a leg **never contributes a
+return on its first day** — it joins at its first close and counts from the
+next session, or a listing-day pop at a price nobody in the book paid enters
+as performance.
+
+**The index has ONE base (its first session, level 100); a CHART has a
+window.** `window()` slices and rebases for display and never re-chains, so
+two windows of the same index cannot disagree about what happened between two
+dates — tested. Current levels: **long 2879.54, short 2448.88, ratio 117.59**.
+
+| window | long | short | L/S % | pp apart |
+|---|---|---|---|---|
+| 1y | −0.88% | −9.55% | **+9.59%** | +8.67 |
+| 5y | +94.46% | +58.60% | **+22.61%** | +35.86 |
+| max (19.7y) | +2779.54% | +2348.88% | **+17.59%** | **+430.66** |
+
+**That last row is the ratio-vs-pp distinction at the scale where it stops
+being pedantry** — +17.59% against +430.66pp. The ruler makes the same point
+live: a mid-window drag reads **+336.24% against +1,977.38pp**, and the two
+agree *only* at the rebase date, where the level is 1.00 (verified: a drag
+from the base gives +2465.48% and +2465.48pp exactly).
+
+**Every window is CANDLES; the bar PERIOD is what changes** (PM, same day:
+*"can you make candles since you have ohlc? It should be simple right?"* — it
+shipped drawing a line above 260 bars, because a daily candle over 19.7 years
+is 0.19px wide). Daily to 320 sessions, **weekly** to 1,600, **monthly**
+beyond, which puts every window between 3.8 and 9.3px a candle:
+
+**The windows are the PM's** (same day: *"Lets remove 10 and max, add 6 months,
+3 months, 1 month"*) — **1M / 3M / 6M / 1Y / 2Y / 3Y / 5Y**, shortest first.
+10Y and MAX are gone. **The INDEX still runs from 2007; only the VIEWS
+changed** — `build()` chains the whole history regardless, the header keeps
+printing the levels against their 2007 base, and the freeze logic is
+untouched. Dropping a window is not dropping the data, and confusing the two
+would move the base every time a button changed.
+
+| window | sessions | bars | period |
+|---|---|---|---|
+| 1M | 21 | 21 | daily |
+| 3M | 64 | 64 | daily |
+| 6M | 123 | 123 | daily |
+| 1Y | 246 | 246 | daily |
+| 2Y | 494 | 105 | weekly |
+| 3Y | 737 | 157 | weekly |
+| 5Y | 1,234 | 262 | weekly |
+
+Monthly is now unreachable from the UI but the code path stays: it is the
+correct answer above 1,600 sessions and `--selftest` still covers it.
+
+**The aggregation is EXACT, which is why it beats thinning**: open = the
+period's first open, high = max, low = min, close = last close. Every session
+still contributes — verified against the raw daily levels, 236 monthly bars,
+**zero mismatches**, and the session counts add back to the window exactly.
+Dropping every fifth bar would have been a silent lie about the path.
+
+**The bound survives aggregation.** A daily high here is already an upper bound
+on the index's true high; the max of upper bounds over a month is still an
+upper bound, and likewise the min for the low. So the wick means exactly what
+it meant daily — checked: the bound contains the body on 850/850 bars across
+all windows and all three charts.
+
+Two labelling traps came with it, both fixed at the site. The **rollup's open
+falls back to the first bar's CLOSE, never the next bar's open** — only the
+index's base bar lacks an open, and its close is the level the period started
+at; falling through discarded the first session's move. The selftest caught it,
+and it was the only thing that could have: on real data it shifts one monthly
+candle out of 237 and the chart still looks sensible. And the **ruler's span is
+BARS, not sessions** — it printed "90 sessions" on a monthly chart where 90
+bars is 3,660 sessions, twenty times short. It now reads `178 months (3,660
+sessions)`, summed from each bar's own count.
+
+**There is no index table, deliberately.** The whole series recomputes from
+`prices` and `book_positions` in well under a second, so persisting it would
+only create a second thing that can be stale. **The daily review needs no step
+for it**: a snapshot lands in `book_positions` and the index extends itself.
+
+#### What counts as a session — measured over 4,867 dates, not assumed
+
+Three independent filters, each reported separately on the page so one cannot
+mask another:
+
+- **QUORUM.** A date is a session only if ≥50% of the legs listed by then
+  printed. 4,863 of 4,867 dates sit at 100%; the only two below 90% are
+  **2010-02-06, a SATURDAY special session that just 1 of 20 listed names
+  carries**, and 2026-09-16 at 75%. Nothing is near the threshold.
+- **PHANTOM SESSIONS — 10 of them.** 2008-11-27, 2009-10-13, 2014-04-24,
+  2014-10-15, 2025-03-18, 2026-01-15, 2026-05-01, 2026-05-28, 2026-06-26,
+  2026-09-14. Yahoo answers for a day the exchange was shut with
+  `open == high == low == close` and volume 0. The test is the tape's own,
+  applied across members, so a single halted stock on a real session can never
+  take the day out. A holiday calendar was rejected: another thing to maintain,
+  wrong the first year nobody updates it. **The rows are still in `prices`** —
+  this cleans only what the index reads.
+- **ALL-OR-NOTHING.** A session yields a bar only if every LISTED member has a
+  close at both ends; otherwise no bar and the chain runs on, so the interval
+  widens but stays COMMON to every member. **It costs exactly one session in
+  19.7 years** (2026-09-16). The bar that absorbs a gap is MARKED by the API
+  (`skipped`) rather than inferred in the browser — a skipped session leaves no
+  bar, so `span` is the previous bar's date either way and cannot reveal it.
+
+**A correction to what this file said on 2026-09-16: that session was NOT a
+fetch that failed.** Yahoo itself has no bar for those eight names on that
+date — a hole in the source. Checked directly against the endpoint.
+
+**The same hole shows up a second way on 2026-09-07, and the chart says so.**
+Eight long legs (amber, dalmia, hindalco, jindal_steel, kaynes, ltts, mphasis,
+syrma_sgs) carry a CLOSE for that date but no open/high/low, and the deep
+backfill could not fill them because Yahoo now skips 09-07 for those names
+entirely — it serves 09-04 then 09-08. The closes are genuine and distinct
+(none repeats 09-04's), so **the chain uses them and the level is right**; what
+cannot be drawn is the candle, because the range was never measured for half
+the side. That bar renders as a labelled close TICK rather than a doji — a doji
+would claim a range of zero, which is a measurement, where the truth is an
+absence.
+
+#### 2007, and why not 1996
+
+The endpoint reaches 1996 for six of the legs, and **the deep history is
+unusable**: Tata Steel −86.8% (2004-04-27) plus thirty >35% moves before it,
+UltraTech −75.6% (2004-08-24, the Grasim cement demerger), Hindustan Zinc
+**+5,575%** (2006-11-21), Ambuja +652% (2004-10-14), Wipro +400%
+(1999-09-27), and five **identical** +949.6% jumps in Tata Steel between 1996
+and 1999 — a magnitude that repeats to the decimal cannot be a market. From
+2007 the only one-day move above 35% anywhere in the thirty-two is **VEDL's
+real 2026-04-30 demerger**, which `core/corporate_actions` already carries;
+it is dropped from that day's mean while the 2008 crash and the 2020 COVID
+moves are drawn through, per tape.py's allow-list rule.
+
+**Splits are adjusted; demergers are not.** Tata Steel's 1:10 (2022-07-28) is
+smooth through the event, so the chart endpoint is split-adjusted. VEDL is
+773.60 → 271.55 on **both** `close` and `adjclose` — Yahoo reports splits as
+events but not demergers, so that break stays a hand-verified allow-list
+problem.
+
+#### The backfill, and the trap that would have poisoned it
+
+`yahoo_prices.load("2007-01-01", only=<the 32 legs>)` wrote **123,768 OHLC
+rows**; `prices` went 201,267 → 280,166. Every one of the 32 resolves, and
+**not a single bar is missing open/high/low**.
+
+**`range=max` SILENTLY OVERRIDES `interval=1d`, and `fetch_bars` never read
+`meta.dataGranularity`.** Measured: `max` on TATASTEEL.NS returns
+`dataGranularity: 1mo` — 370 **month-end** bars spanning 1996-2026 — and on
+VAML.NS returns `1h`, 481 hourly bars collapsing to 69 distinct dates. Both
+parse perfectly and both would have been stored as daily rows: monthly candles
+written as sessions, or a date carrying five bars of which the last silently
+wins. Nothing downstream could see it — the closes are real closes, of the
+wrong period. That is the same shape as the `chartPreviousClose`/`range=5d`
+warning already at the top of that file: **the numbers are right and the
+PERIOD is wrong.**
+
+`fetch_bars` now **verifies** the granularity and refuses anything but `1d`,
+and `rng` accepts an **ISO date** that goes through `period1`/`period2` — the
+only way to get daily bars past 20 years (31 years of `1d` for Tata Steel).
+Range tokens hold `1d` up to and including `20y` and break at `max`. Tested
+both directions: the date and `1mo`/`1y` accept, `max` is refused on both the
+monthly and the hourly flavour.
+
+### Kelly sizing — a block on the Book tab, 2026-09-25
+
+PM: *"Let's start with applying kelly criterion to the book."* Then, the
+same day: *"just put returns and comments then and there and the fraction
+gets calculated there."* So **the edge is typed on the Book tab**. Each pair
+gets an expected 13-week return (long minus short, %) and a comment, and
+13 weeks is fixed as the horizon. **A return with no comment previews but
+never saves.** Edges are stored append-only in **`book_kelly_edges`**
+(latest row per pair is live, a NULL return is a clear, and history is
+kept), via the one write route on the server, `POST /api/kelly_edge`.
+**Edges do not live in `specs/book.yaml`**; they did for an hour, and a
+non-empty `kelly.edges` key there is now reported rather than read.
+
+**The risk is measured**: each pair's spread (mean long return − mean short
+return) over `lookback_days`, plus the covariance across pairs shrunk toward
+its diagonal (Schäfer–Strimmer δ, 0.12 today). The parameters (fraction ½,
+lookback, min_sessions, horizon, shrink) stay in the spec.
+`packages/book/kelly.py` is the tested reference (`--selftest`, 25 checks).
+`engine.book_view` attaches it as `kelly`, including a full-precision
+`calc` block (shrunk Σ, variances, today's sizes). **app.html's
+`kellyCalc()` recomputes from that block on every keystroke and must mirror
+`compute()`.** It was checked on four edges and matched to the displayed
+digit (e.g. JSTL_TATA 409% / 391% / 2.88%, book 0.0037× Kelly). The vault
+copy has no server: it previews and says it cannot save.
+
+**Nothing the system computes is used as an edge.** The composite gap was
+refused because no composite is validated, and the spread's own drift was
+refused because it is a survivorship back-cast. Do not default the edge
+from either.
+
+The block gives three reads. The first is **implied edge**: what today's
+size assumes you expect over 13w, which needs no edge. The second is **½K
+alone vs joint**: joint splits a shared-leg bet (DIXON backs three longs),
+and a negative joint weight is flagged `flip`, never clipped. The third is
+**at today's gross**: the joint proportions scaled to today's combined gross
+for the edged pairs.
+
+**The scale finding, measured on the live book:** every implied edge comes
+out at **+0.02% to +0.05% over 13 weeks**, while a +5%/13w edge on a 19%-vol
+spread asks for ~270% of NAV per side at half Kelly. Absolute Kelly size is
+never the binding constraint here, and the allocation column is the part to
+read.
+
+**A saved edge reaches the vault copy at the next refresh**, not
+immediately. An export per keystroke-save would be ~90s each, which is why
+it was left out.
 
 ## Price sources have a precedence order — read before adding a feed
 
@@ -562,6 +909,13 @@ no.
   ACCEPTANCE test too.
 - **Digest filenames are `DD-MM-YYYY.md`** — plain `sorted()` orders by day of
   month. Always sort on the parsed ISO date.
+- **Yahoo's `range=max` is NOT daily, whatever `interval=1d` says.** It returns
+  `dataGranularity: 1mo` for a long history (370 month-END bars for
+  TATASTEEL.NS, 1996-2026) and `1h` for a short one (VAML.NS: 481 hourly bars
+  over 69 dates). Both parse cleanly and would store as daily rows. Use an ISO
+  date — `fetch_bars` routes it through `period1`/`period2`, which holds `1d`
+  out to 31 years — and never trust the interval you asked for: `fetch_bars`
+  asserts `meta.dataGranularity` now. Range tokens are daily up to `20y`.
 - **Verify a Yahoo symbol by NAME, not instrumentType.** `ZN=F` is the 10-Year
   T-Note. `ZNC=F` is a dead 2019 contract returning a frozen price. `ALA=F`
   reports `ALTSYMBOL` and is perfectly live. Resolve tickers with
@@ -1249,3 +1603,1313 @@ alumina surplus tonnage, VAML's alumina `market_pct`, the coal
 `basis_pass_through` of 0.35, Hindalco's `base_ebitda` (the only unsourced
 denominator), VAML's derived share count, and VEDL's **pre-demerger** net debt —
 which makes VEDL read dearer than it is, so its cheapness survives its own bias.
+
+## The Company tab — transcript-only coverage, added 2026-09-14
+
+PM instruction: *"a 'company' tab in the frontend, an option to select
+companies, put avalon in it... The end goal is to have a past coverage and
+analysis of the stocks in such a manner that I can read and get done with the
+company in depth."* First name: **Avalon Technologies (AVALON)**.
+
+**It scores NOTHING and must not.** Avalon already sits in `specs/entities/
+ems.yaml` with `peer_group: null` (not in F&O, invariant 7). This tab is a
+READ surface: `data/companies/<slug>/dossier.json` → `engine.company_view()` →
+`/api/company` → `#s-company`. No adapter writes to it, no pillar reads it,
+nothing here reaches `pillar_scores`. Putting a transcript-derived revenue
+number anywhere a bridge could shock it is the `estimates`-vs-`prices` lesson
+again.
+
+**The universe is the folder list**, deliberately — `company_list()` globs
+`data/companies/*/dossier.json`. Adding a company is a directory, never a code
+change, and a sector shows the sub-tab only when it has a dossier. The
+one hardcoded company list in this system is the thing that would rot first.
+
+**Since 2026-09-16 it is NOT a top-level tab.** PM: *"The company analysis
+sits out like a sore spot. Keep it within the sectors only, add a tab within
+each sector that says company historical analysis."* So each sector's
+sub-view bar carries a **Company historical analysis** tab, shown only where
+that sector has at least one dossier, and the picker offers that sector's
+names alone. Every dossier carries a top-level **`sector`** key (an
+`engine.SECTORS` id) — the skill writes it; `_company_sector()` falls back to
+the entity spec matching `tickers.nse`, then the `entities` table, and an
+unresolved dossier is reported as `company_unplaced` on the nav and on every
+Company sub-tab rather than dropped. Coforge needed the explicit key: IT has
+no specs and the `entities` table holds no NSE symbols. `/api/company` takes
+`sector=`; a slug outside that sector falls back to the sector's first name.
+A non-scoring sector (IT) used to hide the sub-view bar entirely; with a
+dossier it now shows the bar with the three scoring tabs hidden and its panel
+reachable as Prices & Watch. Three dossiers today: Tata Steel → Steel, Avalon
+→ EMS, Coforge → IT.
+
+### What 14 transcripts actually produce
+
+Q4FY23 (29-May-2023, the inaugural call) through Q1FY27 — **14 consecutive
+quarters, no gaps, and that is the entire history**: Avalon listed in April
+2023, so 14 is not a sample, it is the population. Downloaded from
+screener.in's concall list, which links the company's own IR PDFs; plain
+`urllib` with a browser UA, no login, ~122k words, all digital (no OCR).
+
+Ten of fifteen module keys populate from transcripts alone. **Five cannot and
+are rendered as named holes with the document that closes each** —
+shareholding (needs the pattern filing), market share (needs peer revenues),
+ratios and valuation (need a screener export), stock (needs prices). An
+absent module reading as "nothing happened" is the one thing it must not do.
+
+### The guidance ledger is the product, and it leads the page
+
+20 commitments harvested and graded: **7 miss, 6 beat, 1 met, 6 pending.**
+Sorted misses-first, because a scoreboard that opens on the wins is a
+brochure.
+
+**A revised commitment is graded against the ORIGINAL.** FY24 was guided at
++25-30% revenue and 12-13% margins, cut to 15-25% one quarter later, then to
+"lower end with a negative bias", then replaced with a **degrowth** forecast of
+8-10%. It landed at **-8.2%**. That is a MISS, and the note says so explicitly:
+*miss against the original commitment; met against the guidance as reset.* A
+company that resets guidance does not get to launder the first promise.
+
+The mirror image is FY26: guided 18-20%, **raised four times in four
+consecutive quarters** (23-25 → 28-30 → ~40) and still beaten at +46%. Same
+management, same disclosure habit, opposite sign. Both rows are on the page
+and neither is smoothed.
+
+### The finding that no single call contains
+
+**US manufacturing share went 28% → 11% → 28%.** Management drove it down
+deliberately (stated target 85:15 India:US, ~55-60% of US customers approved
+for transfer to India), reached 11% by Q2FY25 — and then it climbed back to
+28% by Q1FY27 as new US wins landed. **At Q1FY27 the target was quietly
+restated as "naturally settle at around 20%".** The reversal is never named as
+a change of plan on any call; it is only visible as a series. That is exactly
+what a 14-quarter dossier is for, and it renders as an amber callout above the
+table rather than as a row you have to notice.
+
+### Flags are rendered, never resolved
+
+Three unreconciled conflicts are carried on the page rather than silently
+picked, per the silent-arithmetic rule:
+
+- **FY23 revenue is PRINTED in the transcript as "INR44.7 crores"** against a
+  Q4 of 272 and an FY23 gross margin of 338 — impossible. Reconstructed as
+  ~944.7cr and flagged; module 9 must take it from a filed statement. A second
+  instance on the same call prints FY25 capex guidance as "FY'20".
+- **Q1FY24 gross profit is 77cr on its own call and 80.0cr when the Q1FY25
+  call restates it** (32.8% vs 34.0%).
+- **June-24 net working capital is 156 days on the Q1FY25 call and 163 days
+  when Q1FY26 restates it.**
+
+None is large enough to change a view. All three are the shape that is.
+
+### Plumbing
+
+`/data/companies/...` is a read-only passthrough in `serve.py` so a citation
+links AT the filed PDF and its long-form note; it is confined to
+`data/companies/` **after** normalisation, and `.md` is served as `text/plain`
+so a note opens in the tab instead of landing in Downloads. Refusal and
+acceptance are both tested (200 on the pdf and the note, 404 on a traversal
+and on a missing file) — per the GLOB lesson, a guard needs both.
+
+Company data lives under gitignored `data/`, like the book. The 14 PDFs are
+7.2MB and are not in git; the dossier is regenerable from them.
+
+**`engine.REPO`, not `ROOT`** — there is no `ROOT` in engine.py, and the first
+draft of this used it. Caught immediately because the module would not import;
+noted because the two names are interchangeable everywhere else in the repo.
+
+### The narrative layer — added same day, and it changed what the tab is for
+
+PM, on seeing the module dossier: *"I wanted some sort of a backward looking
+company analysis over the history of the company. Any relevant news and
+earnings or raw material change can look to somehow explain the share price
+movement."* So the **price became the spine** and the modules were demoted to
+reference beneath it. `narrative` in the dossier; `companyNarrative()` renders
+first.
+
+Avalon listed 2023-04-18 at INR398 and closed INR2,264.50 on 2026-09-11 —
+**+468.9% over 846 sessions**, high INR2,373.30 on 2026-08-31. The history is
+cut into **eight chapters bounded by turning points in the price**, never by
+the calendar, each carrying what happened, what the market did, and an
+explicit **attribution grade**.
+
+**THE FINDING THAT ORGANISES EVERYTHING: the stock tracks the change in
+expectation, not the level of delivery.**
+
+| | revenue growth | share return |
+|---|---|---|
+| FY24 | **−8.2%** | **+24.1%** |
+| FY25 | +26.6% | +49.6% |
+| FY26 | **+46.0%** | **+20.5%** |
+| FY27 YTD | one quarter | **+141.7%** |
+
+The business shrank and the stock rose a quarter; three years later the best
+operating year in its history produced the worst full-year return of the
+three. Three of fourteen earnings days moved it ±20% — a guidance CUT
+(−20.3%, the worst on record), a delivered inflection (+34.5%, the best) and a
+beaten year (+20.5%) — **and none of the three was about the quarter being
+reported.**
+
+**RAW MATERIALS WERE TESTED AND THEY EXPLAIN NOTHING.** 21-day return
+correlations: copper +0.00, HRC −0.06, aluminium −0.11, brent −0.16, USDINR
+−0.26, cp_coke −0.26. The regime test settles it — FY24 inputs flat-to-down
+with revenue −8.2%, FY26 inputs up 27-64% with revenue +46%, gross margin
+36.3% → 34.3% across the whole span. Avalon is a converter with pass-through
+pricing, demonstrated under the hardest test available: through the tariff
+period it paid **over 50 distinct tariff rates and recovered more than 99%**
+from customers. The two mild negatives are risk-off proxies for Indian small
+caps, not cost channels. **This is why the EMS spec was right to withhold
+economics for these names** — a margin bridge here would have carried a 0.50
+composite weight on a linkage that measures zero.
+
+**Two honesty rules are rendered on the page, and both cost something:**
+
+- **Seven of eighteen 8%+ sessions have NO explanation in this archive** and
+  are listed as unattributed. Calls happen four times a year; news flow,
+  initiations and blocks do not. Inventing a reason for those seven would
+  make the eleven real attributions worthless.
+- **The deepest drawdown in the history carried ZERO company information.**
+  −39.7% peak-to-trough between 2024-12-27 and 2025-01-28, inside the
+  January-2025 Indian small-cap correction, with no call, no filing and no
+  guidance change — and the Q3FY25 print six days after the trough was
+  excellent. A dossier that reads only company documents would have read that
+  trough as a signal. It is labelled `attribution: none — market factor`.
+
+**The most instructive single event is Q2FY26 (2025-11-06): guidance was
+RAISED to 28-30% and the stock fell 9.6% on the day, −22.1% over twenty
+sessions.** It had run 34% into the print, and the reported margin was
+optically compressed ~110bps because the tariff pass-through grossed up both
+revenue and cost — a mechanism stated plainly on the call and invisible in the
+headline. A raise already in the price is not a catalyst, and a margin you have
+not read the accounting for is not a margin.
+
+### `/company-analysis` — the skill, added 2026-09-14
+
+PM: *"can we create a skill that creates a company analysis like this? Takes
+in earnings calls or searches for them on screener, bifurcates everything, does
+the analysis, creates price explanation."* So Avalon's run was generalised into
+`.claude/skills/company-analysis/` plus two scripts, keeping the repo's split —
+**the scripts do the arithmetic, the agent does the reading.**
+
+| | |
+|---|---|
+| `packages/company/fetch_transcripts.py` | screener Concalls block → deduped, dated PDFs → page-marked text + a boilerplate-stripped copy |
+| `packages/company/price_story.py` | reactions, drawdowns, 8%+ sessions, chapter candidates, and the commodity test |
+
+Both carry `--selftest` with acceptance AND rejection cases per the GLOB
+lesson. `price_story --selftest` caught a bug on its first run — and it was the
+TEST that was wrong: the synthetic fixture started its recovery the session
+after the crash, so `d1` correctly read −24.5% rather than −25.0%. The fixture
+was fixed and a comment left at the site saying so, because the next reader
+will otherwise "fix" the code.
+
+**Four traps are encoded in the fetcher**, all met on the first real run:
+screener rows duplicate (dedupe on URL, not date); the quarter is NOT in the
+link and is derived from the call month (Aug→Q1 … May/Jun→Q4, fiscal year
+rolling with it); some transcripts are broker-hosted (MOFSL, JM) — same call,
+different provenance, recorded; and page 1 is often the covering letter to the
+exchanges, flagged and skipped. A scanned PDF is REFUSED, never OCR'd.
+
+**The fetcher reports whether the quarter sequence is contiguous**, because
+*"all 14 calls that exist"* and *"a sample of 14"* are different claims and the
+dossier has to make the right one.
+
+**`price_story.commodity_test` exists to say NO.** It ran zero on every input
+for Avalon and prints `no usable linkage — do NOT build a cost overlay` below
+|0.35|. Its docstring carries the reason the threshold is not a significance
+test: a converter with pass-through pricing reads ~0 *because the economics
+work*, so the regime check (did margin survive a period when inputs moved
+hard?) has to be run by hand before concluding either way.
+
+**Two script outputs the skill forbids swallowing.** `unattributed` — sessions
+that moved 8%+ with no call within two days; ten of Avalon's eighteen, and the
+skill says to render them as unexplained because inventing a reason for each
+would devalue the eight that are real. And `market_factor` on a drawdown — no
+call inside the fall, so nothing the company said caused it; the flag fires
+automatically on Avalon's deepest drawdown, which was the January-2025
+small-cap correction.
+
+Verified end-to-end: `fetch_transcripts.py AVALON --list` returns the same 14
+calls with correct quarter labels, and `price_story.py avalon --calls …`
+reproduces the published reactions, the three drawdown episodes and the
+commodity verdict exactly.
+
+## Auto — a READ tab, added 2026-09-19 with Ather Energy
+
+PM instruction: cover "Aether (the ev company)" and "create an auto tab also".
+The company is **Ather Energy (ATHERENERG, NSE; 544397, BSE)** — "Aether" is
+not an EV maker, and the spelling was corrected before anything was fetched.
+
+**The tab scores NOTHING and must not start to.** `auto` is in
+`engine.SECTORS` with `peer_groups: []` — the same shape IT had on
+2026-08-31, and honest for the same reason: no spec has been written, no cost
+stack tested, no peer group defined. `ather` reaches `entities` only through
+`yahoo_prices.EQUITIES`, which inserts with peer_group NULL, so invariant 7
+keeps it out of every pillar, every pair and every backtest. `run_scores.py`
+was re-run after the change and still writes 106 rows across the same five
+sectors. **Do not give `auto` a peer group to make the tab look finished.**
+
+**The chart is BRENT, and that is a deliberate refusal.** For an ICE maker
+crude is a cost; for an electric two-wheeler maker it sits on the REVENUE
+side, and it is the driver management names first — the Q1FY27 call lists
+petrol *availability* fears and rising pump prices among four structural
+tailwinds. Charting a cost series there would assert the cost story the
+evidence below refuses. The caption carries the caveat: brent is +102% over
+Ather's listed life against the stock's +442%, but the 21-day correlation is
+**−0.149**, the generic risk-off sign. Level evidence, no short-horizon
+evidence, and the page says both.
+
+`ATHERENERG-BL.NS` is recorded in `yahoo_prices.REJECTED`: Yahoo returns it
+beside the ordinary line under the same `longName`, so the name pattern cannot
+separate them and the symbol is pinned instead. It is a thin parallel
+(block/trade-for-trade) book, not the tape.
+
+### Ather's dossier — six calls, and that is the whole population
+
+Listed 06-May-2025, so Q4FY25 was its first call as a listed company. Six
+transcripts, contiguous, none scanned, ~53,400 words. **Five and a bit
+quarters is a record, not a track record**, and the coverage note says so
+before the ledger does.
+
+**THE CENTRAL FINDING: one line explains the whole chart, and it is the
+EBITDA margin.** Listed at −23%, first positive EBITDA quarter five prints
+later, +442.5% on the share price. The ladder is almost monotone against the
+close before each call — and it has exactly one exception, which is also the
+only drawdown in the history:
+
+| | EBITDA margin | cum. share return at the print |
+|---|---|---|
+| Q4FY25 | −23.0% | −0.7% |
+| Q1FY26 | −16.0% | +14.9% |
+| Q2FY26 | −10.0% | +107.0% |
+| Q3FY26 | −3.0% | **+105.5%** ← the exception |
+| Q4FY26 | −2.0% | +209.2% |
+| Q1FY27 | **+0.8%** | +316.9% |
+
+**The stock paid for a SIGN, not a SIZE.** +INR9cr of EBITDA on roughly
+INR1,300cr of quarterly revenue produced the largest single-day reaction in
+the history (+15.1%), in the worst commodity quarter on record. The best
+operating year the company ever had produced +0.3% over twenty sessions,
+because management spent that call warning about commodities instead.
+**Every one of the six reactions is positive on all three horizons** — there
+is no negative earnings reaction anywhere in this company's listed life,
+which is the clearest single sign of how short the sample is.
+
+### The commodity test returns zero, and it means the OPPOSITE of Avalon's zero
+
+This is the finding worth carrying to the next name. Avalon's inputs were
+**tested and measured zero**, because a pass-through converter has no cost
+channel. **Ather's binding input is simply ABSENT from the store.**
+
+In Q1FY27 management booked a **5.6pp hit to gross margin** from commodity
+inflation — the largest input shock in its listed life — and in that exact
+quarter every tradeable series this system carries **FELL**: aluminium
+−12.8%, nickel −4.9%, Indian HRC −2.2%, brent −43.7%, lead −1.9%, USDINR
+flat, only copper up (+8.9%). **A cost overlay on those series would have
+read the worst commodity quarter on record as a TAILWIND.** The inputs that
+actually moved are lithium ($8/kg → $24/kg), the NMC cathode complex, cells
+(+30-50%) and DRAM — none has a series here and none is backfillable from a
+free source. Management's own number is a company commodity index **+46% over
+five quarters**.
+
+**So a null correlation has two opposite readings and they must be told
+apart:** either the business has no cost channel, or the channel is real and
+the series does not exist. `price_story.commodity_test` cannot distinguish
+them — only the regime check by hand can, which is exactly what its docstring
+warns.
+
+### The drawdown was NOT the market, and that had to be checked
+
+Ather's deepest drawdown (−21.5%, 2025-10-21 → 2026-01-29) landed while the
+**Nifty fell 1.7% and Nifty Auto 2.5%** — so it was entirely the stock's own
+de-rating. That is the mirror image of Avalon's deepest drawdown, which was
+the January-2025 small-cap correction. `price_story` already flagged
+`market_factor: false`; the benchmark check confirmed it rather than assuming
+it. **The transferable thing is the test, not the answer.** The benchmarks
+live in `flow_series` (`nifty`, `nifty_auto`), not `prices`, so
+`price_story --benchmark` cannot reach them — it was computed directly.
+
+**Two of the five `unattributed` 8%+ sessions ARE explained by this archive**,
+because the script's rule only knows about earnings calls: 01-Sep-2025 (+8.1%)
+is the first session after Ather Community Day 2025 (Stack 7 + EL unveil, a
+Saturday), though Nifty Auto rose 2.80% that day so the attribution is
+partial; and 28-Aug-2026 (+8.1%) is the Friday before Community Day 2026,
+where EL launched, with Nifty Auto at −0.11%. Three remain genuinely
+unexplained — 09-Sep-2025, 16-Oct-2025 and 29-Jun-2026, the last being +8.5%
+on a day Nifty Auto fell 2.08%.
+
+### The ledger — 22 commitments, 2 miss / 3 beat / 8 met / 9 pending
+
+Two rows carry more than their verdict:
+
+- **The qualifier moved before the date did.** "The full 42,000 should be
+  operationalized before end of this FY **for sure**" (Q4FY26) became "could
+  spill over into the first few months of FY2028" **one call later**. The
+  plant is tracking; the certainty went first.
+- **The motorcycle horizon has receded faster than time has passed.** Fifteen
+  months took Zenith from "we have begun platform level work" to "more than a
+  year away for sure. Probably two years plus" and "Ather may not be the
+  pioneer this time." That is disclosure rather than the silence Avalon's
+  aerospace programme went quiet in, but it is the same shape. Every EL date,
+  from the same management in the same archive, was met.
+
+**The one hard number the company has ever given was 700 stores, and it landed
+on it** — then it declined to repeat the exercise for FY27 and, in Q1FY27,
+gave no store count at all for the first time since listing. A company that
+refuses guidance tells you something when it stops refusing.
+
+### Flags rendered, never resolved
+
+- **Q4FY26 volume is 83,000 on p3 and 81,000 on p5 of the same call.** 83,000
+  reconciles with the separately-stated +23% QoQ on Q3's 67,800; 81,000 does
+  not.
+- **The Q4FY26 price hike is "INR3,000" on the Q3FY26 call and "roughly about
+  INR1,000 to INR1,500" on the Q4FY26 call.** Roughly 2x apart, never
+  reconciled.
+- **FY26's EBITDA margin is DERIVED, never printed** (~−7%, from two
+  independent routes), and the four stated quarterly wholesale figures sum to
+  ~262,900 against the ~257,300 that "+66%" on FY25's 155,000 implies — ~2%,
+  all of it verbal rounding. Both must come off a filed statement.
+- **Market shares were restated upward between calls** (Q1FY25 7.4%→7.6%,
+  Q4FY25 13.3%→13.6%). Vahan back-dates registrations, which would explain it;
+  no call ever says so.
+
+**F&O membership is NOT established by this archive** and is listed as an open
+hole. Ather has no `oi` row and is in no spec, so nothing here says whether it
+can be a pair leg. Check the NSE list before treating it as one.
+**CLOSED 2026-09-23: ATHERENERG IS in F&O**, first contract 2026-08-26,
+confirmed from `fo_oi` — the loaded NSE bhavcopy, not the transcripts. The
+sentence above stands as written because the point it makes is still right:
+the ARCHIVE could not answer it, and the answer came from somewhere else. It
+still has no `oi` row and no spec, so invariant 7 keeps it out of scoring
+regardless; what changed is that it is now eligible to be a pair leg.
+
+**The transcript long-form notes were NOT written** — the Document Archive
+shows `no note yet` against all six PDFs, which is the honest state. The
+dossier does not depend on them.
+
+**`fetch_transcripts.py` reported `cover_letter: false` on all six and page 1
+of every one IS the covering letter to NSE/BSE.** Harmless here (the reader
+skips it) but the flag is not firing on this issuer's filing format, and a
+future run on a scanned or differently-laid-out filing should not be trusted
+to catch it either.
+
+### Eicher Motors — the Auto tab's second dossier, 2026-09-20
+
+PM: *"now do for eicher motors"*. `EICHERMOT` / BSE 505200, added to
+`yahoo_prices.CANDIDATES` and loaded from 2007-01-01 (4,867 rows). **The 2020
+1:10 split is smooth through the event** — the >15% jump scan finds eight
+moves, all 2007-2010, all GFC-era market moves, so no allow-list entry is
+needed. Scores nothing; `peer_group` NULL; `run_scores.py` still writes 106
+rows.
+
+**SEVENTEEN CALLS IS A SAMPLE, NOT THE POPULATION — the opposite of Ather and
+Avalon, and it changes the tooling.** Screener's concall block starts at
+Q1FY23 (Aug-2022) against nearly twenty years of loaded price. Run unbounded,
+`price_story` reports **45 unexplained 8%+ sessions of which 44 predate the
+first transcript** — which does not make the dossier honest, it makes the
+unexplained list meaningless. Hence `--since`.
+
+#### THE CENTRAL FINDING: most of it is the sector, and the alpha is one tax change
+
+| chapter | Eicher | Nifty Auto | vs sector | sessions |
+|---|---|---|---|---|
+| 1 Aug–Oct 2022 | +24.7% | +3.3% | **+21.4pp** | 60 |
+| 2 Oct 2022–Mar 2023 | −25.9% | −10.9% | −15.0pp | 103 |
+| 3 Mar–Dec 2023 | +46.6% | +48.4% | −1.9pp | 167 |
+| 4 Dec 2023–Jul 2025 | +28.8% | +34.0% | −5.1pp | 407 |
+| 5 **Jul 2025–Feb 2026** | **+52.1%** | +21.1% | **+31.0pp** | 146 |
+| 6 Feb–Sep 2026 | −8.2% | −5.5% | −2.8pp | 141 |
+
+Over the window Eicher did **+143.4% against Nifty Auto's +109.4%** — ~34pp of
+outperformance. **Chapters 3 and 4 are 574 of the 1,025 sessions (56%) and
+Eicher LOST to its sector in both.** Every point of the relative gain and more
+came in chapter 5, on the **22-Sep-2025 GST reform** that cut sub-350cc to 18%
+— and roughly nine in ten Royal Enfields are 350cc. Q2FY26 revenue +45%,
+Bullet +70%, Hunter +41%, enquiry-to-booking 20-21% → 29-30%.
+
+**The uncomfortable read: the market paid Eicher almost nothing for four years
+of strategy and everything for the exogenous rate cut that made the strategy
+pay.** The refreshed Classic/Bullet/Hunter that caught the cut existed because
+of the FY25 spending the market had already marked down — the Feb-2025 print
+(record volumes, margin 24.2% vs 26.1%) is the **worst reaction in the
+archive at −7.4%**.
+
+**Nifty Auto lives in `flow_series`, not `prices`, so `price_story
+--benchmark` cannot reach it.** Computed directly. Worth fixing if a third
+sector-heavy name lands.
+
+#### Two bugs found and fixed, both SILENT_BUGS shape
+
+**1. `fetch_transcripts` silently de-spaced three filings.** PyMuPDF's default
+`get_text()` reads inter-word spacing from the PDF's own encoding. Eicher's
+Q1/Q2/Q3 FY25 (Google-Docs exports) wrap every word in U+202D…U+202C with **no
+space between runs**, so the extractor returned
+`Ourtotalsalesstoodatabout2,27,736motorcyclesinthisquarteras`. Nothing raised:
+the file existed, `scanned` was correctly False, **every number survived
+intact**, and the only symptom was a word count **55% low** (4,353 against a
+real ~9,700) — which reads as "that was a short call", not "the extractor is
+broken". `_page_text()` now falls back to `get_text("words")`, which derives
+boundaries from GLYPH POSITIONS, **only where the default is materially worse**
+(words-mode reorders multi-column pages, so it must not become the default),
+and reports `respaced:Np` per file. The fourteen healthy filings came back
+byte-identical in word count.
+
+**2. `price_story` anchored a non-trading call date BACKWARD.** Eicher's Q4FY24
+was **Saturday 11-May-2024**. The walk-back draft anchored on Thursday's close
+and reported the reaction as **+2.0% — every point of which happened on the
+Friday, BEFORE the call.** Monday, the first session that could have reacted,
+was −0.01%. In range, correctly signed for a good quarter, entirely
+pre-announcement noise. Now resolves forward, so base = Friday's close, same
+treatment a Thursday-evening result already gets. Fixed in **both** sites —
+`reactions()` and `benchmark_test()` — because the plain reaction and its
+sector/idio split must describe the same window.
+
+Both carry acceptance AND rejection tests. **The respacing fixture's rejection
+case is the load-bearing one**: firing on a healthy page would corrupt fourteen
+files to repair three. And the Saturday fixture was wrong on its first run and
+the CODE was right — it put the reaction on the Tuesday and asserted d1 == 0,
+forgetting d1 spans the resolved call day plus one. Comment left at the site,
+per the drawdown-fixture precedent.
+
+#### The commodity test returns zero for a THIRD different reason
+
+Three companies, three near-identical correlation tables, three different
+mechanisms — which is why the regime check is not optional:
+
+| | what zero meant |
+|---|---|
+| Avalon | inputs tested, **measured zero** — pass-through converter, no cost channel |
+| Ather | the binding input (lithium, NMC, DRAM) **has no series in the store** |
+| **Eicher** | the inputs **are** in the store, the cost line **is** large — and management re-prices it quarterly |
+
+Steel, aluminium and copper are genuinely Eicher's stack and all three are in
+`prices`. Over the window HRC +21.1%, aluminium +36.8%, copper +48.6% while
+the EBITDA margin went 23.4% → 24.0%. **Q1FY27 is the proof**: a 4-4.5% input
+shock — the largest in the archive — moved the margin 10bps, because a 1.75%
+price rise and 0.4% of value engineering absorbed it. Royal Enfield took **no
+price increase at all across FY25** and then four tranches in fifteen months.
+A cost line re-priced every quarter cannot show up at 21 days. **Track the
+basis-point bridge management gives; do not rebuild it from LME.**
+
+#### The ledger — 19 commitments, 4 miss / 3 beat / 6 met / 6 pending
+
+- **International was the miss that matters.** *"it will mimic what we saw in
+  India a few years back"* (Q1FY23). Four years later: 100k → 120,634 units,
+  FY24 **went backwards** to 77,209, and midsize share outside India is still
+  the same 8-9% band quoted in 2022. The CKD network built underneath it is
+  real; the growth curve did not travel.
+- **The concession that never had to be made.** Siddhartha Lal wrote midsize
+  share down to *"80%-85%"* in Aug-2023 against Harley, Triumph, Bajaj and
+  Hero entering. Exit share Q3FY26: **88.9%**. It dipped to 84% for exactly
+  one quarter, on the GST slab change, not on competition.
+- **The replacement cycle is the receding-horizon row.** *"it will kick in"*
+  (Q3FY24) → *"we are waiting for that moment"* (Q3FY25) → *"it is yet to kick
+  in"* (Q4FY26), while the installed base went 6m → 8m+. Q1FY27 finally
+  quantified it: **RE-to-RE upgraders are 5-6% of buyers**; ~70% are conquest
+  from other brands. Thirteen quarters, horizon unmoved. Ask whether it is
+  late or wrong.
+- **VECV is the row nobody asks about and it compounded hardest** — EBITDA
+  margin 7.5% → 9.5% across four years, two with a flat-to-down industry, and
+  past 100,000 units in FY26. It is **equity-accounted**, so it reaches EML's
+  P&L only as ₹135-183cr a quarter of share-of-profit and never as revenue.
+  Structure decides attention; attention is not value.
+
+**The capacity date will not sit still.** ₹958cr Cheyyar brownfield to 2m
+units has been stated as FY27-28, then "beginning of fiscal 29" (accepted
+without correction in the same call), then Q2 FY28, then FY27-28 again — three
+different answers in three consecutive calls. Plus ₹1,225cr greenfield at Tada
+(261 acres) for 2.45m by FY29-30, and a **50-50 vehicle-financing JV with
+Volvo** (₹750cr) — the first non-vehicle business in the archive.
+
+#### Flags rendered, never resolved
+
+- **Q4FY24 EBITDA is CORRECTED, not as stated.** The call says *"₹829 crores,
+  up 21%"* — which is DOWN on Q4FY23's ₹934cr, contradicts the 26.5% margin
+  stated in the same breath, and breaks the stated FY24 total. The three
+  earlier quarters sum to ₹3,198cr of ₹4,327cr, leaving **₹1,129cr = 26.5% of
+  ₹4,256cr exactly**. A transcription error — and identifiable as one *only*
+  because **every one of the four complete years in this archive cross-foots
+  to the rupee**, which neither previous company's did.
+- **Stark Future is €50m on the Q3FY23 call and €15m on the Q4FY23 call.** A
+  3.3x discrepancy, never reconciled on any later call.
+- **VECV restates its own comparatives on almost every call** — Q1FY23 EBITDA
+  ₹207cr → ₹218cr, Q2FY25 7.1% → 7.3%, Q3FY25 ₹509cr/8.8% → ₹517cr/9.2%. Each
+  small, the pattern systematic, no call explains it.
+- **Four different April-2026 growth rates in one call** (51%, 57%, 31%, 37%)
+  with no basis stated for any of them.
+- **The midsize share column changes basis mid-archive** — ">125cc" through
+  FY24, "midsize 250-750cc" from FY25 — which is why it jumps ~30% → ~88%. The
+  two are not comparable and the dossier says so on the table.
+- **VECV Q3FY24 parts sales printed as "₹5,060 crores"**, which would exceed
+  that quarter's entire VECV revenue. Reads as ₹506cr on the trend.
+
+**One session in 1,025 moved 8%+** (2025-01-02, +8.7%) — and Nifty Auto rose
+5.18% that day, so most of it is the sector. A large cap grinds: worst
+earnings reaction −7.4%, best +8.0%, both inside the threshold. Compare Avalon
+(18 in 846) and Ather (8 in 347).
+
+**The transcript long-form notes were NOT written** — all seventeen show `no
+note yet`. `EICHERMOT-` has no BL-series twin to reject, unlike ATHERENERG.
+
+### Vahan maker share — the Auto tab's chart, 2026-09-23
+
+PM: *"in the auto tab, I need a graph for market share change on a daily
+basis. Different for PV, 2 wheelers and CV. Only include fno names in the graph
+lines, keep rest as others."* Three stacked charts on Auto's Prices & Watch
+panel, `/api/auto_share` -> `engine.auto_share` (transport shim) ->
+`packages/adapters/vahan_share.py`, which owns the fetch, the roster, the
+arithmetic and the selftest. Scores NOTHING; `vahan_share` is a VOLUME table
+and nothing on this path reaches `prices` or `pillar_scores`.
+
+**DAILY DOES NOT EXIST ON THE OPEN API, AND THAT IS THE SHAPE OF THE WHOLE
+FEED.** Vahan's daily granularity lives only behind
+`/analytics/vahanpublicreport`, which is CAPTCHA-gated. The public dashboard
+API bottoms out at MONTHLY (`calendarType=3`); **4..8 silently fall back to
+YEARLY**, and `transactionLineChart`, `vahanYearWiseRegistrationComparisonChart`
+and `vehicleRegistration` all return twelve monthly values per year. All
+probed. So "daily" here is the **month-to-date level re-read every morning**:
+day t = MTD(t) - MTD(t-1). Two consequences, both printed on the page:
+
+- **FORWARD-ONLY.** First capture **2026-09-23**. A past date's MTD level was
+  never published, so there is no daily history and none can be manufactured —
+  the IndiaMART bargain again. The MONTHLY series is long (13 months stored,
+  the source reaches the 1990s) and is captured alongside, which is the only
+  reason the chart was not empty on the day it was asked for. The toggle
+  defaults to Monthly and the Daily view REFUSES to draw one point — a single
+  dot renders as a flat line, which reads as "share did not move", the one
+  thing one capture cannot tell you.
+- **IT IS A REVISION SERIES, NOT A PRINT.** Vahan BACKDATES: a registration
+  files against its own date, so a month's MTD keeps growing for days. Ather's
+  own dossier records the symptom from the other side — market shares restated
+  upward between calls (Q1FY25 7.4%->7.6%) with no call explaining it. So a
+  naive MTD(t)-MTD(t-1) can go NEGATIVE when a backdated batch lands in the
+  prior month. **The MTD SHARE is what is stored and led with**; it revises
+  gently and converges on the month's final answer.
+
+**THE F&O ROSTER IS READ FROM WHAT ACTUALLY TRADED, NEVER HARDCODED.**
+`_fno_live()` reads distinct symbols from `fo_oi` within 30 days. A hardcoded
+list rots INVISIBLY: a name that leaves F&O keeps drawing its own line and
+stops being in Others, the shares still sum to 100%, and nothing raises. Two
+findings fell straight out of it, both in the selftest so a change upstream
+fails loudly:
+
+- **ATHERENERG IS in F&O** (first contract 2026-08-26) — closing the open hole
+  in Ather's dossier, from the bhavcopy rather than the transcripts.
+- **TATA MOTORS' CV ENTITY IS NOT.** `TATAMOTORS` last traded **2025-10-23**
+  and `TMPV` first traded **2025-10-24** — the demerger, visible as a clean
+  handover in `fo_oi`. Only the PV arm carries futures. **So on the CV chart
+  India's LARGEST CV maker sits inside Others**, which is the PM's rule applied
+  faithfully and NOT an omission. Others is consequently the biggest line there
+  (44.8%), and the per-segment note says why, under the chart it applies to —
+  a CV chart whose residual leads reads as a bug otherwise.
+
+**CV WAS SPLIT INTO M&HCV AND LCV ON 2026-09-24** (PM: *"Mahindra is in LCV,
+only Ashok, TMCV, VECV and eicher are MHCV. Forcemotor is also different"*),
+and **the split is `vehicleSubCategories`, not a list of makers.** Assigning
+tiers by hand would have put Ashok Leyland's 6,595 Dost units into M&HCV and
+Tata's whole book into one tier; the tape already carries HEAVY/MEDIUM/LIGHT,
+so makers fall where they belong instead of where a spec asserts. Confirmed
+before building — Aug-26 MHCV/LCV: Mahindra 746/23,887, Force 171/3,019, Ashok
+Leyland 10,495/6,595, Tata 14,021/17,920, VECV 5,948/1,409. Ashok Leyland and
+Tata STRADDLE both tiers, which a maker list could not have expressed.
+
+  - **`EICHER MOTORS LTD` REGISTERS ZERO VEHICLES.** Every Eicher truck files
+    as `VE COMMERCIAL VEHICLES LTD`, so "VECV and Eicher" is ONE line. Drawing
+    both would put a permanent flat zero beside a real series, which reads as a
+    collapsed business rather than a naming fact. Three MHCV lines, not four.
+  - **`LIGHT PASSENGER VEHICLE` IS TAXI-REGISTERED CARS**, not LCV product —
+    Maruti alone is 23,592 of Aug-26's 43,182. LCV includes it on the PM's
+    choice because it is the only place Force Motors' Traveller appears (95
+    goods against 2,924 passenger); the cost is Maruti at ~27% of the LCV
+    chart, inside Others. The tooltip says so.
+  - **M&HCV DRAWS NO OTHERS LINE** (PM). Its three lines are ~89% and
+    deliberately do NOT sum to 100 — suppressing the residual must not rebase
+    the rest onto a smaller universe, which would inflate every share.
+  - **TMCV IS IN `FNO_EXEMPT`.** Listed (TMCV.NS, "Tata Motors Limited") but
+    absent from the live NSE roster — a demerged entity still in its
+    qualification period. The roster guard correctly dropped it on the first
+    run, leaving Others at 54% of M&HCV and 70% of LCV, the exact complaint
+    that started the rework. Drawn on instruction, the Hindustan Copper
+    precedent: cash-only, never a pair leg. `--selftest` checks the exemption
+    has not ROTTED — the day TMCV enters F&O it stops being an exception.
+  - The CV tiers have **no harvested month shape**: the exports are a
+    maker x category-GROUP pivot and cannot carve sub-categories. `load_shape`
+    SKIPS them and reports it; their skew is basis `none`, so the forecast is
+    plain working-day extrapolation and the tooltip says so. One export with
+    X-Axis = **Sub-Category** would fit them.
+
+**THE OTHER SEGMENTS ARE `vehicleCategoryGroup`, AND THE BUCKETS WERE CHECKED
+RATHER THAN ASSUMED:** `2W = Two Wheeler`, `PV = Four Wheeler`.
+Four Wheeler is PASSENGER — Maruti 168,502 there in Aug-26 against Ashok
+Leyland's **1** (0.0059% of its own 16,861 CV registrations), while the CV
+entity Tata Motors Ltd sits at 36 in Four Wheeler against 3,547+618 in
+Goods+Bus on the MH cross-section. The selftest asserts that as a RATIO, not a
+zero: an `== 0` failed on that single stray vehicle, and "no CV maker ever
+appears in Four Wheeler" is both untrue and not the claim worth testing.
+The eleven groups OVERLAP ~0.6% so they are not a partition — which does not
+touch a share, because every share is computed INSIDE one segment against that
+segment's own separately-fetched total. Tractors and 3W are deliberately out;
+the PM named three segments.
+
+**THE EMPTY-BODY RULE, THIRD AND FINAL FORM.** TRAP 2 is a ROW-COUNT
+short-circuit, and every call here carries a filter that keeps the result set
+under it. So **under a filter an empty body means NO REGISTRATIONS**, not a
+refusal. Treating it as one broke the CV split on its first run:
+`ASHOK LEYLAND LTD.` — the trailing-period duplicate holding 36 vehicles in its
+whole life — has no MEDIUM GOODS VEHICLE row and the entire capture aborted.
+Narrow the query enough and every maker eventually has an honest zero. `strict`
+is reserved for the SEGMENT TOTAL, where an empty body cannot be real.
+
+**ALL-INDIA IS SAFE ONLY WITH A SEGMENT FILTER — and that is measured.**
+Unfiltered, `stateCode=""` short-circuits to an empty body for the largest
+makers (see `vahan.py` TRAP 2) and needs a 36-state sum. **That short-circuit
+is INTERMITTENT** — deterministic on 2026-09-19, gone by 2026-09-23 — which is
+exactly why the state-sum stays: it is the only path correct under both
+regimes, and a test asserting the server stays broken was removed the day it
+failed. WITH a segment filter
+the result set is small enough that it does not fire, and it is **36x cheaper**
+— the whole capture is ~18 requests, ~15s. Hero/2W and ALL/Four-Wheeler both
+reconcile to the state-sum with **zero difference** across five months, and
+`--selftest` re-runs that reconciliation every time, because the day the
+server's threshold moves is the day this silently starts under-counting.
+
+**Others is DERIVED as `total - sum(named)`**, never a separate query, so the
+lines cannot fail to sum to 100% and every unlisted maker is inside it. A
+NEGATIVE Others raises rather than clamping: it would mean a maker string is
+double-counted, and a silently clamped 0 reads as "no unlisted makers", a claim
+about the market rather than a bug report. Tested both ways.
+
+**Wired into `refresh.py` AFTER the F&O bhavcopy step** — the roster is read
+from `fo_oi`, so running first would classify against yesterday's F&O universe,
+and silently on exactly the day a name enters or leaves. **Not in `SKIP_IF_DONE`,
+but the reason first written here was wrong**: it claimed a 15:00 re-run
+captures "a fuller count of the same day". Measured 2026-09-25, **Vahan's
+month-to-date does not update intraday** — 2W read 1,444,108 at the 08:10
+refresh and exactly 1,444,108 hours later, M&HCV 32,797 both times. It refreshes
+once, overnight, so a same-day re-run gains nothing; it is harmless (same
+capture_date, identical values) and lets a failed 08:00 run retry. It also
+means the newest point is genuinely T-1 whenever it is read.
+`export_static.py` enumerates the route and its parity selftest knows it (20
+checks pass), or the vault copy would render the panel empty.
+
+**First cross-section, 2026-09-23 MTD** — 2W total 1,303,493: Others 38.4%,
+Hero 24.8%, TVS 20.6%, Bajaj 9.1%, Royal Enfield 5.5%, Ather 1.6%. PV 284,978:
+Maruti 38.8%, Others 27.3%, Hyundai 12.5%, Mahindra 12.1%, TMPV 9.3%. CV
+68,705: Others 44.8%, Mahindra 26.6%, Ashok Leyland 18.2%, VECV 8.3%, Force
+2.1%.
+
+**Registrations are RETAIL, not dispatches** — companies report wholesales to
+dealers and the two differ by channel inventory. That divergence is the reason
+to track Vahan at all, and it is also why these numbers will never tie to a
+reported volume. The page says so.
+
+**Known and NOT fixed:** the Mahindra PV line is `MAHINDRA & MAHINDRA LIMITED`
+filtered to Four Wheeler, which is clean — but the same maker string
+unfiltered mixes SUVs with the Bolero pickup (39% of its MH Aug-26
+registrations are Goods Vehicle). The segment filter does the splitting here,
+so the charts are right; anyone querying that maker string WITHOUT a segment
+filter gets a blend. `vahan.py`'s illustrative `GROUPS` map is exactly that
+trap and is labelled "NOT a spec".
+
+#### The month-end forecast — on the tab since 2026-09-24
+
+PM: *"Given the sales from the start of the month, can we extrapolate it from
+the 1st till whatever is today and extend that to month end? ... I just know
+sales increase in the second half of the month usually."* Both halves true;
+neither true the way the naive method assumes.
+`forecast = MTD / (working-day fraction x segment skew)`, a panel above the
+share charts, printing BOTH factors rather than only the answer.
+
+**CALENDAR DAYS FLIP THE SIGN.** Hero, Sep-2026: days 20-23 ran
+13,466/CALENDAR day against 14,188 over days 1-19 — a slowdown. Per WORKING
+day the same window is **17,955 against 15,857, a 13% ACCELERATION**. The whole
+apparent slowdown was one Sunday. Public holidays are deliberately NOT
+modelled (basket_index's holiday-calendar ruling); whatever they do is absorbed
+into the measured skew.
+
+**THE MONTH IS BACK-LOADED, BY SEGMENT, AND MILDLY** — harvested from the
+CAPTCHA-gated report builder, four exports now VERSIONED in
+`data/staging/vahan/` because they are the only record of numbers no automated
+step can re-fetch. `observed / working-day`, 1.00 = no skew:
+
+| cut | 2W | PV | CV |
+|---|---|---|---|
+| Jul-26 d15 | 0.995 | 0.927 | 1.006 |
+| Aug-26 d15 | 0.911 | 0.846 | 0.940 |
+| Aug-26 d24 | **0.983** | **0.912** | **0.983** |
+
+**PV is the most back-loaded in EVERY month** — month-end dealer push shows up
+in cars far more than two-wheelers — so the skew is per segment, never one
+market number. And **it is a CURVE**: it relaxes toward 1.0 as the cut nears
+month end, because the late surge has by then been counted. `cut_day` is a KEY
+in `vahan_month_shape`, never averaged over; a cut with no harvested month
+returns skew 1.0 with `basis: none` and the panel labels that row amber, since
+it is plain working-day extrapolation with no back-loading at all.
+
+**THE FESTIVE MONTHS BROKE THE METHOD RECOMMENDED FIRST.** Sep-2025 at d24 is
+0.722/0.659/0.873, far outside the normal band; Navratri began 22 Sep 2025 and
+October-2025 2W then printed **+140.7% m/m**. Year-on-year anchoring cancels
+intra-month shape ONLY WHEN THE SHAPE REPEATS, and the festive effect keys on
+the LUNAR calendar — so it forecast Sep-2026 at +75%/+77%/+41% against a market
+running +20-30% in Jul/Aug. Not used. The working-day method lands +28.6% /
++27.9% / +25.4%, inside the band, which is the plausibility check the other
+failed.
+
+**FESTIVITY IS A PROPERTY OF THE MONTH, NOT OF ONE SEGMENT.** The first
+`skew()` tested each segment alone and KEPT Sep-2025 for CV (0.873, inside the
+band) while dropping it for 2W and PV — so CV's factor blended a festive month
+with a normal one, **0.928 instead of 0.983**, and nothing about it looked
+wrong. Commercial buyers genuinely care less about an auspicious date than
+retail ones, which is why the per-segment test passed and exactly why it must
+not be the test. A period is now judged across ALL segments and excluded from
+every one together; the panel names the excluded month ONCE with each
+segment's own ratio, because that spread is the evidence.
+
+**`_full_month()` reads `vahan_share` before the network.** Fitting over HTTP
+cost 20-30 round trips per page load; the daily capture already stores every
+segment's monthly TOTAL. It REFUSES the current month — its stored total is a
+month-to-DATE, and a partial over a partial gives a fraction near 1.0, a
+"no skew" reading that is pure arithmetic on the one month that matters.
+
+**EACH CHART HAS A LIVE TABLE BESIDE IT** (PM, 2026-09-24, with a mock):
+OEM · LIVE VOL (month) · LIVE SHARE · **YOY (PP)**. The chart gives up its
+right-hand 40% for it. **YoY is in SHARE POINTS, not % of volume** — that is
+the whole point of the column, because a maker can grow volume 20% and still be
+losing its market. Green is share GAINED; a move under 0.005pp gets NO arrow,
+since a green triangle on a flat share is a claim the number does not make.
+
+The comparator is the prior-year same month, looked up **BY NAME** in
+`monthly.periods` and not by index — the 13-entry window means `periods[0]` is
+September-to-September today, and an index would silently compare the wrong two
+months the day `MONTHS_KEPT` changes. **A basis mismatch is accepted and
+stated**: this month is month-to-DATE against a completed month last year.
+Share barely drifts inside a month (±0.3pp on 2W, worst case +0.93pp on Tata
+PV), but on a column denominated in tenths of a point that is not nothing, so
+the header carries the note. Comparing against last year's same-DAY MTD is only
+possible for the two segments whose shape was harvested, and a column meaning
+different things on different charts is worse than one meaning a single
+slightly imperfect thing everywhere.
+
+**THE FIRST DRAW MEASURES ZERO AND IS RECONCILED ONCE.** `#autoshare-box`
+reported `clientWidth` 0 while its children had real rects — the whole document
+did, `window.innerWidth` included — so `W` fell back to 892 and rendered a
+535px chart beside an 826px table on a 1377px panel. Same hidden-section
+problem `loadPair()` already solves. `drawAutoShare` re-measures after paint and
+redraws ONCE, guarded by a `_retry` flag so a still-wrong measurement cannot
+loop. The chart pane is also PINNED to `W`: `flex:0 0 auto` sized it to its
+widest child, which is the LEGEND and not the plot, pushing the table past the
+wrap point and under the graph.
+
+**IT RENDERS AS A DOTTED CONTINUATION OF EACH SHARE LINE, NOT A TABLE** (PM,
+2026-09-24: *"just add a dotted line to show forecast, no need for a whole
+table"*) — solid through the last completed month (or last capture), dotted
+across the interval that has not happened yet. On the monthly view the dash
+REPLACES the current month's point, which was a partial month standing beside
+full ones.
+
+**THE SKEW HAD TO BECOME PER MAKER FOR THAT LINE TO SAY ANYTHING.** A
+segment-wide factor CANCELS out of a share — (mtd/f)/(total/f) = mtd/total — so
+the projected share would have equalled today's exactly and the dotted line
+would have been flat BY CONSTRUCTION, reading as "share will not move" rather
+than "this chart cannot tell you". The makers genuinely differ: at Aug-26 d24,
+PV runs **Tata Motors PV 0.830 against Maruti 0.912 and Others 0.934**, and
+that spread IS the forecast — Tata's share drifts **+0.93pp** into month end,
+Mahindra CV **+0.74pp**, while 2W barely moves (±0.27pp), which is itself the
+finding that 2W share is stable late in the month. `vahan_month_shape` is
+therefore keyed on `label` too, Others is the residual on both sides, and the
+segment forecast is the SUM OF THE PARTS so the projected shares add to 100%.
+A maker with no fit of its own falls back to the SEGMENT skew, never to 1.0 —
+which would assert that one maker alone is not back-loaded while every peer is.
+
+`--forecast` and `--load-shape GLOB` on the CLI; 15 selftest checks, acceptance
+beside rejection (a range not starting on the 1st is refused, a cross-foot
+failure refuses the file, the skew must relax toward 1.0 at a later cut,
+per-maker skews must DIFFER, and forecast shares must sum to 100).
+**KNOWN: n=1 at d24** — one normal month per segment. The daily captures
+supply the curve empirically from October without another CAPTCHA.
+
+### SIAM, and the Inventory sub-tab — 2026-09-25
+
+The original auto plan had **SIAM supplying vehicle ASP. It does not, free or
+paid.** Every statistics page and the full subscription catalogue were read:
+the only "price" product is a raw-material **commodity** report. SIAM is a
+VOLUME source. For ASP use company results (revenue / reported wholesale).
+
+**What SIAM gives free is three numbers a month** — PV, 2W, 3W domestic sales
+(plus a production total), in a press release ~15 days after month end. No
+company split (paid, INR 53,350/yr), no model split (paid, 47,300), no
+cars-vs-UVs, no monthly CV at all. Company-wise **growth rates** arrive free in
+Kotak's monthly auto note (~2nd of the month); absolute units are in its linked
+PDF. BSE's announcements API returns **403** to automated requests (bot
+protection — not routed around), and the morning brief has **no Auto bucket**,
+so neither currently captures OEM monthly dispatches.
+
+**Why SIAM is still worth having: it is WHOLESALE and Vahan is RETAIL.**
+`packages/adapters/siam_wholesale.py` stores both (`siam_wholesale`,
+`vahan_retail_monthly`) and `channel()` joins them; dispatch minus registration
+is what went into dealer stock. The **Inventory** sub-tab (Auto only, between
+Prices & Watch and Company historical analysis) draws it as monthly BARS —
+green built, red drawn — beside a 12-month table. The festive cycle reads
+straight off it: 2W +814,785 into stock in Sep-2025, then -1,029,867 and
+-702,423 as Oct/Nov retail drew it down.
+
+**MONTHLY, PV AND 2W — THE FLOOR THE DATA SETS.** Wholesale is monthly and
+~15 days late, so the newest bar is always last month; a daily flow would need
+a daily wholesale, which exists nowhere free. CV is absent (no monthly SIAM
+CV); **3W is out by design** — Vahan's three-wheeler count is dominated by
+e-rickshaw makers who are not SIAM members, so retail would exceed wholesale
+permanently.
+
+**FLOW, NEVER A LEVEL — there is deliberately no cumulative.** Retail counts
+makers SIAM does not: **Ola Electric is not a SIAM member** (nor Kinetic
+Green, Okinawa, Revolt, Hero Electric), and BMW/Mercedes/JLR/Volvo are members
+whose data is "not available". So every month reads slightly LOW — Ola alone
+~8-16k/month. That is 1-2% of a festive swing, so one bar is sound; summed over
+thirty it drifts ~150k a year into destocking that never happened. Correcting
+it needs those makers' Vahan series, and on 2026-09-25 exactly those queries
+(Ola, BMW) plus the whole 3W category returned **HTTP 500 at every scope** — a
+partial server-side outage — so the correction is deferred, not half-applied.
+
+**Four parse/discovery traps, all silent, all met on the first run:**
+
+  - **A QUARTER READ AS A MONTH.** Sep-2025 prints `84,077units` with no
+    space; a regex wanting `([\d,]+) units` skipped it and took the NEXT
+    figure — the Jul-Sep QUARTERLY total, 229,239, 3x high and plausible. The
+    monthly block is now cut at the quarterly heading so a quarter is out of
+    reach, and `_plausible()` refuses a month over 2.2x its neighbours' median.
+  - **The source's own typo**, `were units 19,02,209 units` (May/Jul-26).
+  - **An unused pid is HTTP 200, never 404** — SIAM serves bare site chrome
+    for pid 623, 700 or 9999, so "scan until 404" never terminates.
+  - **AND THE FIRST EMPTINESS TEST DROPPED TWO MONTHS IN THREE.** A fixed
+    "<6,000 characters is empty" threshold was calibrated against a convention
+    write-up (12,693) — but an ordinary monthly release is 4,898-5,319, so only
+    quarter-end releases (~9,585, with an extra section) survived. The backfill
+    stored ten months, Dec/Mar/Jun/Sep, reported success, and looked like a
+    feed that simply publishes quarterly. Emptiness is now read against the
+    chrome MEASURED each run (pid 999999, 3,557 characters). A threshold
+    calibrated on the wrong sample; regression-tested at 4,898.
+
+**SIAM reused a number:** Dec-2025's "PV without Tata" is 270,704, identical to
+Dec-2024's and implying Tata sold 128,512 PVs that month. The ex-Tata column is
+therefore not stored. Tata IS in the headline PV in all 31 months — there is no
+basis break (a hypothesis tested and rejected before it reached the page).
+
+`vahan_share --selftest` now reports its two LIVE checks as **SKIP** when
+Vahan is down rather than crashing: on 2026-09-25 it crashed on an Ashok
+Leyland 500, a partial source outage presenting as a broken adapter.
+
+The "Auto is not scored…" line is removed from the Auto tab (PM); **IT still
+carries the identical line.** Refresh step `SIAM wholesale` runs after `vahan
+share`; route `/api/auto_inventory` is in the exporter and the verifier.
+
+## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
+
+PM: *"can we create a copy of the front-end in the vault that can be accessed
+by me elsewhere? It should get updated with each full-refresh?"* The vault is
+in OneDrive, so a file written there syncs to the phone and to any other
+signed-in machine. That is the entire delivery mechanism — no server, no port,
+no hosting cost, the same constraint everything else here is built under.
+
+`packages/web/export_static.py` writes **ONE self-contained HTML file** to
+`OneDrive - PinPOINT\Obsidian Vault\Investment Micro-System\`, beside a README
+that tells the PM how to read it. **NOT into `Dashboard/`** — that is the old
+vault system's node dashboard on 8765, which the standing ruling says is not
+this project.
+
+**It is a photograph of the app, not a second app.** `app.html` is copied
+through byte-identical with ONE `<script>` inserted before `</head>`; ~920
+`/api/*` payloads are computed once by importing `engine` directly and baked
+into that script, and a shim in front of `window.fetch` answers from the map.
+The day this exporter starts editing app.html is the day the vault copy and the
+desk copy can disagree about what the system says, and a second front end is
+exactly what this project does not want.
+
+**It imports `engine`; it does not call the server.** refresh.py runs
+unattended and serve.py may not be up — driving the export over HTTP would make
+the vault copy silently skip on any morning the port was busy.
+
+### Three things cannot survive the freeze, and each is loud
+
+- **A missed route** lands in `window.__IMS_MISSES` and turns the snapshot bar
+  amber with the route named. **This is not theoretical.** The first build
+  trimmed `/api/tape?pillar=…` with no `groups`, on the reasoning that app.html
+  hides the Pair tab when `live:false` (IT, Auto) so that request is
+  unreachable. A click-through of the nav missed it **three times**: `pair` is
+  SECTOR_SCOPED, so switching to IT or Auto re-runs `loadPair()` for the new
+  sector even though the section is not the visible one. It costs **3.7MB of
+  the 11MB** and it is baked, because the cheap alternatives are worse — an
+  `{error:…}` stub makes `getTape()` throw into a visible error banner on a tab
+  where nothing is wrong, an empty payload draws a blank chart (the silent
+  hole), and leaving it to miss puts a permanent amber warning in the bar.
+- **Staleness.** The in-page refresh light reads the FROZEN `status.json`, so
+  it stays green forever once the file stops being rewritten — a copy that
+  stopped updating would look exactly like a quiet market, which is the failure
+  `refresh.py`'s light exists to prevent. The snapshot bar therefore counts
+  **weekdays in the viewer's own browser** against the export stamp, the only
+  clock in the file that still moves, and goes amber at 2. Weekdays rather than
+  true trading days because a holiday calendar is another thing to maintain and
+  wrong the first year nobody updates it; the bar says "weekdays" so the
+  approximation is stated rather than implied.
+- **Filed PDFs** (~20MB, not in git) stay on the desk machine. The citation
+  links remain — they are provenance — and a click says where the document is.
+
+### Wiring and the two rules that fell out of it
+
+**A step in `refresh.py`, LAST, after `front end`** — `build_frontend.py`
+verifies every route renders, and exporting a route it just failed on would put
+the failure in the vault where nothing checks it. **BACKGROUND**, for the same
+reason as the IndiaMART sweep: ~920 payloads take ~80s and the `.vbs` launcher
+runs refresh BLOCKING before opening the page, so a foreground export turns an
+~18s morning launch into ~100s. Never fatal — OneDrive being signed out is a
+laptop condition, not a code failure.
+
+**Deliberately NOT in `SKIP_IF_DONE`:** a second double-click at 15:00 should
+re-export against the fresher closes, exactly as the equity load re-pulls them.
+That permits two exports running at once, which is why the write is **atomic**
+(temp file beside the target, `os.replace`) — OneDrive watches that folder and
+must never sync a half-written 11MB page that opens blank on the phone. The
+background log name is now derived from the step label, so
+`cement_watch_last.log` keeps its name and the new one is
+`vault_copy_last.log`.
+
+**The Book is included and `--no-book` excludes it.** The vault is the PM's own
+OneDrive inside PinPOINT, not a third party; "position data stays in gitignored
+`data/`" is a rule about the git remote, and this exporter writes nothing into
+the repo. Excluded, the Book tab says so rather than rendering empty.
+
+**`--selftest` carries route parity with `serve.py`.** A route app.html fetches
+that the exporter does not enumerate FAILS the test, rather than becoming a
+blank tab in the vault. It also checks the key normaliser both ways (it exists
+twice — Python and JS — and a divergence misses every parameterised route while
+the plain ones keep working, which reads as "some tabs broke") and the
+`</script>` break-out, with an acceptance case beside the rejection case per the
+GLOB lesson. **One fixture was wrong on its first run and the code was right**
+— it expected `?pillar=…&groups=…` in insertion order, forgetting that the
+whole point is to SORT and `groups` < `pillar`. Comment left at the site, per
+the drawdown- and Saturday-fixture precedents.
+
+Verified by opening the exported file and driving it: every sector × every
+visible sub-view, all four `#win` options, all five pillar pills, all seven
+index ranges (3 charts each), all 30 OI rows expanded, all 23 what-moved rows
+expanded, all 801 `oi_movers` date×window combinations, every company picker in
+four sectors, and the `/data/` link interception. **Zero misses.**
+
+### It updates daily, and there was exactly one hole
+
+The chain: the Claude Desktop scheduled task `daily-full-refresh` fires
+`/full-refresh` at 08:00 → its Step 3 is `python packages/refresh.py` → whose
+last step is `vault copy`. The launcher re-runs the same file on every
+double-click, so a second export lands whenever the PM opens the dashboard.
+Nothing extra to schedule.
+
+**The hole was `daily_review`, and it is the one staleness the snapshot bar
+cannot catch.** That skill runs **outside** `refresh.py` on purpose and is the
+only thing that writes `book_*` — so a review loading a paste at 16:00 changed
+the Book tab on the desk and left the vault copy showing the PREVIOUS
+snapshot's positions, pairs, YTD ledger and long/short index until 08:00 the
+next day. The bar would still read "today · green", **correctly** for
+everything that came out of the morning refresh and **wrongly** for the book,
+and nothing on the page can tell the two apart — a green light over a stale
+half is worse than an amber one over the whole.
+
+So `daily_review` grew **Step 2c: re-export, foreground, after the paste loads
+and after the review verdicts are recorded** (one run at the end covers both —
+`add_review` writes `book_pair_reviews`, which the tab renders). ~90 seconds.
+The same rule generalises: **any skill that writes a table the page reads and
+does not run inside `refresh.py` owes the vault copy an export.** Today
+`daily_review` is the only one.
+
+Its "position data stays local" bullet is amended rather than deleted — the
+vault copy is a deliberate, PM-sanctioned exception to it, and a rule with a
+silent exception is how the rule gets ignored.
+
+**A second hole, same shape, in the 08:00 run itself.** `refresh.py --consume
+metals` returns BEFORE the STEPS list, so it does not re-run `vault copy` — and
+the Kotak pack lands ~08:50-09:00 IST against an 08:00 start, so on a normal
+morning the export is built off PRE-PACK scores and the late-pack path then
+rescores behind it. Both the `full-refresh` skill and the scheduled task's own
+prompt now say to run `export_static.py` after `--consume metals` +
+`run_scores.py`, and say why. **Nothing else in the 08:00 sequence needs it**:
+mail, brief, cement pack and BBG all finish before `refresh.py`, so its own
+step already catches them. Rescoring without re-exporting is how the offline
+copy and the desk quietly stop agreeing.
+
+### The IndiaMART watch: the median could not move, and the plain mean lies (2026-09-20)
+
+PM: *"what happened to the cement price check from daily mart? Any updates?"*
+then *"can we do a mean instead of median?"* Both answered with the panel's own
+20 captures; full write-up is `docs/SILENT_BUGS.md` **entry 11**.
+
+**It ran perfectly and signalled nothing.** 20 captures (2026-08-28 ..
+2026-09-20, ~1,100 listings/day; only 09-02 and 09-03 missing, days no refresh
+ran at all). Across 5 regions x 19 day-pairs, **all 95 matched-pair medians
+were exactly +0.000** — while ~40% of matched listings re-priced every day. A
+median of per-listing changes only leaves zero when MORE THAN HALF the panel
+moves the same day; the most that has ever moved at all is 45.3%. **The
+indicator was structurally incapable of firing and read on the page as a calm
+market.**
+
+**The plain mean was refused, with numbers.** A listing flipping 290 <-> 430
+reads +48.3% up and -32.6% back, so the arithmetic mean of a round trip on an
+UNCHANGED price is **+7.86% per leg**. Compounding the daily plain means over
+the 19 day-pairs gives **+10.72%** against a panel whose own median level went
+**-1.47 / 0 / 0 / 0 / 0**, and it was positive on **19 days of 19**. At
+`ALERT_PCT = 1.0` it would have alerted most weeks on churn.
+
+**`matched_pct` is now the MEAN OF LOG CHANGES.** It cancels the flip by
+construction and compounds to +0.55% against a true ~0%, and unlike the median
+it has variance (-0.40 .. +0.30, both directions). `matched_median_pct` and
+`n_moved` are stored beside it and `--report` prints `moved%`, because **+0.00
+across a panel where 40% re-priced and +0.00 across one that did not move are
+different statements and the headline cannot tell them apart.**
+`--rebuild` recomputed all 20 captures from `cement_watch_listing` — the
+listings table holds every row ever scraped, so a change of statistic
+backfills rather than starting a second basis inside one column. The selftest
+gained four cases: the symmetric flip (log mean 0 where the plain mean is
++7.859), a real uniform +5% coming through as log(1.05), and the duplicate fix
+below — acceptance beside rejection, per the GLOB lesson.
+
+**A second bug in the same function.** The matched-pair join built
+`{product_id: price}` over rows keyed `(capture_date, product_id, city,
+category)`, so an id under several cities silently kept **whichever row SQLite
+returned last** — 727 collisions, up to 4 copies, and the same listing could
+appear to move between two copies of itself. `_panel()` averages now.
+
+**`ALERT_PCT = 1.0` IS NOW CALIBRATED, and the August guess survived.** There
+was nothing to calibrate against while the median sat at zero. On the log-mean
+basis: 95 readings, mean +0.027, sd 0.368, |move| p95 0.694, **p99 0.949** — so
+1.0 sits just above the panel's own 99th percentile and fires on **0 of 19
+days** at `MIN_REGIONS = 2` (0.5 would fire on 16%). The value did not change;
+the justification did. **Still thin at 19 day-pairs — re-measure at ~60.**
+
+### The ask chart is on the Cement tab, and the line is a MEAN
+
+PM, same day: *"put the first graph below the score graph in cement tab, above
+the stock price"*, then *"why can't you just put the average of all bags in a
+region"*. Both taken; the log-mean panel is NOT displayed anywhere — it stays
+the alert statistic and nothing else.
+
+**The chart line is the MEAN level, and the median was wrong for it too.** Over
+the 20 captures the mean is both more informative and smoother: **south's
+median is pinned at exactly 300 on every single day** while its mean moves
+308.1-312.8, and **north's median jumps to 350** where its mean stays inside
+336.0-345.5. A panel carrying ~100 distinct price points puts a median on a
+round number and holds it there — the same coarseness that pinned the
+matched-pair median at zero, showing up a second way. Stored as `mean_bag`.
+
+It is the **per-listing** mean (`_panel()`, so a listing syndicated across four
+cities counts once), which lands within ~1 Rs of the raw all-rows mean on every
+region and is the sounder of the two.
+
+Plumbing: `engine.cement_watch()` gained a `series` block and the chart rides on
+**that existing route rather than a new one** — the Overview already fetches it,
+and a new route would have to be added to `export_static.py`'s enumeration or
+the vault copy would render the panel empty. `drawCementAsks()` reuses
+`lineChart()`, so the three charts share one visual grammar, and it renders on
+**cement only** — an empty box on the other four sectors would read as a broken
+query.
+
+**The x-axis says its own span, in the axis label.** The ask chart is
+sandwiched between two charts running the selected span (often months) while it
+holds 20 days, and three stacked charts read as one shared time axis unless
+told otherwise. The axes genuinely cannot be made to match — capture began
+2026-08-28 and nothing before it exists — so the label carries
+`own span 28 Aug-20 Sep, shorter than the charts above and below` rather than
+leaving it to the note underneath.
+
+**AND IT HAS NEVER HAD THE EVENT IT EXISTS FOR.** The whole point is to lead
+the Kotak pack by ~15 days. **The pack has printed no new month since capture
+began**: the Monthly Prices sheet in the 2026-09-18 staging file ends at
+2026-08-31 (Excel serial 46265 — checked directly), so 20 days into September
+there is no September column at all. The loader is right; Kotak has not
+published. So the upper tail measured above is **noise only, never a known
+true positive**, and nothing yet says whether this panel leads, lags or is
+unrelated. Keep sweeping; judge it on the first real hike.
+
+## The Results tab — sell-side estimates vs the print, added 2026-09-22
+
+PM: *"add a Results tab in the end, it will be used for forecasting, storing
+result estimates from sell-side analysts... sectors and then within that,
+companies. Within each company, a view of results and estimates for quarter."*
+Last top-level tab. Sector chips → company picker → one panel per period,
+newest first: every house's estimate for a metric, the consensus, the print,
+the surprise, a beat/miss verdict. `/api/results?sector=&entity=` →
+`engine.results_view` (transport shim) → `packages/results/results_io.py`,
+which owns the arithmetic, the loader and the selftest (basket_index's split).
+
+**THERE IS NO NEW NUMBER TABLE, DELIBERATELY.** Estimates go in `estimates` —
+whose schema comment has said "feeds the Projections tab" since day one; this
+is that tab — and prints go in `observations` with `factor='actual'`, the
+convention concall-ingest and `steel_actuals.json` already use. So the Q1FY27
+steel and aluminium prints P4 grades against showed up on the tab before a
+single row was loaded for it. Both tables carry a NOT NULL quote, so invariant
+1 holds on both sides of every row. The one new table is `results_calendar`
+(WHEN a print lands) because neither existing table has a place for a date
+that is not a fact about the business. The consensus panel and valuation_pe
+filter on `broker IN ('consensus_yahoo','bloomberg')`; those two names are
+REFUSED as brokers here, so the machine feed and the house rows can never
+blur. Nothing on this path reaches `prices` or `pillar_scores`.
+
+**The roster is a UNION, resolved through the peer group first.** Specs (a
+scored name's `peer_group` names its tab — aluminium.yaml says `sector:
+aluminium` for six names whose tab is `non_ferrous`; a reporting unit such as
+Novelis takes its parent's), then the `entities` table (IT lives only there),
+then the dossiers joined on NSE symbol via `yahoo_prices.CANDIDATES` (Ather
+and Eicher have no spec and a NULL sector in the table). 47 names, none
+unplaced; an unplaceable one would list under `other`, never vanish. Every
+sector chip renders even at 0/N, and the picker offers every covered name
+with "nothing stored" against the empty ones — the picker is the coverage
+list, not a list of what happens to be loaded.
+
+**Three guards in the loader, each with acceptance AND rejection cases in
+`--selftest` (27 checks):**
+
+- **All-or-nothing per file.** One bad row refuses the whole file with every
+  problem listed. A half-loaded file is the partially-corrected shape from
+  the aluminium clean-up: it looks fixed and is not.
+- **Units must agree within (entity, period, metric)** — across the file and
+  against the store. Kotak writes "Rs41.5bn", Emkay "Rs4,150 cr"; a median
+  of the two is 2,095.75 of nothing, plausible, and nothing downstream would
+  complain (the SILENT_BUGS shape). Money lines are INR cr, volumes `t`,
+  per-tonne INR/t, margins `%`, Novelis USD mn — and `tata_steel`'s EBITDA/t
+  is `INR/t India` because the stored print is standalone; a bare `INR/t`
+  against it is refused, correctly, since consolidated and standalone are
+  different measures. The quote keeps the source's own figure, so every
+  conversion is auditable.
+- **An estimate dated after the print is not a forecast.** Kept and shown as
+  `post-print`, excluded from the consensus the print is graded against.
+  Including it is the `effective_from` look-ahead: the surprise shrinks
+  toward zero because the "estimate" already knew the answer.
+
+Consensus is the **median of each broker's LATEST pre-print estimate** (a
+revision replaces, never averages with, the house's earlier number). Beat/miss
+follows `METRICS[m].better` — a lower cost/t beats; capex carries no verdict.
+"In line" is within 1% (0.2pp on margins), a named constant printed in the
+meta-line. Several distinct prints for one metric are FLAGGED with all values
+listed, latest shown, none corrected. `1QFY27E`/`2QFY27F`/`FY27E` normalise to
+`Q1FY27`/`FY27`; FY sorts after its own Q4.
+
+**Only numbers the source STATES are loaded.** "PAT +6% vs est" gives the
+actual, not the estimate: 349/1.06 is arithmetic the broker did not write
+down. The seed file (`data/results/staging/2026-09-22_q1fy27_digest_seed.json`,
+tracked) carries 9 estimates and 14 prints lifted verbatim from the digests,
+which is why the first cross-section reads Shree EBITDA/t 1,024 vs Emkay 1,200
+(−14.7%, miss), Dalmia 664 vs KIE 701 (−5.3%, miss), Novelis $516mn vs Kotak
+$508mn (+1.6%, beat). The digests end 18-08-2026; **Q2FY27 previews in early
+October are the first quarter this tab forecasts LIVE.**
+
+**Feeding it is agent-only, like every extraction here — `/results-ingest`.**
+Stage a cited JSON, `results_io.py --load`, then `export_static.py` (the
+daily_review rule: a skill that writes a table the page reads outside
+`refresh.py` owes the vault copy an export). `refresh.py` runs `--load-all`
+each morning so a staged-but-unloaded file lands at 08:00. The exporter
+enumerates every sector × roster name (~60 payloads) and its parity selftest
+knows the route; `build_frontend.py` checks it. The API server was restarted
+for the engine change.
+
+**Known, not fixed:** `observations` holds the steel/aluminium Q1FY27 actuals
+three times over (steel_actuals.json was loaded before load_observations grew
+its identity check). `periods_for` dedupes on (source, period, metric, quote)
+at read time; the duplicate rows are still in the table.
+
+### The end labels came off every line chart — 2026-09-23
+
+PM: *"in scoring tabs for all sectors, I see you write the company name at the
+end of the graphs and draw a small line to show which line graph is which
+company. Remove that, it makes the visualization confusing. I can just hover
+and see."*
+
+**What was there:** each line's last value carried its name in the right
+margin, de-collided down a 13px ladder with a leader line back to the true
+value. It was built because five names inside a 1-5 band overlap routinely —
+and the cure was worse than the disease. On a tight band EVERY label is
+displaced, so the chart ended in a column of names joined by diagonal leaders
+to dots they do not sit beside, and the eye has to trace each one.
+
+**Identity was already answered twice over**, which is what made the third
+answer the confusing one: the **legend** above each chart pairs every name with
+its colour, and the **hover readout** lists every series at the crosshair date
+with its key, value and label (verified live: the score chart returns
+`2.17 hindalco / 3.29 hindustan_zinc / …`, the price chart the same names in
+percent). Neither was touched.
+
+**The end DOT stays.** It marks where a line stops — a fact about the data
+rather than a label, and it cannot be mis-attributed.
+
+**`MR` went 116 → 16 and the plot reclaimed ~100px**, about 12% more width on a
+929px chart, which is most of what made a flat 1-5 band hard to read.
+
+**One thing had to move with it, and it is the kind that goes unnoticed:** the
+x-axis ticks were all `text-anchor="middle"`, safe only while MR held a 116px
+gutter. At MR 16 a centred `23 Sep` on the newest tick overhangs the svg and
+clips to `23 Se` — and a truncated axis label just reads as a shorter month,
+so nothing would raise. Edge ticks now anchor `end`/`start`; checked
+positionally rather than by eye (rightmost text ends at 914 of 929, zero
+elements overflowing).
+
+Applies to all four `lineChart()` consumers — score, price, the cement ask
+panel and the sector price chart — because it is one function. Verified across
+non_ferrous / steel / cement / mining / ems: **0 `.vend` elements, dots
+preserved, legends intact.** The dead `.vend` CSS rule is deleted too, not left
+behind.
+
+### The economics chart plots ₹/tonne, not the score — 2026-09-23
+
+PM, after asking why SAIL's economics line looked like everyone else's despite
+carrying the group's highest coking-coal salience: *"keep the scores as is, but
+in the economics graph, give raw ebitda/t. Scores make no sense to me."*
+
+**The score is untouched.** It is still computed, still persisted, still what
+the table, the composite and the backtest read. Only the Pair tab's top chart
+changed, and only on the economics pillar.
+
+**WHY THE SCORE WAS THE WRONG PICTURE HERE, measured before changing anything.**
+The hill curve anchors 5% of EBITDA at 4.0, and on a strong tape the bridged
+names sit far past it — the four steel mills ran 1.6x to 5.0x the anchor, so a
+**3.09x spread in the underlying (8.17% -> 25.21% of EBITDA) compressed into
+0.485 of a 4.00-point scale.** Worse, it **inverted the ranking**: over the
+past month SAIL had the largest raw improvement (+26.45pp against Tata's
++10.46pp) and the *smallest* score gain (+2.058 vs Jindal's +2.694), because it
+hit the ceiling first, and the cross-sectional spread NARROWED 0.920 -> 0.485
+while the raw numbers were fanning out. The counterfactual is the cleanest
+statement of it: **deleting the coking coal line from SAIL's bridge entirely
+moves its score by 0.028 points** while costing it 3.70% of EBITDA. Not a bug —
+invariant 4's flat tail doing exactly what it is specified to do — but it makes
+the chart say the opposite of the data in precisely the weeks that matter.
+
+₹/t has no ceiling and separates them: **SAIL +2,515/t against the pack's
++1,394 to +1,486.**
+
+**Plumbing.** `bridge.py` already computed `d_ebitda_per_t` (with `_primary()`
+handling SAIL's co-product basis — 16.64mt, not one 8.32mt leg). `run_scores`
+now PERSISTS it; `tape.py` exposes `ebitda_per_t` per point and **derives every
+point from `d_ebitda_cr` and today's spec tonnage rather than mixing the newly
+stored value with derived history** — 174 of 175 stored dates predate the
+persist, and two denominators inside one line is the numbers-right-basis-wrong
+shape this repo keeps meeting. Stored and derived agree to <0.01% (the gap is
+`d_ebitda_cr` being rounded to 1dp before storage). A WITHHELD point stays a
+hole, exactly as on the score chart — Coal India's line correctly stops where
+its TTM offtake went stale.
+
+**Two things that had to move with it, neither obvious:**
+
+- **Divergence markers are still computed on the SCORE.** `DIV_S = 0.25` is on
+  the 1-5 scale; run against ₹/t every session clears a threshold meant to be
+  rare and the chart buries itself in triangles. The marker is re-anchored to
+  the plotted series' value so it still sits on the visible line.
+- **The axis fits the data on ₹/t and stays FIXED at 1-5 for a score.** A score
+  chart that rescaled to its own range would make a quiet week look violent.
+  Zero is always on the ₹/t axis because the sign is the whole point.
+
+**AND ONE REAL BUG, caught by cross-checking rather than by looking.** The first
+version chose per-tonne mode PER ENTITY, falling back to the score when a name
+had no ₹/t. `apl_apollo` has **0 of 174** per-tonne points — its economics is a
+**spread z-score** (`detail.basis: spread_z`, the HRC-tube spread), with no
+tonnage anywhere — so it fell through and drew its 1-5 score on the rupee axis,
+hovering as **"+2/t"**. A score rendered as a rupee figure, plausible and
+wrong, on a chart nobody would re-check. The mode is now decided ONCE per
+chart, and a name with no ₹/t is dropped and NAMED underneath rather than
+silently converted.
+
+Verified across every sector x every pillar: the four bridged sectors switch to
+₹/t, EMS (which withholds economics) falls back cleanly to the score, and
+valuation / mood / guidance / composite are untouched everywhere.

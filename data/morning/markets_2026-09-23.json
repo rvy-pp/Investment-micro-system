@@ -1,0 +1,185 @@
+{
+ "date": "2026-09-23",
+ "fetched_at": "2026-09-23T08:13:49",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-22",
+    "close": 7764.64,
+    "prev_date": "2026-09-21",
+    "chg_pct": -0.0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-22",
+    "close": 27244.28,
+    "prev_date": "2026-09-21",
+    "chg_pct": 0.45
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-22",
+    "close": 51863.69,
+    "prev_date": "2026-09-21",
+    "chg_pct": -0.36
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-22",
+    "close": 12689.82,
+    "prev_date": "2026-09-21",
+    "chg_pct": 2.06
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-21",
+    "close": 227.38,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.3
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-21",
+    "close": 615.52,
+    "prev_date": "2026-09-18",
+    "chg_pct": 9.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-21",
+    "close": 445.14,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.41
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-21",
+    "close": 362.66,
+    "prev_date": "2026-09-18",
+    "chg_pct": 1.41
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-21",
+    "close": 186.11,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.66
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-21",
+    "close": 59.38,
+    "prev_date": "2026-09-18",
+    "chg_pct": -0.82
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Is It Too Late To Make Money On Accenture Stock After Its Rebound?",
+    "publisher": "Trefis",
+    "when": "2026-09-22 20:18Z",
+    "link": "https://finance.yahoo.com/m/87b8ff8f-bf5f-316e-801b-546fb2d7e13a/is-it-too-late-to-make-money.html"
+   },
+   {
+    "title": "Accenture, AWS Launch Six Technology, AI Offerings for Mid-Market Companies",
+    "publisher": "MT Newswires",
+    "when": "2026-09-22 12:23Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-aws-launch-six-technology-122300892.html"
+   },
+   {
+    "title": "Accenture Edge Collaborates with AWS to Help Mid-Market Organizations Harness AI and Accelerate Business Impact",
+    "publisher": "Business Wire",
+    "when": "2026-09-22 11:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-edge-collaborates-aws-help-115900128.html"
+   },
+   {
+    "title": "Jefferies Adjusts Price Target on Accenture to $190 From $130, Keeps Hold Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-22 09:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jefferies-adjusts-price-target-accenture-091522422.html"
+   },
+   {
+    "title": "Accenture, Google Cloud Name Volvo Cars Lead Partner for Automotive Software Platform",
+    "publisher": "MT Newswires",
+    "when": "2026-09-22 07:44Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-google-cloud-name-volvo-074401325.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "PR Newswire",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/belcan-cognizant-company-recognized-2025-120000803.html"
+   },
+   {
+    "title": "Deutsche Bank Raises Price Target on Cognizant Technology Solutions to $70 From $65, Keeps Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-18 11:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-raises-price-target-113308379.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia (NVDA) Targets 22,000 GPUs For New Southeast Asia AI Factory Hubs",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-23 02:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-targets-22-000-021206548.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Price Prediction: Marvell, AMD & Broadcom- Our Bold Price Predictions for 2027",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-22 16:00Z",
+    "link": "https://finance.yahoo.com/m/682ec492-4731-32a9-9e65-942f30876693/price-prediction%3A-marvell%2C.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stock Has Blown Past Nvidia This Year. Is It Still the Better Buy?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-22 20:20Z",
+    "link": "https://finance.yahoo.com/m/a21a3171-64f7-309c-84ab-c75c833015d1/amd-stock-has-blown-past.html"
+   },
+   {
+    "title": "AMD Stock Just Sent a Huge AI Signal",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-22 19:07Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-stock-just-sent-huge-190755384.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23350.0,
+  "chg_pct": 0.09,
+  "stamp": "23-Sep-2026 08:13:31",
+  "expiry": "29-Sep-2026",
+  "volume": 1689,
+  "nifty_close": {
+   "close": 23329.0,
+   "stamp": "22-Sep-2026 15:30"
+  },
+  "gap_pts": 21.0,
+  "gap_pct": 0.09
+ }
+}

@@ -33,6 +33,21 @@ source of truth; this step only fixes where it sits in the sequence. It writes
 `data/morning/brief_<today>.json`: the 24h all-mail sweep, one summarizer agent
 per non-empty sector bucket, the AI/semis bullets and the ACN/CTSH reasons.
 
+**Since 2026-09-18 every mail bullet also carries a `detail` block** — a
+2–3-sentence summary plus 3–5 number-first points, which the Overview renders
+as a click-to-expand drawer under the bullet (the what-moved commodity rows'
+grammar, PM's own comparison). Two consequences for this step, both in
+`morning-brief` §3b and repeated here because they change the run's cost and
+its failure shape:
+
+- The sector agents now `read_resource` the body of **every mail they
+  bullet** rather than a picked few. That is ≤24 body reads, so the step is
+  slower than it was and the token spend sits with the sector agents.
+- **The collapsed bullets must look identical to before.** The drawer is a
+  second layer, not licence to write longer bullets; if the brief comes back
+  with four-line bullets, the expansion has eaten the thing it was added to
+  protect. Check the rendered Overview, not just the JSON.
+
 Run it **here, not later**, for two reasons:
 
 - It needs the same interactively-authenticated M365 MCP as step 1, so both
@@ -92,6 +107,63 @@ Two exit codes, and the distinction is the point:
 
 Needs the machine **awake and logged in**. Locked is fine; asleep was already
 fatal to the whole run.
+
+### `NOT TODAY` is not the end of the step — PM instruction, 2026-09-17
+
+**The mail lands ~08:50-09:00 IST and the scheduled run starts at 08:00.** So on
+a scheduled run `NOT TODAY` at 08:0x is the EXPECTED first answer, not a fault.
+On 2026-09-17 the pack arrived at 08:58, twenty minutes after the first attempt,
+and the run had already written it off as a four-day sync gap.
+
+So the rule is: **do not stop at `NOT TODAY`. Go and find the newest pack that
+exists, and load it if the store has not seen it.**
+
+1. Run `outlook_pack.py --save`. If it dates today, done.
+2. Otherwise search the mailbox for the latest pack **with no date window** —
+   `outlook_email_search` with `query: "Daily Metals Pack"` and no
+   `afterDateTime`. The 24h sweep is the wrong instrument here; the last pack
+   may be from yesterday morning or older.
+3. Compare that mail's date against the newest `data/staging/metals_pack_*.xlsx`.
+   - **newer than anything staged -> USE IT.** Re-run `outlook_pack.py --save`;
+     the mail may have arrived in the interim, or Outlook may have only just
+     synced it. Then `refresh.py --consume metals`, `run_scores.py`, **and
+     `packages/web/export_static.py`.**
+
+     The export is the one people will forget, so it is spelled out: `--consume`
+     returns before the STEPS list, so **it does not re-run the vault copy** —
+     and on a normal 08:00 morning the pack lands AFTER the main `refresh.py`,
+     which means the vault copy was built off pre-pack scores. Without this it
+     holds yesterday's commodity prices until tomorrow, under a green snapshot
+     bar. Rescoring without re-exporting is how the offline copy and the desk
+     quietly stop agreeing.
+   - **already the newest staged file -> SKIP.** The store has it; re-loading
+     changes nothing and the prices are legitimately as old as the last pack.
+4. Only after BOTH of those fail is the pack genuinely missing. Say so with the
+   date of the newest one that exists.
+
+**Retry `outlook_pack.py --save` once before concluding anything.** It returned
+`Outlook UNREACHABLE` once on 2026-09-17 purely because a separate PowerShell
+COM session was holding the Outlook object; five seconds later the same command
+saved the file. One transient COM error is not a broken capability.
+
+**The M365 connector is NOT a fallback for the metals pack, and here is the
+measurement.** Read on 2026-09-17, `Daily Metals Pack, September 17, 2026.xlsx`
+(1,943,643 bytes) came back as 200,036 characters / 834 lines ending in
+`[truncated: 1 of 5 sheets included]`, and the rows it kept were Excel serials
+**40182 .. 41381 — 2010-01-04 to 2013-04-17**. It truncates from the OLD end, so
+what survives is thirteen years stale and today's prices are exactly what is
+missing. Do not stage it, not even "for history": the store already has that
+history from every prior pack. The cement pack is WIDE and does come through
+whole, which is why step 2b uses the same connector happily.
+
+**Diagnose a persistent COM miss by walking the folders, not by guessing.** A
+read-only PowerShell that recurses `$ns.Folders` and Restricts on
+`[ReceivedTime]` will show, per folder, every `*asic materials*` mail COM can
+see with its attachment names. On 2026-09-17 that walk proved the local store
+genuinely lacked the 09-15 and 09-16 mails while holding 09-07..09-11 and 09-17
+— a real gap, but one today's pack closed by itself, because **every pack
+carries the full history**. That is the reason a missed day costs nothing as
+long as a later pack lands.
 
 ## Step 2b — cement pack (MCP, agent only, and it WORKS here)
 
@@ -245,6 +317,12 @@ corporate actions
 score + persist          HALT on failure
 front end                build_frontend.py — step 4, run here so the run
                          verifies what the page will render
+vault copy               export_static.py — the whole front end frozen into
+                         ONE self-contained HTML in OneDrive so the PM can
+                         read it off this machine. Spawned DETACHED (~1.5
+                         min, ~920 payloads, ~11MB); log ->
+                         data/refresh/vault_copy_last.log. AFTER the front-end
+                         check on purpose, and never fatal
 ```
 
 This block is the ACTUAL `STEPS` list in `packages/refresh.py` — if the two
@@ -390,9 +468,14 @@ failure mode the doc itself warns about. Current read: `dispersion` ready,
 `prices.volume` NULL on all 155,401 rows, and no FII source. `sector_regime` holds
 0 rows. F4 crowding has its data (96 dates x 4 names) and nothing in `score/`
 reads it. **F1 is LIVE since 2026-09-02** — `market_regime` carries ~2,470
-classified US sessions (9 states + the flow-spell layer) and the Flows tab leads
-with the current read and its next-session odds; the readiness tables above
-describe F2-F4 only.
+classified US sessions (9 states + the flow-spell layer). **Since 2026-09-08 the
+tab LEADS with the ROLLING past week, updated every US session** (PM: "update
+daily... show weekly trend but calculate past week on a rolling basis") — each
+session read as its own trailing 5-session window on the weekly σ scale; the
+Friday-to-Friday weekly layer stays as the trend strip and the evidence base.
+All of it recomputes on demand inside `regime.weekly_view()` from `flow_series`,
+so the flow-series step is the only refresh dependency — nothing new to run.
+The readiness tables above describe F2-F4 only.
 
 A sector with no `peer_groups` is not an empty tab. It lists the commodity inputs
 already arriving for it, dated and sourced, plus the three steps needed to make it
@@ -400,6 +483,54 @@ live — so the tab shows what a build would have to work with rather than a
 placeholder. Its change column measures against the last close that actually
 **differed**, not the previous row, because the pack pre-creates the current day
 and carries the prior session forward until the next file backfills it.
+
+## Step 4b — the vault copy (PM, 2026-09-20)
+
+```bash
+python packages/web/export_static.py            # -> the vault, ~1.5 min
+python packages/web/export_static.py --selftest
+```
+
+Step 3 already spawns this DETACHED as its last step; the command is here for a
+by-hand run. It writes ONE self-contained HTML file —
+
+    OneDrive - PinPOINT\Obsidian Vault\Investment Micro-System\
+        Investment Micro-System.html
+
+— which OneDrive syncs, so the page is readable on the phone and on any other
+signed-in machine. There is no server and no port; that is the whole point.
+
+**It is a photograph of the app, not a second app.** `app.html` is copied
+through byte-identical with ONE `<script>` inserted before `</head>`; every
+`/api/*` payload the page can ask for (~920 of them) is computed once by
+importing `engine` directly and baked into that script, and a shim in front of
+`window.fetch` answers from the map. The day this exporter starts editing
+app.html is the day the vault copy and the desk copy can disagree about what
+the system says.
+
+**Three things cannot survive the freeze, and each is loud rather than blank:**
+
+- **A missed route** lands in `window.__IMS_MISSES` and turns the snapshot bar
+  amber with the route named. This is not theoretical — the first build trimmed
+  `/api/tape?pillar=…` with no `groups`, reasoning that the Pair tab is hidden
+  on `live:false` sectors; the click-through missed it three times, because
+  `pair` is SECTOR_SCOPED and re-renders for IT and Auto anyway. It costs 3.7MB
+  of the 11MB and it is baked.
+- **Staleness.** The in-page refresh light reads the FROZEN `status.json`, so it
+  stays green forever once the file stops being rewritten. The snapshot bar
+  therefore counts **weekdays** in the viewer's own browser against the export
+  stamp — the only clock in the file that still moves — and goes amber at 2.
+- **Filed PDFs** (~20MB, not in git) stay on the desk machine. The citation
+  links remain, and a click says where the document actually is.
+
+**The Book is included, `--no-book` excludes it.** The vault is the PM's own
+OneDrive inside PinPOINT, not a third party; CLAUDE.md's "position data stays in
+gitignored `data/`" is a rule about the git remote and this file writes nothing
+into the repo. Excluded, the Book tab says so instead of rendering empty.
+
+`--selftest` checks the key normaliser both ways, the `</script>` break-out, and
+**route parity with serve.py** — a route app.html fetches that the exporter does
+not know about fails the test, rather than becoming a blank tab in the vault.
 
 ## Step 5 — report, and be specific about what did NOT land
 
@@ -419,7 +550,9 @@ State plainly:
 - whether mail staging was written, and how many structural hits it produced
 - whether the morning brief was written: mails scanned, which sectors had
   bullets, which were quiet — and if step 1b failed, that the Overview is
-  showing "no brief yet" for today
+  showing "no brief yet" for today. Name any bullet whose `detail.read` came
+  back `"snippet"`: the drawer is there but it was built off ~250 characters
+  of preview, not the note
 - the composite and SIZE across the scored names (17 across seven peer
   groups as of 2026-08-29)
 - around the 1st-4th of a month: whether the mining filings fetch found the

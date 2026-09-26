@@ -1,0 +1,85 @@
+{
+ "date": "2026-09-11",
+ "generated_at": "2026-09-11T10:10:00+05:30",
+ "mail": {
+  "window": "24h to 09:45 IST",
+  "n_scanned": 92,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {"text": "VAML added to Nifty Next 50 (~$135mn flow, 4.42x ADV) and Hindustan Copper to Nifty Midcap 150, effective close 29-Sep.", "source": "BNP Paribas — BNPP India Quick Notes: Sept Indices Changes", "received": "09:04"},
+     {"text": "White House copper tariff plan stalls amid affordability concerns, sources say.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"},
+     {"text": "US aluminium manufacturers launch new alliance to address tariff concerns.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"}
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {"text": "Tata Steel commissioned India's first coke oven gas injection project.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"},
+     {"text": "India's iron ore & pellet imports climbed to an 11-year high in Aug'26 (BigMint).", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"},
+     {"text": "South African coal portside prices in India surged on tight supply.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"}
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {"text": "JPM's only India cement OW is UltraTech: ~13% 1-yr fwd RoE, ~20% 3-yr EPS CAGR justify premium; weak Sept quarter, recovery from late Nov.", "source": "JPMorgan — India Cement Sector: With premium metrics come premium multiples - UTCEM top pick", "received": "07:00"},
+     {"text": "Kotak: Ambuja at 395.6 vs fair value 370, rated SELL.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"},
+     {"text": "Meghalaya Government paused Shree Cement's plant operations pending an inquiry, per Kotak's daily note.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"}
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {"text": "Iron ore & pellet imports hit an 11-year high in Aug'26, per BigMint — cheaper imports pressuring NMDC's domestic realisations.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"},
+     {"text": "August power demand rose 13% YoY (peak +12%) on El Nino; utility coal stocks fell 42% YoY, tightening into 3Q.", "source": "CLSA Research — CLSA: India power pulse: Strong power demand sustained", "received": "02:37"},
+     {"text": "White House copper tariff plan stalls on affordability concerns, easing near-term pressure on LME-linked names like Hindustan Copper.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:52"}
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {"text": "Kaynes reiterates 2x-industry growth guide, PCB/OSAT FY27 revenue outlook unchanged (timelines slightly pushed); ABC cuts TP to Rs4,300, still BUY, on FY26-29E CAGR 41/42/38%.", "source": "Aditya Birla Capital — Kaynes Technology India (BUY) | Company Update: Core EMS momentum intact; PCB/OSAT capabilities take shape", "received": "10-Sep 23:29"},
+     {"text": "PhillipCapital's BUY-DIXON/SELL-PGEL technical pair (called 03-Sep) stopped out 10-Sep on its stop-loss trigger.", "source": "PhillipCapital — STOP LOSS TRIGGERED EXIT ... Long-Short Pair Trade of BUY DIXON and SELL PGEL (call given on 03SEPT 2026)", "received": "10-Sep 11:10"}
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {"text": "JPM stays Underweight Tata Technologies, PT Rs540 vs Rs779 CMP; management dropped the 18%-EBITDA-margin-by-4QFY27 target, margins stuck at 16%.", "source": "JPM (Bhavik Mehta) — Tata Technologies: C-Suite Fireside Chat takeaways: Optimistic on double-digit revenue growth, cautious on margins", "received": "10-Sep 20:31"},
+     {"text": "JPM stays Neutral on LTM, PT Rs4,050 vs Rs4,374 CMP; 55-60% of clients already hit by AI deflation, Randstad deal targeted to close 3QFY27.", "source": "JPM (Ankur Rudra) — LTM: C-Suite Fireside Chat Takeaways: Outlook dented by geopolitics", "received": "06:30"},
+     {"text": "Insurers' Aug portfolios show Infosys among top reductions while adding One97 Communications and Dixon Tech, per Nuvama's Aug tracker.", "source": "Nuvama (Sneha Baxi) — Insurance Portfolio Analyser -Aug 26 Edition (+2 more in Outlook)", "received": "10-Sep 16:49"}
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {"text": "Nifty trend stays bearish as FIIs net sold $296mn cash+futures yesterday (DIIs bought $300mn); Kotak flags 23300 as next support.", "source": "Kotak (Sudhanshu Bhuwalka) — Cochin Ship - Soft Margins ; Delhivery - Well placed ; BPO services - well placed", "received": "08:28"},
+     {"text": "US 10-year yield jumped 12bp to 4.96%, highest since Oct 2023, as JPM expects 8 of 9 DM central banks to hike by year-end.", "source": "JP Morgan (Flora Hung) — JPM Overnight Brief! 9/11 - 8 of 9 DM central banks to hike; 10-year yields highest since Oct 2023", "received": "05:49"},
+     {"text": "India equity MF inflows hit a 4-month high of INR293bn in August, SIPs a record INR323bn — SMID-led, largecap still saw outflows.", "source": "Nuvama Alt (Sneha Baxi) — India's MF Flow Analyzer - INR 293bn Equity Inflows at 4-Month High | SIPs Hit Record INR 323bn (+3 more in Outlook)", "received": "10-Sep 16:51"}
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {"text": "Kotak retains SELL, FV Rs860, after CSL guided FY27 EBITDA margin ~14% (250-300bp below KIE) despite Rs320bn LPD opportunity and Rs65bn five-year capex plan.", "source": "Kotak — Cochin Shipyard (CMP: Rs1,520, FV: Rs860, SELL): Soft margin guidance; capex intensity set to rise", "received": "07:30"},
+     {"text": "Kotak raises Delhivery FV to Rs550 (from Rs540), BUY, citing strong festive-season volumes and a two-player 3PL thesis holding with customers.", "source": "Kotak — Delhivery (CMP: Rs448, FV: Rs550, BUY): The well-positioned pragmatist", "received": "10-Sep 20:59"},
+     {"text": "Avendus Spark REDUCE on Bajaj Finance, TP Rs1,074: Flexi ban from Apr-27 seen as ~220bp drag on FY28 AUM growth to 21%.", "source": "Avendus Spark — Bajaj Finance - A manageable Flexi hit, bigger questions beyond it - Company Update (Rating: REDUCE, TP: Rs. 1,074) (+1 more in Outlook)", "received": "06:48"}
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {"text": "Semis sold off overnight: SOX -2.66%, AMD -3.36%, Nvidia -2.37%, TSMC ADR -1.68%, Broadcom -0.97% (10-Sep close).", "source": "morning_markets — Yahoo closes 2026-09-10"},
+   {"text": "Jensen Huang struck a bullish tone on AI on Day 3 of the GS Communacopia + Technology conference.", "source": "Goldman Sachs (Xinru X) — [GS Daily] Day 3 for US Communacopia, Jenson bullish tone on AI"},
+   {"text": "OpenAI picked Broadcom for its first custom AI chip; the case for Broadcom over Nvidia strengthens in September.", "source": "24/7 Wall St. headline (AVGO) via morning_markets"}
+  ],
+  "bellwethers": [
+   {"name": "Accenture", "reason": "Won a $480.4mn US Army task-management systems contract (MT Newswires, 10-Sep); +1.2% against a -0.6% S&P."},
+   {"name": "Cognizant", "reason": null}
+  ]
+ }
+}

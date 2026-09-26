@@ -1,0 +1,170 @@
+{
+ "date": "2026-09-20",
+ "generated_at": "2026-09-20T08:19:03",
+ "mail": {
+  "window": "36h to 08:05 IST (Sat+Sun, exchanges shut)",
+  "n_scanned": 12,
+  "sectors": [
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kaynes plans $1bn incremental OSAT investment under ISM 2.0, 3x its ISM 1.0 outlay, per JPM's Semicon takeaways.",
+      "source": "JPM - India EMS: Kaynes planning $1bn OSAT investment under ISM 2.0",
+      "received": "00:25",
+      "detail": {
+       "summary": "Kaynes plans a $1bn incremental OSAT investment (advanced packaging, LED/micro-LED) under ISM 2.0, 3x its ISM 1.0 outlay, if approved. Funding is the open question as it scales from 2.3bn to 8bn chips annually.",
+       "points": [
+        "$1bn incremental OSAT investment planned, 3x ISM 1.0 outlay",
+        "FY27 OSAT revenue guide Rs2.5-3bn; Rs1bn already booked",
+        "Capacity target scales 2.3bn to 8bn chips annually"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kaynes OSAT unit 2 (1.2bn chips/yr, Fujitsu & Infineon) up for client qualification end-Nov/early-Dec, then commercial output.",
+      "source": "JPM - India EMS: Kaynes planning $1bn OSAT investment under ISM 2.0",
+      "received": "00:25",
+      "detail": {
+       "summary": "Unit 2, at 1.2bn chips/yr for Fujitsu and Infineon, heads for client qualification by end-November or early December, with commercial production to follow. Unit 1 (3.6mn chips/yr, Alpha Omega Semiconductor) is already in commercial production.",
+       "points": [
+        "Unit 2: 1.2bn chips/yr, clients Fujitsu & Infineon",
+        "Qualification end-Nov/early-Dec, then commercial output",
+        "Unit 1: 3.6mn chips/yr already live, client Alpha Omega"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTTS EBIT margin fell 18.5% (FY23) to 14% (FY26E); JPM presses the path back to its 16.5% target by 4QFY27.",
+      "source": "JPM - JPM India Conference: Key points of discussion with LTTS",
+      "received": "10:34",
+      "detail": {
+       "summary": "JPM's pre-meeting note frames the LTTS debate as whether margin has bottomed and whether organic growth can return to mid-to-high teens after two straight years at 3%.",
+       "points": [
+        "18.5% FY23 EBIT margin down to 14% FY26E",
+        "16.5% margin target reaffirmed for 4QFY27",
+        "Two-year organic revenue growth only 3%",
+        "Portfolio rationalisation dropping low-margin business",
+        "Two large deals absorbed: SWC, Intelliswift"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "KPIT onshore mix leads peers at 50% (LTTS 45%, Tata Elxsi 25%); JPM probes recovery toward 20-21% normalised EBITDA.",
+      "source": "JPM - JPM India Conference: Key points of discussion with KPIT",
+      "received": "10:29",
+      "detail": {
+       "summary": "JPM frames KPIT's near-term debate as recovering margin after sharp 1Q headwinds and converting deal wins into revenue, citing EV-slowdown drag at top clients BMW, Honda and VW.",
+       "points": [
+        "Onshore mix 50% vs LTTS 45%, Tata Elxsi 25%",
+        "Normalised EBITDA margin band 20-21%",
+        "Caresoft acquisition $191mn, May 2025",
+        "Payout averaged ~30% of PAT",
+        "Headwinds named at BMW, Honda, VW"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge is the only India name on CLSA's APAC event-driven list for the week ended 18 Sep.",
+      "source": "CLSA Event Driven - APAC Weekly Highlights (18 Sep)",
+      "received": "05:35",
+      "detail": {
+       "summary": "The mail body carries only the week's contents list; Coforge sits alongside twelve China, Japan, Korea and SE Asia situations and is the sole India entry. The substance is in the attached PDF, which this brief did not open.",
+       "points": [
+        "Coforge sole India name among 13 situations listed",
+        "Week ended 18 Sep 2026",
+        "Detail sits in the attached PDF, not the body"
+       ],
+       "read": "snippet"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "IT-Software was the week's only one-sided F&O sector: 0 of 14 names broke out, 3 broke down, 1 on volume.",
+      "source": "PhillipCapital - SECTORS AND STOCKS WEEKLY BREAKOUT/BREAKDOWN (14-18 Sept 2026)",
+      "received": "12:52",
+      "detail": {
+       "summary": "PhillipCapital's weekly price/volume screen over the NSE F&O universe shows IT-Software with no breakouts at all and 21% of names breaking down. It corroborates Friday's US IT-services selloff rather than contradicting it.",
+       "points": [
+        "IT-Software: 0 of 14 breakouts, 3 breakdowns (21%)",
+        "TCS -4%, KPIT -4%, Tata Elxsi -3% on the breakdown list",
+        "Cement: 0 breakouts, 1 of 5 breakdown",
+        "EMS: 0 breakouts and 0 breakdowns of 4",
+        "Auto: 0 breakouts, 2 of 10 breakdowns"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Metals split evenly: APL Apollo the lone breakout at +5%, NMDC the lone breakdown at -4%; Coal India also broke down -4%.",
+      "source": "PhillipCapital - SECTORS AND STOCKS WEEKLY BREAKOUT/BREAKDOWN (14-18 Sept 2026)",
+      "received": "12:52",
+      "detail": {
+       "summary": "One breakout and one breakdown across ten F&O metals names is no sector signal. The names are the interesting part: the screen's single metals breakout is the desk's weakest composite, and its breakdown is a name the model reads as roughly neutral.",
+       "points": [
+        "Metals: 1 breakout, 1 breakdown of 10 names",
+        "APL Apollo +5% breakout; model composite 1.79, SIZE -0.75",
+        "NMDC -4% breakdown; model composite 2.90",
+        "Coal India -4%, listed under Power"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": []
+   }
+  ],
+  "quiet": [
+   "Non-ferrous",
+   "Steel",
+   "Cement",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +2.78% on Friday with Broadcom +2.97%, AMD +2.70%, Nvidia +1.34% - semis led while IT services sold off.",
+    "source": "Yahoo closes 2026-09-18 (morning_markets.py)"
+   },
+   {
+    "text": "Anthropic will embed Accenture evaluators to test AI safety; ACN rose after hours on the announcement.",
+    "source": "Bloomberg / WSJ, 2026-09-18 20:58-21:16Z"
+   },
+   {
+    "text": "Accenture -4.73% and Cognizant -3.25% in Friday's regular session while the S&P rose 0.17%.",
+    "source": "Yahoo closes 2026-09-18 (morning_markets.py)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "change_pct": -4.73,
+    "reason": null,
+    "headline": "Accenture (ACN) Stock Trades Down, Here Is Why (StockStory, 2026-09-18 22:40Z)"
+   },
+   {
+    "name": "Cognizant",
+    "change_pct": -3.25,
+    "reason": null,
+    "headline": "Deutsche Bank Raises Price Target on Cognizant Technology Solutions to $70 From $65, Keeps Buy Rating (MT Newswires, 2026-09-18 11:33Z)"
+   }
+  ]
+ }
+}
