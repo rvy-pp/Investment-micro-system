@@ -336,8 +336,32 @@ def capture_retail(conn: sqlite3.Connection) -> dict:
     for seg, group in RETAIL_GROUP.items():
         p = vahan._params("", "", vahan.CALENDAR["month"], "2026", "2026")
         p["vehicleCategoryGroup"] = group
-        rows = vahan._get(f"{vahan.DASH}/durationWiseRegistrationTable?"
-                          + urllib.parse.urlencode(p))
+        try:
+            rows = vahan._get(f"{vahan.DASH}/durationWiseRegistrationTable?"
+                              + urllib.parse.urlencode(p))
+        except RuntimeError:
+            rows = []
+        if not rows:
+            # STATE-SUM FALLBACK, 2026-09-27 — same failure as vahan_share: on
+            # 26/27-Sep this all-India total returned HTTP 500/404 while every
+            # state-scoped query answered. The direct call returns ONE row per
+            # period; the state rows are 36 per period and MUST be summed
+            # before the INSERT OR REPLACE below, or the last state wins.
+            # Restricted to vahan_share's 13-month window, the span where
+            # direct == state-sum was measured (0 difference); older periods
+            # keep their stored direct values. A state that still fails
+            # raises, and main() keeps the stored retail — never a partial sum.
+            import vahan_share
+            keep = set(vahan_share._recent_months())
+            agg: dict[str, int] = {}
+            for r in vahan_share._state_rows("", "vehicleCategoryGroup", group):
+                per = r.get("yearAsString")
+                if per in keep:
+                    agg[per] = agg.get(per, 0) + int(r.get("registeredVehicleCount") or 0)
+            rows = [{"yearAsString": k, "registeredVehicleCount": v}
+                    for k, v in agg.items()]
+            if rows:
+                out.setdefault("state_sum_fallback", []).append(seg)
         if not rows:
             # A SEGMENT total cannot genuinely be empty — refuse, keep yesterday.
             raise RuntimeError(f"Vahan returned no rows for {group}; stored retail kept")

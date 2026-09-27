@@ -288,9 +288,34 @@ def _filters(cfg: dict) -> list[tuple[str, str]]:
     return [("vehicleCategoryGroup", v) for v in cfg["groups"]]
 
 
+def _state_rows(maker: str, param: str, group: str, workers: int = 6,
+                tries: int = 5) -> list[dict]:
+    """Every state's rows for one (maker, filter), concatenated.
+
+    A state-scoped empty body is a real zero (vahan.series docstring), so it
+    contributes nothing; a state whose GET still fails after `tries` raises,
+    because the sum without it is silently short. More tries than the
+    all-India call: 36 requests against a server that is already failing
+    intermittently (Meghalaya alone threw a 404 in the 2026-09-27 probe).
+    """
+    def one(st):
+        p = vahan._params(maker, st, vahan.CALENDAR["month"], "2026", "2026")
+        p[param] = group
+        return vahan._get(
+            f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}",
+            tries=tries) or []
+
+    rows: list[dict] = []
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        for part in ex.map(one, vahan.STATES):
+            rows.extend(part)
+    return rows
+
+
 def _fetch(maker: str, groups: list[str], months: set[str],
            param: str = "vehicleCategoryGroup",
-           strict: bool = False) -> dict[str, int]:
+           strict: bool = False,
+           fallback: list[str] | None = None) -> dict[str, int]:
     """Segment-filtered all-India monthly counts, summed over `groups`.
 
     THE EMPTY-BODY RULE, THIRD AND FINAL FORM. vahan.TRAP 2 is a ROW-COUNT
@@ -313,13 +338,41 @@ def _fetch(maker: str, groups: list[str], months: set[str],
     `strict` is reserved for the SEGMENT TOTAL query, where an empty body
     cannot be a real zero — a segment with no registrations at all means the
     fetch broke, and that must still refuse.
+
+    THE STATE-SUM FALLBACK, added 2026-09-27. On 26-Sep and 27-Sep the
+    all-India segment TOTAL for Two Wheeler (and Four Wheeler, via SIAM)
+    returned HTTP 500, then 404, for the whole 08:00 run, while every maker-
+    and state-scoped query answered — and the whole capture aborted, storing
+    nothing. Minutes later the same query worked. So when `fallback` is a list
+    (only `capture()` passes one), a failed all-India call — or an empty body
+    on a strict total, which is TRAP 2 — is re-asked as the 36-state sum,
+    and the (maker, group) is appended to `fallback` so the run SAYS it
+    happened. Measured before shipping: Four Wheeler direct vs state-sum,
+    Jul/Aug/Sep-2026, difference 0 / 0 / 0.
+    A state that still fails after its retries REFUSES the whole query: a
+    35-state sum is an undercount that looks exactly like a real number.
+    `fallback=None` (the default) keeps the old direct-only behaviour — the
+    selftest's reconciliation MUST stay direct-only, or a moved short-circuit
+    threshold would be compared state-sum against state-sum and always pass.
     """
     out: dict[str, int] = {}
     for g in groups:
         p = vahan._params(maker, "", vahan.CALENDAR["month"], "2026", "2026")
         p[param] = g
-        rows = vahan._get(
-            f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}")
+        url = f"{vahan.DASH}/durationWiseRegistrationTable?{urllib.parse.urlencode(p)}"
+        if fallback is None:
+            rows = vahan._get(url)
+        else:
+            try:
+                rows = vahan._get(url)
+            except RuntimeError as e:
+                rows = _state_rows(maker, param, g)
+                fallback.append(f"{maker or 'TOTAL'}/{g} (all-India: "
+                                f"{str(e).splitlines()[-1].strip()})")
+            else:
+                if not rows and strict:
+                    rows = _state_rows(maker, param, g)
+                    fallback.append(f"{maker or 'TOTAL'}/{g} (all-India: empty body)")
         if not rows:
             if strict:
                 raise vahan.VahanRefused(
@@ -349,8 +402,10 @@ def capture(conn: sqlite3.Connection, capture_date: str | None = None,
                 jobs.append((mk, vals, param, False))
                 meta.append((seg, label, sym))
 
+    fell_back: list[str] = []
+
     def run(j):
-        return _fetch(j[0], j[1], months, j[2], j[3])
+        return _fetch(j[0], j[1], months, j[2], j[3], fallback=fell_back)
 
     agg: dict[tuple[str, str, str], int] = {}
     dropped: list[str] = []
@@ -372,7 +427,8 @@ def capture(conn: sqlite3.Connection, capture_date: str | None = None,
         rows)
     conn.commit()
     return {"capture_date": cd, "rows": len(rows),
-            "periods": len(months), "dropped_not_in_fno": dropped}
+            "periods": len(months), "dropped_not_in_fno": dropped,
+            "state_sum_fallback": fell_back}
 
 
 def shares(conn: sqlite3.Connection, segment: str, period: str | None = None,
@@ -868,6 +924,78 @@ def selftest() -> int:
     except ValueError:
         check("double-counted maker raises", True)
 
+    print("\nSTATE-SUM FALLBACK (offline — vahan._get stubbed)")
+    # 2026-09-26/27: the all-India segment total failed and the whole capture
+    # stored nothing. Acceptance AND rejection, per the GLOB lesson — the
+    # rejection cases are the load-bearing ones, because a fallback that
+    # quietly sums 35 states is worse than the abort it replaced.
+    real_get = vahan._get
+    mo = "2026-September"
+    per_state = {st: 10 for st in vahan.STATES}
+
+    def stub(direct, broken_state=None, empty_states=False):
+        def g(url, tries=3, timeout=180):
+            st = urllib.parse.parse_qs(urllib.parse.urlparse(url).query,
+                                       keep_blank_values=True)["stateCode"][0]
+            if st == "":
+                if direct == "fail":
+                    raise RuntimeError("GET failed after 3: stub\n  HTTP Error 500:")
+                if direct == "empty":
+                    return []
+                return [{"yearAsString": mo, "registeredVehicleCount": 360}]
+            if st == broken_state:
+                raise RuntimeError("GET failed after 5: stub\n  HTTP Error 404:")
+            if empty_states:
+                return []
+            return [{"yearAsString": mo, "registeredVehicleCount": per_state[st]}]
+        return g
+
+    try:
+        fb: list[str] = []
+        vahan._get = stub("ok")
+        r = _fetch("", ["Two Wheeler"], {mo}, strict=True, fallback=fb)
+        check("direct works -> direct value, no fallback", r == {mo: 360} and not fb, str(r))
+
+        fb = []
+        vahan._get = stub("fail")
+        r = _fetch("", ["Two Wheeler"], {mo}, strict=True, fallback=fb)
+        check("direct fails -> 36-state sum, and it is recorded",
+              r == {mo: 10 * len(vahan.STATES)} and len(fb) == 1, f"{r} {fb}")
+
+        fb = []
+        vahan._get = stub("empty")
+        r = _fetch("", ["Two Wheeler"], {mo}, strict=True, fallback=fb)
+        check("strict total empty (TRAP 2) -> state sum",
+              r == {mo: 10 * len(vahan.STATES)} and len(fb) == 1, str(r))
+
+        fb = []
+        vahan._get = stub("empty")
+        r = _fetch("HERO MOTOCORP LTD", ["Two Wheeler"], {mo}, fallback=fb)
+        check("non-strict empty stays an honest zero, no fallback", r == {} and not fb, str(r))
+
+        vahan._get = stub("fail", broken_state="ML")
+        try:
+            _fetch("", ["Two Wheeler"], {mo}, strict=True, fallback=[])
+            check("one state still failing refuses (no 35-state sum)", False)
+        except RuntimeError:
+            check("one state still failing refuses (no 35-state sum)", True)
+
+        vahan._get = stub("fail", empty_states=True)
+        try:
+            _fetch("", ["Two Wheeler"], {mo}, strict=True, fallback=[])
+            check("strict total empty in every state refuses", False)
+        except vahan.VahanRefused:
+            check("strict total empty in every state refuses", True)
+
+        vahan._get = stub("fail")
+        try:
+            _fetch("", ["Two Wheeler"], {mo}, strict=True)
+            check("fallback=None stays direct-only (reconciliation relies on it)", False)
+        except RuntimeError:
+            check("fallback=None stays direct-only (reconciliation relies on it)", True)
+    finally:
+        vahan._get = real_get
+
     print("\nMONTH WINDOW")
     m = _recent_months(13, dt.date(2026, 1, 15))
     check("window crosses the year boundary",
@@ -1038,6 +1166,8 @@ def main() -> int:
         if r["dropped_not_in_fno"]:
             print(f"  DROPPED (no longer in F&O, now inside Others): "
                   f"{r['dropped_not_in_fno']}")
+        for fb in r["state_sum_fallback"]:
+            print(f"  STATE-SUM FALLBACK (all-India refused, summed 36 states): {fb}")
         report(conn)
         return 0
     if a.report:

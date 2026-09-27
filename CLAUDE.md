@@ -2272,6 +2272,24 @@ reconcile to the state-sum with **zero difference** across five months, and
 `--selftest` re-runs that reconciliation every time, because the day the
 server's threshold moves is the day this silently starts under-counting.
 
+**AND THE SEGMENT TOTAL NOW FALLS BACK TO THE STATE-SUM (2026-09-27).** On
+26-Sep and 27-Sep the all-India Two Wheeler total returned HTTP 500 (later
+404) for the whole 08:00 run while every maker- and state-scoped query
+answered, and `capture()` aborted storing NOTHING; SIAM's retail half failed
+on the Four Wheeler total the same way. Minutes later the same query worked,
+and a single Meghalaya state query 404'd on its own — sporadic server errors,
+not a size threshold and not demonstrably the weekend (this was the feed's
+first weekend, so there is no comparison yet). `_fetch(fallback=list)` now
+re-asks a failed all-India call (or an empty strict total, TRAP 2) as the
+36-state sum, retries each state 5x, and names it in the capture output
+(`STATE-SUM FALLBACK`). **A state that still fails refuses the whole query** —
+a 35-state sum is a plausible undercount. Only `capture()` enables it; the
+selftest's reconciliation stays direct-only, or it would compare state-sum to
+state-sum and always pass. SIAM's `capture_retail` does the same, SUMMING the
+36 rows per period (the direct call returns one) and only inside the 13-month
+window where direct == state-sum was measured (Four Wheeler Jul/Aug/Sep-2026:
+0 / 0 / 0). Seven stubbed selftest cases cover acceptance and rejection.
+
 **Others is DERIVED as `total - sum(named)`**, never a separate query, so the
 lines cannot fail to sum to 100% and every unlisted maker is inside it. A
 NEGATIVE Others raises rather than clamping: it would mean a maker string is
