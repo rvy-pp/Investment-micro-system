@@ -100,35 +100,14 @@ STEPS = [
     # hand-set rows survive); --load tops up missing days, T-1 by publication.
     ("F&O bhavcopy",      ["packages/adapters/fo_bhavcopy.py", "--map",
                            "--load", "--days", "7"],                          False),
-    # Vahan maker share for the Auto tab (2W/PV/CV). MUST COME AFTER THE F&O
-    # BHAVCOPY: the roster of which names get their own line is read from
-    # `fo_oi`, so running this first would classify against yesterday's F&O
-    # universe — and on the day a name enters or leaves, silently.
-    #
-    # DAILY IS THE WHOLE POINT AND THE REASON THIS CANNOT BE SKIPPED. Vahan
-    # publishes no daily granularity on the open API (the report builder that
-    # does is CAPTCHA-gated), so the daily series IS this step's capture
-    # history: a morning that does not run is a hole that can never be
-    # backfilled — the same "history you cannot recover" logic as the
-    # consensus capture and the IndiaMART sweep. ~18 requests, ~15s.
-    #
-    # NOT IN SKIP_IF_DONE — but the reason originally written here was WRONG.
-    # It said a 15:00 re-run "overwrites the 08:00 row with a fuller count of
-    # the same day". Measured 2026-09-25: Vahan's month-to-date does NOT update
-    # intraday. The 2W total read 1,444,108 at the 08:10 refresh and exactly
-    # 1,444,108 hours later; M&HCV 32,797 both times. It refreshes ONCE, in an
-    # overnight batch, so a later same-day re-run gains nothing. It stays out of
-    # SKIP_IF_DONE only because re-running is harmless — same capture_date,
-    # INSERT OR REPLACE, identical values — and a day whose 08:00 run FAILED
-    # still gets a second chance on the next double-click.
-    ("vahan share",       ["packages/adapters/vahan_share.py", "--capture"],  False),
-    # SIAM wholesale + Vahan segment retail -> the Auto tab's Inventory view.
-    # Daily although SIAM publishes monthly (~15 days after month end): the
-    # scan costs ~15 requests on a quiet day and picks the release up the day
-    # it appears. Retail is re-read too, because Vahan backdates and a later
-    # read of a month is the more complete one. A Vahan failure keeps the
-    # stored retail rather than blanking it.
-    ("SIAM wholesale",    ["packages/adapters/siam_wholesale.py", "--fetch"], False),
+    # VAHAN SHARE AND SIAM WHOLESALE LEFT THIS LIST ON 2026-09-29 (PM: "Lets do
+    # vahan update in the afternoon. Remove the process for daily-refresh").
+    # Four mornings running Vahan refused every FILTERED query at ~08:10 and
+    # recovered by midday, so these two steps could only fail here and turn the
+    # Overview amber. They run at 13:00 from packages/vahan_refresh.py (Claude
+    # Desktop task `vahan-afternoon`), which writes its OWN status file,
+    # data/refresh/vahan_status.json. Do not add them back: Vahan's MTD
+    # refreshes once overnight, so a morning read gains nothing over 13:00.
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,

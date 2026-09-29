@@ -1244,6 +1244,49 @@ def input_history(entity_id: str) -> dict:
             "first_ever": span["a"], "n_ever": span["n"]}
 
 
+# The afternoon Vahan run (packages/vahan_refresh.py) is fired by the
+# `vahan-afternoon` task at 13:00 + the scheduler's jitter (13:13 as created),
+# waits up to 3h and then takes ~3 min, so by 17:00 local it has either
+# finished or failed. Before that an absent run is just "not yet", which is
+# why the morning page is silent.
+VAHAN_DUE = (17, 0)
+
+
+def _vahan_run(today: str) -> dict:
+    """The afternoon Vahan run's state, and a warning ONLY when it earned one.
+
+    PM 2026-09-29: "no error shows up in the morning". So there is deliberately
+    no warning for yesterday's failure or for "today's has not run yet" before
+    VAHAN_DUE — only for today's run FAILING, for a run left "running" longer
+    than its own wait allows (the process died), or for no run at all by
+    VAHAN_DUE. The last one is the scheduled-task-silently-stopped case, which
+    must not read as a quiet market.
+    """
+    import datetime as dt
+    vs = _read_json(REPO / "data" / "refresh" / "vahan_status.json") or {}
+    out = {"day": vs.get("day"), "state": vs.get("state"),
+           "finished": vs.get("finished"), "warning": None}
+    now = dt.datetime.now()
+    if vs.get("day") == today:
+        if vs.get("state") == "failed":
+            out["warning"] = f"afternoon Vahan run FAILED — {vs.get('reason') or 'see data/refresh/vahan_last.log'}"
+        elif vs.get("state") == "running":
+            try:
+                started = dt.datetime.fromisoformat(vs["started"]).replace(tzinfo=None)
+                limit = float(vs.get("max_wait_h") or 0) + 0.5
+                if (now - started).total_seconds() > limit * 3600:
+                    out["warning"] = (f"afternoon Vahan run started {vs['started'][11:16]} "
+                                      f"and never finished — the process likely died; "
+                                      f"see data/refresh/vahan_last.log")
+            except (KeyError, ValueError):
+                pass
+    elif (now.hour, now.minute) >= VAHAN_DUE:
+        out["warning"] = (f"afternoon Vahan run has not run today (last: "
+                          f"{vs.get('day') or 'never'}) — the vahan-afternoon task may "
+                          f"not have fired; run: python packages/vahan_refresh.py")
+    return out
+
+
 def overview() -> dict:
     """One screen: did the run work, what is stale, where did the book land.
 
@@ -1284,6 +1327,8 @@ def overview() -> dict:
     else:
         out["run"] = {"warning": "no data/refresh/status.json — the refresh has "
                                  "never completed on this machine"}
+
+    out["vahan"] = _vahan_run(today)
 
     fe = _read_json(REPO / "data" / "refresh" / "frontend.json")
     if fe:

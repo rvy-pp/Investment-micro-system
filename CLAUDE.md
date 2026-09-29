@@ -141,6 +141,21 @@ the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
 The launcher still refreshes on every double-click; `launch\Install Daily
 Task.bat` (Windows Task Scheduler) remains written and unrun.
 
+**A second task, `vahan-afternoon`, runs at 13:00 (+ jitter: 13:13) daily**
+(PM, 2026-09-29: *"Lets do vahan update in the afternoon. Remove the process for
+daily-refresh... Make sure the front-end gets updated again in the afternoon and
+no error shows up in the morning"*). It only starts `packages/vahan_refresh.py
+--detach`, which polls Vahan until filtered queries answer (every 15 min, up to
+3h), then runs the Vahan share capture, SIAM wholesale and the vault-copy export,
+and writes **`data/refresh/vahan_status.json`, never `status.json`**. Vahan
+share and SIAM wholesale are OUT of `refresh.py` — four mornings running (26-29
+Sep) Vahan refused every filtered query at ~08:10 and recovered by midday, so
+the 08:00 run could only fail there. The Overview (`engine._vahan_run`) warns
+only when TODAY's afternoon run failed, died mid-wait, or has not run by
+`VAHAN_DUE` (17:00) — never in the morning. The desk page reads `vahan_share`
+live and needs no refresh; the export is for the vault copy. A second start the
+same day steps aside if a run succeeded or is still polling (`--force` overrides).
+
 ### Two halves of the API that must not be merged
 
 | | reads | serves |
@@ -2296,10 +2311,13 @@ NEGATIVE Others raises rather than clamping: it would mean a maker string is
 double-counted, and a silently clamped 0 reads as "no unlisted makers", a claim
 about the market rather than a bug report. Tested both ways.
 
-**Wired into `refresh.py` AFTER the F&O bhavcopy step** — the roster is read
-from `fo_oi`, so running first would classify against yesterday's F&O universe,
-and silently on exactly the day a name enters or leaves. **Not in `SKIP_IF_DONE`,
-but the reason first written here was wrong**: it claimed a 15:00 re-run
+**Runs from `packages/vahan_refresh.py` at 13:00 since 2026-09-29, NOT from
+`refresh.py`** (see the `vahan-afternoon` task above) — which also keeps it
+AFTER the 08:00 F&O bhavcopy step, as it must be: the roster is read from
+`fo_oi`, so running first would classify against yesterday's F&O universe, and
+silently on exactly the day a name enters or leaves. When it lived in
+`refresh.py` it was **not in `SKIP_IF_DONE`, but the reason first written here
+was wrong**: it claimed a 15:00 re-run
 captures "a fuller count of the same day". Measured 2026-09-25, **Vahan's
 month-to-date does not update intraday** — 2W read 1,444,108 at the 08:10
 refresh and exactly 1,444,108 hours later, M&HCV 32,797 both times. It refreshes
@@ -2516,8 +2534,8 @@ Vahan is down rather than crashing: on 2026-09-25 it crashed on an Ashok
 Leyland 500, a partial source outage presenting as a broken adapter.
 
 The "Auto is not scored…" line is removed from the Auto tab (PM); **IT still
-carries the identical line.** Refresh step `SIAM wholesale` runs after `vahan
-share`; route `/api/auto_inventory` is in the exporter and the verifier.
+carries the identical line.** `SIAM wholesale` runs after `vahan share`, both in
+the afternoon `vahan_refresh.py` since 2026-09-29; route `/api/auto_inventory` is in the exporter and the verifier.
 
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 

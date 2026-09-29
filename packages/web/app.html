@@ -3003,6 +3003,10 @@ async function loadOverview(){
       + badSteps.map(x => `${x.step}${x.detail ? ' — ' + x.detail : ''}`).join('; ')
       : null,
     feeds.n_stale ? `${feeds.n_stale} feed(s) stale: ${staleList}` : null,
+    /* The afternoon Vahan run (13:00, vahan_refresh.py). engine._vahan_run
+       returns a warning only for TODAY's failure or a missed run after
+       16:30 — never in the morning (PM, 2026-09-29). */
+    (d.vahan || {}).warning,
     ...(fe.problems || []),
     ...(morn && morn.warnings || []),
   ].filter(Boolean);
