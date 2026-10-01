@@ -203,6 +203,38 @@ the capture lands in the table minutes later and its log is
 spawn. **It writes to `cement_watch*`, never to `prices`, and no pillar reads
 it.**
 
+## Step 2b' — Kotak cement channel-check note (MCP, agent only, monthly)
+
+Added 2026-10-01. Kotak mails a monthly **"[Kotak] Construction Materials: …"**
+note (sender `siddharth.mehrotra@kotak.com`, usually around the 20th–25th)
+whose regional m/m price changes are **the pack's own numbers about a week
+early**. On 23-Sep-2026 it printed +3.5/+3.0/+2.1/+1.3/+1.0% (E/S/W/N/C) and
++2.2% all-India, and the pack's September column carried exactly those on
+30-Sep. Rebuilt levels match the pack to 0.04%.
+
+1. `outlook_email_search` query `Construction Materials`, sender `kotak.com`.
+   The free-text search ignores dates, so keep only mail received in the
+   **last 3 days** client-side.
+2. Skip if `data/staging/cement_check_<mail date>.json` already exists. Skip
+   if the note has no regional m/m sentence. Not every Construction Materials
+   mail is the monthly price check.
+3. `read_resource` the body and write
+   `data/staging/cement_check_<mail date, IST, YYYY-MM-DD>.json`:
+   `month` (YYYY-MM the prices are FOR), `received`, `sender`, `subject`,
+   `mom_pct` with all six keys `east south west north central india`
+   (percent, signed), and `quote`, the sentence(s) the numbers come from,
+   verbatim. The format is in the docstring of `packages/adapters/cement_check.py`.
+4. Probe: `python packages/adapters/cement_check.py --file <that json>`.
+
+`refresh.py` loads it in Step 3 (`cement check (staged)`), after the pack, as
+source `kotak_check` (rank 35). A month the pack already carries is skipped,
+and when the pack later prints that month it deletes the `kotak_check` rows.
+**Only Kotak's note.** Nuvama, Nomura, JPM, IIFL and Elara also send dealer
+checks. The early-month ones are ANNOUNCED hikes (Sep-2026 overstated 2–10x)
+and the late ones disagree by region (East: Kotak +3.5%, JPM/IIFL flat), so
+none of them is loaded. Never write a `cement_check` file from a non-Kotak
+mail. The loader refuses it, and so should you.
+
 ## Step 2c — BBG 2-yr forward P/E (screenshots, agent only)
 
 Added 2026-09-02, PM instruction: "keep updating the BBG 2 year numbers daily
@@ -308,6 +340,8 @@ EMS consensus (load)     -> the `estimates` table (NOT prices — an EPS is not
 metals pack (Outlook)    step 2, an ordinary step since 2026-08-24
 metals pack (staged)     loads it. .xlsx first, .tsv only as a legacy fallback
 cement pack (staged)     consumes step 2b's capture, skips cleanly if absent
+cement check (staged)    consumes step 2b' (Kotak channel-check note) as
+                         source kotak_check; skips months the pack carries
 cement watch (IndiaMART) spawned DETACHED (~6.5 min sweep); once a day;
                          writes cement_watch*, never prices
 mail watch (staged)      consumes step 1, skips cleanly if absent

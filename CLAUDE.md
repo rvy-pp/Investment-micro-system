@@ -1256,6 +1256,37 @@ with nothing raising. Rs/t also matches steel's `hrc_india_inr`. The staging
   yoy change. A naive label match loads DELTAS as levels. Guarded twice: first
   block only, plus a Rs/bag plausibility range a delta block cannot pass.
 
+### The pack's numbers arrive a week early, in Kotak's own note (2026-10-01)
+
+PM, after September's column moved every cement score ~2.5 points in one
+session on 30-Sep: *"This cement pack is ass."* A sweep of September's broker
+mail found that **Kotak's monthly "[Kotak] Construction Materials" channel-check
+note (23-Sep) carried the pack's September numbers exactly**:
++3.5/+3.0/+2.1/+1.3/+1.0% E/S/W/N/C, +2.2% all-India. Rebuilt levels match the
+pack to 0.04%. `adapters/cement_check.py` loads that note as an EARLY print of
+the same `cement_price_*` ids, with source **`kotak_check`** (rank 35, below
+`cement_pack`). It is not a proxy, so invariant 6 does not bite, but the
+source tag keeps provenance visible. It is staged by full-refresh Step 2b'
+and loaded by the `cement check (staged)` step.
+
+**The pack supersedes it twice over.** The loader skips any month the pack
+already carries. `cement_pack.py --load` DELETES `kotak_check` rows for every
+month it carries, or the 23rd and the 30th would stand as two prints of one
+month. Replayed on September: the economics flip would have landed on
+**23-Sep instead of 30-Sep** (dalmia 1.77 → 4.44), and the pack's arrival
+replaced all six rows.
+
+**The other houses are deliberately NOT loaded, and the reason is measured.**
+Early-month notes are ANNOUNCED hikes (Nuvama 03-Sep: Central +Rs35–40/bag,
+realised +Rs3; Nomura 08-Sep roughly 2x). Late-month notes agree on all-India
+(Kotak +Rs8, IIFL +10, Elara +7) and DISAGREE on regions: East is +3.5% on
+Kotak, flat on JPM and IIFL. That East print is what puts Dalmia and Shree at
+the top of the cement table. Nomura quotes trade prices (~Rs330, against
+Kotak's ~359), a different basis. Only Kotak's note IS the pack's number. A
+cross-house check shown beside it is the scoped next step, not yet built.
+The IndiaMART watch got September wrong in every region (South −0.6% and West
+−0.8% against +3.0/+2.1%).
+
 ### The pack lands ~15 days late — hence the IndiaMART watch
 
 PM figure, 2026-08-28: the pack's prints are about a **fortnight** behind. Cement

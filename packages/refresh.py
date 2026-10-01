@@ -158,6 +158,14 @@ STEPS = [
     # unattended one (the connector is agent-callable only), but a cheap one:
     # one read, no Outlook automation. See adapters/cement_pack.py.
     ("cement pack (staged)", ["packages/refresh.py", "--consume", "cement"],  False),
+    # Kotak's monthly cement channel-check NOTE, staged by the full-refresh
+    # skill (Step 2b'). It carries the pack's own regional m/m numbers ~7 days
+    # before the pack prints them (Sep-2026: note 23-Sep, pack 30-Sep, numbers
+    # identical). Loads as source 'kotak_check' under the pack's series ids;
+    # AFTER the pack step on purpose, so a month the pack already carries is
+    # skipped rather than written. Idempotent, a no-op with nothing staged.
+    ("cement check (staged)",
+     ["packages/adapters/cement_check.py", "--load-all"],                   False),
     # THE ONLY STEP HERE THAT IS A WATCH RATHER THAN A FEED. Scrapes IndiaMART
     # dealer asks into `cement_watch`, never into `prices`, and no pillar reads
     # it. It earns its place because the Kotak pack lands ~15 days late, so a

@@ -53,6 +53,11 @@ PRECEDENCE = {
     # be a claim about relative quality that is not true, and ranking is what
     # decides a future overlap.
     "cement_pack": 40,
+    # Kotak's monthly cement channel-check NOTE — the pack's own regional
+    # numbers ~7 days before the pack prints them (adapters/cement_check.py).
+    # Below cement_pack so the pack wins any same-date collision; cement_pack
+    # also deletes these rows for every month it carries.
+    "kotak_check": 35,
     "westmetall":  30,
     "wind":        20,
     "fred":        10,
