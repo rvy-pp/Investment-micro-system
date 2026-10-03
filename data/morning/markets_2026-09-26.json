@@ -1,0 +1,203 @@
+{
+ "date": "2026-09-26",
+ "fetched_at": "2026-09-26T08:11:09",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-25",
+    "close": 7743.41,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.51
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-25",
+    "close": 27068.72,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.48
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-25",
+    "close": 51828.62,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.93
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-25",
+    "close": 12668.93,
+    "prev_date": "2026-09-24",
+    "chg_pct": 1.41
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-25",
+    "close": 225.07,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.22
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-25",
+    "close": 630.63,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.22
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-25",
+    "close": 450.61,
+    "prev_date": "2026-09-24",
+    "chg_pct": -0.12
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-25",
+    "close": 352.81,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.7
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-25",
+    "close": 176.11,
+    "prev_date": "2026-09-24",
+    "chg_pct": -0.73
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-25",
+    "close": 57.33,
+    "prev_date": "2026-09-24",
+    "chg_pct": 0.28
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Invests In AI Automation Deal To Deepen Enterprise Workflow Push",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-26 02:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-invests-ai-automation-020845438.html"
+   },
+   {
+    "title": "Accenture (ACN) Joins Anthropic\u2019s AI Safety Effort. Can it Turn Evaluation into Profits?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-25 23:36Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-joins-anthropic-ai-233631025.html"
+   },
+   {
+    "title": "How Much Downside Is Left In Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-09-25 15:32Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/much-downside-left-accenture-stock-153228027.html"
+   },
+   {
+    "title": "JPMorgan Adjusts Price Target on Accenture to $200 From $179, Maintains Overweight Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-25 09:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jpmorgan-adjusts-price-target-accenture-094023485.html"
+   },
+   {
+    "title": "Accenture (ACN) Declines More Than Market: Some Information for Investors",
+    "publisher": "Zacks",
+    "when": "2026-09-24 21:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-declines-more-market-210002888.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Daiwa Securities Adjusts PT on Cognizant Technology Solutions to $60 From $42, Maintains Neutral Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-25 10:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/daiwa-securities-adjusts-pt-cognizant-104251766.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Rolled Out AI Engineering Tools To Clients",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-23 14:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-rolled-141549646.html"
+   },
+   {
+    "title": "Cognizant and Cognition put autonomous AI engineering into production at Odyssey Logistics, with a 37 percent net cost saving",
+    "publisher": "PR Newswire",
+    "when": "2026-09-23 11:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-cognition-put-autonomous-ai-110000576.html"
+   },
+   {
+    "title": "Capitalize on AI-Driven Pharmacovigilance: Benchmark IQVIA, Accenture, Cognizant, Parexel and ArisGlobal to Secure Compliance ROI and Dominate the Global Market Shift Through 2030",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-23 08:12Z",
+    "link": "https://finance.yahoo.com/healthcare/articles/capitalize-ai-driven-pharmacovigilance-benchmark-081200688.html"
+   },
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "PR Newswire",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/belcan-cognizant-company-recognized-2025-120000803.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia Would Have to Add Almost a Whole Broadcom to Reach $7 Trillion",
+    "publisher": "Motley Fool",
+    "when": "2026-09-25 23:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-add-almost-whole-broadcom-234401557.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Nvidia Would Have to Add Almost a Whole Broadcom to Reach $7 Trillion",
+    "publisher": "Motley Fool",
+    "when": "2026-09-25 23:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-add-almost-whole-broadcom-234401557.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Nvidia, AMD Love This High-Tech Facilitator. So Does Wall Street.",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-25 20:00Z",
+    "link": "https://finance.yahoo.com/m/b8eae4aa-f7ed-33bb-9966-deffb558b2ed/nvidia%2C-amd-love-this.html"
+   },
+   {
+    "title": "Is AMD Stock Priced Right Against Its Chip Peers?",
+    "publisher": "Trefis",
+    "when": "2026-09-25 18:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-priced-against-chip-183430014.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23237.5,
+  "chg_pct": 0.21,
+  "stamp": "26-Sep-2026 02:39:57",
+  "expiry": "29-Sep-2026",
+  "volume": 150465,
+  "nifty_close": {
+   "close": 23140.5,
+   "stamp": "25-Sep-2026 15:30"
+  },
+  "gap_pts": 97.0,
+  "gap_pct": 0.42
+ }
+}

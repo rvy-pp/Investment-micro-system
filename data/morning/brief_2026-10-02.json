@@ -1,0 +1,337 @@
+{
+ "date": "2026-10-02",
+ "generated_at": "2026-10-02T08:13:03+05:30",
+ "mail": {
+  "window": "24h to 07:53 IST",
+  "n_scanned": 124,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Vedanta raised Rs2,000 crore via non-convertible debentures, reported 30-Sep.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "HRC at Rs64K/t (+11% since end-July), 3% above import parity; Australian HCC ~US$274/t (+27%); spreads ~1% wider WoW near April peak.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "14:14",
+      "detail": {
+       "summary": "Domestic prices hold a small premium to import parity, backed by the safeguard duty, so imports should normalise as production ramps. Elevated met coal on China supply disruptions keeps costs high; how spreads evolve beyond monsoon is the stock driver. Medium-term view constructive.",
+       "points": [
+        "HRC Rs64K/t, +11% since end-July",
+        "Secondary rebar Rs51.7K/t, +2% WoW, +18% since end-July",
+        "China CFR iron ore ~US$95/t flat WoW",
+        "Spreads up ~44% since mid-Dec lows",
+        "Steel stocks +8% YTD vs Sensex -15%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "SAIL is flying in Mongolian coking coal to secure new supplies, sources say.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     },
+     {
+      "text": "Naveen Jindal weighs a bid for EU steelmaker Celsa.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:55"
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "CLSA expects 2Q cement Ebitda/t down Rs200-250 QoQ despite 7-9% YoY demand growth; preferred picks UltraTech, Shree, Dalmia Bharat.",
+      "source": "CLSA — Green Energy Corridor-III | Previews: Banks, Cements | Capex Insights | IDEA",
+      "received": "09:03",
+      "detail": {
+       "summary": "Cement demand beat in 2Q on a below-normal monsoon and resilient housing, but profitability is expected to weaken sharply. CLSA still prefers the three large names into results.",
+       "points": [
+        "Demand +7-9% YoY in 2Q",
+        "Industry Ebitda/t down Rs200-250 QoQ",
+        "Drivers: below-normal monsoon, resilient housing",
+        "Picks: UTCEM, SRCM, DALBHARA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambuja (via ACC) commissions 2.4mtpa Salai Banwa grinding unit and 1mtpa Kalamboli blending capacity; consolidated capacity 113.45mtpa; Emkay ADD, TP Rs450 vs CMP Rs374.",
+      "source": "Emkay — Cement Corner: Ambuja Cement Commissions 2.4mtpa Salai Banwa GU and 1mtpa Kalamboli GU",
+      "received": "09:11",
+      "detail": {
+       "summary": "ACC commissioned a greenfield grinding unit in Uttar Pradesh and a subsidiary added blending capacity in Maharashtra. Emkay values Ambuja at 15x EV/EBITDA on 1QFY29 and maintains ADD.",
+       "points": [
+        "Salai Banwa GU: 2.4mtpa, Uttar Pradesh",
+        "Kalamboli: 3mtpa blending unit, adds 1mtpa cement",
+        "Consolidated capacity now 113.45mtpa",
+        "TP Rs450 vs CMP Rs374, 15x EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: September cement prices stable QoQ pan-India against usual seasonal softness, South led hikes, West hit by festival headwinds; another price hike scheduled next month.",
+      "source": "Elara — Elara Stinger: Centre cuts windfall tax on diesel, ATF exports from October 1 - Monthly Update: Cement (+2 more in Outlook)",
+      "received": "08:58",
+      "detail": {
+       "summary": "Elara's monthly update says partial hikes held through a light monsoon as fuel costs rose, though demand recovery is uneven. Regionally, North leads the recovery and West lags on festival timing.",
+       "points": [
+        "Pan-India prices stable QoQ, breaking seasonal trend",
+        "South led September regional hikes",
+        "North leads recovery; East, Central mild gains",
+        "West faces festival-season headwinds"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Coal India Sep e-auction premium jumped to ~94% from ~59% in Aug; Morgan Stanley (OW, PT Rs480) sees upside risk to earnings estimates.",
+      "source": "Morgan Stanley — PULSE: Coal India Limited: Sep e-auction premiums at ~94% vs. ~59% in Aug",
+      "received": "12:55",
+      "detail": {
+       "summary": "Sharply higher global thermal coal prices since July and seasonally strong non-power demand are driving premiums. Morgan Stanley sees this as a material positive and expects the stock to do well near term.",
+       "points": [
+        "Sep premium ~94% vs ~59% in Aug",
+        "Rating Overweight, price target Rs480",
+        "Premium expected to expand in coming months",
+        "Upgrade to OW on 21 Sep"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coal India Sep dispatch 61.2mt (+12.5% yoy), production 53.5mt (+9.2%); e-auction premium 94% vs 54% for 1HFY27, 72% allocation.",
+      "source": "Kotak — [Kotak] Coal India | Dispatch volumes increased 12.5% yoy in September 2026",
+      "received": "17:48",
+      "detail": {
+       "summary": "Growth leaned on a weak base, and 1HFY27 production is still down. Power-plant stocks at 6.8 days leave room for restocking, while CIL's own stock is ~67mt. Kotak says e-auction earnings likely improved in September.",
+       "points": [
+        "1HFY27 dispatch 384.2mt, +7.6% yoy",
+        "1HFY27 production 321.0mt, -2.5% yoy",
+        "Power-plant inventory 6.8 days, five-year low",
+        "Offered 13.02mt, 9.36mt (72%) allocated",
+        "Imported coal ~US$116/t"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA lifts 2026E copper 3% to US$13,278/t, keeps 2027E US$15,250/t, raises long-term real price to US$12,000/t from US$10,000/t.",
+      "source": "BofA — BofA ASIA Daily: U/G BHP to BUY. Copper Upside. (+2 more in Outlook)",
+      "received": "06:50",
+      "detail": {
+       "summary": "BofA expects copper inventories to stay in the US on financing demand and sees supply disruptions as supportive. The higher long-term price drives NAV upgrades; BHP is upgraded to Buy ahead of a November Olympic Dam visit.",
+       "points": [
+        "2026E US$13,278/t, +3%",
+        "2027E unchanged US$15,250/t",
+        "LT real US$12,000/t from US$10,000/t",
+        "BHP upgraded to Buy"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "ACN FY27 organic guide midpoint 2.25% vs 3% in FY26 implies deceleration; CLSA sees downside risk to FY28 EPS, keeps Hold on TCS/INFY/HCLT/TechM, Wipro Underperform.",
+      "source": "CLSA — CLSA: India IT: ACN 4Q26: Steady is enough",
+      "received": "03:01",
+      "detail": {
+       "summary": "ACN beat revenue and EPS by c.3%, but its FY27 organic guide is lower than FY26 growth. Since ACN has been taking share from Indian peers, the guide implies low-single-digit organic growth for them and risk to FY28 EPS.",
+       "points": [
+        "4Q26 revenue and EPS beat c.3% vs Bloomberg consensus",
+        "FY27 revenue guide 3-6%, incl. 2-2.5% inorganic",
+        "Comms +11% (read-across for TechM), BFSI +6% YoY",
+        "TCS/INFY valuations at parity to ACN; discount risk in FY28",
+        "Hold on TCS, INFY, HCL, TechM; Underperform Wipro"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS expects the ACN-led sentiment lift in India IT to fizzle within weeks unless 2QFY27 revenue prints surprise; macro and pricing unchanged.",
+      "source": "Morgan Stanley — India Technology: IT Services: Read-across from ACN's 4QF26",
+      "received": "22:06",
+      "detail": {
+       "summary": "MS sees the ACN beat and FY27 guide as sentiment-positive, but organic growth decelerating at the midpoint, no macro change and hyper-competitive pricing remain concerns for large India IT. Any rally likely fades absent a meaningful 2QFY27 revenue surprise.",
+       "points": [
+        "Uptick in small deals; indirect Middle East impact stabilised",
+        "Management: macro unchanged, 4QFY26 pricing lower in many areas",
+        "FY27 guide assumes intense competition continues",
+        "MS bakes in some F28e organic improvement vs F27e",
+        "Industry View: In-Line"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA calls ACN's 7% cc beat largely company-specific, neutral read-across; AI narration constructive (FY27 deflation similar to FY26); prefers Mphasis, Coforge.",
+      "source": "BofA — India IT Services: Read across from ACN print: Positive AI narration hits a mark; Q4 beat firm specific - India (+8 more in Outlook)",
+      "received": "23:11",
+      "detail": {
+       "summary": "The beat was driven by smaller deals, faster mobilisation and federal acquisitions, two of them company-specific, with the demand view unchanged and FY27 guide in line. The AI commentary is the sector positive. BofA expects Mphasis and Coforge to stand out in the Sep quarter.",
+       "points": [
+        "Q4 revenue +7% cc yoy vs 3% street",
+        "FY27 guide 3-6% cc; 1-3.5% organic; in line",
+        "FY27 AI deflation comparable to FY26; token costs falling",
+        "FY27 margin expansion guided despite intense pricing competition",
+        "Mphasis 2Q: expects 3% qoq cc growth"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "CLSA recommends a CRR hike at the 5-7 Oct MPC, with or without a repo hike that OIS already prices as near-certain.",
+      "source": "CLSA — CLSA: India Economics: MPC Preview: Why not a CRR hike?",
+      "received": "16:34",
+      "detail": {
+       "summary": "CLSA says a repo hike is almost a given per OIS, but would achieve little amid the current liquidity surplus. A CRR hike, though seen as taboo, has definite benefits, so CLSA recommends it next week.",
+       "points": [
+        "MPC meets 5-7 Oct 2026",
+        "Repo hike near-certain per OIS (Bloomberg)",
+        "Liquidity surplus blunts repo-only tightening",
+        "CLSA calls for CRR hike, with or without repo"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nifty fell 3.1% last week, an eighth straight weekly loss (longest since 2001); forward PE 16.9x, lowest since June 2022.",
+      "source": "CLSA — CLSA: India strategy: Weekly wrap",
+      "received": "19:40",
+      "detail": {
+       "summary": "The Nifty's losing streak is the longest since 2001 and has taken valuations to a four-year low. FIIs kept selling, the 10-year yield rose, and CLSA's Bull-Bear index stays bearish.",
+       "points": [
+        "FIIs sold US$2.5bn equities; CY26-TD outflows US$27.9bn",
+        "10-year yield +10bps to 7.2%",
+        "Bond-earnings yield gap 1.3ppts vs c.1ppt average",
+        "Bull-Bear index 12.4% bullish"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MSCI India fell 6.9% in September, as Brent +14% m/m and DM hikes lifted the 10-year yield 24bps; FIIs sold $3.2bn.",
+      "source": "JPM — India Equity Strategy: September 2026 wrap: Global rate hikes and crude spike outweigh resilient domestic prints (+2 more in Outlook)",
+      "received": "19:09",
+      "detail": {
+       "summary": "September's drop came from crude and global rate hikes, with a weaker rupee and primary-market supply adding pressure. Domestic prints stayed resilient: industrial output and trade deficit beat expectations.",
+       "points": [
+        "Nifty -6.1% in Sept, -13% YTD",
+        "INR 95.83/USD, -0.7% m/m",
+        "DII inflows $8.0bn vs FII selling $3.2bn",
+        "Aug IIP +8% oya; trade deficit $26.9bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Sep wholesales beat ex-Bajaj: Maruti +24.4%, TVS +24.3%, Tata CV +42.4%; Bajaj 9% below estimate; M&M tractors -21.2% on El Nino.",
+      "source": "PhillipCapital — India Auto Wholesales Analysis - Sept-2026 | Healthy growth (ex-tractors) despite delayed festivals! | Entering normalized era",
+      "received": "00:00",
+      "detail": {
+       "summary": "Pre-festive build and retail traction lifted September wholesales above estimates, except Bajaj, hit by production and shipping issues. Tractors are de-growing on a high base and El Nino. Retail growth should moderate to mid-to-high single digits in Navratri-Diwali as the GST-cut base rises.",
+       "points": [
+        "Maruti 2,36,013 units, +24.4% YoY; Tata CV 51,062, +42.4%",
+        "Bajaj Auto 5,38,443 vs estimate 5,92,210, -9%",
+        "M&M tractors 52,100, -21.2% YoY; Escorts 15,214, -16.7%",
+        "Hero 7,66,348, +11.5% YoY, 9% above estimate",
+        "Normalised industry growth of 7-8% expected from Q4FY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Sep registrations: 2W +39%, PV +44%, CV +41% YoY on a GST-cut base; growth to moderate to mid-single digits from October.",
+      "source": "CLSA — CLSA: India autos: Auto barometer",
+      "received": "00:31",
+      "detail": {
+       "summary": "September retail was strong across segments, largely because the first three weeks of Sep 2025 were subdued ahead of the 22 Sep GST cut. The base effect starts hitting from next month, so YoY growth moderates, but absolute momentum is expected to hold. Wholesale outpaced retail, implying channel stocking ahead of festivals.",
+       "points": [
+        "Retail: 2W +39%, PV +44%, CV +41%, tractors +19% YoY",
+        "e-2W retails +99% YoY; adoption 12%, e-PV 9%",
+        "e-2W share: TVSL 26%, Bajaj 23%, Ather 15%",
+        "TMPV volumes +65% YoY; MSIL lost 180bps share",
+        "Top picks: M&M, Bajaj Auto, TVSL, Ather"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HEG Graphite EBITDA/t seen rising from ~US$700 in Q1FY27 to US$1,200-1,400 in FY28E as CY27 contracts reset; demerged entity lists within weeks.",
+      "source": "Aditya Birla Capital — HEG Graphite (NOT RATED) | Darwin's test passed; spread expansion yet to be priced in (+5 more in Outlook)",
+      "received": "17:30",
+      "detail": {
+       "summary": "After a day at HEG HQ, the broker sees the company surviving the graphite electrode downturn with the strongest cost position and a 100ktpa single-site plant. Stock gains reflect value unlock and early recovery hopes; spread expansion arrives with a lag as offtake contracts roll over, and is not yet priced.",
+       "points": [
+        "EBITDA/t ~US$700 in Q1FY27",
+        "FY28E EBITDA/t US$1,200-1,400 as CY27 pricing resets higher",
+        "Plant capacity 100ktpa at a single site",
+        "HEG Graphite to list in coming weeks after demerger",
+        "Rating: NOT RATED"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Micron +3% post results; GS lifts TP to $1,250 from $1,100, FY27 capex $55bn, LTAs cover ~35% of revenue through FY30.",
+    "source": "Goldman Sachs — [GS Daily] MU strong quarter and Q1 guidance"
+   },
+   {
+    "text": "Samsung 3Q26 OP seen above W100tn (GS trims to W106tn on KRW); 2027 HBM revenue +274% yoy to exceed W100tn.",
+    "source": "Goldman Sachs — [GS Sales Note] memory stocks; [GS Daily] Samsung"
+   },
+   {
+    "text": "SOX +1.59% on the day, Nvidia +1.09%, AMD +0.65%; Broadcom -2.15% on $42bn financing tying chips to Anthropic.",
+    "source": "GuruFocus (AVGO headline, 2026-10-01); Yahoo Finance markets file"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "4Q earnings and AI bookings eased AI-disruption fears; revenue +7% cc vs 1-5% guide (Insider Monkey 2 Oct; BofA, IIFL notes)"
+   },
+   {
+    "name": "Cognizant",
+    "reason": "Moved in sympathy with Accenture's results (TIKR, 1 Oct headline: Cognizant and EPAM up ~7% on Accenture's good news)"
+   }
+  ]
+ }
+}

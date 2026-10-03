@@ -1,0 +1,38 @@
+[
+  {
+    "entity_id": "dalmia",
+    "sector": "cement",
+    "subject": "Hi Rajvaibhav, Concrete Insights: September: Surprise price hikes in the South; demand still mixed",
+    "sender": "sanjay.mookim@jpmresearchmail.com",
+    "receivedDateTime": "2026-09-17T01:30:36.000Z",
+    "hasAttachments": false,
+    "summary": "Asia Pacific Equity Research. Concrete Insights: September: Surprise price hikes in the South; demand still mixed."
+  },
+  {
+    "entity_id": "hindalco",
+    "sector": "aluminium",
+    "subject": "Ambit Metals: Monthly Chartbook: Macro tightens, China weakens",
+    "sender": "satyadeep.jain@ambit.co",
+    "receivedDateTime": "2026-09-17T01:35:15.000Z",
+    "hasAttachments": true,
+    "summary": "Key Highlights from this Chartbook: ...steel and base metals; HNDL over VAML."
+  },
+  {
+    "entity_id": "amber",
+    "sector": "ems",
+    "subject": "Avendus Spark Quant-Attentive: GAMUT - Get A Mutual Fund Update | September 2026 - Chronicling the Mutual Fund Space",
+    "sender": "lakshmeenarasimhan.s@avendusspark.com",
+    "receivedDateTime": "2026-09-17T01:18:00.000Z",
+    "hasAttachments": false,
+    "summary": "...bn, 4 schemes for Amber at Rs. 5 bn. Largest addition for the month: HDFC Bank - Rs. 55 bn, Aster DM - Rs.28bn, TD Power Systems - Rs. 33 bn. Largest reduction for the month..."
+  },
+  {
+    "entity_id": "kaynes",
+    "sector": "ems",
+    "subject": "GS Launchpad - Sep 17",
+    "sender": "bella.chong@mail.marquee.gs.com",
+    "receivedDateTime": "2026-09-16T23:32:33.000Z",
+    "hasAttachments": false,
+    "summary": "Date Time (in HKT) Company/Topic Language Register..."
+  }
+]

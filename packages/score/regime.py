@@ -395,40 +395,53 @@ def _grade(spec: dict, v: float) -> str:
     return "faint"
 
 
-def _rolling_weeks(raw: dict, sig: dict, spec: dict, n_days: int) -> list[dict]:
-    """The last n US sessions, each read as a ROLLING week: the move over that
-    series' own last 5 sessions, z'd against the latest completed-week sigma.
+def classify_rolling(raw: dict, sig: dict, spec: dict) -> list[dict]:
+    """EVERY classifiable US session read as a ROLLING week: the move over
+    that series' own last 5 sessions, z'd against the AS-OF completed-week
+    sigma (the newest weekly sigma whose week index <= the session's own —
+    each sigma is built from the 52 weeks ENDING BEFORE its key week, so a
+    day never normalises against a window containing itself: no look-ahead).
 
-    This is the daily quantification of the weekly read — it does not wait for
-    Friday. Two honesty notes baked in: consecutive readings share 4 of 5
-    sessions (they autocorrelate by construction — display, never a backtest
-    sample), and the sigma is the latest completed week's, so a vol regime
-    change inside the current week shows up in the MOVE, not the divisor."""
+    This is the daily quantification of the weekly read — it does not wait
+    for Friday, and since 2026-09-08 it is what the tab LEADS with. The full
+    history goes through this one function so the backtest tests exactly the
+    number the tab shows. Consecutive readings share 4 of 5 sessions — they
+    autocorrelate by construction — which is why every forward statistic on
+    this layer is computed on STATE ENTRIES, never on all days."""
+    import bisect as _b
     eq, bond, gold = (spec["roles"]["eq"], spec["roles"]["bond_from"],
                       spec["roles"]["gold"])
     p = spec["weekly"]
-    last_sig = {}
+    # per series: weekly sigmas as a sorted (week_index, sigma) list
+    sig_ax: dict[str, tuple[list[int], list[float]]] = {}
     for sid in (eq, bond, gold):
         if not sig[sid]:
             return []
-        last_sig[sid] = sig[sid][max(sig[sid], key=lambda k: _wkidx(*k))]
+        ks = sorted(sig[sid], key=lambda k: _wkidx(*k))
+        sig_ax[sid] = ([_wkidx(*k) for k in ks], [sig[sid][k] for k in ks])
 
     cals = {sid: sorted(raw[sid]) for sid in (eq, bond, gold)}
     out = []
-    for d in cals[eq][-n_days:]:
+    for d in cals[eq]:
+        iso = dt.date.fromisoformat(d).isocalendar()
+        wk = _wkidx(iso[0], iso[1])
         zs = {}
         ok = True
         for sid in (eq, bond, gold):
             cal = cals[sid]
-            import bisect as _b
             i = _b.bisect_right(cal, d) - 1
             if i < 5:
+                ok = False
+                break
+            idxs, sigs = sig_ax[sid]
+            j = _b.bisect_right(idxs, wk) - 1
+            if j < 0:
                 ok = False
                 break
             c1, c0 = raw[sid][cal[i]], raw[sid][cal[i - 5]]
             mv = ((c1 - c0) * 100.0 if spec["series"][sid]["kind"] == "yield_pct"
                   else math.log(c1 / c0))
-            zs[sid] = mv / last_sig[sid]
+            zs[sid] = mv / sigs[j]
         if not ok:
             continue
         z_eq, z_bond, z_gold = zs[eq], -zs[bond], zs[gold]
@@ -443,6 +456,118 @@ def _rolling_weeks(raw: dict, sig: dict, spec: dict, n_days: int) -> list[dict]:
             "z_gold": round(z_gold, 2),
             "intensity": round(inten, 2), "grade": _grade(spec, inten),
         })
+    return out
+
+
+def rolling_runs(rdays: list[dict], gap_break: int = 7) -> list[dict]:
+    """Compress the rolling day series into state RUNS. A run is the unit the
+    evidence layer samples: its first day is the moment the tab's lead
+    actually flipped. A classification hole longer than gap_break calendar
+    days ends the run and marks the next one gap-preceded, so an unclassified
+    stretch never fabricates a flip (the transitions() rule, one layer up)."""
+    runs: list[dict] = []
+    for d in rdays:
+        if runs:
+            prev = runs[-1]
+            gap = (dt.date.fromisoformat(d["date"])
+                   - dt.date.fromisoformat(prev["end"])).days
+            if d["state"] == prev["state"] and gap <= gap_break:
+                prev["end"] = d["date"]
+                prev["len"] += 1
+                continue
+            runs.append({"state": d["state"], "start": d["date"],
+                         "end": d["date"], "len": 1,
+                         "after_gap": gap > gap_break})
+        else:
+            runs.append({"state": d["state"], "start": d["date"],
+                         "end": d["date"], "len": 1, "after_gap": True})
+    return runs
+
+
+def rolling_stats(rdays: list[dict], spec: dict) -> dict:
+    """Does the rolling read actually change daily, and what follows a flip.
+
+    churn_pct = share of consecutive session pairs where the state differs;
+    run lengths answer the same question per state; entry transitions are the
+    flip-to-flip matrix (which state a run of X hands over to). All counts,
+    no model — the weekly tables' discipline at the rolling cadence."""
+    rp = spec.get("rolling") or {}
+    runs = rolling_runs(rdays, rp.get("gap_break_days", 7))
+    n_pairs = 0
+    n_chg = 0
+    for a, b in zip(rdays, rdays[1:]):
+        gap = (dt.date.fromisoformat(b["date"])
+               - dt.date.fromisoformat(a["date"])).days
+        if gap > rp.get("gap_break_days", 7):
+            continue
+        n_pairs += 1
+        n_chg += a["state"] != b["state"]
+    lens = sorted(r["len"] for r in runs)
+    by_state: dict[str, list[int]] = {}
+    for r in runs:
+        by_state.setdefault(r["state"], []).append(r["len"])
+    flips: dict[str, dict[str, int]] = {}
+    for a, b in zip(runs, runs[1:]):
+        if b["after_gap"]:
+            continue
+        flips.setdefault(a["state"], {}).setdefault(b["state"], 0)
+        flips[a["state"]][b["state"]] += 1
+    return {
+        "n_days": len(rdays), "n_runs": len(runs),
+        "churn_pct": round(100.0 * n_chg / n_pairs, 1) if n_pairs else None,
+        "median_run": lens[len(lens) // 2] if lens else None,
+        "mean_run": round(sum(lens) / len(lens), 2) if lens else None,
+        "run_len_by_state": {s: {"n": len(v),
+                                 "mean": round(sum(v) / len(v), 2),
+                                 "max": max(v)}
+                             for s, v in by_state.items()},
+        "flips": flips,
+        "runs": runs,
+    }
+
+
+def _india_after_entries(runs: list[dict], spec: dict, horizon: int,
+                         min_n: int) -> dict:
+    """Per state, the India move over the `horizon` sessions after a rolling
+    ENTRY (the run's first day — the day the lead flipped to that state).
+    Base close = last India close on/before the entry's US date (already
+    known when the flip prints); end = the horizon-th India session after.
+    Same live-from-the-store discipline as _india_next_week: a stale series
+    contributes fewer pairs, never zeros."""
+    import bisect as _b
+    conn = sqlite3.connect(DB)
+    out: dict[str, dict] = {}
+    for sid, scfg in (spec.get("india_series") or {}).items():
+        if not scfg.get("evidence"):
+            continue
+        px = dict(_series(conn, sid))
+        if not px:
+            continue
+        cal = sorted(px)
+        per_state: dict[str, list[float]] = {}
+        for r in runs:
+            j = _b.bisect_right(cal, r["start"]) - 1
+            if j < 0 or j + horizon >= len(cal):
+                continue
+            # a data hole must not stretch the window into a multi-week move
+            span = (dt.date.fromisoformat(cal[j + horizon])
+                    - dt.date.fromisoformat(cal[j])).days
+            if span > horizon * 2 + 4:
+                continue
+            per_state.setdefault(r["state"], []).append(
+                100.0 * math.log(px[cal[j + horizon]] / px[cal[j]]))
+        stats = {}
+        for s, v in per_state.items():
+            if len(v) < min_n:
+                stats[s] = {"n": len(v)}
+                continue
+            m = sum(v) / len(v)
+            sd = math.sqrt(sum((x - m) ** 2 for x in v) / len(v))
+            stats[s] = {"n": len(v), "mean": round(m, 2),
+                        "hit": round(100.0 * sum(1 for x in v if x > 0) / len(v), 0),
+                        "t": round(m / (sd / math.sqrt(len(v))), 1) if sd else None}
+        out[sid] = {"stats": stats, "last_date": max(px)}
+    conn.close()
     return out
 
 
@@ -563,39 +688,70 @@ def _india_next_week(weeks: list[dict], spec: dict, min_n: int) -> dict:
 
 
 def weekly_view() -> dict:
-    """Everything the tab's weekly panel renders. JSON-safe."""
+    """Everything the tab's F1 panel renders. JSON-safe.
+
+    LEAD is the ROLLING week since 2026-09-08 (PM: "update daily... show
+    weekly trend but calculate past week on a rolling basis") — the newest
+    session's trailing 5-session read. The Friday-to-Friday layer stays as
+    the trend strip and supplies the long-run tables: next-state odds, the
+    intensity ladder and the primary India evidence all condition on the
+    LEAD state but count over completed weeks (492 of them, non-overlapping
+    — the honest sample). Rolling-entry evidence rides beside them from
+    rolling_stats, sampled at flips only, never at every day."""
     weeks, spec, ctx = classify_weeks()
     if not weeks:
         return {"error": "no classified weeks - run flow_series.py --load"}
     tr = weekly_transitions(weeks)
     last = weeks[-1]
 
-    nxt = sorted(tr["pct"].get(last["state"], {}).items(), key=lambda kv: -kv[1])
+    rdays = classify_rolling(ctx["raw"], ctx["sig"], spec)
+    lead = rdays[-1] if rdays else None
+    lead_state = lead["state"] if lead else last["state"]
+    rst = rolling_stats(rdays, spec) if rdays else {}
+    runs = rst.pop("runs", [])
+    cur_run = runs[-1]["len"] if runs else None
+    rp = spec.get("rolling") or {}
+    entry_india = _india_after_entries(
+        runs, spec, rp.get("horizon_sessions", 5),
+        rp.get("min_stat_n", 15)) if runs else {}
+    # which state the lead has flipped to next, historically
+    lead_flips = rst.get("flips", {}).get(lead_state, {})
+    n_flips = sum(lead_flips.values())
+    entry_next = [{"state": s, "pct": round(100.0 * c / n_flips, 1)}
+                  for s, c in sorted(lead_flips.items(), key=lambda kv: -kv[1])
+                  ] if n_flips else []
+
+    nxt = sorted(tr["pct"].get(lead_state, {}).items(), key=lambda kv: -kv[1])
     india = _india_next_week(weeks, spec, spec["weekly"]["min_stat_n"])
 
-    # ROLLING week (PM, 2026-09-04: "show quantification on a daily basis,
-    # rolling window method"): each of the last N sessions read as a full
-    # 5-session weekly window — replaces the old partial week-to-date chip,
-    # which mixed 1-session and 4-session "weeks" into one z scale.
-    rolling = _rolling_weeks(ctx["raw"], ctx["sig"], spec,
-                             spec["weekly"].get("rolling_days", 10))
-
-    stale_days = (dt.date.today()
-                  - dt.date.fromisoformat(last["week_end"])).days
+    stale_anchor = lead["date"] if lead else last["week_end"]
+    stale_days = (dt.date.today() - dt.date.fromisoformat(stale_anchor)).days
     return {
         "spec_version": spec["version"],
+        # the LEAD read — rolling past week, updated every US session
+        "lead": ({**lead, "run_len": cur_run} if lead else None),
+        "lead_state": lead_state,
+        # the completed Friday week — the trend anchor
         "week": last["wk"], "week_end": last["week_end"],
         "state": last["state"], "loud_state": last["loud_state"],
         "z_eq": last["z_eq"], "z_bond": last["z_bond"],
         "z_gold": last["z_gold"], "rot_z": last["rot_z"],
         "intensity": last["intensity"], "grade": last["grade"],
-        "stale_days": stale_days, "stale": stale_days > 10,
-        "rolling": rolling,
+        # a rolling lead goes stale on the last classified US SESSION —
+        # T-1/T-2 from India is normal, beyond ~6 calendar days it is not
+        "stale_days": stale_days, "stale": stale_days > 6,
+        "rolling": rdays[-spec["weekly"].get("rolling_days", 10):],
+        "rolling_stats": {k: rst.get(k) for k in
+                          ("n_days", "n_runs", "churn_pct", "median_run",
+                           "mean_run")} if rst else None,
+        "entry_india": entry_india,
+        "entry_next": entry_next[:5],
+        "n_entries": n_flips,
         "ladder": _intensity_ladder(weeks, spec),
-        "state_ladder": _state_ladder(weeks, last["state"]),
+        "state_ladder": _state_ladder(weeks, lead_state),
         "next": [{"state": s, "pct": round(v, 1),
                   "base": round(tr["base"].get(s, 0.0), 1)} for s, v in nxt],
-        "n_observations": sum(tr["counts"].get(last["state"], {}).values()),
+        "n_observations": sum(tr["counts"].get(lead_state, {}).values()),
         "n_weeks": tr["n_weeks"], "first": weeks[0]["wk"],
         "persistence": {s: round(tr["pct"][s].get(s, 0.0) / tr["base"][s], 2)
                         for s in tr["pct"] if tr["base"].get(s)},
@@ -671,6 +827,87 @@ def cmd_backtest() -> None:
         print("  " + _fmt_day(d))
 
 
+def cmd_rolling_backtest() -> None:
+    """The rolling-week layer's evidence: does the read actually change day
+    to day, and what has followed a flip. Printed, never asserted — the same
+    eyeball-first discipline as cmd_backtest."""
+    weeks, spec, ctx = classify_weeks()
+    rdays = classify_rolling(ctx["raw"], ctx["sig"], spec)
+    if not rdays:
+        print("no classifiable sessions - run flow_series.py --load")
+        return
+    rst = rolling_stats(rdays, spec)
+    runs = rst["runs"]
+    rp = spec.get("rolling") or {}
+    print(f"rolling-week read over {rst['n_days']} US sessions "
+          f"({rdays[0]['date']} .. {rdays[-1]['date']}), spec {spec['version']}")
+    print(f"vs {len(weeks)} completed Friday weeks — same sign map, same "
+          f"quiet_z, sampling anchor moved off Friday\n")
+
+    print(f"does it change daily?  state flips on {rst['churn_pct']}% of "
+          f"consecutive sessions;")
+    print(f"{rst['n_runs']} runs, median length {rst['median_run']} sessions, "
+          f"mean {rst['mean_run']}\n")
+
+    print("state distribution, rolling days vs completed weeks:")
+    wk_n = {s: sum(1 for w in weeks if w['state'] == s) for s in STATE_ORDER}
+    for s in STATE_ORDER:
+        nd = sum(1 for d in rdays if d["state"] == s)
+        if not nd and not wk_n[s]:
+            continue
+        rl = rst["run_len_by_state"].get(s, {})
+        print(f"  {s:17s} {100.0 * nd / len(rdays):5.1f}% of days "
+              f"({nd:4d})   {100.0 * wk_n[s] / max(len(weeks), 1):5.1f}% of "
+              f"weeks ({wk_n[s]:3d})   runs n={rl.get('n', 0):3d} "
+              f"mean {rl.get('mean', 0):4.1f}d max {rl.get('max', 0):2d}d")
+
+    print("\nflip matrix — which state a run hands over to (row = ending run):")
+    hdr = "  " + " " * 18 + "".join(f"{s[:7]:>9s}" for s in STATE_ORDER)
+    print(hdr)
+    for s in STATE_ORDER:
+        row = rst["flips"].get(s)
+        if not row:
+            continue
+        n = sum(row.values())
+        cells = "".join(f"{100.0 * row.get(t, 0) / n:8.1f} " for t in STATE_ORDER)
+        print(f"  {s:17s} {cells}  n={n}")
+
+    hz = rp.get("horizon_sessions", 5)
+    print(f"\nIndia after a rolling ENTRY (the day the read flips to the "
+          f"state), next {hz} sessions —")
+    print("sampled at flips only: consecutive rolling days share 4 of 5 "
+          "sessions, so day-level\nstats would pseudo-replicate. "
+          "Cells failing |t| >= 2 are context, not signal:\n")
+    ei = _india_after_entries(runs, spec, hz, rp.get("min_stat_n", 15))
+    for sid, blk in ei.items():
+        print(f"  {sid}  [series thru {blk['last_date']}]")
+        for s in STATE_ORDER:
+            st = blk["stats"].get(s)
+            if not st:
+                continue
+            if st.get("mean") is None:
+                print(f"    {s:17s} withheld (n={st['n']})")
+            else:
+                print(f"    {s:17s} {st['mean']:+5.2f}%  hit {st['hit']:3.0f}%  "
+                      f"t {st['t']:+5.1f}  n={st['n']}")
+
+    print("\nepisode checks, rolling read on/after each dated day:")
+    idx = {d["date"]: d for d in rdays}
+    for date, label in EPISODES:
+        d = idx.get(date)
+        if d:
+            print(f"  {label:34s} {date}  {d['state']:17s} "
+                  f"[{d['grade']}, max |z| {d['intensity']:.2f}]")
+        else:
+            print(f"  {label:34s} {date}  NOT CLASSIFIED")
+
+    print("\nnewest 15 rolling readings:")
+    for d in rdays[-15:]:
+        print(f"  {d['date']}  {d['state']:17s} [{d['grade']:8s} "
+              f"{d['intensity']:4.2f}]  eq {d['z_eq']:+.2f}  "
+              f"bond {d['z_bond']:+.2f}  gold {d['z_gold']:+.2f}")
+
+
 def cmd_tune() -> None:
     print("quiet_z grid — protocol per specs/flows.yaml: anchor is Aug-2026")
     print("mostly-quiet (the coach's dated observation), bounded by quiet not")
@@ -727,17 +964,29 @@ def main() -> int:
     ap.add_argument("--tune", action="store_true")
     ap.add_argument("--explain", metavar="DATE")
     ap.add_argument("--weekly", action="store_true",
-                    help="print the week-on-week read the tab leads with")
+                    help="print the rolling-week read the tab leads with")
+    ap.add_argument("--rolling-backtest", action="store_true",
+                    help="churn, runs, flip matrix and entry evidence for "
+                         "the rolling-week layer")
     args = ap.parse_args()
 
     if args.weekly:
-        import json as _json
         v = weekly_view()
-        print(f"last completed week {v['week']} (ended {v['week_end']}): "
+        ld = v.get("lead")
+        if ld:
+            print(f"LEAD — rolling week thru {ld['date']} "
+                  f"(run of {ld['run_len']}): {ld['state']} [{ld['grade']}, "
+                  f"max |z| {ld['intensity']:.2f}]  eq {ld['z_eq']:+.2f} "
+                  f"bond {ld['z_bond']:+.2f} gold {ld['z_gold']:+.2f}")
+        print(f"trend — last completed week {v['week']} (ended {v['week_end']}): "
               f"{v['state']} [{v['grade']}, max |z| {v['intensity']:.2f}]  "
               f"eq {v['z_eq']:+.2f} bond {v['z_bond']:+.2f} "
               f"gold {v['z_gold']:+.2f}"
               + (f" rot {v['rot_z']:+.2f}" if v.get('rot_z') is not None else ""))
+        rs = v.get("rolling_stats")
+        if rs:
+            print(f"rolling layer: flips on {rs['churn_pct']}% of sessions, "
+                  f"median run {rs['median_run']}d over {rs['n_days']} days")
         print("\nrolling week (each day = its own last 5 sessions):")
         for r in v.get("rolling", []):
             print(f"  {r['date']}  {r['state']:17s} [{r['grade']:8s} "
@@ -753,15 +1002,29 @@ def main() -> int:
                     for g, c in lad[fam].items())
                 print(f"  {fam:4s}: {cells}")
         print(f"\nnext week, from {v['n_observations']} prior "
-              f"{v['state']} weeks:")
+              f"{v['lead_state']} weeks (Friday sample):")
         for x in v["next"][:5]:
             print(f"  {x['pct']:5.1f}%  {x['state']}  (base {x['base']}%)")
-        print("\nIndia next week given this state:")
+        if v.get("entry_next"):
+            print(f"\nwhen a rolling {v['lead_state']} run has ended "
+                  f"(n={v['n_entries']}), it flipped to:")
+            for x in v["entry_next"]:
+                print(f"  {x['pct']:5.1f}%  {x['state']}")
+        print("\nIndia next week given this state (Friday sample):")
         for sid, blk in v["india"].items():
-            s = blk["stats"].get(v["state"])
+            s = blk["stats"].get(v["lead_state"])
             print(f"  {sid:12s} " + (f"{s['mean']:+.2f}%  hit {s['hit']:.0f}%  "
                   f"t {s['t']}  n={s['n']}" if s else "withheld (too few pairs)")
                   + f"   [series thru {blk['last_date']}]")
+        print("\nIndia after a rolling ENTRY into this state (flip sample):")
+        for sid, blk in (v.get("entry_india") or {}).items():
+            s = blk["stats"].get(v["lead_state"])
+            ok = s and s.get("mean") is not None
+            print(f"  {sid:12s} " + (f"{s['mean']:+.2f}%  hit {s['hit']:.0f}%  "
+                  f"t {s['t']}  n={s['n']}" if ok else
+                  f"withheld (n={s['n'] if s else 0})"))
+    elif args.rolling_backtest:
+        cmd_rolling_backtest()
     elif args.tune:
         cmd_tune()
     elif args.backtest:

@@ -1,0 +1,221 @@
+{
+ "date": "2026-10-03",
+ "generated_at": "2026-10-03T08:10:50+05:30",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 33,
+  "sectors": [
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPMorgan ranks Dixon > Amber (both OW) > Kaynes N > Syrma, Avalon, Cyient DLM UW after 25 meetings; Dixon, Amber down 9-12% in 2M.",
+      "source": "JPMorgan — India EMS: Postcard from SG marketing and India conference: Waiting for positive catalysts in Dixon/Amber",
+      "received": "14:40",
+      "detail": {
+       "summary": "Investors see Dixon and Amber as attractive after the underperformance but want a catalyst before buying. JPM argues EMS multiples should be ranked by ROCE as well as earnings growth, since the sector is capex-heavy and high in working capital. That keeps it selective after the rally in peers.",
+       "points": [
+        "25 investors met across Singapore marketing and the India conference",
+        "Dixon and Amber down 9-12% in 2M vs Nifty -9%, peers +26-33%",
+        "Order: Dixon OW > Amber OW > Kaynes N > Syrma UW > Avalon UW > Cyient DLM UW",
+        "No pushback on recent Syrma, Avalon and Cyient DLM downgrades",
+        "Premium multiples belong to higher-ROCE names at comparable earnings growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Dixon upside hinges on signed MPMS export agreements, worth 15% on JPM out-year revenue estimates; camera and display module ramps have slipped.",
+      "source": "JPMorgan — India EMS: Postcard from SG marketing and India conference: Waiting for positive catalysts in Dixon/Amber",
+      "received": "14:40",
+      "detail": {
+       "summary": "With the Vivo JV and HKC JV approvals through, investor focus has moved to export upside under the mobile phone manufacturing scheme. Dixon has flagged an export opportunity from two anchor customers over two years, but no formal agreements exist yet. Backward integration into cameras and displays has run late, so execution is the second swing factor.",
+       "points": [
+        "Vivo JV and HKC JV approvals came through over the last few months",
+        "Formal export agreements still awaited from two anchor customers",
+        "Signed exports = 15% upside to JPM's out-year revenue estimates",
+        "Camera modules (Q Tech) and display modules (HKC JV) have seen delays"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kaynes: investors see a smart-meter sale fixing elevated working capital, at a cost of 20-25% of revenue and EBITDA; JPM Neutral.",
+      "source": "JPMorgan — India EMS: Postcard from SG marketing and India conference: Waiting for positive catalysts in Dixon/Amber",
+      "received": "14:40",
+      "detail": {
+       "summary": "Kaynes meetings were dominated by one issue: the smart-meter business is a drag on working capital that has been elevated for a year. Investors reckon divesting it is the stock's main lever, even though it shrinks the P&L. JPM links to press reports that Kaynes is in talks with investors to spin it off.",
+       "points": [
+        "Discussion focused only on the smart-meter business",
+        "Working capital has been elevated over the last year",
+        "Sale would cut revenue and EBITDA by 20-25%",
+        "Press reports say Kaynes is in talks with investors on a spin-off",
+        "JPM rating on Kaynes: Neutral"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "JPMorgan expects Infosys to cut FY27 organic guide to -0.5/0.5% and HCLT to 2-3.5%, with Wipro guiding -2 to 0% for 3Q27.",
+      "source": "JPMorgan — India IT Services: No seasonal joy as demand softness persists: 2QFY27 Preview",
+      "received": "19:33",
+      "detail": {
+       "summary": "JPM sees 2Q as soft despite seasonality and Accenture's beat, because geopolitics and AI deflation are still hurting revenue conversion. Midcaps keep outgrowing large caps. It calls Accenture's beat company-specific and expects scale names to stay range-bound even at -2SD multiples.",
+       "points": [
+        "Infosys guide to -0.5/0.5% vs prior -0.2/1.3%",
+        "HCLT guide to 2-3.5% vs prior 1.5-4.5%",
+        "Persistent 8.0% QoQ CC led; Wipro -1.3% the only decline",
+        "Infosys, TCS and Wipro at -2SD on 5/10yr P/E",
+        "Top OW: TechM, Coforge, Sagility; avoids: Wipro, Infosys, LTM, Tata Elxsi"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA calls Accenture's 7% CC beat company-specific and a neutral read-across, but sees its AI commentary as sector-positive; prefers Mphasis and Coforge.",
+      "source": "BofA — India IT: Read across from Accenture's print",
+      "received": "08:36",
+      "detail": {
+       "summary": "BofA argues the beat came from federal work and faster mobilisation, with demand described as unchanged and CY27 budgets 'more of the same'. The positive is the AI narration, which comes alongside a beat and a reasonable guide, undercutting the bear case on deflation.",
+       "points": [
+        "ACN 7% YoY CC revenue vs street 3%",
+        "FY27 guide 3-6% CC (1-3.5% organic), in line with consensus",
+        "FY27 AI deflation seen comparable to FY26",
+        "Mphasis seen at 3% QoQ CC in Q2 with FY27 guide held",
+        "Coforge expected above its 3-4% CQGR band"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital expects Infosys to trim the top of its FY27 guide to 1.5-2.5% from 1.5-3.0% while HCLT holds 1.5-4.5%; prefers midcaps.",
+      "source": "PhillipCapital — IT Services Results Preview - Modest Growth and Margins; Midcaps to outperform (+3 more in Outlook)",
+      "received": "13:46",
+      "detail": {
+       "summary": "PhillipCapital expects muted large-cap growth from AI deflation, weak discretionary spend and Middle East conflict, with midcaps taking share. It sees only modest margin expansion because rupee depreciation is limited. It frames valuations as supportive after the sharp YTD correction, but stays selective and prefers midcaps.",
+       "points": [
+        "Nifty IT at 15.5x NTM PE, 29% below 10-year median",
+        "Large-cap FCF yields at multi-year highs of 6-9%",
+        "Persistent +6.6%, Coforge +4.1% QoQ CC expected",
+        "Large-cap margin +0-40bps; rupee +0.9% QoQ vs 2.5% prior average",
+        "Preferred: Coforge, Mphasis, LTTS; large-cap pick Infosys"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "CLSA stays 5% underweight India after eight straight weekly Nifty falls to 18.7x 12m fwd PE; OIS prices a 50bp RBI hike on 7 Oct.",
+      "source": "CLSA — CLSA: Global Equity Strategy: TGIF — week #39",
+      "received": "09:50",
+      "detail": {
+       "summary": "Valuation is the cheapest in over six years, but CLSA sees no catalyst. Foreign ownership is at a 16-year low, issuance has saturated the market and elevated energy prices threaten the rupee. It also argues EM earnings growth is a narrow tech cycle, not a broad supercycle.",
+       "points": [
+        "Nifty down eight straight weeks; 12m fwd PE 18.7x, cheapest since May 2020",
+        "Foreign ownership 14%, lowest since June 2010",
+        "Net foreign selling US$59bn since Sep-2024; US$3.4bn from India last week",
+        "RBI 7 Oct: OIS implies +50bp, Bloomberg consensus +25bp",
+        "Equity issuance US$62bn over past year; CLSA India weight 0.95x MSCI"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "BofA sees CV volume upgrades after Sep M&HCV +43% y/y, liking Ashok Leyland and TMCV; Bajaj domestic 2W fell 12% y/y.",
+      "source": "BofA — Autos - India: Sep volume beats lost in sell off, buy the disconnect",
+      "received": "10:42",
+      "detail": {
+       "summary": "BofA argues stocks sold off on margin-cut and macro fears (rate cycle, crude) despite strong September prints. It reads that disconnect as a buying opportunity, led by CVs. It also flags Hero as an earnings-upside candidate into Q2 and says Bajaj's correction improves risk-reward.",
+       "points": [
+        "Sep CV +43%, PV +22%, 2W +13% y/y; tractors -20 to -21%",
+        "M&HCV H1 growth 26%, far ahead of market expectations",
+        "PV domestic dispatches ~460k; EV volumes a record 36k (8.5% adoption)",
+        "Hero 766k, +12% y/y; TVS +24%; Bajaj domestic -12%",
+        "2W channel stock 6-7 weeks into festive; PV channel stock under 1 month"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay prefers 2Ws and CVs over PVs; Bajaj retail 2W share slid to ~9.3% in Sep-26 from ~10.7% a year ago.",
+      "source": "Emkay — Auto & Auto Ancillaries: Steady Sep-26 – CVs, 2Ws lead; tractors lag",
+      "received": "18:03",
+      "detail": {
+       "summary": "Emkay argues underlying retail demand is strong and growth looks softer only because of a festive-timing mismatch and an elevated Sep-25 base. It favours 2Ws and CVs over PVs on better pricing flexibility under commodity pressure and a thin FY27 new-PV launch pipeline. Ather is named its 2W frontrunner.",
+       "points": [
+        "2W industry retail +33% y/y; E-2W penetration 11.6% (Aug-26: 10.7%)",
+        "TVSL 23% y/y dispatch growth; Bajaj domestic -12%",
+        "MHCV retail +50% y/y; TMCV +42%, Ashok Leyland +28% volumes",
+        "Tractors: Escorts -17%, M&M -21%; management flags high-base moderation in 2H",
+        "Ather named among Emkay's preferred 2W names alongside TVSL"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara expects paints Q2 volume growth ~5% as dealer stock sits at 2.5-3.0 months versus 1.5-2.0 normal; coverage EBITDA margin down ~70bp.",
+      "source": "Elara — Paints - Inventory correction weighs on Q2 - Quarterly Preview (+1 more in Outlook)",
+      "received": "19:36",
+      "detail": {
+       "summary": "Elara says dealers cut August purchases to correct Q1 overstocking on soft secondary sales, with only modest festive restocking in September. Brent's rise from ~$70 to ~$97 per barrel pressures margins, partly offset by price hikes. It stays at Accumulate on Asian Paints and Berger.",
+       "points": [
+        "Industry revenue growth 12-13% y/y on ~5% volume growth",
+        "Asian Paints 3-4% hike from November, taking cumulative rise to 15-16%",
+        "Margin y/y: Asian Paints -117bp, Kansai Nerolac -49bp, Berger +50bp",
+        "Birla Opus cut dealer schemes 5-6%; dealer margin edge now ~5% versus ~10%",
+        "Berger revenue +12.8%, Kansai Nerolac +12.0%, Asian Paints decorative +10%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "Cement",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Goldman raises Micron TP to $1,250 from $1,100 after a strong quarter; FY27 capex stepped up to $55bn, with DRAM/NAND tight through 2028.",
+    "source": "Goldman Sachs — [GS Daily] MU strong quarter and Q1 guidance"
+   },
+   {
+    "text": "Goldman sees Samsung 2027 HBM revenue up 274% YoY to above W100tn on higher HBM4 pricing and share; 3Q26E OP cut 5% to W106tn.",
+    "source": "Goldman Sachs — [GS Daily] Samsung Expect W100tn+ for 3Q26 OP and 2027 HBM revenue"
+   },
+   {
+    "text": "Samsung and SK Hynix buybacks end early to mid-Oct, raising liquidity-void concern; Samsung earnings likely Oct 7/8.",
+    "source": "Goldman Sachs — [GS Daily] Korea Memory Buyback Check"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Profit-taking after the ~16% post-print rally (Benzinga, 02-Oct 18:00Z)."
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

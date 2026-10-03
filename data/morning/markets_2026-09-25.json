@@ -1,0 +1,227 @@
+{
+ "date": "2026-09-25",
+ "fetched_at": "2026-09-25T08:10:50",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-24",
+    "close": 7704.13,
+    "prev_date": "2026-09-23",
+    "chg_pct": -0.02
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-24",
+    "close": 26939.37,
+    "prev_date": "2026-09-23",
+    "chg_pct": 0.01
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-24",
+    "close": 51349.98,
+    "prev_date": "2026-09-23",
+    "chg_pct": -0.31
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-24",
+    "close": 12492.54,
+    "prev_date": "2026-09-23",
+    "chg_pct": -0.33
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-24",
+    "close": 224.58,
+    "prev_date": "2026-09-23",
+    "chg_pct": -0.41
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-24",
+    "close": 629.26,
+    "prev_date": "2026-09-23",
+    "chg_pct": 2.38
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-24",
+    "close": 451.15,
+    "prev_date": "2026-09-23",
+    "chg_pct": 1.03
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-24",
+    "close": 350.36,
+    "prev_date": "2026-09-23",
+    "chg_pct": -1.3
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-24",
+    "close": 177.41,
+    "prev_date": "2026-09-23",
+    "chg_pct": -3.33
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-24",
+    "close": 57.17,
+    "prev_date": "2026-09-23",
+    "chg_pct": -3.33
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Declines More Than Market: Some Information for Investors",
+    "publisher": "Zacks",
+    "when": "2026-09-24 21:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-declines-more-market-210002888.html"
+   },
+   {
+    "title": "Accenture (ACN) Earnings Expected to Grow: Should You Buy?",
+    "publisher": "Zacks",
+    "when": "2026-09-24 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-earnings-expected-grow-130001509.html"
+   },
+   {
+    "title": "Anthropic\u2019s CEO Warned of AI Risks and Accenture Found a Business Opportunity There. How to Play ACN Stock Now.",
+    "publisher": "Barchart",
+    "when": "2026-09-24 11:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/anthropic-ceo-warned-ai-risks-115158427.html"
+   },
+   {
+    "title": "Accenture (ACN) Launches Construct Following A New Question About Whether The Stock Is Fully Valued",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-24 11:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-launches-construct-following-111527636.html"
+   },
+   {
+    "title": "Does Accenture\u2019s AI Safety and Cloud Expansion Shift the Bull Case for ACN?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-24 10:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/does-accenture-ai-safety-cloud-101258805.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Rolled Out AI Engineering Tools To Clients",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-23 14:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-rolled-141549646.html"
+   },
+   {
+    "title": "Cognizant and Cognition put autonomous AI engineering into production at Odyssey Logistics, with a 37 percent net cost saving",
+    "publisher": "PR Newswire",
+    "when": "2026-09-23 11:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-cognition-put-autonomous-ai-110000576.html"
+   },
+   {
+    "title": "Capitalize on AI-Driven Pharmacovigilance: Benchmark IQVIA, Accenture, Cognizant, Parexel and ArisGlobal to Secure Compliance ROI and Dominate the Global Market Shift Through 2030",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-23 08:12Z",
+    "link": "https://finance.yahoo.com/healthcare/articles/capitalize-ai-driven-pharmacovigilance-benchmark-081200688.html"
+   },
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "PR Newswire",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/belcan-cognizant-company-recognized-2025-120000803.html"
+   },
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "CNW Group",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/small-business/articles/belcan-cognizant-company-recognized-2025-120000759.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "How IonQ\u2019s On\u2011Prem Quantum System At NVIDIA (NVDA) Has Changed Its Investment Story",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-25 00:21Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/ionq-prem-quantum-system-nvidia-002115947.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom (AVGO) Stock May Be 24% Undervalued Following Fresh AI Demand Fears",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-24 21:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-stock-may-24-211644898.html"
+   },
+   {
+    "title": "Broadcom's Latest Prediction Makes the Stock a No-Brainer Buy Right Now",
+    "publisher": "Motley Fool",
+    "when": "2026-09-24 20:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcoms-latest-prediction-makes-stock-204300445.html"
+   },
+   {
+    "title": "Broadcom Falls 2% as $230 Billion AI Target Doubles the Delivery Test",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-24 19:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-falls-2-230-billion-192033958.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Investors Must Pay Attention to This Huge Warning Sign",
+    "publisher": "Motley Fool",
+    "when": "2026-09-24 20:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-investors-must-pay-attention-200300659.html"
+   },
+   {
+    "title": "AMD and Micron Get New Price Targets as Taiwan Chip Exports Hit Record $30.8B",
+    "publisher": "BeInCrypto",
+    "when": "2026-09-24 20:01Z",
+    "link": "https://finance.yahoo.com/news/amd-micron-price-targets-taiwan-200138586.html"
+   },
+   {
+    "title": "Nvidia, AMD Love This High-Tech Facilitator. So Does Wall Street.",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-24 20:00Z",
+    "link": "https://finance.yahoo.com/m/b8eae4aa-f7ed-33bb-9966-deffb558b2ed/nvidia%2C-amd-love-this.html"
+   },
+   {
+    "title": "AMD Move Lower as $1 Trillion Raises the Execution Bar",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-24 17:32Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-move-lower-1-trillion-173239552.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23125.5,
+  "chg_pct": -0.11,
+  "stamp": "25-Sep-2026 08:10:33",
+  "expiry": "27-Oct-2026",
+  "volume": 7736,
+  "nifty_close": {
+   "close": 23063.100000000002,
+   "stamp": "24-Sep-2026 15:30"
+  },
+  "gap_pts": 62.4,
+  "gap_pct": 0.27
+ }
+}

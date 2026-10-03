@@ -1,0 +1,351 @@
+{
+ "date": "2026-10-01",
+ "generated_at": "2026-10-01T08:12:39+05:30",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 94,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Steel spot flats spreads hit a 40-month high, longs a 6-month high; IIFL stays positive, pecking order SAIL, Tata, JSPL, JSW.",
+      "source": "IIFL Metals - India Steel - Longs prices up Rs 2800/t over a week, narrow gap with Flats; Reiterate positive stance",
+      "received": "09:49",
+      "detail": {
+       "summary": "Rebar rallied while coking coal eased, so mill spreads keep widening. IIFL sees fundamentals diverging from stock prices because of West Asia risk-off and a strong DXY, and expects mills to follow coal down only with a lag, as 2H is seasonally strong.",
+       "points": [
+        "Rebar +Rs2,800/t WoW to Rs62,700/t; HRC Rs63,900/t",
+        "Coking coal -US$10/t to US$273/t; DCE coal futures -14% MTD",
+        "China steel output -4% yoy in 8MCY26, exports -3%",
+        "Upside: SAIL 31% (tactical), Tata 33%, JSPL 19%, JSW 13%",
+        "Steel equities +8% CYTD vs Nifty -13%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HRC-Patra spread widened 12.3% WoW to Rs14,007/t versus 3-month average of Rs11,751/t; negative for HRC-based pipe makers.",
+      "source": "Nuvama - HRC-Patra spread widens by 12.3% WoW to INR 14,007/ton",
+      "received": "13:20",
+      "detail": {
+       "summary": "HRC kept rising while Patra (pipe) prices fell, stretching the conversion spread above its recent norm. Nuvama flags the squeeze as hurting HRC-based pipe manufacturers, especially in the low-end HRC segment.",
+       "points": [
+        "HRC +0.6% WoW to Rs63,850/t after +3% prior week",
+        "Patra -2.3% WoW to Rs49,843/t after +1.9% prior week",
+        "Spread Rs14,007/t vs 3M average Rs11,751/t",
+        "3M change: HRC +10%, Patra +9%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Steel puts Rs3,260 crore into T Steel Holdings (394 crore shares); separate Rs427 crore tax relief cuts exposure to Rs1,259 crore.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "08:56",
+      "detail": {
+       "summary": "Kotak's daily links list two Tata Steel filings and news items. One is a capital infusion into its subsidiary T Steel Holdings, the other a reduction in disputed tax exposure. Port Talbot electric furnace grid delays are also reported, with talks ongoing.",
+       "points": [
+        "Rs3,260 crore for 394 crore shares in T Steel Holdings",
+        "Tax dispute relief Rs427 crore; exposure to fall to Rs1,259 crore",
+        "Port Talbot EAF faces grid delays per BBC report",
+        "India policy target: 600mt steel capacity by 2047"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Elara channel checks: all-India cement up Rs7/bag MoM to Rs359, a multi-quarter high; Rs5-15/bag hikes planned for first week of October.",
+      "source": "Elara - Cement price hiked as fuel costs rise",
+      "received": "11:41",
+      "detail": {
+       "summary": "Dealer checks show partial price hikes sticking on fuel-cost pressure and a dry monsoon, with prices flat QoQ against the usual seasonal drop. Petcoke is up sharply and margins are seen at their lowest since the start of CY25, so Elara sees negatively biased earnings revisions.",
+       "points": [
+        "All-India Rs359/bag, +Rs7 MoM; ~4% YoY, flat QoQ",
+        "South +Rs11, North +Rs10, Central/East +Rs5, West +Rs4/bag",
+        "Petcoke up 19% in past month",
+        "Next hike Rs5-15/bag planned first week of October",
+        "Downside risk to earnings estimates; revisions negatively biased"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA 2Q preview: industry volumes +7-9% YoY, but expects Rs200-250/t QoQ profit decline; prefers UltraTech, Shree, Dalmia.",
+      "source": "CLSA - India cement: 2Q preview: Resilient demand",
+      "received": "05:48",
+      "detail": {
+       "summary": "Demand beat on a below-normal monsoon, but diesel, packaging and petcoke/coal costs plus maintenance shutdowns delay the profitability recovery. Middle East conflict has no end in sight, so 2HFY27 recovery is pushed out and catalysts are back-ended.",
+       "points": [
+        "Shree and UltraTech double-digit volume growth; Shree +12%, UltraTech ~+10%",
+        "Dalmia/Ramco mid-single-digit; Ambuja muted on OPC pullback",
+        "Shree EBITDA/t down Rs120-130; rest down Rs180-350 QoQ",
+        "Diesel +5% QoQ; East prices down 2-3%",
+        "1-2% price hike expected in 3QFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM 2Q cement preview: negative bias to margins on coal/petcoke and weak rupee; post-monsoon pricing upside key; prefers UltraTech and Grasim.",
+      "source": "JPM - India Daily: 2Q27 preview: Cement (Sanjay Mookim) (+1 more in Outlook)",
+      "received": "09:05",
+      "detail": {
+       "summary": "September quarter is seasonally weak, with deficient rain helping construction but higher coal/petcoke and a weaker currency hitting costs. Estimates carry some margin downside, though the bias is still negative. Sector underperformance and low expectations set up a tactical post-monsoon trade.",
+       "points": [
+        "Dealer checks: prices held up despite seasonal volume weakness",
+        "Sector underperformed market past two months",
+        "Signs of industry pricing and capacity discipline emerging",
+        "Webinar on energy and cement earnings 1 Oct, 1:30pm IST"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kingboard Laminates: CCL price hikes lag profits 1-2 months, so Jul-Aug hikes lift Aug-Oct earnings; PO raised to HK$65 from HK$53.",
+      "source": "BofA - BofA Greater China Top 10 for Oct (Kingboard Laminates)",
+      "received": "11:39",
+      "detail": {
+       "summary": "BofA sales commentary argues glass-fiber cloth tightness is structural, so laminate makers keep raising prices as auto and smartphone OEMs scramble for PCB supply. Because CCL lead times stretched, profit recognition lags price hikes, implying stronger 2H. This is the input-cost side for PCB-linked EMS names.",
+       "points": [
+        "Jul earnings HK$1.1bn",
+        "Glass fiber cloth price could keep rising into Sep",
+        "CCL lead time 1-2 months vs 7-10 days before",
+        "PO HK$65 (was HK$53) on 13x 2H26-1H27E P/E",
+        "Pricing momentum expected through 2026"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak 2QFY27E: Voltas UCP +25% and Blue Star UP +16.5% yoy on RAC, but margins 4-13ppt below 2QFY25 on partial inflation pass-through.",
+      "source": "Kotak - Tale of 2 balances; Large Caps - Value on Offer; ... DURABLES 2Qe",
+      "received": "08:53",
+      "detail": {
+       "summary": "Kotak sees RAC-led growth in white goods but strong margin compression as input inflation is only partly passed through. Copper and aluminium INR prices stay far above last year. Read-through for RAC-exposed EMS names is volume support with cost pressure.",
+       "points": [
+        "Copper +56%, aluminium +40% yoy in 2Q (INR, M-1)",
+        "Lloyd +16% yoy; LG ~16.5% revenue growth",
+        "Crompton ECD +15.5%, Havells ECD +7% yoy",
+        "ECD margin 330/980bps lower for Crompton/Havells vs 2QFY25",
+        "Wires & cables volume growth subdued at 5-10% yoy"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama: most firms hold 2-4 months inventory, so input repricing hits Q2FY27 margins; SMIDs and manufacturers hit harder, EMS in sample.",
+      "source": "Nuvama - Brace for Margin impact in Q2FY27 - Stock wise analysis also available",
+      "received": "12:33",
+      "detail": {
+       "summary": "Nuvama argues Q1FY27's margin resilience reflects inventory cushions, not pricing power, so the supply-shock hit shifts to Q2. In 2022 the margin shock lagged oil by a quarter and SMIDs were compressed more than largecaps. It favours a flip to largecaps and defensives.",
+       "points": [
+        "BSE500 Q1FY27 topline +19%, PAT +22% yoy",
+        "Inventory 2-4 months at FY26 end",
+        "Manufacturing sample includes EMS, durables, industrials",
+        "Assumes oil USD100/bbl, INR 95",
+        "Excel of company-wise inventory days attached"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "BofA upgrades Mphasis to Buy (PO Rs2,550) and Tech Mahindra to Neutral (PO Rs1,660), betting on sustained deal-win uptick.",
+      "source": "BofA - India IT Services: Q2 preview: Demand uptick is still elusive; Downgrade TTEC. Upgrade MPHL, TECHM.",
+      "received": "18:45",
+      "detail": {
+       "summary": "BofA sees Q2 demand tracking H1's slow pace, with US rate hike and Middle East uncertainty capping an H2 recovery. Dispersion is company-specific: Mphasis, Coforge and TechM expected strong, Infosys, HCL and LTM soft. Upgrades rest on deal wins and a higher target multiple.",
+       "points": [
+        "Large-cap organic cc growth 1.5% yoy vs 2.0% in Q1",
+        "Mphasis PO Rs2,550 from Rs2,440; target multiple 21x",
+        "Mphasis Q2 cc growth 3% qoq; HSD-LDD FY27 stance kept",
+        "TechM PO Rs1,660 from Rs1,365; target PE 20x; Q2 +1.4% qoq",
+        "Infosys Q2 +1.1% qoq; FY27 top-end guide cut 3% to 2.5%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley cuts Infosys PT to Rs976 (from Rs1,075) and Wipro to Rs147; raises HCL to Rs1,390 and TechM to Rs1,480.",
+      "source": "Morgan Stanley - IDEA: India Technology: IT Services: 2QF27 preview: growth divergence to keep large-cap multiples very polarized",
+      "received": "03:07",
+      "detail": {
+       "summary": "Morgan Stanley expects another slow-growth year in F28 and sees large-cap multiples staying polarized until growth rates converge. It stays cautious on the pack, preferring TCS over Infosys and HCLT over TechM, underweight Wipro, with Accenture's F27 guidance as the next catalyst.",
+       "points": [
+        "TCS PT Rs2,160 from Rs2,200",
+        "Infosys PT Rs976, Wipro PT Rs147 (from Rs161)",
+        "HCLT upside risk to consensus; TechM downside risk",
+        "EBIT margins ex-currency down 260-390bps over F25-27",
+        "Prefers mid-caps over large-caps"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay expects Infosys to cut FY27 cc growth guide to 1.5-2.5% (mid-point 2.0%), HCLT to keep organic mid-point; Wipro Q3 guide -2% to 0%.",
+      "source": "Emkay - Information Technology: 2QFY27 preview - Deja vu all over again",
+      "received": "02:50",
+      "detail": {
+       "summary": "Emkay sees an unchanged macro backdrop with restrained discretionary spend and AI-led deflation resetting renewals. Large-caps soft while select mid-caps outperform, with M&A lifting sequential growth. Nifty IT has lagged the market on slower growth and AI-disruption concerns.",
+       "points": [
+        "Tier-1 Q2 cc growth -1.0% to 3.1%; Tier-2 0.5% to 8.0%",
+        "Coforge 12.6% cc growth on Encora; Persistent on $650mn deal ramp",
+        "Infosys EBITM guide 20-22% retained",
+        "HCLT guide 3-4% cc incl. Jaspersoft, HPE Telco; EBIT 17.5-18.5%",
+        "Nifty IT lagged market 5.6% over 1M, 6.5% over 6M"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Morgan Stanley expects RBI to start hiking 25bps in October, 100bps in total to 6.25% by April 2027; FY27 GDP 7.3%, CPI 5.3%.",
+      "source": "Morgan Stanley - MS India Trends & Themes: RBI Policy Preview: Earlier Rate Hikes and a Higher Terminal Rate Expected",
+      "received": "08:29",
+      "detail": {
+       "summary": "Morgan Stanley pulls forward RBI normalisation: resilient growth, rising inflation and tighter global financial conditions argue for earlier and deeper tightening than previously expected. The same mail logs FII selling alongside DII buying.",
+       "points": [
+        "25bps hike in October, then four straight hikes",
+        "Cumulative 100bps, policy rate 6.25% by April 2027",
+        "FY27 GDP forecast 7.3%, inflation raised to 5.3%",
+        "29 Sep FII net -US$1,040mn; MTD -US$3,160mn",
+        "Nifty 22,716 (-0.28%) on 29 Sep"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA sees combined centre+state capex growth slowing to ~4% in Sep-Mar from 13.2% in 5MFY27, dragging 2HFY27 GDP to 5.5-6% vs 7-7.5% in 1H.",
+      "source": "CLSA - India economics: Fiscal update - August 2026",
+      "received": "19:31",
+      "detail": {
+       "summary": "Fiscal spending was front-loaded, and an August fall in receipts left the centre's deficit at 41.9% of budget estimates, the highest in six years. With a weak rural sector and adverse base, CLSA expects growth to fade in the second half.",
+       "points": [
+        "Centre fiscal deficit 41.9% of BE in 5MFY27 vs 38.1% LY",
+        "August total receipts fell by two-thirds; August capex -30% YoY",
+        "Centre capex growth seen 4.5% YoY Sep-Mar vs -8% LY",
+        "Combined capex 13.2% YoY in 5MFY27 vs 20% LY",
+        "Only defence capex expected to pick up"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama stays bullish on SMIDs as Smallcap100/Midcap100 breaks a multi-year downtrend; NSE500 support 22,000-21,700, bullish above 23,100 weekly close.",
+      "source": "Nuvama - [Nuvama Technical Update] Reiterating Bull-Market Correction, Not Breakdown | Stay Bullish on SMIDs (+2 more in Outlook)",
+      "received": "12:40",
+      "detail": {
+       "summary": "Nuvama calls the current phase a time correction within a bull market and says broader markets are outperforming the headline index. Risk-on is to be built gradually, since geopolitics can keep volatility high even after the QuantTech signal.",
+       "points": [
+        "NSE500 CMP 22,165; key support 22,000-21,700",
+        "Weekly close above 23,100 validates the bullish breakout",
+        "US 10Y below 4.60% is the missing risk-on trigger",
+        "SMID bullish: mid private banks, microfinance, healthcare, auto ancillaries, infra and capital goods",
+        "Turnaround SMIDs: tyres, metals, chemicals"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "CAFE 3 notified: 17% CO2 cut over FY28-32, no small-car carve-out; sub-10% EV share suffices by FY32, TMPV and Maruti best placed, M&M relieved.",
+      "source": "BofA - Autos - India: CAFE norms finally see light of the day - India",
+      "received": "19:09",
+      "detail": {
+       "summary": "The final norms match the July draft and remove a two-year overhang. Super credits, a carbon neutrality factor, credit pooling and technology concessions mean OEMs need far less electrification than feared, so compliance is a manageable ask even for M&M, long seen as most exposed.",
+       "points": [
+        "Fleet CO2 from 95 to 79 g/km, FY28-32, two blocks",
+        "Super credits: EV 3x, PHEV 2.5x, strong hybrid 1.6x",
+        "Concessions up to 9g CO2/km for select technologies",
+        "Current EV penetration ~8%; M&M E-SUVs 12% of SUV volumes",
+        "EVs 40-50% of mid-term launches at top 4 OEMs"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "US$20bn Green Energy Corridor III approved (Rs1.86tn, FY33): 135GW RE evacuation plus 50GWh BESS, a new transmission and equipment order leg.",
+      "source": "JPM - India Electric Utilities: US$20bn Green Energy Corridor capex plan announced; positive for PGCIL and power equipment makers",
+      "received": "20:01",
+      "detail": {
+       "summary": "The government approved a capex plan far larger than the earlier phases to strengthen state-level transmission. Greenfield projects go via competitive bidding, which should lift order inflows for transmission developers, equipment makers and EPC players, a demand driver for power-linked metals.",
+       "points": [
+        "Rs1.86tn: Rs1.36tn InSTS plus Rs500bn BESS",
+        "Central assistance Rs541bn; target completion FY33",
+        "GEC-2 was Rs120.31bn; GEC-1 Rs101.41bn",
+        "Greenfield via TBCB, brownfield cost-plus",
+        "Beneficiaries: PGCIL, Hitachi, GVTD, Siemens Energy, CG Power"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tyres face ~30% FY27 input-cost increase against 10-13% price hikes versus ~17-18% needed; margins may bottom 3QFY27; prefer Balkrishna and Apollo.",
+      "source": "IIFL - Auto/Tyres - FY27 margin pressure | Steel - spreads strengthen | ICICI Lombard - Digital/AI edge | Nexus Select - acquisition-led growth",
+      "received": "09:13",
+      "detail": {
+       "summary": "FY26 gained from volumes and lower raw material costs, but FY27 carries an unprecedented input-cost jump that pricing has not yet covered. Margins trough in 3QFY27 and recover from 4Q; lower crude and rubber are the key upside trigger.",
+       "points": [
+        "Input cost up ~30% in FY27",
+        "Price hikes 10-13% versus 17-18% required",
+        "Margin bottom 3QFY27, recovery from 4Q",
+        "Balkrishna: global OHT volume recovery",
+        "Apollo: Europe restructuring, margin gain from 3QFY27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Semis and Mag 7 keep leading: 80% of SOX stocks above 50-day average vs 25% for the S&P 500; NVDA estimates still rising.",
+    "source": "CLSA - Best Charts of X"
+   },
+   {
+    "text": "Yields most overbought on RSI in 40 years, high-yield spreads widening to near 2022 levels; Micron tracking SOX, DRAM ETF seeing outflows since mid-August.",
+    "source": "CLSA - Best Charts of X"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

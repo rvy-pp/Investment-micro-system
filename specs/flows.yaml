@@ -54,7 +54,7 @@
 # tool has edge today: in quiet regimes the pillars carry; in loud ones flows
 # run the tape over fundamentals.
 
-version: f1-2026-09-04.1   # added intensity grades + rolling-week params; daily method unchanged
+version: f1-2026-09-08.1   # rolling week LEADS, updated daily (PM 2026-09-08); daily+weekly methods unchanged
 
 series:
   # ust10y is the yield in PERCENT (verified 2026-09-02: 1.60 in Sep-2016,
@@ -165,22 +165,44 @@ spell:
   intensity_max: 1.25
   violence_z: 2.5
 
-# WEEKLY resolution — the read the PM ruled the tab should lead with
-# (2026-09-03: "daily is of no use, show a weekly analysis in the tab").
-# Same sign map, same quiet_z; only the sampling changes: Friday-to-Friday
-# (last close of each ISO week), sigma over the trailing 52 completed weeks.
-# What the weekly backtest (492 weeks) earned: stress weeks CLUSTER
-# (liquidation repeats at 2.9x base, stagflation 1.9x, goldilocks has never
-# repeated), and a confirmed risk_on week is followed by the strongest India
-# week (+0.67% Nifty, 70% hit, t +3.9). Daily states still persist to
-# market_regime — they feed the spell and the future review layer — but the
-# tab leads weekly.
+# WEEKLY resolution — the Friday-to-Friday trend layer. Same sign map, same
+# quiet_z; only the sampling changes: last close of each ISO week, sigma over
+# the trailing 52 completed weeks. What the weekly backtest (492 weeks)
+# earned: stress weeks CLUSTER (liquidation repeats at 2.9x base, stagflation
+# 1.9x, goldilocks has never repeated), and a confirmed risk_on week is
+# followed by the strongest India week (+0.67% Nifty, 70% hit, t +3.9).
+# Daily states still persist to market_regime — they feed the spell and the
+# future review layer.
+#
+# LEAD CADENCE — two PM rulings, in order. 2026-09-03: "daily is of no use,
+# show a weekly analysis in the tab" -> the tab led with the last COMPLETED
+# Friday week. 2026-09-08: update daily — "show weekly trend but calculate
+# past week on a rolling basis" -> the tab now LEADS with the ROLLING week
+# (each US session read as its own trailing 5-session window, z'd against
+# the as-of completed-week sigma, same sign map, same quiet_z), refreshed
+# every session; the Friday-to-Friday layer stays as the trend strip and
+# the long-run evidence base. The two rulings do not conflict: the unit of
+# analysis is still a week — only the sampling anchor moved off Friday.
 weekly:
   vol_window: 52       # trailing completed weeks for sigma
   min_obs: 30
   quiet_z: 0.75
   min_stat_n: 15       # fewer forward pairs than this -> the cell is withheld
-  rolling_days: 10     # how many rolling-week readings the tab shows
+  rolling_days: 10     # how many rolling-week chips the tab shows
+
+# ROLLING-week evidence layer (2026-09-08). The rolling read is classified
+# over the FULL history (same code path as the live chips — the backtest
+# tests exactly what the tab shows). Consecutive readings share 4 of 5
+# sessions, so day-level forward stats would pseudo-replicate; all rolling
+# evidence is therefore computed on STATE ENTRIES only — the first session
+# of each run, the moment the tab's lead actually flips — which is also the
+# question a daily-updating read poses ("it just turned X; now what?").
+# horizon_sessions is the forward India window from an entry (5 India
+# sessions ~ the next week, matching the weekly tables' unit).
+rolling:
+  horizon_sessions: 5
+  min_stat_n: 15       # entries; fewer -> the cell is withheld
+  gap_break_days: 7    # a classification hole longer than this breaks a run
 
 # Intensity grades on the max joint |z| — one scale for both cadences, and the
 # lower bound IS quiet_z so the grades partition the loud days exactly.

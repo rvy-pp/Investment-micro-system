@@ -1,0 +1,233 @@
+{
+ "date": "2026-09-29",
+ "fetched_at": "2026-09-29T08:10:46",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-28",
+    "close": 7683.69,
+    "prev_date": "2026-09-25",
+    "chg_pct": -0.77
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-28",
+    "close": 26820.38,
+    "prev_date": "2026-09-25",
+    "chg_pct": -0.92
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-28",
+    "close": 51481.51,
+    "prev_date": "2026-09-25",
+    "chg_pct": -0.67
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-28",
+    "close": 12465.24,
+    "prev_date": "2026-09-25",
+    "chg_pct": -1.61
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-28",
+    "close": 228.86,
+    "prev_date": "2026-09-25",
+    "chg_pct": 1.68
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-28",
+    "close": 607.87,
+    "prev_date": "2026-09-25",
+    "chg_pct": -3.61
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-28",
+    "close": 452.88,
+    "prev_date": "2026-09-25",
+    "chg_pct": 0.5
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-28",
+    "close": 349.57,
+    "prev_date": "2026-09-25",
+    "chg_pct": -0.92
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-28",
+    "close": 174.47,
+    "prev_date": "2026-09-25",
+    "chg_pct": -0.93
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-28",
+    "close": 56.75,
+    "prev_date": "2026-09-25",
+    "chg_pct": -1.01
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN): A 50% Rally Into Earnings, and a Street That Cannot Agree on What It Means",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-29 00:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-50-rally-earnings-005828466.html"
+   },
+   {
+    "title": "What Are Accenture Stock Bears Missing?",
+    "publisher": "Trefis",
+    "when": "2026-09-28 22:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-bears-missing-220418740.html"
+   },
+   {
+    "title": "Accenture plc (ACN)\u2019s Cash Machine Remains Strong. But Where Does Growth Come from?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-28 21:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-plc-acn-cash-machine-210339659.html"
+   },
+   {
+    "title": "Accenture Earnings Due As Artificial Intelligence Looms As Double-Edged Sword",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-28 14:06Z",
+    "link": "https://finance.yahoo.com/m/63a48562-4857-3ee8-9c4c-bf63a0ee1ab2/accenture-earnings-due-as.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "ACI, Cognizant Say BASE24-eps Sustained Double its Target Transaction Load Without Single Failure",
+    "publisher": "MT Newswires",
+    "when": "2026-09-28 12:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-cognizant-base24-eps-sustained-122630369.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Complete BASE24-eps Performance Testing on AWS",
+    "publisher": "InvestorsHub",
+    "when": "2026-09-28 12:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-complete-base24-121148852.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Demonstrate Strong Card Processing Performance on Amazon Web Services, Inc. (AWS)",
+    "publisher": "Business Wire",
+    "when": "2026-09-28 11:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-demonstrate-strong-110000030.html"
+   },
+   {
+    "title": "Daiwa Securities Adjusts PT on Cognizant Technology Solutions to $60 From $42, Maintains Neutral Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-25 10:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/daiwa-securities-adjusts-pt-cognizant-104251766.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Rolled Out AI Engineering Tools To Clients",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-23 14:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-rolled-141549646.html"
+   },
+   {
+    "title": "Cognizant and Cognition put autonomous AI engineering into production at Odyssey Logistics, with a 37 percent net cost saving",
+    "publisher": "PR Newswire",
+    "when": "2026-09-23 11:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-cognition-put-autonomous-ai-110000576.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Is CEO Jensen Huang Becoming Nvidia (NVDA)\u2019s Most Valuable Political Asset?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-29 01:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ceo-jensen-huang-becoming-nvidia-013038328.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Not Nvidia, Not AMD. Broadcom's Custom Silicon Business Is Quietly Becoming an AI Chip Powerhouse",
+    "publisher": "Motley Fool",
+    "when": "2026-09-28 20:31Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/not-nvidia-not-amd-broadcoms-203100154.html"
+   },
+   {
+    "title": "Broadcom vs. Marvell Technology: Which Semiconductor Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-28 20:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-vs-marvell-technology-semiconductor-202938231.html"
+   },
+   {
+    "title": "Broadcom Stock Slips Lower as $115 Billion Forecast Raises the Conversion Bar",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-28 19:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-slips-lower-115-193550273.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Bank of America resets AMD price target after major milestone",
+    "publisher": "TheStreet",
+    "when": "2026-09-29 02:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bank-america-resets-amd-price-023300904.html"
+   },
+   {
+    "title": "AMD to buy Fei-Fei Li's World Labs in $8.2 billion bet on 'physical AI'",
+    "publisher": "Reuters",
+    "when": "2026-09-28 23:17Z",
+    "link": "https://finance.yahoo.com/news/amd-acquires-world-labs-8-203900428.html"
+   },
+   {
+    "title": "AMD just spent $8.2 billion to enlist the 'Godmother of AI'",
+    "publisher": "Yahoo Finance",
+    "when": "2026-09-28 23:06Z",
+    "link": "https://finance.yahoo.com/technology/article/amd-just-spent-82-billion-to-enlist-the-godmother-of-ai-230634166.html"
+   },
+   {
+    "title": "AMD acquires startup cofounded by \u2018godmother of AI\u2019 Fei-Fei Li for $8.2 billion",
+    "publisher": "Fortune",
+    "when": "2026-09-28 21:56Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-acquires-startup-cofounded-godmother-215604650.html"
+   },
+   {
+    "title": "AMD Bolsters AI Vision With $8.2B Acquisition Of Fei-Fei Li\u2019s World Labs, Stock Drops 4%",
+    "publisher": "Stocktwits",
+    "when": "2026-09-28 21:37Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-bolsters-ai-vision-8-213731913.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22890.5,
+  "chg_pct": -0.05,
+  "stamp": "29-Sep-2026 08:09:27",
+  "expiry": "27-Oct-2026",
+  "volume": 1551,
+  "nifty_close": {
+   "close": 22780.25,
+   "stamp": "28-Sep-2026 15:30"
+  },
+  "gap_pts": 110.2,
+  "gap_pct": 0.48
+ }
+}

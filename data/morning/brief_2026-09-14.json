@@ -1,0 +1,124 @@
+{
+  "date": "2026-09-14",
+  "generated_at": "2026-09-14T08:20:00+05:30",
+  "mail": {
+    "window": "24h to 08:20 IST",
+    "n_scanned": 32,
+    "sectors": [
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "India HRC rose INR200/t w-w to INR62,200/t, a 4-year high; rebar +INR1,150/t to INR58,150/t, flat-long spread now over INR4,000/t.",
+            "source": "Nomura — India steel - Steel weekly trends (week ended 11 Sep 2026)",
+            "received": "06:02"
+          },
+          {
+            "text": "Imported coking coal jumped USD10/t w-w to USD282/t, highest YTD, after Chinese domestic coal spiked ~40% on a fatal mine accident.",
+            "source": "Nomura — India steel - Steel weekly trends (week ended 11 Sep 2026)",
+            "received": "06:02"
+          },
+          {
+            "text": "Nomura stays Buy on Tata Steel, JSW Steel and Jindal Steel: 1HFY27 price hikes more than offset West Asia cost inflation.",
+            "source": "Nomura — India steel - Steel weekly trends (week ended 11 Sep 2026)",
+            "received": "06:02"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "NMDC lump prices +INR150/t to INR5,400/t effective Sep-26, fines steady at INR4,500/t - already loaded ex-royalty from the 09-Sep circular.",
+            "source": "Nomura — India steel - Steel weekly trends (week ended 11 Sep 2026)",
+            "received": "06:02"
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "GS Communacopia wrap: managements bullish on AI infra spend; 8-10 new fabs lift 2027 WFE capex, NAND tightness supports pricing 12-18 months.",
+            "source": "Goldman Sachs — GS Daily: US Communacopia Conf Wrap / Greater China Semis Tour",
+            "received": "06:25"
+          },
+          {
+            "text": "GS previews Micron 4Q at revenue USD51.9bn, EPS USD32.54, gross margin 87.3% on AI-driven DRAM/HBM tightness.",
+            "source": "Goldman Sachs — GS Daily: US Communacopia Conf Wrap / Greater China Semis Tour",
+            "received": "06:25"
+          },
+          {
+            "text": "BofA: hyperscalers on track to spend over USD700bn this year on AI compute; GPU rental rates up 48-56% in months.",
+            "source": "BofA Global Research — Must Read Research This Week",
+            "received": "21:43"
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "JPM, CLSA and BofA read firm US August core CPI as locking in a 25bp Fed hike this week; JPM sees a second in December.",
+            "source": "JPM — Overnight Brief 9/14: expect the Fed to hike 25bp in September and December",
+            "received": "05:34"
+          },
+          {
+            "text": "BofA turns constructive on India equity, Nifty target 26,200 by Dec-26 (+12%), shifting preference to large caps over SMID.",
+            "source": "BofA — ASIA Daily: INDIA EQUITY get constructive",
+            "received": "06:23"
+          },
+          {
+            "text": "UBS: FII equity flows turned positive across Jul-Aug, Q1FY27 GDP at 7.8%, USD/INR view held neutral.",
+            "source": "UBS — India: what's trending in India's macro",
+            "received": "06:36"
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "Tile consolidation accelerating: organised-unorganised price gap narrowed from 40-50% to 20-25% as Morbi shuts on gas costs.",
+            "source": "PhillipCapital — Somany Ceramics Ltd analyst meet",
+            "received": "18:31"
+          },
+          {
+            "text": "SEBI proposes cutting the Closing Auction Session to 10 minutes and blending settlement VWAP, to restore derivative participation.",
+            "source": "Avendus Spark — SEBI Consultation Paper on Review of CAS",
+            "received": "11:25"
+          }
+        ]
+      }
+    ],
+    "quiet": [
+      "Non-ferrous",
+      "Cement",
+      "EMS"
+    ]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX +1.81% into the weekend on AMD +2.49% and TSMC ADR +1.22%; Nvidia flat at -0.03% and Broadcom +0.32%, so the move was the rest of the complex.",
+        "source": "morning_markets.py — US close 2026-09-11"
+      },
+      {
+        "text": "S&P 500 +0.86% and Nasdaq +0.96% on Friday, leaving US equity at highs into a Fed meeting the desks now expect to deliver a hike.",
+        "source": "morning_markets.py — US close 2026-09-11"
+      }
+    ],
+    "bellwethers": [
+      {
+        "name": "Accenture",
+        "move_pct": 3.37,
+        "reason": null
+      },
+      {
+        "name": "Cognizant",
+        "move_pct": 2.88,
+        "reason": null
+      }
+    ]
+  }
+}

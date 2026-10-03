@@ -289,6 +289,28 @@ def tape(pillar: str = "composite", since: str | None = None,
             "SELECT date, close FROM prices WHERE entity_id=? AND close IS NOT NULL "
             "ORDER BY date", (eid,))]
 
+    # EBITDA/t denominators, for the economics pillar's own chart.
+    #
+    # ONE BASIS FOR THE WHOLE LINE, DELIBERATELY. `d_ebitda_per_t` is only
+    # persisted from 2026-09-23, so 174 of 175 stored dates carry just
+    # `d_ebitda_cr`. Mixing a stored value for the newest point with a derived
+    # one for the rest would put two denominators inside a single line the
+    # moment a spec tonnage changed — the numbers right and the basis wrong,
+    # which is the shape this repo keeps getting bitten by. So every point is
+    # derived the same way, from d_ebitda_cr and TODAY's spec tonnage, and the
+    # chart caption says so. `basis_volume`/`_primary` are the bridge's own, so
+    # SAIL divides by the 16.64mt co-product total rather than one 8.32mt leg.
+    tonnes: dict[str, float] = {}
+    if pillar == "economics":
+        try:
+            import bridge as _b
+            for eid, e in _b.load_specs()[0].items():
+                v = _b.basis_volume(e, _b._primary(e))
+                if v:
+                    tonnes[eid] = v
+        except Exception:
+            tonnes = {}          # no /t series; the chart falls back to score
+
     series = {}
     for eid in ents:
         px, i, last, last_d = closes.get(eid, []), 0, None, None
@@ -302,10 +324,19 @@ def tape(pillar: str = "composite", since: str | None = None,
                 det = json.loads(r["detail"]) if r["detail"] else None
             except (TypeError, json.JSONDecodeError):
                 det = None
+            # Rs per tonne of the basis product. None where the entity has no
+            # tonnage (nothing in economics today, but EMS-shaped names would)
+            # or where the score was withheld — a withheld point must stay a
+            # hole on this chart exactly as it is on the score chart.
+            t = tonnes.get(eid)
+            dc = (det or {}).get("d_ebitda_cr")
             pts.append({
                 "d": d,
                 "score": r["score"],
                 "raw": r["raw"],
+                "ebitda_per_t": (dc * 1e7 / t
+                                 if t and dc is not None and r["score"] is not None
+                                 else None),
                 "close": last,
                 # How stale the close is on this score date. A price that has
                 # not printed for days is not the same evidence as today's.

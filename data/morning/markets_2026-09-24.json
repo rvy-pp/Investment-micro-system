@@ -1,0 +1,221 @@
+{
+ "date": "2026-09-24",
+ "fetched_at": "2026-09-24T08:15:56",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-23",
+    "close": 7706.03,
+    "prev_date": "2026-09-21",
+    "chg_pct": -0.76
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-23",
+    "close": 26936.04,
+    "prev_date": "2026-09-21",
+    "chg_pct": -0.69
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-23",
+    "close": 51511.59,
+    "prev_date": "2026-09-21",
+    "chg_pct": -1.03
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-23",
+    "close": 12534.27,
+    "prev_date": "2026-09-21",
+    "chg_pct": 0.81
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-23",
+    "close": 225.51,
+    "prev_date": "2026-09-22",
+    "chg_pct": -1.47
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-23",
+    "close": 614.61,
+    "prev_date": "2026-09-22",
+    "chg_pct": -1.47
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-23",
+    "close": 446.57,
+    "prev_date": "2026-09-22",
+    "chg_pct": -1.2
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-23",
+    "close": 354.99,
+    "prev_date": "2026-09-22",
+    "chg_pct": -2.62
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-23",
+    "close": 183.52,
+    "prev_date": "2026-09-21",
+    "chg_pct": -1.39
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-23",
+    "close": 59.14,
+    "prev_date": "2026-09-21",
+    "chg_pct": -0.4
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Invests in AI Platform Within",
+    "publisher": "MT Newswires",
+    "when": "2026-09-23 13:37Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-invests-ai-platform-within-133723228.html"
+   },
+   {
+    "title": "Accenture and Within Help Clients Accelerate AI Across the Enterprise Through Strategic Investment and New Partnership",
+    "publisher": "Business Wire",
+    "when": "2026-09-23 12:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-within-help-clients-accelerate-125900507.html"
+   },
+   {
+    "title": "Accenture Stock Rallies After Announcing $1 Billion AI Partnership With Anthropic",
+    "publisher": "TIKR",
+    "when": "2026-09-23 12:40Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-stock-rallies-announcing-1-124039571.html"
+   },
+   {
+    "title": "Accenture Launches New Business Focused on Planning, Delivering Large Infrastructure Projects",
+    "publisher": "MT Newswires",
+    "when": "2026-09-23 12:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-launches-business-focused-planning-122606369.html"
+   },
+   {
+    "title": "Accenture Launches Accenture Construct to Reinvent Fragmented Capital Project Delivery Amid Global Investment Supercycle",
+    "publisher": "Business Wire",
+    "when": "2026-09-23 11:59Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-launches-accenture-construct-reinvent-115900153.html"
+   },
+   {
+    "title": "BMO Capital Adjusts PT on Accenture to $200 From $150, Maintains Market Perform Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-23 09:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bmo-capital-adjusts-pt-accenture-094253518.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Rolled Out AI Engineering Tools To Clients",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-23 14:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-rolled-141549646.html"
+   },
+   {
+    "title": "Cognizant and Cognition put autonomous AI engineering into production at Odyssey Logistics, with a 37 percent net cost saving",
+    "publisher": "PR Newswire",
+    "when": "2026-09-23 11:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-cognition-put-autonomous-ai-110000576.html"
+   },
+   {
+    "title": "Capitalize on AI-Driven Pharmacovigilance: Benchmark IQVIA, Accenture, Cognizant, Parexel and ArisGlobal to Secure Compliance ROI and Dominate the Global Market Shift Through 2030",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-23 08:12Z",
+    "link": "https://finance.yahoo.com/healthcare/articles/capitalize-ai-driven-pharmacovigilance-benchmark-081200688.html"
+   },
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "PR Newswire",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/belcan-cognizant-company-recognized-2025-120000803.html"
+   },
+   {
+    "title": "Belcan, a Cognizant company, Recognized as a 2025 PPG Excellent Supplier",
+    "publisher": "CNW Group",
+    "when": "2026-09-22 12:00Z",
+    "link": "https://finance.yahoo.com/small-business/articles/belcan-cognizant-company-recognized-2025-120000759.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia once rattled IonQ stock. Now it plans to install IonQ tech",
+    "publisher": "TheStreet",
+    "when": "2026-09-24 01:17Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-once-rattled-ionq-stock-011700843.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Just Made a Move That Further Solidifies My Decision to Buy on Repeat",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-23 15:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-just-made-move-further-154548147.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Is Up 187% This Year and Nvidia Is Up 22%. Prediction: Nvidia Wins the Next 12 Months.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-24 00:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-187-nvidia-22-prediction-001801442.html"
+   },
+   {
+    "title": "AMD Is Up 187% This Year: Take Profits, or Buy More?",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-23 19:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-187-profits-buy-more-191007816.html"
+   },
+   {
+    "title": "AMD Becomes the 14th Company to Cross $1 Trillion In Market Cap. What This Means for AMD Stock.",
+    "publisher": "Barchart",
+    "when": "2026-09-23 18:52Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-becomes-14th-company-cross-185209558.html"
+   },
+   {
+    "title": "AMD Just Hit $1 Trillion. Can Oracle\u2019s 50,000-GPU Deployment Help Justify It?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-23 18:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-just-hit-1-trillion-184727280.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23282.0,
+  "chg_pct": -0.14,
+  "stamp": "24-Sep-2026 08:15:55",
+  "expiry": "29-Sep-2026",
+  "volume": 7895,
+  "nifty_close": {
+   "close": 23446.8,
+   "stamp": "23-Sep-2026 15:30"
+  },
+  "gap_pts": -164.8,
+  "gap_pct": -0.7
+ }
+}

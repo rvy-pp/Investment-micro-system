@@ -100,6 +100,14 @@ STEPS = [
     # hand-set rows survive); --load tops up missing days, T-1 by publication.
     ("F&O bhavcopy",      ["packages/adapters/fo_bhavcopy.py", "--map",
                            "--load", "--days", "7"],                          False),
+    # VAHAN SHARE AND SIAM WHOLESALE LEFT THIS LIST ON 2026-09-29 (PM: "Lets do
+    # vahan update in the afternoon. Remove the process for daily-refresh").
+    # Four mornings running Vahan refused every FILTERED query at ~08:10 and
+    # recovered by midday, so these two steps could only fail here and turn the
+    # Overview amber. They run at 13:00 from packages/vahan_refresh.py (Claude
+    # Desktop task `vahan-afternoon`), which writes its OWN status file,
+    # data/refresh/vahan_status.json. Do not add them back: Vahan's MTD
+    # refreshes once overnight, so a morning read gains nothing over 13:00.
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,
@@ -150,6 +158,14 @@ STEPS = [
     # unattended one (the connector is agent-callable only), but a cheap one:
     # one read, no Outlook automation. See adapters/cement_pack.py.
     ("cement pack (staged)", ["packages/refresh.py", "--consume", "cement"],  False),
+    # Kotak's monthly cement channel-check NOTE, staged by the full-refresh
+    # skill (Step 2b'). It carries the pack's own regional m/m numbers ~7 days
+    # before the pack prints them (Sep-2026: note 23-Sep, pack 30-Sep, numbers
+    # identical). Loads as source 'kotak_check' under the pack's series ids;
+    # AFTER the pack step on purpose, so a month the pack already carries is
+    # skipped rather than written. Idempotent, a no-op with nothing staged.
+    ("cement check (staged)",
+     ["packages/adapters/cement_check.py", "--load-all"],                   False),
     # THE ONLY STEP HERE THAT IS A WATCH RATHER THAN A FEED. Scrapes IndiaMART
     # dealer asks into `cement_watch`, never into `prices`, and no pillar reads
     # it. It earns its place because the Kotak pack lands ~15 days late, so a
@@ -164,6 +180,14 @@ STEPS = [
     ("cement watch (IndiaMART)",
      ["packages/adapters/indiamart_cement.py", "--capture"],                False),
     ("mail watch (staged)",  ["packages/refresh.py", "--consume", "mail"],    False),
+    # The Results tab's staged files (sell-side estimates, reported prints,
+    # result dates — data/results/staging/*.json, hand-extracted, cited). The
+    # EXTRACTION is agent-only like every other extraction here; this step
+    # only loads what is already staged, idempotently, so a file dropped in
+    # at 16:00 is in the store by the 08:00 run without a separate command.
+    # Writes `estimates` (house brokers), `observations` (factor='actual') and
+    # `results_calendar` — nothing a pillar's price path reads. Never fatal.
+    ("results (staged)",  ["packages/results/results_io.py", "--load-all"],   False),
     # ADVISORY, NEVER WRITES. Hindalco's and Novelis' base numbers are static by
     # the PM's instruction and change once a quarter from the public release.
     # This says whether that quarter has turned. Two HTTP requests; it cannot
@@ -182,6 +206,18 @@ STEPS = [
     # tab is indistinguishable from a loading tab, which is why it is a step
     # rather than something you notice by opening the page.
     ("front end",         ["packages/review/build_frontend.py"],             False),
+    # THE VAULT COPY (PM, 2026-09-20) — the whole front end frozen into one
+    # self-contained HTML file in OneDrive, so the page is readable off this
+    # machine. AFTER "front end" deliberately: build_frontend.py verifies every
+    # route renders, and exporting a route that build_frontend just failed on
+    # would put the failure in the vault where nothing checks it.
+    # BACKGROUND, for the same reason as the IndiaMART sweep and not a
+    # different one: it computes ~920 payloads and takes ~80s, and the .vbs
+    # launcher runs this file BLOCKING before it opens the page — a foreground
+    # export would turn an ~18s morning launch into ~100s. Never fatal: a
+    # copy for reading elsewhere must not be able to stop a scoring run, and
+    # OneDrive being signed out is a laptop condition, not a code failure.
+    ("vault copy",        ["packages/web/export_static.py", "--quiet"],      False),
 ]
 
 # Steps that run AT MOST ONCE A DAY. The launcher refreshes on every
@@ -219,10 +255,16 @@ SKIP_IF_DONE = {"NSE OI fetch", "open interest", "cement watch (IndiaMART)"}
 #     6-minute sweep on every launch until one finishes is the worse failure.
 #     A sweep that dies leaves no capture for today, which the Overview banner
 #     shows as a stale capture date. `--force` re-spawns.
+#   The vault copy is background too, and it is deliberately NOT in
+#   SKIP_IF_DONE: a second double-click at 15:00 should re-export against the
+#   fresher closes, exactly as the equity load re-pulls them. That permits two
+#   exports running at once, which is why export_static.py writes to a temp
+#   file and os.replace()s it — OneDrive is watching that folder and must never
+#   see a half-written 11MB page.
 #   - this run's status.json says "background", never "ok" — the step's own
-#     outcome lands in data/refresh/cement_watch_last.log and in the
+#     outcome lands in data/refresh/<step>_last.log and in the
 #     cement_watch table itself, which /api/cement_watch reads live.
-BACKGROUND = {"cement watch (IndiaMART)"}
+BACKGROUND = {"cement watch (IndiaMART)", "vault copy"}
 MARKER = OUT / "steps_done.json"
 
 
@@ -444,7 +486,13 @@ def main() -> int:
             # cmd.exe the .vbs launcher wraps it in. Stdout goes to a log file
             # because a detached process has no console to inherit — writing to
             # a dead handle would kill the sweep with a cryptic OSError.
-            logf = OUT / "cement_watch_last.log"
+            # One log per background step, named off the label. The slug drops
+            # the parenthesised qualifier, so "cement watch (IndiaMART)" still
+            # lands in cement_watch_last.log — the name the full-refresh skill
+            # tells you to read, and renaming it would send a reader to a file
+            # that no longer exists.
+            slug = label.split(" (")[0].strip().replace(" ", "_").lower()
+            logf = OUT / f"{slug}_last.log"
             OUT.mkdir(parents=True, exist_ok=True)
             with open(logf, "w", encoding="utf-8") as lf:
                 flags = (getattr(subprocess, "DETACHED_PROCESS", 0)
@@ -455,7 +503,10 @@ def main() -> int:
                 # nothing. The log exists precisely for the dying case.
                 subprocess.Popen([PY, "-u", *argv], cwd=REPO, stdout=lf,
                                  stderr=subprocess.STDOUT, creationflags=flags)
-            say(f"  started in background (~6.5 min); output -> {logf.name}")
+            mins = {"cement watch (IndiaMART)": "~6.5 min",
+                    "vault copy": "~1.5 min"}.get(label, "")
+            say(f"  started in background{' (' + mins + ')' if mins else ''}; "
+                f"output -> {logf.name}")
             results.append({"step": label, "status": "background"})
             if label in SKIP_IF_DONE:
                 marker[label] = day        # at spawn — see BACKGROUND above

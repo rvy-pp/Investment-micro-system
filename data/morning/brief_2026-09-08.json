@@ -1,0 +1,156 @@
+{
+  "date": "2026-09-08",
+  "generated_at": "2026-09-08T09:45:00+05:30",
+  "mail": {
+    "window": "24h to 09:15 IST",
+    "n_scanned": 88,
+    "sectors": [
+      {
+        "sector": "Non-ferrous",
+        "bullets": [
+          {
+            "text": "NALCO partners EGA for DX+ Ultra aluminium smelting technology in its Odisha smelter expansion; headline only, no capacity or capex figures in the mail.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:56"
+          }
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "India HRC +INR2,250/t w-w to INR62,000/t (four-year high), rebar +INR2,250/t to INR57,000/t; Nomura stays Buy Tata, JSW, Jindal Steel.",
+            "source": "Nomura — FW: India steel - Steel weekly trends (week ended 04 Sep 2026)",
+            "received": "11:23"
+          },
+          {
+            "text": "Imported coking coal +USD13/t w-w to USD272/t, YTD high vs Aug average USD232/t; iron ore 62% Fe stable ~USD94/t.",
+            "source": "Nomura — FW: India steel - Steel weekly trends (week ended 04 Sep 2026)",
+            "received": "11:23"
+          },
+          {
+            "text": "August coal deficit 6.53MT cut power-plant stocks 15.5% to 52% of norm; non-coking coal +7% to USD118/t — power-cost risk.",
+            "source": "Nomura — FW: India steel - Steel weekly trends (week ended 04 Sep 2026)",
+            "received": "11:23"
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "Sep'26 pan-India trade prices set +~Rs10/bag m-m to ~Rs330; hikes announced (South/West/North Rs15, East Rs10) but implementation doubtful; 2QFY27 spread -Rs63/t q-q.",
+            "source": "Nomura — India Cement - Cement channel checks — Sep'26",
+            "received": "03:11"
+          },
+          {
+            "text": "UltraTech formally launched wires-and-cables brand Ultravolt, targeting the #2 position within five years — a capital-allocation shift beyond cement.",
+            "source": "Kotak — Consumer Durables & Apparel: India W&C: Brace for Ultravolt",
+            "received": "07:04"
+          },
+          {
+            "text": "ACC shuts Jhinkpani cement plant on limestone depletion and rising costs — a supply-side capacity exit in the East.",
+            "source": "Kotak — Basic materials - daily news and prices (+2 more in Outlook)",
+            "received": "08:53"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "NMDC cut lump and fine prices INR200/t each effective Aug-26, to INR5,250/t and INR4,500/t respectively.",
+            "source": "Nomura — FW: India steel - Steel weekly trends (week ended 04 Sep 2026)",
+            "received": "11:23"
+          },
+          {
+            "text": "NMDC to start commercial coal production by Q3, targeting 1 MT coal sales in FY27.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:53"
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "Infosys sees AI-deflation intensity moderating but AI-led growth still far off; demand unchanged since Q1, Telecom/Retail soft — JPM stays Neutral, PT Rs1,050.",
+            "source": "JPM — Infosys: C-Suite Fireside Chat Takeaways",
+            "received": "07:50"
+          },
+          {
+            "text": "Wipro's CFO sees 4-6 more quarters of AI deflation but growth returning in 2-3 quarters, margins back to 17-17.5%; JPM stays Underweight, PT Rs155.",
+            "source": "JPM — Wipro Ltd.: Takeaways from C-Suite Fireside Chat",
+            "received": "07:01"
+          },
+          {
+            "text": "Kotak's AI study — frontier narrowing in software tasks, capabilities expanding — bears directly on the deflation-duration debate the two fireside chats frame differently.",
+            "source": "Kotak — IT Services: Frontier narrows in software tasks while capabilities expand",
+            "received": "07:32"
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "RBI's Rs 7tn 30-day VRRR runs 0930-1000 IST today with withdrawal flexibility; result ~1030 — failure puts CRR hike/OMO sales in play before Oct-7 MPC.",
+            "source": "CLSA — India Economics: Problem of plenty",
+            "received": "09:25"
+          },
+          {
+            "text": "FIIs net sold USD 420mn (cash+futures) in the last session and DIIs turned net sellers too — both cohorts selling simultaneously.",
+            "source": "Kotak — AoN - BHE / HAL + VE ; PVRINOX",
+            "received": "08:23"
+          },
+          {
+            "text": "Rising JGB yields alongside US rate pressure threaten the yen carry trade — BNPP flags Japan-US twin tightening as the key cross-asset risk.",
+            "source": "BNPP — Japan +US rates - Twin tightening risks cause of worry (+2 more in Outlook)",
+            "received": "09:07"
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "CLSA initiates Sansera at Outperform seeing 2x in three years; HAL receives $3.4bn DAC order.",
+            "source": "CLSA — SANSERA: Initiate with Outperform, 2x in 3Y | HNAL: DAC order for $3.4b",
+            "received": "08:46"
+          },
+          {
+            "text": "Kotak flags large defense AoN approval, naming BEL and HAL as the key beneficiaries.",
+            "source": "Kotak — Aerospace & Defense: Large AoN approved; BEL and HAL key beneficiaries",
+            "received": "20:03"
+          },
+          {
+            "text": "JPM sees MSIL and HMCL surprising on market share one year after GST cuts.",
+            "source": "JPM — India Daily: Autos: Trends post 1yr of GST cuts (+3 more in Outlook)",
+            "received": "08:50"
+          }
+        ]
+      }
+    ],
+    "quiet": ["EMS"]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX +3.37% Friday led by AMD +4.69% after unveiling a $100,000-plus AI workstation for 2027; TSMC ADR +2.85%.",
+        "source": "markets file (Fri 09-04 close; GuruFocus AMD headline); US closed Monday for Labor Day"
+      },
+      {
+        "text": "Broadcom's AI forecast read as hyperscalers wanting alternatives beyond Nvidia; AVGO +0.21% Friday after a 10% three-month drawdown.",
+        "source": "Insider Monkey / Zacks headlines via markets file"
+      },
+      {
+        "text": "GS Communacopia + Technology conference runs Sep 8-11 in San Francisco — the week's AI newsflow venue.",
+        "source": "GS — GS Daily | US Communacopia Conf previews"
+      }
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

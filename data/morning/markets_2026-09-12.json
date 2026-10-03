@@ -1,0 +1,196 @@
+{
+ "date": "2026-09-12",
+ "fetched_at": "2026-09-12T08:07:10",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-11",
+    "close": 7656.98,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.86
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-11",
+    "close": 26333.04,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.96
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-11",
+    "close": 52573.29,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.98
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-11",
+    "close": 11824.0,
+    "prev_date": "2026-09-10",
+    "chg_pct": 1.81
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-11",
+    "close": 218.29,
+    "prev_date": "2026-09-10",
+    "chg_pct": -0.03
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-11",
+    "close": 516.13,
+    "prev_date": "2026-09-10",
+    "chg_pct": 2.49
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-11",
+    "close": 433.24,
+    "prev_date": "2026-09-10",
+    "chg_pct": 1.22
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-11",
+    "close": 361.99,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.32
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-11",
+    "close": 183.9,
+    "prev_date": "2026-09-10",
+    "chg_pct": 3.37
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-11",
+    "close": 60.0,
+    "prev_date": "2026-09-10",
+    "chg_pct": 2.88
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Would You Be Glad To Own Accenture If Its Consulting Work Stays Slow?",
+    "publisher": "Trefis",
+    "when": "2026-09-11 21:41Z",
+    "link": "https://finance.yahoo.com/m/8d7c07d0-9ae8-361b-bd9b-300a5a393d25/would-you-be-glad-to-own.html"
+   },
+   {
+    "title": "Google and Accenture Team Up to Accelerate Enterprise AI Adoption",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/google-accenture-team-accelerate-enterprise-151402810.html"
+   },
+   {
+    "title": "What Is The Market Seeing In Accenture Stock That You Are Not?",
+    "publisher": "Trefis",
+    "when": "2026-09-11 00:39Z",
+    "link": "https://finance.yahoo.com/m/f07f5f15-7cd7-3849-9ccf-8c4871dd1c12/what-is-the-market-seeing-in.html"
+   },
+   {
+    "title": "Accenture Wins $480.4 Million US Army Contract for Task-Management System",
+    "publisher": "MT Newswires",
+    "when": "2026-09-10 21:40Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-wins-480-4-million-214057085.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Says AI Creates Jobs, Its Own Restructuring Says Otherwise",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-says-ai-creates-jobs-154755236.html"
+   },
+   {
+    "title": "Cognizant (CTSH): Can 17 AI Agents Turn Productivity Into Revenue?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-10 23:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-17-ai-agents-231307532.html"
+   },
+   {
+    "title": "Cognizant Named in TIME World's Best Companies 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-09 13:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-time-worlds-best-133000424.html"
+   },
+   {
+    "title": "Cognizant Expands US Hiring Through Universities",
+    "publisher": "MT Newswires",
+    "when": "2026-09-08 10:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-expands-us-hiring-universities-101112397.html"
+   },
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia Is Letting Rival AI Chips Into Its Racks. Astera Labs Could Be the Quiet Winner",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 23:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-letting-rival-ai-chips-232525930.html"
+   },
+   {
+    "title": "Apple, Microsoft, and Nvidia Top the List of Largest Companies by Market Cap. Here's the One I'm Buying Now.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-11 23:20Z",
+    "link": "https://finance.yahoo.com/m/a9bf2e69-d0ca-32ca-8588-c037da584394/apple%2C-microsoft%2C-and-nvidia.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom\u2019s Custom AI Chip Boom Has a Powerful Landlord: TSM",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 23:16Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-custom-ai-chip-boom-231614780.html"
+   },
+   {
+    "title": "What's Going On With Broadcom Stock Friday",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-11 17:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/whats-going-broadcom-stock-friday-174335036.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23575.0,
+  "chg_pct": 0.51,
+  "stamp": "12-Sep-2026 02:29:40",
+  "expiry": "29-Sep-2026",
+  "volume": 60771,
+  "nifty_close": {
+   "close": 23398.100000000002,
+   "stamp": "11-Sep-2026 15:30"
+  },
+  "gap_pts": 176.9,
+  "gap_pct": 0.76
+ }
+}

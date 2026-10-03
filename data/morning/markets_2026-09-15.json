@@ -1,0 +1,226 @@
+{
+ "date": "2026-09-15",
+ "fetched_at": "2026-09-15T21:01:47",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-15",
+    "close": 7584.09,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.47
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-15",
+    "close": 25997.66,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.72
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-15",
+    "close": 51968.6,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.86
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-15",
+    "close": 11196.1,
+    "prev_date": "2026-09-14",
+    "chg_pct": 0.58
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-15",
+    "close": 212.1,
+    "prev_date": "2026-09-14",
+    "chg_pct": 0.54
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-15",
+    "close": 504.65,
+    "prev_date": "2026-09-14",
+    "chg_pct": 2.28
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-15",
+    "close": 414.24,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.9
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-15",
+    "close": 340.92,
+    "prev_date": "2026-09-14",
+    "chg_pct": -1.1
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-15",
+    "close": 195.38,
+    "prev_date": "2026-09-14",
+    "chg_pct": 0.19
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-15",
+    "close": 63.96,
+    "prev_date": "2026-09-14",
+    "chg_pct": -0.23
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Inside Broyhill\u2019s Bearish Exit of Accenture (ACN)",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-15 14:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/inside-broyhill-bearish-exit-accenture-140414781.html"
+   },
+   {
+    "title": "Accenture pays $25 million to settle DOJ diversity discrimination claims",
+    "publisher": "Quartz",
+    "when": "2026-09-15 12:46Z",
+    "link": "https://finance.yahoo.com/m/407bfb5d-3143-331d-a95e-bbc7a0f3f79c/accenture-pays-%2425-million-to.html"
+   },
+   {
+    "title": "Accenture to Announce Fourth-Quarter and Full-Year Fiscal 2026 Results",
+    "publisher": "Business Wire",
+    "when": "2026-09-15 10:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-announce-fourth-quarter-full-105900557.html"
+   },
+   {
+    "title": "Why Accenture (ACN) Stock Is Up Today",
+    "publisher": "StockStory",
+    "when": "2026-09-15 03:31Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-accenture-acn-stock-today-033130514.html"
+   },
+   {
+    "title": "Accenture to pay $25 million to settle US government allegations over DEI",
+    "publisher": "Reuters",
+    "when": "2026-09-15 00:58Z",
+    "link": "https://finance.yahoo.com/small-business/articles/accenture-pay-25-million-settle-004542391.html"
+   },
+   {
+    "title": "Accenture to Pay $25 Million to Resolve DOJ Discrimination Claims",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-09-14 21:36Z",
+    "link": "https://finance.yahoo.com/m/8f6bde0a-3300-3424-a37e-72127ea8ed9f/accenture-to-pay-%2425-million.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 44% Below Fair Value After AI Updates",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-15 03:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-could-032258586.html"
+   },
+   {
+    "title": "Cognizant Named to Newsweek's America's Most Admired Workplaces 2027",
+    "publisher": "PR Newswire",
+    "when": "2026-09-14 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-newsweeks-americas-most-130000380.html"
+   },
+   {
+    "title": "Cognizant CFO: AI Pressures IT Spending, but BFSI Growth Stays Strong",
+    "publisher": "MarketBeat",
+    "when": "2026-09-13 17:02Z",
+    "link": "https://finance.yahoo.com/m/b0264aab-f9e1-30d5-97cf-ab4569588a03/cognizant-cfo%3A-ai-pressures.html"
+   },
+   {
+    "title": "Cognizant Says AI Creates Jobs, Its Own Restructuring Says Otherwise",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-says-ai-creates-jobs-154755236.html"
+   },
+   {
+    "title": "Cognizant (CTSH): Can 17 AI Agents Turn Productivity Into Revenue?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-10 23:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-17-ai-agents-231307532.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "The AI Stock I\u2019m Buying on Repeat (And It Isn\u2019t Nvidia)",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-15 15:15Z",
+    "link": "https://finance.yahoo.com/m/f9d77b0c-9ded-360f-9c39-ec0b3b3eaa38/the-ai-stock-i%E2%80%99m-buying-on.html"
+   },
+   {
+    "title": "Salesforce Broadens Alliances With Nvidia, Google Cloud, AWS for Enterprise AI Integration",
+    "publisher": "MT Newswires",
+    "when": "2026-09-15 15:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/salesforce-broadens-alliances-nvidia-google-151359616.html"
+   },
+   {
+    "title": "Meta To Reportedly Launch New AI Chip In 2027, Aims To Beat Nvidia On Efficiency",
+    "publisher": "Stocktwits",
+    "when": "2026-09-15 15:10Z",
+    "link": "https://finance.yahoo.com/m/b6860b8f-0031-3e29-9add-13065df32a00/meta-to-reportedly-launch-new.html"
+   },
+   {
+    "title": "Trump tells Nvidia's Jensen Huang AI fears are a 'hoax,' but can midterm voters be convinced?",
+    "publisher": "Yahoo Finance Video",
+    "when": "2026-09-15 14:52Z",
+    "link": "https://finance.yahoo.com/video/trump-tells-nvidias-jensen-huang-145234740.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Credo vs. Broadcom: Which AI Connectivity Stock Is the Better Pick?",
+    "publisher": "Zacks",
+    "when": "2026-09-15 14:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/credo-vs-broadcom-ai-connectivity-140300535.html"
+   },
+   {
+    "title": "Broadcom CEO Sends Urgent Message on AI Slowdown Fears",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-15 12:39Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-ceo-sends-urgent-message-123902083.html"
+   },
+   {
+    "title": "Broadcom\u2019s Real Constraint Isn\u2019t Demand. It\u2019s Supply.",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-15 12:26Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-real-constraint-isn-t-122658190.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23212.0,
+  "chg_pct": 0.04,
+  "stamp": "15-Sep-2026 21:01:49",
+  "expiry": "29-Sep-2026",
+  "volume": 77585,
+  "nifty_close": {
+   "close": 23118.600000000002,
+   "stamp": "15-Sep-2026 15:30"
+  },
+  "gap_pts": 93.4,
+  "gap_pct": 0.4
+ }
+}

@@ -1,0 +1,442 @@
+{
+ "date": "2026-09-29",
+ "generated_at": "2026-09-29T08:13:43+05:30",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 90,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "LME zinc +11.6% 3M / +30.3% 6M to $3,964/t — PhillipCapital's strongest bullish read for Hindustan Zinc; aluminium range-bound at $3,322/t.",
+      "source": "PhillipCapital — FW: METALS – Weekend update: Prices (PhillipCapital India)",
+      "received": "12:19",
+      "detail": {
+       "summary": "PhillipCapital's weekend price tracker flags zinc as the standout non-ferrous mover, up sharply over 3 and 6 months versus a merely range-bound aluminium; domestic silver, an HZL byproduct, stays elevated despite a pullback.",
+       "points": [
+        "LME zinc $3,964/t: +11.6% 3M, +30.3% 6M",
+        "LME aluminium $3,322/t: +1.4% WoW, -2.3% 3M",
+        "LME lead $1,871/t: -2.6% 3M, negative for HZL",
+        "Domestic silver Rs2,29,230/kg: -1.1% 3M but still elevated"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Alumina spot $349/t (+15.6% 6M) is just 10.5% of LME aluminium vs 15-16% historical norm — cheap, positive for NALCO.",
+      "source": "PhillipCapital — FW: METALS – Weekend update: Prices (PhillipCapital India)",
+      "received": "12:19",
+      "detail": {
+       "summary": "PhillipCapital notes alumina has risen meaningfully over 3 and 6 months but still trades below its typical 15-16% ratio to LME aluminium, implying room to re-rate further, which favors NALCO's realizations.",
+       "points": [
+        "Alumina spot $349/t: +12.6% 3M, +15.6% 6M",
+        "Alumina at 10.5% of LME Al vs 15-16% norm",
+        "Ratio has widened 122bp over 6 months",
+        "Higher alumina prices read positive for NALCO"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: IF26 investors split on Vedanta Aluminium (upstream bet) vs Hindalco (downstream hedge); aluminium debate centers on Indonesian capacity ramp timing.",
+      "source": "CLSA — CLSA: India materials, durables: Key debates at IF26 (+1 more in Outlook)",
+      "received": "00:28",
+      "detail": {
+       "summary": "CLSA met 20+ investors at IF26 in Hong Kong; sentiment on a commodities supercycle stayed constructive but cautious, with the aluminium debate split between an Indonesian-oversupply camp and one expecting delays from power constraints and financing.",
+       "points": [
+        "20+ investors met at IF26, Hong Kong",
+        "Clients prefer VAML for upstream, Hindalco for downstream hedge",
+        "Indonesian aluminium capacity ramp is the key supply swing factor",
+        "Domestic cement/steel demand resilience surprised investors"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Elara reiterates Tata Steel Buy, TP Rs235 (25% upside): Europe DSP restart lifts EBITDA sequentially into Q1FY28; valuation discount to JSW/Jindal now 39%/32%.",
+      "source": "Elara — Ferrous Metals - Tata Steel - Pessimism priced in - Company Update - Buy - TP: INR 235 - Upside: 25%",
+      "received": "10:59",
+      "detail": {
+       "summary": "Elara views Tata Steel's underperformance as overdone: Europe turned EBITDA-negative in Q1FY27 on a Netherlands plant shutdown but should improve sequentially through Q1FY28 after an August restart, while firm Indian HRC prices and resilient demand support the base business.",
+       "points": [
+        "TP Rs235, 25% upside, CMP Rs188 (25-Sep)",
+        "Valuation discount to JSW/Jindal widened to 39%/32% from 28%/11%",
+        "Europe EBITDA-negative in Q1FY27; DSP restarted August 2026",
+        "Q2FY27 HRC prices +~2% vs Q1FY27, no usual seasonal dip"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital chart: SAIL corrected over 6 months while Tata Steel and Jindal Steel rallied since September — implies the latter two outperform in 2HFY27.",
+      "source": "PhillipCapital — FW: METALS – Weekend update: Prices (PhillipCapital India)",
+      "received": "12:19",
+      "detail": {
+       "summary": "Despite steel prices and spreads improving for two months, only Tata Steel and Jindal Steel have rallied while SAIL has corrected — PhillipCapital reads this divergence as a signal that Tata Steel and Jindal Steel could lead into 2HFY27.",
+       "points": [
+        "HRC Rs63,700/t, +9.4% 3M, +12.4% 6M",
+        "HRC spread Rs37,505/t, +9.0% 3M, expanding",
+        "SAIL corrected even as steel prices/spreads rose",
+        "Tata Steel, Jindal Steel rallied only from September"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: coking coal eased $6/t WoW to $276/t (still above Aug's $232/t after a mine-accident spike); rebar rallied +Rs1,650/t WoW to Rs62,100/t.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 25 Sep 2026) (+2 more in Outlook)",
+      "received": "10:19",
+      "detail": {
+       "summary": "Nomura's weekly steel note: rebar extended its rally as the flat-long spread narrowed to Rs1,700/t, while coking coal eased slightly WoW but stays elevated after supply disruptions and a fatal Chinese mine accident; Nomura stayed positive on the sector.",
+       "points": [
+        "Rebar Rs62,100/t, +Rs1,650/t WoW, extending uptrend",
+        "HRC flat at Rs63,800/t, near 4-year high",
+        "Coking coal $276/t, -$6/t WoW, still +19% vs Aug avg",
+        "Flat-long spread narrowed to ~Rs1,700/t favoring long products"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Avendus: petcoke/coal spot ~20% above Q1FY27 near $165/$125/t; margin normalisation pushed to 1HFY28E, Oct hike of Rs10-15/bag needed.",
+      "source": "Avendus Spark — Avendus Spark Cement: Sector Update – September 2026 & FY26 Annual Report Observations",
+      "received": "07:02",
+      "detail": {
+       "summary": "Fuel cost inflation (petcoke/coal up ~20% since August) has pushed the sector's expected margin recovery from 2HFY27E to 1HFY28E, making further pass-through price hikes essential. Preferred plays are share gainers and value names rather than the broader sector.",
+       "points": [
+        "Petcoke/coal ~20% above Q1FY27, now $165/$125 per tonne",
+        "Rs10-15/bag pan-India price hike expected from October",
+        "EBITDA/t range Rs850-950/t; FY28E reversion to Rs1,000-1,100/t",
+        "Preferred: UltraTech, Dalmia Bharat, Ramco Cements, JK Lakshmi"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL: all-India cement price +3% mom in Sep (Rs10/bag), 2Q still -2% qoq; Oct hike needed to offset 30% petcoke jump to $170/t.",
+      "source": "IIFL — The Front Page: Cement; Telecom; GCPL",
+      "received": "07:36",
+      "detail": {
+       "summary": "IIFL's dealer price checks show September's 3% mom rise (Rs10/bag) is not enough to reverse the April-August decline, leaving the 2QFY27 average price down qoq. A further October hike is needed to absorb a 30% jump in imported petcoke costs.",
+       "points": [
+        "All-India price +3% mom (Rs10/bag) in September",
+        "2QFY27 average price -2% qoq (Rs6/bag)",
+        "Imported petcoke +30% qoq to $170/t",
+        "Dealers expect ~2% further hike from October",
+        "Preferred: UltraTech, JK Cement; positive on Ambuja, Dalmia"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak's 'Road to Nowhere': five-year cement market-cap gain of 31% (Rs1.6tn) is almost entirely UltraTech; street FY27E ignores petcoke cost headwinds.",
+      "source": "Kotak — Kotak : Monsoons / Borrowings; IT preview - No pick up; ... Cement - Road to Nowhere; EMS - Semicon oppty....",
+      "received": "08:57",
+      "detail": {
+       "summary": "Kotak argues cement deserves a plain commodity multiple, not a premium, since none of the bullish theses (GST-cut price stickiness, Adani-led consolidation, limestone scarcity, green fuel costs) have materialised. Street FY27 estimates assume price hikes or lower input costs that may not show up.",
+       "points": [
+        "Cement market cap +31% (Rs1.6tn) over five years",
+        "Gains concentrated almost entirely in UltraTech",
+        "No supply-demand improvement seen for next few years",
+        "Street 2HFY27 estimates don't price in cost headwinds"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Nomura: NMDC hiked iron ore lump +Rs150/t to Rs5,400/t (effective Sep-26), fines flat at Rs4,500/t; global 62% Fe iron ore stable near $91/t, CY26 low.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 25 Sep 2026)",
+      "received": "10:19",
+      "detail": {
+       "summary": "Nomura's weekly note also covers NMDC: it raised lump prices while keeping fines flat, even as global seaborne 62% Fe iron ore held near its 2026 low, unaffected by the domestic hike.",
+       "points": [
+        "NMDC lump Rs5,400/t, +Rs150/t effective Sep-26",
+        "NMDC fines flat at Rs4,500/t",
+        "Global iron ore (62% Fe, CFR China) ~$91/t",
+        "Near lowest level observed in CY26 YTD"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama: Sep coal-fired generation +15.24% YoY (record Sep peak power demand 2,69,063MW, +17.4% YoY) — strong demand tailwind for Coal India offtake.",
+      "source": "Nuvama — Daily Power Demand",
+      "received": "08:59",
+      "detail": {
+       "summary": "Nuvama's daily power file shows September power demand running well ahead of last year with coal generation growth even faster than overall demand, and IEX spot prices more than doubling YoY — both point to strong near-term coal offtake.",
+       "points": [
+        "Sep coal generation +15.24% YoY, YTD +10.64%",
+        "Sep power demand +13.13% YoY, YTD +10.49%",
+        "Sep peak demand 2,69,063MW, highest ever, +17.4% YoY",
+        "IEX Sep avg price Rs7.71/kWh, +115.3% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME copper +7.1% 3M / +22.4% 6M to $14,491/t, still elevated per PhillipCapital — positive for Hindustan Copper.",
+      "source": "PhillipCapital — FW: METALS – Weekend update: Prices (PhillipCapital India) (+3 more in Outlook)",
+      "received": "12:19",
+      "detail": {
+       "summary": "PhillipCapital's weekly tracker flags copper as the strongest base-metal mover, up sharply over 3 and 6 months and holding near multi-month highs, which the note reads as a direct positive for Hindustan Copper's realizations.",
+       "points": [
+        "LME copper $14,491/t: +7.1% 3M, +22.4% 6M",
+        "Prices remain elevated versus 6-month range",
+        "NMDC discount to global iron ore price 56%, above LT avg",
+        "NMDC iron ore lump/fines both flat WoW"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kotak raises Avalon FV to Rs1,740 (from Rs1,050) on semiconductor-equipment component ramp with a global wafer-fab customer; maintains SELL.",
+      "source": "Kotak — Electronic Manufacturing Services: Semiconductor equipment opportunity emerges",
+      "received": "08:26",
+      "detail": {
+       "summary": "Kotak sees Avalon Technologies and Cyient DLM as early beneficiaries of the global semiconductor-equipment investment cycle (AI, HBM, advanced packaging), participating via power modules, box-builds and subsystems rather than complete fabs. Raises FY29 estimates and FV for both; EPS revised 1-7% for Avalon, 2-8% for Cyient.",
+       "points": [
+        "Avalon FV Rs1,740 (was Rs1,050)",
+        "Cyient DLM FV Rs770 (was Rs430)",
+        "Avalon EPS revised 1-7%, Cyient 2-8%",
+        "Global equipment billings $135.1bn 2025 -> $229.5bn by 2028",
+        "Rating: SELL maintained on both"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LG/Voltas/Daikin/Godrej hiking AC-TV prices 5-10% from Oct 1 as copper +34%, steel +24%, aluminium +16% input costs bite.",
+      "source": "Nomura — India Consumer Durables and EMS: Costly Diwali: Appliance makers set to serve up another price shock",
+      "received": "09:11",
+      "detail": {
+       "summary": "LG's Sept 24 trade communication cites input inflation - copper +34%, resin +17%, steel +24%, aluminium +16% YTD - driving a third price hike this year (cumulative 16-18% since January) across ACs, TVs and appliances from Oct 1. Voltas, Daikin, Godrej, Havells and Bosch following with similar hikes.",
+       "points": [
+        "LG: copper +34%, resin +17%, steel +24%, aluminium +16% YTD",
+        "Cumulative price hikes 16-18% since January, third hike this year",
+        "LG AC/TV/appliances +5-7% from Oct 1",
+        "Voltas ACs +5-7%, Daikin +6-10%, Godrej +4-6%, Havells ~5%",
+        "Samsung TVs +Rs1,000-10,000 across 43-75 inch range"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: IF26 investors saw no pushback to its negative Dixon thesis, citing memory-upcycle risk to entry/mid-level smartphone margins.",
+      "source": "CLSA — India materials, durables: Key debates at IF26",
+      "received": "00:28",
+      "detail": {
+       "summary": "At CLSA's IF26 Hong Kong conference (20+ investors), EMS discussion was stock-specific rather than thematic, with margin/cashflow disappointment a concern and preference for names doing value-addition. On Dixon specifically, clients agreed with CLSA's negative thesis, flagging entry/mid-level smartphones as most exposed to a global memory-chip upcycle.",
+       "points": [
+        "EMS interest stock-specific, not thematic, at IF26",
+        "Concern: margin and cashflow disappointment across EMS",
+        "Preference for EMS names doing value-addition projects",
+        "No pushback to CLSA's negative Dixon thesis",
+        "Risk: entry/mid-level smartphones hit hardest by memory upcycle"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Coforge appoints Akhil Gupta (ex-Bharti Vice Chairman) as independent chairperson effective immediately, well ahead of its 3-month deadline; JPM Overweight, PT Rs1,850.",
+      "source": "JPM — Coforge: Appointment of a credible chairperson",
+      "received": "07:20",
+      "detail": {
+       "summary": "JPM says Akhil Gupta's appointment as independent chairperson, ahead of schedule, adds board credibility after this month's departures and lets focus return to AI traction and Encora integration.",
+       "points": [
+        "Akhil Gupta ex-Vice Chairman, Bharti Enterprises",
+        "Appointed well within 3-month guided window",
+        "Follows earlier board departures this month",
+        "JPM Overweight, PT Rs1,850 (Jun-27)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak 2QFY27 IT preview: muted for large-caps, better for mid-tier; margins steady near-term but pressure building; guidance cut at Infosys, weak at Wipro, HCLT unchanged.",
+      "source": "Kotak — India Daily: Initiating Coverage - Dhoot Transmission; Strategy; Updates - ... IT Services, Economy",
+      "received": "08:51",
+      "detail": {
+       "summary": "Kotak's India Daily flags a muted 2QFY27 for large-cap IT against a stronger mid-tier, steady margins with building pressure points, and Infosys guidance cut versus Wipro weakness.",
+       "points": [
+        "Large-caps muted, mid-tier better this quarter",
+        "Margins steady now, pressure points building",
+        "Infosys guidance cut, Wipro weak, HCLT unchanged at midpoint",
+        "Valuations: downside protected, upside capped by growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: HCLT leads tier-1 growth at +2% qoq organic; Infosys +1.1%, TCS +0.5% lag; PSYS +7% qoq on mega-deal ramp leads mid-tier.",
+      "source": "Kotak — Kotak : Monsoons / Borrowings; IT preview - No pick up; ... (+1 more in Outlook)",
+      "received": "08:57",
+      "detail": {
+       "summary": "Kotak expects AI deflation and soft macro to mute tier-1 growth this seasonally strong quarter, HCLT the standout, while Persistent, Coforge and Mphasis again outpace on deal ramps.",
+       "points": [
+        "HCLT +2% qoq organic (+2.4% yoy)",
+        "Infosys +1.1% qoq, TCS +0.5% qoq",
+        "PSYS +7% qoq, Coforge +4.5%, MPHL +3.5%",
+        "TechM +1.6% qoq/+6.6% yoy leads hybrids vs LTM"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "NSE rebalance (29-Sep close): net +$535mn on $2.2bn gross; VAML added to Next 50 (+$150mn, 4.4x ADV), Wipro cut from Nifty 50 (-$247.5mn, 13.5x ADV).",
+      "source": "BNPP — BNPP INDIA QUICK NOTES: NSE INDICES REBAL | GLOBAL CAP GOODS | SEMICON ...",
+      "received": "08:52",
+      "detail": {
+       "summary": "BNPP's index periscope models NSE's 29-Sep rebalance, timed with F&O expiry: $2.2bn of two-way gross flow nets to a modest +$535mn inflow, with Nifty 50 nearly flat (BSE added, Wipro dropped) while Next 50 and Midcap 150 carry the sharper single-stock moves.",
+       "points": [
+        "$2.2bn gross flow, +$535mn net inflow at expiry",
+        "VAML added to Nifty Next 50, +$150mn, 4.4x ADV",
+        "Wipro dropped from Nifty 50, -$247.5mn, 13.5x ADV",
+        "Hindustan Copper added to Midcap 150, +$8.2mn",
+        "Shree Cement dropped from Next 50, added to Midcap 150"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs sold $0.4bn cash Friday (DII offset), ~$5bn out via the Sep series over 7 weeks; Kotak calls positioning oversold, Nifty support near 23,000.",
+      "source": "Kotak — Kotak : Monsoons / Borrowings; IT preview - No pick up; ... (Positioning Daily)",
+      "received": "08:57",
+      "detail": {
+       "summary": "Kotak's positioning desk flags FII selling easing in derivatives even as roughly $5bn left via equities plus futures over the September series across seven straight down weeks; with Nifty parked near key support, fresh shorts screen as poor risk-reward versus a bounce.",
+       "points": [
+        "FII cash outflow $0.4bn Friday, DII inflows offset it",
+        "~$5bn FII selling via equities and futures this Sep series",
+        "Seven consecutive weekly closes negative for Nifty",
+        "Nifty support seen near 23,000 on the weekly chart",
+        "Kotak favours a bounce over fresh shorting here"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "US 10y yield hit 5.25% intraday (19-yr high) on renewed bond selloff; JPM prices ~2/3 odds of an October Fed hike.",
+      "source": "JPM — JPM Overnight Brief! 9/29 - renewed bond selloff with 10y yield hitting 5.25% intraday, a 19-year high; 2/3 probability of an October hike",
+      "received": "05:25",
+      "detail": {
+       "summary": "JPM's US overnight wrap: the S&P fell 0.8% amid a fresh bond selloff as the 10y hit 5.25% intraday, a 19-year high, on hawkish Fedspeak and firm growth/inflation data; markets now price roughly two-thirds odds of an October hike, a risk-off backdrop that bears on EM/India sentiment.",
+       "points": [
+        "S&P -0.8%, Nasdaq -1.1% on renewed bond selloff",
+        "10y Treasury yield 5.25% intraday, a 19-year high",
+        "~2/3 probability now priced for an October Fed hike",
+        "Brent roughly flat near $92.60, yields the real driver",
+        "ETF flows skewed defensive; crypto inflows at 11-month highs"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "ICICI Sec pegs Sep'26 wholesales: MSIL +21% YoY to 230k, Bajaj 2W +10% to 560k, TVS +18% to 636k, HMCL flat at 700k.",
+      "source": "ICICI Securities — Auto volume estimates - Sept'26",
+      "received": "17:34",
+      "detail": {
+       "summary": "Broker's monthly wholesale tracker projects Sep'26 dispatches across PV, 2W, CV, tractor OEMs versus Sep'25 and Aug'26, no accompanying commentary - just a volume/YoY/MoM table across ten OEMs.",
+       "points": [
+        "MSIL 230,000 units, +21% YoY, +5% MoM",
+        "2W total 20,30,000 units, +9% YoY",
+        "CV total 77,750 units, +25% YoY",
+        "Tractors -6% YoY on high base (M&M, Escorts)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA's Sep-26 wholesale preview: MSIL +21% YoY, TVS 2W +14% domestic, RE only +6% on capacity constraint; prefers M&M, Bajaj, Ather.",
+      "source": "CLSA — India autos: Preview: Auto barometer",
+      "received": "12:03",
+      "detail": {
+       "summary": "CLSA's Sep-26CL wholesale model expects broad low-to-high-teens YoY growth with September inventory build ahead of festive season, followed by destocking; picks M&M, Bajaj Auto and Ather Energy.",
+       "points": [
+        "MSIL +21% YoY, outperforming on soft base",
+        "TVS domestic 2W +14% YoY, exports +45%",
+        "RE only +6%, capacity-constrained; HMCL flat YoY",
+        "CVs (AL, TMCV) +10-12% YoY in Sep",
+        "August inventory: wholesale exceeded retail by 10-20%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM: POWERIND base order inflow of Rs29-30bn+ would be a positive catalyst; GVTD's ~Rs14-15bn US HVDC export order and pricing key to watch.",
+      "source": "JPM — India Power Equipment: Order inflow pickup likely ahead; incremental pricing/margins key to monitor (+3 more in Outlook)",
+      "received": "19:43",
+      "detail": {
+       "summary": "JPM stays constructive on power equipment (GVTD, Hitachi Energy OW; Siemens Energy N) as NCT approvals and TBCB pipeline point to an order-inflow pickup, though transformer bushing/copper bottlenecks and rising CRGO/copper/aluminium costs pressure near-term pricing and margins.",
+       "points": [
+        "POWERIND: base OI Rs29-30bn+ would be positive catalyst",
+        "GVTD: ~Rs14-15bn US HVDC export order size key",
+        "ENRIN: 9M exports +75% YoY, ~22% EBIT margin watch",
+        "HV transformer backlogs running 12-24 months currently",
+        "CRGO steel, copper, aluminium costs rose further in 2Q"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "AMD agreed to buy Fei-Fei Li's World Labs for $8.2bn in a 'physical AI' bet; BofA reset its AMD price target.",
+    "source": "Reuters / TheStreet — AMD to buy World Labs; BofA resets AMD price target"
+   },
+   {
+    "text": "Broadcom's $115bn forecast has stirred Street debate on its custom-silicon runway; SOX -1.61% overnight, Nvidia +1.68% held up.",
+    "source": "GuruFocus — Broadcom Stock Slips Lower as $115 Billion Forecast Raises the Conversation"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,209 @@
+{
+ "date": "2026-09-30",
+ "fetched_at": "2026-09-30T08:12:01",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-29",
+    "close": 7670.84,
+    "prev_date": "2026-09-28",
+    "chg_pct": -0.17
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-29",
+    "close": 26797.54,
+    "prev_date": "2026-09-28",
+    "chg_pct": -0.09
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-29",
+    "close": 51349.92,
+    "prev_date": "2026-09-28",
+    "chg_pct": -0.26
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-29",
+    "close": 12629.16,
+    "prev_date": "2026-09-28",
+    "chg_pct": 1.32
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-29",
+    "close": 227.21,
+    "prev_date": "2026-09-28",
+    "chg_pct": -0.72
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-29",
+    "close": 607.57,
+    "prev_date": "2026-09-28",
+    "chg_pct": -0.05
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-29",
+    "close": 456.94,
+    "prev_date": "2026-09-28",
+    "chg_pct": 0.9
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-29",
+    "close": 355.1,
+    "prev_date": "2026-09-28",
+    "chg_pct": 1.58
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-29",
+    "close": 177.12,
+    "prev_date": "2026-09-28",
+    "chg_pct": 1.52
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-29",
+    "close": 56.84,
+    "prev_date": "2026-09-28",
+    "chg_pct": 0.16
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Digital Transformation Market Report 2026: Capitalize on the $2.47 Trillion Revenue Surge to $5.01 Trillion by 2030 as Microsoft, Google, IBM, Accenture and Oracle Accelerate AI, Cloud and Automation Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-29 15:57Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-market-report-2026-155700660.html"
+   },
+   {
+    "title": "IT BFSI Market Report 2026: Capitalize on the $171.25 Billion Revenue Surge to $359.2 Billion by 2030 as AI, Cloud and Cybersecurity Disrupt Competition Across Microsoft, AWS, Accenture, IBM and Oracle",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-29 15:54Z",
+    "link": "https://finance.yahoo.com/technology/articles/bfsi-market-report-2026-capitalize-155400666.html"
+   },
+   {
+    "title": "Accenture Fiscal Q4 Earnings Due As AI Looms As Double-Edged Sword",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-29 12:00Z",
+    "link": "https://finance.yahoo.com/m/63a48562-4857-3ee8-9c4c-bf63a0ee1ab2/accenture-fiscal-q4-earnings.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Named to Forbes World's Best Employers 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-29 15:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-forbes-worlds-best-150000587.html"
+   },
+   {
+    "title": "ACI, Cognizant Say BASE24-eps Sustained Double its Target Transaction Load Without Single Failure",
+    "publisher": "MT Newswires",
+    "when": "2026-09-28 12:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-cognizant-base24-eps-sustained-122630369.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Complete BASE24-eps Performance Testing on AWS",
+    "publisher": "InvestorsHub",
+    "when": "2026-09-28 12:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-complete-base24-121148852.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Demonstrate Strong Card Processing Performance on Amazon Web Services, Inc. (AWS)",
+    "publisher": "Business Wire",
+    "when": "2026-09-28 11:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-demonstrate-strong-110000030.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Michael Burry sends fresh warning on Nvidia stock",
+    "publisher": "TheStreet",
+    "when": "2026-09-30 02:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/michael-burry-sends-fresh-warning-023300611.html"
+   },
+   {
+    "title": "History Says Nvidia's Record $150 Billion Buyback Is Good News for the Stock",
+    "publisher": "Motley Fool",
+    "when": "2026-09-30 01:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/history-says-nvidias-record-150-010301431.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stock Jumps Nearly 3.2% as $16.7 Billion AI Engine Faces Margin Test",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-29 18:46Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stock-jumps-nearly-3-184641753.html"
+   },
+   {
+    "title": "Reflecting On Processors and Graphics Chips Stocks\u2019 Q2 Earnings: Broadcom (NASDAQ:AVGO)",
+    "publisher": "StockStory",
+    "when": "2026-09-29 18:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/reflecting-processors-graphics-chips-stocks-184002453.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD takes on Nvidia with aggressive $8.2 billion bet on AI\u2019s next era",
+    "publisher": "TheStreet",
+    "when": "2026-09-29 22:07Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-takes-nvidia-aggressive-8-220700242.html"
+   },
+   {
+    "title": "AMD Expands AI Expertise With World Labs Acquisition",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-29 20:08Z",
+    "link": "https://finance.yahoo.com/m/1d377f15-dbae-3e08-b0fa-e90a5fa6b069/amd-expands-ai-expertise-with.html"
+   },
+   {
+    "title": "AMD Makes $8.2 Billion Bet on AI's Next Big Market",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-29 19:05Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-makes-8-2-billion-190528941.html"
+   },
+   {
+    "title": "AMD vs. Nvidia: Which Chip Giant Looks Stronger After Their Latest Acquisitions?",
+    "publisher": "Zacks",
+    "when": "2026-09-29 18:24Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-vs-nvidia-chip-giant-182400957.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22809.5,
+  "chg_pct": -0.12,
+  "stamp": "30-Sep-2026 08:11:31",
+  "expiry": "27-Oct-2026",
+  "volume": 1542,
+  "nifty_close": {
+   "close": 22716.2,
+   "stamp": "29-Sep-2026 15:30"
+  },
+  "gap_pts": 93.3,
+  "gap_pct": 0.41
+ }
+}
