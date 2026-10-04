@@ -1,0 +1,209 @@
+{
+ "date": "2026-10-04",
+ "fetched_at": "2026-10-04T08:09:36",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-02",
+    "close": 7722.72,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.73
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-02",
+    "close": 27190.86,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.19
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-02",
+    "close": 51176.96,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.49
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-02",
+    "close": 13136.67,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.4
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-02",
+    "close": 233.95,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.34
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-02",
+    "close": 633.91,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-02",
+    "close": 472.78,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.96
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-02",
+    "close": 355.14,
+    "prev_date": "2026-10-01",
+    "chg_pct": 3.35
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-02",
+    "close": 198.9,
+    "prev_date": "2026-10-01",
+    "chg_pct": -6.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-02",
+    "close": 58.51,
+    "prev_date": "2026-10-01",
+    "chg_pct": -3.89
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Was Supposed to Be an AI Casualty. Is the Market Changing Its Mind?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-03 04:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-supposed-ai-casualty-043234381.html"
+   },
+   {
+    "title": "What is Accenture\u2019s (ACN) Economic Moat, and is it Widening or Narrowing?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-03 00:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-economic-moat-widening-003604766.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Could Be Undervalued On A 33% Five Year Slide",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-02 22:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-could-undervalued-220519537.html"
+   },
+   {
+    "title": "Accenture Stock Pulls Back as Investors Book Profits",
+    "publisher": "Benzinga",
+    "when": "2026-10-02 18:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-pulls-back-investors-180020984.html"
+   },
+   {
+    "title": "Accenture Q4 Earnings Call Sees AI Demand Broaden Into FY27",
+    "publisher": "Zacks",
+    "when": "2026-10-02 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-q4-earnings-call-sees-130000263.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Set for Durable Growth as Margin Expansion Expected to Begin in Q4, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-02 15:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-set-durable-growth-margin-150618825.html"
+   },
+   {
+    "title": "Cognizant Schedules Third Quarter 2026 Earnings Release and Conference Call",
+    "publisher": "PR Newswire",
+    "when": "2026-10-02 12:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-schedules-third-quarter-2026-120000616.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia (NVDA) Is At The Center Of An $8 Billion AI Financing Shift",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-03 23:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-center-8-billion-230622829.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "If You'd Invested $1,000 in Broadcom's 2009 IPO, Here's How Much You'd Have Today",
+    "publisher": "Motley Fool",
+    "when": "2026-10-03 10:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/youd-invested-1-000-broadcoms-103500401.html"
+   },
+   {
+    "title": "Prediction: This AI Chip Stock Will Be the Biggest Winner of 2027 (Hint: It\u2019s Not Nvidia, AMD, or Broadcom)",
+    "publisher": "Motley Fool",
+    "when": "2026-10-03 09:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/prediction-ai-chip-stock-biggest-094001664.html"
+   },
+   {
+    "title": "Broadcom\u2019s $42 Billion Loan to Anthropic Turns the Chipmaker Into Its Customer\u2019s Bank",
+    "publisher": "Forkast News",
+    "when": "2026-10-03 07:38Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-42-billion-loan-anthropic-073843155.html"
+   },
+   {
+    "title": "Broadcom, Qualcomm, and Sensata Technologies Stocks Trade Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-03 00:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-qualcomm-sensata-technologies-stocks-003003380.html"
+   },
+   {
+    "title": "Broadcom Stocks Jump 3.5% as AI Chip Guide Reaches $21.7 Billion",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-02 19:49Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-jump-3-5-194924009.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Intel Was Worth About 28 Times as Much as AMD 10 Years Ago. Now AMD Is Worth About 60% More.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-03 09:32Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/intel-worth-28-times-much-093201957.html"
+   },
+   {
+    "title": "Why AMD Stock Jumped 30% in September",
+    "publisher": "Motley Fool",
+    "when": "2026-10-03 00:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-jumped-30-005002040.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22624.5,
+  "chg_pct": 0.59,
+  "stamp": "02-Oct-2026 02:42:33",
+  "expiry": "27-Oct-2026",
+  "volume": 83278,
+  "nifty_close": {
+   "close": 22421.95,
+   "stamp": "01-Oct-2026 15:30"
+  },
+  "gap_pts": 202.5,
+  "gap_pct": 0.9
+ }
+}
