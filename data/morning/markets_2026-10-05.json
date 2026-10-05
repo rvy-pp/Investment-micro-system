@@ -1,0 +1,209 @@
+{
+ "date": "2026-10-05",
+ "fetched_at": "2026-10-05T08:13:33",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-02",
+    "close": 7722.72,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.73
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-02",
+    "close": 27190.86,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.19
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-02",
+    "close": 51176.96,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.49
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-02",
+    "close": 13136.67,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.4
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-02",
+    "close": 233.95,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.34
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-02",
+    "close": 633.91,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-02",
+    "close": 472.78,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.96
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-02",
+    "close": 355.14,
+    "prev_date": "2026-10-01",
+    "chg_pct": 3.35
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-02",
+    "close": 198.9,
+    "prev_date": "2026-10-01",
+    "chg_pct": -6.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-02",
+    "close": 58.51,
+    "prev_date": "2026-10-01",
+    "chg_pct": -3.89
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Is Accenture (ACN) Really Priced Like Its Best Days Are Over?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-04 17:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-really-priced-best-173337701.html"
+   },
+   {
+    "title": "Accenture vs. Microsoft: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-04 15:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-microsoft-technology-stock-155844224.html"
+   },
+   {
+    "title": "Accenture (ACN) Was Supposed to Be an AI Casualty. Is the Market Changing Its Mind?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-03 04:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-supposed-ai-casualty-043234381.html"
+   },
+   {
+    "title": "What is Accenture\u2019s (ACN) Economic Moat, and is it Widening or Narrowing?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-03 00:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-economic-moat-widening-003604766.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Could Be Undervalued On A 33% Five Year Slide",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-02 22:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-could-undervalued-220519537.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Is Cognizant\u2019s AI-Led Delivery Shift Altering The Investment Case For Cognizant Technology Solutions (CTSH)?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-04 19:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ai-led-delivery-shift-190859908.html"
+   },
+   {
+    "title": "Cognizant Set for Durable Growth as Margin Expansion Expected to Begin in Q4, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-02 15:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-set-durable-growth-margin-150618825.html"
+   },
+   {
+    "title": "Cognizant Schedules Third Quarter 2026 Earnings Release and Conference Call",
+    "publisher": "PR Newswire",
+    "when": "2026-10-02 12:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-schedules-third-quarter-2026-120000616.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Rise; Nasdaq At Highs With Nvidia, SpaceX Buys, But Note These Risks",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-05 01:48Z",
+    "link": "https://finance.yahoo.com/m/b98e0c13-f78a-3e19-ad93-12d5a340e701/dow-jones-futures-rise%3B.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom vs. Intel: What Revenue Trends Tell Investors About These Artificial Intelligence Companies",
+    "publisher": "Motley Fool",
+    "when": "2026-10-04 23:36Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-vs-intel-revenue-trends-233628358.html"
+   },
+   {
+    "title": "Can Broadcom Keep Growing Its Dividend as AI Customers Gain Power?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-04 20:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-keep-growing-dividend-ai-203334720.html"
+   },
+   {
+    "title": "Here is Why Broadcom (AVGO) is a Good Investment at Today\u2019s Price",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-04 20:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-avgo-good-investment-201656820.html"
+   },
+   {
+    "title": "Broadcom\u2019s Massive $42 Billion Chip-Buying Deal with Anthropic Raises Circular Financing Worries",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-04 15:33Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-massive-42-billion-chip-153348373.html"
+   },
+   {
+    "title": "Broadcom's 2028 Projection Makes the Stock a Screaming Buy",
+    "publisher": "Motley Fool",
+    "when": "2026-10-04 13:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcoms-2028-projection-makes-stock-130400961.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Reaches a $1 Trillion Market Cap. Can It Finally Dethrone Nvidia?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-04 13:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-reaches-1-trillion-market-133400777.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22628.5,
+  "chg_pct": 0.08,
+  "stamp": "05-Oct-2026 08:13:38",
+  "expiry": "27-Oct-2026",
+  "volume": 2479,
+  "nifty_close": {
+   "close": 22421.95,
+   "stamp": "01-Oct-2026 15:30"
+  },
+  "gap_pts": 206.5,
+  "gap_pct": 0.92
+ }
+}
