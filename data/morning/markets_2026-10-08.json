@@ -1,0 +1,208 @@
+{
+ "date": "2026-10-08",
+ "fetched_at": "2026-10-08T08:08:58",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-07",
+    "close": 7801.77,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.22
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-07",
+    "close": 27538.69,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.22
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-07",
+    "close": 51179.87,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.66
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-07",
+    "close": 13066.15,
+    "prev_date": "2026-10-06",
+    "chg_pct": -1.15
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-07",
+    "close": 237.47,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.74
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-07",
+    "close": 645.86,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.55
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-07",
+    "close": 472.2,
+    "prev_date": "2026-10-06",
+    "chg_pct": -2.09
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-07",
+    "close": 376.51,
+    "prev_date": "2026-10-06",
+    "chg_pct": 0.19
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-07",
+    "close": 196.64,
+    "prev_date": "2026-10-06",
+    "chg_pct": 1.68
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-07",
+    "close": 57.07,
+    "prev_date": "2026-10-06",
+    "chg_pct": -0.26
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Digital Transformation - Global Strategic Business Report: Capitalize on the US$3.7 Trillion Market by 2030 as Microsoft, IBM, Accenture, Oracle and SAP Disrupt Enterprise ROI",
+    "publisher": "GlobeNewswire",
+    "when": "2026-10-07 21:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-global-strategic-business-211100026.html"
+   },
+   {
+    "title": "What Is Accenture Building That Investors Should Watch?",
+    "publisher": "Trefis",
+    "when": "2026-10-07 14:26Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-building-investors-watch-142647705.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Gets Fair Value Boost After Q4 Beat And Higher Analyst Targets",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-06 20:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-gets-fair-201005356.html"
+   },
+   {
+    "title": "How to Play the Giant Post-Earnings Rally in Accenture Stock",
+    "publisher": "Barchart",
+    "when": "2026-10-06 14:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/play-giant-post-earnings-rally-143407956.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Gilead Sciences signs five-year DevOps agreement with Cognizant",
+    "publisher": "Pharmaceutical Technology",
+    "when": "2026-10-07 08:21Z",
+    "link": "https://finance.yahoo.com/healthcare/articles/gilead-sciences-signs-five-devops-082156410.html"
+   },
+   {
+    "title": "Gilead Sciences signs five-year DevOps agreement with Cognizant",
+    "publisher": "Hospital Management",
+    "when": "2026-10-07 08:21Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/gilead-sciences-signs-five-devops-082156865.html"
+   },
+   {
+    "title": "Cognizant, Gilead Sign 5-Year Tech Extension Covering DevOps, AI Tools",
+    "publisher": "MT Newswires",
+    "when": "2026-10-06 13:29Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-gilead-sign-5-tech-132908888.html"
+   },
+   {
+    "title": "Cognizant Expands AI-Enabled DevOps Capabilities for Gilead Sciences",
+    "publisher": "PR Newswire",
+    "when": "2026-10-06 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-expands-ai-enabled-devops-130000366.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Jensen Huang Said Nvidia Now Has \"a Lot Greater Visibility\" Into Demand, Letting It Forecast a Full Year Ahead for the First Time Ever. Does That Confidence Justify Nvidia's Premium Valuation?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-08 00:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jensen-huang-said-nvidia-now-002000270.html"
+   },
+   {
+    "title": "Think You Missed Out on Nvidia's Stock Rise? Think Again.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-07 23:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/think-missed-nvidias-stock-rise-235900064.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom, Oracle And SpaceX Tap Private Credit For AI Hardware: Report",
+    "publisher": "Stocktwits",
+    "when": "2026-10-07 23:37Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-oracle-spacex-tap-private-233758270.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Is Seen As Resilient To 32 Gigawatt Power Shortfalls",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-07 23:17Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-avgo-seen-resilient-32-231711308.html"
+   },
+   {
+    "title": "Broadcom, Oracle, and SpaceX pursue blockbuster debt deals amid AI buildout - WSJ",
+    "publisher": "Investing.com",
+    "when": "2026-10-07 21:58Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-oracle-spacex-pursue-blockbuster-215828392.html"
+   },
+   {
+    "title": "Market Chatter: Broadcom, Oracle, SpaceX Seek Financing for AI Chip Purchases",
+    "publisher": "MT Newswires",
+    "when": "2026-10-07 21:57Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/market-chatter-broadcom-oracle-spacex-215754137.html"
+   },
+   {
+    "title": "Mobile Edge Computing - Global Strategic Business Report: Capitalize on 29% CAGR to Secure the US$6.9 Billion 2030 Market as Cisco, AT&T, Broadcom, ADLINK, and HPE Reshape Competition",
+    "publisher": "GlobeNewswire",
+    "when": "2026-10-07 21:13Z",
+    "link": "https://finance.yahoo.com/technology/articles/mobile-edge-computing-global-strategic-211300346.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22618.0,
+  "chg_pct": 0.27,
+  "stamp": "08-Oct-2026 08:08:53",
+  "expiry": "27-Oct-2026",
+  "volume": 1620,
+  "nifty_close": {
+   "close": 22603.05,
+   "stamp": "07-Oct-2026 15:30"
+  },
+  "gap_pts": 15.0,
+  "gap_pct": 0.07
+ }
+}
