@@ -1,0 +1,196 @@
+{
+ "date": "2026-10-09",
+ "fetched_at": "2026-10-09T08:11:49",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-08",
+    "close": 7765.36,
+    "prev_date": "2026-10-07",
+    "chg_pct": -0.47
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-08",
+    "close": 27193.34,
+    "prev_date": "2026-10-07",
+    "chg_pct": -1.25
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-08",
+    "close": 51231.64,
+    "prev_date": "2026-10-07",
+    "chg_pct": 0.1
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-08",
+    "close": 12623.71,
+    "prev_date": "2026-10-07",
+    "chg_pct": -3.39
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-08",
+    "close": 230.48,
+    "prev_date": "2026-10-07",
+    "chg_pct": -2.94
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-08",
+    "close": 620.68,
+    "prev_date": "2026-10-07",
+    "chg_pct": -3.9
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-08",
+    "close": 457.99,
+    "prev_date": "2026-10-07",
+    "chg_pct": -3.01
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-08",
+    "close": 360.14,
+    "prev_date": "2026-10-07",
+    "chg_pct": -4.35
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-08",
+    "close": 208.36,
+    "prev_date": "2026-10-07",
+    "chg_pct": 5.96
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-08",
+    "close": 60.01,
+    "prev_date": "2026-10-07",
+    "chg_pct": 5.15
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-08 23:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-know-233609788.html"
+   },
+   {
+    "title": "Accenture (ACN) Could Be 30% Undervalued As Q4 Results Beat Expectations",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-08 20:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-could-30-undervalued-201203050.html"
+   },
+   {
+    "title": "What Would It Take For AI Price Cuts To Break Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-10-08 18:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-price-cuts-break-accenture-183050311.html"
+   },
+   {
+    "title": "Is Accenture (ACN) the Market\u2019s Most Overlooked AI Play?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-08 16:19Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-market-most-overlooked-161945893.html"
+   },
+   {
+    "title": "Accenture, Dell Create New Business Group to Scale AI, Modernize Infrastructure",
+    "publisher": "MT Newswires",
+    "when": "2026-10-08 12:39Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-dell-create-business-group-123916203.html"
+   },
+   {
+    "title": "Accenture and Dell Technologies Expand Collaboration to Help Enterprises Scale Private AI and Modernize Infrastructure",
+    "publisher": "Business Wire",
+    "when": "2026-10-08 11:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-dell-technologies-expand-collaboration-115900969.html"
+   }
+  ],
+  "CTSH": [],
+  "NVDA": [
+   {
+    "title": "Why Nvidia (NVDA) Stock Is Trading Lower Today",
+    "publisher": "StockStory",
+    "when": "2026-10-09 00:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-nvidia-nvda-stock-trading-000009960.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Jim Cramer Told a Broadcom (AVGO) Holder Not to Sell, and Said He Trimmed It Himself",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-09 02:31Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-told-broadcom-avgo-023103180.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Stock Looks To Trade At A Discount To Fair Value",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-08 22:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-stock-looks-trade-221759849.html"
+   },
+   {
+    "title": "Why Broadcom Stock Took a Dive Today",
+    "publisher": "Motley Fool",
+    "when": "2026-10-08 22:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-stock-took-dive-220557842.html"
+   },
+   {
+    "title": "Nvidia vs. Broadcom: Which AI Chip Stock Is the Better Buy for the Next 5 Years?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-08 21:49Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-vs-broadcom-ai-chip-214900606.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD CEO delivers stark warning on chip market\u2019s future",
+    "publisher": "TheStreet",
+    "when": "2026-10-09 01:03Z",
+    "link": "https://finance.yahoo.com/technology/articles/amd-ceo-delivers-stark-warning-010300304.html"
+   },
+   {
+    "title": "AMD Stocks Fall 1.5% Despite TSMC's Record AI Demand Signal",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-08 20:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-fall-1-5-204633708.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22366.5,
+  "chg_pct": 0.01,
+  "stamp": "09-Oct-2026 08:11:52",
+  "expiry": "27-Oct-2026",
+  "volume": 1646,
+  "nifty_close": {
+   "close": 22231.8,
+   "stamp": "08-Oct-2026 15:30"
+  },
+  "gap_pts": 134.7,
+  "gap_pct": 0.61
+ }
+}
