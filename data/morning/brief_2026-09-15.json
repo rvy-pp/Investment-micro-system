@@ -1,0 +1,93 @@
+{
+ "date": "2026-09-15",
+ "generated_at": "2026-09-15T08:08:48+05:30",
+ "mail": {
+  "window": "24h to 08:05 IST",
+  "n_scanned": 54,
+  "sectors": [
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Coforge chairman OP Bhatt and NRC chief DK Singh quit over a withheld board evaluation report; five brokers reiterate BUY, target prices unchanged.",
+      "source": "Kotak - Coforge (CMP: Rs1,847, FV: Rs2,000, BUY): Board changes; fundamentals unchanged (+6 more in Outlook)",
+      "received": "07:54"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "BofA turns constructive on Nifty, reversing its prior cautious India equity stance.",
+      "source": "BofA - India Insight: Strategy - Turn constructive on Nifty",
+      "received": "07:53"
+     },
+     {
+      "text": "UBS: Aug CPI rose to 4.8%; elevated oil, firm core and surplus liquidity keep RBI tightening risk alive into the Oct policy.",
+      "source": "UBS - India: August CPI inflation rises to 4.8%; further upside likely",
+      "received": "05:35"
+     },
+     {
+      "text": "US 10Y hit 5% overnight as investors rotated out of AI baskets; SPX -0.5%, NDX -0.8%, RTY -0.4%.",
+      "source": "JPM - Overnight Brief 9/15: investors rotated away from AI baskets, US 10Y yields hit 5% (+8 more in Outlook)",
+      "received": "06:56"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Solar Industries to buy 100% of Omnia Holdings for ~USD1.35bn all-cash through step-down subsidiary Solar SA Investments.",
+      "source": "Kotak - Solar Industries: Omnia Acquisition Adds Global Scale",
+      "received": "05:25"
+     },
+     {
+      "text": "Kotak upgrades Dabur to ADD from REDUCE, FV Rs430 against CMP Rs376.",
+      "source": "Kotak - Dabur India (CMP: Rs376, FV: Rs430, ADD): Risk reward favorable",
+      "received": "07:20"
+     },
+     {
+      "text": "Avendus Spark revises Inventurus Knowledge Solutions to BUY, TP Rs2,230.",
+      "source": "Avendus Spark - Healthcare Tech: Inventurus Knowledge Solutions (Revised to BUY, TP Rs2,230) (+9 more in Outlook)",
+      "received": "06:48"
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "Cement",
+   "Mining",
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX fell 5.86% on AI-pause talk; AMD -4.4%, Broadcom -4.8%, TSMC ADR -3.5%, Nvidia -3.4%.",
+    "source": "Barchart - AMD Stock Leads Semiconductor Stocks Lower Amid AI Slowdown Debate"
+   },
+   {
+    "text": "Broadcom dropped over 4% as its USD21.7bn AI order forecast met slowdown fears.",
+    "source": "GuruFocus - Broadcom Drops Over 4% as $21.7 Billion AI Forecast Meets Slowdown Fears"
+   },
+   {
+    "text": "JPM desk flags an outright rotation away from AI baskets overnight, with the US 10Y at 5%.",
+    "source": "JPM - Overnight Brief 9/15"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,690 @@
+{
+  "captured": "2026-10-07",
+  "source": "yahoo quoteSummary earningsTrend",
+  "entities": {
+    "dixon": {
+      "symbol": "DIXON.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 179.90042,
+          "lags": {
+            "7daysAgo": 182.16673,
+            "30daysAgo": 183.07828,
+            "60daysAgo": 185.42827,
+            "90daysAgo": 167.31091
+          },
+          "n_analysts": 26,
+          "up_30d": 0,
+          "down_30d": 3,
+          "growth": -0.3321
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 279.94937,
+          "lags": {
+            "7daysAgo": 281.55826,
+            "30daysAgo": 281.26196,
+            "60daysAgo": 281.38788,
+            "90daysAgo": 257.31354
+          },
+          "n_analysts": 27,
+          "up_30d": 1,
+          "down_30d": 2,
+          "growth": 0.5561
+        }
+      ],
+      "trailing_eps": 349.19
+    },
+    "amber": {
+      "symbol": "AMBER.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 104.15027,
+          "lags": {
+            "7daysAgo": 103.96454,
+            "30daysAgo": 103.96454,
+            "60daysAgo": 111.74873,
+            "90daysAgo": 110.8244
+          },
+          "n_analysts": 22,
+          "up_30d": 3,
+          "down_30d": 15,
+          "growth": 0.78069997
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 188.85994,
+          "lags": {
+            "7daysAgo": 189.03078,
+            "30daysAgo": 190.02956,
+            "60daysAgo": 196.58038,
+            "90daysAgo": 195.22832
+          },
+          "n_analysts": 24,
+          "up_30d": 5,
+          "down_30d": 12,
+          "growth": 0.8133
+        }
+      ],
+      "trailing_eps": 27.12
+    },
+    "kaynes": {
+      "symbol": "KAYNES.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 59.35193,
+          "lags": {
+            "7daysAgo": 59.47824,
+            "30daysAgo": 59.47824,
+            "60daysAgo": 66.25882,
+            "90daysAgo": 65.91638
+          },
+          "n_analysts": 19,
+          "up_30d": 3,
+          "down_30d": 14,
+          "growth": 0.0845
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 89.7647,
+          "lags": {
+            "7daysAgo": 89.88803,
+            "30daysAgo": 89.88803,
+            "60daysAgo": 90.51614,
+            "90daysAgo": 89.51075
+          },
+          "n_analysts": 21,
+          "up_30d": 7,
+          "down_30d": 10,
+          "growth": 0.51240003
+        }
+      ],
+      "trailing_eps": 51.29
+    },
+    "pg_electroplast": {
+      "symbol": "PGEL.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 10.58571,
+          "lags": {
+            "7daysAgo": 10.58571,
+            "30daysAgo": 10.58571,
+            "60daysAgo": 11.21429,
+            "90daysAgo": 11.2
+          },
+          "n_analysts": 7,
+          "up_30d": 1,
+          "down_30d": 2,
+          "growth": 0.5522
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 16.48889,
+          "lags": {
+            "7daysAgo": 16.56,
+            "30daysAgo": 16.56,
+            "60daysAgo": 16.54444,
+            "90daysAgo": 16.54444
+          },
+          "n_analysts": 9,
+          "up_30d": 1,
+          "down_30d": 2,
+          "growth": 0.5577
+        }
+      ],
+      "trailing_eps": 7.74
+    },
+    "syrma_sgs": {
+      "symbol": "SYRMA.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 22.68951,
+          "lags": {
+            "7daysAgo": 22.44773,
+            "30daysAgo": 22.55038,
+            "60daysAgo": 22.52981,
+            "90daysAgo": 21.41294
+          },
+          "n_analysts": 20,
+          "up_30d": 1,
+          "down_30d": 1,
+          "growth": 0.32619998
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 31.64174,
+          "lags": {
+            "7daysAgo": 31.24518,
+            "30daysAgo": 30.94464,
+            "60daysAgo": 30.91785,
+            "90daysAgo": 28.9021
+          },
+          "n_analysts": 21,
+          "up_30d": 2,
+          "down_30d": 0,
+          "growth": 0.3946
+        }
+      ],
+      "trailing_eps": 19.06
+    },
+    "avalon": {
+      "symbol": "AVALON.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 26.03243,
+          "lags": {
+            "7daysAgo": 26.01598,
+            "30daysAgo": 26.07383,
+            "60daysAgo": 23.72635,
+            "90daysAgo": 23.58768
+          },
+          "n_analysts": 14,
+          "up_30d": 1,
+          "down_30d": 1,
+          "growth": 0.544
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 36.60847,
+          "lags": {
+            "7daysAgo": 36.57361,
+            "30daysAgo": 36.57611,
+            "60daysAgo": 33.28184,
+            "90daysAgo": 32.96117
+          },
+          "n_analysts": 16,
+          "up_30d": 1,
+          "down_30d": 1,
+          "growth": 0.4063
+        }
+      ],
+      "trailing_eps": 21.2
+    },
+    "ltimindtree": {
+      "symbol": "LTM.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 205.88454,
+          "lags": {
+            "7daysAgo": 206.56255,
+            "30daysAgo": 206.22774,
+            "60daysAgo": 205.9487,
+            "90daysAgo": 206.6399
+          },
+          "n_analysts": 36,
+          "up_30d": 5,
+          "down_30d": 1,
+          "growth": 0.1301
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 229.15134,
+          "lags": {
+            "7daysAgo": 229.96832,
+            "30daysAgo": 230.33585,
+            "60daysAgo": 229.87744,
+            "90daysAgo": 229.06474
+          },
+          "n_analysts": 36,
+          "up_30d": 4,
+          "down_30d": 2,
+          "growth": 0.113000005
+        }
+      ],
+      "trailing_eps": 176.29
+    },
+    "infosys": {
+      "symbol": "INFY.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 76.70497,
+          "lags": {
+            "7daysAgo": 76.48171,
+            "30daysAgo": 76.47616,
+            "60daysAgo": 76.45767,
+            "90daysAgo": 77.25871
+          },
+          "n_analysts": 39,
+          "up_30d": 2,
+          "down_30d": 3,
+          "growth": 0.0399
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 80.06355,
+          "lags": {
+            "7daysAgo": 79.99656,
+            "30daysAgo": 79.9959,
+            "60daysAgo": 79.93895,
+            "90daysAgo": 81.52101
+          },
+          "n_analysts": 39,
+          "up_30d": 2,
+          "down_30d": 2,
+          "growth": 0.0438
+        }
+      ],
+      "trailing_eps": 72.92
+    },
+    "tcs": {
+      "symbol": "TCS.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 154.38985,
+          "lags": {
+            "7daysAgo": 155.04749,
+            "30daysAgo": 155.08232,
+            "60daysAgo": 155.00272,
+            "90daysAgo": 155.1817
+          },
+          "n_analysts": 33,
+          "up_30d": 2,
+          "down_30d": 2,
+          "growth": 0.0614
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 162.05531,
+          "lags": {
+            "7daysAgo": 162.51466,
+            "30daysAgo": 162.4991,
+            "60daysAgo": 162.42776,
+            "90daysAgo": 163.814
+          },
+          "n_analysts": 37,
+          "up_30d": 1,
+          "down_30d": 2,
+          "growth": 0.0497
+        }
+      ],
+      "trailing_eps": 137.66
+    },
+    "hcl_tech": {
+      "symbol": "HCLTECH.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 73.451,
+          "lags": {
+            "7daysAgo": 73.46495,
+            "30daysAgo": 72.62457,
+            "60daysAgo": 72.54842,
+            "90daysAgo": 72.27434
+          },
+          "n_analysts": 40,
+          "up_30d": 3,
+          "down_30d": 2,
+          "growth": 0.1438
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 80.31333,
+          "lags": {
+            "7daysAgo": 79.46028,
+            "30daysAgo": 78.81195,
+            "60daysAgo": 78.67812,
+            "90daysAgo": 78.54987
+          },
+          "n_analysts": 40,
+          "up_30d": 2,
+          "down_30d": 3,
+          "growth": 0.094
+        }
+      ],
+      "trailing_eps": 64.41
+    },
+    "wipro": {
+      "symbol": "WIPRO.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 13.33176,
+          "lags": {
+            "7daysAgo": 13.31623,
+            "30daysAgo": 13.31811,
+            "60daysAgo": 13.31629,
+            "90daysAgo": 13.73835
+          },
+          "n_analysts": 37,
+          "up_30d": 2,
+          "down_30d": 0,
+          "growth": 0.041500002
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 13.88638,
+          "lags": {
+            "7daysAgo": 13.9084,
+            "30daysAgo": 13.91133,
+            "60daysAgo": 13.91691,
+            "90daysAgo": 14.3393
+          },
+          "n_analysts": 37,
+          "up_30d": 0,
+          "down_30d": 1,
+          "growth": 0.0416
+        }
+      ],
+      "trailing_eps": 12.57
+    },
+    "tech_mahindra": {
+      "symbol": "TECHM.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 77.13784,
+          "lags": {
+            "7daysAgo": 77.56391,
+            "30daysAgo": 77.28786,
+            "60daysAgo": 77.24428,
+            "90daysAgo": 77.31899
+          },
+          "n_analysts": 37,
+          "up_30d": 4,
+          "down_30d": 0,
+          "growth": 0.3668
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 88.10234,
+          "lags": {
+            "7daysAgo": 87.29884,
+            "30daysAgo": 87.10679,
+            "60daysAgo": 86.86606,
+            "90daysAgo": 84.87523
+          },
+          "n_analysts": 37,
+          "up_30d": 3,
+          "down_30d": 1,
+          "growth": 0.1421
+        }
+      ],
+      "trailing_eps": 56.66
+    },
+    "persistent": {
+      "symbol": "PERSISTENT.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 144.39922,
+          "lags": {
+            "7daysAgo": 144.33151,
+            "30daysAgo": 144.30505,
+            "60daysAgo": 144.50941,
+            "90daysAgo": 147.89381
+          },
+          "n_analysts": 33,
+          "up_30d": 3,
+          "down_30d": 0,
+          "growth": 0.1715
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 177.73024,
+          "lags": {
+            "7daysAgo": 176.92636,
+            "30daysAgo": 176.86774,
+            "60daysAgo": 177.18225,
+            "90daysAgo": 174.76714
+          },
+          "n_analysts": 30,
+          "up_30d": 3,
+          "down_30d": 0,
+          "growth": 0.2308
+        }
+      ],
+      "trailing_eps": 121.95
+    },
+    "coforge": {
+      "symbol": "COFORGE.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 58.91432,
+          "lags": {
+            "7daysAgo": 58.7818,
+            "30daysAgo": 59.007,
+            "60daysAgo": 58.83599,
+            "90daysAgo": 57.33768
+          },
+          "n_analysts": 29,
+          "up_30d": 3,
+          "down_30d": 2,
+          "growth": 0.2076
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 71.66385,
+          "lags": {
+            "7daysAgo": 71.35762,
+            "30daysAgo": 71.51476,
+            "60daysAgo": 71.36244,
+            "90daysAgo": 68.29318
+          },
+          "n_analysts": 30,
+          "up_30d": 5,
+          "down_30d": 0,
+          "growth": 0.2164
+        }
+      ],
+      "trailing_eps": 48.77
+    },
+    "mphasis": {
+      "symbol": "MPHASIS.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 112.88696,
+          "lags": {
+            "7daysAgo": 112.79422,
+            "30daysAgo": 112.80814,
+            "60daysAgo": 112.76463,
+            "90daysAgo": 114.17388
+          },
+          "n_analysts": 36,
+          "up_30d": 3,
+          "down_30d": 1,
+          "growth": 0.14039999
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 127.07093,
+          "lags": {
+            "7daysAgo": 126.90431,
+            "30daysAgo": 126.84965,
+            "60daysAgo": 126.79635,
+            "90daysAgo": 126.91039
+          },
+          "n_analysts": 35,
+          "up_30d": 4,
+          "down_30d": 0,
+          "growth": 0.12560001
+        }
+      ],
+      "trailing_eps": 100.0
+    },
+    "kpit": {
+      "symbol": "KPITTECH.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 22.03359,
+          "lags": {
+            "7daysAgo": 23.2092,
+            "30daysAgo": 22.24873,
+            "60daysAgo": 22.24873,
+            "90daysAgo": 27.77678
+          },
+          "n_analysts": 16,
+          "up_30d": 1,
+          "down_30d": 0,
+          "growth": -0.1142
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 30.78714,
+          "lags": {
+            "7daysAgo": 31.65046,
+            "30daysAgo": 31.48191,
+            "60daysAgo": 31.48191,
+            "90daysAgo": 34.34818
+          },
+          "n_analysts": 17,
+          "up_30d": 1,
+          "down_30d": 0,
+          "growth": 0.3973
+        }
+      ],
+      "trailing_eps": 21.42
+    },
+    "tata_elxsi": {
+      "symbol": "TATAELXSI.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 120.80857,
+          "lags": {
+            "7daysAgo": 120.74533,
+            "30daysAgo": 120.74295,
+            "60daysAgo": 120.74295,
+            "90daysAgo": 132.8877
+          },
+          "n_analysts": 14,
+          "up_30d": 0,
+          "down_30d": 12,
+          "growth": 0.073
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 142.40768,
+          "lags": {
+            "7daysAgo": 143.762,
+            "30daysAgo": 143.76416,
+            "60daysAgo": 143.76416,
+            "90daysAgo": 154.24385
+          },
+          "n_analysts": 13,
+          "up_30d": 0,
+          "down_30d": 12,
+          "growth": 0.17879999
+        }
+      ],
+      "trailing_eps": 104.67
+    },
+    "ofss": {
+      "symbol": "OFSS.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 433.1,
+          "lags": {
+            "7daysAgo": 437.1,
+            "30daysAgo": 437.1,
+            "60daysAgo": 437.1,
+            "90daysAgo": 361.2
+          },
+          "n_analysts": 2,
+          "up_30d": 2,
+          "down_30d": 0,
+          "growth": 0.4336
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 452.85,
+          "lags": {
+            "7daysAgo": 453.35,
+            "30daysAgo": 453.35,
+            "60daysAgo": 453.35,
+            "90daysAgo": 383.4
+          },
+          "n_analysts": 2,
+          "up_30d": 2,
+          "down_30d": 0,
+          "growth": 0.0456
+        }
+      ],
+      "trailing_eps": 393.15
+    },
+    "ltts": {
+      "symbol": "LTTS.NS",
+      "trend": [
+        {
+          "period": "0y",
+          "end_date": "2027-03-31",
+          "eps": 142.31468,
+          "lags": {
+            "7daysAgo": 141.85123,
+            "30daysAgo": 141.85123,
+            "60daysAgo": 141.77649,
+            "90daysAgo": 142.78142
+          },
+          "n_analysts": 28,
+          "up_30d": 1,
+          "down_30d": 0,
+          "growth": 0.17879999
+        },
+        {
+          "period": "+1y",
+          "end_date": "2028-03-31",
+          "eps": 163.40788,
+          "lags": {
+            "7daysAgo": 162.49554,
+            "30daysAgo": 162.52496,
+            "60daysAgo": 162.30092,
+            "90daysAgo": 162.86334
+          },
+          "n_analysts": 29,
+          "up_30d": 1,
+          "down_30d": 0,
+          "growth": 0.14819999
+        }
+      ],
+      "trailing_eps": 122.73
+    }
+  }
+}

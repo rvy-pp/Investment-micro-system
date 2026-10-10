@@ -1,0 +1,30 @@
+{
+  "fetched_at": "2026-09-19T02:35:00Z",
+  "window_from": "2026-09-18T18:30:00Z",
+  "note": "21 per-entity outlook_email_search queries run (relevance-ranked; afterDateTime ignored with free-text query, so filtered client-side to receivedDateTime >= 2026-09-18T18:30Z = 2026-09-19 00:00 IST). Saturday run: only 5 mails in the whole mailbox fall inside the window (confirmed independently by the date-ordered no-query sweep). One entity hit.",
+  "queries_run": 21,
+  "mails_in_window_total": 5,
+  "hits": [
+    {
+      "entity_id": "kaynes",
+      "sector": "ems",
+      "subject": "Hi Rajvaibhav, India EMS: Kaynes planning $1bn OSAT investment under ISM 2.0: Takeaways from day 2 of India Semicon event",
+      "sender": "bhavik.mehta@jpmresearchmail.com",
+      "receivedDateTime": "2026-09-18T18:55:31.000Z",
+      "hasAttachments": false,
+      "summary": "J.P. Morgan India EMS. Kaynes planning $1bn OSAT investment under ISM 2.0: takeaways from day 2 of the India Semicon event. By Bhavik Mehta, CFA AC, Ankur Rudra, CFA."
+    }
+  ],
+  "no_hit_entities": [
+    "amber", "ambuja", "apl_apollo", "coal_india", "dalmia", "dixon", "hindalco",
+    "hindustan_copper", "hindustan_zinc", "jindal_steel", "jsw_steel", "nalco",
+    "nmdc", "pg_electroplast", "sail", "shree", "tata_steel", "ultratech",
+    "vaml", "vedanta"
+  ],
+  "other_mails_in_window_no_entity": [
+    {"subject": "CLSA Event Driven - APAC Weekly Highlights (18 Sep) PDF attached", "sender": "eric.chang@clsa.com", "receivedDateTime": "2026-09-19T00:05:48.000Z"},
+    {"subject": "Daily Insights: El Nino: A consumer tailwind, but a weather risk", "sender": "bankofamericainstitute@bofa.com", "receivedDateTime": "2026-09-18T19:16:51.000Z"},
+    {"subject": "<replay> CLSA GOVERNANCE EXPERT WEBINAR: India Corporate Governance: Tata Sons, HDFC Bank, Coforge, Kotak", "sender": "suveer.chainani@clsa.com", "receivedDateTime": "2026-09-18T18:46:34.000Z"},
+    {"subject": "Financials - India: Healthy growth, better liquidity; Prefer Big private banks and diversified NBFCs", "sender": "feedback@globalresearch.bofa.com", "receivedDateTime": "2026-09-18T18:32:07.000Z"}
+  ]
+}

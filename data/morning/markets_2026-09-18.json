@@ -1,0 +1,190 @@
+{
+ "date": "2026-09-18",
+ "fetched_at": "2026-09-18T08:09:11",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-17",
+    "close": 7637.76,
+    "prev_date": "2026-09-16",
+    "chg_pct": 1.14
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-17",
+    "close": 26418.3,
+    "prev_date": "2026-09-16",
+    "chg_pct": 1.69
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-17",
+    "close": 51778.04,
+    "prev_date": "2026-09-16",
+    "chg_pct": 0.61
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-17",
+    "close": 11599.49,
+    "prev_date": "2026-09-16",
+    "chg_pct": 3.14
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-17",
+    "close": 219.34,
+    "prev_date": "2026-09-16",
+    "chg_pct": 2.54
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-17",
+    "close": 545.09,
+    "prev_date": "2026-09-16",
+    "chg_pct": 6.36
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-17",
+    "close": 430.26,
+    "prev_date": "2026-09-16",
+    "chg_pct": 3.0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-17",
+    "close": 347.3,
+    "prev_date": "2026-09-16",
+    "chg_pct": 2.29
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-17",
+    "close": 190.29,
+    "prev_date": "2026-09-16",
+    "chg_pct": 0.34
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-17",
+    "close": 61.88,
+    "prev_date": "2026-09-16",
+    "chg_pct": 0.05
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Why Has Accenture Stock Surged With No New Results To Report?",
+    "publisher": "Trefis",
+    "when": "2026-09-17 20:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-accenture-stock-surged-no-204443971.html"
+   },
+   {
+    "title": "Is Trending Stock Accenture PLC (ACN) a Buy Now?",
+    "publisher": "Zacks",
+    "when": "2026-09-17 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/trending-stock-accenture-plc-acn-130002775.html"
+   },
+   {
+    "title": "Here's Why Accenture (ACN) Fell More Than Broader Market",
+    "publisher": "Zacks",
+    "when": "2026-09-16 22:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-why-accenture-acn-fell-220002733.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Axis Bank and Cognizant Collaborate to Strengthen Application Management with AMS 2.0",
+    "publisher": "PR Newswire",
+    "when": "2026-09-17 06:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/axis-bank-cognizant-collaborate-strengthen-063000796.html"
+   },
+   {
+    "title": "Cognizant Pivots to AI-Driven Outcomes, Digital Labor Model",
+    "publisher": "MarketBeat",
+    "when": "2026-09-16 14:02Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-pivots-ai-driven-outcomes-140226708.html"
+   },
+   {
+    "title": "How Is Cognizant\u2019s Stock Performance Compared to Other Dividend Stocks",
+    "publisher": "Barchart",
+    "when": "2026-09-16 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-stock-performance-compared-other-110231405.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 44% Below Fair Value After AI Updates",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-15 03:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-could-032258586.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [
+   {
+    "title": "Jim Cramer on Broadcom (AVGO): \u201cThe Stock May Be Too Cheap to Ignore\u201d",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-17 21:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-broadcom-avgo-stock-214237143.html"
+   },
+   {
+    "title": "Oracle vs. Broadcom: Which \"Picks and Shovels\" AI Stock Has the Bigger Growth Runway From Here?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-17 17:43Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/oracle-vs-broadcom-picks-shovels-174300358.html"
+   },
+   {
+    "title": "AMD Jumps 7% as Semiconductor Rebound Reaches a Third Session; Broadcom Rises 3%, NVIDIA Edges Higher",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-17 17:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-jumps-7-semiconductor-rebound-173707172.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why AMD Stock Jumped Today",
+    "publisher": "Motley Fool",
+    "when": "2026-09-17 23:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-jumped-today-233549219.html"
+   },
+   {
+    "title": "Vishay Intertechnology, Allegro MicroSystems, Himax, Bandwidth, and AMD Stocks Trade Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-09-17 21:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/vishay-intertechnology-allegro-microsystems-himax-212217670.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23335.5,
+  "chg_pct": -0.1,
+  "stamp": "18-Sep-2026 08:08:29",
+  "expiry": "29-Sep-2026",
+  "volume": 763,
+  "nifty_close": {
+   "close": 23270.600000000002,
+   "stamp": "17-Sep-2026 15:30"
+  },
+  "gap_pts": 64.9,
+  "gap_pct": 0.28
+ }
+}

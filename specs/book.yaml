@@ -18,6 +18,47 @@
 # day-P&L column instead; not the live convention.
 pnl_basis: contract_itd
 
+# ---------------------------------------------------------------------------
+# index: the Book tab's equal-weighted long and short indices.
+# PM instruction 2026-09-17, verbatim intent: "Keep VAML out, use 2007
+# onwards. Create an equal weighted index for longs, equal for shorts. Once
+# VAML starts to exist, add VAML to the long index. Till 16th sep 2026, we
+# keep the index same. Post that, as and when the positions change, we change
+# the index on a daily basis." It REPLACED two earlier charts (a
+# portfolio-weighted back-cast and a snapshot-only live index); do not
+# reintroduce either.
+#
+# These are SPEC values, not constants in code, because every one of them is
+# a judgement the PM made and would have to be found again otherwise.
+index:
+  # Where the back-cast starts. 2007 is not arbitrary: before it the Yahoo
+  # history for these names carries unadjusted corporate actions and bad
+  # prints — Tata Steel -86.8% (2004-04-27), UltraTech -75.6% (2004-08-24,
+  # the Grasim cement demerger), Hindustan Zinc +5,575% (2006-11-21), Ambuja
+  # +652% (2004-10-14), and five IDENTICAL +949.6% jumps in Tata Steel
+  # 1996-99 that repeat to the decimal and so cannot be market moves. From
+  # 2007 the only one-day move above 35% anywhere in the 32 legs is VEDL's
+  # real 2026-04-30 demerger, which is in core/corporate_actions.
+  start: "2007-01-01"
+
+  # THE FREEZE BOUNDARY. On or before this date the membership is the roster
+  # of THIS date's snapshot, held constant — the back-cast. After it,
+  # membership follows each new snapshot as positions change.
+  #
+  # IT IS A CONSTANT AND MUST STAY ONE. Deriving it as "the latest snapshot"
+  # would move it forward every morning, and the whole back-cast would
+  # silently re-write itself to whatever the book looks like today — which is
+  # the survivorship bias this design exists to bound.
+  freeze_before: "2026-09-16"
+
+  # A date is a SESSION only if at least this fraction of the legs listed by
+  # then actually printed. Measured over 4,867 dates from 2007: 4,863 are at
+  # 100%, and the only two below 90% are 2010-02-06 (a SATURDAY special
+  # session that just 1 of 20 listed names carries — 5%) and 2026-09-16
+  # (75%, a genuine hole in Yahoo's data for 8 names). 0.5 separates them
+  # cleanly, and nothing sits near the threshold.
+  session_quorum: 0.5
+
 ticker_map:
   # EMS
   AMBER: amber
@@ -71,8 +112,12 @@ pairs:
   IT LARGECAP:
     - {name: TCS_INFO,      long: [TCS],      short: [INFO]}
     - {name: TECHM_LTM,     long: [TECHM],    short: [LTM]}
-    - {name: TCS_WPRO,      long: [TCS],      short: [WPRO]}
-    - {name: TCS_HCLT,      long: [TCS],      short: [HCLT]}
+    # PM, 2026-09-23: "I flipped/changed pairs. Now it is TCS_INFO,
+    # HCLT_WPRO, HZ_VEDL." HCLT was flipped short -> long on 2026-09-23 and
+    # WPRO's short grown 6 -> 7; TCS_WPRO and TCS_HCLT are CLOSED as pairs
+    # (TCS_HCLT's old direction ended -686 on price). Their history stays
+    # in book_positions under the IMS tags; only the dictated view changed.
+    - {name: HCLT_WPRO,     long: [HCLT],     short: [WPRO]}
   IT MIDCAP:
     - {name: COFORGE_PSYS,  long: [COFOR],    short: [PSYS]}
     - {name: LTTS_KPITTECH, long: [LTTS],     short: [KPITT]}
@@ -90,7 +135,11 @@ pairs:
     - {name: UTCEM_SRCM,    long: [UTCEM],    short: [SRCM]}
     - {name: DALBHARA_ACEM, long: [DALBHARA], short: [ACEM]}
   ZINC:
-    - {name: VEDL_HZ,       long: [VEDL],     short: [HZ]}
+    # PM, 2026-09-23 (same instruction): the pair REVERSED on 2026-09-21 with
+    # the U6 -> V6 roll — long HZ / short VEDL. The old direction VEDL_HZ
+    # closed at -797.01 on the IMS's own finals (chain: -864, $67 short at
+    # the 09-18 last-seen). Its realized P&L sits in N.A. from 2026-09-22.
+    - {name: HZ_VEDL,       long: [HZ],       short: [VEDL]}
   ALUMINIUM:
     - {name: HNDL_NACL,     long: [HNDL],     short: [NACL]}
     - {name: VAML_NACL,     long: [VAML],     short: [NACL]}
@@ -135,3 +184,21 @@ names:
   VAML: VAML
 
 carry: {}
+
+# ---------------------------------------------------------------------------
+# kelly: Kelly sizing over the dictated pairs (PM, 2026-09-25). The RISK is
+# measured by packages/book/kelly.py from `prices` (each pair's spread =
+# mean long-leg return - mean short-leg return; covariance across pairs,
+# shrunk toward its diagonal). The EDGE is the PM's and only the PM's —
+# nothing the system computes is used as one (no composite is validated).
+#
+# Sizes are notional PER SIDE as a fraction of NAV; gross = 2x that.
+kelly:
+  fraction: 0.5          # half Kelly (PM, 2026-09-25)
+  lookback_days: 730     # calendar days of price history for sigma / correlation
+  min_sessions: 120      # fewer -> standalone only, kept out of the joint solve
+  horizon_weeks: 13      # default horizon for an edge, and for the implied-edge read
+  shrink: auto           # Schafer-Strimmer intensity; or pin a number in [0, 1]
+  # EDGES ARE NOT HERE. They are typed on the Book tab (return + comment per
+  # pair, recomputed live) and stored append-only in book_kelly_edges
+  # (PM, 2026-09-25). An `edges:` key here is reported, not read.

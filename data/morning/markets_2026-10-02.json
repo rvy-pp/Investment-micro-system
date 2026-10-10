@@ -1,0 +1,221 @@
+{
+ "date": "2026-10-02",
+ "fetched_at": "2026-10-02T08:12:57",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-01",
+    "close": 7666.45,
+    "prev_date": "2026-09-30",
+    "chg_pct": 0.19
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-01",
+    "close": 26871.6,
+    "prev_date": "2026-09-30",
+    "chg_pct": 0.04
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-01",
+    "close": 50926.56,
+    "prev_date": "2026-09-30",
+    "chg_pct": 0.04
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-01",
+    "close": 12829.0,
+    "prev_date": "2026-09-30",
+    "chg_pct": 1.59
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-01",
+    "close": 230.86,
+    "prev_date": "2026-09-30",
+    "chg_pct": 1.09
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-01",
+    "close": 615.73,
+    "prev_date": "2026-09-30",
+    "chg_pct": 0.65
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-01",
+    "close": 459.2,
+    "prev_date": "2026-09-30",
+    "chg_pct": 0.66
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-01",
+    "close": 343.64,
+    "prev_date": "2026-09-30",
+    "chg_pct": -2.15
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-01",
+    "close": 212.3,
+    "prev_date": "2026-09-30",
+    "chg_pct": 15.78
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-01",
+    "close": 60.88,
+    "prev_date": "2026-09-30",
+    "chg_pct": 5.99
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Q4 2026 Earnings Call Transcript",
+    "publisher": "Motley Fool",
+    "when": "2026-10-02 02:28Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-q4-2026-earnings-022853964.html"
+   },
+   {
+    "title": "Accenture (ACN) Soars 15.8% as Q4 Earnings, AI Bookings Crush Disruption Fears",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-02 00:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-soars-15-8-002914087.html"
+   },
+   {
+    "title": "Should Investors Chase Accenture (ACN) Stock After Its Post-Earnings Surge?",
+    "publisher": "Zacks",
+    "when": "2026-10-01 22:11Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investors-chase-accenture-acn-stock-221100343.html"
+   },
+   {
+    "title": "Why IBM Stock Is Getting a Much-Needed Boost From Accenture Earnings",
+    "publisher": "Barrons.com",
+    "when": "2026-10-01 21:13Z",
+    "link": "https://finance.yahoo.com/m/5ef0359e-b826-39c2-bb3d-48a3aab0029e/why-ibm-stock-is-getting-a.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Trades Up, Here Is Why",
+    "publisher": "StockStory",
+    "when": "2026-10-01 21:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-trades-why-210107589.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant and EPAM Soar 7% on Accenture\u2019s Good News: What You Need to Know",
+    "publisher": "TIKR",
+    "when": "2026-10-01 15:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-epam-soar-7-accenture-151628548.html"
+   },
+   {
+    "title": "Cognizant Shares Rise 7.2% Following Accenture Results",
+    "publisher": "InvestorsHub",
+    "when": "2026-10-01 12:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-shares-rise-7-2-123306736.html"
+   },
+   {
+    "title": "Cognizant Named to Forbes World's Best Employers 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-29 15:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-forbes-worlds-best-150000587.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Analysts rank 16-year-old chip firm 61 places above NVIDIA",
+    "publisher": "TheStreet",
+    "when": "2026-10-02 02:38Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/analysts-rank-16-old-chip-023800121.html"
+   },
+   {
+    "title": "The Semiconductor ETF's 2026 Return Is About 3 Times Nvidia's",
+    "publisher": "Motley Fool",
+    "when": "2026-10-02 00:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/semiconductor-etfs-2026-return-3-004601851.html"
+   },
+   {
+    "title": "Arm Stocks Moves Higher as Nvidia Security Adds a Second Compute Layer",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-02 00:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/arm-stocks-moves-higher-nvidia-000203024.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Anthropic and Broadcom Are Becoming More Intertwined. What It Means for Broadcom Stock.",
+    "publisher": "Barrons.com",
+    "when": "2026-10-01 19:13Z",
+    "link": "https://finance.yahoo.com/m/ea49aba6-700c-36b3-aecb-a1ee3f6dbcd8/anthropic-and-broadcom-are.html"
+   },
+   {
+    "title": "Applied Materials vs. Broadcom: Which Semiconductor Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-01 18:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/applied-materials-vs-broadcom-semiconductor-182942297.html"
+   },
+   {
+    "title": "Broadcom Stocks Fall as $42 Billion Financing Links Chips to Anthropic",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-01 17:49Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-fall-42-billion-174939585.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stocks Slip as $8.2 Billion World Labs Deal Adds Dilution",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-01 23:57Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slip-8-2-235728683.html"
+   },
+   {
+    "title": "HPE stock closes at record high on growing networking orders, $1.2 billion AMD Helios order",
+    "publisher": "Yahoo Finance",
+    "when": "2026-10-01 20:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/article/hpe-stock-closes-at-record-high-on-growing-networking-orders-12-billion-amd-helios-order-211204477.html"
+   },
+   {
+    "title": "Why Did AMD Stock Jump?",
+    "publisher": "Trefis",
+    "when": "2026-10-01 18:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-did-amd-stock-jump-181321044.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22624.5,
+  "chg_pct": 0.59,
+  "stamp": "02-Oct-2026 02:42:33",
+  "expiry": "27-Oct-2026",
+  "volume": 83278,
+  "nifty_close": {
+   "close": 22421.95,
+   "stamp": "01-Oct-2026 15:30"
+  },
+  "gap_pts": 202.5,
+  "gap_pct": 0.9
+ }
+}

@@ -1,0 +1,437 @@
+{
+ "date": "2026-10-06",
+ "generated_at": "2026-10-06T08:24:07",
+ "mail": {
+  "window": "24h to 08:10 IST (Tuesday)",
+  "n_scanned": 123,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "CLSA: Odisha HC bauxite ruling costs VAML up to US$290m one-time (2.8% of mkt cap) and +US$10/t aluminium cost; stock dips are a buying opportunity, O-PF.",
+      "source": "CLSA — CLSA India Research| Vedanta Aluminium| DMart| Nykaa| India consumer| India IT| India Autos| India Economics| India Economics| India NBFC| India strategy",
+      "received": "08:55",
+      "detail": {
+       "summary": "The Odisha High Court dismissed VAML's petition to buy OMC bauxite at the historical rate. CLSA sees a one-time recovery of past dues plus a higher cost base, but expects higher OMC sourcing and the Sijimali mine to mitigate it over the medium term.",
+       "points": [
+        "Up to US$290m one-time dues incl. interest (2.8% of mkt cap)",
+        "+US$10/t aluminium cost of production from 1QFY27 levels",
+        "OMC still cheaper than alternative sources at revised cost",
+        "Sijimali captive mine recently received consent to operate",
+        "Maintain O-PF"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay stays bearish on aluminium: LME 3M fell over 5% to $3,098/t, steepest weekly drop since 26-Jun; range $3,040-3,200, sell rallies.",
+      "source": "Emkay — Weekly Base Metals Report: Base Metals Slip as Easing Supply Concerns and Weak Global Demand Weigh on Prices",
+      "received": "10:23",
+      "detail": {
+       "summary": "The Gulf supply-risk premium has faded as output and logistics recovered, and banks are cutting CY26 deficit estimates and pointing to a possible CY27 surplus. Emkay stays bearish on LME and MCX aluminium and prefers selling at the top of the range.",
+       "points": [
+        "LME 3M Al down over 5% to $3,098/t",
+        "SHFE down just over 1%, MCX down nearly 4%",
+        "LME range $3,040-3,200/t; MCX Oct Rs331-343/kg",
+        "Banks point to potential CY27 surplus",
+        "MCX inventories 604MT vs 1,620MT a month earlier"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM top pick Hindalco: India aluminium EBITDA seen down QoQ on lower LME, Novelis stable at ~$500/t; stock already prices in much lower LME than spot.",
+      "source": "JPM — India Materials & Logistics: “Perform or Perish” environment for stocks; we like growth stories – 2QFY27 preview (+2 more in Outlook)",
+      "received": "23:57",
+      "detail": {
+       "summary": "JPM expects Hindalco to post 18% YoY EBITDA growth in 2QFY27 but a sequential decline in India aluminium. It argues the post-correction share price already discounts bearish LME outcomes, and flags scrap spreads and the Bay Minette ramp as the Novelis debates.",
+       "points": [
+        "Hindalco EBITDA +18% YoY: India +31%, Novelis +11%",
+        "Novelis EBITDA/t ~$500/t, stable quarter",
+        "VEDL EBITDA +86% YoY on zinc and silver tailwinds",
+        "LME Al range-bound $3,050-3,300/t over three months",
+        "Hindalco among top picks with JSW Steel, Exide, Aegis"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "JPM prefers JSW Steel into 2QFY27: sees EBITDA +33% YoY/+11% QoQ, SAIL +126% YoY, Tata India +13% YoY; HRC at highest since mid-2022.",
+      "source": "JPM — India Materials & Logistics: “Perform or Perish” environment for stocks; we like growth stories – 2QFY27 preview",
+      "received": "23:57",
+      "detail": {
+       "summary": "JPM argues Indian steel is well poised because inventory has fallen sharply while consumption outruns production, with safeguard duties supporting HRC. Coking coal prices have started declining, and the recent price rise more than offsets the 3QFY27 coking coal cost impact. Spot spreads are at a new high.",
+       "points": [
+        "JSW EBITDA +33% YoY/+11% QoQ; +46% YoY ex-BPSL",
+        "SAIL EBITDA +126% YoY, +28% QoQ; EBITDA/t up QoQ",
+        "Tata consolidated EBITDA +13% YoY; Europe EBITDA $11mn (~$7/t)",
+        "FY27TD finished steel consumption +7% YoY vs production +3.9%",
+        "NMDC remains Underweight; 1HFY27TD sales volumes flat YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama: HRC rose 0.6% WoW to Rs65,433/t, Patra 3.4% to Rs51,517/t; HRC-Patra spread narrowed 7.8% to Rs12,917/t, above 3M average.",
+      "source": "Nuvama — HRC-Patra spread narrows by 7.8% WoW to INR 12,917/ton",
+      "received": "09:22",
+      "detail": {
+       "summary": "The weekly check shows HRC still edging higher while Patra caught up, narrowing the spread from the prior week's Rs14,007/t. Spread remains above the three-month average, which Nuvama flags as negative for HRC-based pipe makers, particularly in the low-end HRC segment.",
+       "points": [
+        "3M average spread Rs11,815/t vs Rs12,917/t now",
+        "HRC +11% over 3 months; Patra +13%",
+        "Prior week spread Rs14,007/t (+12.3% WoW)",
+        "Wide spread negative for HRC-based pipe makers"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NMDC September production 4.04mt; Shyam Metalics plans Rs50,000cr Maharashtra steel complex; Steel Ministry asks SAIL, NMDC to explore overseas mining assets.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:54",
+      "detail": {
+       "summary": "Headline-only roundup of India steel and iron ore news. It carries NMDC's September output, a large Shyam Metalics capacity plan and a ministry push for SAIL and NMDC to secure raw-material assets abroad; the Kotak mail itself gives no analysis.",
+       "points": [
+        "NMDC September 2026 production 4.04mt",
+        "Shyam Metalics: Rs50,000cr steel complex, Maharashtra",
+        "Steel Ministry: SAIL, NMDC to explore mining assets abroad"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Kotak cuts 2QFY27 cement EBITDA/t by ~Rs200 qoq on fuel and freight, sees 4-5% downside to FY27 consensus earnings; Nuvoco top pick, TRCL top sell.",
+      "source": "Kotak — [Kotak] Construction Materials: 2QFY27 Preview: Cost pressures to weigh on margins",
+      "received": "07:30",
+      "detail": {
+       "summary": "Kotak expects cost pressure to show in 2QFY27 margins with no near-term easing, since the Gulf war keeps fuel and packaging elevated. Prices were stable and volumes are strong. Valuations leave little upside against falling earnings.",
+       "points": [
+        "Spot pet coke/seaborne coal 25%/12% above 2QFY27E averages",
+        "All-India prices +0.5% qoq, +3.5% yoy in 2QFY27E",
+        "Industry demand +9-10% yoy; coverage +10.9%; FY27E +7%",
+        "Festive Oct/Nov may cap hike stickiness until late 3QFY27E",
+        "Nuvoco sub-US$60 EV/ton FY28E; TRCL top SELL"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura channel checks: pan-India trade prices +~Rs10/bag in Sep, a further ~Rs10 expected in Oct; 2Q spreads fell Rs62/t to Rs2,449/t; top picks UltraTech, Dalmia.",
+      "source": "Nomura — India Cement - Cement channel checks — Oct'26",
+      "received": "11:33",
+      "detail": {
+       "summary": "Pricing improved in September after two subdued months, but dealers call the push largely company-led and doubt that further hikes will be absorbed. Nomura sees margin pressure mostly confined to 1HFY27, with recovery in 2HFY27 if post-monsoon demand is normal.",
+       "points": [
+        "2QFY27 average adjusted trade price Rs325/bag, flat qoq",
+        "South: further hikes up to Rs20/bag in Oct, demand weak",
+        "East and North: Rs10/bag hikes announced, not yet effective",
+        "60-day-lagged spread down Rs106/t qoq; 90-day-lagged down Rs250/t",
+        "FY27F volume growth 6-7% maintained"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Nuvama upgrades Coal India to BUY from HOLD, TP Rs501 (from Rs454); FY27E/28E EBITDA raised 6%/4% on volumes and e-auction premiums.",
+      "source": "Nuvama — Nuvama Daily: Actionables: HDFC Bank, Banking Biz Update, IT/Accenture, Vedanta, Coal India - Upgrade, Alkem, Sterlite",
+      "received": "08:29",
+      "detail": {
+       "summary": "Nuvama moves Coal India to BUY because volume growth and rising e-auction premiums are being helped by strong thermal power demand, low plant inventories and elevated import coal prices. Estimates and target price go up accordingly.",
+       "points": [
+        "TP Rs501 vs Rs454 earlier; CMP Rs420",
+        "FY27E/28E EBITDA +6%/+4%",
+        "4.1x FY28E EV/EBITDA",
+        "~6% dividend yield"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM calls Coal India's 94% September e-auction premium unsustainable, expects prices to ease from end-Oct/Nov; raises PT to Rs450, stays Neutral.",
+      "source": "JPM — India Materials & Logistics: “Perform or Perish” environment for stocks; we like growth stories – 2QFY27 preview",
+      "received": "23:57",
+      "detail": {
+       "summary": "JPM sees the e-auction spike as cyclical, driven by rain-related rake and volume shortfalls plus tight power-plant stocks, not a structural shift. It lifts its premium assumptions but keeps Neutral because the seasonal 2H volume ramp should rebuild inventories.",
+       "points": [
+        "PT Rs450 from Rs430",
+        "Power plant coal stock 6 days (18.5MT)",
+        "Pithead stock 67MT vs 130MT at end-FY26",
+        "NCL premium 126% in Apr-Sep, output -16% YoY",
+        "FY27E production/sales 810MT/812MT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM keeps NMDC Underweight: 1HFY27 sales volume flat YoY; 2QFY27 EBITDA seen +12% YoY on price hikes but down QoQ.",
+      "source": "JPM — India Materials & Logistics: “Perform or Perish” environment for stocks; we like growth stories – 2QFY27 preview",
+      "received": "23:57",
+      "detail": {
+       "summary": "JPM names NMDC a least-preferred stock on weak sales volumes even as production improves with the iron ore supply ramp-up. Higher realisations from price hikes drive the YoY EBITDA rise, but it expects a sequential decline.",
+       "points": [
+        "2Q EBITDA +12% YoY on higher ASPs",
+        "Sales volume -2% YoY in 2Q",
+        "1HFY27TD sales volume flat YoY",
+        "Odisha share of India iron ore output 47%, down from ~55%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM 2QFY27 EMS preview: Syrma +48% YoY revenue, Avalon +35%, Dixon +24%, Kaynes +10%; cuts Kaynes PT to Rs3,150 and Dixon FY27 EBITDA 10-14%.",
+      "source": "J.P. Morgan — India EMS: 2Q preview: Growth divergence again; however, given recent rallies in some, the focus should move to ROCEs",
+      "received": "23:37",
+      "detail": {
+       "summary": "JPM expects another quarter of growth divergence and argues ROCE should drive multiples after the recent rally. It stays OW Dixon and Amber, N Kaynes, and UW Syrma, Avalon and Cyient DLM. It expects Syrma and Avalon FY27 revenue guidance to be raised.",
+       "points": [
+        "Syrma 2Q revenue +48% YoY, EBITDA margin 10.2%",
+        "Avalon revenue +35%, margin +200bps to 12.1%",
+        "Dixon margin -100bps to 2.8%; PT Rs16,200 from Rs16,400",
+        "Kaynes EBITDA margin -220bps to 14.1%; PT Rs3,150 from Rs3,600",
+        "Syrma guide seen >40% vs >35%; Avalon >30% vs 26-30%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus: Kaynes FY26 adjusted OCF ex-Gridcrest turned negative at ~Rs3bn; adjusted receivable days rose to ~144 from ~114, ECL provisions up 4x.",
+      "source": "Avendus Spark — Avendus Spark 'Inside Out' Series: Kaynes Technology – Annual Report Analysis-Deep dive into Kaynes and its key subsidiaries' financials",
+      "received": "06:48",
+      "detail": {
+       "summary": "Avendus's annual-report deep dive finds Kaynes' FY26 EBITDA growth was flattered by acquisitions, cost capitalisation and receivable discounting. Cash conversion in the core EMS business weakened beyond Gridcrest, and reporting quality still has room to improve.",
+       "points": [
+        "Contingent liabilities ~6x to Rs32bn; OSAT guarantees Rs18.3bn",
+        "Adjusted working capital ~60% of adjusted revenue vs 44%",
+        "Smart metering ~38% of consolidated EBITDA",
+        "Interest capitalised ~Rs0.5bn vs Rs0.1bn",
+        "Bill discounting Rs4.6bn vs Rs1.1bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus ranks Avalon, Syrma and Dixon most durable on cash flow; Amber's ILJIN buyouts and Kaynes' smart-meter divestment are the swing factors.",
+      "source": "Avendus Spark — EMS Annual Report Analysis: From narrative to numbers - What the financials show (+2 more in Outlook)",
+      "received": "06:49",
+      "detail": {
+       "summary": "Avendus sees similar FY26-30e growth across EMS names, so balance sheet and cash flow are the differentiators. Avalon, Syrma and Dixon look best placed. Kaynes and Amber depend on capex pace and corporate actions.",
+       "points": [
+        "FY26-30e revenue CAGR ~25-35%, Amber ~18%",
+        "Syrma FY27-29e capex ~Rs7bn already funded",
+        "Amber needs at least Rs4bn cash for remaining buyouts",
+        "Dixon free cash generation inflects from FY28",
+        "Kaynes smart-metering EBITDA margin ~23% after elimination"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA expects Infosys to cut FY27 growth guide to 1-2% (from 1.5-3%) and HCL to trim organic guide; large-cap TPs cut up to 18%.",
+      "source": "CLSA — CLSA: India IT: Lacking rerating catalysts",
+      "received": "08:00",
+      "detail": {
+       "summary": "Post-Accenture, CLSA cuts FY27-28 revenue and EPS estimates and target PEs for large caps, citing weak macro and AI deflation. Persistent then Coforge should lead 2Q27 growth while Wipro declines. Mphasis is upgraded on limited downside.",
+       "points": [
+        "Large-cap TPs cut by up to 18%",
+        "FY27/28 EPS cut by up to 4% post ACN",
+        "Coforge EPS raised c.5% on Encora synergies",
+        "Wipro 3Q27 guide seen at -2% to 0% CC QoQ",
+        "Mphasis upgraded to Hold from U-PF"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak upgrades Persistent Systems to BUY from REDUCE, FV Rs6,250, on intact compounding and meaningful earnings accretion from Nagarro.",
+      "source": "Kotak — India Daily: Change in Reco - Persistent Systems; Updates",
+      "received": "09:08",
+      "detail": {
+       "summary": "Kotak sees Persistent well placed to sustain organic momentum, with integration of Nagarro the key to realising revenue and cost synergies. Earnings accretion from the deal is expected to be meaningful.",
+       "points": [
+        "FV Rs6,250",
+        "Upgrade to BUY from REDUCE",
+        "Earnings accretion from Nagarro seen as meaningful",
+        "Integration key to revenue and cost synergies"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNPP keeps Tech Mahindra top pick, TP INR1,900 (+24% vs INR1,533); least preferred Wipro and HCLT; reverse DCF puts Nifty IT at 26-31k.",
+      "source": "BNP Paribas — BNPP INDIA QUICK NOTES: HDFCB - New CEO | STRATEGY - Winter ascent | IT SERVICES: ACN / DCF analysis / TECHM / Deals tracker (+4 more in Outlook)",
+      "received": "08:59",
+      "detail": {
+       "summary": "BNPP stays cautious on the sector but sees Tech Mahindra as a strong alpha idea, one of few large-cap IT names with a positive one-year return. Winners and losers are now diverging within IT.",
+       "points": [
+        "TECHM TP INR1,900, upside +24%",
+        "Reverse DCF: Nifty IT 26-31k near term",
+        "Top picks TECHM, PSYS; least preferred WPRO, HCLT",
+        "Sep-26 deal signings inched up m-m, broadly muted"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Emkay expects RBI to begin a hike cycle today with 25bp (50bp an outside risk), stance neutral; 2HFY27 CPI forecasts run ~20bp above RBI's.",
+      "source": "Emkay — RBI MPC Preview: Policy recalibration begins",
+      "received": "21:59",
+      "detail": {
+       "summary": "Oil above $100 and the Fed's hiking cycle force a recalibration. Inflation is broadening beyond food, and FCNR-led excess liquidity keeps conditions looser than the policy rate implies, so sterilization is the open question.",
+       "points": [
+        "25bp base case, 50bp possible catch-up",
+        "3Q/4Q CPI tracking 6.1%/5.7%",
+        "~29% of CPI basket above 6% in Aug-26",
+        "Core momentum 0.54% mom vs ~0.3% six-month average",
+        "Core liquidity ~Rs9.5trn; further OMO sales possible"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: Nifty fell 5.2% in 3QCY26 to 16.9x forward PE, 10% below the 10-year average; sentiment index near a contra-buy signal.",
+      "source": "CLSA — CLSA: India strategy: Taking stock - September 2026",
+      "received": "07:24",
+      "detail": {
+       "summary": "Crude's rebound and a bond-yield spike after the Fed's first hike in three years drove the fall. Price has run ahead of earnings cuts, leaving valuations at a four-year low, while consensus expects EPS growth to accelerate from 14% to 16%.",
+       "points": [
+        "Nifty -5.2% in quarter; lagged EM/AxJ by 4.2ppt",
+        "60% of Nifty stocks below own 10-year average multiples",
+        "Bull-Bear Index 12.4% bullish, four quarters without turning bullish",
+        "Nifty EPS cut 0.3%, FY28 EPS cut 1.7%",
+        "Small-cap PE premium to Nifty at a record high"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley calls India large caps technically in a bear market but stays constructive: overweight Financials, Discretionary, Industrials; underweight Energy, Materials.",
+      "source": "Morgan Stanley — India Equity Strategy Playbook: As the Bear Market Deepens… (+6 more in Outlook)",
+      "received": "00:40",
+      "detail": {
+       "summary": "MS reads the de-rating as cyclical, caused by a negative relative-growth gap, not secular. It sees a growth upcycle and a major earnings cycle ahead. Risks it names are new-issue bunching, early tightening and oil above $120.",
+       "points": [
+        "Investment-to-GDP projected at 37.5% over five years",
+        "Underweight Utilities and Healthcare as well",
+        "IT Services flagged as possible dark horse",
+        "Foreign positioning very weak; relative valuations just off all-time lows"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "CLSA cuts MSIL TP to Rs14,537 from Rs16,000 (O-PF kept), FY27/28 profit -13%/-10%; top auto picks M&M, Bajaj Auto, Ather.",
+      "source": "CLSA — CLSA: India autos: 2QFY27 earnings preview",
+      "received": "23:34",
+      "detail": {
+       "summary": "CLSA expects 2QFY27 margins to stay subdued as commodity inflation outpaces price hikes. Premium-focused OEMs hold margins better than mass-market makers. Tyre makers are most exposed, and the 2HFY27 commodity outlook is the key call watch.",
+       "points": [
+        "Coverage ex-TMPV: revenue +26%, EBITDA +10% YoY",
+        "OEM price hikes of 2-5% cumulative in 1HFY27",
+        "Tyre EBITDA margin down c.100bps QoQ after 300-450bps in 1Q",
+        "CV margin +50-120bps QoQ on 25-33% volume growth",
+        "MSIL 2Q EBITDA margin flat QoQ at 8.3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees 2QFY27 auto EBITDA margin -160bps YoY ex-TMPV; MSIL EBITDA -10%, HMIL -18%, versus Bajaj +30%, TVS +45%, Eicher +22%.",
+      "source": "Kotak — [Kotak] Automobiles & Components: RM cost spikes overshadow healthy topline growth",
+      "received": "09:21",
+      "detail": {
+       "summary": "Kotak expects a mixed quarter: strong revenue growth from GST-cut-led volumes, but commodity and energy costs compress margins. Maruti, Hyundai, tyre makers and tractor OEMs are flagged as weak prints, while 2W OEMs, TMCV and select ancillaries look strong.",
+       "points": [
+        "Revenue ex-TMPV +27% YoY; volumes +20% across 2W/PV/CV",
+        "M&M EBITDA +8% on auto volumes +38%",
+        "Ashok Leyland EBITDA +11%; Tata Motors domestic CV +38%",
+        "TMPV PV business EBITDA +21% YoY",
+        "HMCL EBITDA margin -160bps YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA keeps TMPV Underperform, PO Rs305: JLR Q2 wholesales 82.4k (+25% YoY) but mix weak; Q2 EBIT margin seen 3.2% versus 2.8% in Q1.",
+      "source": "BofA — TMPV IN: Tata Motors Passenger Vehicles Limited: JLR Q2 volumes: Recovery is mild but mix is weak (+2 more in Outlook)",
+      "received": "10:28",
+      "detail": {
+       "summary": "JLR's recovery is mild: retail fell on China and Europe weakness and high-ASP mix slipped, though margin should improve slightly and FCF turn positive. Margin recovery to 7% depends on the cost programme, and the stock is seen as cheap but needing delivery on EVs and FCF.",
+       "points": [
+        "Retail 79k, -1% QoQ and -7% YoY; China -19% QoQ",
+        "High-ASP model share down to 77.6% from 80.8%",
+        "FY27 JLR guide: £26B revenue, 4% EBIT margin, FCF break-even",
+        "£1.7B cost programme over 2 years; breakeven volume 300k",
+        "SOTP: India business plus Tata Tech worth about Rs250/share"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Goldman keeps TSMC at Buy, raises 12m TP to NT$3,300 (ADR US$660 from US$620) on AI accelerator demand and capex; 2027E EPS +7%.",
+    "source": "Goldman Sachs — [GS Daily] TSMC TP raise on strong AI demand and Capex"
+   },
+   {
+    "text": "Goldman's US semis 3Q preview sees a constructive setup after the de-risking pullback, expecting positive estimate revisions for semicap on agentic AI compute.",
+    "source": "Goldman Sachs — [GS Daily] US Semi 3Q Preview"
+   },
+   {
+    "text": "Nasdaq +1.05% to a record; TSMC ADR +2.75%, Nvidia +2.12%, Broadcom +2.08% while SOX lagged at +0.27% and AMD fell 0.34%.",
+    "source": "morning_markets closes, 2026-10-05"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
