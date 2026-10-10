@@ -1,0 +1,362 @@
+{
+ "date": "2026-10-10",
+ "generated_at": "2026-10-10T08:12:50+05:30",
+ "mail": {
+  "window": "24h to 09:00 IST (Sat 10-Oct)",
+  "n_scanned": 93,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "BofA sees Hindalco 2Q EBITDA -20% QoQ on Novelis metal lag and weaker India aluminium; HZ +8% QoQ on zinc; HZ stays Underperform.",
+      "source": "BofA — Metals & Mining - India: 2Q preview: Seasonal softness in steel; mixed trends in non-ferrous - India",
+      "received": "14:40",
+      "detail": {
+       "summary": "QoQ LME aluminium fell while zinc rose, so Hindalco's India upstream and Novelis lag hurt while HZ benefits. Hindalco view stays positive on falling captive coal costs; HZ premium valuation caps returns.",
+       "points": [
+        "LME Al -5%, Zn +11%, silver -14% QoQ",
+        "India aluminium EBITDA -12% QoQ",
+        "Novelis adj. EBITDA/t US$558, shipments +1%",
+        "HZ EBITDA +96% YoY",
+        "Hindalco positive; HZ Underperform"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Vedanta declares first post-demerger interim dividend of Rs5 per share.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:57",
+      "detail": {
+       "summary": "Kotak's daily links a Business Standard report on Vedanta's first interim dividend since the demerger. The mail body carries the headline only.",
+       "points": [
+        "Rs5 per share interim dividend",
+        "First declaration post-demerger",
+        "Headline only, no record date in mail"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "BofA sees 2QFY27 India steel EBITDA/t falling INR1,500-1,800 at JSTL and Tata, SAIL -INR1,950/t (-19% QoQ); JSTL stays top pick.",
+      "source": "BofA — Metals & Mining - India: 2Q preview: Seasonal softness in steel; mixed trends in non-ferrous - India",
+      "received": "14:40",
+      "detail": {
+       "summary": "Lower seasonal long-steel realizations and higher coking coal cost compress margins, with volume growth cushioning. SAIL is hit hardest on long-steel exposure, while Tata Steel Europe recovers on the Netherlands.",
+       "points": [
+        "Volumes +4-11% YoY, +15-23% QoQ",
+        "SAIL EBITDA/t -INR1,950, -19% QoQ",
+        "TSE Netherlands EBITDA/t INR6,437 vs INR286 in 1Q",
+        "UK losses widen QoQ on costs, volumes",
+        "JSTL top pick"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HRC up ~1% WoW to Rs64.5K/t (+12% since end-July), sitting ~4% above import parity; MS sees limited near-term upside, spreads supported.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "11:44",
+      "detail": {
+       "summary": "Domestic steel prices are already at a premium to import parity, so upside is capped near term, but the safeguard duty and seasonally strong demand support spreads. Stocks are flat YTD against a falling Sensex.",
+       "points": [
+        "Rebar +1% WoW to Rs52.8K/t, +20% since end-July",
+        "Australian HCC ~US$272/t, +26% since end-July",
+        "China CFR iron ore ~US$91/t, -2% WoW",
+        "Domestic ore at ~49% discount to parity vs 56% 5Y avg",
+        "Spreads +46% since mid-Dec lows"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW Steel 2Q update: consolidated crude steel production rises to 7.27 MT.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:57",
+      "detail": {
+       "summary": "The Kotak daily links JSW Steel's quarterly production update filed on BSE. Only the headline figure is in the mail body; the filing itself holds the detail.",
+       "points": [
+        "Consolidated production 7.27 MT",
+        "Source is BSE filing link",
+        "Headline only, no QoQ or YoY given"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "BofA sees NMDC 2Q EBITDA -25% QoQ on volumes -11%, reiterates Underperform; Coal India EBITDA +2% QoQ on 65% e-auction premium, Buy.",
+      "source": "BofA — Metals & Mining - India: 2Q preview: Seasonal softness in steel; mixed trends in non-ferrous - India",
+      "received": "14:40",
+      "detail": {
+       "summary": "NMDC faces price-cut risk because its prices trade at a 30%+ premium to export realizations after a ~10% global ore correction since early September. Coal India's seasonal volume dip is offset by richer e-auction premiums.",
+       "points": [
+        "NMDC volumes -11% QoQ, -2% YoY",
+        "NMDC at 30%+ premium to export realizations",
+        "CIL e-auction premium +65% vs +47% in 1Q",
+        "CIL volumes -5% QoQ, +13% YoY",
+        "CIL EBITDA +79% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Hindustan Copper CMD sees copper staying above $14,000 and relies on cost discipline, not benchmark pricing, for expansion.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:57",
+      "detail": {
+       "summary": "Kotak's daily links a The Hindu interview with the Hindustan Copper CMD. The mail body carries only the headline.",
+       "points": [
+        "Copper seen above $14,000",
+        "Expansion built on cost discipline",
+        "Headline only, no volume or capex figures"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "UBS cuts Amber FY27-29E earnings 26-33% on margin headwinds, higher minority interest and depreciation; Q2 PAT may stay negative despite 59% EBITDA growth.",
+      "source": "UBS (Gattani) — Fw: UBS: Indian Consumer Durables Sector \"Q2FY27E: De-rating on margin uncertainty\"...",
+      "received": "10:28",
+      "detail": {
+       "summary": "UBS sees Amber's Q2 top line driven largely by acquisitions, so reported growth overstates organic momentum. Below EBITDA, depreciation and minority interest absorb the gain, leaving PAT negative. The cut sits inside a sector-wide margin-led de-rating.",
+       "points": [
+        "FY27-29E earnings cut 26-33%",
+        "Q2 revenue +28% YoY, led by electronics",
+        "Q2 EBITDA +59%, largely acquisition-driven",
+        "PAT may be negative on depreciation and minority interest",
+        "Sector de-rated ~15% in three months"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS expects Dixon Q2 revenue +45% on ~50% ASP jump despite smartphone volume -8% to 9.6m units; EBITDA only +2%, margin 2.7%.",
+      "source": "UBS (Gattani) — Fw: UBS: Indian Consumer Durables Sector \"Q2FY27E: De-rating on margin uncertainty\"...",
+      "received": "10:28",
+      "detail": {
+       "summary": "Price-led revenue growth does not reach profit: volumes fall while margin compresses 110bps YoY. UBS still prefers Dixon, citing component localization as the key earnings driver, but sees limited near-term catalysts. Results watch points are the Vivo JV start timeline, volume trend and MPMS benefits.",
+       "points": [
+        "Smartphone volume -8% YoY to 9.6m units",
+        "ASP up ~50%, revenue +45%",
+        "EBITDA +2%; margin 2.7%, -110bps YoY",
+        "UBS prefers LG, Blue Star, Dixon, Voltas",
+        "Watch: Vivo JV timing, MPMS benefits"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Counterpoint sees festive-season India smartphone volumes -12% YoY on memory-cost-led price rises, with value +5% on higher ASPs.",
+      "source": "Nomura (Bera) — India Consumer Durables and EMS: As smartphone prices rise, consumers wait for festive sales to buy (+2 more in Outlook)",
+      "received": "09:09",
+      "detail": {
+       "summary": "Higher memory costs and device prices are cutting festive volumes while consumers trade up selectively via financing and trade-ins. Component costs are still rising, so prices could climb further. Channel conversion depends on financing, trade-in and promotional offers, a volume headwind for smartphone EMS.",
+       "points": [
+        "Festive smartphone volume -12% YoY",
+        "Market value +5% YoY on higher ASPs",
+        "66% of intending buyers noticed price increases",
+        "53% plan purchase around Diwali e-commerce sales",
+        "Component costs may push prices higher"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak cuts TCS margin estimates after in-line 2QFY27; growth investments and muted deal wins outweigh accelerating AI revenue.",
+      "source": "Kotak — India Daily: Result - TCS; Change in Reco - Info Edge, Thermax, CESC, KEC International; Updates - Insurance, IT Services",
+      "received": "08:21",
+      "detail": {
+       "summary": "Kotak sees the TCS quarter as in-line on growth and margins, but argues the push for growth is eroding margin stability. Deal wins disappointed slightly and the AI revenue acceleration is hard to extrapolate, so it lowers margin estimates.",
+       "points": [
+        "In-line growth and margins; overseas business reasonably healthy",
+        "Deal wins muted, a tad disappointing",
+        "AI revenue growth accelerates, but difficult to extrapolate",
+        "Margin estimates cut on growth investments",
+        "US DoL freezes PERM applications; limited operational impact for IT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL holds TCS BUY, TP Rs2,500 (15x 2YF P/E); annualised AI revenue US$3.1bn, +19% QoQ, 10% of revenue.",
+      "source": "IIFL Sales — IT: AI-led IaaS Growth | Auto – 2Q Preview & EPS Cuts | MHCV – FY27 Growth Upgrade | Textiles – KPR Leads | Ports – ADSEZ & AEGISVOP Preferred | TCS – BUY, TP ₹2,500",
+      "received": "11:04",
+      "detail": {
+       "summary": "IIFL reads the quarter as improving internals with 2H growth set to accelerate on BSNL and Porsche deal ramp-ups and three straight quarters of headcount adds. It sees TCS cheap against HCL Tech for a similar growth outlook.",
+       "points": [
+        "Revenue +0.5% QoQ CC; EBIT margin stable at 24%, slightly below expectations",
+        "Deal wins US$9.6bn, healthy",
+        "TCS at 15% valuation discount to HCL Tech",
+        "Indian IT growth forecast 2.6%/5.6% in FY27/28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HCLT reports 12 Oct post-market: Nuvama expects FY27 EBIT margin guide trimmed to lower half of 17.5-18.5%; revenue US$3.75bn vs US$3.67bn consensus.",
+      "source": "Nuvama — Result Estimates for 12th October 2026 : HCLT, RBK (+3 more in Outlook)",
+      "received": "15:14",
+      "detail": {
+       "summary": "Nuvama expects HCLT to show a small beat versus Bloomberg consensus, with margin expansion from revenue growth and FX. It expects the FY27 services growth guide to be narrowed around the same midpoint while the margin guide is trimmed.",
+       "points": [
+        "Revenue +2.7% QoQ CC, ~0.8% inorganic",
+        "EBIT margin 17.58% vs 17.50% consensus; +70bp QoQ",
+        "FY27 services growth guide seen 2.5-4.0% from 1.5-4.5%",
+        "Stock -4.06% over 5 days; futures rollover 88%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Nifty fwd PE hit 16.7x, a six-year low and only 2.8% above its 20-year average; CLSA Bull-Bear Index at 8.7% flags contrarian buy.",
+      "source": "CLSA — India strategy: Weekly wrap",
+      "received": "22:15",
+      "detail": {
+       "summary": "The Nifty's eight-week losing streak ended on a 0.4% gain despite the RBI's first hike since 2023, but flows and sentiment kept deteriorating. Valuation is now the smallest premium to the 20-year average since Covid, while the 10-year yield sits at a three-year high.",
+       "points": [
+        "FIIs sold US$3.6bn in the week; CY26 outflows US$31.9bn",
+        "INR down 0.4%, second-weakest EM currency",
+        "10-year yield 7.3%, three-year high; bond-earnings yield gap 1.2ppts vs c.1ppt average",
+        "Bull-Bear Index 8.7% bullish vs 11.9% a week earlier",
+        "Nifty at 11% discount to 10-year average PE"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nifty fell 1.7% on the week with metals -7%, autos -7%, realty -6%; RBI hiked 25bps and moved stance to 'calibrated tightening'.",
+      "source": "Kotak — Strategy: Friday Flash: Continued pessimism",
+      "received": "14:14",
+      "detail": {
+       "summary": "Indian markets saw broad-based weakness on global headwinds plus the RBI's hawkish turn. Midcaps and smallcaps fell harder than the Nifty, while private banks and IT services held up as the only outperformers.",
+       "points": [
+        "Midcap-150 -2.5%, Smallcap-250 -1.7%; USD-INR weaker 0.5%",
+        "FPI outflows US$3.2bn vs DII inflows US$3.7bn",
+        "Private banks +0.6%, IT services +0.1%",
+        "Biggest losers: Bandhan -13%, Bajaj Auto -11%, Jindal Steel -11%",
+        "TCS 2QFY27 broadly in line; domestic bond yields elevated"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "El Nino drag lands in 2HFY27: CLSA says kharif output falls 7-10% on 6-8% yield loss even with area sown down only 1%.",
+      "source": "CLSA — India economics: Wait for El Nino impact in 2HFY27 (+7 more in Outlook, unread)",
+      "received": "14:12",
+      "detail": {
+       "summary": "The rainfall deficit was c.13% while area sown fell just 1%, which markets read as no monsoon damage. CLSA argues area sown is the wrong gauge: past El Nino years show the hit comes through yields, rural wages and agri GVA, concentrated in the second half.",
+       "points": [
+        "Rainfall deficit c.13%; area sown down only 1%",
+        "Historical yield fall of 6-8% in El Nino years",
+        "Kharif production down 7-10% historically",
+        "Rural wages and agri GVA hit, mostly in 2H",
+        "Expects drag on real GDP growth in 2HFY27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "IIFL lifts FY27 MHCV industry growth to 13% from 6% on September annualised volumes of 540k; prefers TMCV over Ashok Leyland.",
+      "source": "IIFL Sales — IT: AI-led IaaS Growth | Auto – 2Q Preview & EPS Cuts | MHCV – FY27 Growth Upgrade | Textiles – KPR Leads | Ports – ADSEZ & AEGISVOP Preferred | TCS – BUY, TP ₹2,500",
+      "received": "11:04",
+      "detail": {
+       "summary": "Sequential MHCV demand has stepped up sharply, driving the growth upgrade. IIFL favours TMCV on stronger 2H volume growth, realistic margin expectations and cheaper valuation, and flags consensus margin downgrade risk for Ashok Leyland.",
+       "points": [
+        "MHCV annualised volumes 540k in September vs 460-470k in June-July",
+        "FY27 MHCV growth 13% vs 6% earlier",
+        "TMCV EPS upgraded 4%",
+        "Drivers: domestic share gains, Indonesia export orders",
+        "Ashok Leyland faces potential consensus margin downgrades"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: Q2FY27 OEM revenue (ex-Tata Motors) +26% YoY, but calibrated pricing leaves Q2/Q3 margins pressured; Eicher, TVS, Maruti top picks.",
+      "source": "Elara — Automobiles - Commodity costs remain elevated - Quarterly Preview (Author: Jay Kale)",
+      "received": "10:58",
+      "detail": {
+       "summary": "Volumes and mix drive strong revenue, but OEM price hikes have not fully caught up with the earlier commodity spike, keeping margins under pressure despite volume. Bajaj and TVS should see least compression thanks to price hikes, currency and export mix.",
+       "points": [
+        "PV/2W/CV wholesales +30%/+19%/+31% YoY; M&M tractors -6%",
+        "QoQ aluminium/lead/steel -9%/-4%/-1%; copper/rubber +6%/+9%",
+        "INR ~1% weaker QoQ at 95.6, helps export-heavy 2Ws",
+        "Apollo/MRF tyre margins -65bps/-44bps; CEAT flat",
+        "Top OEM picks: Eicher, TVS, Maruti, M&M"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: Nifty Auto down 17% in two months vs Nifty -10%; M&M trades ~15x FY28 core EPS, EIM among four seen near bear-case values.",
+      "source": "CLSA — India autos: Right here, right now",
+      "received": "09:59",
+      "detail": {
+       "summary": "CLSA sees the de-rating as disconnected from fundamentals: GST-cut base effects and commodity margin fears are widely anticipated, and OEMs guided mid- to high-single-digit 2HFY27 growth. Even with flat FY28 margins, downside for several names looks limited.",
+       "points": [
+        "Nifty Auto underperformed Nifty50 by 700bps over two months",
+        "M&M ~15x FY28 core EPS vs ~17x long-term average",
+        "HMCL 10.5x FY28 EPS; bear case ~12x",
+        "TMCV, AL, BJAUT, EIM 10-15% below historical multiples",
+        "Bear-case downside for those four 10-15%; TVSL risk-reward least favourable"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Cement"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "ISG: As-a-Service ACV +94% (IaaS +115%); CY26 As-a-Service growth guide raised to 60% from 30%, Managed Services held at 2.1%.",
+    "source": "IIFL Sales — IT: AI-led IaaS Growth | Auto – 2Q Preview & EPS Cuts | MHCV – FY27 Growth Upgrade | Textiles – KPR Leads | Ports – ADSEZ & AEGISVOP Preferred | TCS – BUY, TP ₹2,500"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
