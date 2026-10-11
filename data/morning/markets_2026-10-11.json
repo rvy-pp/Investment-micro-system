@@ -1,0 +1,215 @@
+{
+ "date": "2026-10-11",
+ "fetched_at": "2026-10-11T08:09:52",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-09",
+    "close": 7811.54,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.59
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-09",
+    "close": 27366.17,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.64
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-09",
+    "close": 51654.95,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.83
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-09",
+    "close": 12572.42,
+    "prev_date": "2026-10-08",
+    "chg_pct": -0.41
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-09",
+    "close": 229.28,
+    "prev_date": "2026-10-08",
+    "chg_pct": -0.52
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-09",
+    "close": 608.1,
+    "prev_date": "2026-10-08",
+    "chg_pct": -2.03
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-09",
+    "close": 453.31,
+    "prev_date": "2026-10-08",
+    "chg_pct": -1.02
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-09",
+    "close": 361.54,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.39
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-09",
+    "close": 209.06,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.34
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-09",
+    "close": 59.2,
+    "prev_date": "2026-10-08",
+    "chg_pct": -1.35
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Has Accenture Stock Become A Different Bet?",
+    "publisher": "Trefis",
+    "when": "2026-10-09 23:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-become-different-bet-233939774.html"
+   },
+   {
+    "title": "How to Play ACN Stock as Accenture Deepens Its AI Ties",
+    "publisher": "Barchart",
+    "when": "2026-10-09 18:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/play-acn-stock-accenture-deepens-182024759.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-08 23:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-know-233609788.html"
+   },
+   {
+    "title": "Accenture (ACN) Could Be 30% Undervalued As Q4 Results Beat Expectations",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-08 20:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-could-30-undervalued-201203050.html"
+   },
+   {
+    "title": "What Would It Take For AI Price Cuts To Break Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-10-08 18:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-price-cuts-break-accenture-183050311.html"
+   },
+   {
+    "title": "Is Accenture (ACN) the Market\u2019s Most Overlooked AI Play?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-08 16:19Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-market-most-overlooked-161945893.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Undervalued Following Its New Credit Facilities?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-09 19:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-undervalued-191439325.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Cerebras Is About as Big as Nvidia's Data Center Business Was Nearly a Decade Ago. The Similarities Mostly End There.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-11 00:57Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cerebras-big-nvidias-data-center-005701692.html"
+   },
+   {
+    "title": "Amazon (AMZN) Wants Investors to Finance $8 Billion of Nvidia Chips. Is AI Spending Getting Too Heavy?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-10 22:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amazon-amzn-wants-investors-finance-221126922.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Jim Cramer Told a Broadcom (AVGO) Holder Not to Sell, and Said He Trimmed It Himself",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-10 17:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-told-broadcom-avgo-023103180.html"
+   },
+   {
+    "title": "Broadcom vs. Intel: Which Chip Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-10 15:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-vs-intel-chip-stock-153502766.html"
+   },
+   {
+    "title": "Broadcom\u2019s AI Revenue Is Tripling, but the Stock Has Lagged. Is It Time to Load Up?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-10 14:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-ai-revenue-tripling-stock-144343796.html"
+   },
+   {
+    "title": "Here's What a $10,000 Investment in Broadcom Stock Could Be Worth in 5 Years. (Hint: It Could Be 1 of the Best AI Stocks to Buy Today.)",
+    "publisher": "Motley Fool",
+    "when": "2026-10-10 14:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-10-000-investment-broadcom-144000137.html"
+   },
+   {
+    "title": "The Next Wave of AI Demand Could Send Broadcom, Marvell, and AMD Soaring",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-10 14:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/next-wave-ai-demand-could-143057696.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stock Is Set to Benefit From Both Physical and Agentic AI",
+    "publisher": "Barchart",
+    "when": "2026-10-10 15:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-stock-set-benefit-both-153002887.html"
+   },
+   {
+    "title": "The Next Wave of AI Demand Could Send Broadcom, Marvell, and AMD Soaring",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-10 14:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/next-wave-ai-demand-could-143057696.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22575.5,
+  "chg_pct": -0.12,
+  "stamp": "10-Oct-2026 02:30:09",
+  "expiry": "27-Oct-2026",
+  "volume": 68954,
+  "nifty_close": {
+   "close": 22520.45,
+   "stamp": "09-Oct-2026 15:30"
+  },
+  "gap_pts": 55.0,
+  "gap_pct": 0.24
+ }
+}
