@@ -1,0 +1,203 @@
+{
+ "date": "2026-10-15",
+ "fetched_at": "2026-10-15T08:19:18",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-14",
+    "close": 7718.94,
+    "prev_date": "2026-10-13",
+    "chg_pct": -1.11
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-14",
+    "close": 26692.87,
+    "prev_date": "2026-10-13",
+    "chg_pct": -1.88
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-14",
+    "close": 51621.48,
+    "prev_date": "2026-10-13",
+    "chg_pct": -0.09
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-14",
+    "close": 11684.38,
+    "prev_date": "2026-10-13",
+    "chg_pct": -4.3
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-14",
+    "close": 221.3,
+    "prev_date": "2026-10-13",
+    "chg_pct": -3.16
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-14",
+    "close": 570.82,
+    "prev_date": "2026-10-13",
+    "chg_pct": -5.73
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-14",
+    "close": 430.0,
+    "prev_date": "2026-10-13",
+    "chg_pct": -3.4
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-14",
+    "close": 346.25,
+    "prev_date": "2026-10-13",
+    "chg_pct": -3.1
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-14",
+    "close": 214.96,
+    "prev_date": "2026-10-13",
+    "chg_pct": 0.66
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-14",
+    "close": 62.47,
+    "prev_date": "2026-10-13",
+    "chg_pct": 1.86
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Targets Faster Growth as AI Reinvention Strategy Takes Center Stage",
+    "publisher": "MarketBeat",
+    "when": "2026-10-14 22:02Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-targets-faster-growth-ai-220225775.html"
+   },
+   {
+    "title": "Accenture (ACN) Is Up 10.4% After Dividend Hike And New AI Deals With Dell And Workday",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-14 21:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-10-4-dividend-211123841.html"
+   },
+   {
+    "title": "Why Accenture (ACN) Stock Is Trading Up Today",
+    "publisher": "StockStory",
+    "when": "2026-10-14 18:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-accenture-acn-stock-trading-182007968.html"
+   },
+   {
+    "title": "Accenture and Workday Promise a Faster Path to Measurable AI Impact. The Path Has No Numbers on It.",
+    "publisher": "Forkast News",
+    "when": "2026-10-14 16:42Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-workday-promise-faster-path-164200492.html"
+   },
+   {
+    "title": "Accenture\u2019s Investor Day Answers the AI Question: Why the Street Isn\u2019t Buying It Yet",
+    "publisher": "TIKR",
+    "when": "2026-10-14 16:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-investor-day-answers-ai-160718474.html"
+   },
+   {
+    "title": "Is Accenture Worth Buying as AI Growth Meets Rising Execution Risk?",
+    "publisher": "Zacks",
+    "when": "2026-10-14 14:26Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-worth-buying-ai-growth-142600067.html"
+   },
+   {
+    "title": "Accenture Jumps 10.4% in the Past Month: Can It Extend the Rally?",
+    "publisher": "Zacks",
+    "when": "2026-10-14 14:21Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-jumps-10-4-past-142100349.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "TD Cowen Adjusts Price Target on Cognizant Technology Solutions to $60 From $54",
+    "publisher": "MT Newswires",
+    "when": "2026-10-13 11:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/td-cowen-adjusts-price-target-111753970.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "History Says Nvidia Stock Usually Rises in the Fourth Quarter -- It Has in 20 of the Last 27",
+    "publisher": "Motley Fool",
+    "when": "2026-10-15 00:11Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/history-says-nvidia-stock-usually-001102430.html"
+   },
+   {
+    "title": "Nvidia CEO Says He Would Cut Off Buyers Developing Unsafe AI",
+    "publisher": "MT Newswires",
+    "when": "2026-10-14 23:50Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-ceo-says-cut-off-235015911.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom vs. Marvell Technology: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-14 22:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-vs-marvell-technology-technology-222209867.html"
+   },
+   {
+    "title": "A $10,000 Broadcom investment in 2016 now pays $1,991 a year in dividends",
+    "publisher": "TheStreet",
+    "when": "2026-10-14 22:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/10-000-broadcom-investment-2016-221700178.html"
+   },
+   {
+    "title": "Nvidia, Broadcom and Marvell Stocks Fall as AI Spending Concerns Grow",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-14 19:16Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-broadcom-marvell-stocks-fall-191611708.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stock Takes a Bigger Hit as Cracks Emerge in the AI Trade",
+    "publisher": "Barrons.com",
+    "when": "2026-10-14 20:46Z",
+    "link": "https://finance.yahoo.com/m/02b4e834-4dc3-3b57-9736-5c4291f5bfe7/amd-stock-takes-a-bigger-hit.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22632.0,
+  "chg_pct": 0.37,
+  "stamp": "15-Oct-2026 08:18:57",
+  "expiry": "27-Oct-2026",
+  "volume": 1630,
+  "nifty_close": {
+   "close": 22622.7,
+   "stamp": "14-Oct-2026 15:30"
+  },
+  "gap_pts": 9.3,
+  "gap_pct": 0.04
+ }
+}
