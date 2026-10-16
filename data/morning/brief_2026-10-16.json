@@ -1,0 +1,429 @@
+{
+ "date": "2026-10-16",
+ "generated_at": "2026-10-16T08:11:47",
+ "mail": {
+  "window": "24h to 08:06 IST",
+  "n_scanned": 204,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Emkay's $2,800/t Al stress test flags NALCO (REDUCE, TP Rs340) as most exposed; Hindalco (ADD, TP Rs1,150) and VAML (BUY, TP Rs550) hold up better.",
+      "source": "Emkay — Metals & Mining: Aluminium – Stress-testing the downside; staying constructive",
+      "received": "22:07",
+      "detail": {
+       "summary": "Aluminium has fallen about 9% in a month as GCC smelters restart and Indonesian and Chinese supply rises, but Emkay says this is not the start of a downcycle. LME stocks and regional premiums still show physical tightness. NALCO's upstream leverage makes it the weakest name under the bear case.",
+       "points": [
+        "Al down ~9% in 1M, below $3,000/t",
+        "LME inventories ~239kt, near multi-decade lows",
+        "Global Al deficit 1.6mt CY26E, 700kt CY27E",
+        "MJP 4QCY26 premium -35% qoq to $255/t",
+        "VAML TP Rs550 (53% upside); Hindalco TP Rs1,150 (29%)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME aluminium broke below $3,000/t to ~$2,975 (-1.5%) and copper fell 0.8% toward $14,400/t on hot US CPI; LME Week starts 18-Oct.",
+      "source": "Emkay — Commodity Market Report: Hot US CPI hits metals as silver slides 6%; oil climbs on Middle East risk",
+      "received": "09:44",
+      "detail": {
+       "summary": "US CPI of 3.7% yoy against 3.6% expected revived fears of a Fed hike at the 27-28 Oct meeting, though FedWatch still shows 75% odds of no change. Base metals sold off, with aluminium and copper leading the declines. Emkay sees a possible technical rebound in copper, aluminium and lead, while zinc stays vulnerable to selling at higher levels.",
+       "points": [
+        "US CPI +3.7% yoy vs 3.6% expected",
+        "MCX copper Rs1,404/kg (-0.9%); aluminium Rs320/kg (-1.4%)",
+        "Lead resilient around $1,900/t",
+        "CME-LME copper spread ~$148/t vs ~$3,000/t in Jul-25",
+        "Zinc seen vulnerable to selling at higher levels"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Indonesian aluminium exports run ~1.5mt annualised in Jul-Aug vs ~600kt in 2025; JPM sees ~2.5mt in 2027, a headwind for Hindalco, NALCO, VAML.",
+      "source": "JPM — ASEAN Caravan Blog - Day 1: Energy & Basic Materials - Buy Refining Dips, Watch Coal Peak, Track Aluminum Ramp",
+      "received": "17:10",
+      "detail": {
+       "summary": "JPM's tracker shows Indonesia's aluminium ramp is ongoing, with rising cryolite imports into Morowali pointing to the 600kt Taijing smelter ramping into 4Q26. Investors already know the incremental-supply story. The open debate is how much capacity materialises, given power constraints and China's ODI rules. JPM sees limited power constraints for the existing projects.",
+       "points": [
+        "Exports ~1.5mt annualised vs ~600kt 2025 average",
+        "2027 supply seen near ~2.5mt once smelters fully ramp",
+        "Cryolite imports into Morowali rising",
+        "Taijing 600kt smelter likely ramping into 4Q26",
+        "Debate: power constraints and China ODI rules"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Spot steel spreads still widening: Elara flags a strong September price recovery globally and domestically while domestic output lags demand, supportive for mill margins.",
+      "source": "Elara — Elara Stinger: Companies shift to bank loans as bond cost rises, driving 81% share of fresh credit - Monthly Update: Metals & Mining - Quarterly Result: Canara Bank (Buy INR 155), ICICI Lombard GIC (INR 1,985), Leela Palaces Hotels & Resorts (INR 798)",
+      "received": "10:10",
+      "detail": {
+       "summary": "Elara's monthly metals update says spot steel spreads continue to widen. Global and domestic prices recovered strongly in September, while domestic production slowed despite strong demand. Global output fell as China's shrank. The mail carries headline points only, no numbers or company calls.",
+       "points": [
+        "Spot steel spreads continue to widen",
+        "Global steel production down ~1% YoY",
+        "China's output shrinking",
+        "Domestic production slowing despite strong demand",
+        "Global and domestic prices recovered strongly in September"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Jindal Stainless saw a $65m block trade on 14-Oct as metals closed down 1%, so watch for supply overhang.",
+      "source": "UBS sales — UBS INDIA - BLOCKBUSTER BHEL Q2 Results; ... COPPER RE-RATING (sales commentary, not UBS Research)",
+      "received": "09:18",
+      "detail": {
+       "summary": "UBS sales desk market wrap lists JSTL among Wednesday's major blocks. The Nifty fell 0.4% and metals were down about 1%. The mail gives no buyer, seller or price, so the block's direction is unknown.",
+       "points": [
+        "JSTL block $65m on Wednesday",
+        "Other blocks: Meesho $123m, Max Healthcare $19m",
+        "Metals sector down ~1%",
+        "Nifty -0.4% to 22,623",
+        "Buyer, seller and price not disclosed"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "JPM October dealer checks: cement prices up in most regions, led by South; North demand beats; East lacklustre; UltraTech remains top pick.",
+      "source": "JPM — India Daily: MOTHERSO: diversified manufacturing play ripe for re-rating | 2Q Results: Tata Tech - u/g to N , BHEL, Groww, ICICI Lombard, Leela Hotels | Cement Channel Checks",
+      "received": "09:10",
+      "detail": {
+       "summary": "JPM's October dealer checks show pricing ahead of schedule, building on September's momentum, especially in the South. Northern demand is stronger than expected as builders anticipate winter construction curbs. The key variable is whether companies can pass on cost increases after Diwali.",
+       "points": [
+        "Prices up in most regions, South strongest",
+        "North demand better than expected, pre-winter curbs",
+        "East demand lacklustre, labour shortages into festive season",
+        "Central capex slowed, likely muted in 2HFY27",
+        "Construction lending up 25% YoY in August",
+        "Post-Diwali price pass-through is the swing factor"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cement results calls: UltraTech 19-Oct, Shree 23-Oct, JK Cement 27-Oct, Ambuja 29-Oct.",
+      "source": "Nuvama — Nuvama Daily | Actionables: +BHEL; +CEAT | Erngs Tracker | Rslt Updates: +BHEL; +ICICGI (UG to HOLD); HDBFS | First Cut: BAJCON | Alt Research: Bulk Deals | Forthcoming Erngs Calls",
+      "received": "09:10",
+      "detail": {
+       "summary": "The forthcoming earnings-calls table sets the dates for the cement names' financial results calls. UltraTech reports first, followed by Shree, JK Cement and Ambuja across the next two weeks.",
+       "points": [
+        "UltraTech Cement: 19-Oct, 4.00 PM IST",
+        "Shree Cement: 23-Oct, 4.30 PM IST",
+        "J. K. Cement: 27-Oct, 12.00 PM IST",
+        "Ambuja Cements: 29-Oct, 4.30 PM IST"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "UBS sees $13,000/t copper as a plausible new norm on grid, AI and data-centre demand, a read-across for Hindustan Copper.",
+      "source": "UBS sales — UBS INDIA - BLOCKBUSTER BHEL Q2 Results; ... COPPER RE-RATING (sales commentary, not UBS Research)",
+      "received": "09:18",
+      "detail": {
+       "summary": "UBS's China basic materials note argues for a secular copper re-rating. Electrification, grids and AI infrastructure broaden demand while falling ore grades, long development timelines and restrained capex limit supply. Its read-across is to HK/China miners trading at a discount to overseas peers, not to Hindustan Copper.",
+       "points": [
+        "US$13,000/t seen as plausible new norm",
+        "Data-centre power demand 900kt (2025) to 1.55mt (2030)",
+        "15-20% of global copper demand growth",
+        "HK/China miners 8x P/E, 6x EV/EBITDA",
+        "Overseas peers trade at 10x EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM expects thermal coal to peak in Oct/Nov as Indonesia and China add supply, not back to 2025 levels; watch Coal India e-auction premiums.",
+      "source": "JPM — ASEAN Caravan Blog - Day 1: Energy & Basic Materials - Buy Refining Dips, Watch Coal Peak, Track Aluminum Ramp",
+      "received": "17:10",
+      "detail": {
+       "summary": "JPM's Asean basic materials note expects thermal coal to peak in Oct/Nov as Indonesia and China raise supply, with prices unlikely to return to 2025 levels. Indonesian coal stocks are crowded. The note is about Indonesian miners; any Coal India read-across is inferred, not stated.",
+       "points": [
+        "Thermal coal likely peaks Oct/Nov",
+        "Indonesia 2026 RKAB revised from 600mt to 720mt",
+        "2027 RKAB base case flat 720mt",
+        "Indonesian miners' mid-cycle EBITDA $10-15/t in 2027 vs >$20/t spot",
+        "Newcastle +2%, Indonesian low-CV +8% since early September"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME copper fell toward $14,400/t from a $14,700/t high on hot US CPI, with a technical rebound flagged for today (Hindustan Copper).",
+      "source": "Emkay — Commodity Market Report: Hot US CPI hits metals as silver slides 6%; oil climbs on Middle East risk (+1 more in Outlook)",
+      "received": "09:44",
+      "detail": {
+       "summary": "Emkay says base metals sold off after a hotter US CPI print revived Fed rate-hike worries, with copper and aluminium leading declines. The day-ahead view is a technical rebound in copper. LME Week from 18-Oct will focus on tariffs, flows and mine disruptions.",
+       "points": [
+        "LME copper -0.8%, toward $14,400/t after $14,700/t",
+        "MCX copper down over 0.9% toward Rs1,404/kg",
+        "CME-LME copper spread ~$148/t vs ~$3,000/t in July last year",
+        "US CPI 3.7% YoY vs 3.6% expected",
+        "Day ahead: technical rebound possible in copper"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Cyient DLM cut FY27 EBITDA margin guide to 9-10% from ~11%; 2Q margin 8.7% missed JPM by 210bps, with double digits only from 1QFY28.",
+      "source": "JPM — Cyient DLM: Revenue and margin miss; FY27 margin guide cut",
+      "received": "00:36",
+      "detail": {
+       "summary": "2Q missed on revenue and margin. Sales, marketing and product-development spend (a 100-150bps drag) runs until 4Q, so the margin guide was cut. Growth guidance stays at ~30%, backed by a record order book.",
+       "points": [
+        "Revenue Rs3,931mn, +27% YY, 3% below JPM",
+        "EBITDA margin 8.7%, -130bps YY, -180bps QQ",
+        "Spend headwind 100-150bps, continues till 4Q",
+        "FY27 EBITDA cut 12%, EPS cut 4%",
+        "Target Rs530 held, Underweight; price Rs1,030"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak keeps SELL on Cyient DLM despite a record Rs28bn order book (~2X TTM sales); FY27 EPS cut 14%, FV Rs790.",
+      "source": "Kotak — [Kotak] Cyient DLM (CMP: Rs1,030, FV: Rs790, SELL): Margin headwinds temper growth momentum",
+      "received": "06:05",
+      "detail": {
+       "summary": "Execution was fine, but a weaker mix (more product-development orders) and higher sales spend took 2Q margin well below Kotak's estimate. Order quality is improving, yet Kotak sees the stock as expensive. The FV rise to Rs790 comes only from rolling forward to Dec-2028E earnings.",
+       "points": [
+        "PAT Rs158mn, 19% below Kotak estimate",
+        "EBITDA margin 8.7% vs Kotak 9.8%",
+        "Order inflow Rs6.1bn, +29% YY",
+        "Margin guide 9-10% from ~11%",
+        "FV Rs790 from Rs770; CMP Rs1,030"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Festive online smartphone units are -16% YY after 35-40% price hikes on 2-3x memory-chip costs, a demand risk for mobile EMS volumes.",
+      "source": "Nomura — India Consumer Durables and EMS: Online mobile sales may not ring loud this Navratri; WPI inflation quickens to 11.39 per cent in September",
+      "received": "08:59",
+      "detail": {
+       "summary": "Counterpoint data cited in the digest show the Navratri e-commerce season sliding as handset makers pass chip-cost inflation on to buyers while discounts shrink. Brick-and-mortar retailers report a similar slump. This is a demand signal for handset-linked EMS volumes, not a company-specific call.",
+       "points": [
+        "Online festive smartphone units -16% YY (Counterpoint)",
+        "Discounts 10-25% vs 25-40% last year",
+        "Smartphone prices +35-40%; memory chips 2-3x",
+        "Retailer body AIMRA: sales -20% since Navratri began",
+        "Overall festive retail seen down over 15%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "TechM upgraded to BUY at IIFL, TP Rs2,000 from 1,750; 2Q cc growth 2.4% QoQ beat, EBIT margin 14.8% against a 15% FY27 target.",
+      "source": "IIFL — Tech Mahindra [TECHM IN, Upgrade to BUY]: Catapulting ahead of the large cap circle!",
+      "received": "23:44",
+      "detail": {
+       "summary": "IIFL argues TechM is near the end of a 3-year turnaround with growth ahead of other large caps and margins close to target. Broad-based verticals and strong deal wins support a re-rating toward the mid-cap multiple as the next 3-year roadmap is outlined.",
+       "points": [
+        "2Q cc growth 2.4% QoQ vs IIFLe 1.5%",
+        "EBIT margin 14.8%, +40bps, 12th straight expansion",
+        "TCV USD1.02bn, fourth straight USD1bn+ quarter",
+        "EPS raised 5-10% FY27-29; TP at 21X 2YF EPS",
+        "Trades at 19% premium to large caps on 18.4X FY28 P/E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Wipro downgraded to REDUCE at IIFL, TP Rs160; TCV USD2.6bn the weakest in five years, headcount down 7.4k, Q3 guide -1.5% to +0.5%.",
+      "source": "IIFL — Wipro [WPRO IN, REDUCE]: Deal wins and guidance lack substance!",
+      "received": "23:31",
+      "detail": {
+       "summary": "IIFL says the revenue beat is a low bar: deal intake, headcount and guidance all point to no near-term rebound. It expects growth below peers to widen the discount to TCS and Infosys from under 10%, so it moves to REDUCE.",
+       "points": [
+        "Revenue flat QoQ, -0.6% organic vs IIFLe -1.1%",
+        "Large deal TCV USD2.6bn, down 26% TTM yoy",
+        "Net headcount fell 7.4k, the biggest drop in 3 years",
+        "IT services EBIT margin 16.5%, +50bps; EPS cut 3-5%",
+        "TP Rs160 at 12x 2YF P/E, 8% downside"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM moves Persistent to OW, PT Rs6,400 vs Rs5,840 CMP, despite a 100bps EBIT margin miss and adj EPS 11% below consensus.",
+      "source": "JPM — Persistent Systems: Moving to an OW rating and Rs6,400 PT from NR (+24 more in Outlook)",
+      "received": "07:00",
+      "detail": {
+       "summary": "JPM treats the quarter as mixed: revenue beat consensus but EBIT margin missed on amortisation from the IBM products deal. It sees slipped deal closures and a healthy pipeline supporting the fastest growth in its coverage, and keeps PSYS a top IT pick despite 2-4% adj EPS cuts.",
+       "points": [
+        "Revenue +7.8% CC QoQ, 150bps ahead of consensus",
+        "EBIT margin 15.0%, -100bps QoQ; 62bps below consensus",
+        "TCV $634mn, +4% yoy; some closures slipped to 3Q",
+        "FY27-29 margins cut 40-60bps; adj EPS cut 2-4%",
+        "17% organic CC revenue CAGR FY26-28E; margin aspiration 16-17%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Goods deficit widened to $30.2bn in Sep from $26.9bn; Emkay flags H2 BOP turning negative on ECB prepayments and FPI selling.",
+      "source": "Emkay — Trade Balance: Oil and capital goods drive deficit higher; mild BOP risks emerge",
+      "received": "21:08",
+      "detail": {
+       "summary": "Oil and electronics imports lifted the Sep deficit, and services net exports have plateaued near $17bn a month. Emkay keeps FY27E CAD/GDP at 1.3% but sees downside to its ~$100bn FY27 BOP estimate. Corporates are prepaying ECBs and FPI flows are worsening, with the IDBI stake sale to Fairfax a partial offset.",
+       "points": [
+        "Imports $74.6bn (+6% mom); exports $44.4bn (+1% mom)",
+        "Oil imports +10% mom to $18.3bn; electronics imports +9% to $15bn",
+        "Aug ECB outflow ~$22bn; FY27TD ~$28bn",
+        "CAD/GDP 1.3% at $85 Brent; 1.5% at $90",
+        "Even a $55-60bn BOP surplus would be significant; Fairfax-IDBI stake sale adds $5-5.5bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "WPI inflation jumped to 11.39% in Sep from 9.9%, with CPI at 5.54% and fuel and power inflation at 25.85%.",
+      "source": "Nomura — India Consumer Durables and EMS: Online mobile sales may not ring loud this Navratri; WPI inflation quickens to 11.39 per cent in September from 9.9 per cent in August",
+      "received": "08:59",
+      "detail": {
+       "summary": "Nomura's morning highlights carry the inflation prints alongside weak festive demand data. Wholesale inflation is being driven by fuel and food, and retail inflation rose on vegetable prices. Consumer-facing demand looks soft: online festive smartphone units are down and urban festive spending is expected to fall.",
+       "points": [
+        "WPI 11.39% in Sep vs 9.9% in Aug",
+        "CPI 5.54% vs 4.83% in Aug; manufactured products 9.76%",
+        "Online festive smartphone units -16% yoy (Counterpoint)",
+        "Urban festive spending seen -6% to Rs1.97 lakh cr",
+        "Smartphone prices +35-40% on memory chip costs"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Bank credit grew 19.4% in Sep, but Kotak's wrap flags a possible RBI hike slowing H2, plus a 20% FERR requirement over CRR.",
+      "source": "Kotak — BFSI Daily Wrap: October 16, 2026 (+2 more in Outlook)",
+      "received": "06:31",
+      "detail": {
+       "summary": "The wrap is a headline digest. It pairs strong September credit growth with the Business Standard view that an RBI rate hike may slow H2 growth. It also lists the RBI's FERR clarification for banks, record bank deposits and August's current account deficit.",
+       "points": [
+        "Bank credit +19.4% in Sep",
+        "Bank deposits hit a record $3 trillion on dollar deposits scheme",
+        "RBI: banks must hold 20% FERR over and above CRR",
+        "Current account deficit $5.2bn in Aug",
+        "Net direct tax collections +13% to Rs13.38 lakh cr till Oct 14"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Polycab 2QFY27 beat: W&C volume +6-7% vs 3-4% in 1Q, EBITDA +39% yoy; Kotak lifts FV to Rs8,500 but stays REDUCE on competition.",
+      "source": "Kotak — [Kotak] Polycab (CMP: Rs8,207, FV: Rs8,500, REDUCE): Strong quarter",
+      "received": "06:54",
+      "detail": {
+       "summary": "Polycab beat on every line, with sales up 53% to Rs99bn and EBITDA about 15% ahead. Kotak raises FY27E EPS 6% and FV to Rs8,500 but keeps REDUCE. Its worry is that a new entrant lifts competition and hits W&C margins once yoy price inflation fades.",
+       "points": [
+        "Sales +53% yoy to Rs99bn, ~9.7% beat",
+        "W&C sales +47%; volume +6-7% vs 3-4% in 1Q",
+        "EBITDA margin 14.4%, down 140bps yoy; KIE expected 13.7%",
+        "FMEG +120% yoy; EBIT margin 10.1% vs KIE 6%",
+        "FY27E EPS +6%; FV 31x Dec-28E PE (32x earlier)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CEAT 2QFY27 EBITDA margin 9.6%, 90bps above consensus; RM basket +8-9% qoq, more price hikes from October; CLSA cuts FY27/28 EPS 14%/12%.",
+      "source": "CLSA — CEAT (CEAT IN): Riding on commodity inflation cycle",
+      "received": "06:34",
+      "detail": {
+       "summary": "CEAT's margin beat came from timely price hikes; the 1HFY27 hikes of 12-13% in replacement fell short of 23-24% commodity inflation. Management sees another ~3% input rise in 3Q and has hiked again from October, expecting flat gross margin. CLSA cuts EPS but keeps its Rs3,979 target.",
+       "points": [
+        "Consolidated EBITDA margin 9.6%, +114bps qoq",
+        "Standalone revenue +23% yoy; volume +10%",
+        "Price hikes: 12-13% replacement, 14-15% OEM vs 23-24% inflation",
+        "2HFY27 volume guide mid-single-digit vs 10% in 2Q",
+        "Camso customer transition 85% done; TP Rs3,979 unchanged"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Hyundai to invest Rs110bn at its Pune plant and Toyota to add 100k units of annual capacity at Karnataka from early 2027.",
+      "source": "Kotak — Kotak Auto News: Toyota Glanza Facelift Launched in India at Rs699k; Hyundai Motor India to invest Rs110 bn at Pune plant; Toyota to add annual capacity of 100k units at Karnataka plant from early 2027 (+4 more in Outlook)",
+      "received": "09:12",
+      "detail": {
+       "summary": "Kotak's daily auto news roundup is headlines only. India items include the Hyundai and Toyota capacity plans, a CEAT loan-to-equity conversion tied to Camso integration, and BS-VII norms reported from April 2029 in three phases. Global items cover Stellantis-Leapmotor EVs and GM China sales.",
+       "points": [
+        "Hyundai Motor India: Rs110bn at Pune plant",
+        "Toyota Kirloskar: +100k units/yr at Bidadi from early 2027",
+        "Glanza facelift launched at Rs699k",
+        "CEAT converts USD24.5mn loan to equity; Camso at 85% migration",
+        "BS-VII reported from April 2029 in 3 phases"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "TSMC says AI demand shows no slowdown, keeps 2026 capex at US$60-64bn; CLSA sees 2027 capex at US$80bn with upside, calls 16.8x PE cheap.",
+    "source": "CLSA — TSMC (2330 TT): Sober enthusiasm"
+   },
+   {
+    "text": "Semis, neoclouds and momentum L/S were heavy on 15-Oct; software beat semis by 2.6%, and AI/semis trimming was passive and orderly.",
+    "source": "JPM — Overnight Brief 10/16: the rotation out of tech extends"
+   },
+   {
+    "text": "JPM lifts Google Cloud 3Q growth to +100% yoy on TPU sales; AWS raised GPU reserve pricing 15% from Oct 7, fourth straight quarterly hike.",
+    "source": "JPM — Overnight Brief 10/16: US Internet Pre-3Q Earnings Estimate Revisions"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Investor day (15 Oct): revenue targets read as easing AI-deflation fears and supporting a growth-acceleration case (UBS via MT Newswires; BofA India IT read-across, 15 Oct)."
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

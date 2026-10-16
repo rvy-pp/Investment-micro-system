@@ -1,0 +1,178 @@
+{
+ "date": "2026-10-16",
+ "fetched_at": "2026-10-16T08:12:48",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-15",
+    "close": 7744.06,
+    "prev_date": "2026-10-14",
+    "chg_pct": 0.33
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-15",
+    "close": 26713.03,
+    "prev_date": "2026-10-14",
+    "chg_pct": 0.08
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-15",
+    "close": 52177.69,
+    "prev_date": "2026-10-14",
+    "chg_pct": 1.08
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-15",
+    "close": 11581.21,
+    "prev_date": "2026-10-14",
+    "chg_pct": -0.88
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-15",
+    "close": 217.23,
+    "prev_date": "2026-10-14",
+    "chg_pct": -1.84
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-15",
+    "close": 562.23,
+    "prev_date": "2026-10-14",
+    "chg_pct": -1.5
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-15",
+    "close": 422.25,
+    "prev_date": "2026-10-14",
+    "chg_pct": -1.8
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-15",
+    "close": 344.33,
+    "prev_date": "2026-10-14",
+    "chg_pct": -0.55
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-15",
+    "close": 224.92,
+    "prev_date": "2026-10-14",
+    "chg_pct": 4.63
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-15",
+    "close": 65.77,
+    "prev_date": "2026-10-14",
+    "chg_pct": 5.28
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture's Revenue Targets Ease AI Fears, Support Growth Outlook, UBS Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-15 18:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-apos-revenue-targets-ease-184420622.html"
+   },
+   {
+    "title": "Accenture Sees AI as Net Demand Driver, Targets Growth Acceleration, RBC Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-15 15:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-sees-ai-net-demand-151500694.html"
+   },
+   {
+    "title": "UBS Adjusts Price Target on Accenture to $278 From $275, Maintains Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-15 14:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/ubs-adjusts-price-target-accenture-143330588.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "TD Cowen Adjusts Price Target on Cognizant Technology Solutions to $60 From $54",
+    "publisher": "MT Newswires",
+    "when": "2026-10-13 11:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/td-cowen-adjusts-price-target-111753970.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "How Investors Are Reacting To NVIDIA (NVDA) AI Partnership Wave",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-16 02:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investors-reacting-nvidia-nvda-ai-021743091.html"
+   },
+   {
+    "title": "LITEON Showcases at NVIDIA MGX Ecosystem at OCP, Highlighting 800 VDC Power Technologies to Advance Next-Generation AI Infrastructure",
+    "publisher": "PR Newswire",
+    "when": "2026-10-16 02:16Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/liteon-showcases-nvidia-mgx-ecosystem-021600739.html"
+   },
+   {
+    "title": "Nvidia, Cisco Among Tech Firms Donating to Trump White House Ballroom",
+    "publisher": "MT Newswires",
+    "when": "2026-10-15 23:59Z",
+    "link": "https://finance.yahoo.com/technology/articles/nvidia-cisco-among-tech-firms-235948048.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stocks Fall 1.7% Although Cash Flow Covers Dividends Four Times",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-15 18:51Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-fall-1-7-185123562.html"
+   },
+   {
+    "title": "Broadcom CEO Hock Tan Echoes Warren Buffett in Warning About \"Casino\"-Like Investing",
+    "publisher": "Motley Fool",
+    "when": "2026-10-15 17:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-ceo-hock-tan-echoes-173700371.html"
+   },
+   {
+    "title": "I\u2019m Simply Not Worried About Broadcom\u2019s Multi-Segment Drag",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-15 16:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/m-simply-not-worried-broadcom-164534970.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23086.0,
+  "chg_pct": -0.12,
+  "stamp": "16-Oct-2026 08:12:14",
+  "expiry": "27-Oct-2026",
+  "volume": 1615,
+  "nifty_close": {
+   "close": 22997.350000000002,
+   "stamp": "15-Oct-2026 15:30"
+  },
+  "gap_pts": 88.6,
+  "gap_pct": 0.39
+ }
+}
