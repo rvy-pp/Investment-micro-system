@@ -1,0 +1,75 @@
+{
+ "date": "2026-10-12",
+ "generated_at": "2026-10-12T08:20:00",
+ "mail": {
+  "window": "24h to 08:05 IST",
+  "n_scanned": 67,
+  "sectors": [
+   {"sector": "Steel", "bullets": [
+    {"text": "India HRC rose INR700/t w-w to INR64,700/t, a four-year high, with spot margin ~INR39,110/t, up ~INR3,000/t vs 2QFY27; Nomura keeps Buy on Tata Steel, JSW, Jindal Steel.",
+     "source": "Nomura - India steel - Steel weekly trends (week ended 09 Oct 2026)", "received": "05:12",
+     "detail": {"summary": "Nomura says domestic flat and long steel are both rallying, and price hikes already taken more than absorb raw material inflation. It stays positive on the sector and on its three Buy-rated names.",
+      "points": ["Rebar +INR900/t w-w to INR63,800/t", "Flat-long spread narrowed to ~INR900/t", "Imported coking coal -USD3/t w-w to USD271/t", "Iron ore 62% Fe at USD87/t, lowest in CY26", "NMDC lumps +INR150/t to INR5,400/t from Sep-26"], "read": "body"}}]},
+   {"sector": "Cement", "bullets": [
+    {"text": "Emkay sees high probability of a Rs10-15/bag cement price hike from 12-Oct (Navratri); another ~Rs10/bag is needed to offset Rs300-400/t cost inflation.",
+     "source": "Emkay - Cement: Tempting valuations across pack; price hikes likely in Oct", "received": "21:33",
+     "detail": {"summary": "Emkay's channel checks point to an October hike on busy-season demand and a favourable demand-supply balance. The Sep-26 hike worked, but costs have run ahead of price, so another hike is what the street needs.",
+      "points": ["Sep-26 hike Rs5-7/bag trade, Rs10-20 non-trade", "2Q earnings seen down Rs200-250/t sequentially", "Petcoke ~$175/t, imported coal ~$150/t, both ~16-20% above 2Q average", "Flat operating costs q-q expected in 3QFY27"], "read": "body"}},
+    {"text": "BofA cuts FY27 EBITDA 4-16% across cement coverage as fuel costs now seen extending into 3Q; Buy UltraTech, Rs1,200/t EBITDA/t in FY28.",
+     "source": "BofA Global Research - Cement - India: Demand holds, costs bite; waiting for the turn", "received": "03:18",
+     "detail": {"summary": "BofA had expected the West Asia-driven fuel cost peak in 2Q, but the conflict now pushes pressure into Dec quarter and possibly CY27. Demand remains healthy, so UltraTech stays the top pick on pan-India presence and capacity additions.",
+      "points": ["Brent above $100/bbl vs $70-75 in July", "Petcoke $170-175/t vs below $120 pre-conflict", "2Q volume growth high-single digit; FY27 demand estimate 6.5%", "Stocks down 15-30% since Mar-26", "UltraTech volume CAGR 11% over FY27-28"], "read": "body"}},
+    {"text": "Emkay's top picks are UltraTech, JSW Cement and Dalmia Bharat, with Shree and Ambuja tactical Buys; UltraTech at ~14x 1-year-forward EV/EBITDA, a Russia-Ukraine-trough multiple.",
+     "source": "Emkay - Cement: Tempting valuations across pack; price hikes likely in Oct (+1 more in Outlook)", "received": "21:33",
+     "detail": {"summary": "Emkay lowered valuation multiples but kept earnings broadly intact, so it still sees 10-35% average upside. It argues the street has not priced the October hikes or 2HFY27 operating leverage.",
+      "points": ["JSW Cement upgraded to BUY from Reduce", "Ramco Cements upgraded to ADD from Sell", "Universe trades below 5Y -1SD 1-year-forward EV/EBITDA", "Demand CAGR ~7% over FY26-28E"], "read": "body"}}]},
+   {"sector": "Mining", "bullets": [
+    {"text": "Power-plant coal stock fell to 21MT (7 days) in Sep-26 vs 46MT yoy, -54%; thermal PLF 68%, +646bps yoy - supportive for Coal India offtake.",
+     "source": "Avendus Spark - India Power Sector Round up for September 2026", "received": "06:48",
+     "detail": {"summary": "Power demand is running hot on a low base, with shortages concentrated in non-solar hours and exchange prices sharply higher. Plant coal stocks are drawn down well below last year, while Avendus expects demand to stay strong with El Nino and a low FY26 base.",
+      "points": ["Peak demand +17% yoy, consumption +11% in Sep-26", "Peak shortage ~5GW, high of ~7.7GW on 9-Sep", "IEX avg DAM price Rs7.3/unit, +105% yoy", "Gas PLF 27% vs 17% yoy", "Thermal PLF 68%, +646bps yoy"], "read": "body"}},
+    {"text": "BofA copper-supply call today at 9PM HKT (6:30PM IST), titled 'Extreme tightness in copper mine supply' - relevant to Hindustan Copper.",
+     "source": "BofA Corp Access - China Consumer Golden Week takeaways, Glencore teach-in, Global copper mine supply", "received": "07:09"}]},
+   {"sector": "IT / AI-tech", "bullets": [
+    {"text": "Persistent secured 94.04% of Nagarro, above the 90% squeeze-out threshold; Kotak keeps BUY, FV Rs6,250 (30x Sep-28E), CMP Rs5,770.",
+     "source": "Kotak - Persistent Systems (CMP: Rs5,770, FV: Rs6,250, BUY): Near-full ownership to accelerate integration", "received": "07:40",
+     "detail": {"summary": "Acceptance beyond 90% gives Persistent more room to integrate, reorganise and allocate capital, and it removes the earlier two-year DPLTA constraint. Kotak argues this raises the odds of realising the Nagarro synergies, and it leaves its target and rating unchanged.",
+      "points": ["Stake 94.04% on Oct 6 vs 83.25% after initial period", "Additional acceptance period added 10.79%", "Closing expected by end-FY2027; UK, Austria, Spain, RBI approvals pending", "Combined ~27% EPS CAGR FY27-29E vs ~20% standalone", "Trades at 25x FY29E pro forma EPS"], "read": "body"}}]},
+   {"sector": "Macro & strategy", "bullets": [
+    {"text": "RBI weekend: CRR maintenance 90% to 99% from 16 Oct, Rs250bn OMO sale on 13 Oct, OMC dollar window; CLSA sees INR towards 95 from 96.70.",
+     "source": "CLSA - India economics: More liquidity and FX measures", "received": "04:26",
+     "detail": {"summary": "The RBI is using liquidity absorption and FX curbs together to defend the rupee. CLSA expects near-term INR support but calls the steps a band-aid. Flows, crude and the FY28 BoP outlook return as drivers after a few weeks.",
+      "points": ["CRR maintenance 90% to 99% from fortnight of 16 Oct", "FERR 20% on importer hedges above US$2m", "Derivative threshold without underlying cut to US$5m from US$100m", "FX reserves US$735bn, about US$50bn below early-Sep peak", "10-year yield may break 7.30%; CRR hike not ruled out"], "read": "body"}},
+    {"text": "RBI's OMC dollar window removes US$10-12bn monthly spot demand; Kotak sees USD-INR below 95 and over Rs1.5tn monthly durable liquidity drain.",
+     "source": "Kotak - Economy: INR: A few more steps to curb depreciation bias", "received": "07:56",
+     "detail": {"summary": "Kotak argues the FX and derivatives measures put a near-term floor under INR, while the liquidity steps keep draining the banking system. Medium-term BoP stays at risk because basic balance is weak and flow-dependent.",
+      "points": ["OMC window drains about Rs1tn a month of liquidity", "FERR could lock Rs400-500bn; hedging cost up 1-1.5%", "INR floor around 97; FY27E USD-INR average held at 95.1", "Higher daily CRR likely aligns call rate with repo", "Narrow spread over global yields weighs on FPI flows"], "read": "body"}},
+    {"text": "MPC hiked repo 25bp to 5.5% and moved to calibrated tightening; UBS expects 50-75bp cumulative, next 25bp in December, FY27 GDP raised to 7.2%.",
+     "source": "UBS - what's trending in India's macro (+6 more in Outlook)", "received": "15:08",
+     "detail": {"summary": "UBS expects real policy rates to turn negative as inflation accelerates, forcing further tightening. It sees activity momentum strong now but growth softening in 2HFY27 on external headwinds.",
+      "points": ["Repo 5.5%, stance changed to calibrated tightening", "Cumulative hike cycle 50-75bp; next 25bp in December", "India-CEI up 0.7% MoM in August after 0.4% in July", "FY27 real GDP forecast raised 20bp to 7.2% YoY"], "read": "body"}}]},
+   {"sector": "Other coverage-adjacent", "bullets": [
+    {"text": "DMart 2Q miss: BofA cuts PO to Rs3,730 from Rs4,120, EPS 3-7%, stays Neutral; Emkay SELL, TP Rs3,300; stock at Rs3,517.",
+     "source": "BofA - DMART IN: Avenue Supermarts: Disappointing 2QFY27 earnings; Lowering estimates and PO - reiterate Neutral (+7 more in Outlook)", "received": "04:04",
+     "detail": {"summary": "Revenue held up on better like-for-like growth, but gross margin, opex and capital costs ate the flow-through. BofA sees valuation capped by slower earnings growth, ongoing investment and quick-commerce competition.",
+      "points": ["Revenue +18% YoY, EBITDA +14%, EPS +7%", "LFL growth 9.5%; gross margin -10bps YoY", "Bill cuts +c.14% vs store count +c.20%", "Short-term borrowings and inventory up; FY27E FCF negative", "Revenue estimates cut 1%, EPS cut 3-7%"], "read": "body"}},
+    {"text": "Lenskart: Alpha Wave selling up to US$175mm (INR 16,907mm, 1.6% of shares) in a block today at a INR 640 floor, 5.56% below close.",
+     "source": "Avendus ECM - REVISED UPSIZED TERMSHEET: GREENSHOE EXERCISED, AVENDUS LAUNCHES US$175MM (INR 16,907 MM) BLOCK DEAL IN LENSKART SOLUTIONS", "received": "19:45",
+     "detail": {"summary": "Revised terms raise the vendor sale to a 100% secondary block after the greenshoe was exercised. Books close 7:30am IST on 12 October with no pricing guidance until the shares cross on the exchanges.",
+      "points": ["Floor INR 640 vs INR 677.65 close on 9 Oct", "Base US$100mm (c.15.1mn shares) plus US$75mm upsize", "Total up to c.26.4mn shares, c.1.6% of shares outstanding", "Trade 12 Oct, settlement 13 Oct; 30-day lock-in"], "read": "body"}},
+    {"text": "Zetwerk Manufacturing IPO launched: INR 50,123mm (US$519mm) at INR 143-151 band, INR 28,300mm fresh issue, with proceeds mainly repaying debt.",
+     "source": "Avendus ECM - LAUNCHES IPO OF ZETWERK MANUFACTURING BUSINESSES (INR 50,123.3 MM/US$ 518.8 MM)", "received": "07:32",
+     "detail": {"summary": "The offer combines a fresh issue and a selling-shareholder sale of INR 21,823mm. Proceeds go to repaying borrowings of the company and subsidiaries, plus unidentified acquisitions, which makes it a supply and deleveraging event.",
+      "points": ["Post-money market cap at upper end c.US$2.79bn (fully diluted)", "Offer c.18.6% of fully diluted shares", "Anchor portion up to INR 22,512mm", "Fresh INR 28,300mm; offer for sale INR 21,823mm"], "read": "body"}}]}
+  ],
+  "quiet": ["Non-ferrous (aluminium/zinc)", "EMS"]
+ },
+ "global": {
+  "ai_semis": [
+   {"text": "GS: AI stocks sold off on FT's OpenAI ~$50bn ARR vs $68-70bn cited; Oracle 5y CDS record 261bp, Broadcom 136bp.", "source": "GS - Asia Internet and Consumer | AI Portfolio and Talking Points"},
+   {"text": "JPM: HFs net sold Semis most of any industry in N. America (-1.5z) and EMEA (-3z), yet Semis remain a top-2 net exposure everywhere.", "source": "JPM - JPM Overnight Brief! 10/12 - buy Banks, sell Semis"},
+   {"text": "BOCI: Meta reportedly shelved renting AI compute to Anthropic; Nvidia reportedly to invest in d-Matrix; Omdia sees Q3 PC shipments -21%.", "source": "BOCI - BOCI TMT Daily (12 Oct)"}
+  ],
+  "bellwethers": [{"name": "Accenture", "reason": null}, {"name": "Cognizant", "reason": null}]
+ }
+}

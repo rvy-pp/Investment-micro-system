@@ -1,0 +1,381 @@
+{
+ "date": "2026-09-22",
+ "generated_at": "2026-09-22T08:16:43",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 77,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Vedanta board approves raising NCDs worth Rs 35bn, per BSE filing dated 21-Sep.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:05",
+      "detail": {
+       "summary": "Vedanta's board approved raising non-convertible debentures worth Rs 35bn, per a BSE corporate filing linked in the digest. No tenor, coupon or use-of-proceeds detail is given in the mail itself.",
+       "points": [
+        "Rs 35bn NCD raise approved",
+        "Board approval, per BSE filing",
+        "Tenor/coupon not stated in digest"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "EU draft proposal would bar India from importing metal scrap, including aluminium, from May 2027.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:05",
+      "detail": {
+       "summary": "A reported EU proposal would restrict India's imports of metal scrap, including aluminium, starting May 2027, per a linked Moneycontrol article. No volume or price impact is quantified in the digest.",
+       "points": [
+        "May 2027 proposed start date",
+        "Covers aluminium scrap imports",
+        "EU proposal, not yet enacted"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "HRC-Patra spread widens 7.5% WoW to INR12,461/ton, above the 3-month average INR11,634; HRC +3%, Patra +2%.",
+      "source": "Nuvama - HRC-Patra spread widens by 7.5% WoW to INR 12,461/ton",
+      "received": "10:58",
+      "detail": {
+       "summary": "Nuvama's weekly tracker shows the HRC-Patra spread widening to INR12,461/ton, above its 3-month average of INR11,634, as HRC's 3% WoW rise outpaced Patra's 2%. Over three months Patra gained more (+13% vs HRC +9%). Called negative for low-end HRC-based pipe makers.",
+       "points": [
+        "HRC INR63,461/ton, +3% WoW, +9% over 3 months",
+        "Patra INR51,000/ton, +2% WoW, +13% over 3 months",
+        "Spread INR12,461/ton, +7.5% WoW vs INR11,634 3-month avg",
+        "Negative for HRC-based pipe manufacturers, low-end especially"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Calcutta HC protects Tata Steel's Rs2,970cr SDF deposit pending appeal, per BSE filing.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:05",
+      "detail": {
+       "summary": "Kotak's daily news roundup links a BSE corporate filing showing the Calcutta High Court has protected Tata Steel's Rs2,970 crore Special Deposit Fund liability from enforcement pending the company's appeal.",
+       "points": [
+        "Rs2,970cr SDF deposit protected",
+        "Protection holds pending Tata Steel's appeal",
+        "Sourced via linked BSE corporate filing"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Steel seeks fresh UK government funding as Port Talbot faces delays, per a 19-Sep report.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:05",
+      "detail": {
+       "summary": "Kotak's roundup links a Business Today report (19-Sep-2026) that Tata Steel is seeking additional UK government funding as its Port Talbot furnace project runs behind schedule. No quantum is given.",
+       "points": [
+        "Port Talbot delayed, per 19-Sep report",
+        "Fresh UK government funding sought",
+        "No financial figures in the linked headline"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Petcoke and thermal coal up ~20% since July-end; MS sees Rs150-200/t cost inflation needing Rs10-15/bag hikes.",
+      "source": "Morgan Stanley - IDEA: India Materials: Cement: Renewed risks of cost inflation",
+      "received": "12:31",
+      "detail": {
+       "summary": "MS argues cement faces a renewed higher-for-longer cost cycle: petcoke and thermal coal are up ~20% since July-end as the inventory buffers that cushioned 1Q/2Q run out, while monsoon ~15% below normal risks rural demand into 4QFY27. Absent Rs10-15/bag of hikes it flags 3QFY27 downgrade risk.",
+       "points": [
+        "Petcoke and thermal coal +~20% since July-end",
+        "Rs150-200/t power and fuel cost inflation in 2Q-3Q",
+        "Needs Rs10-15/bag pan-India hikes over 2-3 months",
+        "Rainfall ~15% below LTA as of 20-Sep",
+        "OW UltraTech, EW Ambuja, UW Shree/Dalmia/ACC; stocks -14% YTD"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Morgan Stanley upgrades Coal India to Overweight from Equal-weight, PT Rs420 to Rs480, on a ~20% FY27 EPS upgrade.",
+      "source": "Morgan Stanley - IDEA: Coal India: Earnings upgrades in sight; upgrade to OW",
+      "received": "19:08",
+      "detail": {
+       "summary": "MS upgrades Coal India to Overweight, PT to Rs480 from Rs420, arguing accelerating thermal demand, five-year-low plant inventories and rising global thermal coal prices set up both volume growth and e-auction premium expansion, driving a ~20% FY27 EPS upgrade.",
+       "points": [
+        "Rating Equal-weight to Overweight; PT Rs420 to Rs480",
+        "~20% upgrade to FY27 EPS estimate",
+        "59% e-auction bid premium in Aug-26 vs 41% in July",
+        "10ppt e-auction premium rise lifts EPS ~6%",
+        "~6.6x one-year forward P/E, near long-term average"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS tactical idea puts 80%+ probability on Coal India rising over the next 30 days.",
+      "source": "Morgan Stanley - IDEA: Coal India Limited (COAL.NS): Research Tactical Idea",
+      "received": "08:03",
+      "detail": {
+       "summary": "A same-desk follow-up assigns an 80%+ subjective probability that Coal India rises in absolute terms over 30 days, citing accelerating September thermal demand, five-year-low plant inventories and rising global thermal coal prices as the near-term catalysts.",
+       "points": [
+        "80%+ probability of a 30-day share price rise",
+        "~20% YoY Sept MTD demand vs ~12% in Aug",
+        "~7 days plant inventory, lowest in five years",
+        "~20% rise in global thermal coal since end-July",
+        "~6.6x forward P/E, near 8-year average"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "65 of 168 domestic power plants at critical coal stock as demand surges and hydro generation falls 15% YoY.",
+      "source": "IIFL - India Energy Transition: Power DS Tracker (1-19 Sep) (+1 more in Outlook)",
+      "received": "21:07",
+      "detail": {
+       "summary": "IIFL's tracker for 1-19 Sep finds strong demand and weaker hydro accelerating coal inventory depletion, pushing a large share of plants to critical stock while coal offtake and coal-fired generation both pick up sharply. A read-across to Coal India's dispatch and pricing environment.",
+       "points": [
+        "65 of 168 plants at critical coal stock",
+        "7 days non-pithead inventory, down from 10",
+        "13% YoY coal offtake growth in Sept MTD",
+        "18% YoY rise in coal-fired generation",
+        "Hydro generation -15% YoY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kaynes capitalised Rs461mn borrowing costs plus Rs517mn know-how, 19.4% of FY26 PBT; core EMS ex-meters grew just 3%.",
+      "source": "Kotak (ESG) - Kaynes Technology: FY2026 Annual Report analysis",
+      "received": "17:13",
+      "detail": {
+       "summary": "Kotak's FY26 annual-report analysis argues Kaynes' reported growth and margins are flattered by accounting choices: capitalised borrowing costs and technical know-how together supported a fifth of PBT, while the smart-meter JV rather than core EMS drove most of the EBITDA gain. Operating cash flow turned sharply negative.",
+       "points": [
+        "19.4% of FY26 PBT from capitalised borrowing costs and know-how",
+        "Core EMS ex-smart-meters revenue +3% YoY only",
+        "Smart-metering ecosystem ~43% of FY26 EBITDA",
+        "Operating cash flow -Rs6.0bn vs -Rs0.8bn in FY25",
+        "Cash conversion cycle 226 days, from 157"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kaynes contingent liabilities jump to Rs32.4bn, 68% of net worth, from Rs5.2bn, mostly OSAT/PCB guarantees.",
+      "source": "Kotak (Sales) - Kaynes - More of the same",
+      "received": "21:11",
+      "detail": {
+       "summary": "The companion sales note on the same annual-report analysis flags that receivable discounting and supplier financing are rising fast, pushing effective funding obligations well beyond reported debt, while August Electronics' FY26 PAT contribution is largely absorbed by intangible amortisation.",
+       "points": [
+        "Contingent liabilities Rs32.4bn, 68% of net worth (FY25: 18%)",
+        "Corporate guarantees Rs23.9bn vs Rs2.1bn in FY25",
+        "Bills discounted Rs4.6bn vs Rs1.1bn in FY25",
+        "Effective tax rate 27.8%, up from 21.0%",
+        "~Rs31bn capex pipeline yet to execute, ex-subsidies"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama puts Syrma, Kaynes and Dixon US tariff exposure under 3-4% of sales; Avalon a possible US-manufacturing beneficiary.",
+      "source": "Nuvama Daily - Actionables: Trump potential tariff impact",
+      "received": "08:08",
+      "detail": {
+       "summary": "Nuvama's tariff read-across ranks EMS exposure as small: most names have limited direct US export sales, with Syrma, Kaynes and Dixon flagged as the relatively higher but still low exposure. Avalon's US manufacturing footprint is floated as a partial offsetting beneficiary, unquantified.",
+       "points": [
+        "Syrma, Kaynes, Dixon US exposure under 3-4% of total sales",
+        "Avalon has US manufacturing presence",
+        "Framed as limited relative benefit, not quantified upside",
+        "Sector-wide EMS tariff impact called small vs other sectors"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA: 2Q27 demand commentary weakest at Infosys and Wipro, most resilient at HCLTech; FY27 EPS risk skewed down.",
+      "source": "CLSA - India IT: 2Q27 demand remains challenging",
+      "received": "21:17",
+      "detail": {
+       "summary": "CLSA's checks into the silent 2Q27 period find management demand commentary cautious across the board, with weak macro hitting discretionary spend hardest at Infosys and Wipro while HCLTech remains most resilient. Ratings unchanged, but the risk to FY27 EPS is skewed down.",
+       "points": [
+        "Nifty IT at 15% discount to Nifty vs 10-yr 10% premium",
+        "32% discount to Nasdaq vs 10-yr average 15% discount",
+        "BFSI demand resilient despite BofA/GS trading revenue warnings",
+        "TCS headcount grew sequentially; order books largely stable"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge (CLSA O-PF): AI-agent delivery pivot, two new independent directors and Encora synergies named as rerating catalysts.",
+      "source": "CLSA India Research pack - Coforge analyst meeting (18-Sep)",
+      "received": "09:00",
+      "detail": {
+       "summary": "CLSA hosted a Coforge analyst meeting on 18-Sep where management detailed a shift to AI-agent delivery, deeper front-end engineering talent and outcome-based pricing. Two new independent directors and Encora revenue synergies are named as the next rerating catalysts; O-PF maintained.",
+       "points": [
+        "18-Sep-2026 virtual analyst meeting on AI strategy",
+        "Two new independent directors expected within months",
+        "Encora revenue synergies flagged as estimate upside risk",
+        "O-PF rating maintained, no target change stated"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Anthropic-Accenture $1bn-each AI-safety evaluator team, announced 18-Sep, flagged as a governance opening for six Indian IT names.",
+      "source": "BNP Paribas - India Quick Notes (+2 more in Outlook)",
+      "received": "09:07",
+      "detail": {
+       "summary": "Anthropic and Accenture announced on 18-Sep a jointly-funded team of embedded evaluators to test AI model safety, each investing $1bn over five years. BNPP frames this as a governance-services opportunity for Indian IT rather than a demand call on any single name.",
+       "points": [
+        "18-Sep-2026 announcement date",
+        "$1bn committed by each company over five years",
+        "Named: TCS, Infosys, HCLTech, TechM, Persistent, Coforge",
+        "Framed as governance opportunity, no rating or estimate change"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Brent fell 3.6% to $100.10/bbl (WTI -4.9%) after Trump held off Houthi strikes, reviving de-escalation hopes.",
+      "source": "JPM - Overnight Brief 9/22",
+      "received": "04:43",
+      "detail": {
+       "summary": "JPM's overnight wrap says global stocks rose 0.9% as crude sold off nearly 5% intraday on reports Trump called off Houthi airstrikes and on diplomatic optimism into the UN General Assembly, while Fed's Musalem and Goolsbee struck hawkish tones on further hikes.",
+       "points": [
+        "Brent -3.6% to $100.10/bbl; WTI -4.9% to $95.43",
+        "10Y Treasury yield -5bp to 4.95% on the oil move",
+        "Musalem and Goolsbee both flagged more hikes needed",
+        "S&P 500 +1.5%, Nasdaq 100 +2.8%, Meta +11.4%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNPP: Brent above $100 and US 10Y near 5% leave RBI less room to hold; INR off over 1%, FII selling resumed.",
+      "source": "BNPP - India Strategy: Rate Hike Odds Increase",
+      "received": "09:07",
+      "detail": {
+       "summary": "BNPP argues India's macro is weakening: Mid-East escalation had pushed Brent back above $100 with US 10Y yields near 5%, India's 10Y has breached 7%, and FX reserves rest partly on reversible FCNR inflows. The note predates the overnight crude sell-off above.",
+       "points": [
+        "Brent above $100/bbl; US 10Y near 5%",
+        "INR depreciated over 1% in the past two weeks",
+        "India 10Y yield breached 7%; FII selling resumed",
+        "FX reserves ~$800bn, incl. $127bn reversible FCNR deposits"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs net sold $229mn of single-stock futures; Nifty support 23,000, resistance 23,600-23,800.",
+      "source": "Kotak - Positioning Daily",
+      "received": "08:39",
+      "detail": {
+       "summary": "Kotak's positioning note says sentiment stays bearish but oversold conditions offer support, with DIIs the main buying source as retail slows. The Nifty is rangebound between a critical 23,000 support and a 23,600-23,800 hurdle.",
+       "points": [
+        "FIIs sold $229mn in single-stock futures",
+        "FIIs bought $63mn index futures, $28mn other index",
+        "DIIs the primary buying support; retail buying slowed",
+        "Nifty support 23,000; resistance 23,600-23,800"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak initiates INDO-MIM at REDUCE, FV Rs1,110 vs CMP Rs1,161, on 37x FY29E EPS and 24% five-year revenue CAGR.",
+      "source": "Kotak - INDO-MIM initiation (REDUCE)",
+      "received": "21:09",
+      "detail": {
+       "summary": "Kotak initiates on INDO-MIM, the global metal-injection-moulding leader at ~6.8% share, with REDUCE: strong multi-vector growth across MIM, casting, machining, aerospace and consumer electronics is already in the price against its DCF-based fair value.",
+       "points": [
+        "FV Rs1,110 vs CMP Rs1,161, 4% downside",
+        "37x P/E on Mar-2029E earnings, DCF basis",
+        "Revenue CAGR 24%/20% over next 5/10 years",
+        "EBITDA margin ~28%, seen broadly stable",
+        "Global MIM market share ~6.8%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "China's NEV penetration reached ~64% and exports 37% of shipments; Elara reiterates Sona BLW Buy.",
+      "source": "Elara - Auto Ancillaries: Electrification gaining pace globally",
+      "received": "08:44",
+      "detail": {
+       "summary": "Elara's Global Auto Volume Tracker finds EV penetration broadening worldwide despite soft passenger-vehicle volumes, with China's export push accelerating against weak domestic demand. It stays selective on India-listed plays exposed to the shift.",
+       "points": [
+        "China NEV penetration ~64% (BEV 43.5%, PHEV 20.6%)",
+        "Europe BEV share 24%, US only 5.7%",
+        "China exports ~37% of total shipments YTD",
+        "Sona BLW Buy, preferred structural EV name",
+        "SAMIL Sell; JLR (Tata Motors PV) Reduce reiterated"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "AMD +9.95% and the SOX +4.29% as Meta's Muse AI launch drove fresh chip-demand bets.",
+    "source": "Stocktwits - ARM, Intel, AMD Surge As Meta's Muse AI Fuels Fresh Chip Demand Bets"
+   },
+   {
+    "text": "Nasdaq +2.26% led by Meta +11.4%; the 10Y fell 5bp to 4.95% as crude sold off.",
+    "source": "JPM - Overnight Brief 9/22"
+   },
+   {
+    "text": "Broadcom +1.41% with AI chip revenue targeted at $21.7bn; Nvidia +2.30%, TSMC ADR +2.41%.",
+    "source": "GuruFocus - Broadcom Edges Higher as AI Chips Target $21.7 Billion"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

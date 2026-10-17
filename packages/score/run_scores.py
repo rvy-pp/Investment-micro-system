@@ -301,8 +301,19 @@ def score_one_date(conn, as_of: str, sha: str,
             elif pct is not None and r["coverage_ok"]:
                 s = to_score(pct, k, form, p)
                 parts["economics"] = s
+                # d_ebitda_per_t is PERSISTED from 2026-09-23. The Pair tab
+                # plots it instead of the score on the economics pillar (PM:
+                # "give raw ebitda/t. Scores make no sense to me"), and the
+                # bridge already computes it against the co-product basis —
+                # SAIL's 16.64mt, not whichever output leg is listed first.
+                # Stored rows before this date carry only d_ebitda_cr, so
+                # tape.py derives the whole series from that instead; see the
+                # note there for why one basis beats a mixed one.
                 put(conn, as_of, eid, "economics", s, pct,
                     {"d_ebitda_cr": round(r["d_ebitda_cr"], 1),
+                     "d_ebitda_per_t": (round(r["d_ebitda_per_t"], 1)
+                                        if r.get("d_ebitda_per_t") is not None
+                                        else None),
                      "priced": f"{r['n_priced']}/{r['n_total']}"}, None, sha)
             else:
                 put(conn, as_of, eid, "economics", None, pct, None,

@@ -1,0 +1,86 @@
+{
+  "date": "2026-09-27",
+  "generated_at": "2026-09-27T08:10:00+05:30",
+  "mail": {
+    "window": "24h to 08:00 IST (Sunday; Saturday mail only)",
+    "n_scanned": 7,
+    "sectors": [
+      {"sector": "Non-ferrous", "bullets": [
+        {"text": "NALCO on PhillipCapital's F&O weekly breakout list: +2.3% on the week, volume 50% above average.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26",
+         "detail": {"summary": "Weekly technical screen of F&O names by price and volume. Metals had 3 of 10 F&O names breaking out and none breaking down, while the Nifty logged an eighth straight weekly decline.",
+                    "points": ["NATIONALUM +2.34% price, +50.3% volume", "Metals: 3/10 breakouts, 0/10 breakdowns", "Cement: 0/5 either way"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Steel", "bullets": [
+        {"text": "SAIL +4.3% and Jindal Steel +4.0% on the week, both on ~86% above-average volume: PhillipCapital F&O breakouts against a falling Nifty.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26",
+         "detail": {"summary": "Two of the four integrated mills screened as price-and-volume breakouts in a week the Nifty fell to ~23,140, its eighth consecutive weekly decline. The screen is technical only; no fundamental call attached.",
+                    "points": ["SAIL +4.33% price, +86.0% volume", "JINDALSTEL +4.05% price, +86.7% volume", "Nifty ~24,750 to ~23,140 on the week"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Mining", "bullets": [
+        {"text": "Coal India +4.0% on the week with volume 81% above average, a PhillipCapital F&O breakout.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26"}
+      ]},
+      {"sector": "EMS", "bullets": [
+        {"text": "Kotak: theoretical RM index for RACs, washers and refrigerators is up 44-51% y/y; LME copper +3% w/w, +61% y/y in rupees.",
+         "source": "Kotak - India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+         "received": "10:07",
+         "detail": {"summary": "Weekly durables wrap. Input inflation is still steep: copper, aluminium and HRC are all well up y/y. News flow points to premiumisation stalling, freight delays and a weak festive season for appliances. Whirlpool's promoter reportedly eyes a full exit.",
+                    "points": ["Copper / Al / HRC w/w: +3% / -2% / flat", "y/y: +61% / +32% / +30%", "RM index (RAC, washers, fridges, fans) +44-51% y/y", "Monsoon deficit 15% season-to-date", "Whirlpool +28% on the week"],
+                    "read": "body"}}
+      ]},
+      {"sector": "IT / AI-tech", "bullets": [
+        {"text": "OFSS -9.5% and Infosys -4.9% on the week: F&O breakdowns on above-average volume, per PhillipCapital.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26",
+         "detail": {"summary": "2 of 14 F&O IT names screened as breakdowns, with no breakouts in the sector.",
+                    "points": ["OFSS -9.47% price, +150.7% volume", "INFY -4.87% price, +73.5% volume", "IT: 0/14 breakouts, 2/14 breakdowns"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Macro & strategy", "bullets": [
+        {"text": "Nifty closed ~23,140, its eighth straight weekly fall; PhillipCapital sees RSI positive divergence and expects 23,000-22,900 to hold.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26",
+         "detail": {"summary": "Technical desk view: the index sits at support near the recent 23,029 low, and the daily RSI has not confirmed the lower low. They expect a recovery. Midcap 100 fell ~2% on the week.",
+                    "points": ["Week: ~24,750 to ~23,140", "Recent low 23,029", "Support 23,000-22,900", "Midcap 100 -2% w/w"],
+                    "read": "body"}},
+        {"text": "JPM expects no meaningful China property stimulus before National Day and forecasts 20-30% y/y sales decline next year.",
+         "source": "JPMorgan - Mainland China/HK Property: Top 3 Questions This Week",
+         "received": "10:57",
+         "detail": {"summary": "The sector rallied on talk of nationwide mortgage subsidies before 1 October. JPM's base case is no needle-moving stimulus: local subsidies are capped (Shanghai Rmb50K per unit) and tier-1 prices are stabilising. Hedge funds are selling strength. This is relevant to China steel and aluminium demand.",
+                    "points": ["Sector -13% after 28-Aug policy, then +4% to 23-Sep", "2027 China property sales forecast -20-30% y/y", "US 10Y cited at 5.2%, a new high"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Other coverage-adjacent", "bullets": [
+        {"text": "Ather -8.7% and Eicher -2.1% on the week: F&O breakdowns; Auto had 4 of 11 names breaking down and none breaking out.",
+         "source": "PhillipCapital - DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) - week ending 26 SEPT 2026",
+         "received": "14:26",
+         "detail": {"summary": "Auto was the weakest sector in the screen after New Economy. TMPV and Hyundai also broke down.",
+                    "points": ["ATHERENERG -8.72%, volume +72.7%", "EICHERMOT -2.08%, volume +56.1%", "TMPV -4.39%, HYUNDAI -4.25%"],
+                    "read": "body"}},
+        {"text": "Clean Max: Augment India selling up to 7.25% (Rs10.6bn) at a Rs1,250 floor, 10.3% below close; trades Monday 28-Sep.",
+         "source": "IIFL - DEAL LAUNCH ALERT: INR 10,628 MM Secondary Placement in Clean Max Enviro Energy Solutions Limited",
+         "received": "12:11",
+         "detail": {"summary": "100% secondary block by the vendor Augment India I Holdings, sold on screen, with IIFL as sole bookrunner.",
+                    "points": ["8,502,537 shares, ~7.25% of total", "Floor Rs1,250 vs Rs1,393.40 close (25-Sep)", "Books close ~08:00 IST 28-Sep; settles 29-Sep"],
+                    "read": "body"}}
+      ]}
+    ],
+    "quiet": ["Cement"]
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "SOX +1.41% Friday, led by Broadcom +0.70%; Nvidia and AMD each +0.22%, TSMC ADR -0.12%.", "source": "morning_markets (Yahoo closes, 2026-09-25)"},
+      {"text": "Bank of America raised its AMD price target.", "source": "Barchart headline"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

@@ -1,0 +1,251 @@
+{
+ "date": "2026-10-06",
+ "fetched_at": "2026-10-06T08:18:12",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-05",
+    "close": 7773.95,
+    "prev_date": "2026-10-02",
+    "chg_pct": 0.66
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-05",
+    "close": 27477.31,
+    "prev_date": "2026-10-02",
+    "chg_pct": 1.05
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-05",
+    "close": 51267.9,
+    "prev_date": "2026-10-02",
+    "chg_pct": 0.18
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-05",
+    "close": 13172.74,
+    "prev_date": "2026-10-02",
+    "chg_pct": 0.27
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-05",
+    "close": 238.9,
+    "prev_date": "2026-10-02",
+    "chg_pct": 2.12
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-05",
+    "close": 631.75,
+    "prev_date": "2026-10-02",
+    "chg_pct": -0.34
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-05",
+    "close": 485.8,
+    "prev_date": "2026-10-02",
+    "chg_pct": 2.75
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-05",
+    "close": 362.51,
+    "prev_date": "2026-10-02",
+    "chg_pct": 2.08
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-05",
+    "close": 195.05,
+    "prev_date": "2026-10-02",
+    "chg_pct": -1.94
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-05",
+    "close": 58.17,
+    "prev_date": "2026-10-02",
+    "chg_pct": -0.58
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "DA Davidson Adjusts Price Target on Accenture to $252 From $175, Keeps Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-05 12:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/da-davidson-adjusts-price-target-124542243.html"
+   },
+   {
+    "title": "Why Accenture (ACN) International Revenue Trends Deserve Your Attention",
+    "publisher": "Zacks",
+    "when": "2026-10-05 12:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-accenture-acn-international-revenue-121510547.html"
+   },
+   {
+    "title": "Berenberg Raises Price Target on Accenture to $235 From $220, Keeps Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-05 10:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/berenberg-raises-price-target-accenture-102932933.html"
+   },
+   {
+    "title": "Deutsche Bank Adjusts Price Target on Accenture to $200 From $175, Keeps Hold Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-05 10:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-100643003.html"
+   },
+   {
+    "title": "Is Accenture (ACN) Really Priced Like Its Best Days Are Over?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-04 17:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-really-priced-best-173337701.html"
+   },
+   {
+    "title": "Accenture vs. Microsoft: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-04 15:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-microsoft-technology-stock-155844224.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Launches New Business Unit to Provide AI Services for Emerging Businesses",
+    "publisher": "MT Newswires",
+    "when": "2026-10-05 13:18Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-launches-business-unit-ai-131823667.html"
+   },
+   {
+    "title": "Cognizant Launches Cognizant Activate to Bring Enterprise AI Transformation for Emerging Enterprises",
+    "publisher": "PR Newswire",
+    "when": "2026-10-05 12:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-launches-cognizant-activate-bring-120000865.html"
+   },
+   {
+    "title": "Is Cognizant\u2019s AI-Led Delivery Shift Altering The Investment Case For Cognizant Technology Solutions (CTSH)?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-04 19:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ai-led-delivery-shift-190859908.html"
+   },
+   {
+    "title": "Cognizant Set for Durable Growth as Margin Expansion Expected to Begin in Q4, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-02 15:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-set-durable-growth-margin-150618825.html"
+   },
+   {
+    "title": "Cognizant Schedules Third Quarter 2026 Earnings Release and Conference Call",
+    "publisher": "PR Newswire",
+    "when": "2026-10-02 12:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-schedules-third-quarter-2026-120000616.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dan Ives Says Nvidia Fuels AI Market, But What If It Has a Lehman Moment?",
+    "publisher": "BeInCrypto",
+    "when": "2026-10-06 02:38Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/dan-ives-says-nvidia-fuels-023821739.html"
+   },
+   {
+    "title": "Nvidia vs. Taiwan Semiconductor Manufacturing: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-06 00:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-vs-taiwan-semiconductor-manufacturing-000354806.html"
+   },
+   {
+    "title": "Dow Jones Futures: Nasdaq Hits Record Highs; TSMC, Nvidia, Elon Musk-Led SpaceX, Tesla Rally",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-05 22:35Z",
+    "link": "https://finance.yahoo.com/m/9c90b53b-8f8f-31da-a2bd-40e22a1f7b08/dow-jones-futures%3A-nasdaq.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Wall Street tests lender appetite with $60 billion Broadcom-Anthropic deal - FT",
+    "publisher": "Investing.com",
+    "when": "2026-10-05 21:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/wall-street-tests-lender-appetite-214705266.html"
+   },
+   {
+    "title": "Nvidia, Broadcom May Be Surprisingly Safe From a 32-GW Hole in the AI Boom, Morgan Stanley Says",
+    "publisher": "Benzinga Prediction Markets",
+    "when": "2026-10-05 18:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-broadcom-may-surprisingly-safe-185153456.html"
+   },
+   {
+    "title": "Why It\u2019s Time to Load Up on Broadcom Stock Before It Touches $523",
+    "publisher": "Barchart",
+    "when": "2026-10-05 17:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-time-load-broadcom-stock-173628173.html"
+   },
+   {
+    "title": "Taiwan Semiconductor Gains 2% to Record as Musk Confirms Early Terafab Talks; Broadcom Rises 2%, Qualcomm Pulls Back",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-05 17:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/taiwan-semiconductor-gains-2-record-170239669.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Chip Stocks Pause After Two-Day Pop. AMD Stock Gets Price-Target Hikes.",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-05 20:52Z",
+    "link": "https://finance.yahoo.com/m/07d008da-b90c-37c0-a2e6-660f1e8e1c0d/chip-stocks-pause-after.html"
+   },
+   {
+    "title": "BNP Paribas Revamps AMD Stock Target -- Sees 60% Upside on AI Boom",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-05 19:19Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bnp-paribas-revamps-amd-stock-191959150.html"
+   },
+   {
+    "title": "AMD Just Got a $700 Price Target as Wall Street Eyes Its Next AI Catalyst",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-05 17:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-just-got-700-price-175924293.html"
+   },
+   {
+    "title": "Cathie Wood Reworks Major Nvidia-AMD Position",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-05 17:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cathie-wood-reworks-major-nvidia-171840416.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22641.5,
+  "chg_pct": -0.07,
+  "stamp": "06-Oct-2026 08:17:50",
+  "expiry": "27-Oct-2026",
+  "volume": 1047,
+  "nifty_close": {
+   "close": 22555.75,
+   "stamp": "05-Oct-2026 15:30"
+  },
+  "gap_pts": 85.8,
+  "gap_pct": 0.38
+ }
+}

@@ -1,0 +1,119 @@
+{
+ "date": "2026-09-16",
+ "generated_at": "2026-09-16T08:09:05+05:30",
+ "mail": {
+  "window": "24h to 08:20 IST",
+  "n_scanned": 28,
+  "sectors": [
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM flags Kaynes may confirm the OSAT scale-up from 2.3bn to 8bn chips at SEMICON (17-19 Sep) - a capacity re-rating catalyst.",
+      "source": "J.P. Morgan - India EMS: Preview of the India SEMICON event this week",
+      "received": "00:18"
+     },
+     {
+      "text": "Kaynes' Sanand OSAT start slips to 3QFY27 on Mideast equipment and logistics delays, a timing risk not yet in numbers.",
+      "source": "J.P. Morgan - India EMS: Preview of the India SEMICON event this week",
+      "received": "00:18"
+     },
+     {
+      "text": "Syrma (tracked, unscored) may announce a chips-packaging entry at SEMICON; Kaynes could also reveal a Japanese equipment tie-up.",
+      "source": "J.P. Morgan - India EMS: Preview of the India SEMICON event this week",
+      "received": "00:18"
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA raises a board-independence governance flag on Coforge alongside a Rs2,170 target - a non-earnings catalyst on a covered IT name.",
+      "source": "CLSA - 1 Min Research (16 Sep) + HSTECH + China Auto + AI",
+      "received": "05:44"
+     },
+     {
+      "text": "Samsung reportedly quoted Apple 30-40% higher DRAM prices for 1Q27 with DDR5 at record highs - AI is tightening memory supply.",
+      "source": "BOCI - TMT Daily (16 Sep)",
+      "received": "07:00"
+     },
+     {
+      "text": "AT&T reportedly sizing AI-era network capex at $250bn, another leg of the buildout Indian IT services demand rides on.",
+      "source": "BOCI - TMT Daily (16 Sep)",
+      "received": "07:00"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Crude spiked 4.2% overnight to $108.64/bbl on Saudi cargo cancellations and Russian refinery strikes - INR and the cement/metals fuel stack both pressured.",
+      "source": "JPM - Overnight Brief 9/16: move higher in oil (+4.2% to $108.64/bbl)",
+      "received": "05:17"
+     },
+     {
+      "text": "Commodity open interest hit $2.1tn, a high since 2012 and energy-led - a broad positioning build, not an isolated oil spike.",
+      "source": "JPM - Overnight Brief 9/16: move higher in oil (+4.2% to $108.64/bbl)",
+      "received": "05:17"
+     },
+     {
+      "text": "NSE F&O contracts fell 18% MoM in August, turnover -17% to Rs1.8tn and an 18-month low on the CAS rollout - thinner derivatives liquidity.",
+      "source": "BofA - India Capital Market Watch: Subdued F&O activity, retail base expands",
+      "received": "01:05"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "NPCI's new UPI MDR framework drew three broker notes overnight; Emkay names Paytm and Pine Labs as the beneficiaries.",
+      "source": "Emkay - Internet: NPCI announces MDR on UPI - Paytm, Pine Labs to benefit (+2 more in Outlook)",
+      "received": "02:25"
+     },
+     {
+      "text": "Avendus Spark initiated IDFC First Bank at BUY (TP Rs107) and upgraded Five-Star Business Finance to BUY (TP Rs650).",
+      "source": "Avendus Spark - Research 16 September 2026: IDFC First Bank initiation, FIVESTAR upgrade",
+      "received": "06:33"
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "Cement",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX closed +0.40% - the AI complex steadied after the prior session's rotation, with AMD +2.2% the standout.",
+    "source": "morning_markets.py - Yahoo closes 2026-09-15"
+   },
+   {
+    "text": "Bank of America argues investors misread AMD; the stock added 2.19% into the note.",
+    "source": "TheStreet - Bank of America says investors get AMD stock wrong"
+   },
+   {
+    "text": "Broadcom fell 1.58% even as its CEO publicly reaffirmed the large AI growth target.",
+    "source": "GuruFocus - Broadcom CEO Doubles Down on Massive AI Growth Target"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "change_pct": -0.82,
+    "reason": "Agreed a $25m DOJ settlement over discrimination claims; Q4/FY26 results date also announced."
+   },
+   {
+    "name": "Cognizant",
+    "change_pct": -1.28,
+    "reason": null
+   }
+  ]
+ }
+}

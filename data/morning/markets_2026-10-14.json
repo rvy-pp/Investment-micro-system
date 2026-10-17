@@ -1,0 +1,203 @@
+{
+ "date": "2026-10-14",
+ "fetched_at": "2026-10-14T08:10:57",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-13",
+    "close": 7805.45,
+    "prev_date": "2026-10-12",
+    "chg_pct": -0.02
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-13",
+    "close": 27204.38,
+    "prev_date": "2026-10-12",
+    "chg_pct": -0.15
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-13",
+    "close": 51670.1,
+    "prev_date": "2026-10-12",
+    "chg_pct": -0.35
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-13",
+    "close": 12208.79,
+    "prev_date": "2026-10-12",
+    "chg_pct": -0.23
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-13",
+    "close": 228.52,
+    "prev_date": "2026-10-12",
+    "chg_pct": 0.97
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-13",
+    "close": 605.53,
+    "prev_date": "2026-10-12",
+    "chg_pct": 1.9
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-13",
+    "close": 445.12,
+    "prev_date": "2026-10-12",
+    "chg_pct": 0.17
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-13",
+    "close": 357.31,
+    "prev_date": "2026-10-12",
+    "chg_pct": 0.73
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-13",
+    "close": 213.56,
+    "prev_date": "2026-10-12",
+    "chg_pct": -0.61
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-13",
+    "close": 61.33,
+    "prev_date": "2026-10-12",
+    "chg_pct": 2.76
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Why Is Everyone Ignoring Accenture Stock's High Cash Yield?",
+    "publisher": "Trefis",
+    "when": "2026-10-13 23:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-everyone-ignoring-accenture-stocks-230558857.html"
+   },
+   {
+    "title": "Accenture (ACN) Deepens AI Push With New Deals And A Customer Data Buy",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-13 21:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-deepens-ai-push-211441147.html"
+   },
+   {
+    "title": "Accenture, Workday Launch Forward Deployed Engineering Program",
+    "publisher": "MT Newswires",
+    "when": "2026-10-13 20:37Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-workday-launch-forward-deployed-203700477.html"
+   },
+   {
+    "title": "Accenture Launches Forward Deployed Engineering Program with Workday to Reinvent Work for the Agentic AI Era",
+    "publisher": "Business Wire",
+    "when": "2026-10-13 19:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-launches-forward-deployed-engineering-195900964.html"
+   },
+   {
+    "title": "Accenture Stock Surges 60% in 3 Months: Is ACN Still a Buy?",
+    "publisher": "Zacks",
+    "when": "2026-10-13 17:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-surges-60-3-173000284.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "TD Cowen Adjusts Price Target on Cognizant Technology Solutions to $60 From $54",
+    "publisher": "MT Newswires",
+    "when": "2026-10-13 11:17Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/td-cowen-adjusts-price-target-111753970.html"
+   },
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Undervalued Following Its New Credit Facilities?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-09 19:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-undervalued-191439325.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Compal Accelerates Time-to-AI with Next-Generation NVIDIA Platforms at OCP Global Summit 2026",
+    "publisher": "PR Newswire",
+    "when": "2026-10-14 02:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/compal-accelerates-time-ai-next-020000035.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stocks Drop as Its Google-Infrastructure Thesis Faces a Revenue Test",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-13 21:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-drop-google-infrastructure-210419090.html"
+   },
+   {
+    "title": "Marvell Is Up 214% in 2026 While Broadcom Is Only Up 3%: Take Profits on MRVL Stock, or Hold On for the Ride?",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-13 19:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/marvell-214-2026-while-broadcom-190011776.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Dow Jones Futures: Techs Rise After Meta, AMD Lead Buys; ASML, CPI Inflation Due",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-14 02:28Z",
+    "link": "https://finance.yahoo.com/m/02b2fe19-36e5-3f96-ac0e-2dc2cf84ceb1/dow-jones-futures%3A-techs-rise.html"
+   },
+   {
+    "title": "Stock Market Today, Oct. 13: Fermi Surges 14% on AMD Credit Support for Project Matador",
+    "publisher": "Motley Fool",
+    "when": "2026-10-13 21:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-oct-13-211426384.html"
+   },
+   {
+    "title": "AMD Stocks Slip 1.2% Although Sweden Deployment Broadens Its AI Reach",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-13 19:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slip-1-2-190816978.html"
+   },
+   {
+    "title": "Fermi Stock Soars 20% on AMD Deal. Why Analysts See Hurdles Ahead.",
+    "publisher": "Barrons.com",
+    "when": "2026-10-13 18:46Z",
+    "link": "https://finance.yahoo.com/m/9e38ffcb-e246-39f8-aa01-81abdbf8c8d6/fermi-stock-soars-20%25-on-amd.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22762.5,
+  "chg_pct": -0.05,
+  "stamp": "14-Oct-2026 08:10:34",
+  "expiry": "27-Oct-2026",
+  "volume": 1458,
+  "nifty_close": {
+   "close": 22721.95,
+   "stamp": "13-Oct-2026 15:30"
+  },
+  "gap_pts": 40.5,
+  "gap_pct": 0.18
+ }
+}

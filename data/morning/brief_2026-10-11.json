@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-11",
+  "generated_at": "2026-10-11T08:12:00+05:30",
+  "mail": {
+    "window": "24h to 08:07 IST (Sunday)",
+    "n_scanned": 8,
+    "sectors": [
+      {"sector": "EMS", "bullets": [
+        {"text": "Kotak: theoretical RM indices for RAC/washers/refrigerators/fans up 41-45% yoy; copper +49%, HRC +36% yoy, aluminium -4% wow.",
+         "source": "Kotak - India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+         "received": "09:36",
+         "detail": {"summary": "Weekly durables wrap. Input inflation is the standout: the copper/aluminium/steel/plastic basket behind cooling appliances is up 41-45% yoy, yet appliance makers still expect double-digit festive growth despite price hikes. Second summer in West and South, rainfall 72% below LPA last week.",
+                    "points": ["RM index RAC/washers/fridges/fans +41-45% yoy", "LME copper +1% wow, +49% yoy (Rs/t)", "LME aluminium -4% wow, +20% yoy", "Domestic HRC +1% wow, +36% yoy", "Rainfall 72% below LPA past week"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Macro & strategy", "bullets": [
+        {"text": "Avendus: ~47% of coverage trades >1sd below 5-year average valuation; ~80% of stocks fell last month, median -5.6%.",
+         "source": "Avendus Spark - Quant-Attentive: Valuation Summary - 09-Oct-2026",
+         "received": "10:19",
+         "detail": {"summary": "Quant screen across Avendus coverage: valuations have compressed broadly after a month-long sell-off, with far more names cheap versus their own history than rich. Highlights BUY-rated names that corrected most over three months.",
+                    "points": ["47% >1sd below 5y avg; 12% >1sd above", "1M: ~80% down, median -5.6%", "1Y: ~63% down, median -6.6%", "Biggest 3M fallers with BUY: Thermax, Aptus, SP Apparels, Delhivery, Lupin"],
+                    "read": "body"}}
+      ]}
+    ],
+    "quiet": ["Non-ferrous (aluminium/zinc)", "Steel", "Cement", "Mining", "IT / AI-tech", "Other coverage-adjacent"]
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "SOX -0.41% Friday as AMD fell 2.0% and TSMC ADR 1.0%; Nvidia -0.5%, Broadcom +0.4%, while S&P 500 rose 0.6%.", "source": "morning_markets closes (Yahoo), 2026-10-09"},
+      {"text": "Semis lagged a broad US up-day; overnight headlines are opinion pieces, no earnings or guidance events.", "source": "Yahoo entity headlines (Motley Fool, Barchart, Insider Monkey)"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

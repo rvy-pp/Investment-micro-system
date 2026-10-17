@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-04",
+  "generated_at": "2026-10-04T08:15:00+05:30",
+  "mail": {
+    "window": "24h to 08:07 IST (Sunday)",
+    "n_scanned": 6,
+    "sectors": [
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "Kotak: Accenture FY27 guide 3-6% includes 2-2.5% inorganic, so organic only 0.5-4%; no AI-deflation hit baked in, supporting 12-13x for Tier-1 Indian IT.",
+            "source": "Kotak — [Kotak] IT Services: Healthy beat and a reasonable guidance",
+            "received": "09:34",
+            "detail": {
+              "summary": "Accenture's 4QFY26 beat (7% lc vs 1-5% guide) leaned on transitory factors: short-cycle deals, faster ramp-ups and Federal acquisitions. Kotak sees no demand change for Indian IT, but reads the absence of any AI-driven revenue deflation in guidance as a positive.",
+              "points": [
+                "4QFY26 +7% lc vs 1-5% guide; FY26 +5% vs 3-4%",
+                "FY27 guide 3-6% lc, inorganic 2-2.5%",
+                "1QFY27 guide 2-6%; FY27 adj. margin 15.9-16.1%",
+                "Q4 bookings US$22.2bn, +5% lc; pricing lower in many areas",
+                "US$5bn M&A, US$5.5bn buybacks planned in FY27"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "US September payrolls +29k vs 89k consensus, unemployment 4.2%; India 10Y G-sec up to 7.21% and Brent at US$126.9/bbl on the week.",
+            "source": "Kotak — [Kotak] Economy Tracker: Markets Update; IN August INR REER; ... US September labor data",
+            "received": "09:55",
+            "detail": {
+              "summary": "Weekly macro tracker: Indian rates sold off across the curve while liquidity stayed in surplus, and equities fell about 3% across caps. August activity data were firm (IIP 8%, GST +14.7%) while the RBI's forward book short widened sharply.",
+              "points": [
+                "Nifty -3.1% wk; midcap -3.5%, smallcap -3.1%",
+                "10Y G-sec 7.21% (7.12%); 5Y 6.94% (6.82%)",
+                "USD-INR 95.83; DXY 102.1 (101)",
+                "August IIP +8%, capital goods +16.9%; mining -5.6%",
+                "RBI forward book net short US$200bn end-Aug (US$137bn end-Jul)"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "PhillipCapital: Nifty's eighth straight weekly fall (-3.15% to 22,421) breached 23,000; 21,900 is the 'mother support' and trendline from March 2024 lows.",
+            "source": "PhillipCapital — DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) THIS WEEK - week ending 3 Oct 2026",
+            "received": "14:07",
+            "detail": {
+              "summary": "Technical wrap: a decisive break of 21,900 would turn the two-year consolidation bearish, with a loose head-and-shoulders on the monthly line chart. Mid and small caps tracked the index rather than leading it lower, and the IT index was the relative outperformer of the week.",
+              "points": [
+                "Nifty -718 pts / -3.15% to 22,421; 8th weekly decline",
+                "Next support 21,900 after 23,000 breach",
+                "Reliance broke 1,220; support band 1,150-1,200",
+                "HDFC Bank bounced off 1,710",
+                "F&O breakout/breakdown list in attached xlsx"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      }
+    ],
+    "quiet": [
+      "Non-ferrous (aluminium/zinc)",
+      "Steel",
+      "Cement",
+      "Mining",
+      "EMS",
+      "Other coverage-adjacent"
+    ]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX +2.40% Friday with Broadcom +3.35%, TSMC ADR +2.96% and AMD +2.95%; Nvidia lagged at +1.34%.",
+        "source": "morning_markets closes, 2026-10-02"
+      },
+      {
+        "text": "Broadcom headline flags a US$42bn loan to Anthropic, recasting the chipmaker as an AI financier.",
+        "source": "Forkast News — Broadcom's $42 Billion Loan to Anthropic Turns the Chipmaker Into Its..."
+      }
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

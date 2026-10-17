@@ -1,0 +1,335 @@
+{
+ "date": "2026-10-15",
+ "generated_at": "2026-10-15T08:18:18",
+ "mail": {
+  "window": "24h to 08:12 IST",
+  "n_scanned": 131,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "LME aluminium $3,039/t, down 2.6% on the week; Emkay sees lower prices weighing on Hindalco and NALCO, VAML and Vedanta offsetting.",
+      "source": "Emkay — Metals Weekly: Aluminium hovering at base case $3,000-3,100/t",
+      "received": "13:14",
+      "detail": {
+       "summary": "Supply has eased: EGA's Al Taweelah restarted, China's August output hit a record 3.9mt, Indonesia added capacity and a stronger dollar weighed on sentiment. Non-ferrous earnings sit in line with Emkay's base case and spot upside is small, while ferrous has 10-20% upside; Emkay still favours VAML and Hindalco on the aluminium cycle.",
+       "points": [
+        "$3,039/t aluminium, -2.6% w/w; base case $3,000-3,100/t",
+        "China Aug-26 output record 3.9mt; exports 516kt CY26YTD vs 582kt",
+        "Spot EBITDA upside: VAML ~1%, NALCO ~7%, HNDL balanced (hedges)",
+        "Non-ferrous 4.4-5.6x FY28E EV/EBITDA vs ferrous 5.5-7.5x",
+        "Metals stocks -3-7% on the week; prefers VAML, HNDL"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NALCO cuts domestic aluminium prices by INR 7,600/t on weaker LME.",
+      "source": "Kotak — Basic materials - daily news and prices (BigMint headline)",
+      "received": "09:00"
+     },
+     {
+      "text": "CLSA 2Q metals preview: softer quarter on lower prices and input costs; Hindalco hit at India level; steel near term, aluminium longer term.",
+      "source": "CLSA sales — NVIDIA @ VIZAG | Metals Preview | O&G Preview",
+      "received": "08:55",
+      "detail": {
+       "summary": "Sales gist of CLSA's 2Q preview: a soft September quarter from lower prices and higher input costs, but flat and long steel prices have risen since quarter-end, which should carry 2H. Hindalco takes the impact in its India business; the house prefers steel near term and aluminium on a longer horizon.",
+       "points": [
+        "Softer 2Q: lower prices, higher input costs",
+        "Flat and long prices up after the Sept quarter; supports 2H",
+        "Hindalco impacted at India business level",
+        "Preference: steel near term, aluminium longer term"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Domestic steel prices at a 53-month high; Elara sees spot spreads widening since June, pointing to Q3FY27 margin expansion, flats over longs.",
+      "source": "Elara — Metals & Mining: Spot steel spreads continue to widen (monthly)",
+      "received": "17:05",
+      "detail": {
+       "summary": "Q2 is seasonally weak (HRC averages -5.7% over five years) but firm HRC in Q2FY27 favours flat producers while rebar and semis corrected from Q1. Tight mill and distributor inventory, shutdowns and input costs keep spreads firm, and H1 consumption outgrew domestic production despite a 24% rise in imports.",
+       "points": [
+        "Sept: primary rebar +13% MoM, HRC +7% MoM",
+        "Domestic steel prices at a 53-month high",
+        "H1FY27 crude output +4% YoY vs finished consumption +8%",
+        "Imports +24% YoY, exports +26% YoY in H1FY27",
+        "Global crude steel -1% YoY in Aug; China -4%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: HRC Rs64,000/t and rebar Rs63,900/t, up 10.5% and 30% over the quarter; JSTL and Tata outperform, JINDALST and SAIL lag.",
+      "source": "Emkay — Metals Weekly: Aluminium hovering at base case $3,000-3,100/t",
+      "received": "13:14",
+      "detail": {
+       "summary": "Emkay's spot scenario shows ferrous strengthening on a raw-material-cost-led and demand-driven recovery in HRC and rebar, even as 2QFY27 ferrous margins stay under pressure from weaker realisations and coking coal. At spot, FY27E ferrous EBITDA carries 10-20% upside to base case; JSTL and JINDALST remain the preferred names.",
+       "points": [
+        "HRC Rs64,000/t (+10.5% QoQ); rebar Rs63,900/t (+30% QoQ)",
+        "Base case HRC/rebar Rs56,400/52,500/t; 10-20% FY27E EBITDA upside at spot",
+        "2QFY27: JSTL, TATA outperform on mix; JINDALST, SAIL lag",
+        "Ferrous 5.5-7.5x FY28E EV/EBITDA; prefers JSTL, JINDALST"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA prefers steel for the near term: flat and long prices rose after the September quarter, which should support 2H.",
+      "source": "CLSA sales — NVIDIA @ VIZAG | Metals Preview (+2 more in Outlook)",
+      "received": "08:55"
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Oct dealer checks: West (ex-Mumbai) +Rs5-20/bag, North +Rs5-10/bag, South up again on top of September; East demand weak.",
+      "source": "JPM — Concrete Insights: October: Pricing improvements; ahead of schedule",
+      "received": "07:00",
+      "detail": {
+       "summary": "JPM's 12-dealer October check finds prices up in most regions, extending September's momentum. North demand is running ahead of expectations on pre-winter construction; East stays weak on labour shortages. Pricing momentum through Nov/Dec is what defends margins.",
+       "points": [
+        "12 dealers surveyed across India",
+        "West ex-Mumbai +Rs5-20/bag; one dealer saw earlier hikes rolled back",
+        "North +Rs5-10/bag; demand pulled forward ahead of winter construction curbs",
+        "South up further after September hikes; demand mediocre until post-Diwali",
+        "Construction lending +25% YoY in August; central capex slowing"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM sees risk of negative Sep-qtr surprises as costs outlast guidance of Rs80-140/MT increases, smaller players worse; UTCEM remains top pick.",
+      "source": "JPM — Concrete Insights: October: Pricing improvements; ahead of schedule",
+      "received": "07:00",
+      "detail": {
+       "summary": "Coal/petcoke, gypsum, power, packaging and a weaker USDINR have pressured costs for longer than expected, flowing into the Dec and Mar quarters. JPM thinks the downside risk is to the guided Rs80-140/MT increase, with larger companies managing better. It prefers UTCEM for defending volumes and margins.",
+       "points": [
+        "Guided cost increase Rs80-140/MT; JPM sees risk to the downside",
+        "Cost pressure flows through Dec and Mar quarter P&L",
+        "Bias: larger companies manage costs better than smaller ones",
+        "Post-Diwali price hikes key to offsetting costs",
+        "UTCEM top pick in sector"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Shree Cement commissions a 3 MTPA grinding unit in the UAE for Rs300 crore.",
+      "source": "Kotak — Basic materials - daily news and prices (ET headline)",
+      "received": "09:00"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Oct'26 peak power demand 260,730MW, +23.7% YoY; October coal generation +27.32% YoY against +11.45% YTD (data to 12 Oct).",
+      "source": "Nuvama — Weekly Power Demand",
+      "received": "09:14",
+      "detail": {
+       "summary": "Nuvama's weekly power tracker through 12 October shows peak demand and coal-fired generation both running well above last year. October coal generation growth is more than double the year-to-date pace. That is a direct volume read for Coal India.",
+       "points": [
+        "Oct'26 peak demand 2,60,730MW",
+        "Peak demand +23.7% YoY",
+        "October coal generation +27.32% YoY",
+        "YTD coal generation +11.45% YoY",
+        "Data till 12 Oct; daily file attached"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay on Coal India (ADD, TP Rs475): Aug-26 e-auction premium 59% vs 41% in July; production -5.8% YoY to 47.5mt, offtake 60.6mt.",
+      "source": "Emkay — Metals Weekly (Recent publications: Coal India offtake momentum intact)",
+      "received": "13:14",
+      "detail": {
+       "summary": "Apr-Aug production runs ~60mt behind the seasonal target but offtake above production is drawing inventory; healthy stocks and a post-monsoon recovery should support the 790mt FY27E offtake. Higher e-auction premiums improve 2QFY27 visibility while imports stay requirement-driven at elevated seaborne prices.",
+       "points": [
+        "E-auction premium 59% Aug vs 41% Jul",
+        "Aug-26 production 47.5mt (-5.8% YoY); FY27E run-rate 753mt",
+        "Offtake 60.6mt; FY27E offtake 790mt",
+        "Thermal generation +4.5% YoY Aug; RB2 ~$140/t"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India iron ore exports fell to a near 4-year low in Sept'26 on subdued Chinese demand.",
+      "source": "Kotak — Basic materials - daily news and prices (BigMint headline) (+2 more in Outlook)",
+      "received": "09:00"
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Nuvama into today's prints: Wipro IT services -1% CC QoQ (Q3 guide -2% to 0%), TechM +1.6% CC, Persistent +6.5% CC.",
+      "source": "Nuvama — Result Estimates for 15th October 2026: WPRO, TECHM, PSYS",
+      "received": "14:34",
+      "detail": {
+       "summary": "Nuvama-vs-street estimates for the three IT names reporting after market today. Wipro's decline includes ~0.8% inorganic with margins +20bp; TechM's growth is telecom-led, the Orange deal offsetting a ~1.3% exceptional base, with the 15% FY27 margin guide expected to hold; Persistent's 6.5% CC carries 3.5% from the large Hitech deal with margins -20bp.",
+       "points": [
+        "Wipro EBIT margin est 16.24% vs street 16.2%; Q3 guide -2% to 0%",
+        "TechM +1.6% CC QoQ; EBIT margin 14.54% vs street 14.49%",
+        "Persistent +6.5% CC QoQ, 3.5% from Hitech deal; margin -20bp",
+        "Persistent PAT est Rs5.72bn vs street Rs5.57bn",
+        "F&O: Wipro shorts persist; PSYS long build-up"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Accenture guides mid-single-digit growth FY27-28, mid-high single digit only by FY29 via acquired businesses; Kotak reads stagnant growth for Indian incumbents.",
+      "source": "Kotak — IT Services - Accenture: Growth acceleration driven by M&A-aided new opportunities",
+      "received": "07:58",
+      "detail": {
+       "summary": "Accenture's investor day sets growth at mid-single digits through FY28, accelerating to mid-high single digits in FY29 on the acquired network of businesses (6% of revenue, to double). Kotak's read-through: the guide limits downside from AI deflation for Indian incumbents but implies stagnant growth, and acceleration needs participation in new TAM.",
+       "points": [
+        "Core (94% of revenue) grows mid-single digits to FY29",
+        "Acquired businesses 6% of revenue, to double by FY29",
+        "Margin +10-30bps a year for 3 years; FCF 110%+ of net income",
+        "TAM US$3tn vs US$1.5tn: US$700bn core AI, US$800bn new markets",
+        "Inorganic growth ~2% a year; 18k AI projects in FY26"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Elxsi 2Q beat (revenue +2.3% QoQ, EBIT margin 19.7%): Kotak keeps SELL, FV Rs3,200 from 3,000; Avendus upgrades to ADD.",
+      "source": "Kotak — Tata Elxsi (CMP Rs3,426, FV Rs3,200, SELL): An improved quarter (+8 more in Outlook)",
+      "received": "08:22",
+      "detail": {
+       "summary": "Broad-based growth across media, healthcare and transport with margins helped by currency (60-70bps) and utilisation up to 78%. Kotak raises EPS 2-3% but stays SELL at 25x FY28E: growth has been volatile, Europe auto is weak, JLR is 24% of revenue, and 1.8% CQGR is needed in 2H for high-single-digit growth.",
+       "points": [
+        "Revenue US$110.3mn, +2.5% QoQ; EBIT margin 19.7% (+70bps)",
+        "FV Rs3,200 (from Rs3,000) at 23x Sep-28E EPS; SELL",
+        "Headcount -1.6% QoQ, seventh straight decline",
+        "JLR 24.1% of revenue, US$52.5mn in 1HFY27",
+        "Avendus U/G to ADD; IIFL ADD TP Rs3,500 (subject lines)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "India WPI 11.4% YoY in September, a 49-month high vs 10.6% consensus; CLSA sees FY27 WPI averaging ~10% vs 8% and RBI more concerned.",
+      "source": "CLSA — India economics: WPI inflation surges to 4-year high",
+      "received": "21:05",
+      "detail": {
+       "summary": "Broad-based acceleration led by imported items (crude, chemicals, metals) with food at a 23-month high and manufactured products at a 52-month high; output PPI posted its first double-digit print. Higher WPI lifts nominal GDP but raises retail-inflation upside risk and the pressure to pass input costs through.",
+       "points": [
+        "WPI 11.4% YoY (49-month high) vs 10.6% consensus",
+        "Food 8.6% (23-month high); fuel & power 26%",
+        "Manufactured products 9.7%, a 52-month high",
+        "Output PPI 11.4% YoY, first double digit; mfg 12.6%",
+        "FY27 WPI seen ~10% vs 8% earlier"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "US core CPI 0.33% m/m vs 0.2% street; October hike odds spiked above 50% then settled ~32%; JPM keeps December as the next hike.",
+      "source": "JPM — Overnight Brief 10/15: lack of buy-the-dip by retail on AI",
+      "received": "05:17",
+      "detail": {
+       "summary": "The hot CPI triggered the US selloff but AI was the main driver: SOX down six straight sessions, CoreWeave bonds at 78c with CDS implying 50% five-year default odds. JPM sees no retail buy-the-dip this time, unlike July, yet stays constructive. Today: PPI, retail sales, Warsh's remarks and TSMC guidance.",
+       "points": [
+        "Headline CPI +0.65% m/m; core +0.33%; core PCE est 0.31%",
+        "Oct hike odds 20% to 50% to 33%; ~30bp of hikes priced by year-end",
+        "S&P -1.1% ends 53-day run without a 1% drop; Russell in correction",
+        "10Y closed at 5.185%, down on the day; 2Y +2bp after a 16bp spike",
+        "SOX -4.3%, -12% on the week; CRWV -15.5%, ASML -3.9%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs net bought USD568mn (cash + futures) on 13 Oct, DIIs sold USD185mn; Kotak sees Nifty testing 22,800 if FII futures buying continues.",
+      "source": "Kotak sales — MM Reverse DCF; Lenskart; Indigo; IPRU; TELX (+6 more in Outlook)",
+      "received": "08:38",
+      "detail": {
+       "summary": "A large single-stock-futures buy improved FII futures positioning while retail cut USD1.57bn of index longs and sold USD140mn of SSF. Continued FII futures buying points to 22,800 on the Nifty; a bigger move is hard if DIIs trim around there.",
+       "points": [
+        "FII +USD568mn cash+futures; DII -USD185mn",
+        "Retail cut USD1.57bn index longs, sold USD140mn SSF",
+        "Nifty hurdle 22,800 on continued FII futures buying",
+        "Unusual F&O: RBK -7.1%, OI +30% short add; BANDHAN +9.2% on IHC stake reports"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Hyundai Motor Group to invest USD15.5 bn in India as a global auto hub, per Kotak's auto news digest.",
+      "source": "Kotak — Auto News: Hyundai bets USD15.5 bn on India",
+      "received": "08:51"
+     },
+     {
+      "text": "Tata Motors PV upgraded to Accumulate, TP pared to INR 338; same Stinger puts average PV loan size at INR 820,000, +49% in seven years.",
+      "source": "Elara — Stinger: PV loan size +49%; Tata Motors PV upgrade (+6 more in Outlook)",
+      "received": "09:47",
+      "detail": {
+       "summary": "Elara upgrades Tata Motors PV to Accumulate with a lower TP of INR 338. It argues EV leadership will help the India PV business outperform the industry. JLR's BEV launches and the Stellantis partnership address US and Europe white spaces.",
+       "points": [
+        "Upgrade to Accumulate; TP pared to INR 338",
+        "India PV: EV leadership aids industry outperformance",
+        "JLR: BEV launches, Stellantis tie-up for US/Europe",
+        "Avg PV loan size +49% to INR 820,000 in 7 years",
+        "Same mail: Industrials initiation, T&D cycle strong, valuations diverge"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX -4.3%, down 12% in a week; CoreWeave -15.5% as its 2032 bonds trade distressed; ASML -3.9% despite a beat-and-raise.",
+    "source": "JPM — Overnight Brief 10/15"
+   },
+   {
+    "text": "VNET and GDS fell 14.6% and 12.6% overnight on the AI infrastructure and data-centre selloff.",
+    "source": "GS — Asia Internet and Consumer: ORCL/CRWV/VNET/GDS sell-off"
+   },
+   {
+    "text": "Nvidia holds a Vizag event on 28 Oct with 50+ Indian companies across the AI stack; TSMC guidance due today.",
+    "source": "CLSA sales — NVIDIA @ VIZAG; JPM — Overnight Brief 10/15"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Investor day: mid-single-digit growth guide through FY28, acceleration in FY29, 10-30bps annual margin expansion, TAM doubled to US$3tn (Kotak, 15 Oct)."
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

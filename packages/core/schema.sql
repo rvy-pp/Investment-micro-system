@@ -875,3 +875,35 @@ CREATE TABLE IF NOT EXISTS fo_sector_map (
     source       TEXT NOT NULL,             -- 'nifty500' | 'manual'
     updated_at   TEXT NOT NULL
 ) STRICT;
+
+-- ---------------------------------------------------------------------------
+-- Results calendar — WHEN a print lands, for the Results tab (2026-09-22).
+--
+-- The Results tab itself stores nothing new for numbers: sell-side estimates
+-- go in `estimates` (whose header comment has said "feeds the Projections tab"
+-- since the schema was written — this is that tab) and reported prints go in
+-- `observations` with factor='actual', the convention concall-ingest and
+-- specs/extracted/steel_actuals.json already use. Both carry a NOT NULL quote,
+-- so invariant 1 holds on both sides of every estimate-vs-actual row.
+--
+-- The date is the one thing neither table holds. status: 'expected' is a
+-- broker/desk calendar guess, 'confirmed' is the company's exchange notice,
+-- 'reported' is set once an actual exists. Several notices for one period may
+-- disagree (a board meeting moves) — each is kept, the newest wins on read.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS results_calendar (
+    id           INTEGER PRIMARY KEY,
+    entity_id    TEXT NOT NULL REFERENCES entities (id),
+    period       TEXT NOT NULL,             -- 'Q2FY27'
+    event_date   TEXT NOT NULL,             -- ISO date of the board meeting / print
+    status       TEXT NOT NULL,             -- expected|confirmed|reported
+    source_id    TEXT NOT NULL REFERENCES sources (id),
+    quote        TEXT NOT NULL,
+    created_at   TEXT NOT NULL,
+    CHECK (status IN ('expected','confirmed','reported')),
+    CHECK (length(trim(quote)) > 0),
+    CHECK (event_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    UNIQUE (entity_id, period, event_date, status)
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS ix_rescal_entity ON results_calendar (entity_id, period);

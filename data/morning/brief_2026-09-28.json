@@ -1,0 +1,270 @@
+{
+ "date": "2026-09-28",
+ "generated_at": "2026-09-28T08:12:13",
+ "mail": {
+  "window": "24h to 08:04 IST",
+  "n_scanned": 43,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Rebar +INR1,650/t w-w to INR62,100/t while HRC holds flat at INR63,800/t, narrowing the flat-long spread to ~INR1,700/t.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 25 Sep 2026)",
+      "received": "03:22",
+      "detail": {
+       "summary": "Nomura says India steel prices stay firm, led by a renewed rebar uptrend that has narrowed the flat-long spread after months of long-product weakness since 1QFY27, with HRC near four-year highs.",
+       "points": [
+        "INR62,100/t rebar, +INR1,650/t w-w",
+        "INR63,800/t HRC, flat w-w, near 4-yr high",
+        "~INR1,700/t flat-long spread, narrowing",
+        "Rebar recovery follows moderation since 1QFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Imported coking coal fell $6/t w-w to $276/t, still above Aug-26's $232/t average; India HRC spot margin ~INR37,540/t.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 25 Sep 2026)",
+      "received": "03:22",
+      "detail": {
+       "summary": "Nomura notes imported coking coal eased w-w but remains well above August levels after supply disruptions, geopolitics and a fatal Chinese mine accident drove a spike; India's HRC margin sits just under the 2QFY27F average.",
+       "points": [
+        "$276/t imported coking coal, -$6/t w-w",
+        "$232/t Aug-26 average",
+        "$358/t China domestic coking coal, -$6/t w-w",
+        "~INR37,540/t HRC spot margin",
+        "~INR36,000/t 2QFY27F average margin"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Kotak: cement sector market cap +31% (~Rs1.6tn) over five years, all of it from UltraTech — the bull narratives created no wealth.",
+      "source": "Kotak — [Kotak] Strategy: The curious case of the Indian cement sector",
+      "received": "06:36",
+      "detail": {
+       "summary": "Kotak's strategy note argues five years of bull narratives (GST-cut price stickiness, Adani-led consolidation, limestone scarcity, branding, green fuel savings) produced almost no wealth creation, since the entire market-cap gain came from one stock.",
+       "points": [
+        "+31% / Rs1.6tn sector market-cap gain, 5 years",
+        "Entire gain attributable to UltraTech",
+        "UltraTech's gain aided by acquisitions",
+        "Valuations still rich, per Kotak"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak says Street 2HFY27 numbers assume price hikes and softer costs it does not see; expects no positive earnings surprises.",
+      "source": "Kotak — [Kotak] Strategy: The curious case of the Indian cement sector",
+      "received": "06:36",
+      "detail": {
+       "summary": "Kotak expects depressed near-term profitability from high input costs, arguing Street numbers bake in 2HFY27 price hikes and/or lower costs its own estimates do not support.",
+       "points": [
+        "2HFY27 Street assumes hikes and cost relief",
+        "Kotak sees no positive-surprise scope",
+        "No supply-demand improvement for next few years"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NMDC raised lump prices INR150/t to INR5,400/t effective Sep-26; fines held flat at INR4,500/t.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 25 Sep 2026)",
+      "received": "03:22",
+      "detail": {
+       "summary": "Nomura flags NMDC's domestic ore hike against a stable seaborne backdrop, with 62% Fe CFR China ore sitting near its CY26 low.",
+       "points": [
+        "INR5,400/t NMDC lump, +INR150/t effective Sep-26",
+        "INR4,500/t NMDC fines, unchanged",
+        "$91/t seaborne 62% Fe CFR China, stable",
+        "Near CY26 YTD low for seaborne ore"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak expects Infosys to cut FY27 guide to 1.5-2.5% (from 1.5-3%) and HCLT to raise to 3-4%; Wipro guided -2% to 0%.",
+      "source": "Kotak — [Kotak] IT Services: 2QFY27 preview—status quo",
+      "received": "08:04",
+      "detail": {
+       "summary": "Kotak's 2QFY27 preview argues demand is flat versus the June quarter, AI deflation (~7% gross, 3.5% net) is becoming visible in operating metrics even as rupee depreciation props up margins, and mid-tiers (PSYS, Coforge, MPHL) outgrow large caps this quarter.",
+       "points": [
+        "Infosys FY27 guide 1.5-2.5%, from 1.5-3%",
+        "HCLT guide raised to 3-4%",
+        "Wipro guided -2% to 0%",
+        "~7% gross / 3.5% net AI deflation",
+        "Picks: TechM, Coforge, Sagility, Indegene"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Mphasis reiterated ~3% CC QoQ for 2Q (highest in 3 years) and its 14.75-15.75% FY27 EBIT margin guide at JPM's IR meeting.",
+      "source": "JPM — Mphasis: Demand stable and guidance intact",
+      "received": "02:32",
+      "detail": {
+       "summary": "JPM hosted Mphasis' IR head: demand unchanged given low exposure to tariff-hit verticals, TCV conversion on track, and margins recover from 2Q as utilization improves after contract-buyout costs. JPM stays Overweight, PT Rs2,650.",
+       "points": [
+        "~3% CC QoQ 2Q, highest in 3 years",
+        "FY27 growth: high-single to low-double digits",
+        "EBIT guide 14.75-15.75% unchanged",
+        "DSO 80-82 days from 70-75",
+        "12% of revenue tariff-exposed (Logistics)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Hexaware kept CY26 growth guide at 6-7%, needing 2.7% CQGR in 3Q-4Q for the midpoint; JPM stays Neutral.",
+      "source": "JPM — Hexaware: CY26 revenue guidance maintained, optimistic on CY27",
+      "received": "02:41",
+      "detail": {
+       "summary": "Hexaware told JPM it won most vendor-consolidation reviews across 13 of its top 20 clients, but that cost growth as clients held back spend elsewhere; AI deflation ~2%/yr now, seen at 20-25% cumulative over four years.",
+       "points": [
+        "6-7% CY26 guide, lower end more likely",
+        "2.7% CQGR needed 3Q-4Q",
+        "Won consolidation at 13 of top 20 clients",
+        "AI deflation 20-25% over 4 years",
+        "EBIT ~13.5%, JPM PT Rs530"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Nifty rebalance at Tue 29 Sep close: BSE ~$617mn passive buying, VAML $144mn; Wipro -$151mn, IH -$129mn.",
+      "source": "Kotak — [Kotak] Nifty Indices Changes (Close of Tuesday, 29th September)",
+      "received": "17:08",
+      "detail": {
+       "summary": "The note recaps the Nifty50/Next50/Bank Nifty/CPSE reconstitution effective Tuesday's close with estimated passive flows per name, flagging which stocks face flows worth several multiples of ADV.",
+       "points": [
+        "BSE +$617mn Nifty50 inflow, 4.1x ADV",
+        "VAML +$144mn Next50 inflow, 3.4x ADV",
+        "SRCM -$61-80mn, 8.0-10.5x ADV",
+        "WPRO -$151mn net",
+        "IH -$129mn Next50 exit, 8.0x ADV"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS India-CEI +0.7% m/m in August (July +0.4%); a $100/bbl Brent case cuts FY27 GDP ~20bp and lifts CPI to 5.5%.",
+      "source": "UBS — UBS India: what's trending in India's macro",
+      "received": "06:06",
+      "detail": {
+       "summary": "UBS argues resilient domestic activity should buffer India against external headwinds, but spells out a downside: if Brent averages $100/bbl through FY27, growth slows, inflation runs hotter, the current account widens and the RBI turns more hawkish.",
+       "points": [
+        "India-CEI +0.7% m/m Aug vs +0.4% Jul",
+        "August CPI 4.8% YoY",
+        "$100 Brent: FY27 GDP -20bp to ~6.7%",
+        "FY27 CPI risk 5.5%",
+        "RBI seen 50bp cumulative hikes from October"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA Flow Show keeps long equities/short duration; favours commodities and EM over cyclicals after a two-month Xi-Trump truce to 10 Jan.",
+      "source": "BofA — BofA ASIA Daily: XI-TRUMP Truce | APAC Strategy | FLOW SHOW (+2 more in Outlook)",
+      "received": "07:27",
+      "detail": {
+       "summary": "BofA reads the Xi-Trump summit as diplomacy over substance — a truce extension to Jan 10 with rare-earth friction unresolved — and keeps clients biased toward commodities and EM over cyclicals given how far US nominal GDP has outrun long bonds.",
+       "points": [
+        "Truce extended 2 months, to Jan 10",
+        "US nominal GDP +63% over six years",
+        "Risk: bond-driven deleveraging",
+        "Add commodities, EM, selective growth"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "BofA Vahan: Sep retail 2W +29% YoY (EV 11%), MHCV +36%, LCV +21%; tractors -1%; picks AL, TMCV, Hyundai, Bajaj Auto.",
+      "source": "BofA — Autos - India: Channel checks & Vahan tracker: who's winning; who's losing?",
+      "received": "23:04",
+      "detail": {
+       "summary": "BofA reads September's strong 2W/PV/CV retail as base- and GST-driven rather than fresh acceleration — tractors already softening and growth should moderate into festive on tougher comps; margin pressure and EPS cuts not fully behind.",
+       "points": [
+        "2W Sep retail +29% YoY, EV 11%",
+        "MHCV +36%, LCV +21% YoY",
+        "Tractors -1% YoY, 2nd soft month",
+        "Picks: AL, TMCV, Hyundai, Bajaj Auto"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: unregistered low-speed e-2W hit 1.8mn units in FY26 (56% of e2W), understating 2W growth and threatening Hero's entry franchise.",
+      "source": "Elara — Automobiles - Reshaping of entry level 2W mobility - Sector Update",
+      "received": "21:58",
+      "detail": {
+       "summary": "Elara argues reported 2W and EV-penetration data understate the market: including unregistered low-speed e-2W, FY26 volume is ~24.0mn (+15.1%) vs reported 22.1mn (+10.2%). The unbranded segment substitutes for economy motorcycles, reframing Hero's entry weakness as structural.",
+       "points": [
+        "Low-speed e-2W 1.8mn FY26, 147% CAGR",
+        "True 2W 24.0mn (+15.1%) vs 22.1mn reported",
+        "True EV penetration 13.9% vs 6.6%",
+        "Hero: structural entry-level risk"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Anthropic reportedly in talks to lease up to 1GW of compute ($40bn+ implied) and signed a 7-year $11.6bn CPU deal with Akamai.",
+    "source": "BOCI — BOCI TMT Daily (28 Sep)"
+   },
+   {
+    "text": "TSMC reportedly plans five new advanced-packaging fabs as AI demand surges.",
+    "source": "BOCI — BOCI TMT Daily (28 Sep)"
+   },
+   {
+    "text": "GS sees hyperscaler AI capex at $1.2tn in 2027 and $1.4tn in 2028, needing ~$300bn annual AI revenue to break even.",
+    "source": "GS — [GS Daily] Trump-Xi First Read ... US Strategy on AI Capex"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

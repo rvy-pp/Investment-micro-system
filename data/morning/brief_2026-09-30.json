@@ -1,0 +1,365 @@
+{
+ "date": "2026-09-30",
+ "generated_at": "2026-09-30T08:11:22+05:30",
+ "mail": {
+  "window": "24h to 08:06 IST",
+  "n_scanned": 104,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "Nalco to supply 50,000 tonnes a year of molten aluminium to the Angul park (Business Standard, 28 Sep).",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "08:54"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "IIFL: flat-steel spreads at a 40-month high as rebar rises Rs2,800/t in a week and coking coal falls US$10 to US$273/t.",
+      "source": "IIFL - The Front Page: Auto; Steel; ICICIGI; NXST",
+      "received": "07:32",
+      "detail": {
+       "summary": "IIFL says steel fundamentals and equities are diverging because of risk-off sentiment from the West Asia war and a strong DXY. It expects mills to follow coking coal down only with a lag, keeping spreads elevated through a seasonally strong 2H, and would add on weakness.",
+       "points": [
+        "Rebar Rs62,700/t, HRC Rs63,900/t",
+        "DCE coal futures -14% MTD, suggesting coking coal is peaking",
+        "China steel output -4% yoy 8MCY26; exports -3%",
+        "Steel equities +8% CYTD vs Nifty -13%, 9% off the CY26 peak",
+        "Upside: SAIL 31% (tactical), Tata 33%, JSPL 19%, JSW 13%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara keeps Tata Steel BUY, TP INR235 (25% upside): discount to JSW at ~39% vs ~28% average; Europe EBITDA to improve four quarters.",
+      "source": "Elara - Pessimism priced in (Tata Steel BUY, TP INR235)",
+      "received": "10:29",
+      "detail": {
+       "summary": "Elara argues the Europe, post-2030 margin-gap and group-news concerns are overdone. Europe went EBITDA-negative in Q1FY27 on the DSP shutdown and should recover sequentially. Q2FY27 HRC is ~2% above Q1 against a normal seasonal fall, and backward integration shields Tata from iron ore inflation in 2H.",
+       "points": [
+        "Discount to Jindal Steel ~32% vs ~11% historical",
+        "DSP restarted in August; Europe EBITDA up through Q2FY27-Q1FY28",
+        "Q2 HRC normally falls ~5.7%; up ~2% QTD instead",
+        "TP on 6.5x India, 4.0x Europe EV/EBITDA; estimates unchanged",
+        "UK CBAM in Q4FY27, contract repricing in Q1FY28"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "IIFL dealer checks: all-India cement price +3% m/m (Rs10/bag) in September; dealers expect another ~2% in October, with petcoke up 30% to US$170/t.",
+      "source": "IIFL - Cement - Dealers Price checks - Prices recover in September, fuel costs cloud 2H outlook",
+      "received": "08:54",
+      "detail": {
+       "summary": "Prices fell steadily April to August, so the 2Q average is still below 1Q despite the September recovery. Fuel costs have weakened the 2H earnings recovery outlook. IIFL expects stocks to go sideways until price hikes are visible, and prefers UltraTech and JK Cement.",
+       "points": [
+        "2Q all-India price -2% q/q (Rs6/bag)",
+        "East -6% q/q, West -2%",
+        "Exit run-rate 2% above the 2Q average",
+        "Offsetting petcoke needs about Rs15/bag",
+        "2Q industry volume +8-10% y/y expected"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM builds a Rs130-200/t q/q EBITDA decline into most 2QFY27 cement estimates, risk skewed lower; prefers UltraTech and Grasim, Shree UW.",
+      "source": "JPM - India Cement Sector: 2Q preview: Cost pressures expected; post-monsoon pricing upside key",
+      "received": "06:30",
+      "detail": {
+       "summary": "Coal, petcoke and a weaker rupee should show up in September-quarter costs, and regional names (Shree, Dalmia) carry the most downside risk. The sector has lagged the market for two months and expectations look low; JPM calls it a good tactical setup for the post-monsoon season.",
+       "points": [
+        "Companies guided Rs80-140/t q/q cost increase after 1Q",
+        "Shree UW; UltraTech OW",
+        "Dalmia rated N",
+        "Cost commentary on 2Q calls sets the sector tone"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: JSW Cement to absorb Shiva Cement at 5 per 41 shares (~0.9% dilution), REDUCE TP Rs125 kept; Ramco clinker capacity now 16.95mtpa.",
+      "source": "Emkay - Cement Corner: JSW Cement- Shiva Cement Amalgamation, Ramco Cement Capacity expansion (+3 more in Outlook)",
+      "received": "20:23",
+      "detail": {
+       "summary": "The merger simplifies the group to one listed entity but adds no earnings, since Shiva is already consolidated; multiples unchanged. Ramco's Jayanthipuram debottlenecking adds clinker and grinding capacity, and Emkay maintains SELL.",
+       "points": [
+        "Swap values Shiva at ~Rs13.8 vs CMP Rs14.9",
+        "JSWCL issues ~12.1mn shares; promoter 71.39%",
+        "Ramco: +1.01mtpa clinker, +0.73mtpa grinding",
+        "Ramco SELL, TP Rs800 vs CMP Rs847"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "GS cuts China 2027 thermal coal forecast to Rmb750/t from Rmb850/t on faster Shanxi supply; turns more positive on copper.",
+      "source": "GS - [GS Daily] China Commodity Trip takeaway, copper (+), coal (-)",
+      "received": "06:38",
+      "detail": {
+       "summary": "After its China commodity trip, GS sees scrap supply constraints tightening domestic copper. It expects policy-driven Shanxi state-owned supply to ease the tight coal market and possibly overshoot by 1H27, so it cuts coal price and earnings forecasts.",
+       "points": [
+        "2027 thermal coal Rmb750/t vs Rmb850/t",
+        "2027-28 coal coverage earnings cut 8-19%",
+        "Chinacoal to Neutral; Yankuang-H to Sell",
+        "Buy on Zijin and CMOC reiterated"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA expert call on India coal gasification with an ex-Coal India director today (30 Sep), 2pm IST.",
+      "source": "BofA - Webcast Event - Sep 30: Expert call: India Coal Gasification - Ambition vs Execution",
+      "received": "12:06",
+      "detail": {
+       "summary": "Interactive call with Debasish Nanda, former Director (Business Development) at Coal India. It frames gasification as import displacement and asks whether policy support is enough to scale.",
+       "points": [
+        "Wed 30 Sep 2026, 2:00 PM IST",
+        "Covers LNG, coking coal, ammonia, methanol displacement",
+        "Constraints: coal linkage, water, EPC, offtake"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kotak sees 2Q room AC secondary volumes +15-20% yoy on pre-buying before Oct 1 hikes, supporting AC component orders.",
+      "source": "Kotak - Consumer Durables & Apparel: Durables 2Q preview: Earnings linked to commodity cycle",
+      "received": "06:46",
+      "detail": {
+       "summary": "Kotak expects 2Q durables earnings to follow the commodity cycle: primary sales lifted by price hikes and pre-buying, margins hit by partial pass-through in a soft quarter. It sees downside risk to FY27E consensus for Blue Star, Voltas and Whirlpool.",
+       "points": [
+        "RAC secondary volumes +15-20% yoy on weak base",
+        "Price hikes 10-12% taken; next 5-7% from Oct 1",
+        "Copper/aluminium INR +56%/+40% yoy in 2Q",
+        "White goods EBIT margins 4-13 ppts below 2QFY25"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "AC brands hike prices 5-10% from Oct 1 (LG, Voltas, Daikin, Godrej) as resin rose 18% and steel 13% in three months.",
+      "source": "Nomura - India Consumer Durables and EMS: High prices this sale season is a done deal",
+      "received": "08:59",
+      "detail": {
+       "summary": "Input inflation has forced a third durables price hike in 2026, above the 2-3% makers first hoped for. Navratri and Diwali carry 25-30% of annual durables offtake, so higher prices against subdued volumes is the festive risk.",
+       "points": [
+        "LG AC +5-7%, Voltas +5-7%, Daikin +6-10%, Godrej +4-6%",
+        "3-month inputs: copper ~10%, aluminium 5%, steel 13%, resin 18%",
+        "Navratri/Diwali ~25-30% of annual offtake",
+        "Financing may be 60-80% of festive transactions"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Electronics (~12% of Apple's global phones) tripled equity investment to Rs3,727 cr; FY26 net loss widened to Rs1,611 cr.",
+      "source": "Nomura - India Consumer Durables and EMS: High prices this sale season is a done deal (+3 more in Outlook)",
+      "received": "08:59",
+      "detail": {
+       "summary": "Tata Electronics is expanding across iPhone assembly, EMS and semiconductors, funded by equity, loans and guarantees - a capital-heavy, loss-making build-out that competes with listed EMS names.",
+       "points": [
+        "Equity investments Rs3,727 cr, mainly semiconductors",
+        "Guarantees Rs61,280 cr",
+        "FY26 net loss Rs1,611 cr"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Coforge reiterates FY27 EBIT margin of at least 15.5% and $5bn FY30 revenue; 2Q27 to be its strongest large-deal quarter; JPM OW, PT Rs1,850.",
+      "source": "JPM - Coforge: Guidance maintained despite board churn",
+      "received": "13:32",
+      "detail": {
+       "summary": "Management met JPM at the India Conference and held guidance despite the board departures. It frames AI deflation as a one-time hit its portfolio has largely absorbed, and sees margin tailwinds outside guidance.",
+       "points": [
+        "EBITDA margin guide 20.5-21% for FY27",
+        "AI deflation 15-30% over 3 years, then 1-3% a year",
+        "Utilisation 81% vs industry 85%",
+        "FCF/PAT ~100%, was ~95% in Q1",
+        "PT on 24x 1-yr forward P/E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge names Akhil Gupta (ex-Bharti Enterprises vice chairman) chairperson for 5 years, easing the board-churn overhang.",
+      "source": "JPM - JPM India Daily: Coforge: Appointment of a credible chairperson",
+      "received": "09:04",
+      "detail": {
+       "summary": "JPM says the chair was backfilled sooner than expected, easing the governance overhang from the early-September board departures; focus returns to core performance, AI traction and Encora integration.",
+       "points": [
+        "Term: 5 years, effective immediately",
+        "Another independent director likely within 3 months",
+        "Focus shifts to Encora integration"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: IT Jobspeak Index +10.9% YoY in August; covered-company headcount +1.1% in 1QFY27, first real rise in six quarters, led by TCS and Coforge.",
+      "source": "CLSA - India IT: Jury still out on impact of AI on jobs",
+      "received": "07:06",
+      "detail": {
+       "summary": "CLSA reads the hiring pickup as a possible early sign of AI-led demand despite weak macro. Revenue is rising faster than headcount, pointing to AI-driven productivity gains.",
+       "points": [
+        "Jobspeak vs headcount correlation: 63%",
+        "BPO Jobspeak 8.3% YoY in August vs 3.5%/5.0% Jun/Jul",
+        "Avasant: 64% of enterprises raising IT headcount in 2026"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Nifty rollover 74% vs 76% 3M average, roll cost 63bps; Metals & Mining and Cement rollovers lag, VEDL and Shree below average.",
+      "source": "Nuvama - India Rollover update (E day) & highest expired positions for September",
+      "received": "05:57",
+      "detail": {
+       "summary": "September expiry closed with market-wide rollover slightly above average but Nifty lagging. Roll costs jumped from the prior day, with October dividend points inflating the absolute cost; sector skew shows where positioning is being shed.",
+       "points": [
+        "Market-wide rollover 91% vs 90% 3M average",
+        "Nifty roll cost 63bps vs 29bps DoD",
+        "Lagging: Cement, Chemicals, Internet, Metals & Mining, Real Estate",
+        "Below average: VEDL, SRCM, HZ, POLYCAB, DLFU"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Oct Fed hike probability fell from 70% to under 50% after Williams; Brent -2.7% to $102.39 on US/Iran deal optimism and SPR release.",
+      "source": "JPM - JPM Overnight Brief! 9/30 - Oct hike probability fell to <50%; Micron Preview",
+      "received": "06:08",
+      "detail": {
+       "summary": "US front-end rallied on Williams' preference for a slower hiking pace, but long yields kept rising and decoupled from crude. JPM's oil desk sees Brent as too high versus fair value.",
+       "points": [
+        "10Y UST 5.25%, 30Y 5.58%",
+        "WTI -3.8% to $89.12",
+        "US SPR release up to 40mm barrels",
+        "JPM oil fair value near $90 Brent"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "China unveiled a 1pp mortgage subsidy for first-home buyers, up to 5 years; GS sizes it at RMB25bn a year and warns of sell-on-news.",
+      "source": "GS - [GS Sales Note]: China Property: Targeted easing (+3 more in Outlook)",
+      "received": "06:48",
+      "detail": {
+       "summary": "First direct-cash property demand support from the central government. Eligibility is tight and skewed to lower-tier cities with the most unsold inventory, so GS expects only a modest growth impulse; it may front-load first-home demand.",
+       "points": [
+        "Eligible homes up to RMB1.5mn and 120 sq m",
+        "Subsidy on up to RMB1mn principal",
+        "90% of cost paid by central government",
+        "Programme scheduled for one year"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "PhillipCapital dealer checks: Royal Enfield and TVS outperform this festive season; Sep-26 wholesale est. Bajaj +16%, TVS +15%, RE +5%, Hero +2%.",
+      "source": "PhillipCapital - Auto Dealers Check - September 2026 | Navratri-Diwali screening",
+      "received": "07:58",
+      "detail": {
+       "summary": "Dealer checks across regions show festive confidence, with 2W the strongest segment and supply on popular models the swing factor. Tractors have entered degrowth and CVs show nominal growth; post-festive growth of 7-8% seen attainable.",
+       "points": [
+        "PVs +5-6%; Maruti +20%, Hyundai +6%, M&M +15% wholesale",
+        "Tata CV +23%, Ashok Leyland +21%, VECV +24%",
+        "M&M tractors -22%, Escorts -18%",
+        "Top picks: Royal Enfield, TVS, Hyundai, M&M PV"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM expects Reliance O2C EBITDA +24% QoQ in 2Q; prefers Reliance/GAIL and BPCL/IOCL, cautious on city gas on CNG costs.",
+      "source": "JPM - India Oil and Gas: Producers / suppliers should outshine commodity consumers again; 2Q earnings preview",
+      "received": "06:30",
+      "detail": {
+       "summary": "JPM sees producers and suppliers outperforming commodity consumers again in 2Q. OMCs improve sequentially on lower crude and lower LPG losses; city gas margins stay squeezed as CNG hikes came late.",
+       "points": [
+        "OMCs: BPCL/IOCL over HPCL",
+        "IGL and MAHGL CNG hikes may not defend margins",
+        "ONGC EBITDA to fall on lower crude"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL flags a ~30% input-cost spike squeezing tyre margins in 2Q/3QFY27, more EPS downgrades likely; prefers Balkrishna and Apollo.",
+      "source": "IIFL - The Front Page: Auto; Steel; ICICIGI; NXST (+3 more in Outlook)",
+      "received": "07:32",
+      "detail": {
+       "summary": "The tyre cost basket spiked as Middle East tensions began and price hikes lag the cost rise. A sharp fall in crude or rubber would lift all tyre stocks.",
+       "points": [
+        "~30% rise in cost basket for FY27",
+        "Further margin pressure 2Q/3QFY27",
+        "Apollo: EU turnaround from 3QFY27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Micron reports after the US close; JPM expects a beat on DRAM and NAND ASPs up >20% QoQ, guide above Street's $56.3bn.",
+    "source": "JPM - JPM Overnight Brief! 9/30 - Micron Preview"
+   },
+   {
+    "text": "SOX +1.32% overnight, Broadcom +1.58%, TSMC ADR +0.90%; OpenAI Dev Day ARR number lifted neoclouds and AI infrastructure names.",
+    "source": "JPM - JPM Overnight Brief! 9/30; closes per markets file"
+   },
+   {
+    "text": "GS: hyperscalers need ~$1.42tn of CY2028-30 revenue to earn 15% ROIC on CY2026-27 AI capex; Mag7 at 95th percentile of HF positioning.",
+    "source": "GS - [GS Sales Note]: AI Series: Sizing the AI Economy Needed to Justify ROIC on Hyperscaler AI Capex"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

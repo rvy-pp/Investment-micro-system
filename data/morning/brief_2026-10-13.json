@@ -1,0 +1,365 @@
+{
+ "date": "2026-10-13",
+ "generated_at": "2026-10-13T08:18:00",
+ "mail": {
+  "window": "24h to 07:55 IST",
+  "n_scanned": 138,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "BofA 2Q preview: Hindalco India EBITDA dips QoQ on lower LME aluminium; Novelis EBITDA/t resilient; Hindustan Zinc benefits from higher zinc.",
+      "source": "BofA — India Insight: DMart | Consumer Preview | Metals & Mining | Oil & Gas | Cement | PI Inds | Financials | Economic Watch",
+      "received": "08:54",
+      "detail": {
+       "summary": "BofA's metals preview sees 2Q earnings split by metal: aluminium price weakness weighs on Hindalco's domestic business, while zinc strength lifts Hindustan Zinc. Novelis is the offset at group level. This is a sales commentary summary, not full research.",
+       "points": [
+        "Hindalco India EBITDA to fall QoQ on lower LME aluminium",
+        "Novelis adj. EBITDA/t seen resilient",
+        "Hindustan Zinc to benefit from higher zinc prices",
+        "Sector peers: Coal India EBITDA +2% QoQ, NMDC -25% QoQ"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME aluminium tested $3,040/t June low on 8-Oct; Chinese primary stocks rose 48kt to 686kt, capping rebound near $3,160-3,180.",
+      "source": "Emkay — Base Metals Market Report: Aluminum – Weak price action meets rising Chinese stocks and dollar-side risks",
+      "received": "11:09",
+      "detail": {
+       "summary": "Emkay sees aluminium under pressure from China's post-holiday restart, with social inventories building and downstream demand subdued. A technical bounce is possible if the June low holds, but fundamentals limit upside. Domestic MCX curve shows near-term backwardation despite weak outright price.",
+       "points": [
+        "MCX aluminium -0.40% on week to Rs335.35/kg",
+        "China social stocks 686,000MT at 8-Oct; bonded 114,600MT",
+        "LME stocks 238,875MT; cash-3M contango about $15/MT",
+        "MCX first-second month backwardation Rs1.45/kg",
+        "UAE aluminium scrap export ban continues past 8-Oct review"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "India HRC at INR64,700/t, a four-year high, with spot margin ~INR39,110/t, up ~INR3,000 q-q; Nomura stays Buy on Tata, JSW, Jindal Steel.",
+      "source": "Nomura — India steel - Steel weekly trends (week ended 09 Oct 2026)",
+      "received": "10:22",
+      "detail": {
+       "summary": "Nomura argues price hikes already taken more than absorb raw-material inflation, so 1HFY27 earnings stay supported. Rebar is catching up with flat, narrowing the flat-long spread, while seaborne coking coal has started to ease from its spike.",
+       "points": [
+        "HRC +INR700/t w-w; rebar +INR900/t w-w to INR63,800/t",
+        "Flat-long spread down to ~INR900/t",
+        "Coking coal -USD3/t w-w to USD271/t, ~3% below Sep average",
+        "Iron ore USD87/t CFR China, lowest of CY26",
+        "NMDC lumps +INR150/t to INR5,400/t from Sep-26"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA expects steel EBITDA/t to contract q-q in 2Q on weaker long prices and higher coking coal; volume growth cushions.",
+      "source": "BofA — India Insight: DMart | Consumer Preview | Metals & Mining | ... (12 Oct)",
+      "received": "08:54",
+      "detail": {
+       "summary": "BofA's 2QFY27 metals preview is sales commentary, not research. It flags a margin squeeze per tonne for steel from long-product price weakness and coking coal costs, partly offset by higher volumes.",
+       "points": [
+        "Steel EBITDA/t to fall q-q in 2QFY27",
+        "Drivers: weaker long steel prices, higher coking coal",
+        "Volume growth to cushion the impact",
+        "Adjacent: NMDC EBITDA seen -25% q-q"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HRC-Patra spread widened 6.9% w-w to INR13,802/t vs 3-month average INR11,884; Nuvama calls it negative for low-end HRC pipe makers.",
+      "source": "Nuvama — HRC-patra spread widens by 6.9% WoW to INR 13,802/ton (+1 more in Outlook)",
+      "received": "10:52",
+      "detail": {
+       "summary": "HRC kept rising while Patra (the pipe-end price) slipped, so the spread over HRC is wider than its recent average. Nuvama sees the squeeze falling on HRC-based pipe manufacturers, especially in the low-end segment.",
+       "points": [
+        "HRC +0.9% w-w to INR64,994/t",
+        "Patra -0.6% w-w to INR51,193/t",
+        "Spread INR13,802/t vs 3-month average INR11,884/t",
+        "HRC and Patra both up 14% over three months"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Nomura: cement needs INR12-15/bag hikes to offset petcoke at USD184/t (+25% q-q); only INR10/bag announced for Oct. Top picks UltraTech, Dalmia.",
+      "source": "Nomura — India cement - Fuel cost inflation raises the pricing hurdle",
+      "received": "10:19",
+      "detail": {
+       "summary": "Fuel inflation has intensified after 2QFY27 but lags the P&L by 60-90 days, so the bulk hits 4QFY27. Hikes must be absorbed in October, before the festive slowdown limits pricing. Spreads are manageable for now but could narrow if hikes fail to stick.",
+       "points": [
+        "Imported petcoke USD184/t, +25% q-q in Oct'26",
+        "Required hikes ~INR12-15/bag post-GST",
+        "INR10/bag hikes announced for Oct'26",
+        "Cement spread INR2,492/t, 3% below 2-year average",
+        "Cost pressure mostly 4QFY27F, limited in 3QFY27F"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA: cement cost pressure extends into 3Q, not peaking in 2Q as assumed; FY27 estimates revised, 2Q prices flattish. Buy UltraTech.",
+      "source": "BofA — India Insight: DMart | Consumer Preview | Metals & Mining | Oil & Gas | Cement | PI Inds | Financials | Economic Watch",
+      "received": "08:54",
+      "detail": {
+       "summary": "Sales-commentary blurb ahead of 2Q results. Demand is healthy on a low base and below-average monsoon, but West Asia uncertainty keeps costs elevated. The focus is on whether recent price hikes stick enough to offset cost pressure.",
+       "points": [
+        "2Q demand momentum similar to 1Q",
+        "Cost peak now seen in 3Q vs 2Q earlier",
+        "Pan-India prices flattish in 2Q",
+        "FY27 estimates revised",
+        "Buy rating on UltraTech"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "BofA 2QFY27 preview: NMDC EBITDA to fall 25% QoQ; Coal India EBITDA +2% as higher e-auction premiums offset seasonal volume dip.",
+      "source": "BofA — India Insight: DMart | Consumer Preview | Metals & Mining | Oil & Gas | Cement | PI Inds | Financials | Economic Watch",
+      "received": "08:54",
+      "detail": {
+       "summary": "BofA's Metals & Mining preview sets up a split between the two PSU miners for the quarter. Coal India's pricing mix (auction premiums) outweighs a seasonal volume dip, while NMDC is expected to see a sharp sequential earnings decline.",
+       "points": [
+        "NMDC EBITDA expected to fall 25% QoQ",
+        "Coal India EBITDA expected to rise 2% QoQ",
+        "Driver: higher e-auction premiums",
+        "Offset: seasonal volume dip",
+        "Part of wider M&M preview, 2QFY27E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Adani's Kutch Copper plans to double smelting capacity to 1 million tonnes, per Kotak's daily news list.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:59"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Zetwerk IPO prices at INR143-151, ~US$519mn at upper end (INR28.3bn fresh, INR21.8bn OFS); books open 15 Oct, close 19 Oct.",
+      "source": "Kotak — ***KOTAK DEAL: IPO of Zetwerk Manufacturing Businesses Limited - Pre-Anchor Announcement***",
+      "received": "09:01",
+      "detail": {
+       "summary": "Kotak's pre-anchor announcement sets the Zetwerk Manufacturing Businesses IPO terms. Upper-end post-money market cap is about US$2.8bn on fully diluted shares. Proceeds go largely to debt repayment at the company and subsidiaries, with the rest for acquisitions and general purposes.",
+       "points": [
+        "Offer INR50,123mn (US$518.8mn) at upper end",
+        "Fresh INR28,300mn; OFS INR21,823mn",
+        "Mcap INR269,749mn fully diluted (US$2.79bn)",
+        "Anchor 14 Oct; open 15 Oct; close 19 Oct",
+        "Offer 18.6% of FDSO; QIB not less than 75%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Festive e-com GMV fell 7-10% YoY to Rs29,800-30,900cr over 7-10 Oct; premium phones above Rs45,000 resilient as smartphone prices rose 35-40%.",
+      "source": "Nomura — India Consumer Durables and EMS: Festive online sales off to fine 'premium' start",
+      "received": "09:06",
+      "detail": {
+       "summary": "Memory-chip-driven price inflation is hurting mass-market electronics volumes while premium holds up. Reports conflict on festive growth, with ET citing up to 40% premium growth and Datum showing GMV down year on year. Relevant to Dixon and Amber demand read-through.",
+       "points": [
+        "GMV Rs29,800-30,900cr vs Rs33,200cr last year (Datum)",
+        "Mobile volumes -12% overall (Counterpoint)",
+        "Laptops and TVs up to 25% costlier",
+        "Mobile sales growth seen 6% vs 26% in 2025",
+        "Flipkart large appliances +30% YoY in first hour"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "HCLT 2QFY27: EBIT margin 18.2% beat, revenue missed on software (-5.8% qoq); FY27 growth guide narrowed to 2.5-4% (from 1-4%), implying weak 2H.",
+      "source": "PhillipCapital — HCL Technologies (HCLT IN) - Mixed results; Narrowed Guidance band implies weak H2 (+Kotak, JPM, MS, CLSA first takes)",
+      "received": "00:42",
+      "detail": {
+       "summary": "Services grew 3.0% qoq CC but software fell on fewer multi-year renewals. Margin beat came from efficiencies, advanced AI mix, SG&A leverage and FX. The narrower guide implies ~1% 2H services CQGR as the mega deal only ramps in 1QFY28.",
+       "points": [
+        "Revenue $3,724mn, +2.3% qoq CC; EBIT margin 18.2%, +131bps",
+        "Software -5.8% qoq CC; Kotak: ARR +2.6% organic",
+        "Advanced AI $219mn, +28% qoq, 5.9% of revenue",
+        "TCV $3.26bn, +35% qoq incl. $1.14bn mega deal",
+        "EBIT margin guide held at 17.5-18.5%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HCLT targets: PhillipCapital cuts to Rs1,290 from 1,430 (Neutral); Kotak FV Rs1,220 REDUCE; Emkay ADD Rs1,250; Avendus REDUCE Rs1,280; CMP Rs1,223.",
+      "source": "Kotak — [Kotak] HCL Technologies (CMP: Rs1,223, FV: Rs1,220, REDUCE): Margins surprise, products disappoint, valuations full",
+      "received": "02:25",
+      "detail": {
+       "summary": "Houses agree the quarter was mixed and valuation is full, so ratings stay put. Phillip lowers its multiple to 17x from 18x and trims FY27-28 EPS 1-2%. Kotak raises margins, lifting FY28-29 EPS 0.1-1% and FV on roll-forward at an unchanged 15x.",
+       "points": [
+        "Phillip: TP Rs1,290 (was 1,430), FY27E EPS Rs74.1, -1.0%",
+        "Kotak: FV Rs1,220 (was 1,200), 16x FY28E EPS",
+        "Emkay ADD Rs1,250; Avendus REDUCE Rs1,280 (headline ratings)",
+        "Phillip 52-wk range Rs1,030-1,780"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS CIO survey: 2026 IT services budget growth 2.0% (from 1.8%), 2027 stable at 2%; slight positive for India IT, no near-term catalysts. (+10 more in Outlook)",
+      "source": "Morgan Stanley — India Technology: 3Q26 CIO Survey: IT Services: Stable 2027 Budget Expectations",
+      "received": "04:17",
+      "detail": {
+       "summary": "Overall IT budgets edged up, led by the US and offset by Europe. MS reads Accenture results plus the survey as stable-to-slightly-decelerating services spend next year. Without acceleration in FY28 revenue growth, India IT forecasts and multiples remain at risk.",
+       "points": [
+        "2026 IT budget growth +4.0%, +23bps qoq; 2027 stable +4.0%",
+        "Services 2027 spend +2% yoy; Financials and Energy strongest",
+        "26% of CIOs fund AI from net-new budget (33% in 2Q26)",
+        "64% plan to buy AI capabilities vs 17% build"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "UBS expects 75bp of RBI hikes to 6% repo after September CPI hit 5.5% (food 7.7%); headline stays above 5.5% for three quarters.",
+      "source": "UBS — India Economic Comment \"September CPI inflation climbs to 5.5%, with...\"",
+      "received": "18:31",
+      "detail": {
+       "summary": "Inflation is broadening beyond food, with core and rural prices firming. Real policy rates turn negative as CPI stays well above the 4% target, forcing a monetary recalibration. El Nino effects on global food prices lag 6-18 months, adding 2027 upside risk.",
+       "points": [
+        "Headline CPI 5.5% vs 4.8% in August",
+        "Food 7.7% vs 6.0%; vegetables & pulses 9.2%",
+        "Core 4.3% vs 4.1%; rural 6.1%, urban 4.9%",
+        "FY27 CPI avg 5.2%; above 5% through 1H FY28",
+        "Cumulative 75bp hikes take repo to 6%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "RBI lifts daily CRR maintenance to 99%, adds Rs250bn OMO sale and OMC dollar window; CLSA sees INR toward 95 from 96.70, 10-year yield breaking 7.30%.",
+      "source": "CLSA — India economics: More liquidity and FX measures",
+      "received": "08:50",
+      "detail": {
+       "summary": "The weekend measures drain liquidity and cut dollar demand, supporting the rupee near term. CLSA calls them a band-aid, with focus returning to crude, FX flows and the FY28 BoP after a few weeks, and more liquidity steps possible including a CRR hike.",
+       "points": [
+        "CRR maintenance 90% to 99% from 16 October",
+        "20% FERR on importer hedges above US$2m",
+        "Non-underlying FX derivative limit cut to US$5m from US$100m",
+        "FX reserves US$735bn vs US$786bn early-September peak",
+        "97/US$ possibly the unofficial RBI red line"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees Nifty-50 2QFY27 net profit +21% yoy, FY27 EPS Rs1,227; downgrades IT, 4W autos and chemicals, upgrades 2W, private banks, pharma. (+14 more in Outlook)",
+      "source": "Kotak — Kotak Q2 Earnings preview - Strong quarter.",
+      "received": "11:10",
+      "detail": {
+       "summary": "Kotak's sector preview summary flags a strong quarter led by pharma, EMS, private banks and 2W, while ferrous metals, large-cap IT and agri-inputs are weak. Metals preference leans ferrous over non-ferrous given macro backdrop and dollar strength.",
+       "points": [
+        "KIE universe net income +21% yoy",
+        "Metals: top BUYs Jindal Steel, JSW Steel, Vedanta Aluminium",
+        "Weak prints: Tata Steel, Wipro, Infosys, Maruti, Hyundai",
+        "EMS strong: Syrma, Avalon, Cyient DLM; Kaynes weak",
+        "Staples margins pressured; ITC, Asian Paints weak"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "JPM: Reliance O2C EBITDA seen +24% QoQ to Rs210bn on diesel exports; SAED-exempt SEZ refinery; stays O/W.",
+      "source": "JPM — India Oil and Gas: Net Diesel cracks - why Indian refiners should have a better 2Q",
+      "received": "08:40",
+      "detail": {
+       "summary": "Indian refiners do not capture the full diesel crack because of the SAED, and net cracks have fallen back to May lows on freight. Even so, September-quarter net cracks are up sharply on June-Q, and higher diesel exports and lower LPG output support Q2 margins.",
+       "points": [
+        "O2C EBITDA Rs170bn to Rs210bn QoQ, c.24%",
+        "Reliance SEZ refinery exempt from SAED",
+        "Diesel exports up in July/Aug vs 1Q (PPAC)",
+        "LPG output down despite steady refinery throughput",
+        "Prefers MAHGL (N) over IGL (U/W); CGD margin risk"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: Nifty Auto down c.17% in two months; M&M at c.15x FY28 core EPS, HC O-PF maintained.",
+      "source": "CLSA — India Research - Gravita, DMart, IRB Infra, India Recycling, Autos, IT... (India autos: Right here, right now)",
+      "received": "08:57",
+      "detail": {
+       "summary": "The sell-off reflects commodity-inflation margin fears, price-hike demand worries and de-rating after the GST-cut rebase, while retail demand stays robust. CLSA argues the GST growth rebase is neither new nor unexpected, so risk-reward now looks attractive even on conservative FY28 assumptions.",
+       "points": [
+        "Nifty Auto -c.17% over two months",
+        "OEMs reiterated mid-to-high single-digit 2HFY27 growth",
+        "M&M c.15x FY28CL core EPS",
+        "Assumes 10% tractor decline in FY28",
+        "c.10% EPS CAGR in conservative case; target unchanged"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "US semis sold off: SOX -2.7%, Ciena and Lumentum -10% on AI-spend caution; Broadcom CEO flagged financing as a bigger AI bottleneck than components.",
+    "source": "JPM — JPM | Views on Asia Tech"
+   },
+   {
+    "text": "JPM stays bullish AI: sees big-5 US cloud capex +67% to $1.21tr in 2027 and +22% to $1.48tr in 2028; hyperscaler ROI above 30%.",
+    "source": "JPM — JPM | Views on Asia Tech"
+   },
+   {
+    "text": "JPM Asia tech feedback: investors positive on substrates/packaging (Ibiden, ASE, TSMC), cautious on HBM chain (Hanmi, ASMPT, BESI); Micron -4% on CXMT competition.",
+    "source": "JPM — JPM | Views on Asia Tech"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

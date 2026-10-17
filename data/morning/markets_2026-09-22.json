@@ -1,0 +1,203 @@
+{
+ "date": "2026-09-22",
+ "fetched_at": "2026-09-22T08:17:23",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-21",
+    "close": 7764.7,
+    "prev_date": "2026-09-18",
+    "chg_pct": 1.49
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-21",
+    "close": 27122.09,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.26
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-21",
+    "close": 52048.83,
+    "prev_date": "2026-09-18",
+    "chg_pct": 0.71
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-21",
+    "close": 12433.17,
+    "prev_date": "2026-09-18",
+    "chg_pct": 4.29
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-21",
+    "close": 227.38,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.3
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-21",
+    "close": 615.52,
+    "prev_date": "2026-09-18",
+    "chg_pct": 9.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-21",
+    "close": 445.14,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.41
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-21",
+    "close": 362.66,
+    "prev_date": "2026-09-18",
+    "chg_pct": 1.41
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-21",
+    "close": 186.11,
+    "prev_date": "2026-09-18",
+    "chg_pct": 2.66
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-21",
+    "close": 59.38,
+    "prev_date": "2026-09-18",
+    "chg_pct": -0.82
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-09-21 23:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-know-231825357.html"
+   },
+   {
+    "title": "Can Accenture Stock Keep Rising On Growth It Has To Buy?",
+    "publisher": "Trefis",
+    "when": "2026-09-21 20:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-keep-rising-growth-200515668.html"
+   },
+   {
+    "title": "Could You Have Seen Accenture Stock's Rebound Coming?",
+    "publisher": "Trefis",
+    "when": "2026-09-21 18:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/could-seen-accenture-stocks-rebound-183331839.html"
+   },
+   {
+    "title": "Accenture Stock Gains After AI Safety Deal With Anthropic",
+    "publisher": "Investopedia",
+    "when": "2026-09-21 16:45Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-stock-gains-ai-safety-164558970.html"
+   },
+   {
+    "title": "Accenture Stock Rises 4% on $1 Billion Anthropic Safety Deal",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-21 14:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-stock-rises-4-1-144436252.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank Raises Price Target on Cognizant Technology Solutions to $70 From $65, Keeps Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-18 11:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-raises-price-target-113308379.html"
+   },
+   {
+    "title": "Axis Bank and Cognizant Collaborate to Strengthen Application Management with AMS 2.0",
+    "publisher": "PR Newswire",
+    "when": "2026-09-17 06:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/axis-bank-cognizant-collaborate-strengthen-063000796.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Why Rackspace Technology (RXT) Is Up 15.8% After Joining NVIDIA\u2019s Cloud Partner Program",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-22 01:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/why-rackspace-technology-rxt-15-011428011.html"
+   },
+   {
+    "title": "TSLA Stock Hits Nearly 3-Week High: Nvidia Win Adds Muscle To \u2018Physical AI\u2019 Pivot Despite Optimus Delays",
+    "publisher": "Stocktwits",
+    "when": "2026-09-22 01:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/tsla-stock-hits-nearly-3-011224775.html"
+   },
+   {
+    "title": "Dow Jones Futures: Falling Oil Prices, Yields Spark Market Rally; AMD, Intel, Micron, Nvidia, Sandisk Are Key Movers",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-22 00:59Z",
+    "link": "https://finance.yahoo.com/m/bc32a5e1-f207-3311-ba0b-143bb01bd032/dow-jones-futures%3A-falling.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Edges Higher as AI Chips Target $21.7 Billion",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-21 18:48Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-edges-higher-ai-chips-184812869.html"
+   },
+   {
+    "title": "Broadcom vs. Intel: Which Semiconductor Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-21 17:26Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-vs-intel-semiconductor-stock-172608325.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "ARM, Intel, AMD Surge As Meta\u2019s Muse AI Fuels Fresh Chip Demand Bets: Retail Turns Extremely Bullish",
+    "publisher": "Stocktwits",
+    "when": "2026-09-22 01:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/arm-intel-amd-surge-meta-015051328.html"
+   },
+   {
+    "title": "Should Investors Chase the AI-Fueled Rally in AMD or META Stock?",
+    "publisher": "Zacks",
+    "when": "2026-09-22 00:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investors-chase-ai-fueled-rally-000500929.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23496.5,
+  "chg_pct": -0.17,
+  "stamp": "22-Sep-2026 08:17:11",
+  "expiry": "29-Sep-2026",
+  "volume": 1770,
+  "nifty_close": {
+   "close": 23414.3,
+   "stamp": "21-Sep-2026 15:30"
+  },
+  "gap_pts": 82.2,
+  "gap_pct": 0.35
+ }
+}

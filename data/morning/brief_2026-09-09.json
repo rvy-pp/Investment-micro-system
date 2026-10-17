@@ -1,0 +1,86 @@
+{
+  "date": "2026-09-09",
+  "generated_at": "2026-09-09T10:00:00+05:30",
+  "mail": {
+    "window": "24h to 09:58 IST",
+    "n_scanned": 90,
+    "sectors": [
+      {
+        "sector": "Non-ferrous",
+        "bullets": [
+          {"text": "Copper $15-16k/t if the US 15%-then-30% refined-copper tariff lands by Jan-27; a delay/exemption unwinds ~750kt COMEX stock toward $12.5-13.5k/t.", "source": "Ambit — Ambit Metals: Base Metals – Tariff risk vs scarcity premium", "received": "08:15"},
+          {"text": "Ambit prefers HNDL (SELL) over VAML for downside protection; the >4x Cu/Al substitution tailwind reverses on any copper correction.", "source": "Ambit — Ambit Metals: Base Metals – Tariff risk vs scarcity premium", "received": "08:15"},
+          {"text": "CLSA exits every demerged Vedanta entity except Vedanta Aluminium from its India model portfolio, redeploying into ICICI, HDFC Bank, SBI.", "source": "CLSA — CLSA: India strategy: Banks: Double catch-up potential", "received": "02:56"}
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {"text": "NMDC lifts lump ore Rs150/t (~Rs185 incl. taxes) from Sep 9, fines flat — marginal negative for JSW Steel, Jindal Steel on external ore.", "source": "Morgan Stanley — PULSE: India Materials: NMDC raises iron ore lump prices slightly", "received": "08:33"},
+          {"text": "Tata Steel actionable (CMP 186, TP 209): 6.1x FY28E EV/EBITDA, cheapest in coverage; Netherlands HRC restarted, Europe EBITDA/t ~USD30 Q2 vs -17 Q1.", "source": "Nuvama — Nuvama Daily | Actionable : Tata Steel", "received": "08:31"},
+          {"text": "Domestic ore still ~52% below import parity (5-yr avg 56%); China August ore imports beat on typhoon-delayed July clearance, seaborne ~US$99/t range-bound.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:51"}
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {"text": "Sep pan-India trade price +Rs10/bag to ~Rs330 on announced hikes, but implementation slipping; 2Q spread Rs2,447/t, -Rs63 q-q.", "source": "Nomura — FW: India Cement - Cement channel checks — Sep'26", "received": "10:48"},
+          {"text": "Kutch rail cuts Ahmedabad delivered cost Rs250-350/t from FY27; Ambit BUY Dalmia/Nuvoco (TP Rs2,150/390), SELL UltraTech, Shree, Ambuja.", "source": "Ambit — Ambit Sales: Cement: Kutch Rail cld pose challenge for North Mfg", "received": "09:38"},
+          {"text": "Shree suspends Meghalaya East Jaintia Hills work after HC admits students' union petition; NE foray delayed (Emkay ADD, TP Rs27,500).", "source": "Emkay — Cement Corner: Shree Cement NE foray update (+3 more in Outlook)", "received": "09:10"}
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {"text": "NMDC circular w.e.f. 09-Sep-2026: lumps Rs5,400/t (+Rs150, ~+2.9%), fines unchanged Rs4,500/t, FOR ex-royalty/DMF/NMET/GST — first hike since the monsoon.", "source": "Morgan Stanley — PULSE: India Materials: NMDC raises iron ore lump prices slightly", "received": "08:33"},
+          {"text": "Domestic fines now ~52% discount to import parity (5-yr avg 56%) with seaborne ~$99/t; MS calls it marginally negative for JSW Steel and Jindal Steel.", "source": "Morgan Stanley — PULSE: India Materials: NMDC raises iron ore lump prices slightly", "received": "08:33"},
+          {"text": "BofA: Rs375bn coal-gasification scheme (100mnt by 2030, 20% capex support, 30-yr linkages) is new Coal India offtake — economics still sub-11% WACC on sanctioned capex.", "source": "BofA — Energy - India: Energy Security part 2: Coal's second act", "received": "06:47"}
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {"text": "PGEL flagged as technical short: entry 553, stop 563, target 533, alongside a bearish Nifty call below 24,200-24,400.", "source": "Emkay — Technical Research: Weekly Technical Note", "received": "14:52"},
+          {"text": "Symphony enters room ACs, BLDC fans and air purifiers from the December quarter via third-party ODMs — a potential new outsourcing customer for Amber and PGEL.", "source": "Nomura — India Consumer Durables and EMS: Symphony to foray into air-conditioner, BLDC fan, air-purifier segments", "received": "09:41"},
+          {"text": "Samsung India cutting 80-100 TV/appliance executives as memory-chip prices more than doubled — component inflation pressuring smartphone and TV assembly margins.", "source": "Nomura — India Consumer Durables and EMS: Symphony to foray into air-conditioner, BLDC fan, air-purifier segments", "received": "09:41"}
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {"text": "Coforge Chair OP Bhatt resigns abruptly after internal auditors flagged concerns on his Board Evaluation; CLSA sales: buy the 7-10% gap-down.", "source": "CLSA — Coforge thoughts | Model Portfolio: Doubling on Banks | AXSB Webinar | BAF | Cement ESG | KR AU SEMIs", "received": "08:58"},
+          {"text": "Coforge and Mphasis CEOs webcast at BofA Insights Forum today; LTIMindtree at JPM fireside chat — first management airtime post the Coforge board exit.", "source": "BofA — Coforge/Mphasis CEO webcasts; JPM — India IT C-Suite Fireside Chat: LTIMindtree", "received": "08:48"},
+          {"text": "AMD TP raised $575 to $710 (O-PF): MI-455 rack ASP ~$5m implies $50k/GPU, FY27-28 EPS +25-29%, ~30% above consensus.", "source": "CLSA — AMD (AMD US): The biggest questions", "received": "15:51 (08-Sep)"}
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {"text": "CLSA exits every demerged Vedanta entity except Vedanta Aluminium and takes profit on Eternal, redeploying into ICICI, HDFC Bank, SBI; banks at 16-year-low 1.8x PB.", "source": "CLSA — CLSA: India strategy: Banks: Double catch-up potential", "received": "02:56"},
+          {"text": "BNPP now calls a Fed HIKE next week (Sep/Dec/Jan path), Brent closed above $99 on Middle East strikes; expects an autumn equity stall before year-end highs.", "source": "BNPP — BNPP INDIA QUICK NOTES: GLOBAL 4Q OUTLOOK - Across asset classes", "received": "08:47"},
+          {"text": "FII flat on 8 Sep (-$13m; MTD -$773m, YTD -$25bn) as Nifty fell 0.61% to 23,635; Emkay's weekly note turns bearish after the ascending-triangle break at 24,600.", "source": "MS — MS India Trends & Themes (+9 more in Outlook)", "received": "09:04"}
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {"text": "Generic GLP-1 to Rs99bn by FY32 (6.6mn users vs 0.27mn): Eris, Torrent, Natco, Lupin gain 4-12% FY29 EPS; NEST, VBL, UBL exposed.", "source": "Kotak — Semaglutide – Many Winners; ..& what impact on consumption habits", "received": "09:29"},
+          {"text": "Corporate lending rates up 50bps since Jan to 7.5%, retail flat — bank NIMs recover 2HFY27; HDFCB > ICICI > Axis/SBI; Eicher BUY TP Rs8,469.", "source": "Ambit — Ambit Sales: Auto: Eicher's Premium Compounding; Banks: NIMs Set to Recover; Infoedge: Hiring Momentum", "received": "09:38"},
+          {"text": "HDFC AMC at Rs2,447 gets three same-day endorsements: Kotak ADD FV Rs3,000, Emkay BUY TP Rs3,200 — 23-31% upside on structural flows.", "source": "Kotak — [Kotak] HDFC AMC (CMP: Rs2,447, FV: Rs3,000, ADD): NDR and Analyst Meet takeaways (+9 more in Outlook)", "received": "08:00"}
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "OpenAI's Astra release reignited the compute-bottleneck trade: SOX +1.3%, software -2.3% (ZM -9.7%, NOW -5.0%); Nvidia -2.0% the outlier.", "source": "JPM Overnight Brief! 9/9 — Middle East escalation, OpenAI's Astra release drove another move higher"},
+      {"text": "AMD +5.9% to $505.74 as CLSA lifts TP to $710 on MI-455 rack economics; sees 2027 non-GAAP EPS $20.25, ~30% above consensus.", "source": "CLSA — AMD (AMD US): The biggest questions"},
+      {"text": "Broadcom +3.0%: Hock Tan reaffirmed FY27/FY28 AI revenue targets of $115bn/$230bn at GS Communacopia, supply constrained; Arista reiterated its 2026 guide.", "source": "GS US TMT day 1 soundbites — GS Communacopia + Technology Conf"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": "Consulting/tech-services sell-off on the energy-cost spike and Fed-hike expectations into FOMC; the Google Cloud Gemini Enterprise launch gave no cushion (StockStory, 2026-09-08)."},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

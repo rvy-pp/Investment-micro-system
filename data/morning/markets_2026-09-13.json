@@ -1,0 +1,209 @@
+{
+ "date": "2026-09-13",
+ "fetched_at": "2026-09-13T08:06:18",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-11",
+    "close": 7656.98,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.86
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-11",
+    "close": 26333.04,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.96
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-11",
+    "close": 52573.29,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.98
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-11",
+    "close": 11824.0,
+    "prev_date": "2026-09-10",
+    "chg_pct": 1.81
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-11",
+    "close": 218.29,
+    "prev_date": "2026-09-10",
+    "chg_pct": -0.03
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-11",
+    "close": 516.13,
+    "prev_date": "2026-09-10",
+    "chg_pct": 2.49
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-11",
+    "close": 433.24,
+    "prev_date": "2026-09-10",
+    "chg_pct": 1.22
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-11",
+    "close": 361.99,
+    "prev_date": "2026-09-10",
+    "chg_pct": 0.32
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-11",
+    "close": 183.9,
+    "prev_date": "2026-09-10",
+    "chg_pct": 3.37
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-11",
+    "close": 60.0,
+    "prev_date": "2026-09-10",
+    "chg_pct": 2.88
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Would You Be Glad To Own Accenture If Its Consulting Work Stays Slow?",
+    "publisher": "Trefis",
+    "when": "2026-09-11 21:41Z",
+    "link": "https://finance.yahoo.com/m/8d7c07d0-9ae8-361b-bd9b-300a5a393d25/would-you-be-glad-to-own.html"
+   },
+   {
+    "title": "Google and Accenture Team Up to Accelerate Enterprise AI Adoption",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/google-accenture-team-accelerate-enterprise-151402810.html"
+   },
+   {
+    "title": "What Is The Market Seeing In Accenture Stock That You Are Not?",
+    "publisher": "Trefis",
+    "when": "2026-09-11 00:39Z",
+    "link": "https://finance.yahoo.com/m/f07f5f15-7cd7-3849-9ccf-8c4871dd1c12/what-is-the-market-seeing-in.html"
+   },
+   {
+    "title": "Accenture Wins $480.4 Million US Army Contract for Task-Management System",
+    "publisher": "MT Newswires",
+    "when": "2026-09-10 21:40Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-wins-480-4-million-214057085.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Says AI Creates Jobs, Its Own Restructuring Says Otherwise",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-11 15:47Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-says-ai-creates-jobs-154755236.html"
+   },
+   {
+    "title": "Cognizant (CTSH): Can 17 AI Agents Turn Productivity Into Revenue?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-10 23:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-17-ai-agents-231307532.html"
+   },
+   {
+    "title": "Cognizant Named in TIME World's Best Companies 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-09 13:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-time-worlds-best-133000424.html"
+   },
+   {
+    "title": "Cognizant Expands US Hiring Through Universities",
+    "publisher": "MT Newswires",
+    "when": "2026-09-08 10:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-expands-us-hiring-universities-101112397.html"
+   },
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Not Nvidia. Not Micron. This Dirt Cheap \u201cMagnificent Seven\u201d Stock Could Be the Biggest Winner of the Trillion-Dollar AI Race \u2013 Here\u2019s the Case.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-12 22:35Z",
+    "link": "https://finance.yahoo.com/m/2932c484-eca9-34b7-8907-641b1c9bae95/not-nvidia.-not-micron.-this.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom vs. Micron Technology: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-12 18:08Z",
+    "link": "https://finance.yahoo.com/m/8c025786-2f35-38af-9455-0063c6cb65fc/broadcom-vs.-micron.html"
+   },
+   {
+    "title": "Better AI Chip Stock: Broadcom vs. Nvidia",
+    "publisher": "Motley Fool",
+    "when": "2026-09-12 17:46Z",
+    "link": "https://finance.yahoo.com/m/f0c445a2-dcab-353a-a837-29096be9dcc4/better-ai-chip-stock%3A.html"
+   },
+   {
+    "title": "Broadcom's AI Chip Revenue Grew 221% Last Quarter. A $1,000 Investment a Year Ago Would Be Worth This Much Today.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-12 11:03Z",
+    "link": "https://finance.yahoo.com/m/282459b4-96ae-3a4c-9520-3836d9c14f85/broadcom%27s-ai-chip-revenue.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why AMD Stock Forecast Has Room to Run",
+    "publisher": "Barchart",
+    "when": "2026-09-12 14:00Z",
+    "link": "https://finance.yahoo.com/m/2b0d1fdc-02cf-3770-9a0c-af4706c01263/why-amd-stock-forecast-has.html"
+   },
+   {
+    "title": "AMD Just Raised the Top of the Company's 2030 Market to $3 Trillion",
+    "publisher": "Motley Fool",
+    "when": "2026-09-12 12:39Z",
+    "link": "https://finance.yahoo.com/m/084a9b7b-7480-31a8-a9df-f397a5987244/amd-just-raised-the-top-of.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23575.0,
+  "chg_pct": 0.51,
+  "stamp": "12-Sep-2026 02:29:40",
+  "expiry": "29-Sep-2026",
+  "volume": 60771,
+  "nifty_close": {
+   "close": 23398.100000000002,
+   "stamp": "11-Sep-2026 15:30"
+  },
+  "gap_pts": 176.9,
+  "gap_pct": 0.76
+ }
+}

@@ -1,0 +1,445 @@
+{
+ "date": "2026-10-07",
+ "generated_at": "2026-10-07T08:13:33+05:30",
+ "mail": {
+  "window": "24h to 07:50 IST",
+  "n_scanned": 125,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "Kotak 2Q preview: Hindalco India EBITDA Rs70.5bn (-8.3% qoq), Novelis $507mn; Nalco -16% qoq aluminium; Vedanta/HZ EBITDA +~9% qoq; VAML -2.1%.",
+      "source": "Kotak — [Kotak] Metals & Mining: 2QFY27 Preview: Softer prices to weigh on margins",
+      "received": "08:53",
+      "detail": {
+       "summary": "Kotak sees a mixed base-metal quarter: zinc strength offsets softer aluminium. It prefers ferrous over non-ferrous on higher rates and dollar strength, with VAML among top BUYs.",
+       "points": [
+        "Zinc +11.4% qoq; aluminium -9.4%; alumina +12.6%",
+        "Novelis EBITDA/t $550, +23% yoy, -2.3% qoq",
+        "Nalco aluminium EBITDA Rs19.8bn, alumina Rs3.7bn",
+        "HZ EBITDA +8.8% qoq, +97% yoy",
+        "VEDL EBITDA +8.9% qoq; VAML -2.1% qoq"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS sees Hindalco 2Q consolidated EBITDA ~Rs116bn vs Rs139bn in 1Q; Novelis adj. EBITDA/t ~$525 vs $563; consensus EPS largely unchanged.",
+      "source": "Morgan Stanley — IDEA: India Materials: Metals & Mining: What to Expect from 2QF27 Results",
+      "received": "01:01",
+      "detail": {
+       "summary": "Lower LME aluminium weakens domestic margins, while Novelis volumes ramp slowly after the Oswego restart. MS flags a likely upside surprise on volumes and margins but no change to consensus EPS.",
+       "points": [
+        "Consolidated EBITDA ~Rs116bn vs ~Rs139bn in 1QF27",
+        "Novelis adj. EBITDA/t ~$525 vs $563",
+        "Watch tariff costs, insurance recoveries, Bay Minette commissioning",
+        "Scrap spread trends key beyond volume ramp"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Vedanta board meets Oct 8 to consider first FY27 interim dividend; separately faces Rs5,600 crore Odisha Mining demand after High Court setback.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:47",
+      "detail": {
+       "summary": "The daily lists two Vedanta headlines: a dated board meeting on the interim dividend and a bauxite-related demand from Odisha Mining after a High Court ruling. Only headlines are given, no detail.",
+       "points": [
+        "Board meeting Oct 8 on first FY27 interim dividend",
+        "Odisha Mining demand Rs5,600 crore",
+        "Odisha High Court setback for Vedanta aluminium"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Nomura sees steel EBITDA/t down ~INR1,150 QoQ in 2Q; JSW ~INR13,000/t (-2,000), Jindal Steel ~INR9,300/t (-2,600), Tata India ~INR16,500/t (-1,300); Buy on all three.",
+      "source": "Nomura — India metals: 2QFY27F preview - Rising operating costs erode unit margins",
+      "received": "00:19",
+      "detail": {
+       "summary": "Higher coking coal and softer realizations outweigh better volumes, so unit margins fall across covered mills. Tata's Europe arm turns profitable, lifting consolidated EBITDA even as India EBITDA/t slips.",
+       "points": [
+        "Industry domestic volume +7-8% y-y; JSW +10%, Tata +8%",
+        "Coking coal +USD8/t q-q; domestic iron ore -INR120/t",
+        "HRC +INR1,040/t q-q, rebar -INR3,500/t q-q",
+        "Tata Europe EBITDA EUR10/t vs loss EUR15/t",
+        "Tata consolidated EBITDA INR100bn vs INR93bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees ferrous EBITDA/t down ~Rs1,500 in 2QFY27 (rebar -5%, HRC +2%); Tata UK loss widens to US$170/t; Jindal Steel, JSTL top BUYs.",
+      "source": "Kotak — [Kotak] Metals & Mining: 2QFY27 Preview: Softer prices to weigh on margins",
+      "received": "08:53",
+      "detail": {
+       "summary": "Seasonal rebar weakness and dearer coking coal hit margins, partly offset by operating leverage from capacity ramp-ups. Kotak prefers ferrous over non-ferrous given macro headwinds, with tariff protection supporting medium-term margins.",
+       "points": [
+        "Realization down ~Rs1,265/t q-q across coverage",
+        "Volume +11.2% y-y, +16% q-q",
+        "Tata Europe EBITDA US$10/t; Dutch US$63/t",
+        "UK loss US$170/t vs US$75/t in 1Q",
+        "NMDC EBITDA/t Rs2,105 (-9.8% q-q)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS calls steel a weak quarter: domestic EBITDA/t down ~Rs700 QoQ; hard coking coal +US$15/t QoQ, more cost pain likely in 3Q; spot spreads supportive.",
+      "source": "Morgan Stanley — IDEA: India Materials: Metals & Mining: What to Expect from 2QF27 Results (+5 more in Outlook)",
+      "received": "01:01",
+      "detail": {
+       "summary": "Volumes are supported by destocking but realizations fell, led by rebar. Recent price hikes should offset cost pressure, supporting spot spreads and 3Q margins amid low inventories.",
+       "points": [
+        "Hard coking coal +US$15/t q-q, ~US$50/t in six months",
+        "HRC +2% q-q, rebar -5% q-q",
+        "NSR down ~Rs0.6K/t JSW & Tata India; ~Rs1.5K/t Jindal & SAIL",
+        "Volumes: JSW +15%, Jindal +23%, Tata +8%, SAIL +6%",
+        "Tata Steel flagged for likely downside surprise on UK/Netherlands"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Nomura 2QFY27 preview: cement EBITDA/t seen down Rs200-250 q-q; Dalmia worst at ~Rs300; trade prices -1% q-q at Rs324/bag, East -5%.",
+      "source": "Nomura — India cement: 2QFY27F preview - Industry profitability metrics signal trough conditions",
+      "received": "16:50",
+      "detail": {
+       "summary": "Nomura sees 2Q as a trough on profitability: volumes solid but prices slipped and fuel/packaging costs bit. East-heavy names take the biggest realisation hit, and spot imported fuel has jumped further, a risk into 3Q. Buy ratings maintained on all but ACC (Reduce).",
+       "points": [
+        "Industry volume +7-8% y-y; Shree highest at +12%",
+        "Operating cost/t +3% q-q",
+        "Spot imported fuel +25% vs 2Q average",
+        "~Rs10/bag hike taken only at quarter-end",
+        "Buy on UTCEM, ACEM, DALBHARA, NUVOCO, TRCL, SRCM"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley: cement EBITDA/t seen down ~Rs250 q-q to ~Rs860; likes UltraTech (upside surprise); Dalmia, Ambuja, Shree flagged downside, EPS cuts modest.",
+      "source": "Morgan Stanley — India Materials: Building Materials – what to expect from 2QF27 results",
+      "received": "19:17",
+      "detail": {
+       "summary": "MS expects demand to hold and pan-India prices to be broadly stable through the monsoon, but warns of a higher-for-longer cost structure from the Middle East conflict. Price hikes would be needed to offset cost inflation; UltraTech is the preferred name into results.",
+       "points": [
+        "Industry volume +7-8% y-y; UTCEM ~11%, Shree ~12%",
+        "Petcoke and thermal coal up ~20% since end-July",
+        "Rs150-200/t cumulative power & fuel cost inflation",
+        "Rs10-15/bag hikes needed over 2-3 months",
+        "Ambuja volume broadly flat; Dalmia +5-6%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: cement margin down ~Rs200/t q-q on fuel, freight and deleverage; industry demand +9-10% y-y; cautious sector view, Nuvoco top pick.",
+      "source": "Kotak — Kotak Daily: Bharat Electronics Upgrade, Preview notes- Chemicals, construction material... (+1 more in Outlook)",
+      "received": "09:13",
+      "detail": {
+       "summary": "Kotak's dealer checks show broadly stable pan-India prices with mild pockets of weakness, so margin pressure is cost-led. It stays cautious because timelines for cost normalisation are uncertain, and keeps Nuvoco as top pick.",
+       "points": [
+        "EBITDA/t -Rs200 q-q for coverage",
+        "Industry demand +9-10% y-y; coverage +10-11%",
+        "Prices broadly stable pan-India in 2QFY27",
+        "Nuvoco top pick"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Coal India 2QFY27: MS sees e-auction premium jumping to ~69% from ~47% and EBITDA/t ~Rs635 vs Rs517; modest EPS upgrade risk.",
+      "source": "Morgan Stanley — IDEA: India Materials: Metals & Mining: What to Expect from 2QF27 Results",
+      "received": "01:01",
+      "detail": {
+       "summary": "MS flags Coal India as the likely upside surprise in its metals preview, driven by e-auction realisation rather than offtake. It expects consensus EPS to be revised modestly higher, and tells you to watch thermal power demand, plant inventories and global thermal coal prices.",
+       "points": [
+        "E-auction premium ~69% vs ~47% in 1QF27",
+        "EBITDA/t (adj. OBR) ~Rs635 vs ~Rs517",
+        "E-auction volume share ~13.5%",
+        "Likely upside surprise; modest EPS revision higher",
+        "Watch power demand, plant stocks, global coal"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NMDC 2QFY27: Kotak sees EBITDA/t at Rs2,105 (-9.8% qoq, +11.5% yoy) as early-quarter price cuts cut realisations.",
+      "source": "Kotak — [Kotak] Metals & Mining: 2QFY27 Preview: Softer prices to weigh on margins",
+      "received": "08:53",
+      "detail": {
+       "summary": "Kotak expects a weak quarter for ferrous names on seasonal price weakness and higher coking coal. For NMDC, the sequential fall comes from price cuts taken early in the quarter, though EBITDA/t is still up year on year.",
+       "points": [
+        "NMDC EBITDA/t Rs2,105",
+        "-9.8% qoq, +11.5% yoy",
+        "Lower realisations from early-quarter price cuts"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Domestic iron ore (NMDC-linked) prices fell ~INR120/t qoq in 2Q, Nomura notes; MS also calls NMDC price move marginally lower.",
+      "source": "Nomura — India metals: 2QFY27F preview - Rising operating costs erode unit margins (+1 more in Outlook)",
+      "received": "00:19",
+      "detail": {
+       "summary": "Nomura says moderating domestic iron ore prices partly offset higher coking coal for steel producers. The point for NMDC is a softer price realisation quarter, consistent with the price cuts Kotak flags.",
+       "points": [
+        "Domestic iron ore down INR120/t q-q",
+        "Coking coal up USD8/t q-q",
+        "Steel EBITDA/t seen down ~INR1,150 q-q"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Dixon 2Q smartphone volumes seen ~9.5mn vs 10.6mn 2QFY26 (Nomura); CLSA has CYTD industry volumes -11% YoY on memory costs, PLI expiry.",
+      "source": "Nomura — India consumer durables, EMS & digital - 2QFY27F preview (+CLSA preview)",
+      "received": "19:35",
+      "detail": {
+       "summary": "Nomura sees Dixon on track with exports post MPMS offsetting weak domestic demand in 2HFY27, while CLSA says elevated memory costs and expired PLI benefits weigh on volumes and margins, with Dixon's customers losing share to premium brands.",
+       "points": [
+        "Dixon 2Q volumes ~9.5mn vs 7.5mn 1QFY27",
+        "2QFY26 base 10.6mn",
+        "CLSA: smartphone volumes -11% YoY CYTD",
+        "Nomura EMS coverage: revenue ~+35%, EBITDA ~+4% YoY",
+        "Nomura keeps Dixon Buy"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura expects Avalon ahead of consensus (Buy, preferred pick) and Kaynes to miss (Neutral) on slower smart meter execution; CLSA sees sharp Kaynes 2Q slowdown.",
+      "source": "Nomura — India consumer durables, EMS & digital - 2QFY27F preview",
+      "received": "19:35",
+      "detail": {
+       "summary": "Against Bloomberg consensus, Nomura flags Avalon as a likely beat on strong B2B traction and Kaynes as a likely miss. CLSA independently expects Kaynes growth to slow sharply as it winds down smart metering, which also hits margins.",
+       "points": [
+        "Avalon: Buy, among Nomura's preferred EMS plays with Dixon",
+        "Kaynes: Neutral, smart meter execution slower",
+        "CLSA: Kaynes 2Q growth slows on smart-meter wind-down",
+        "Monitorables: OSAT/PCB ramp-up"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA sees Amber electronics margins soft in 2QFY27 on elevated CCL costs and lagged pass-through, recovery from 3QFY27; durables growth key.",
+      "source": "CLSA — India durables and EMS: Preview: All eyes on festive demand",
+      "received": "01:57",
+      "detail": {
+       "summary": "CLSA expects EMS margins down for most companies as input costs bite. Amber's electronics margin recovery is pushed to 3QFY27 while the extended summer supports durables growth. Festive demand is the swing factor.",
+       "points": [
+        "Amber electronics margin soft in 2Q",
+        "Recovery expected from 3QFY27",
+        "Extended summer supports durables growth",
+        "Most EMS margins seen down YoY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA expects INFO to cut organic guidance mid-point to 0% from 0.75% and HCLT to 1.2% from 2.2% in 2Q prints; sector UW.",
+      "source": "CLSA (Mimani) — Operational Updates: KMB | Previews: IT, Autos | Strategy",
+      "received": "09:05",
+      "detail": {
+       "summary": "CLSA's IT preview further cuts large-cap EPS while mid-caps are revised up. Deteriorating macro and continued AI deflation drive the expected guidance cuts. PSYS and COFORGE are seen leading CC QoQ growth.",
+       "points": [
+        "INFO guide mid-point 0.75% to 0%",
+        "HCLT guide 2.2% to 1.2%",
+        "PSYS, COFORGE lead CC QoQ growth",
+        "MPHL downgraded to Hold on valuation",
+        "Top picks COFORGE, PSYS, LTM"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA cuts EPS and TP on all IT names except Coforge (EPS & TP raised) and Persistent (TP raised); MPHL downgraded to Hold.",
+      "source": "CLSA (Chainani) — Hindi Test | NVDA's CAKE/EVENT | IT Sector Guidance Cuts | India Taking Stock",
+      "received": "08:56",
+      "detail": {
+       "summary": "The sales note relays the analyst's preview: Coforge and Persistent are top picks, every other stock sees EPS cuts and lower TPs, and the sector UW call is maintained.",
+       "points": [
+        "Coforge: EPS & TP raised",
+        "Persistent: TP raised",
+        "All other IT stocks: EPS cut, TP lowered",
+        "Sector call stays UW"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA flags Accenture growth decelerating to 2.25% organic mid-point from 3% prior-year despite share gains, blaming AI-led legacy compression and geopolitics.",
+      "source": "CLSA (Chainani) — Hindi Test | NVDA's CAKE/EVENT | IT Sector Guidance Cuts | India Taking Stock",
+      "received": "08:56",
+      "detail": {
+       "summary": "The rationale for expected Indian guidance cuts is that even the share-gaining global leader is slowing. AI-led legacy work compression and geopolitics are named as drivers.",
+       "points": [
+        "ACN organic mid-point growth 2.25% vs 3% prior-year actual",
+        "Drivers: AI-led legacy compression, geopolitics",
+        "INFY to 0% from 0.75%, HCLT to 1.2% from 2.2%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "RBI to hike 25bps this week, hawkish tone but neutral stance retained; JPM sees housing financiers PNBHF and IIFL as rate-hike winners.",
+      "source": "JPM — India Daily: Sep Qtr Preview | Marico: Strong 2Q update | Macro: 5 questions for the RBI",
+      "received": "08:33",
+      "detail": {
+       "summary": "JPM expects the RBI to hike 25bps at the October meeting with a hawkish tone but a neutral stance. Early hawkish hikes need not mean a long cycle given two-sided risks. Specialty finance preview says NIM sensitivity to hikes will dominate results season, with HFCs the clear beneficiaries.",
+       "points": [
+        "RBI: +25bps expected, stance neutral, tone hawkish",
+        "PNB Housing: loan growth 18% y/y, NIM 3.52%",
+        "IIFL Finance: gold AuM +10% q/q, ~30% housing mix",
+        "Bond yields have risen; CoF downside risk in 2HFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees Nifty-50 2QFY27 net profit +21% y/y; autos, banks, metals, O&G and telecom lead, FMCG, chemicals, fertilizers, pharma weak.",
+      "source": "Kotak — [Kotak] Strategy: September 2026 quarter earnings preview",
+      "received": "09:24",
+      "detail": {
+       "summary": "Kotak expects broad-based earnings growth led by autos on volumes, price hikes and mix, with stable banks and elevated commodity prices helping metals. Consumer staples face high-cost inventory and downtrading, agri-chemicals weak kharif demand, and pharma a yoy gRevlimid decline.",
+       "points": [
+        "KIE universe 2QFY27 net income +21% y/y",
+        "Nifty EPS Rs1,227 FY27, Rs1,398 FY28",
+        "Weak: chemicals, staples, fertilizers, pharma",
+        "Strong: autos, banks, metals, O&G, telecom"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FPIs sold Rs356.8bn of Indian equities in September after two inflow months; outflows led by financials Rs131.5bn, oil & gas Rs68.5bn, autos Rs62.1bn.",
+      "source": "PhillipCapital — Strategy: FPI Tracker - IPO flows weaken; outflows in financials, O&G, auto (+6 more in Outlook)",
+      "received": "21:47",
+      "detail": {
+       "summary": "September flipped FPI flows negative after Rs498.3bn of inflows over two months, taking FYTD outflows to Rs1.29tn. Positioning shifted toward financials, healthcare and IT, funded by cuts in metals, realty and capital goods. Primary market inflows slowed.",
+       "points": [
+        "FYTD net FPI outflow Rs1.29tn",
+        "IPO inflows Rs96.8bn vs Rs122.7bn in August",
+        "Overweight: telecom +1.32%, services +0.74%",
+        "Underweight: FMCG -1.11%, construction -0.95%, IT -0.59%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Emkay: Sep auto retail +32% YoY (best-ever Sep); PV dealer stock 43-45 days; 76% of dealers expect Oct growth; prefers 2Ws, CVs over PVs.",
+      "source": "Emkay — Auto & Auto Ancillaries: Sep-26 – Record retails; dealer optimism firms up",
+      "received": "17:28",
+      "detail": {
+       "summary": "FADA's Sep data shows broad strength, but growth is flattered by Sep-25 purchase deferrals ahead of GST 2.0. Deferred festive demand should convert from mid-Oct. Emkay favours 2Ws and CVs over PVs on pricing flexibility and a thin FY27 PV launch pipeline.",
+       "points": [
+        "2W +33%, PV +32%, CV +38%, 3W +22%, tractors +14% YoY",
+        "E-2W penetration 11.6% vs 8.2% in Sep-25",
+        "PV inventory 43-45 days, +5 days vs Aug-end; 21-25 days by Dec",
+        "75.6% of dealers expect Oct growth vs 67.1% for Sep",
+        "Picks: HMIL, TVSL, Ather; CAL, JK Tyre, Sandhar, Pricol"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA: Q2 auto volumes strong (CV +36%, PV +30%, 2W +15%) but margins weak; buy Ashok Leyland, TMCV, Bajaj Auto, Bharat Forge on sell-off.",
+      "source": "BofA — Autos - India: Q2 Preview: Strong volumes, weak margins. Buy the sell-off selectively",
+      "received": "02:44",
+      "detail": {
+       "summary": "Volumes keep beating, but steel and rubber surges squeeze Q2 CV and tractor margins and PV earnings still get cut. With 4W OEMs down 20-30% YTD, BofA thinks margin and macro fears are priced in and prefers CVs for a 2H margin recovery.",
+       "points": [
+        "FY27 PV & CV industry growth seen 12-14%",
+        "Ashok Leyland, M&M, Escorts, Maruti, Hyundai EBIT margin -2 to -3.7pp YoY",
+        "PV margins +40-100bp QoQ from Q1 lows",
+        "AL and TMCV at 17-19x F28E PE",
+        "Bajaj: 4.5% dividend yield, 16% EPS CAGR F26-29E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Q2 auto preview: Eicher, Hyundai, Ashok Leyland seen with strongest QoQ earnings gains; Eicher EBITDA margin 24.3%, EPS Rs61.1; picks Eicher, TVS.",
+      "source": "PhillipCapital — India Autos Q2FY27 Previews: Entering normalized growth era with continued input cost pressures; remain selective",
+      "received": "12:46",
+      "detail": {
+       "summary": "Seasonality, operating leverage, price hikes and mix should lift sequential margins even as commodities keep rising at a slower pace. Preference goes to names with pricing power and launch pipelines, with Eicher and TVS the two-wheeler picks.",
+       "points": [
+        "Eicher revenue Rs76.5bn, +15% QoQ; Royal Enfield ~378.7k units",
+        "TVS EBITDA margin 12.8%, EPS Rs27.4",
+        "Hero EBITDA margin 13.3% vs 15.0% a year ago",
+        "Bajaj EBITDA margin 21.0%, EPS Rs113.9",
+        "VECV EBITDA margin 8.8%, +60bps QoQ"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "MRVL +5.8% on investor day: F28 revenue outlook $20bn, F31 target $70-90bn; AVGO +3.7%, ALAB +7.6%, memory lagged (MU -1.7%, WDC -6.9%).",
+    "source": "JPM — Overnight Brief 10/7"
+   },
+   {
+    "text": "Software mixed: CTSH -1.6%, CRM -2.1% as desk flags re-grossing into AI infrastructure; Security +2.3%, ADSK +8.8%.",
+    "source": "JPM — Overnight Brief 10/7"
+   },
+   {
+    "text": "Cognizant launched Activate (enterprise AI for emerging enterprises); Anthropic launched in-country Claude inference in India via AWS.",
+    "source": "Kotak — Technology News Wrap Oct 06"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

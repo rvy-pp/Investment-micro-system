@@ -1,0 +1,233 @@
+{
+ "date": "2026-10-07",
+ "fetched_at": "2026-10-07T08:14:38",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-06",
+    "close": 7818.93,
+    "prev_date": "2026-10-05",
+    "chg_pct": 0.58
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-06",
+    "close": 27599.89,
+    "prev_date": "2026-10-05",
+    "chg_pct": 0.45
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-06",
+    "close": 51521.28,
+    "prev_date": "2026-10-05",
+    "chg_pct": 0.49
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-06",
+    "close": 13217.82,
+    "prev_date": "2026-10-05",
+    "chg_pct": 0.34
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-06",
+    "close": 239.24,
+    "prev_date": "2026-10-05",
+    "chg_pct": 0.14
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-06",
+    "close": 649.42,
+    "prev_date": "2026-10-05",
+    "chg_pct": 2.8
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-06",
+    "close": 482.3,
+    "prev_date": "2026-10-05",
+    "chg_pct": -0.72
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-06",
+    "close": 375.81,
+    "prev_date": "2026-10-05",
+    "chg_pct": 3.67
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-06",
+    "close": 193.4,
+    "prev_date": "2026-10-05",
+    "chg_pct": -0.85
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-06",
+    "close": 57.22,
+    "prev_date": "2026-10-05",
+    "chg_pct": -1.63
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Stock Gets Fair Value Boost After Q4 Beat And Higher Analyst Targets",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-06 20:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-gets-fair-201005356.html"
+   },
+   {
+    "title": "How to Play the Giant Post-Earnings Rally in Accenture Stock",
+    "publisher": "Barchart",
+    "when": "2026-10-06 14:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/play-giant-post-earnings-rally-143407956.html"
+   },
+   {
+    "title": "What Did Accenture's Quarter Change For Its Stock?",
+    "publisher": "Trefis",
+    "when": "2026-10-06 12:54Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/did-accentures-quarter-change-stock-125405258.html"
+   },
+   {
+    "title": "Mizuho Adjusts Price Target on Accenture to $241 From $226, Keeps Outperform Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-06 11:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/mizuho-adjusts-price-target-accenture-110823864.html"
+   },
+   {
+    "title": "Market Chatter: Accenture Contractor Removed by FBI Over Data Breach",
+    "publisher": "MT Newswires",
+    "when": "2026-10-06 08:08Z",
+    "link": "https://finance.yahoo.com/technology/articles/market-chatter-accenture-contractor-removed-080856101.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant, Gilead Sign 5-Year Tech Extension Covering DevOps, AI Tools",
+    "publisher": "MT Newswires",
+    "when": "2026-10-06 13:29Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-gilead-sign-5-tech-132908888.html"
+   },
+   {
+    "title": "Cognizant Expands AI-Enabled DevOps Capabilities for Gilead Sciences",
+    "publisher": "PR Newswire",
+    "when": "2026-10-06 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-expands-ai-enabled-devops-130000366.html"
+   },
+   {
+    "title": "Cognizant Selected as Implementation, Transformation Partner for SITA's SKY Program",
+    "publisher": "MT Newswires",
+    "when": "2026-10-06 09:48Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-selected-implementation-transformation-partner-094826673.html"
+   },
+   {
+    "title": "Cognizant Selected by SITA to Deliver AI-Led Global Finance Transformation on the Cloud",
+    "publisher": "PR Newswire",
+    "when": "2026-10-06 08:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-selected-sita-deliver-ai-080000486.html"
+   },
+   {
+    "title": "Cognizant Selected by SITA to Deliver AI-Led Global Finance Transformation on the Cloud",
+    "publisher": "PR Newswire",
+    "when": "2026-10-06 08:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-selected-sita-deliver-ai-080000907.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia Hits a New All-Time High. Is the AI Stock a Buy?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-07 01:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-hits-time-high-ai-013502375.html"
+   },
+   {
+    "title": "Applied Materials vs. Nvidia: What Revenue Trends Reveal About These Artificial Intelligence Companies",
+    "publisher": "Motley Fool",
+    "when": "2026-10-07 00:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/applied-materials-vs-nvidia-revenue-000659962.html"
+   },
+   {
+    "title": "SpaceX  seeks to raise $40 bln to buy Nvidia chips- FT",
+    "publisher": "Investing.com",
+    "when": "2026-10-06 23:57Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/spacex-seeks-raise-40-bln-235711720.html"
+   },
+   {
+    "title": "SPCX Stock Slips After-Hours As SpaceX Reportedly Seeks $40B For Nvidia Chips",
+    "publisher": "Stocktwits",
+    "when": "2026-10-06 23:48Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/spcx-stock-slips-hours-spacex-234823505.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stocks Rise 4.1% as Power Bottleneck Leaves Forecasts Intact",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-06 18:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-rise-4-1-181232546.html"
+   },
+   {
+    "title": "Cathie Wood Just Bought $13 Million of Broadcom Stock",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-06 18:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cathie-wood-just-bought-13-181021556.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD (AMD) Could Issue 320 Million Shares at a Penny. Here is What Has to Happen First",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-07 00:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-amd-could-issue-320-000812569.html"
+   },
+   {
+    "title": "AMD (AMD) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-06 23:52Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-amd-stock-know-235234909.html"
+   },
+   {
+    "title": "AMD Rallies On Bullish Takes For AI Hardware Sales",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-06 20:40Z",
+    "link": "https://finance.yahoo.com/m/a340a908-0786-341f-828b-177ef562f0da/amd-rallies-on-bullish-takes.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22678.0,
+  "chg_pct": -0.53,
+  "stamp": "07-Oct-2026 08:13:38",
+  "expiry": "27-Oct-2026",
+  "volume": 1490,
+  "nifty_close": {
+   "close": 22776.100000000002,
+   "stamp": "06-Oct-2026 15:30"
+  },
+  "gap_pts": -98.1,
+  "gap_pct": -0.43
+ }
+}

@@ -1,0 +1,322 @@
+{
+ "date": "2026-10-05",
+ "generated_at": "2026-10-05T08:12:41+05:30",
+ "mail": {
+  "window": "24h to 08:15 IST (Monday)",
+  "n_scanned": 59,
+  "sectors": [
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "CLSA keeps VAML O-PF: Odisha HC bauxite ruling means up to US$290m one-time dues (2.8% of mkt cap) and +US$10/t aluminium cost.",
+      "source": "CLSA — CLSA: Vedanta Aluminium (VAML IN): Analysing impact of HC order",
+      "received": "17:59",
+      "detail": {
+       "summary": "Odisha High Court dismissed VAML's plea for OMC bauxite at the historical Rs1,000/t rate. CLSA sees a one-time past-dues claim and a modest recurring cost rise, offset by higher OMC sourcing and the Sijimali mine. It calls any price dip an accumulation chance.",
+       "points": [
+        "One-time dues: c.Rs25bn pre-tax, US$195m post-tax (1.2% of mkt cap)",
+        "Incl. interest: US$290m, 2.8% of market cap",
+        "Recurring: +US$10/t aluminium COP vs 1QFY27 at Rs3,800/t bauxite",
+        "OMC bauxite c.US$10/t cheaper than domestic, US$20-30/t cheaper than imports",
+        "Sijimali mine has consent to operate; OMC moving to 6mtpa"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Nomura channel check: pan-India cement prices rose ~INR10/bag m-m in Sep; dealers expect a further ~INR10/bag in Oct, but see the push as company-led.",
+      "source": "Nomura — India Cement - Cement channel checks — Oct'26",
+      "received": "07:32",
+      "detail": {
+       "summary": "Pricing momentum returned in September after two subdued months, taking 2QFY27 average trade prices to INR325/bag, flat q-q. Dealers say demand is uneven and absorption of further hikes will be difficult and delayed.",
+       "points": [
+        "Sep: ~INR10/bag m-m; Oct: further ~INR10/bag expected",
+        "2QFY27 average INR325/bag, broadly flat q-q",
+        "Poor uptake, festivities and monsoon weigh on construction",
+        "Dealers call the price push largely company-led"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura channel check by region: South leads with up to INR20/bag more in Oct; North and East hikes of INR10/bag announced but not yet effective; Central flat.",
+      "source": "Nomura — India Cement - Cement channel checks — Oct'26",
+      "received": "07:32",
+      "detail": {
+       "summary": "Regional momentum is mixed. South has the strongest pricing but persistent weak demand. West saw better Sep offtake. North and East hikes are announced but not yet implemented, and East faces festive disruption.",
+       "points": [
+        "South: up to INR20/bag in Oct, demand still weak",
+        "North/East: INR10/bag announced, not yet effective",
+        "West: better volume offtake in Sep",
+        "Central: largely flat, no fresh hikes announced"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: 2QFY27 cement spread averaged ~INR2,449/t, down INR62/t q-q; 90-day-lagged spread down INR250/t. Top picks UltraTech and Dalmia (both Buy).",
+      "source": "Nomura — India Cement - Cement channel checks — Oct'26",
+      "received": "07:32",
+      "detail": {
+       "summary": "Pricing did not fully offset elevated fuel costs, so spreads are under pressure while weak demand limits pricing power. Fuel costs take 60-90 days to reach the P&L, so firms with fresher fuel inventory should fare better. Nomura expects pressure to stay in 1HFY27 and margins to recover in 2HFY27F.",
+       "points": [
+        "2QFY27 spread ~INR2,449/t, down INR62/t q-q",
+        "60-day lagged spread down ~INR106/t; 90-day down INR250/t",
+        "Imported fuel cost +1% q-q, over 15% above 4QFY26",
+        "Retail diesel +4% q-q vs 1QFY27",
+        "FY27F volume growth 6-7%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Ex-Coal India board member: gasification scale-up gradual; INR375bn scheme caps support at INR50bn per project; 50% coal-block revenue-share rebate if 10%+ gasified.",
+      "source": "BofA — Energy - India: Coal gasification expert call takeaways: Credible ambition, execution remains key",
+      "received": "21:55",
+      "detail": {
+       "summary": "An ex-Coal India director says the strategic case for coal gasification is strong but execution will decide the outcome, and scale-up will be gradual. Support schemes help, but the per-project cap and unassured coal quality remain gaps. Products with offtake visibility, such as urea and SNG, should be prioritised.",
+       "points": [
+        "INR375bn scheme covers up to 20% of plant & machinery cost",
+        "INR50bn per-project cap vs INR400-500bn mega projects",
+        "Coal block auctions: 50% revenue-share rebate if 10%+ gasified",
+        "Coal linkages up to 30 years; quality not guaranteed",
+        "12% IRR achievable for urea with VGF"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kotak expects EMS coverage 2QFY27 revenue +37% yoy; Dixon +38% yoy (+32% qoq), Amber +30%, but Dixon margins hit by no Mobile PLI and memory costs.",
+      "source": "Kotak — [Kotak] Electronic Manufacturing Services: 2QFY27 Preview: Strong growth; margins mixed",
+      "received": "19:09",
+      "detail": {
+       "summary": "Kotak sees a strong 2QFY27 across B2C and B2B EMS on healthy demand, but margins are mixed. Dixon leads growth, while profitability is pressured by the loss of Mobile PLI benefits and memory costs. Amber faces raw material inflation despite a favorable mix.",
+       "points": [
+        "Coverage revenue ~+37% yoy",
+        "Dixon +38% yoy, +32% qoq",
+        "Amber +30% yoy, acquisition-aided electronics",
+        "Dixon margin: no Mobile PLI, higher memory costs",
+        "Amber margin: raw material inflation"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kaynes flagged as the EMS laggard in 2QFY27: lower growth and margin contraction on reduced smart meter contribution; receivables and cash generation the key watch.",
+      "source": "Kotak — [Kotak] Electronic Manufacturing Services: 2QFY27 Preview: Strong growth; margins mixed",
+      "received": "19:09",
+      "detail": {
+       "summary": "Unlike B2B peers, Kaynes is expected to see weaker growth and margin pressure because the higher-margin smart meter business contributes less. Investor focus stays on receivable collections and cash generation.",
+       "points": [
+        "Kaynes: lower growth, margin contraction",
+        "Cause: reduced high-margin smart meter contribution",
+        "Monitorables: receivables, cash generation",
+        "Syrma, Avalon, Cyient DLM: yoy margin expansion expected"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak cuts Dixon FY27 estimates 3.6% on Vivo volumes of 5mn (from 10mn); FV to Rs14,900 from Rs15,300. Syrma FV raised to Rs1,450 from Rs1,300.",
+      "source": "Kotak — [Kotak] Electronic Manufacturing Services: 2QFY27 Preview: Strong growth; margins mixed",
+      "received": "19:09",
+      "detail": {
+       "summary": "Dixon's FY27 cut is driven by halving the Vivo volume assumption, partly offset by higher IT hardware and telecom revenue. FY28 Vivo volumes are unchanged. Syrma's target rises on higher Elemaster and Kaga JV contribution and a stronger base EMS business including Elcome defense.",
+       "points": [
+        "Dixon FY27E -3.6%; Vivo 5mn vs 10mn",
+        "Dixon FY28E Vivo 20mn unchanged",
+        "Dixon FV Rs14,900 (from Rs15,300)",
+        "Syrma FY29E +3%",
+        "Syrma FV Rs1,450 (from Rs1,300)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak upgrades Persistent to BUY from REDUCE, FV Rs6,250 (from Rs5,250); Nagarro lifts FY27-29E EPS CAGR to ~27% from ~20% standalone.",
+      "source": "Kotak — [Kotak] Persistent Systems (CMP: Rs5,367, FV: Rs6,250, BUY): Compounding story intact; upgrade to BUY",
+      "received": "08:04",
+      "detail": {
+       "summary": "Kotak says the stock has corrected while organic growth accelerates, and the market is not pricing the Nagarro accretion. Synergies are operational: sharper account mining, focused go-to-market and a leaner organisation, with no DPLTA needed. FV is 30x Sep-2028E pro forma EPS.",
+       "points": [
+        "FV Rs6,250 vs Rs5,250 earlier; CMP Rs5,367",
+        "EPS CAGR FY27-29E ~27% vs ~20% standalone",
+        "FY28-29E EPS accretion 3.4% to 12.6%",
+        "83.25% of Nagarro tendered; up to US$450mn equity raise",
+        "Nagarro adj. EBIT margin 11-12% vs Indian peers 15-16%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Accenture FY27 guide of 3-6% cc (organic 0.75-3.75%) beat expectations; IIFL calls it a relief for Indian IT, which prices in a CY27 revenue decline.",
+      "source": "IIFL — IIFL: The Front Page: MOLBIO (Initiation); Banking; NBFC; IT; Auto; Telecom; Agriculture (+1 more in Outlook)",
+      "received": "07:39",
+      "detail": {
+       "summary": "ACN beat its own 4Q guide and delivered FY26 growth at the top of its original range despite little demand improvement. IIFL argues Indian IT stocks are pricing AI-led compression and falling revenue in CY27 and beyond, whereas ACN guides marginally better growth next year.",
+       "points": [
+        "4QFY26 revenue +7% cc vs 1-5% guide",
+        "FY27 guide 3-6% cc incl. 2-2.5% inorganic",
+        "FY27 adj. EBIT margin guide 15.9-16.1%, +10-30bps",
+        "New bookings US$22.2bn, +5% cc; book-to-bill 1.2x"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "UBS expects a 25bp RBI hike on Oct 7 and 50bp cumulative in FY27; CPI seen above 5.5% for three quarters from Q4 CY26.",
+      "source": "UBS — UBS India: what's trending in India's macro (India-CEI, Sep 2026)",
+      "received": "06:36",
+      "detail": {
+       "summary": "UBS's India-CEI shows activity still resilient, supporting tightening. Inflation, supply-side pass-through, oil, RBI liquidity withdrawal and a hawkish Fed are the five rate-path drivers. A CRR hike is possible but timing after Rs1trn of OMO sales could land badly with banks.",
+       "points": [
+        "India-CEI +0.7% MoM in Aug, +0.4% in Jul",
+        "25bp hike expected Oct 7; 50bp total FY27",
+        "CPI >5.5% YoY for three straight quarters",
+        "Rs1trn OMO sales already done; CRR hike on the table"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM sees the Fed's second and final hike in December after Sept NFP of +29k; October hike risk reduced; Brent $102.77, UST 10y 5.27%.",
+      "source": "J.P. Morgan — JPM Overnight Brief! 10/5 - a second and final hike in December; JPM Election series",
+      "received": "05:14",
+      "detail": {
+       "summary": "Softer US payrolls and dovish comments from Fed leadership make an October hike unlikely, but JPM still expects a December hike on sticky core inflation. Global cyclicals led by tech have outperformed domestic cyclicals, which are squeezed by energy costs.",
+       "points": [
+        "Sept NFP +29k; unemployment 4.18% from 4.14%",
+        "Avg hourly earnings +0.1% MoM, +3.0% YoY",
+        "8 of 18 FOMC dots show a third hike in 2027",
+        "Brent +0.4% to $102.77/bbl; 10y UST 5.27%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM India Conference: global investors revisiting India after valuation reset, still underweight; JPM overweight Financials, Industrials, Materials, underweight IT.",
+      "source": "J.P. Morgan — Key Takeaways: J.P. Morgan India Conference 2026 (+3 more in Outlook)",
+      "received": "07:02",
+      "detail": {
+       "summary": "Sentiment has turned constructive after two years of flat markets, with debate centred on higher rates, oil and possible tariff return. Private capex is turning, led by power, grid, semis, EVs, metals and mining. Foreign investors remain underweight Indian equities.",
+       "points": [
+        "100+ companies, 1,000+ clients at Sept 21-22 conference",
+        "Overweight Financials, Cons Disc, Industrials, Healthcare, Materials",
+        "Underweight IT; prefer mid/small caps, quality and momentum",
+        "Capex cycle turning: power, grid, metals and mining"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Sept wholesales: MSIL PV +37% YoY, TVS 2W domestic +17%, Hero +12%, Bajaj domestic -12% (exports +34%), Royal Enfield domestic +7%, M&M PV +14%.",
+      "source": "Avendus Spark — Auto Volume Update – September 2026 – YoY growth trends across 2W & PV segments",
+      "received": "06:47",
+      "detail": {
+       "summary": "September wholesales were strong in PV and most 2W, with Bajaj the domestic laggard but exports strong. CVs grew sharply, while tractors fell on festive-season timing. Retail growth outran wholesale across OEMs.",
+       "points": [
+        "MSIL 181.8k, +37%; UV 78.9k, +62%",
+        "TVS domestic 482.1k, +17%; exports +48%",
+        "Bajaj domestic 239.8k, -12%; exports 211.7k, +34%",
+        "Royal Enfield domestic 121.3k, +7%; Hero 766.3k, +12%",
+        "Tata Motors PV 68.8k, +13%; M&M PV 64.1k, +14%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CVs and retail: VECV +55% YoY, Ashok Leyland domestic MHCV +40%, TTMT MHCV +39%; retail beat wholesale (M&M PV +70%, TVS 2W +48%, RE +32%).",
+      "source": "Avendus Spark — Auto Volume Update – September 2026 – YoY growth trends across 2W & PV segments",
+      "received": "06:47",
+      "detail": {
+       "summary": "Commercial vehicles grew faster than passenger vehicles, led by heavy trucks. Retail registrations ran well ahead of wholesale across PV and 2W, which points to dealer inventory drawdown rather than a build. Tractors fell on festive-season shift.",
+       "points": [
+        "TTMT MHCV 22.2k, +39%; LCV 21.3k, +24%",
+        "M&M CV 32.2k, +16%; M&M tractors 50.2k, -23%",
+        "Retail: MSIL 146.8k, +38%; M&M PV 55.4k, +70%",
+        "Retail: HMCL 434.0k, +34%; Bajaj 166k, +21%",
+        "Royal Enfield retail 101.8k, +32%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA 2Q preview: L&T ex-services inflows Rs1.7tn (+78% YoY) but flat EBITDA; margin pressure at KKC, ABB, Siemens; BEL revenue +17%, earnings +5%.",
+      "source": "BofA — Industrials - India: 2Q Preview: Selective pockets of strength (+2 more in Outlook)",
+      "received": "22:56",
+      "detail": {
+       "summary": "Order inflows are strong but execution is modest and margins are under pressure from commodity and freight costs. Within durables, BofA prefers LGEL and VOLT over HAVL. Within wires and cables, it prefers KEII over Polycab.",
+       "points": [
+        "L&T execution +10% YoY; recurring earnings +15%",
+        "KKC revenue +15%, earnings flat",
+        "Durables topline +15%; BofA earnings 10% below consensus",
+        "KEII earnings +43% vs Polycab +14%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Steel"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +2.40% Friday with Broadcom +3.35%, TSMC ADR +2.96% and AMD +2.95%; Nvidia lagged at +1.34%.",
+    "source": "morning_markets closes, 2026-10-02"
+   },
+   {
+    "text": "CLSA: SpaceX to pass Microsoft as Nvidia's top customer by CY2028 (>20% of revenue); EPS 5-16% above consensus, TP US$425.",
+    "source": "CLSA — CLSA: Nvidia (NVDA US): Customers, old and new"
+   },
+   {
+    "text": "GS upgrades Zhipu (Z.AI) to Buy, TP HK$1,560; 2026 year-end ARR raised to US$3.2bn from 2.7bn after a 70% pullback since July.",
+    "source": "GS — [GS Sales Note]: AI Series: U/G Zhipu to Buy from Neutral"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

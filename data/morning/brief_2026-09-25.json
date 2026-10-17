@@ -1,0 +1,380 @@
+{
+ "date": "2026-09-25",
+ "generated_at": "2026-09-25T08:41:39+05:30",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 95,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Emkay's top non-ferrous pick is VAML: BUY, TP Rs550 (26% upside), despite only ~1% FY27E EBITDA upside at spot.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective",
+      "received": "13:03",
+      "detail": {
+       "summary": "Emkay says non-ferrous offers a subdued FY27E earnings skew versus ferrous but still prefers VAML for its backward-integrated, lower-cost base and elevated aluminium prices, followed by Hindalco. Non-ferrous trades 4.4-5.6x FY28E EV/EBITDA versus 5.5-7.5x for ferrous.",
+       "points": [
+        "VAML BUY, TP Rs550, 26% upside",
+        "Only ~1% FY27E EBITDA upside at spot",
+        "Non-ferrous 4.4-5.6x FY28E EV/EBITDA vs ferrous 5.5-7.5x",
+        "Backward-integrated, lower-cost base cited as edge"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay cuts NALCO to REDUCE, TP Rs340 (-6%), though spot aluminium implies the group's largest FY27E EBITDA upside (~7%).",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective",
+      "received": "13:03",
+      "detail": {
+       "summary": "NALCO has the greatest aluminium-price sensitivity in Emkay's non-ferrous coverage, yet the broker turns cautious on valuation, flagging that further re-rating needs prices to hold above current estimates rather than the spot upside alone.",
+       "points": [
+        "REDUCE, TP Rs340, -6% downside",
+        "~7% FY27E EBITDA upside at spot aluminium",
+        "Highest aluminium-price sensitivity in coverage",
+        "Re-rating needs prices sustained above estimates"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay stays BUY Vedanta (TP Rs350, 29% upside) and ADD Hindalco (TP Rs1,150, 15%), Hindalco's earnings balanced by hedges.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective (+1 more in Outlook)",
+      "received": "13:03",
+      "detail": {
+       "summary": "Vedanta remains a top pick on holdco leverage to its aluminium and other assets, while Hindalco's hedged Novelis exposure keeps earnings comparatively steady versus peers' full commodity beta; aluminium supply-demand is flagged as the key non-ferrous monitorable.",
+       "points": [
+        "Vedanta BUY, TP Rs350, 29% upside",
+        "Hindalco ADD, TP Rs1,150, 15% upside",
+        "Hindalco earnings balanced by hedges",
+        "Aluminium supply-demand the key monitorable"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Spot HRC/rebar Rs63,900/62,100/t vs Emkay's Rs56,400/52,500 base case implies 10-20% FY27E EBITDA upside across ferrous if sustained.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective",
+      "received": "13:03",
+      "detail": {
+       "summary": "Recovery from July lows, gradual absorption of excess supply and rising raw-material costs are keeping ferrous prices above Emkay's base case; ferrous trades 5.5-7.5x FY28E EV/EBITDA versus 4.4-5.6x for non-ferrous.",
+       "points": [
+        "HRC spot Rs63,900/t vs base Rs56,400/t",
+        "Rebar spot Rs62,100/t vs base Rs52,500/t",
+        "10-20% FY27E EBITDA upside if sustained",
+        "Ferrous 5.5-7.5x FY28E EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay's near-term steel pick is Tata Steel: BUY, TP Rs230 (21% upside), on lower 2Q rebar-trough sensitivity and improving Europe.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective",
+      "received": "13:03",
+      "detail": {
+       "summary": "Tata Steel is Emkay's preferred near-term ferrous exposure because its earnings are less exposed to the 2Q rebar-price trough, with its European operations also showing an improving outlook relative to peers.",
+       "points": [
+        "BUY, TP Rs230, 21% upside",
+        "Lower 2Q rebar-trough earnings sensitivity",
+        "Improving European operations outlook",
+        "FY28E EV/EBITDA 7.1x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Medium-term: Jindal Steel BUY TP Rs1,400 (19%), JSW ADD TP Rs1,400 (8%); SAIL BUY TP Rs190 offers just 2% upside.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective (+1 more in Outlook)",
+      "received": "13:03",
+      "detail": {
+       "summary": "Emkay ranks Jindal Steel and JSW Steel as its preferred medium-term ferrous plays on volume growth and pricing leverage, while SAIL's operating leverage is judged insufficiently compensated at current valuation with rebar near Rs63,000/t.",
+       "points": [
+        "Jindal Steel BUY, TP Rs1,400, 19% upside",
+        "JSW Steel ADD, TP Rs1,400, 8% upside",
+        "SAIL BUY, TP Rs190, 2% upside only",
+        "Rebar near Rs63,000/t"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "UltraTech commissions 4.6 mtpa of new cement capacity across Andhra Pradesh, Jharkhand and Rajasthan.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:59"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Emkay stays ADD on Coal India, TP Rs475 (12% upside); FY28E 4.0x EV/EBITDA, 7.4x P/E.",
+      "source": "Emkay — Metals & Mining: #1 Numbers do not lie – Going selective",
+      "received": "13:03",
+      "detail": {
+       "summary": "Coal India is one of the directly rated names in Emkay's broader 'go selective' call across metals and mining, with valuation still seen as supportive versus peers.",
+       "points": [
+        "ADD, TP Rs475",
+        "12% upside to CMP Rs425",
+        "FY28E EV/EBITDA 4.0x, P/E 7.4x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Escondida (BHP, Chile), the world's largest copper mine, is gradually resuming after the 23-Sep fatal-accident halt.",
+      "source": "Kotak (Sumangal Nevatia) — Basic materials - daily news and prices (25-Sep)",
+      "received": "08:32",
+      "detail": {
+       "summary": "Two consecutive Kotak news sweeps carry the arc: the 24-Sep sweep flagged the halt at the world's largest copper mine after a worker fatality, and the 25-Sep sweep (Reuters) reports operations gradually resuming, so the supply disruption to copper looks short-lived.",
+       "points": [
+        "Halted after fatal accident, 23-Sep",
+        "Gradual restart reported 25-Sep (Reuters)",
+        "World's largest copper mine"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Indian copper producers seek a GST cut to 5% as record copper prices lock up working capital (Business Line).",
+      "source": "Kotak (Sumangal Nevatia) — Basic materials - daily news and prices (+1 more in Outlook)",
+      "received": "08:59",
+      "detail": {
+       "summary": "The ask targets GST relief for domestic copper producers whose working-capital needs have risen with record prices; a favourable outcome would help Hindustan Copper's cash cycle.",
+       "points": [
+        "GST cut sought to 5%",
+        "Reason: record copper prices",
+        "Working capital locked up"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM downgrades Cyient DLM, Avalon & Syrma to UW; ROCE-vs-P/E ranking: Dixon > Amber > Kaynes > Syrma > Avalon > Cyient DLM.",
+      "source": "JPM — India EMS: ROCEs matter for P/E multiples; downgrade Cyient DLM, Avalon, Syrma to UW",
+      "received": "09:05",
+      "detail": {
+       "summary": "JPM argues EMS P/E multiples must reflect ROCE given capex-intensive, high-NWC businesses; Cyient DLM/Avalon/Syrma rallied 38%/35%/21% in six weeks on semiconductor optimism and now trade richer than Dixon despite lower ROCE. Reverse DCF implies 39%/37%/34% ten-year revenue CAGRs, which JPM calls too optimistic.",
+       "points": [
+        "51x/68x/56x FY28 PE vs Dixon's 45x",
+        "FY28E ROCE 16%/29%/21% vs Dixon's 36%",
+        "Up 38%/35%/21% past 6 weeks vs Nifty -5%",
+        "Reverse DCF bakes in 39%/37%/34% 10Y CAGR"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM keeps Avalon UW, PT Rs1,650 vs Rs2,316 CMP; management holds 3-yr revenue-doubling guide (~26% CAGR), gross margin 33-35%.",
+      "source": "JPM — Avalon Technologies: Growth and margin guide maintained",
+      "received": "23:42",
+      "detail": {
+       "summary": "JPM reiterates UW after hosting Avalon at its India Conference; management keeps the 3-year revenue-doubling guide and the 33-35% gross-margin band intact. Reverse DCF implies a 37% 10-year CAGR priced into the 52x 2-year forward PE.",
+       "points": [
+        "PT Rs1,650 (Jun-27) vs CMP Rs2,316.10",
+        "Revenue doubling FY26-29, ~26% CAGR",
+        "Gross margin band kept at 33-35%",
+        "Export mix target: US 30%, EU 10%, SE Asia 10%",
+        "52x 2-yr fwd PE"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "IIFL upgrades Tata Technologies to BUY, TP Rs840 (from Rs780, 17% upside) on deal pipeline and 22% FY26-28 EPS growth.",
+      "source": "IIFL — Tata Technologies [TATATECH IN, Upgrade to BUY]: Strong growth prospects; attractive entry point!",
+      "received": "08:57",
+      "detail": {
+       "summary": "IIFL upgrades on a firing deal engine — two full-vehicle programmes converted, four more in the pipeline, plus the $100mn+ Tenneco deal — and calls the ~20% correction from peak an attractive entry point.",
+       "points": [
+        "TP Rs840 from Rs780, 17% upside (33x 2YF P/E)",
+        "22% EPS growth FY26-28",
+        "Four more full-vehicle deals in pipeline",
+        "$100mn+ Tenneco deal ramping",
+        "~20% below peak"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays OW on Cyient; management targets EBIT margin 13.2% to 14-15% medium-term on HSD DET growth.",
+      "source": "JPM — Cyient: Optimistic on both growth and margins",
+      "received": "23:27",
+      "detail": {
+       "summary": "JPM's conference hosting of Cyient's Vice Chairman and CFO reinforces the Overweight: HSD DET growth on Aero MRO/after-market traction and a Telecom shift to network management, with margins climbing as the large-deal strategy matures.",
+       "points": [
+        "EBIT margin 13.2% to 14-15% medium-term",
+        "3Q wage hikes offset by other levers",
+        "HSD revenue growth targeted in DET",
+        "Aero growth from MRO and after-market"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM Neutral on LTTS (PT Rs3,300): EU Auto growth limited, but mid-16% EBIT margin target by 4QFY27 reiterated.",
+      "source": "JPM — L&T Technology Services: EU Auto under pressure, Sustianability strong, margin guide maintained (+2 more in Outlook)",
+      "received": "22:56",
+      "detail": {
+       "summary": "EU Auto OEMs are cutting engineering spend and pushing vendor consolidation/offshoring, while Sustainability keeps double-digit growth on plant modernisation; management reiterates the mid-16% margin target.",
+       "points": [
+        "Mid-16% EBIT margin target for 4QFY27",
+        "EU Auto growth limited; Chinese OEM competition",
+        "Sustainability double-digit growth",
+        "PT Rs3,300, Neutral"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Brent +4.4% to $107.58/bbl on Hormuz phased-reopening talk; US 10Y +10bp to 5.22%, highest since 2007.",
+      "source": "JPM — JPM Overnight Brief! 9/25 - Equities bouncing off the lows exploring a phased deal to reopen Hormuz",
+      "received": "05:46",
+      "detail": {
+       "summary": "JPM frames a choppy session where equities bounced off lows on Hormuz reopening headlines while yields pushed to cycle highs on inflation and heavy issuance concerns; AI infra weakened on Oracle's Project Jupiter force-majeure headline.",
+       "points": [
+        "Brent +4.4% to $107.58/bbl",
+        "US 10Y +10bp to 5.22%, highest since 2007",
+        "30Y +8bp to 5.50%; curve steepened",
+        "Fed pricing unchanged"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS: Brent above $100 could widen India's CAD to ~2% of GDP and lift FY27 CPI to 5.5%; sees 50bp RBI hikes from October.",
+      "source": "UBS — India \"US$100+ Oil: What It Means for India\"",
+      "received": "10:10",
+      "detail": {
+       "summary": "UBS warns sustained $100+ Brent would squeeze OMC margins, risk retail fuel hikes and widen the twin deficits, keeping the RBI on a hiking path. Base case still assumes Brent averages $85/bbl in FY27.",
+       "points": [
+        "CAD ~2% of GDP at $100 Brent",
+        "FY27 CPI 5.5% vs 5.0% baseline",
+        "50bp cumulative repo hikes from October",
+        "Fiscal deficit 4.4% of GDP"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs net bought $260mn (cash+futures), DIIs $250mn on 23-Sep; Kotak expects weak overnight cues to reverse FII flows into a gap-down.",
+      "source": "Kotak — Kotak : Insurance - Pretty Hard Draft ; Manipal - Initiate ADD ; Analyst Meets - VMM, Vinati, TECHM CALL (+3 more in Outlook)",
+      "received": "08:26",
+      "detail": {
+       "summary": "Kotak's morning flow note shows FIIs turned net buyers in cash and futures while retail trimmed index longs; overnight cues were expected to reverse the FII bid into a lower opening.",
+       "points": [
+        "FII net bought $260mn cash+futures",
+        "DII net bought $250mn",
+        "Retail cut $605mn index longs"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "CLSA raises Hero MotoCorp TP to Rs6,685 (O-PF): 11x FY28CL core EPS vs 17x 10-yr average after an 11% monthly fall.",
+      "source": "CLSA — Hero Motocorp (HMCL IB): What more is there to lose?",
+      "received": "07:24",
+      "detail": {
+       "summary": "CLSA argues the commodity-fear sell-off created a mean-reversion opportunity, forecasting 8% EPS CAGR and ~4% dividend yield; Vida's e-2W losses are narrowing and the ~33% Ather Energy stake is a hidden value cushion.",
+       "points": [
+        "TP Rs6,555 to Rs6,685, Outperform",
+        "11x FY28CL core EPS vs 17x 10-yr avg",
+        "Stock -11% over past month",
+        "Vida EBITDA loss ~Rs40k/unit from ~Rs50k",
+        "e-2W share 10-11%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Bharat Forge raised Rs20bn via QIP (10.6mn shares); report flags TVS Motor's link to the Chandrasekaran family.",
+      "source": "Kotak — Kotak Auto News: Bharat Forge raises Rs20 bn through QIP; TVS link to Chandrasekaran's family raises questions",
+      "received": "08:54",
+      "detail": {
+       "summary": "Kotak's daily auto roundup carries a Bharat Forge capital raise, a governance flag on TVS Motor's ties to the Tata Sons chairman's family, and Royal Enfield's new Classic 350 variant launch.",
+       "points": [
+        "Bharat Forge QIP Rs20bn, 10.6mn shares",
+        "TVS-Chandrasekaran family link questioned",
+        "RE Classic 350 Signature White at Rs224k"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IRDAI draft caps life EoM at 15% of GDPI in 2 years, 12.5% in 5; ICICI Sec sees PB Fintech most hit, SBI Life least.",
+      "source": "ICICI Securities — India Insurance Consultation Paper: Pecking order of Impact (+1 more in Outlook)",
+      "received": "08:33",
+      "detail": {
+       "summary": "IRDAI's 23-Sep consultation paper proposes hard commission caps and a company-level EoM glide path, comments due 25 October 2026; motor and closed-architecture bancassurance are least hit, open-market distributors most exposed.",
+       "points": [
+        "Life EoM 15% in 2 yrs, 12.5% in 5",
+        "General EoM 30% of GWP to 20% of GDPI",
+        "Motor TP commission to distributors nil",
+        "Comments due 25-Oct-2026"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Oracle declares force majeure at Project Jupiter (New Mexico) data centre; ORCL -3.5%, Bloom -3.1% despite the 2.4GW contract reaffirmed.",
+    "source": "JPM — JPM Overnight Brief! 9/25"
+   },
+   {
+    "text": "GS: hyperscalers need $1.42tn cumulative AI revenue over CY2028-30 (~$11.6bn/GW/yr) to clear a 15% ROIC on Phase-2 capex.",
+    "source": "GS — [GS Daily] Hyperscaler AI Capex framework"
+   },
+   {
+    "text": "BNPP: $5tn capex gap between bull and bear AI data-centre cases to 2030; power and financing are the binding constraints.",
+    "source": "BNPP — BNPP GREEN BOOK - Goldilocks AI and the Three Bears"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,217 @@
+{
+  "date": "2026-09-21",
+  "generated_at": "2026-09-21T08:26:00+05:30",
+  "mail": {
+    "window": "24h to 08:06 IST",
+    "n_scanned": 40,
+    "sectors": [
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "Tata Steel group CFO Koushik Chatterjee, 2-on-1 today 11:00 at the JPM India Conference, St. Regis Mumbai.",
+            "source": "JPM Asia Conferences - Day 1 Reminder Schedule: J.P. Morgan India Conference, Sep 21-22, 2026",
+            "received": "07:15",
+            "detail": {
+              "summary": "The PM's confirmed 1x1 schedule for the two-day JPM India Conference. Tata Steel fields its group CFO plus the heads of corporate finance and group IR - the most senior metals management in the book this week.",
+              "points": [
+                "11:00-11:50 Mon 21 Sep, room 1821, 2-on-1",
+                "Koushik Chatterjee - Group CFO",
+                "Hriday Nair - Head Corporate Finance",
+                "Pavan Kumar - Head, Group Investor Relations"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "Ambuja Cements CFO Rohit Soni and IR head, 2-on-1 today 14:00 at the JPM India Conference, St. Regis Mumbai.",
+            "source": "JPM Asia Conferences - Day 1 Reminder Schedule: J.P. Morgan India Conference, Sep 21-22, 2026",
+            "received": "07:15",
+            "detail": {
+              "summary": "The PM's confirmed 1x1 schedule for the JPM India Conference. Ambuja is the one cement name on it, and the only scheduled chance this week to test the FY27 +8% volume guide against a book running value-over-volume.",
+              "points": [
+                "14:00-14:50 Mon 21 Sep, room 1702, 2-on-1",
+                "Rohit Soni - Chief Financial Officer",
+                "Deepak Balwani - Head, Investor Relations",
+                "No other cement name on the two-day schedule"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "AI copper-clad laminate prices rising on tight capacity; GS puts the CCL TAM at US$47.5bn by 2028.",
+            "source": "GS Daily - Trump-Xi meeting to expect // SMIC strong AI demand // Shenyi Tech AI CCL growth and capacity // Samsung Electronics // Japan banks",
+            "received": "06:09",
+            "detail": {
+              "summary": "GS maintains Shengyi Tech at Buy (TP Rmb249) on tight AI CCL supply and rising specification-driven pricing. It forecasts 3Q26 revenue +59% YoY to Rmb13bn, gross margin above 30%, and a 33% net income CAGR through 2030E.",
+              "points": [
+                "TP Rmb249, Buy maintained on CL",
+                "AI CCL TAM: US$47.5bn by 2028",
+                "3Q26 revenue +59% YoY, +16% QoQ to Rmb13bn",
+                "Gross margin sustaining above 30%",
+                "33% net income CAGR 2026-30E; new Thailand/China capacity"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "CLSA reiterates Underperform Wipro, Hold TCS/Infosys/HCLT/TechM after ANSR channel check; GCCs a tailwind, headwind for mature SIs.",
+            "source": "CLSA - India IT: ANSR call KTAs: GCC & SI to coexist",
+            "received": "19:54",
+            "detail": {
+              "summary": "CLSA hosted ANSR's CMO on the India GCC/SI landscape: both coexist, with GCCs covering talent gaps and core work while SIs keep non-critical work. GCC growth stays strong as EU, UK and ANZ geographies open up, a net tailwind for SIs but a headwind for mature large-caps.",
+              "points": [
+                "1,800-2,700 people is the GCC 'sweet spot' headcount",
+                "GCC city split: Bangalore 30%, Hyderabad ~20%, Delhi NCR 14%",
+                "FDE costs in India ~4x lower than US-based FDEs",
+                "Underperform Wipro; Hold TCS, Infosys, HCLT, TechM reiterated"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "BofA turns constructive on Nifty (PT 26.2k by Dec'26, +12%) as India AI-exposure concern eases from 32% to 10% of its survey.",
+            "source": "BofA - APAC Signal-to-Noise: From localization to monetization",
+            "received": "20:33",
+            "detail": {
+              "summary": "BofA's Asia Fund Manager Survey shows worries about India's limited AI exposure easing sharply, and India strategist Amish Shah turns constructive on Nifty after two years of caution, citing five of eight previously flagged risks as priced in or played out.",
+              "points": [
+                "India AI-exposure concern: 32% to 10% of survey respondents",
+                "Nifty PT 26.2k by Dec'26, ~12% upside implied",
+                "5 of 8 previously flagged risks priced in/played out",
+                "Asia FMS: 80% await AI monetization proof before adding exposure"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "UBS: Brent above $100/bbl cuts FY27 India GDP ~20bps, lifts CPI to 5.5%, and puts the RBI into 50bps of hikes.",
+            "source": "UBS - Hi Rajvaibhav UBS India: what's trending in India's macro",
+            "received": "05:41",
+            "detail": {
+              "summary": "UBS's India economist models Brent averaging $100/bbl versus an $85 baseline as a stagflationary shock for FY27 - slower growth, higher inflation, a wider current account - that pushes the RBI into a hiking cycle starting the October policy meeting.",
+              "points": [
+                "$100/bbl Brent scenario vs $85 baseline for FY27",
+                "FY27 GDP growth slows ~20bps vs 6.9% base",
+                "FY27 CPI could reach 5.5% on energy & food",
+                "50bps cumulative RBI hikes seen from October",
+                "CAD could widen toward 2% of GDP"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "JPM: Brent at $106 carries a ~$16 risk premium to its ~$90 fair value; desk still sees one more Fed hike, in December.",
+            "source": "JPM - Overnight Brief! 9/21 - Chase spending Data accelerated in Sep by drawing on investment wealth",
+            "received": "05:48",
+            "detail": {
+              "summary": "JPM's oil model puts September fair value near $90 while Brent trades near $106, implying a large geopolitical risk premium that has not resolved; the desk raised its Treasury yield targets and still expects one further Fed hike in December after this week's move.",
+              "points": [
+                "Brent $106 vs ~$90 JPM 'fair value' estimate",
+                "~$16/bbl risk premium implied by the gap",
+                "10Y UST +7bps to 4.99%, 2Y +8bps to 4.74%",
+                "One more Fed hike seen, in December",
+                "YE26 2Y target raised 40bp to 4.70%; 10Y to 5.05%"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "BofA initiates Ather Energy at Buy, PO Rs1,900 (18% upside from Rs1,614), EBITDA breakeven targeted FY28.",
+            "source": "BofA - ATHERENE IN: Ather Energy: Road to a million: Scale meets margins. Initiate at Buy",
+            "received": "08:01",
+            "detail": {
+              "summary": "BofA's initiation argues Ather is past product validation and entering a scale phase, with the EL platform cutting BOM 8-10% and driving margin inflexion alongside capacity tripling to 1.4m units by FY29.",
+              "points": [
+                "PO Rs1,900 vs price Rs1,614 (18% upside)",
+                "16% market share, Top 3 E-2W player",
+                "Capacity to triple to 1.4m units by FY29",
+                "EL platform cuts BOM 8-10%",
+                "EBITDA margin 12.4% by FY31"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Avendus Spark initiates Gabriel India at Buy, TP Rs1,560 (37x Sep-28E EPS); kit value seen rising 4x from FY26.",
+            "source": "Avendus Spark - AVENDUS SPARK AUTOMOTIVE SECTOR - Gabriel India: Initiating Coverage (Rating: BUY, TP: 1,560)",
+            "received": "06:47",
+            "detail": {
+              "summary": "Avendus Spark frames Gabriel as Anand Group's consolidation vehicle, with kit value per vehicle potentially rising 4x from FY26 as JVs (Dana, HL Mando/Klemove) and other Anand entities merge in, targeting Rs500bn group revenue by 2030.",
+              "points": [
+                "TP Rs1,560 at 37x Sep-28E EPS",
+                "Kit value up to 4x FY26 levels",
+                "Group revenue target Rs500bn by 2030",
+                "FY26-30E revenue/EBITDA/EPS CAGR 19%/22%/32%",
+                "Standalone EBITDA margin target double-digit vs ~8.5% now"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Paramount Communications guides Rs50bn revenue by FY31 (21% CAGR), Narmadapuram online Q1FY28, margin to ~8% by Q4FY27.",
+            "source": "Aditya Birla Capital - Paramount Communications (NOT RATED) | Company Update: Turnaround sets the stage for capacity-led growth (+1 more in Outlook)",
+            "received": "07:01",
+            "detail": {
+              "summary": "Aditya Birla Capital's note (Not Rated) says PRMC has already scaled revenue over 3x since FY22 and targets Rs50bn by FY31 on a new Rs3bn Narmadapuram facility, with margins recovering as US tariff normalisation restores parity.",
+              "points": [
+                "Revenue scaled 3x to ~Rs19bn FY26 from ~Rs6bn FY22",
+                "Rs50bn revenue target by FY31, 21% CAGR",
+                "~Rs3bn Narmadapuram facility, commissioning Q1FY28",
+                "EBITDA margin to recover to ~8% by Q4FY27",
+                "Medium-term aspiration: double-digit margins"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      }
+    ],
+    "quiet": ["Non-ferrous", "Mining"]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX +2.78% on Friday led the tape, with Broadcom +2.97%, AMD +2.70%, TSMC ADR +1.02% and Nvidia +1.34%.",
+        "source": "morning_markets - Yahoo closes 2026-09-18"
+      },
+      {
+        "text": "GS flags SMIC's strong AI demand driving 2H26 growth and reads Samsung Electronics positively after a management meeting.",
+        "source": "GS Daily - SMIC strong AI demand to drive 2H26 growth // Samsung Electronics positive from mgmt meeting"
+      },
+      {
+        "text": "BofA's Asia survey: 80% of investors want proof of AI monetization before adding exposure.",
+        "source": "BofA - APAC Signal-to-Noise: From localization to monetization"
+      }
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

@@ -1,0 +1,378 @@
+{
+ "date": "2026-09-23",
+ "generated_at": "2026-09-23T08:13:01",
+ "mail": {
+  "window": "24h to 08:12 IST",
+  "n_scanned": 62,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Avendus Spark initiates VAML at BUY, TP Rs525 (6x FY28 EV/EBITDA), sees FY28E EBITDA Rs406bn vs Rs255bn in FY26.",
+      "source": "Avendus Spark - Initiating coverage on Vedanta Aluminium (BUY, TP: Rs.525)",
+      "received": "06:48",
+      "detail": {
+       "summary": "Avendus argues VAML's Balco ramp-up and backward integration into alumina, bauxite and coal cut reliance on LME gains for growth, with the target price embedding a conservative $2,750/t FY28 LME versus its own $3,000/t house view.",
+       "points": [
+        "FY27/28E EBITDA Rs386bn/Rs406bn vs Rs255bn FY26",
+        "FCF ~Rs215bn/yr (14% yield); dividend Rs76bn (5% yield)",
+        "Growth projects add ~Rs100bn EBITDA potential (40% of FY26)",
+        "Consol net debt to ~$1bn FY28 vs $3.1bn Q1FY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA maintains O-PF on Hindalco, TP Rs1,240; management guides EBITDA to more than double by FY32 off FY26 levels.",
+      "source": "CLSA - Hindalco (HNDL IB): IF26 takeaways",
+      "received": "13:03",
+      "detail": {
+       "summary": "CLSA's IF26 takeaways tie the doubling guide to Novelis' Bay Minette ramp and Oswego's tariff relief, India upstream capacity nearly doubling with captive coal cutting costs, and India downstream scaling five-fold, while consol leverage stays contained as Novelis debt peaks.",
+       "points": [
+        "India upstream capacity to 2.4mt from 1.3mt currently",
+        "Captive coal mines cut cost $200/t vs FY24 levels",
+        "India downstream EBITDA to $1bn from $200m currently",
+        "Novelis net debt peaks 4QFY27 despite $10bn India capex"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Vedanta Aluminium ranks 2nd among India's SEZ goods exporters at $3.5bn exports; Zambian copper smelter also resumed operations.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:07",
+      "detail": {
+       "summary": "Kotak's daily wrap flags two dated Vedanta items alongside broader sector headlines: the SEZ export ranking and the Zambian copper smelter restarting after scheduled maintenance.",
+       "points": [
+        "Vedanta Aluminium: $3.5bn SEZ exports, ranks #2 nationally",
+        "Zambian copper smelter resumed after maintenance shutdown",
+        "Core sector output +4.8% YoY in August 2026"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "India rebar +4% WoW/+13% MoM, HRC +3% WoW/+9% MoM; domestic HRC now at parity with China post safeguard duty.",
+      "source": "UBS India Sales - Steel Price Rally (India Metals & Mining Weekly)",
+      "received": "09:28",
+      "detail": {
+       "summary": "UBS frames continued India steel strength as domestic pricing catching up with China after safeguard duties, even as China's own rebar/HRC and coking-coal complex eased on supply directives and base metals softened on the same read.",
+       "points": [
+        "India rebar +4% WoW / +13% MoM",
+        "India HRC +3% WoW / +9% MoM, now at China parity",
+        "China rebar/HRC -1% WoW, +1% MoM",
+        "Thermal/coking coal -2%/-1% WoW but +11%/+18% MoM"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW Steel and JSW Energy plan $300mn debt sales, per Reuters coverage in Kotak's daily wrap.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:07",
+      "detail": {
+       "summary": "Kotak's aggregator flags JSW Group's planned $300m debt raise across JSW Steel and JSW Energy, alongside a separate Reuters item that BigMint's India steel index hit a 4-year high on strong demand and falling inventories.",
+       "points": [
+        "$300mn debt sales planned across JSW Steel + JSW Energy",
+        "BigMint India steel index at 4-year high",
+        "Core sector output +4.8% YoY in August 2026"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "MS keeps UTCEM as sole cement OW; Shree, Dalmia, ACC UW, ACEM EW, flagging cement stocks already down ~14% YTD.",
+      "source": "Morgan Stanley - MS India Trends & Themes: Coal India upgraded to OW; India Cement Faces Renewed Cost Inflation Risks",
+      "received": "08:56",
+      "detail": {
+       "summary": "MS frames cement as a 'worth flagging' story alongside the Coal India upgrade, keeping only UltraTech at OW while Ambuja stays EW and Shree, Dalmia and ACC remain UW, as cost inflation threatens FY27 estimates without adequate pricing action.",
+       "points": [
+        "Cement stocks down ~14% YTD",
+        "UTCEM only OW; ACEM EW",
+        "Shree, Dalmia, ACC rated UW",
+        "Pricing needed to protect FY27 ests"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cement demand holds at 7-8% YoY with stable pan-India trade prices, but MS still expects near-term earnings pressure without pricing action.",
+      "source": "Morgan Stanley - [MS] India Materials | CIL u/g to OW; Cement cost pressures back in focus",
+      "received": "08:10",
+      "detail": {
+       "summary": "MS argues petcoke and thermal coal, both up ~20% since July-end, are shifting from a one-quarter buffer to a higher-for-longer cost cycle, with inventory and domestic-coal switching only delaying rather than eliminating the hit into 3QFY27.",
+       "points": [
+        "Petcoke & coal up ~20% since Jul-end",
+        "Rs150-200/t cumulative cost inflation 2Q-3QFY27",
+        "Needs Rs10-15/bag pan-India hikes",
+        "Demand still +7-8% YoY, prices stable"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "~15% below-normal monsoon is a later, rural-demand risk for cement — MS pegs the hit to 4QFY27/1QFY28, not this quarter.",
+      "source": "Morgan Stanley - [MS] India Materials | CIL u/g to OW; Cement cost pressures back in focus",
+      "received": "08:10",
+      "detail": {
+       "summary": "MS separates the monsoon call from the near-term cost story: the ~15% rainfall deficit reaches rural cement demand only with a lag via agricultural income, pushing the impact into 4QFY27/1QFY28.",
+       "points": [
+        "Monsoon ~15% below normal",
+        "Lag: rainfall -> agri income -> rural demand",
+        "Impact seen 4QFY27/1QFY28, not now"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "E-auction premiums jumped to 59% in Aug from 41% in Jul; MS says every 10ppt further gain adds ~6% to CIL's EPS.",
+      "source": "Morgan Stanley - [MS] India Materials | CIL u/g to OW; Cement cost pressures back in focus",
+      "received": "08:10",
+      "detail": {
+       "summary": "MS's Coal India upgrade to OW rests heavily on the e-auction premium trajectory, which rose sharply in a single month, directly lifting realisations and driving the ~20% FY27 EPS upgrade.",
+       "points": [
+        "Aug e-auction premium 59% vs Jul 41%",
+        "Every 10ppt premium = ~6% CIL EPS",
+        "Global thermal coal +20% since Jul-end",
+        "Drives ~20% FY27 EPS upgrade"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Thermal power demand accelerated to ~20% YoY in Sep MTD vs ~12% in Aug, with plant inventories at a 5-yr low of ~7 days.",
+      "source": "Morgan Stanley - [MS] India Materials | CIL u/g to OW; Cement cost pressures back in focus",
+      "received": "08:10",
+      "detail": {
+       "summary": "The volume case behind the CIL upgrade is a restocking story: dispatches track thermal demand closely, and plant coal stocks have fallen to their lowest in five years, setting up a replenishment tailwind on top of accelerating demand.",
+       "points": [
+        "Sep MTD thermal power demand +~20% YoY",
+        "Vs ~12% YoY growth in Aug",
+        "Plant inventories ~7 days vs ~19 in Mar",
+        "Lowest inventory level in 5 years"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS flags downside risks to the CIL call: weaker e-auction premiums, crude-led cost pressure and wage hikes assumed in the FY27 upgrade.",
+      "source": "Morgan Stanley - MS India Trends & Themes: Coal India upgraded to OW; India Cement Faces Renewed Cost Inflation Risks",
+      "received": "08:56",
+      "detail": {
+       "summary": "MS frames the CIL call as an earnings upgrade rather than a re-rating, trading near its long-term average multiple, and lists three swing factors that could unwind the thesis.",
+       "points": [
+        "Valuation ~6.6x fwd P/E, near LT avg",
+        "Risk: e-auction premiums could soften",
+        "Risk: crude-led cost pressure",
+        "Risk: wage hikes"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Dixon Chairman targets top-10 global EMS in 5 years, top-5 in 10, scaling mobile volumes 40mn to 65mn via Vivo JV; ROCEs held above 30%.",
+      "source": "JPM - Dixon Technologies: Chairman spotlight at JPM India Conference: Exports to drive next leg of growth",
+      "received": "21:58",
+      "detail": {
+       "summary": "Chairman Vachani frames exports, not domestic demand, as the next EMS growth leg, with India's electronics exports targeted from $40bn to $150bn by 2030. Component manufacturing (camera/display modules) is meant to lift mobile value-addition without diluting the 30%+ ROCE, aided by ECMS.",
+       "points": [
+        "40mn to 65mn mobile units via Vivo JV",
+        "Mobile value-addition to rise 18-20% to 40-45%",
+        "30%+ ROCE floor kept on new investment",
+        "India electronics exports $40bn to $150bn by 2030",
+        "Also eyeing defense, medical, drones via M&A"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kaynes FY26 operating cash flow swung to -Rs6.0bn (FY25: -Rs0.8bn) as receivable days doubled to 154, cash conversion cycle hit 226 days.",
+      "source": "Kotak - Mankind - UPGD BUY; Kaynes - More of the same; INDO MIM - Initiate; Curious Case of ONGC vs OINL",
+      "received": "11:00",
+      "detail": {
+       "summary": "Kaynes' 33.2% FY26 revenue growth leans increasingly on the captive GridCrest/KEMS smart-metering business while core EMS ex-smart-meters grew just 3%, and cash generation has deteriorated sharply alongside a receivables build.",
+       "points": [
+        "Revenue +33.2% YoY, core EMS ex-meters only +3%",
+        "GridCrest/KEMS smart metering ~43% of FY26 EBITDA",
+        "Receivable days doubled to 154, CCC 226 days",
+        "FCF outflow -Rs18.5bn after capex and acquisitions"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Voltas RAC secondary sales +15-20% YoY, share 18.6% vs #2's 12%; read-through for Amber/PGEL AC components.",
+      "source": "Emkay - Voltas: Prioritizing market share over near-term margins; BUY; Target: Rs1,500 (+3 more in Outlook)",
+      "received": "21:33",
+      "detail": {
+       "summary": "Voltas management is explicitly prioritizing market share and absolute EBIT over near-term margin recovery; 2QFY27 RAC demand benefits from a weak GST-disruption base and healthy channel inventory, with price hikes only partly offsetting commodity/BEE-driven cost increases.",
+       "points": [
+        "Secondary RAC sales +15-20% YoY, primary ~+20%",
+        "Voltas RAC share 18.6% vs #2 at ~12%",
+        "Cumulative price hikes ~10-12% vs ~8% GST benefit",
+        "Channel inventory <30 days across the industry"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA: HLD on TCS/Infosys/HCLTech, U-PF on Wipro; sees most EPS downside risk in Infosys and Wipro as 2Q27 demand stays cautious.",
+      "source": "CLSA - CLSA India Research - LG Electronics | Juniper Hotels | India IT",
+      "received": "09:09",
+      "detail": {
+       "summary": "CLSA's 2Q27 India IT preview finds demand commentary cautious across the board as macro, geopolitics, rates and inflation mute discretionary spend. HCL's tone is the most resilient; order books and headcounts look broadly stable, and BFSI remains a relative bright spot.",
+       "points": [
+        "2Q27 demand commentary cautious across TCS, Infosys, Wipro, HCL",
+        "HCL's demand commentary the most resilient of the four",
+        "HLD TCS/Infosys/HCL, U-PF Wipro",
+        "BFSI resilient despite BofA/GS trading revenue warnings"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak hosts TechM CEO Mohit Joshi & CFO Rohit Anand today 1400 IST on turnaround structural factors and AI-driven spending shifts.",
+      "source": "Kotak - Reminder: Fireside chat with TechM leadership | Wed 23 Sep | 1400 IST",
+      "received": "16:11",
+      "detail": {
+       "summary": "A closed-door, recorded fireside chat with Tech Mahindra's CEO and CFO covering the turnaround's structural underpinnings, enterprise-tech spending shifts toward AI, positioning for the AI wave, and financial discipline versus strategic investment.",
+       "points": [
+        "1400 IST webinar, invitation-only, recorded",
+        "Structural turnaround factors and path ahead",
+        "AI adoption shifting enterprise tech spending priorities"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "WPI–core CPI gap widened to 592bps (3-month avg), signaling margin pressure into 4QFY27; Ambit turns cautious on Transmission, SELL on Afcons.",
+      "source": "Ambit - Sales: Consumer event; Cautious on transmission; Economy: WPI-core CPI gap widening",
+      "received": "09:59",
+      "detail": {
+       "summary": "Ambit flags a widening WPI-core CPI gap (manufacturing components inflating above 4% rose from 28% to 61%) as a margin risk through 4QFY27 given Brent above $90. It turns cautious on transmission equipment (execution ~35% below target) and reiterates SELL on Afcons as metro price wars cap margins.",
+       "points": [
+        "592bps WPI-core CPI gap, 3-month avg",
+        "61% of manufacturing WPI items inflating >4% (was 28%)",
+        "220kV+ capacity addition ~35% below FY27 target",
+        "Transmission pecking order: GVTD>Hitachi>ENRIN>CG Power, all SELL",
+        "Afcons incumbent share down to 10-15% from 20%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Brent back above $100/bbl and INR down >1% in two weeks push India's 10Y yield past 7%, with FII selling resuming.",
+      "source": "BNP Paribas - BNPP INDIA QUICK NOTES: CHINA Xi in the US | INDIA ECO CHARTBOOK | CORPORATE SURVEY - CAPEX maintained",
+      "received": "08:58",
+      "detail": {
+       "summary": "BNP flags oil and a high base as headwinds, even as FX reserves near $800bn on FCNR inflows offer near-term cushion. Manufacturing PMI has fallen to its lowest since Aug-21.",
+       "points": [
+        "Brent back above $100/bbl amid Middle East escalation",
+        "INR down >1% in two weeks",
+        "India 10Y yield breached 7%",
+        "FX reserves ~$800bn incl. $127bn FCNR deposits",
+        "Manufacturing PMI lowest since Aug-21"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Small & midcap MF inflows hit record highs (Rs7,970cr/Rs6,990cr in Aug) as Large Cap funds see a 2nd straight month of outflows.",
+      "source": "Elara - The Domestic Liquidity Tracker: domestic liquidity crowding into SMIDs (+2 more in Outlook)",
+      "received": "13:41",
+      "detail": {
+       "summary": "Elara's tracker shows domestic flows rotating from Large Caps into SMIDs, both printing record monthly inflows in August. SMID funds are now ~50-55% of active equity inflows, but flow-adjusted investor returns lag reported NAV returns by wide margins.",
+       "points": [
+        "Aug equity inflows Rs29,330cr, up from Rs24,700cr",
+        "Smallcap/midcap record inflows Rs7,970cr/Rs6,990cr",
+        "Large Cap funds: 2nd straight month of outflows",
+        "SMID ~50-55% of active equity inflows",
+        "Midcap NAV CAGR ~14% vs flow-adjusted investor return ~4%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "BofA initiates Ather Energy at Buy, PO Rs1,900, citing EV adoption past its tipping point and 16% market share (top 3).",
+      "source": "BofA - India Insight: Initiate on Ather Energy (Buy) & PhysicsWallah (Sell)",
+      "received": "09:05",
+      "detail": {
+       "summary": "BofA frames Ather as the best proxy on India's 2-wheeler EV adoption, past the validation phase with 16% share and premium pricing; the next leg is scale via the EL platform and AURIC capacity (1.4m units) with demand ahead of supply, lifting EBITDA margin to low teens by FY31.",
+       "points": [
+        "Buy initiation, price objective Rs1,900",
+        "16% market share, ranked top 3",
+        "AURIC capacity target 1.4m units",
+        "EL platform cuts BOM by 8-10%",
+        "EBITDAm seen reaching low teens by FY31"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +2.06%, AMD +9.95% as the post-Meta Muse agentic-AI rally rotated into semis and memory; NDX hit a new high.",
+    "source": "JPM - Overnight Brief 9/23"
+   },
+   {
+    "text": "BNPP's Santa Clara checks with AMD, Nvidia, Broadcom show no AI-infra slowdown; memory/storage demand still exceeds supply.",
+    "source": "BNP Paribas - India Quick Notes: SEMIs - No slowdown in AI Infra demand"
+   },
+   {
+    "text": "TrendForce sees Q4 NAND pricing +20% QoQ on the AI-driven DRAM shortage; Samsung closing the HBM4 gap on SK Hynix.",
+    "source": "BofA - ASIA Daily: APAC Conf Day 3"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

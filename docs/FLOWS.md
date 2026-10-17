@@ -96,23 +96,56 @@ matrix was computed; evidence in `python packages/score/regime.py --backtest`.
 - After risk_off, risk_on follows 20.1% vs a 13.0% base — the bounce is real
   but only ~1.5x, never a forecast.
 
-**The tab leads WEEKLY since 2026-09-03** — the PM's ruling after the backtests:
-"daily is of no use, show a weekly analysis in the tab." The weekly layer is the
-same sign map sampled Friday-to-Friday (sigma over 52 completed weeks,
-`specs/flows.yaml weekly:`), computed on demand in `regime.weekly_view()` — a
-pure function of `flow_series` + the spec, so nothing persists and nothing can
-go stale separately. What the 492-week backtest earned it: stress weeks CLUSTER
-(a liquidation week repeats at 2.9x base, stagflation 1.9x, goldilocks has
-never repeated), and a confirmed risk_on week precedes the strongest India week
-(Nifty +0.67%, 70% hit, t +3.9). The India evidence rows on the tab are
+**The tab led WEEKLY 2026-09-03 → 2026-09-08** — the PM's ruling after the
+backtests: "daily is of no use, show a weekly analysis in the tab." The weekly
+layer is the same sign map sampled Friday-to-Friday (sigma over 52 completed
+weeks, `specs/flows.yaml weekly:`), computed on demand in `regime.weekly_view()`
+— a pure function of `flow_series` + the spec, so nothing persists and nothing
+can go stale separately. What the 492-week backtest earned it: stress weeks
+CLUSTER (a liquidation week repeats at 2.9x base, stagflation 1.9x, goldilocks
+has never repeated), and a confirmed risk_on week precedes the strongest India
+week (Nifty +0.67%, 70% hit, t +3.9). The India evidence rows on the tab are
 computed LIVE from the three `india_series` (evidence inputs only — never
 regime-state inputs; nifty_metal's Yahoo series goes stale for weeks, which
 costs pairs, never correctness). The daily layer still computes and persists —
 the flow spell is drawn from it and the review layer will want it.
 
-The daily state and next-session odds no longer render anywhere — only the
-spell line survives from the daily layer on the tab. They remain in
-`/api/flows` (`f1`) and in `market_regime` for the review layer.
+**Since 2026-09-08 the LEAD is the ROLLING past week, updated every US
+session** — the PM's second ruling: "update daily... show weekly trend but
+calculate past week on a rolling basis." The two rulings do not conflict: the
+unit of analysis stays a week; only the sampling anchor moved off Friday. Each
+session is read as its own trailing 5-session window, z'd against the AS-OF
+completed-week sigma (no look-ahead: each sigma is built from the 52 weeks
+ending before its own), same sign map, same quiet_z. The Friday layer stays as
+the trend line, the 52-week strip, and the long-run evidence tables. One code
+path (`regime.classify_rolling`) serves both the live chips and the backtest.
+
+What the rolling backtest showed (2,370 sessions since 2017,
+`regime.py --rolling-backtest`):
+
+- **The 8 states DO change daily** — the read flips on 50% of consecutive
+  sessions; 1,186 runs, median 1 session, mean 2.0 (longest: 11-day quiet and
+  liquidation runs). The STATE is a daily-moving reading; the intensity grade
+  is what says how much to care, and the tab states this beside the chips.
+- The rolling day-share per state matches the Friday week-share within ~1.5pp
+  across all 9 states — moving the anchor off Friday does not distort the
+  taxonomy.
+- Episode reads stay sane, with one property to know: a violent one-day
+  REVERSAL takes days to flip a trailing 5-session window — 2025-04-09 (the
+  tariff-pause rally, +9.5% on the day) still reads `liquidation` because the
+  window it sits in is the crash week. The rolling read is the week's state,
+  never the day's; the day's own state is the daily layer in `market_regime`.
+- Forward evidence is sampled at STATE ENTRIES only (the day the read flips —
+  adjacent rolling readings share 4 of 5 sessions, so day-level stats would
+  pseudo-replicate ~5x). Next 5 India sessions after a flip: the only |t|>=2
+  cells are benign entries (Nifty after risk_on +0.32% t+2.2, after quiet
+  +0.31% t+2.5; Metal after risk_on/quiet/liquidity_rally +0.6..0.8%,
+  t+2.3..+3.6; IT after goldilocks +0.67% t+2.4). Stress-state entries are
+  directionally negative on Metal/IT (risk_off −0.79% Metal) but none clear
+  |t|>=2 — flip-day evidence is WEAKER than completed-week evidence (a flip
+  is day-one of a state; a completed Friday week is five days of it), which
+  is why the tab shows both, labelled, rather than replacing one with the
+  other.
 
 **Intensity grades the reaction (backtested 2026-09-03, in the Regime Atlas).**
 Bucketing loud days by max joint |z| (moderate 0.75–1.5, strong 1.5–2.5,

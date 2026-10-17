@@ -1,0 +1,176 @@
+{
+ "date": "2026-09-17",
+ "generated_at": "2026-09-17T08:15:06+05:30",
+ "mail": {
+  "window": "24h to 08:30 IST",
+  "n_scanned": 97,
+  "sectors": [
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "FOMC hiked 25bp to 3.75-4% on a hawkish 16-2 vote; GS scraps one-and-done and adds an October hike.",
+      "source": "Goldman Sachs - Fed hike: More hawkish than GS expected; Hawkish Dots Show Two-Hike Baseline; Adding an October Hike",
+      "received": "06:42"
+     },
+     {
+      "text": "Elara pulls its RBI hike call forward to October 2026 from Feb 2027 and lifts the cycle to a cumulative 75bp.",
+      "source": "Elara - Economics: Fed's rate hike today to seal RBI's October policy hike",
+      "received": "11:30"
+     },
+     {
+      "text": "Post-Fed the 10Y sits at 5.02%, dollar +70bp, WTI -3.2% to $102.43; global metals sold off, VALE -2.3%, RIO -1.5%.",
+      "source": "J.P. Morgan - Overnight Brief 9/17: Expect higher yields and equities to coexist",
+      "received": "07:02"
+     }
+    ]
+   },
+   {
+    "sector": "Non-ferrous (aluminium/zinc)",
+    "bullets": [
+     {
+      "text": "Ambit prefers Hindalco over Vedanta Aluminium in base metals, staying cautious as Fed tightening pressures the complex.",
+      "source": "Ambit - Metals Monthly Chartbook: Macro tightens, China weakens",
+      "received": "07:05"
+     },
+     {
+      "text": "Vedanta's board meets 18 Sep to consider an NCD raise - a leverage watch item on the holdco leg.",
+      "source": "Kotak - Basic materials: daily news and prices",
+      "received": "08:53"
+     },
+     {
+      "text": "Hindustan Zinc cut its domestic zinc benchmark despite a firm LME - a realisation headwind against global strength.",
+      "source": "Kotak - Basic materials: daily news and prices",
+      "received": "08:53"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Coking coal imports up 20-50% YoY at JSW, Tata and SAIL with FY27TD prices +19% - an industry-wide cost headwind.",
+      "source": "J.P. Morgan - India Daily: Coal: Imports of coking coal surging",
+      "received": "08:41"
+     },
+     {
+      "text": "HRC +6.2% WoW and the HRC-patra spread +31% to Rs14,757/t, a 3-month high - squeezes APL Apollo's conversion margin.",
+      "source": "Nuvama - HRC-Patra spread widens sharply by 31% WoW to INR 14,757/ton",
+      "received": "10:01"
+     },
+     {
+      "text": "India crude steel output -1.8% MoM in August and finished-steel consumption -0.5% - soft domestic demand backdrop.",
+      "source": "Kotak - Basic materials: daily news and prices",
+      "received": "08:53"
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Surprise South hike of Rs10-25/bag on stable demand - Dalmia is the most South-levered of the four scored names.",
+      "source": "J.P. Morgan - Concrete Insights September: Surprise price hikes in the South; demand still mixed",
+      "received": "07:00"
+     },
+     {
+      "text": "North cut Rs5-10/bag despite the strongest regional demand and East stayed flat on the weakest - both drag on Shree.",
+      "source": "J.P. Morgan - Concrete Insights September: Surprise price hikes in the South; demand still mixed",
+      "received": "07:00"
+     },
+     {
+      "text": "JPM makes UltraTech its top pick and expects a rebound from late November on festive demand and pricing.",
+      "source": "J.P. Morgan - Concrete Insights September: Surprise price hikes in the South; demand still mixed",
+      "received": "07:00"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Indonesian export cuts and China supply curbs have thermal coal +50-60% YTD - a tailwind to Coal India e-auction realisations.",
+      "source": "J.P. Morgan - Transition Talks: Coal-ity check: supply shocks, cost pass-through, and transition tension",
+      "received": "15:45"
+     },
+     {
+      "text": "Seaborne iron ore holds near $100/t on cost-curve support despite weak China steel - eases pressure on NMDC circulars.",
+      "source": "J.P. Morgan - Iron ore: Benchmark prices remain steady, while freight rates spike; Simandou ramps up",
+      "received": "00:32"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "CLSA reiterates Underperform on Dixon - demand, premiumisation and competition all weighing on the outlook together.",
+      "source": "CLSA - Dixon (DIXON IN): Fighting on three fronts",
+      "received": "08:54"
+     },
+     {
+      "text": "India SEMICON runs 17-19 Sep; watch Kaynes on OSAT scale-up and Syrma on chips packaging for announcements.",
+      "source": "J.P. Morgan - India Daily: EMS: India SEMICON preview",
+      "received": "08:41"
+     },
+     {
+      "text": "Dixon targets 20-25% IT-hardware share of a Rs200-250bn pool plus 120-130bps margin gain; Syrma guides export mix to 33%.",
+      "source": "Morgan Stanley - India Industrials & Utilities: Virtual Seminar Day Two",
+      "received": "21:32"
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "MS reads Coforge's board resignations as an individual succession and disclosure issue, not board-wide; NRC chair seated.",
+      "source": "Morgan Stanley - India Trends & Themes: UPI MDR Framework Revised; Coforge Board Resignations in Focus",
+      "received": "09:07"
+     },
+     {
+      "text": "Coforge has engaged Egon Zehnder for board hires - active replacement rather than a prolonged vacancy.",
+      "source": "Kotak - Technology News Wrap, September 16",
+      "received": "10:58"
+     },
+     {
+      "text": "Tech Mahindra will channel recent margin gains into growth investment over its next three-year plan, not further margin.",
+      "source": "Kotak - Technology News Wrap, September 16",
+      "received": "10:58"
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Other coverage-adjacent"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX closed +0.63% while the S&P fell 0.45% - semis held in as the broad tape sold the Fed hike.",
+    "source": "morning_markets.py - Yahoo closes 2026-09-16"
+   },
+   {
+    "text": "AMD +1.65% and TSMC ADR +0.96% led; Broadcom was flat at +0.07% despite guiding AI revenue to $230bn by 2030.",
+    "source": "morning_markets.py - Yahoo closes 2026-09-16"
+   },
+   {
+    "text": "Over a quarter of Nvidia revenue now comes from customers based outside its core hyperscaler set.",
+    "source": "Motley Fool - More Than a Quarter of Nvidia's Revenue Now Comes From Customers Based Abroad"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "change_pct": -1.94,
+    "reason": "Investor fears of AI disintermediation weighed on the stock; a $25m DOJ discrimination settlement was also in the tape."
+   },
+   {
+    "name": "Cognizant",
+    "change_pct": -2.26,
+    "reason": null
+   }
+  ]
+ }
+}

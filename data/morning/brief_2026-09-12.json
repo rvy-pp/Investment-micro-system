@@ -1,0 +1,185 @@
+{
+  "date": "2026-09-12",
+  "generated_at": "2026-09-12T08:20:00+05:30",
+  "mail": {
+    "window": "24h to 08:05 IST",
+    "n_scanned": 67,
+    "note": "Saturday run. Every mail in the window is Friday 11-Sep dated; no broker mail has arrived since 18:30Z / 00:00 IST. The 21 per-entity structural-watch queries returned zero hits in today's window.",
+    "sectors": [
+      {
+        "sector": "Non-ferrous (aluminium/zinc)",
+        "bullets": [
+          {
+            "text": "White House copper tariff plan stalling removes a near-term prop under global copper prices, a mild headwind to Hindustan Copper's LME-linked realisations.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:52"
+          },
+          {
+            "text": "US aluminium producers forming a tariff-advocacy alliance signals persisting tariff uncertainty, a watch item for Hindalco's Novelis US remelt footprint.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:52"
+          }
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "Coking coal spiked +26% MoM to ~$287/t on Shanxi and Mongolia supply cuts, a level-setting cost hit landing hardest on thinnest-margin mills.",
+            "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+            "received": "12:42"
+          },
+          {
+            "text": "Domestic iron ore's discount to import parity narrowed to ~52%, a cost headwind specific to JSW and Jindal external ore, not Tata/SAIL captive.",
+            "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+            "received": "12:42"
+          },
+          {
+            "text": "HRC's discount to import parity widened to ~2%, leaving mills room to push prices further as demand picks up post-monsoon.",
+            "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+            "received": "12:42"
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "Meghalaya government paused Shree Cement work pending inquiry, a name-specific regulatory risk with no read-through to the other three.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:52"
+          },
+          {
+            "text": "JPM stays OW UltraTech into a seasonally weak Sept quarter, betting the October demand uptick revalidates its premium multiple.",
+            "source": "JPM — India Daily: Ultratech: With premium metrics come premium multiples | C-Suite Chat KTAs: LTM, Tata Technologies",
+            "received": "09:02"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "Iron ore and pellet imports hit an 11-year high in August despite domestic ore below import parity, signalling tight NMDC availability.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:52"
+          },
+          {
+            "text": "South African coal portside prices in India surging on tight supply lifts the landed-cost floor, room for Coal India e-auction premiums to hold.",
+            "source": "Kotak — Basic materials - daily news and prices",
+            "received": "08:52"
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "Aditya Birla reiterates BUY on Kaynes, TP Rs4,300, on an FY26-29E revenue and EBITDA CAGR guide of 41% and 42%.",
+            "source": "Aditya Birla Capital — Mgt. Meet KTAs: KAYNES IN (BUY), Core EMS Momentum Intact; PCB/OSAT Capabilities Take Shape",
+            "received": "08:27"
+          },
+          {
+            "text": "Kaynes FCF stays negative through FY28E on elevated capex and working capital despite that growth guide, a cash-conversion risk.",
+            "source": "Aditya Birla Capital — Mgt. Meet KTAs: KAYNES IN (BUY), Core EMS Momentum Intact; PCB/OSAT Capabilities Take Shape",
+            "received": "08:27"
+          },
+          {
+            "text": "OSAT is a new Kaynes growth leg at FY29E revenue Rs11.2bn, and PCB capacity is being absorbed by existing customers.",
+            "source": "Aditya Birla Capital — Mgt. Meet KTAs: KAYNES IN (BUY), Core EMS Momentum Intact; PCB/OSAT Capabilities Take Shape",
+            "received": "08:27"
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "LTM says 55-60% of client contracts have already taken AI-deflation pricing cuts, with the rest expected within four to six quarters.",
+            "source": "JPM — India Daily: C-Suite Chat KTAs: LTM, Tata Technologies",
+            "received": "09:02"
+          },
+          {
+            "text": "Tata Technologies says OEMs are accelerating outsourcing to cut costs amid Chinese competition, with non-anchor clients set to outgrow anchor accounts.",
+            "source": "JPM — India Daily: C-Suite Chat KTAs: LTM, Tata Technologies",
+            "received": "09:02"
+          },
+          {
+            "text": "CLSA calls AI-driven manpower deflation a net negative for Indian IT, headcount growth flat despite emerging consulting and adoption opportunities.",
+            "source": "CLSA — GCC Expert Webinar | Met Top GPU | Initiation: China Battery | AXSB Call KTAs | NIITMTS",
+            "received": "08:47"
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "Dated crude jumped to $120.8/bbl from $101.7/bbl over the week on US-Iran escalation and hawkish Fed repricing into the Sept 16 FOMC.",
+            "source": "Kotak — Strategy: Friday Flash: Risk off",
+            "received": "14:59"
+          },
+          {
+            "text": "Nifty fell 2.1% for a fifth straight week; FIIs sold $0.6bn of equities and INR fell 1.1%, the worst-performing EM currency.",
+            "source": "CLSA — India strategy: Weekly wrap",
+            "received": "22:36"
+          },
+          {
+            "text": "India-focused fund outflows moderated to ~$100mn from $170mn, $270mn and $366mn in prior weeks, improving relative to Taiwan and Korea.",
+            "source": "Elara — Global Liquidity Tracker: India outflows persist but improve relative to Taiwan & Korea",
+            "received": "13:12"
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "NSE's Rs225bn IPO, the second-largest ever, opens Sept 17-21, a sizeable liquidity draw on the secondary market to watch.",
+            "source": "CLSA — India Financials: NSE announces price band for Rs225 bn IPO | UPI MDR notification soon?",
+            "received": "09:14"
+          },
+          {
+            "text": "Kotak flags Kumiai's Yen4.5bn FY26 profit cut and AXEEV inventory write-down on generic entry, reiterating SELL on PI Industries.",
+            "source": "Kotak — PI Industries (CMP Rs2,246, SELL): Kumiai Chemical writes down Axeev inventories citing pricing pressure",
+            "received": "13:31"
+          },
+          {
+            "text": "CLSA raises Sterlite Tech target to Rs1,400 from Rs950 on ~70% utilisation and an FY29 Rs200bn revenue target from hyperscaler AI demand.",
+            "source": "CLSA — Sterlite Tech (SOTL IN): Plant visit and another raise",
+            "received": "20:15"
+          }
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "Semis rallied overnight: SOX +1.81%, AMD +2.49%, TSMC ADR +1.22%, Broadcom +0.32%; Nvidia flat at -0.03% (11-Sep close).",
+        "source": "morning_markets — Yahoo closes 2026-09-11"
+      },
+      {
+        "text": "US indices closed broadly higher: S&P 500 +0.86%, Nasdaq +0.96%, Dow +0.98% (11-Sep close).",
+        "source": "morning_markets — Yahoo closes 2026-09-11"
+      },
+      {
+        "text": "GIFT Nifty 23,575 implies a +177pt / +0.76% gap to the 23,398 Nifty close, but Indian markets are shut today.",
+        "source": "morning_markets — nseix.com market-rate API, 12-Sep 02:29"
+      }
+    ],
+    "bellwethers": [
+      {
+        "name": "Accenture",
+        "move_pct": 3.37,
+        "reason": null
+      },
+      {
+        "name": "Cognizant",
+        "move_pct": 2.88,
+        "reason": null
+      }
+    ]
+  }
+}

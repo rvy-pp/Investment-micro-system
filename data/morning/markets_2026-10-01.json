@@ -1,0 +1,203 @@
+{
+ "date": "2026-10-01",
+ "fetched_at": "2026-10-01T08:13:37",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-30",
+    "close": 7651.54,
+    "prev_date": "2026-09-29",
+    "chg_pct": -0.25
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-30",
+    "close": 26861.06,
+    "prev_date": "2026-09-29",
+    "chg_pct": 0.24
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-30",
+    "close": 50906.05,
+    "prev_date": "2026-09-29",
+    "chg_pct": -0.86
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-30",
+    "close": 12628.62,
+    "prev_date": "2026-09-29",
+    "chg_pct": -0.0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-30",
+    "close": 228.38,
+    "prev_date": "2026-09-29",
+    "chg_pct": 0.51
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-30",
+    "close": 611.76,
+    "prev_date": "2026-09-29",
+    "chg_pct": 0.69
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-30",
+    "close": 456.19,
+    "prev_date": "2026-09-29",
+    "chg_pct": -0.16
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-30",
+    "close": 351.19,
+    "prev_date": "2026-09-29",
+    "chg_pct": -1.1
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-30",
+    "close": 183.37,
+    "prev_date": "2026-09-29",
+    "chg_pct": 3.53
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-30",
+    "close": 57.44,
+    "prev_date": "2026-09-29",
+    "chg_pct": 1.06
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Dear Accenture Stock Fans, Mark Your Calendars for October 1",
+    "publisher": "Barchart",
+    "when": "2026-09-30 18:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dear-accenture-stock-fans-mark-184614106.html"
+   },
+   {
+    "title": "Accenture on Pace to More Than Double Bookings With Emerging Alliances, UBS Says",
+    "publisher": "MT Newswires",
+    "when": "2026-09-30 15:47Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-pace-more-double-bookings-154710975.html"
+   },
+   {
+    "title": "Accenture Fiscal Q4 Earnings Due As AI Impacts Business",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-09-30 13:05Z",
+    "link": "https://finance.yahoo.com/m/63a48562-4857-3ee8-9c4c-bf63a0ee1ab2/accenture-fiscal-q4-earnings.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Named to Forbes World's Best Employers 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-29 15:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-forbes-worlds-best-150000587.html"
+   },
+   {
+    "title": "ACI, Cognizant Say BASE24-eps Sustained Double its Target Transaction Load Without Single Failure",
+    "publisher": "MT Newswires",
+    "when": "2026-09-28 12:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-cognizant-base24-eps-sustained-122630369.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Complete BASE24-eps Performance Testing on AWS",
+    "publisher": "InvestorsHub",
+    "when": "2026-09-28 12:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-complete-base24-121148852.html"
+   },
+   {
+    "title": "ACI Worldwide and Cognizant Demonstrate Strong Card Processing Performance on Amazon Web Services, Inc. (AWS)",
+    "publisher": "Business Wire",
+    "when": "2026-09-28 11:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/aci-worldwide-cognizant-demonstrate-strong-110000030.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Is AI-Driven Edge Security Integration With Nvidia\u2019s Stack Altering The Investment Case For Palo Alto Networks (PANW)?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-01 01:23Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-driven-edge-security-integration-012337957.html"
+   },
+   {
+    "title": "Nvidia Could Have a Monster October. Here's Why.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-01 00:23Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-could-monster-october-heres-002300963.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Nvidia, Broadcom, and AMD Investors Need to Have Oct. 15 Circled on Their Calendars",
+    "publisher": "Motley Fool",
+    "when": "2026-09-30 23:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-broadcom-amd-investors-oct-230400490.html"
+   },
+   {
+    "title": "SCHD\u2019s Rules Sold Broadcom in March 2024. The Stock Is Up About 183% Since, and SCHD Holders Missed the Run",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-30 20:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/schd-rules-sold-broadcom-march-200147768.html"
+   },
+   {
+    "title": "Top Analyst Reports for Apple, Microsoft & Broadcom",
+    "publisher": "Zacks",
+    "when": "2026-09-30 19:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/top-analyst-reports-apple-microsoft-192000774.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Nvidia, Broadcom, and AMD Investors Need to Have Oct. 15 Circled on Their Calendars",
+    "publisher": "Motley Fool",
+    "when": "2026-09-30 23:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-broadcom-amd-investors-oct-230400490.html"
+   },
+   {
+    "title": "HPE stock closes at record high on growing networking orders, $1.2 billion AMD Helios order",
+    "publisher": "Yahoo Finance",
+    "when": "2026-09-30 21:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/article/hpe-stock-closes-at-record-high-on-growing-networking-orders-12-billion-amd-helios-order-211204477.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22605.0,
+  "chg_pct": -0.22,
+  "stamp": "01-Oct-2026 08:12:28",
+  "expiry": "27-Oct-2026",
+  "volume": 1368,
+  "nifty_close": {
+   "close": 22620.45,
+   "stamp": "30-Sep-2026 15:30"
+  },
+  "gap_pts": -15.5,
+  "gap_pct": -0.07
+ }
+}

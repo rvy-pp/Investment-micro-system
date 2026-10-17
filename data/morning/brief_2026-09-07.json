@@ -1,0 +1,80 @@
+{
+  "date": "2026-09-07",
+  "generated_at": "2026-09-07T12:00:00+05:30",
+  "mail": {
+    "window": "24h to 11:55 IST",
+    "n_scanned": 70,
+    "sectors": [
+      {
+        "sector": "Steel",
+        "bullets": [
+          {"text": "India HRC +Rs2,250/t w-w to Rs62,000/t (four-year high), rebar +Rs2,250 to Rs57,000/t; Nomura keeps Buys on Tata, JSW, Jindal Steel.", "source": "Nomura — India steel - Steel weekly trends (week ended 04 Sep 2026)", "received": "03:08"},
+          {"text": "Imported coking coal +$13/t w-w to $272/t, YTD high vs Aug avg $232; iron ore stable ~$94/t, NMDC prices unchanged w-w.", "source": "Nomura — India steel - Steel weekly trends (week ended 04 Sep 2026)", "received": "03:08"},
+          {"text": "Power-plant coal stocks fell 15.5% to 31.95MT (52% of norm) in August; Indian non-coking coal +7% to $118/t — power-cost risk for aluminium.", "source": "Nomura — India steel - Steel weekly trends (week ended 04 Sep 2026)", "received": "03:08"}
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {"text": "ACC shuts its Jhinkpani cement plant amid limestone depletion and rising costs.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:53"},
+          {"text": "CLSA sizes UltraTech's C&W ambition at Rs280bn+ revenue by FY32, implying Rs50-60bn capex vs Rs18bn announced; maintains High-Conviction Outperform.", "source": "CLSA — UltraTech (UTCEM IS): What if. . .", "received": "18:54"},
+          {"text": "BofA keeps UltraTech Buy after Ultravolt launch ahead of Dec-26 guidance; opex from 2HFY27, returns FY30-weighted, Polycab/KEI margin hit ~50bps.", "source": "BofA — India Insight: Industrials - UTCEM Entry", "received": "09:04"}
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {"text": "NMDC cut lump and fines prices INR200/t each effective Aug-26, to INR5,250/t and INR4,500/t — negative NMDC realisations, cost relief for external-ore mills.", "source": "Nomura — India steel - Steel weekly trends (week ended 04 Sep 2026)", "received": "03:08"},
+          {"text": "NMDC to start commercial coal production by Q3, targeting 1 MT sales in FY27 — a new revenue line beyond iron ore.", "source": "Kotak — Basic materials - daily news and prices", "received": "08:53"}
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {"text": "Avalon approves JV with Zollner Elektronik (top-15 global EMS, ~US$2.7bn revenue); Rs3.5-5bn capex at Chennai Oragadam; Avendus positive, maintain BUY.", "source": "Avendus Spark — Update: AVALON - Zollner JV (+)", "received": "10:29"},
+          {"text": "Emkay reiterates Syrma SGS BUY, TP Rs2,050 (41% upside, 65x FY28E PE), modelling FY26-31E revenue/EBITDA/PAT CAGR of 34%/39%/40%.", "source": "Emkay — Syrma SGS Technology: Stepping stones laid, poised to leap ahead", "received": "01:51"}
+        ]
+      },
+      {
+        "sector": "Non-ferrous",
+        "bullets": [
+          {"text": "CLSA's 13 global producer calls reinforce its bullish view on oil, aluminium and copper.", "source": "CLSA — UTCEM-CROMPTON?? | LGE (Parent) - AIDS | Global Mining & Energy | Zooms", "received": "08:55"}
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {"text": "CLSA reiterates O-PF on Persistent (US$650m hi-tech deal win) and LTIMindtree as SaaS gains share over SIs, with most IT services cutting guidance.", "source": "CLSA — India IT: SaaS AI-fied over SaaSpocalypse", "received": "06:59"},
+          {"text": "Today 7 Sep: JPM hosts Infosys C-suite fireside chat, group Zoom call — dial-in via the mail.", "source": "JPM — REMINDER TODAY - INDIA IT C-SUITE FIRESIDE CHAT SERIES - INFOSYS LIMITED", "received": "08:00"},
+          {"text": "BNPP initiates Minimax (+, TP HKD600, +75%) over Zhipu (=) on China open-source LLMs; readthrough positive for Microsoft and CoreWeave.", "source": "BNPP — INDIA QUICK NOTES: GREEN BOOK: CHINA LLM - Open AI now Made-In-China", "received": "09:03"}
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {"text": "RBI's Rs 7tn 30-day VRRR auctions today 0930 IST with withdrawal flexibility; a failed cutoff forces CRR hike/OMO options ahead of Oct 7 policy.", "source": "CLSA — India Economics: Problem of plenty", "received": "09:25"},
+          {"text": "One-year OIS up 25bps in a fortnight points to an RBI hike; Ambit prefers large-cap quality, sees SMIDs at risk on crude.", "source": "Ambit — OIS curve pointing towards a rate hike", "received": "13:50"},
+          {"text": "US payrolls +162k revive a September Fed hike, with USDJPY the focal trade into the FOMC.", "source": "Citi — NFP Blowout Revives September Hike; USDJPY in Focus (+4 more in Outlook)", "received": "05:33"}
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {"text": "HUVR Capital Markets Day dominated the tape: Kotak REDUCE FV Rs2,115, Emkay ADD TP Rs2,350, Elara ACCUMULATE TP Rs2,230 — direction praised, execution doubted.", "source": "Kotak / Emkay / Elara — HUVR CMD takeaways (+5 more in Outlook)", "received": "08:59"}
+        ]
+      }
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "Semis decoupled from the Friday tape: SOX +3.4% (AMD +4.7%, TSMC +2.9%) while the S&P 500 fell 0.4%.", "source": "Yahoo closes, 2026-09-04 (markets file)"},
+      {"text": "AMD committed up to $5bn to Anthropic, whose IPO prospects headline September event risk.", "source": "Motley Fool headline via Yahoo; BofA — What could go right in Sep"},
+      {"text": "Nvidia's Hugging Face deal is being read as a hedge against Broadcom's custom-silicon push.", "source": "Insider Monkey headline via Yahoo"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}

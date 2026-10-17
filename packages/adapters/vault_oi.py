@@ -8,7 +8,20 @@ than rebuilding an NSE fetcher.
 FILE SHAPE: YAML frontmatter carrying the CURRENT snapshot (percentiles,
 buildup, lot size, spot), then a newest-first markdown table of daily rows.
 Both are ingested — the table for history, the frontmatter for today's derived
-metrics, which are not recomputable from the table alone.
+metrics that are not recomputable from the table alone (buildup, z-score, %
+vs median, lot size).
+
+THE 3M PERCENTILE IS COMPUTED HERE, NOT COPIED (PM ruling 2026-09-15). The
+vault's `percentile_3m` is EXPIRY-CYCLE-NORMALISED: it splits the window at
+every >8% single-day OI drop, divides each day by its own cycle's median and
+ranks the ratios. That answers "high within the current expiry cycle?", not
+"high over three months?" — Coforge printed 95th with OI 8.6% BELOW the 3m
+median and a -0.7σ z-score in the same frontmatter block, and 10 of 31 names
+sat on the opposite side of 50 from their raw rank. Where the drop detector
+found only one cycle it silently fell back to raw, so the column mixed two
+definitions across rows. `oi_percentile` is now the plain rank of the latest
+OI among the last 63 sessions in the table (strict-below / n), the number the
+OI-vs-time chart actually shows.
 
 TWO HORIZONS, BOTH KEPT. The vault publishes buildup over 15d AND 3m, and they
 routinely disagree: a name can be short-covering over 15d inside a 3-month
@@ -66,7 +79,11 @@ NAMES = {
     "UltraTech": "ultratech",
     "Ambuja": "ambuja",
     "Shree Cement": "shree",
-    "Dalmia Bharat": "dalmia",
+    # Dalmia Bharat REMOVED 2026-09-15 (PM: "it's no longer in F&O"). Its
+    # vault file kept stamping last_fetched daily but the table stopped at
+    # 25-08-2026, so the loader was carrying a stale frontmatter percentile
+    # onto NULL-OI rows. Invariant 7: no row for a name not in F&O. Its oi
+    # rows were deleted from the store the same day; scoring is untouched.
     # --- mining, added 2026-08-29, same collision check run: none of these
     # four folder names appears under any other Coverage/<sector>/. Hindustan
     # Copper and Lloyds Metals carry `status: not_in_fno` (price-only files)
@@ -133,6 +150,22 @@ UNMODELLED: dict[str, tuple[str, str]] = {
 
 BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",
               "long_unwinding", "neutral"}
+
+LOOKBACK_3M = 63  # sessions — the vault's own 3m window, kept for comparability
+
+
+def raw_pct_3m(rows_newest_first: list[dict]) -> float | None:
+    """Percentile rank (0-100) of the latest OI among the last LOOKBACK_3M
+    sessions, strict-below count over n, rounded — the same rank the vault
+    used BEFORE its cycle normalisation, so 41 here means what 41 meant
+    there. Raw on purpose: the expiry sawtooth is real, but the chart shows
+    raw OI and the Mag cell is raw, so the rank must be too."""
+    vals = [r["oi"] for r in rows_newest_first[:LOOKBACK_3M]
+            if r.get("oi") is not None]
+    if not vals or rows_newest_first[0].get("oi") is None:
+        return None
+    cur = rows_newest_first[0]["oi"]
+    return float(round(sum(1 for v in vals if v < cur) / len(vals) * 100))
 
 
 def iso(d: str) -> str:
@@ -208,9 +241,11 @@ def main() -> int:
                   f"{'NOT IN F&O':16} {'-':>7}  no futures — no rows, not zeros")
             continue
         latest = rows[0]["date"] if rows else "-"
+        pct = raw_pct_3m(rows) if rows else None
         print(f"{eid:16} {len(rows):>5} {latest:12} {fm.get('last_fetched','?'):12} "
-              f"{fm.get('buildup_3m','?'):16} {fm.get('percentile_3m','?'):>7}  "
-              f"15d={fm.get('buildup_15d','?')}")
+              f"{fm.get('buildup_3m','?'):16} "
+              f"{('%.0f' % pct) if pct is not None else '?':>7}  "
+              f"vault_fm={fm.get('percentile_3m','?')} 15d={fm.get('buildup_15d','?')}")
 
     if not a.load:
         return 0
@@ -230,6 +265,7 @@ def main() -> int:
             continue
         lot = int(float(fm["lot_size"])) if fm.get("lot_size") else None
         latest_date = rows[0]["date"]
+        pct_3m = raw_pct_3m(rows)  # ours, not fm["percentile_3m"] — see header
 
         for r in rows:
             # OI change is published in lots; derive pct rather than assume it
@@ -248,11 +284,11 @@ def main() -> int:
                  r["price_chg_pct"], lot,
                  bu3 if bu3 in BUILDUP_OK else None,
                  bu15 if bu15 in BUILDUP_OK else None,
-                 num(fm.get("percentile_3m")) if is_latest else None,
+                 pct_3m if is_latest else None,
                  num(fm.get("percentile_15d")) if is_latest else None,
                  num(fm.get("z_score_3m")) if is_latest else None,
                  num(fm.get("pct_vs_median_3m")) if is_latest else None,
-                 63 if is_latest else None, "vault_oi_history"))
+                 LOOKBACK_3M if is_latest else None, "vault_oi_history"))
             n += 1
     conn.commit()
     conn.close()

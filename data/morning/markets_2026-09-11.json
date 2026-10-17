@@ -1,0 +1,221 @@
+{
+ "date": "2026-09-11",
+ "fetched_at": "2026-09-11T09:51:59",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-10",
+    "close": 7591.7,
+    "prev_date": "2026-09-09",
+    "chg_pct": -0.58
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-10",
+    "close": 26081.72,
+    "prev_date": "2026-09-09",
+    "chg_pct": -0.65
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-10",
+    "close": 52064.1,
+    "prev_date": "2026-09-09",
+    "chg_pct": -0.6
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-10",
+    "close": 11614.17,
+    "prev_date": "2026-09-09",
+    "chg_pct": -2.66
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-10",
+    "close": 218.36,
+    "prev_date": "2026-09-09",
+    "chg_pct": -2.37
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-10",
+    "close": 503.6,
+    "prev_date": "2026-09-09",
+    "chg_pct": -3.36
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-10",
+    "close": 428.03,
+    "prev_date": "2026-09-09",
+    "chg_pct": -1.68
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-10",
+    "close": 360.83,
+    "prev_date": "2026-09-09",
+    "chg_pct": -0.97
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-10",
+    "close": 177.91,
+    "prev_date": "2026-09-09",
+    "chg_pct": 1.2
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-10",
+    "close": 58.32,
+    "prev_date": "2026-09-09",
+    "chg_pct": 0.21
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "What Is The Market Seeing In Accenture Stock That You Are Not?",
+    "publisher": "Trefis",
+    "when": "2026-09-11 00:39Z",
+    "link": "https://finance.yahoo.com/m/f07f5f15-7cd7-3849-9ccf-8c4871dd1c12/what-is-the-market-seeing-in.html"
+   },
+   {
+    "title": "Accenture Wins $480.4 Million US Army Contract for Task-Management System",
+    "publisher": "MT Newswires",
+    "when": "2026-09-10 21:40Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-wins-480-4-million-214057085.html"
+   },
+   {
+    "title": "MotoGP Hires Accenture to Modernize Streaming Experience, Control Content Delivery",
+    "publisher": "MT Newswires",
+    "when": "2026-09-10 08:55Z",
+    "link": "https://finance.yahoo.com/media-advertising/articles/motogp-hires-accenture-modernize-streaming-085517446.html"
+   },
+   {
+    "title": "MotoGP and Accenture Join Forces to Reinvent the Direct-to-Fan Sports Streaming Experience",
+    "publisher": "Business Wire",
+    "when": "2026-09-10 07:59Z",
+    "link": "https://finance.yahoo.com/media-advertising/articles/motogp-accenture-join-forces-reinvent-075900111.html"
+   },
+   {
+    "title": "Bank FOMO fueling AI spending, Accenture exec says",
+    "publisher": "Banking Dive",
+    "when": "2026-09-10 06:52Z",
+    "link": "https://finance.yahoo.com/m/f6e2c213-8c7a-3bc2-a9e1-51923bead784/bank-fomo-fueling-ai.html"
+   },
+   {
+    "title": "Is Accenture's Business Falling As Fast As Its Stock?",
+    "publisher": "Trefis",
+    "when": "2026-09-09 23:19Z",
+    "link": "https://finance.yahoo.com/m/13e9ec28-c5a7-3de5-868d-f42feab667ba/is-accenture%27s-business.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant (CTSH): Can 17 AI Agents Turn Productivity Into Revenue?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-10 23:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ctsh-17-ai-agents-231307532.html"
+   },
+   {
+    "title": "Cognizant Named in TIME World's Best Companies 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-09 13:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-time-worlds-best-133000424.html"
+   },
+   {
+    "title": "Cognizant Expands US Hiring Through Universities",
+    "publisher": "MT Newswires",
+    "when": "2026-09-08 10:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-expands-us-hiring-universities-101112397.html"
+   },
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia CEO Reportedly Dismisses Anthropic Exec's AI Doomsday Warning As \u2018Outlandish\u2019 And \u2018Deeply Untrue\u2019",
+    "publisher": "Stocktwits",
+    "when": "2026-09-11 03:45Z",
+    "link": "https://finance.yahoo.com/m/9fdc9d21-ea00-398f-8299-aa958b34f69a/nvidia-ceo-reportedly.html"
+   },
+   {
+    "title": "SpaceX Stock Chases 3-Week Winning Streak: CFO Says \u2018Very Strong\u2019 Nvidia Alliance Could Fuel 10-GW AI Push",
+    "publisher": "Stocktwits",
+    "when": "2026-09-11 01:46Z",
+    "link": "https://finance.yahoo.com/m/0b1872fa-3587-34d0-ae1f-e97fd07f3ac7/spacex-stock-chases-3-week.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Marvell Technology vs. Broadcom: Comparing Revenue Trends Between These Artificial Intelligence Companies",
+    "publisher": "Motley Fool",
+    "when": "2026-09-10 18:17Z",
+    "link": "https://finance.yahoo.com/m/fc7afde6-8070-3952-b24f-3d436f0a5ac4/marvell-technology-vs..html"
+   },
+   {
+    "title": "The Case for Broadcom Over Nvidia Strengthens in September",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-10 16:58Z",
+    "link": "https://finance.yahoo.com/m/2316fd49-ab5b-3869-9387-82c2a3adadb1/the-case-for-broadcom-over.html"
+   },
+   {
+    "title": "OpenAI Picked Broadcom for Its First Custom AI Chip. The Race for Number Two Just Got Dangerous.",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-10 16:40Z",
+    "link": "https://finance.yahoo.com/m/6b17e61f-d805-3062-b700-83cbb8bfe569/openai-picked-broadcom-for.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "NVIDIA vs. AMD After Earnings: Which AI Stock Should You Buy Now?",
+    "publisher": "Zacks",
+    "when": "2026-09-10 19:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-vs-amd-earnings-ai-190000157.html"
+   },
+   {
+    "title": "Piper Sandler Has a Message for AMD Stock Investors",
+    "publisher": "GuruFocus.com",
+    "when": "2026-09-10 18:37Z",
+    "link": "https://finance.yahoo.com/technology/articles/piper-sandler-message-amd-stock-183752621.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23259.5,
+  "chg_pct": -0.29,
+  "stamp": "11-Sep-2026 09:52:01",
+  "expiry": "29-Sep-2026",
+  "volume": 13179,
+  "nifty_close": {
+   "close": 23477.8,
+   "stamp": "11-Sep-2026 09:52"
+  },
+  "gap_pts": -218.3,
+  "gap_pct": -0.93
+ }
+}

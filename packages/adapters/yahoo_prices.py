@@ -45,6 +45,11 @@ import prices_io  # noqa: E402
 DB = REPO / "data" / "ims.db"
 
 CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?range={rng}&interval=1d"
+# The same endpoint addressed by an explicit epoch window instead of a range
+# token. It exists because of the trap documented on fetch_bars: `range=max`
+# SILENTLY CHANGES THE INTERVAL, and no range token reaches past 20 years.
+CHART_SPAN = ("https://query1.finance.yahoo.com/v8/finance/chart/{sym}"
+              "?period1={p1}&period2={p2}&interval=1d")
 # Yahoo wants a browser UA; without one it returns 401/429.
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
@@ -139,6 +144,30 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "tata_elxsi":       [("TATAELXSI.NS", r"tata\s*elxsi")],
     "ofss":             [("OFSS.NS", r"oracle\s*fin")],
     "ltts":             [("LTTS.NS", r"l\s*&\s*t\s*tech")],
+    # --- equities: auto, added 2026-09-19 (PM: Ather + an Auto tab) ---
+    # Resolved with yahoo_search.py before being written here, per the VAML
+    # lesson. The search returns THREE rows for "Ather Energy" and only one
+    # is the ordinary line: ATHERENERG-BL.NS is the BL (trade-for-trade /
+    # block) series on the same company, a thin parallel listing whose closes
+    # are NOT the ones the tape quotes. The pattern cannot reject it (same
+    # longName), so the symbol is pinned explicitly and the -BL series is
+    # recorded in REJECTED below.
+    #
+    # NOTE THE DATE FLOOR: Ather IPO'd 2025-05-06. There is no price before
+    # that and `range` tokens longer than the listing return only what exists,
+    # so a "5y" ask is not an error here — it is simply 1.4 years. Anything
+    # that treats a short history as a fetch failure is wrong about this name.
+    "ather":            [("ATHERENERG.NS", r"ather\s*energy")],
+    # Eicher added 2026-09-20 with its dossier. Name-verified first, and the
+    # pattern requires "eicher" precisely because the company the market means
+    # is the HOLDCO (Royal Enfield + the 54.4% VECV JV), not "Eicher
+    # Engineering" or any of the group's unlisted arms.
+    #
+    # UNLIKE ather, THIS IS A LONG HISTORY AND IT HAS A SPLIT IN IT: 1:10 on
+    # 2020-08-25 (face value Rs10 -> Re1). Yahoo adjusts splits (it does not
+    # adjust demergers - see the VEDL note above), and the series was scanned
+    # for >35% single-day moves after loading to confirm the adjustment took.
+    "eicher":           [("EICHERMOT.NS", r"eicher\s*motors")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -189,10 +218,16 @@ EQUITIES = {
     "dixon", "amber", "kaynes", "pg_electroplast", "syrma_sgs", "avalon",
     "infosys", "tcs", "hcl_tech", "wipro", "tech_mahindra", "ltimindtree",
     "persistent", "coforge", "mphasis", "kpit", "tata_elxsi", "ofss", "ltts",
+    "ather", "eicher",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.
 REJECTED = {
+    "ATHERENERG-BL.NS":
+        "THE SAME COMPANY ON THE BL (block/trade-for-trade) SERIES. Yahoo "
+        "returns it beside ATHERENERG.NS for the same longName, so the name "
+        "pattern cannot separate them — the symbol is pinned instead. Its "
+        "closes are a thin parallel book, not the tape the PM quotes.",
     "ZNC=F": "instrumentType ALTSYMBOL, name 'ZNC Future JUL 2019' — a dead 2019 "
              "contract. Returned a frozen 3950.00 with only 5 distinct closes in 23 "
              "sessions. Plausible level, no information.",
@@ -220,17 +255,34 @@ MIN_DISTINCT_RATIO = 0.5    # a live series moves; a dead contract repeats
 # the name pattern do the discriminating.
 
 
-def fetch(symbol: str, rng: str = "3mo",
-          name_pattern: str | None = None) -> list[tuple[str, float]]:
-    """Return [(iso_date, close)] ascending. Raises if the series fails validation.
+def fetch_bars(symbol: str, rng: str = "3mo",
+               name_pattern: str | None = None
+               ) -> list[tuple[str, float, dict]]:
+    """Return [(iso_date, close, bars)] ascending, bars = open/high/low/volume.
 
-    Validation is not optional. A symbol returning a plausible NUMBER is not the
-    same as the right series: ZNC=F returned a perfectly reasonable 3950.00 that
-    was a frozen 2019 contract, and ZN=F returns T-note prices under a
-    zinc-looking ticker. Both would have silently rescaled a whole peer group.
+    Raises if the series fails validation. Validation is not optional. A symbol
+    returning a plausible NUMBER is not the same as the right series: ZNC=F
+    returned a perfectly reasonable 3950.00 that was a frozen 2019 contract, and
+    ZN=F returns T-note prices under a zinc-looking ticker. Both would have
+    silently rescaled a whole peer group.
+
+    THE CLOSE IS THE ONLY REQUIRED FIELD, and that asymmetry is deliberate.
+    The endpoint has always returned the full quote block; `fetch()` simply
+    dropped four fifths of it, which is why every one of the 201,267 rows in
+    `prices` carried a NULL open until 2026-09-11. A bar with a missing leg
+    still yields a usable close, so the close is kept and the bar is dropped —
+    never the reverse, and never a bar back-filled from a neighbouring field.
     """
-    req = urllib.request.Request(CHART.format(sym=symbol, rng=rng),
-                                 headers={"User-Agent": UA})
+    # `rng` accepts an ISO DATE as well as a Yahoo range token. A date goes
+    # through the explicit-epoch URL, which is the only way to reach past 20
+    # years and the only way to get daily bars for a deep window at all.
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", rng):
+        p1 = int(dt.datetime.fromisoformat(rng + "T00:00:00+00:00").timestamp())
+        p2 = int(dt.datetime.now(dt.timezone.utc).timestamp())
+        url = CHART_SPAN.format(sym=symbol, p1=p1, p2=p2)
+    else:
+        url = CHART.format(sym=symbol, rng=rng)
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=20) as resp:
         doc = json.load(resp)
 
@@ -239,15 +291,48 @@ def fetch(symbol: str, rng: str = "3mo",
         raise ValueError("no result block")
     r = result[0]
     meta = r.get("meta") or {}
+
+    # GRANULARITY IS NOT WHAT WE ASKED FOR, AND YAHOO DOES NOT SAY SO.
+    # `interval=1d` is a REQUEST, not a contract. Measured 2026-09-17 with
+    # interval=1d on every call:
+    #     range=max, TATASTEEL.NS -> dataGranularity '1mo', 370 month-END bars
+    #                                spanning 1996..2026
+    #     range=max, VAML.NS      -> dataGranularity '1h',  481 hourly bars
+    #                                collapsing to 69 distinct dates
+    # Both parse perfectly and both would have been stored as DAILY rows: 370
+    # monthly candles written as sessions, or a date carrying five bars of
+    # which the last one silently wins. Nothing downstream could see it —
+    # the closes are real closes, just of the wrong period. That is the
+    # silent-arithmetic shape (docs/SILENT_BUGS.md), and it is the same trap
+    # as the chartPreviousClose/range=5d note at the top of this file: the
+    # numbers are right and the PERIOD is wrong.
+    #
+    # So the interval is verified, not assumed. Use an explicit ISO date for
+    # deep history (period1/period2 holds '1d' out to 31 years); range tokens
+    # hold '1d' up to and including '20y' and break at 'max'.
+    gran = str(meta.get("dataGranularity") or "")
+    if gran and gran != "1d":
+        raise ValueError(
+            f"granularity {gran!r}, not '1d' — Yahoo overrode interval=1d for "
+            f"range={rng!r}. Pass an ISO date (period1/period2) instead; "
+            f"'max' returns monthly for long histories and hourly for short ones")
+
     stamps = r.get("timestamp") or []
-    closes = (r["indicators"]["quote"][0] or {}).get("close") or []
+    q = (r["indicators"]["quote"][0] or {})
+    closes = q.get("close") or []
+    opens, highs, lows = q.get("open") or [], q.get("high") or [], q.get("low") or []
+    vols = q.get("volume") or []
+
+    def _at(seq, i):
+        return seq[i] if i < len(seq) and seq[i] is not None else None
 
     out = []
-    for ts, close in zip(stamps, closes):
+    for i, (ts, close) in enumerate(zip(stamps, closes)):
         if close is None:
             continue
         d = dt.datetime.fromtimestamp(ts, dt.timezone.utc).date().isoformat()
-        out.append((d, float(close)))
+        out.append((d, float(close), {"open": _at(opens, i), "high": _at(highs, i),
+                                      "low": _at(lows, i), "volume": _at(vols, i)}))
     if not out:
         raise ValueError("no closes")
 
@@ -263,12 +348,25 @@ def fetch(symbol: str, rng: str = "3mo",
     if stale > MAX_STALE_DAYS:
         raise ValueError(f"stale: last print {out[-1][0]} ({stale}d ago)")
 
-    ratio = len(set(round(c, 6) for _, c in out)) / len(out)
+    ratio = len(set(round(c, 6) for _, c, _b in out)) / len(out)
     if ratio < MIN_DISTINCT_RATIO:
         raise ValueError(f"frozen: only {ratio:.0%} distinct closes "
                          f"— dead or illiquid contract")
 
     return out
+
+
+def fetch(symbol: str, rng: str = "3mo",
+          name_pattern: str | None = None) -> list[tuple[str, float]]:
+    """Return [(iso_date, close)] ascending — the close-only view of fetch_bars.
+
+    Kept as the published signature because flow_series.py and
+    morning_markets.py consume the 2-tuple. It DELEGATES rather than
+    re-implementing: the identity/stale/frozen guards above are the ones that
+    stop a T-note being loaded as zinc, and a second copy of them would be a
+    second thing to keep in step.
+    """
+    return [(d, c) for d, c, _bars in fetch_bars(symbol, rng, name_pattern)]
 
 
 def probe(rng: str = "1mo") -> dict[str, dict]:
@@ -294,14 +392,27 @@ def probe(rng: str = "1mo") -> dict[str, dict]:
     return findings
 
 
-def load(rng: str = "3mo") -> int:
+def load(rng: str = "3mo", only: set[str] | None = None) -> int:
+    """Fetch and store CANDIDATES. `only` restricts to those entity ids.
+
+    `only` exists for the deep backfill of OHLC bars (the Book tab's index
+    needs history the daily 3mo window does not reach). Pointing a long range
+    at the WHOLE candidate list would also rewrite two years of commodity
+    closes as a side effect of wanting equity bars — so the subset is named
+    explicitly rather than the range just being widened.
+
+    `rng` may be a Yahoo range token or an ISO DATE. Use the date for anything
+    deep: see the granularity note in fetch_bars — `max` is not daily.
+    """
     conn = sqlite3.connect(DB)
     conn.execute("PRAGMA foreign_keys = ON")
     n_rows = 0
     for eid, syms in CANDIDATES.items():
+        if only is not None and eid not in only:
+            continue
         for sym, pat in syms:
             try:
-                series = fetch(sym, rng, pat)
+                series = fetch_bars(sym, rng, pat)
             except Exception:
                 continue
             conn.execute(
@@ -314,10 +425,18 @@ def load(rng: str = "3mo") -> int:
             # metals pack or westmetall. It used to silently win every race by
             # running last — it overwrote the pack's usdinr on 2026-08-15,
             # 95.4300 -> 95.6470.
-            res = prices_io.upsert(conn, [(eid, d, c) for d, c in series], "yahoo")
+            #
+            # Bars ride along from 2026-09-11 (the Book tab's basket candles).
+            # They are refused wherever the close is refused — prices_io never
+            # lets one row carry two sources' numbers.
+            res = prices_io.upsert(
+                conn, [(eid, d, c, b) for d, c, b in series], "yahoo")
             if res["refused"]:
                 print(f"   {eid}: {res['refused']} rows kept from a higher-ranked "
                       f"source, {res['wrote']} written")
+            if res.get("bad_bars"):
+                print(f"   {eid}: {res['bad_bars']} incoherent bar(s) dropped, "
+                      f"closes kept")
             n_rows += res["wrote"]
             break
     conn.commit()
@@ -337,7 +456,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--probe", action="store_true")
     ap.add_argument("--load", action="store_true")
-    ap.add_argument("--range", default="3mo")
+    ap.add_argument("--range", default="3mo",
+                    help="a Yahoo range token, or an ISO DATE for deep history "
+                         "(period1/period2 — the only way past 20y, and the "
+                         "only way to get daily bars at all: see fetch_bars on "
+                         "why 'max' is not daily)")
+    ap.add_argument("--only", default=None,
+                    help="comma-separated entity ids. REQUIRED in practice for "
+                         "a deep --range: pointing a long range at the whole "
+                         "candidate list rewrites years of commodity closes as "
+                         "a side effect of wanting equity bars. This is how a "
+                         "newly entered book leg gets the history the index "
+                         "needs — without it the leg 'lists' on whatever date "
+                         "the daily 3mo window happens to start, and the "
+                         "back-cast shows it joining there.")
     a = ap.parse_args()
 
     if a.probe:
@@ -363,8 +495,17 @@ def main() -> int:
         return 0
 
     if a.load:
-        n = load(a.range)
-        print(f"loaded {n} price rows into {DB}")
+        only = ({e.strip() for e in a.only.split(",") if e.strip()}
+                if a.only else None)
+        if only:
+            unknown = sorted(only - set(CANDIDATES))
+            if unknown:
+                print(f"not in CANDIDATES (no symbol, so no prices and no "
+                      f"place in any index): {', '.join(unknown)}")
+                return 2
+        n = load(a.range, only=only)
+        print(f"loaded {n} price rows into {DB}"
+              + (f" for {', '.join(sorted(only))}" if only else ""))
         return 0
 
     ap.print_help()

@@ -1,0 +1,202 @@
+{
+ "date": "2026-09-21",
+ "fetched_at": "2026-09-21T08:13:06",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-18",
+    "close": 7650.5,
+    "prev_date": "2026-09-17",
+    "chg_pct": 0.17
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-18",
+    "close": 26522.54,
+    "prev_date": "2026-09-17",
+    "chg_pct": 0.39
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-18",
+    "close": 51682.64,
+    "prev_date": "2026-09-17",
+    "chg_pct": -0.18
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-18",
+    "close": 11921.69,
+    "prev_date": "2026-09-17",
+    "chg_pct": 2.78
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-18",
+    "close": 222.27,
+    "prev_date": "2026-09-17",
+    "chg_pct": 1.34
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-18",
+    "close": 559.82,
+    "prev_date": "2026-09-17",
+    "chg_pct": 2.7
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-18",
+    "close": 434.67,
+    "prev_date": "2026-09-17",
+    "chg_pct": 1.02
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-18",
+    "close": 357.61,
+    "prev_date": "2026-09-17",
+    "chg_pct": 2.97
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-18",
+    "close": 181.29,
+    "prev_date": "2026-09-17",
+    "chg_pct": -4.73
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-18",
+    "close": 59.87,
+    "prev_date": "2026-09-17",
+    "chg_pct": -3.25
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Is Down 37% From Its Peak. Does the AI Transformation Story Still Hold Up?",
+    "publisher": "TIKR",
+    "when": "2026-09-19 14:58Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-down-37-peak-does-145857267.html"
+   },
+   {
+    "title": "Can Accenture (ACN) Turn Its AI Strategy Into Sustainable Growth?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-19 08:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-turn-ai-strategy-080629365.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Trades Down, Here Is Why",
+    "publisher": "StockStory",
+    "when": "2026-09-18 22:40Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-trades-down-224040409.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Sinks As Market Gains: Here's Why",
+    "publisher": "Zacks",
+    "when": "2026-09-18 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-sinks-market-215003281.html"
+   },
+   {
+    "title": "Anthropic\u2019s first embedded evaluator is\u00a0\u2026 Accenture?",
+    "publisher": "TechCrunch",
+    "when": "2026-09-18 21:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/anthropic-first-embedded-evaluator-accenture-214433105.html"
+   },
+   {
+    "title": "Anthropic\u2019s Latest Safety Push Sends Accenture Stock Higher",
+    "publisher": "Barrons.com",
+    "when": "2026-09-18 21:39Z",
+    "link": "https://finance.yahoo.com/m/f89ef7d7-ee33-3315-b419-c2af13875265/anthropic%E2%80%99s-latest-safety.html"
+   },
+   {
+    "title": "Accenture Shares Climb Aftermarket On Anthropic Safety Partnership Announcement",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-09-18 21:16Z",
+    "link": "https://finance.yahoo.com/m/fccac040-2a42-3a5a-ba3d-df21984ddcba/accenture-shares-climb.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank Raises Price Target on Cognizant Technology Solutions to $70 From $65, Keeps Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-09-18 11:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-raises-price-target-113308379.html"
+   },
+   {
+    "title": "Axis Bank and Cognizant Collaborate to Strengthen Application Management with AMS 2.0",
+    "publisher": "PR Newswire",
+    "when": "2026-09-17 06:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/axis-bank-cognizant-collaborate-strengthen-063000796.html"
+   },
+   {
+    "title": "Cognizant Pivots to AI-Driven Outcomes, Digital Labor Model",
+    "publisher": "MarketBeat",
+    "when": "2026-09-16 14:02Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-pivots-ai-driven-outcomes-140226708.html"
+   },
+   {
+    "title": "How Is Cognizant\u2019s Stock Performance Compared to Other Dividend Stocks",
+    "publisher": "Barchart",
+    "when": "2026-09-16 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-stock-performance-compared-other-110231405.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia's Jensen Huang Beats Zuckerberg, Bezos for Trump's AI Favor as Stock Climbs",
+    "publisher": "BeInCrypto",
+    "when": "2026-09-21 02:07Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidias-jensen-huang-beats-zuckerberg-020726073.html"
+   }
+  ],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Dow, S&P 500, Nasdaq Futures Climb Ahead Of Key China Summit: CRML, APLD, GME, AMD Stocks In Focus",
+    "publisher": "Stocktwits",
+    "when": "2026-09-21 02:23Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dow-p-500-nasdaq-futures-022332279.html"
+   },
+   {
+    "title": "Jim Cramer sends a blunt message to AMD stock investors",
+    "publisher": "TheStreet",
+    "when": "2026-09-20 03:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-sends-blunt-message-033300311.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23337.5,
+  "chg_pct": 0.17,
+  "stamp": "21-Sep-2026 08:12:46",
+  "expiry": "29-Sep-2026",
+  "volume": 969,
+  "nifty_close": {
+   "close": 23346.4,
+   "stamp": "18-Sep-2026 15:30"
+  },
+  "gap_pts": -8.9,
+  "gap_pct": -0.04
+ }
+}

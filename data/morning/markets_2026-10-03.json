@@ -1,0 +1,203 @@
+{
+ "date": "2026-10-03",
+ "fetched_at": "2026-10-03T08:09:24",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-02",
+    "close": 7722.72,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.73
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-02",
+    "close": 27190.86,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.19
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-02",
+    "close": 51176.96,
+    "prev_date": "2026-10-01",
+    "chg_pct": 0.49
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-02",
+    "close": 13136.67,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.4
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-02",
+    "close": 233.95,
+    "prev_date": "2026-10-01",
+    "chg_pct": 1.34
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-02",
+    "close": 633.91,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-02",
+    "close": 472.78,
+    "prev_date": "2026-10-01",
+    "chg_pct": 2.96
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-02",
+    "close": 355.14,
+    "prev_date": "2026-10-01",
+    "chg_pct": 3.35
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-02",
+    "close": 198.9,
+    "prev_date": "2026-10-01",
+    "chg_pct": -6.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-02",
+    "close": 58.51,
+    "prev_date": "2026-10-01",
+    "chg_pct": -3.89
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "What is Accenture\u2019s (ACN) Economic Moat, and is it Widening or Narrowing?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-03 00:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-economic-moat-widening-003604766.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Could Be Undervalued On A 33% Five Year Slide",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-02 22:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-could-undervalued-220519537.html"
+   },
+   {
+    "title": "Accenture Stock Pulls Back as Investors Book Profits",
+    "publisher": "Benzinga",
+    "when": "2026-10-02 18:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-pulls-back-investors-180020984.html"
+   },
+   {
+    "title": "Accenture Q4 Earnings Call Sees AI Demand Broaden Into FY27",
+    "publisher": "Zacks",
+    "when": "2026-10-02 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-q4-earnings-call-sees-130000263.html"
+   },
+   {
+    "title": "Argus Research Adjusts Accenture Price Target to $260 From $220, Maintains Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-02 12:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/argus-research-adjusts-accenture-price-125035912.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Set for Durable Growth as Margin Expansion Expected to Begin in Q4, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-02 15:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-set-durable-growth-margin-150618825.html"
+   },
+   {
+    "title": "Cognizant Schedules Third Quarter 2026 Earnings Release and Conference Call",
+    "publisher": "PR Newswire",
+    "when": "2026-10-02 12:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-schedules-third-quarter-2026-120000616.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "3 AI Chip Stocks To Watch After Nvidia Stock Hit A Fresh All Time High",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-03 01:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/3-ai-chip-stocks-watch-011109542.html"
+   },
+   {
+    "title": "Give Your Dying Father $500,000 of Nvidia Stock So You Can Inherit It Back With a Tax-Free Step-Up. If He Dies Within a Year, the IRS Pretends the Gift Never Happened",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-03 00:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dying-father-500-000-nvidia-004444596.html"
+   },
+   {
+    "title": "Nvidia Hits Record High, Wall Street Still Sees Up to 99% Upside",
+    "publisher": "BeInCrypto",
+    "when": "2026-10-03 00:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-hits-record-high-wall-003921500.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom, Qualcomm, and Sensata Technologies Stocks Trade Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-03 00:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-qualcomm-sensata-technologies-stocks-003003380.html"
+   },
+   {
+    "title": "Broadcom Stocks Jump 3.5% as AI Chip Guide Reaches $21.7 Billion",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-02 19:49Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-jump-3-5-194924009.html"
+   },
+   {
+    "title": "Broadcom Bets $102 Billion on Anthropic Chips",
+    "publisher": "TIKR",
+    "when": "2026-10-02 18:35Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-bets-102-billion-anthropic-183557853.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why AMD Stock Jumped 30% in September",
+    "publisher": "Motley Fool",
+    "when": "2026-10-03 00:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-jumped-30-005002040.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22624.5,
+  "chg_pct": 0.59,
+  "stamp": "02-Oct-2026 02:42:33",
+  "expiry": "27-Oct-2026",
+  "volume": 83278,
+  "nifty_close": {
+   "close": 22421.95,
+   "stamp": "01-Oct-2026 15:30"
+  },
+  "gap_pts": 202.5,
+  "gap_pct": 0.9
+ }
+}

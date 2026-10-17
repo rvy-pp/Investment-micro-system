@@ -1,0 +1,646 @@
+{
+ "months": [
+  "2025-October",
+  "2025-November",
+  "2025-December",
+  "2026-January",
+  "2026-February",
+  "2026-March",
+  "2026-April",
+  "2026-May",
+  "2026-June",
+  "2026-July",
+  "2026-August",
+  "2026-September"
+ ],
+ "rows": {
+  "Hero MotoCorp": {
+   "seg": "2W",
+   "makers": [
+    "HERO MOTOCORP LTD"
+   ],
+   "data": {
+    "2025-October": 1007100,
+    "2025-November": 900548,
+    "2025-December": 301321,
+    "2026-January": 501545,
+    "2026-February": 466942,
+    "2026-March": 552952,
+    "2026-April": 562012,
+    "2026-May": 520522,
+    "2026-June": 474389,
+    "2026-July": 442372,
+    "2026-August": 415826,
+    "2026-September": 269575
+   }
+  },
+  "Honda (HMSI, unlisted)": {
+   "seg": "2W",
+   "makers": [
+    "HONDA MOTORCYCLE AND SCOOTER INDIA (P) LTD"
+   ],
+   "data": {
+    "2025-October": 850925,
+    "2025-November": 640065,
+    "2025-December": 379778,
+    "2026-January": 494665,
+    "2026-February": 450950,
+    "2026-March": 493416,
+    "2026-April": 494266,
+    "2026-May": 456448,
+    "2026-June": 456101,
+    "2026-July": 472645,
+    "2026-August": 449275,
+    "2026-September": 285226
+   }
+  },
+  "TVS Motor": {
+   "seg": "2W",
+   "makers": [
+    "TVS MOTOR COMPANY LTD"
+   ],
+   "data": {
+    "2025-October": 578564,
+    "2025-November": 469640,
+    "2025-December": 287820,
+    "2026-January": 384610,
+    "2026-February": 356460,
+    "2026-March": 394844,
+    "2026-April": 388120,
+    "2026-May": 365736,
+    "2026-June": 368657,
+    "2026-July": 384194,
+    "2026-August": 363025,
+    "2026-September": 226683
+   }
+  },
+  "Bajaj Auto": {
+   "seg": "2W",
+   "makers": [
+    "BAJAJ AUTO LTD"
+   ],
+   "data": {
+    "2025-October": 391650,
+    "2025-November": 318241,
+    "2025-December": 184306,
+    "2026-January": 252295,
+    "2026-February": 236609,
+    "2026-March": 269780,
+    "2026-April": 253287,
+    "2026-May": 241513,
+    "2026-June": 233770,
+    "2026-July": 229779,
+    "2026-August": 202960,
+    "2026-September": 121383
+   }
+  },
+  "Royal Enfield (Eicher)": {
+   "seg": "2W",
+   "makers": [
+    "ROYAL-ENFIELD (UNIT OF EICHER LTD)"
+   ],
+   "data": {
+    "2025-October": 154542,
+    "2025-November": 122881,
+    "2025-December": 87902,
+    "2026-January": 112317,
+    "2026-February": 97378,
+    "2026-March": 101435,
+    "2026-April": 102949,
+    "2026-May": 87139,
+    "2026-June": 97310,
+    "2026-July": 97369,
+    "2026-August": 96294,
+    "2026-September": 59675
+   }
+  },
+  "Suzuki 2W (unlisted)": {
+   "seg": "2W",
+   "makers": [
+    "SUZUKI MOTORCYCLE INDIA PVT LTD"
+   ],
+   "data": {
+    "2025-October": 142135,
+    "2025-November": 111333,
+    "2025-December": 86127,
+    "2026-January": 104888,
+    "2026-February": 99715,
+    "2026-March": 102481,
+    "2026-April": 96822,
+    "2026-May": 99243,
+    "2026-June": 106139,
+    "2026-July": 103559,
+    "2026-August": 104780,
+    "2026-September": 60193
+   }
+  },
+  "Yamaha (unlisted)": {
+   "seg": "2W",
+   "makers": [
+    "INDIA YAMAHA MOTOR PVT LTD"
+   ],
+   "data": {
+    "2025-October": 94762,
+    "2025-November": 73332,
+    "2025-December": 56465,
+    "2026-January": 66218,
+    "2026-February": 62639,
+    "2026-March": 67644,
+    "2026-April": 65440,
+    "2026-May": 61187,
+    "2026-June": 68140,
+    "2026-July": 68142,
+    "2026-August": 62656,
+    "2026-September": 39090
+   }
+  },
+  "Ola Electric": {
+   "seg": "2W",
+   "makers": [
+    "OLA ELECTRIC TECHNOLOGIES PVT LTD"
+   ],
+   "data": {
+    "2025-October": 16438,
+    "2025-November": 8892,
+    "2025-December": 9403,
+    "2026-January": 7811,
+    "2026-February": 4175,
+    "2026-March": 10287,
+    "2026-April": 12398,
+    "2026-May": 15305,
+    "2026-June": 16294,
+    "2026-July": 14239,
+    "2026-August": 13930,
+    "2026-September": 6313
+   }
+  },
+  "Maruti Suzuki": {
+   "seg": "PV",
+   "makers": [
+    "MARUTI SUZUKI INDIA LTD"
+   ],
+   "data": {
+    "2025-October": 255610,
+    "2025-November": 169261,
+    "2025-December": 160943,
+    "2026-January": 231665,
+    "2026-February": 166434,
+    "2026-March": 185330,
+    "2026-April": 168227,
+    "2026-May": 172375,
+    "2026-June": 176487,
+    "2026-July": 169691,
+    "2026-August": 172852,
+    "2026-September": 93973
+   }
+  },
+  "Hyundai Motor India": {
+   "seg": "PV",
+   "makers": [
+    "HYUNDAI MOTOR INDIA LTD"
+   ],
+   "data": {
+    "2025-October": 69454,
+    "2025-November": 52737,
+    "2025-December": 50946,
+    "2026-January": 69651,
+    "2026-February": 48326,
+    "2026-March": 51872,
+    "2026-April": 49700,
+    "2026-May": 47330,
+    "2026-June": 45234,
+    "2026-July": 48904,
+    "2026-August": 47856,
+    "2026-September": 30062
+   }
+  },
+  "Tata Motors PV": {
+   "seg": "PV",
+   "makers": [
+    "TATA MOTORS PASSENGER VEHICLES LTD"
+   ],
+   "data": {
+    "2025-October": 70856,
+    "2025-November": 49594,
+    "2025-December": 47953,
+    "2026-January": 59018,
+    "2026-February": 52694,
+    "2026-March": 59960,
+    "2026-April": 50041,
+    "2026-May": 44852,
+    "2026-June": 44364,
+    "2026-July": 44053,
+    "2026-August": 44044,
+    "2026-September": 21675
+   }
+  },
+  "Mahindra (auto)": {
+   "seg": "PV",
+   "makers": [
+    "MAHINDRA & MAHINDRA LIMITED"
+   ],
+   "data": {
+    "2025-October": 106823,
+    "2025-November": 84894,
+    "2025-December": 72112,
+    "2026-January": 96751,
+    "2026-February": 82098,
+    "2026-March": 89297,
+    "2026-April": 78274,
+    "2026-May": 69474,
+    "2026-June": 74202,
+    "2026-July": 76281,
+    "2026-August": 69160,
+    "2026-September": 43037
+   }
+  },
+  "Toyota Kirloskar": {
+   "seg": "PV",
+   "makers": [
+    "TOYOTA KIRLOSKAR MOTOR PVT LTD"
+   ],
+   "data": {
+    "2025-October": 38550,
+    "2025-November": 30766,
+    "2025-December": 28605,
+    "2026-January": 38305,
+    "2026-February": 29339,
+    "2026-March": 30672,
+    "2026-April": 29648,
+    "2026-May": 27970,
+    "2026-June": 30453,
+    "2026-July": 31158,
+    "2026-August": 26242,
+    "2026-September": 15313
+   }
+  },
+  "Kia India": {
+   "seg": "PV",
+   "makers": [
+    "KIA INDIA PRIVATE LIMITED"
+   ],
+   "data": {
+    "2025-October": 35382,
+    "2025-November": 25834,
+    "2025-December": 22216,
+    "2026-January": 32447,
+    "2026-February": 27059,
+    "2026-March": 30387,
+    "2026-April": 27046,
+    "2026-May": 25721,
+    "2026-June": 24060,
+    "2026-July": 26411,
+    "2026-August": 24103,
+    "2026-September": 14681
+   }
+  },
+  "Skoda-VW": {
+   "seg": "PV",
+   "makers": [
+    "SKODA AUTO VOLKSWAGEN INDIA PVT LTD",
+    "SKODA AUTO INDIA PVT LTD",
+    "VOLKSWAGEN INDIA PVT LTD"
+   ],
+   "data": {
+    "2025-October": 13374,
+    "2025-November": 10322,
+    "2025-December": 10137,
+    "2026-January": 10821,
+    "2026-February": 8372,
+    "2026-March": 9741,
+    "2026-April": 9604,
+    "2026-May": 8806,
+    "2026-June": 8489,
+    "2026-July": 8470,
+    "2026-August": 7687,
+    "2026-September": 5103
+   }
+  },
+  "JSW MG Motor": {
+   "seg": "PV",
+   "makers": [
+    "JSW MG MOTOR INDIA PVT LTD"
+   ],
+   "data": {
+    "2025-October": 6728,
+    "2025-November": 5172,
+    "2025-December": 4961,
+    "2026-January": 6884,
+    "2026-February": 5270,
+    "2026-March": 7217,
+    "2026-April": 6717,
+    "2026-May": 6237,
+    "2026-June": 7425,
+    "2026-July": 7356,
+    "2026-August": 6085,
+    "2026-September": 3526
+   }
+  },
+  "Honda Cars (unlisted)": {
+   "seg": "PV",
+   "makers": [
+    "HONDA CARS INDIA LTD"
+   ],
+   "data": {
+    "2025-October": 7776,
+    "2025-November": 5746,
+    "2025-December": 6017,
+    "2026-January": 6348,
+    "2026-February": 5129,
+    "2026-March": 6012,
+    "2026-April": 5685,
+    "2026-May": 4641,
+    "2026-June": 5032,
+    "2026-July": 5992,
+    "2026-August": 5101,
+    "2026-September": 2956
+   }
+  },
+  "Renault": {
+   "seg": "PV",
+   "makers": [
+    "RENAULT INDIA PVT LTD"
+   ],
+   "data": {
+    "2025-October": 5117,
+    "2025-November": 3443,
+    "2025-December": 3336,
+    "2026-January": 4872,
+    "2026-February": 3334,
+    "2026-March": 3693,
+    "2026-April": 4210,
+    "2026-May": 4304,
+    "2026-June": 3916,
+    "2026-July": 3556,
+    "2026-August": 3316,
+    "2026-September": 2115
+   }
+  },
+  "Nissan": {
+   "seg": "PV",
+   "makers": [
+    "NISSAN MOTOR INDIA PVT LTD"
+   ],
+   "data": {
+    "2025-October": 2641,
+    "2025-November": 2011,
+    "2025-December": 1797,
+    "2026-January": 2461,
+    "2026-February": 1768,
+    "2026-March": 2737,
+    "2026-April": 3233,
+    "2026-May": 3046,
+    "2026-June": 2803,
+    "2026-July": 2761,
+    "2026-August": 2812,
+    "2026-September": 1756
+   }
+  },
+  "Tata Motors (CV)": {
+   "seg": "CV",
+   "makers": [
+    "TATA MOTORS LTD"
+   ],
+   "data": {
+    "2025-October": 36850,
+    "2025-November": 34315,
+    "2025-December": 31296,
+    "2026-January": 38522,
+    "2026-February": 38667,
+    "2026-March": 39975,
+    "2026-April": 39840,
+    "2026-May": 31846,
+    "2026-June": 33537,
+    "2026-July": 37460,
+    "2026-August": 32249,
+    "2026-September": 21104
+   }
+  },
+  "Ashok Leyland": {
+   "seg": "CV",
+   "makers": [
+    "ASHOK LEYLAND LTD",
+    "ASHOK LEYLAND LTD."
+   ],
+   "data": {
+    "2025-October": 17671,
+    "2025-November": 16370,
+    "2025-December": 16008,
+    "2026-January": 19933,
+    "2026-February": 19564,
+    "2026-March": 20459,
+    "2026-April": 18689,
+    "2026-May": 15400,
+    "2026-June": 15950,
+    "2026-July": 18598,
+    "2026-August": 17149,
+    "2026-September": 10622
+   }
+  },
+  "VE Commercial (Eicher)": {
+   "seg": "CV",
+   "makers": [
+    "VE COMMERCIAL VEHICLES LTD",
+    "VE COMMERCIAL VEHICLES LTD (VOLVO BUSES DIVISION)"
+   ],
+   "data": {
+    "2025-October": 7996,
+    "2025-November": 7456,
+    "2025-December": 7077,
+    "2026-January": 8424,
+    "2026-February": 8672,
+    "2026-March": 8838,
+    "2026-April": 9485,
+    "2026-May": 7615,
+    "2026-June": 8476,
+    "2026-July": 9219,
+    "2026-August": 7465,
+    "2026-September": 5012
+   }
+  },
+  "Force Motors": {
+   "seg": "CV",
+   "makers": [
+    "FORCE MOTORS LIMITED"
+   ],
+   "data": {
+    "2025-October": 3366,
+    "2025-November": 2605,
+    "2025-December": 2452,
+    "2026-January": 2970,
+    "2026-February": 3655,
+    "2026-March": 3614,
+    "2026-April": 3414,
+    "2026-May": 2468,
+    "2026-June": 3023,
+    "2026-July": 3950,
+    "2026-August": 3495,
+    "2026-September": 2091
+   }
+  },
+  "SML (Mahindra)": {
+   "seg": "CV",
+   "makers": [
+    "SML MAHINDRA LTD"
+   ],
+   "data": {
+    "2025-October": 870,
+    "2025-November": 822,
+    "2025-December": 934,
+    "2026-January": 927,
+    "2026-February": 1099,
+    "2026-March": 1309,
+    "2026-April": 1568,
+    "2026-May": 1471,
+    "2026-June": 1849,
+    "2026-July": 1767,
+    "2026-August": 1242,
+    "2026-September": 670
+   }
+  },
+  "Mahindra (tractor)": {
+   "seg": "TRAC",
+   "makers": [
+    "MAHINDRA & MAHINDRA LIMITED (TRACTOR)",
+    "MAHINDRA & MAHINDRA LIMITED (SWARAJ DIVISION)",
+    "MAHINDRA & MAHINDRA LTD FARM MACHINERY DIVISION"
+   ],
+   "data": {
+    "2025-October": 30401,
+    "2025-November": 55219,
+    "2025-December": 51762,
+    "2026-January": 48019,
+    "2026-February": 38616,
+    "2026-March": 35747,
+    "2026-April": 31992,
+    "2026-May": 35526,
+    "2026-June": 44100,
+    "2026-July": 50349,
+    "2026-August": 36965,
+    "2026-September": 17618
+   }
+  },
+  "TAFE": {
+   "seg": "TRAC",
+   "makers": [
+    "TAFE LIMITED"
+   ],
+   "data": {
+    "2025-October": 9618,
+    "2025-November": 13558,
+    "2025-December": 11486,
+    "2026-January": 13461,
+    "2026-February": 8898,
+    "2026-March": 8495,
+    "2026-April": 8440,
+    "2026-May": 10673,
+    "2026-June": 12076,
+    "2026-July": 14184,
+    "2026-August": 10783,
+    "2026-September": 4944
+   }
+  },
+  "Escorts Kubota": {
+   "seg": "TRAC",
+   "makers": [
+    "ESCORTS KUBOTA LIMITED (AGRI MACHINERY GROUP)"
+   ],
+   "data": {
+    "2025-October": 7907,
+    "2025-November": 14524,
+    "2025-December": 13104,
+    "2026-January": 12318,
+    "2026-February": 10140,
+    "2026-March": 8934,
+    "2026-April": 8592,
+    "2026-May": 9550,
+    "2026-June": 10378,
+    "2026-July": 12818,
+    "2026-August": 9760,
+    "2026-September": 4351
+   }
+  },
+  "Sonalika (ITL)": {
+   "seg": "TRAC",
+   "makers": [
+    "SONALIKA INTERNATIONAL TRACTORS LIMITED",
+    "INTERNATIONAL TRACTORS LIMITED"
+   ],
+   "data": {
+    "2025-October": 9154,
+    "2025-November": 16101,
+    "2025-December": 14186,
+    "2026-January": 15686,
+    "2026-February": 11987,
+    "2026-March": 10724,
+    "2026-April": 10739,
+    "2026-May": 11388,
+    "2026-June": 13510,
+    "2026-July": 16296,
+    "2026-August": 11968,
+    "2026-September": 5730
+   }
+  },
+  "John Deere": {
+   "seg": "TRAC",
+   "makers": [
+    "JOHN DEERE INDIA  PVT LTD(TRACTOR DEVISION)",
+    "JOHN DEERE INDIA PVT LTD(CROP SOLUTION DIV)"
+   ],
+   "data": {
+    "2025-October": 7286,
+    "2025-November": 10777,
+    "2025-December": 9474,
+    "2026-January": 9112,
+    "2026-February": 8208,
+    "2026-March": 8081,
+    "2026-April": 6432,
+    "2026-May": 6991,
+    "2026-June": 8553,
+    "2026-July": 9381,
+    "2026-August": 6910,
+    "2026-September": 3171
+   }
+  },
+  "Piaggio": {
+   "seg": "3W",
+   "makers": [
+    "PIAGGIO VEHICLES PVT LTD"
+   ],
+   "data": {
+    "2025-October": 14338,
+    "2025-November": 13117,
+    "2025-December": 10509,
+    "2026-January": 12091,
+    "2026-February": 12368,
+    "2026-March": 12395,
+    "2026-April": 11613,
+    "2026-May": 11263,
+    "2026-June": 12692,
+    "2026-July": 13899,
+    "2026-August": 12436,
+    "2026-September": 7402
+   }
+  },
+  "Atul Auto": {
+   "seg": "3W",
+   "makers": [
+    "ATUL AUTO LTD"
+   ],
+   "data": {
+    "2025-October": 3599,
+    "2025-November": 3522,
+    "2025-December": 2682,
+    "2026-January": 3295,
+    "2026-February": 3155,
+    "2026-March": 3044,
+    "2026-April": 2661,
+    "2026-May": 2575,
+    "2026-June": 2880,
+    "2026-July": 3084,
+    "2026-August": 2820,
+    "2026-September": 1654
+   }
+  }
+ }
+}

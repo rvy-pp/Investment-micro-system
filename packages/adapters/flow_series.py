@@ -160,6 +160,37 @@ def load(rng: str = "3mo") -> int:
         # Partial-day guard — see module docstring.
         live = [r for r in rows if r[0] >= today_utc]
         rows = [r for r in rows if r[0] < today_utc]
+        # A fetch that SUCCEEDS but leaves nothing usable is not an error, and
+        # must not abort the run. The report line below indexes rows[0] and
+        # rows[-1], so an empty list raised IndexError out of load() and killed
+        # the whole step — including the NSE tail-fill loop underneath, which
+        # is the one mechanism built to cover exactly this case. The `except`
+        # above already handles a FAILED fetch; this is its successful-but-
+        # empty twin and needs the same "report and carry on".
+        #
+        # Caught 2026-09-17, and the trigger is TIME OF DAY, not a dead symbol.
+        # For the seven NSE sectoral indices (^CNXMETAL, ^CNXAUTO, ^CNXCMDT,
+        # ^CNXINFRA, ^CNXENERGY, ^CNXREALTY, ^CNXPSE) Yahoo serves full history
+        # BEFORE the NSE open and only the live bar once the session is running
+        # — 1 row at every range from 3mo to 10y. Measured the same day: at
+        # 02:42Z (08:12 IST, pre-open) all seven loaded and wrote 2026-09-16;
+        # from 06:21Z (11:51 IST, mid-session) all seven returned 1 row. ^NSEI
+        # and ^CNXIT are NOT affected and return 65 rows either way, so this is
+        # specific to the sectoral symbols whose EOD history CLAUDE.md already
+        # records as frozen at 2026-07-17.
+        #
+        # So the 08:00 scheduled run is fine and it is the RE-RUN that breaks —
+        # exactly what you do after fixing something else, mid-morning. Three
+        # such re-runs failed here while the 08:12 run had passed. Do not
+        # conclude from a mid-session run that the symbol is dead, and do not
+        # "tidy" this back into an unguarded print: the crash landed on the 7th
+        # of 14 series, so the seven after it never loaded and the NSE tail
+        # fill below never ran at all.
+        if not rows:
+            why = f"{len(live)} live partial only" if live else "nothing returned"
+            print(f"  none {sid:8s} {s['symbol']:6s}     0 usable rows "
+                  f"({why}) — leaving the tail to the NSE fill below")
+            continue
         n = 0
         for d, close in rows:
             cur = conn.execute(

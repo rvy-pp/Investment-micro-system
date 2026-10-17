@@ -1,0 +1,326 @@
+{
+ "date": "2026-10-14",
+ "generated_at": "2026-10-14T08:15:21+05:30",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 109,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "CLSA sees Hindalco India aluminium Ebitda/t down c.US$350 QoQ in 2QFY27 on LME -US$330/t and a 6% cost rise; Novelis pre-ex US$575/t.",
+      "source": "CLSA - India metals: 2QFY27 preview",
+      "received": "21:56",
+      "detail": {
+       "summary": "CLSA calls 2QFY27 a softer quarter for aluminium as lower realisations and weaker physical premiums combine with higher costs from poor linkage coal materialisation. Novelis is the offset, helped by scrap spreads, operating leverage and a smaller tariff drag. Spot aluminium is already c.US$100/t below the 2Q average, so the pressure persists into 3Q.",
+       "points": [
+        "Aluminium price -US$330/t QoQ; spot c.US$100/t below 2Q average",
+        "India costs +6% QoQ on lower linkage coal materialisation",
+        "India aluminium Ebitda/t down c.US$350 sequentially",
+        "Novelis pre-ex US$575/t vs US$563/t in 1Q; volume +2% QoQ",
+        "Watch Novelis scrap spreads and Bay Minette expansion updates"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA expects Vedanta Ebitda +12% QoQ and Hindustan Zinc +5%; Vedanta Aluminium profitability falls US$200/t but Ebitda still rises 12%.",
+      "source": "CLSA - India metals: 2QFY27 preview",
+      "received": "21:56",
+      "detail": {
+       "summary": "CLSA argues zinc strength and volume offset aluminium weakness at Vedanta. Higher alumina output and more backward integration cushion VAML against lower aluminium prices. Silver prices are the drag on the zinc side. Hindustan Zinc's costs and by-product realisations are the swing factors to watch at the print.",
+       "points": [
+        "Vedanta Aluminium profitability down US$200/t QoQ",
+        "Vedanta consolidated Ebitda +12% QoQ on volumes and zinc prices",
+        "Hindustan Zinc Ebitda +5% QoQ",
+        "Declining silver prices partly offset zinc gains",
+        "Watch Sijimali bauxite ramp-up, HZL costs and by-product realisations"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Zinc current-to-next-month backwardation widened to nearly Rs16/kg on MCX with exchange stocks at 46.59MT; aluminium fell over 1% on MCX Monday.",
+      "source": "Emkay - Commodity Market Report: Dollar strength dents metals; crude jumps on Hormuz risks (+2 more in Outlook)",
+      "received": "09:39",
+      "detail": {
+       "summary": "Emkay sees dollar strength and Fed hawkishness weighing on base metals, with aluminium the most vulnerable. Zinc is seen holding relative support because nearby supply is tight, shown by wide backwardation and low exchange inventories. A stronger rupee after RBI measures gives domestic prices some cushion against weaker LME.",
+       "points": [
+        "Zinc backwardation near Rs16/kg; inventories 46.59MT as of 11-Oct-26",
+        "MCX aluminium down over 1% on Monday",
+        "USD above 102.50; Brent above $105/bbl",
+        "Rupee at 95.78 after tighter RBI forex measures",
+        "Emkay view: aluminium vulnerable, zinc supported by tight nearby supply"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "CLSA sees 2Q domestic steel profit/t falling: Tata Steel -Rs1,300 to Rs16.5k, JSW -Rs1,800 to Rs13.2k, Jindal Steel steepest at -Rs3,000 QoQ.",
+      "source": "CLSA - India metals: 2QFY27 preview",
+      "received": "21:56",
+      "detail": {
+       "summary": "CLSA calls 2QFY27 softer for steel because rebar slid over the quarter and the recovery in long-product prices came late. It argues the setup improves into 3Q, as spot flat and long prices and spreads have jumped above the 2Q average. Coking coal is the swing factor it flags.",
+       "points": [
+        "Tata Steel profit/t -Rs1,300 QoQ to Rs16.5k; JSW -Rs1,800 to Rs13.2k",
+        "Jindal Steel profit/t -Rs3,000 QoQ, steepest, as long-product recovery was back-ended",
+        "Rebar -Rs3,500/t QoQ to Rs53,500; HRC +Rs1,150 to Rs59,815",
+        "Spot flat/long prices +Rs5,000/10,000/t vs 2Q average; spreads +Rs3,000/t",
+        "Spot coking coal US$15/t above 2Q average; watch cost and volume guidance"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India HRC has rallied from a discount to parity with China import-parity prices after safeguard duty; domestic rebar +10% MoM, HRC +4% MoM.",
+      "source": "UBS - India Metals & Mining Weekly via UBS India sales note (STEEL PRICES INCH UP)",
+      "received": "09:11",
+      "detail": {
+       "summary": "UBS says the domestic HRC rally has erased the discount to China's import parity once safeguard duties are counted. India steel is firming while Chinese prices are flat to lower, and aluminium is moderating. This is a short sales-note summary of the weekly, not the full report.",
+       "points": [
+        "Domestic rebar +1% WoW, +10% MoM",
+        "Domestic HRC +1% WoW, +4% MoM",
+        "China rebar flat WoW, -2% MoM; China HRC -1% WoW, -3% MoM",
+        "Aluminium -3% WoW, -7% MoM; alumina +3% WoW"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Aditya Birla Sun Life MF cut UltraTech by INR5.22bn in September, its second-largest reduction that month.",
+      "source": "Nuvama - Mutual Fund Insights <MFI Oct '26>: PB Fintech -> ICICI Pru MF & HDFC MF lap it up as stock plunges 48% in Sept",
+      "received": "12:09",
+      "detail": {
+       "summary": "Nuvama's monthly mutual fund tracker lists house-wise September portfolio changes. UltraTech appears only as a reduction at one house, with no cement buyers in the named lists. This is a flow datapoint, not a view on the stock.",
+       "points": [
+        "INR5.22bn UltraTech reduction by Aditya Birla SL MFs in Sept",
+        "Avenue Super was the largest ABSL cut at INR6.59bn",
+        "Sun Pharma cut INR2.43bn at the same house",
+        "ABSL's top additions were Grasim INR4.66bn, Trent INR4.31bn",
+        "Values use Sep-26 ending values"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "CLSA expects Coal India 2QFY27 Ebitda down 20% QoQ; Ebitda/t ex-OBR falls Rs100 to Rs414 as volumes slip 5% to 189mt.",
+      "source": "CLSA - India metals: 2QFY27 preview",
+      "received": "21:56",
+      "detail": {
+       "summary": "CLSA sees a softer 2QFY27 for Coal India as higher cash costs and lower realisations compress profitability. Volumes fall sequentially. The results should turn on e-auction realisation and any FSA price increases.",
+       "points": [
+        "Ebitda -20% QoQ on higher cash costs, lower realisation",
+        "Sales volumes -5% QoQ to 189mt",
+        "Ebitda/t ex-OBR down Rs100 to Rs414",
+        "Watch e-auction realisation in the results",
+        "Watch regulated FSA price increases"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Tata Elxsi upgraded to ADD from REDUCE by Avendus, TP Rs3,730; stock down 34% YTD, FY28 USD growth seen ~11%.",
+      "source": "Avendus Spark - 2QFY27 Outlook review: Tata Elxsi (Rating: Upgrade to ADD, TP: Rs.3,730)",
+      "received": "06:49",
+      "detail": {
+       "summary": "Avendus argues the 2Q beat plus a 34% YTD fall makes risk-reward favourable at about 24x 1-year forward P/E, roughly 50% below its 5-year average. Growth is broad-based except European auto, which remains the key downside risk. IIFL (ADD, TP Rs3,500, 2% upside) is far less bullish on upside.",
+       "points": [
+        "Rating REDUCE to ADD; 1-year TP Rs3,730 at unchanged 25x Sep-28e EPS",
+        "Share price down 10% in 3 months, 34% YTD",
+        "USD revenue growth 5% FY27, ~11% FY28",
+        "EBIT margin 20.3% FY27, 21.2% FY28; up 30bps/90bps",
+        "Healthcare growing again after six quarters of decline"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HCLT +5% on 13-Oct: advanced AI revenue +78% YoY with 7-10% richer gross margins, but BofA keeps Neutral (PO Rs1,290) on 20% premium to TCS.",
+      "source": "BofA - Rajvaibhav, on HCLT earnings",
+      "received": "10:05",
+      "detail": {
+       "summary": "BofA calls the print positive for the sector (a third company citing widening enterprise AI adoption) but less so for HCL itself. Investment focus limits next-year margin expansion, and organic growth is now close to TCS while the stock trades at a premium. BNP is harsher: Underperform, TP Rs1,070, premium unwarranted.",
+       "points": [
+        "Advanced AI revenue +28% QoQ, +78% YoY; ~5.9% of revenue (BNP)",
+        "AI services gross margin 7-10% above traditional services",
+        "BofA Neutral, PO Rs1,290 vs price Rs1,223",
+        "BNP Underperform, TP Rs1,070 (+2%), -13% downside; FY27 organic growth seen below TCS",
+        "Margin +130bps QoQ; FY27 revenue guide midpoint modestly cut"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "AI trade: KOSPI -7% on 13-Oct on AI-financing fears; US semis fell six straight days, SMH rebounded 200bps off lows; US CPI tonight.",
+      "source": "JPM - JPM Overnight Brief! 10/14 - demand in Mag7/hyperscalers/networking names, sellers in semis (+9 more in Outlook)",
+      "received": "05:20",
+      "detail": {
+       "summary": "JPM sees the Asia-led memory selloff exhausting itself: SMH recovered from opening lows as semis/memory supply looked front-loaded while optical demand picked up. BNP attributes the Asia drop to Intel and Broadcom warning that capital access and financing costs, not chips or power, may be the next AI constraint.",
+       "points": [
+        "KOSPI -7%, Taiwan -2%, Nikkei -3% on 13-Oct (BNP)",
+        "SMH closed 200bps above opening lows; six straight days of semis declines",
+        "S&P about unchanged; passive demand in hyperscalers and networking, sellers in semis",
+        "JPM forecasts Sep core CPI 0.18% m/m, below consensus",
+        "TSMC Q3 results on 15-Oct (BNP event note)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Elara expects RBI to hike 25bps in Dec and 25bps in Feb, or 50bps in Dec; headline CPI seen above 6% through CY26.",
+      "source": "Elara - India CPI inflation broadens, more rate hikes in sight (Garima Kapoor)",
+      "received": "12:29",
+      "detail": {
+       "summary": "September CPI matched expectations, but food, energy and core are all rising together. Deficient monsoon and El Nino add supply risk, and the rupee is weak. Elara argues this strengthens the case for further RBI tightening, with Rabi sowing a further risk.",
+       "points": [
+        "CPI 5.5% in Sep vs 4.82% in Aug; core 4.6% vs 4.2%",
+        "Food inflation 7.7% vs 6.0%; onion +108% YoY",
+        "Monsoon at 87% of long-period average; Kharif sowing 1.2% below last year",
+        "Fuel & energy 3.2%, transport 5.0%, with pass-through risk to freight"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs sold US$4.1bn in September, 84% of the prior two months' buying, and another US$3.6bn in October so far; DMF inflows rose 25% to Rs592bn.",
+      "source": "CLSA - India strategy (Flowmeter): The hand that giveth taketh away",
+      "received": "21:04",
+      "detail": {
+       "summary": "FII selling resumed as active non-India funds sold and passive buying only partly offset it. Domestic inflows rebounded, led by mid- and small-cap funds, but SIP discontinuations are at an 18-month high. FIIs turned neutral on financials and cut discretionary and healthcare overweights.",
+       "points": [
+        "Nifty -6.1% in Sep, underperforming EM/AxJ by c.6ppts in US$",
+        "Discontinued vs new SIPs 116% vs 81% in Aug",
+        "FII underweight in IT at record 1.2ppt after adding 18bps",
+        "Mid-/small-cap fund inflows Rs78bn/Rs90bn, record highs"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA FMS: 10Y UST at 5.9% flips allocators from stocks to bonds; long global semis the most crowded trade at 45%.",
+      "source": "BofA - Hartnett's Global Fund Manager Survey: The Sixth Sense (+5 more in Outlook)",
+      "received": "13:43",
+      "detail": {
+       "summary": "Fund managers are bullish into the midterms, FOMC and Q3 earnings, holding low cash. The survey flags disorderly bond yields and an AI-capex cut as the main risks. Tech overweight is the highest in over five years, while bank longs were cut sharply.",
+       "points": [
+        "76% expect no Fed hike at Oct 28 FOMC",
+        "Cash 3.9%; equity longs net 44% from 49%",
+        "Biggest tech overweight since Aug'20; biggest bank-long cut since Mar'23",
+        "Disorderly bond yields 31% and AI bubble 23% top tail risks"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Elara upgrades Tata Motors PV to Accumulate from Reduce, TP INR 338 (from 351), after a 29% fall since 30 June; India BEV share ~40%.",
+      "source": "Elara - Automobiles - Tata Motors Passenger Vehicles - India EV resurgence; addressing white spaces at JLR - Company Update - Accumulate - TP: INR 338",
+      "received": "22:57",
+      "detail": {
+       "summary": "Elara argues the 29% drawdown already prices the JLR and India margin strain. India BEV leadership and JLR's coming BEV launches are the offsets. Estimates fall 7-11%, so the upgrade rests on valuation and the EV moat, not on earnings.",
+       "points": [
+        "India PV BEV penetration 7.6% YTDFY27, up 260bps YoY",
+        "TMPV India BEV share ~40%; BEV is 22% of its domestic volumes",
+        "JLR Q2FY27 wholesales +25% YoY, ~4% QoQ",
+        "FY27E-29E earnings cut 7-11%",
+        "SOTP: JLR 2.0x FY29E EV/EBITDA, India PV 10x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak keeps BUY on M&M but cuts FY27-29E EPS 5-8% and FV to Rs4,000 (from Rs4,175); tractor volumes seen declining for four quarters.",
+      "source": "Kotak - [Kotak] Mahindra & Mahindra (CMP: Rs2,864, FV: Rs4,000, BUY): Correction offers a compelling entry point",
+      "received": "19:32",
+      "detail": {
+       "summary": "Kotak says the 20% one-year fall overstates the earnings damage, because the next three years contribute only 14% of DCF value. The tractor downcycle and lost SUV share are called cyclical or reversible, with new platform launches from 1HCY27 the fix. The estimate cut itself is real.",
+       "points": [
+        "Stock down ~10% in 3 months, ~20% in 1 year",
+        "Reverse DCF implies only 3-3.5% volume CAGR over FY2029-50E",
+        "15.5x FY2028E core EPS",
+        "EPS cut driven by tractor volumes and lower EBITDA margin",
+        "16 new SUV and 10 new LCV launches planned by FY2031"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA expects 2QFY27 E&C backlog +18%, revenue +8%, EBITDA +12%; L&T backlog up 25% to a record US$88bn, but FY27-28 EPS cut 3-4%.",
+      "source": "CLSA - CLSA: India capex insight #73: Dichotomic 2Q (+4 more in Outlook)",
+      "received": "05:06",
+      "detail": {
+       "summary": "CLSA sees orders and execution diverging. L&T orders surprise on the Middle East, but execution there slows. HNAL and BHEL, on a low base, execute strongly. The L&T cut reflects the Middle East crisis, which CLSA expects to run until 3QFY27, while the Rs4,842 target price is held on a roll-forward.",
+       "points": [
+        "Sector book-to-bill 3.7x; 1QFY27 domestic execution +13.4% YoY",
+        "Cement -7%, bitumen +19%, diesel +9% versus one-year peaks",
+        "L&T FY27 new orders hiked; FY27-28CL EPS cut 3-4%",
+        "L&T target price maintained at Rs4,842",
+        "Top picks: L&T, HNAL, NCC, BHE, IRB"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "KOSPI -7% on 13-Oct on AI-financing fears; US semis down six straight sessions before SMH rebounded 200bps off lows; SOX -0.23%, Nvidia +0.97%, AMD +1.90%.",
+    "source": "JPM - Overnight Brief 10/14; BNPP India Quick Notes (AI trade getting hit); markets file"
+   },
+   {
+    "text": "BofA FMS: long global semis is the most crowded trade at 45%, with AI bubble (23%) and disorderly bond yields (31%) the top tail risks.",
+    "source": "BofA - Hartnett's Global Fund Manager Survey: The Sixth Sense"
+   },
+   {
+    "text": "Broadcom +0.73% but its Google-infrastructure thesis faces revenue scrutiny; TSMC Q3 results due 15-Oct.",
+    "source": "GuruFocus headline (markets file); BNPP India Quick Notes event calendar"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

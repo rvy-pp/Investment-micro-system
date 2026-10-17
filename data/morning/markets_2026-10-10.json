@@ -1,0 +1,191 @@
+{
+ "date": "2026-10-10",
+ "fetched_at": "2026-10-10T08:13:09",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-09",
+    "close": 7811.54,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.59
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-09",
+    "close": 27366.17,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.64
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-09",
+    "close": 51654.95,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.83
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-09",
+    "close": 12572.42,
+    "prev_date": "2026-10-08",
+    "chg_pct": -0.41
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-09",
+    "close": 229.28,
+    "prev_date": "2026-10-08",
+    "chg_pct": -0.52
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-09",
+    "close": 608.1,
+    "prev_date": "2026-10-08",
+    "chg_pct": -2.03
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-09",
+    "close": 453.31,
+    "prev_date": "2026-10-08",
+    "chg_pct": -1.02
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-09",
+    "close": 361.54,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.39
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-09",
+    "close": 209.06,
+    "prev_date": "2026-10-08",
+    "chg_pct": 0.34
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-09",
+    "close": 59.2,
+    "prev_date": "2026-10-08",
+    "chg_pct": -1.35
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Has Accenture Stock Become A Different Bet?",
+    "publisher": "Trefis",
+    "when": "2026-10-09 23:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-become-different-bet-233939774.html"
+   },
+   {
+    "title": "How to Play ACN Stock as Accenture Deepens Its AI Ties",
+    "publisher": "Barchart",
+    "when": "2026-10-09 18:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/play-acn-stock-accenture-deepens-182024759.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-08 23:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-know-233609788.html"
+   },
+   {
+    "title": "Accenture (ACN) Could Be 30% Undervalued As Q4 Results Beat Expectations",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-08 20:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-could-30-undervalued-201203050.html"
+   },
+   {
+    "title": "What Would It Take For AI Price Cuts To Break Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-10-08 18:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-price-cuts-break-accenture-183050311.html"
+   },
+   {
+    "title": "Is Accenture (ACN) the Market\u2019s Most Overlooked AI Play?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-08 16:19Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-market-most-overlooked-161945893.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Undervalued Following Its New Credit Facilities?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-09 19:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-undervalued-191439325.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "What Is Physical AI? Nvidia Is the Stock I'd Buy to Own It.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-10 00:01Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/physical-ai-nvidia-stock-id-000101758.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Here's What a $5,000 Investment in Broadcom Could Be Worth by 2032",
+    "publisher": "Motley Fool",
+    "when": "2026-10-09 19:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-5-000-investment-broadcom-195000234.html"
+   },
+   {
+    "title": "Broadcom Stocks Rise Higher as Open Networking Targets AI Bottlenecks",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-09 17:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-rise-higher-open-173254322.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD CEO Su shares important supply news with stock market\u00a0investors",
+    "publisher": "TheStreet",
+    "when": "2026-10-09 19:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-ceo-su-shares-important-191300089.html"
+   },
+   {
+    "title": "AMD Stocks Slide Lower Despite Street-High $800 AI Target",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-09 18:23Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slide-lower-despite-182355619.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22575.5,
+  "chg_pct": -0.12,
+  "stamp": "10-Oct-2026 02:30:09",
+  "expiry": "27-Oct-2026",
+  "volume": 68954,
+  "nifty_close": {
+   "close": 22520.45,
+   "stamp": "09-Oct-2026 15:30"
+  },
+  "gap_pts": 55.0,
+  "gap_pct": 0.24
+ }
+}

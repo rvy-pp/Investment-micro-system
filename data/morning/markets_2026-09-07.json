@@ -1,0 +1,203 @@
+{
+ "date": "2026-09-07",
+ "fetched_at": "2026-09-07T20:13:17",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-04",
+    "close": 7718.6,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.38
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-04",
+    "close": 26506.99,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-04",
+    "close": 53414.25,
+    "prev_date": "2026-09-03",
+    "chg_pct": -0.51
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-04",
+    "close": 11735.26,
+    "prev_date": "2026-09-03",
+    "chg_pct": 3.37
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-04",
+    "close": 230.36,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.84
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-04",
+    "close": 477.57,
+    "prev_date": "2026-09-03",
+    "chg_pct": 4.69
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-04",
+    "close": 428.91,
+    "prev_date": "2026-09-03",
+    "chg_pct": 2.85
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-04",
+    "close": 357.9,
+    "prev_date": "2026-09-03",
+    "chg_pct": 0.21
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-04",
+    "close": 186.72,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.31
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-04",
+    "close": 62.31,
+    "prev_date": "2026-09-03",
+    "chg_pct": -3.6
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "The Business Accenture Now Mentions In Passing",
+    "publisher": "Trefis",
+    "when": "2026-09-03 22:16Z",
+    "link": "https://finance.yahoo.com/m/d1c1048d-1272-3f0f-ae5c-ffeeec93c9ad/the-business-accenture-now.html"
+   },
+   {
+    "title": "Accenture (ACN) Rises Higher Than Market: Key Facts",
+    "publisher": "Zacks",
+    "when": "2026-09-03 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-rises-higher-market-215001547.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Looks Stretched Following Its 39% Five Year Slump",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-03 08:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-looks-stretched-081844373.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   },
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   },
+   {
+    "title": "Cognizant, CrowdStrike Expand Cybersecurity Partnership for Industrial Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-08-31 12:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-crowdstrike-expand-cybersecurity-partnership-124913928.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia\u2019s (NVDA) Strong Results Reinforce Long Term Outlook",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 14:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-nvda-strong-results-reinforce-140501713.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom vs Marvell: One of These AI Chip Stocks Is a Clear Winner",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-07 13:38Z",
+    "link": "https://finance.yahoo.com/m/41f90243-5fe1-361c-8220-5a4d8a8a57b5/broadcom-vs-marvell%3A-one-of.html"
+   },
+   {
+    "title": "Broadcom Inc. (AVGO) Is a Trending Stock: Facts to Know Before Betting on It",
+    "publisher": "Zacks",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-inc-avgo-trending-stock-130004580.html"
+   },
+   {
+    "title": "AMD\u2019s Whole AI Story Has One Threat It Cannot Ignore: Broadcom",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-07 12:47Z",
+    "link": "https://finance.yahoo.com/m/e4acb03b-6b18-3b31-bc5c-6bcc00497574/amd%E2%80%99s-whole-ai-story-has-one.html"
+   },
+   {
+    "title": "Broadcom And 2 Top Growth Stocks To Watch",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-06 12:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-2-top-growth-stocks-121016991.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Nvidia just sent a strong signal to AMD and Intel investors",
+    "publisher": "TheStreet",
+    "when": "2026-09-07 11:03Z",
+    "link": "https://finance.yahoo.com/m/2ec593d1-b65f-378d-b51e-569b4ca23575/nvidia-just-sent-a-strong.html"
+   },
+   {
+    "title": "AMD and Intel Soared as Nvidia Lagged: Has the AI Trade Changed?",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-07 08:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-intel-soared-nvidia-lagged-082539405.html"
+   },
+   {
+    "title": "Did Nvidia Just Say Checkmate to AMD and Intel?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-06 22:30Z",
+    "link": "https://finance.yahoo.com/m/3ec6ae6a-644b-3ca8-95fd-2aea2df3c889/did-nvidia-just-say-checkmate.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23797.0,
+  "chg_pct": -0.12,
+  "stamp": "07-Sep-2026 20:13:09",
+  "expiry": "29-Sep-2026",
+  "volume": 40240,
+  "nifty_close": {
+   "close": 23779.15,
+   "stamp": "07-Sep-2026 15:30"
+  },
+  "gap_pts": 17.8,
+  "gap_pct": 0.08
+ }
+}

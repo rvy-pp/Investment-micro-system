@@ -1,0 +1,177 @@
+{
+ "date": "2026-10-17",
+ "fetched_at": "2026-10-17T08:10:54",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-16",
+    "close": 7659.44,
+    "prev_date": "2026-10-15",
+    "chg_pct": -1.09
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-16",
+    "close": 26140.03,
+    "prev_date": "2026-10-15",
+    "chg_pct": -2.15
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-16",
+    "close": 52002.41,
+    "prev_date": "2026-10-15",
+    "chg_pct": -0.34
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-16",
+    "close": 11137.29,
+    "prev_date": "2026-10-15",
+    "chg_pct": -3.83
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-16",
+    "close": 214.13,
+    "prev_date": "2026-10-15",
+    "chg_pct": -1.43
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-16",
+    "close": 528.75,
+    "prev_date": "2026-10-15",
+    "chg_pct": -5.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-16",
+    "close": 412.61,
+    "prev_date": "2026-10-15",
+    "chg_pct": -2.28
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-16",
+    "close": 328.75,
+    "prev_date": "2026-10-15",
+    "chg_pct": -4.52
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-16",
+    "close": 229.68,
+    "prev_date": "2026-10-15",
+    "chg_pct": 2.12
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-16",
+    "close": 66.03,
+    "prev_date": "2026-10-15",
+    "chg_pct": 0.4
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Why Did Accenture Stock Jump?",
+    "publisher": "Trefis",
+    "when": "2026-10-17 02:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-did-accenture-stock-jump-020214844.html"
+   },
+   {
+    "title": "Deutsche Bank Adjusts Price Target on Accenture to $209 From $200",
+    "publisher": "MT Newswires",
+    "when": "2026-10-16 14:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-140903444.html"
+   },
+   {
+    "title": "Accenture Just Capped Employees\u2019 Claude Spending at $29 a Month. Some Were Spending $1,000",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-16 13:27Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-just-capped-employees-claude-132727075.html"
+   },
+   {
+    "title": "Accenture's $8B Acquisition Push: A Growth Catalyst for ACN Stock?",
+    "publisher": "Zacks",
+    "when": "2026-10-16 11:54Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accentures-8b-acquisition-push-growth-115400359.html"
+   },
+   {
+    "title": "Accenture launches AI spending cap after staff rack up $1,000 monthly bills",
+    "publisher": "The Telegraph",
+    "when": "2026-10-16 11:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-launches-ai-spending-cap-113202292.html"
+   },
+   {
+    "title": "Is Investor Day Outlook Altering The Investment Case For Accenture (ACN)?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-16 05:19Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/investor-day-outlook-altering-investment-051910715.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank Adjusts Price Target on Cognizant Technology Solutions to $75 From $70",
+    "publisher": "MT Newswires",
+    "when": "2026-10-16 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-133739171.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "CoreWeave's not-so-secret weapons: Price hikes and an Nvidia trump card",
+    "publisher": "Pitchbook",
+    "when": "2026-10-16 23:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/coreweaves-not-secret-weapons-price-233000657.html"
+   },
+   {
+    "title": "1 Obvious Metric That Makes Nvidia a Top Stock to Buy Now",
+    "publisher": "Motley Fool",
+    "when": "2026-10-16 23:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/1-obvious-metric-makes-nvidia-230400433.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Inc. (AVGO) Falls More Steeply Than Broader Market: What Investors Need to Know",
+    "publisher": "Zacks",
+    "when": "2026-10-16 20:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-inc-avgo-falls-more-204505934.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "How much AMD stock does CEO Lisa Su actually own?",
+    "publisher": "TheStreet",
+    "when": "2026-10-16 23:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/much-amd-stock-does-ceo-231249941.html"
+   }
+  ]
+ },
+ "errors": [
+  "gift_nifty: nseix: no NIFTY FUTIDX rows"
+ ],
+ "gift_nifty": {
+  "error": "ValueError: nseix: no NIFTY FUTIDX rows"
+ }
+}

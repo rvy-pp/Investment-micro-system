@@ -1,0 +1,209 @@
+{
+ "date": "2026-10-13",
+ "fetched_at": "2026-10-13T08:18:41",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-12",
+    "close": 7807.24,
+    "prev_date": "2026-10-09",
+    "chg_pct": -0.06
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-12",
+    "close": 27245.9,
+    "prev_date": "2026-10-09",
+    "chg_pct": -0.44
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-12",
+    "close": 51850.55,
+    "prev_date": "2026-10-09",
+    "chg_pct": 0.38
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-12",
+    "close": 12236.79,
+    "prev_date": "2026-10-09",
+    "chg_pct": -2.67
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-12",
+    "close": 226.32,
+    "prev_date": "2026-10-09",
+    "chg_pct": -1.29
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-12",
+    "close": 594.24,
+    "prev_date": "2026-10-09",
+    "chg_pct": -2.28
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-12",
+    "close": 444.35,
+    "prev_date": "2026-10-09",
+    "chg_pct": -1.98
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-12",
+    "close": 354.73,
+    "prev_date": "2026-10-09",
+    "chg_pct": -1.88
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-12",
+    "close": 214.87,
+    "prev_date": "2026-10-09",
+    "chg_pct": 2.78
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-12",
+    "close": 59.68,
+    "prev_date": "2026-10-09",
+    "chg_pct": 0.81
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Take the Zacks Approach to Beat the Markets: HF Sinclair, Accenture & FirstCash in Focus",
+    "publisher": "Zacks",
+    "when": "2026-10-12 13:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-approach-beat-markets-hf-131000393.html"
+   },
+   {
+    "title": "Has Accenture Stock Become A Different Bet?",
+    "publisher": "Trefis",
+    "when": "2026-10-09 23:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-become-different-bet-233939774.html"
+   },
+   {
+    "title": "How to Play ACN Stock as Accenture Deepens Its AI Ties",
+    "publisher": "Barchart",
+    "when": "2026-10-09 18:20Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/play-acn-stock-accenture-deepens-182024759.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Is Up, What You Need To Know",
+    "publisher": "StockStory",
+    "when": "2026-10-08 23:36Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-know-233609788.html"
+   },
+   {
+    "title": "Accenture (ACN) Could Be 30% Undervalued As Q4 Results Beat Expectations",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-08 20:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-could-30-undervalued-201203050.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Undervalued Following Its New Credit Facilities?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-09 19:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-undervalued-191439325.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia's China AI-chip share falls as Huawei closes gap, report finds",
+    "publisher": "Reuters",
+    "when": "2026-10-13 02:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidias-china-ai-chip-share-023259440.html"
+   },
+   {
+    "title": "Microsoft Now Has 3 Generations of Its Own AI Chips. Nvidia Is Still the Chip Stock to Buy.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-13 02:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/microsoft-now-3-generations-own-020302810.html"
+   },
+   {
+    "title": "Dow Jones Futures: Micron, Nvidia Lead AI Trade Lower; Apple, Meta Rally Near Buy Points",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-13 01:11Z",
+    "link": "https://finance.yahoo.com/m/1b66e790-9e3e-3d5c-a8bf-167703811db3/dow-jones-futures%3A-micron%2C.html"
+   },
+   {
+    "title": "Nvidia\u2019s 'Reflection' move could put customers on edge",
+    "publisher": "TheStreet",
+    "when": "2026-10-13 00:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-reflection-move-could-put-000300441.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom CEO follows a proven blueprint for labs buying its chips",
+    "publisher": "TheStreet",
+    "when": "2026-10-13 02:04Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-ceo-follows-proven-blueprint-020400946.html"
+   },
+   {
+    "title": "Broadcom vs. Qualcomm: Which Chip Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-12 22:51Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-vs-qualcomm-chip-stock-225101810.html"
+   },
+   {
+    "title": "Chip Stocks Fall As Broadcom, Intel CEOs Warn About AI Funding",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-12 20:45Z",
+    "link": "https://finance.yahoo.com/m/f5aa1d57-d78a-3377-89e8-88d6bebd9938/chip-stocks-fall-as-broadcom%2C.html"
+   },
+   {
+    "title": "Nvidia (NVDA) vs. Broadcom (AVGO): Which AI Stock Is a Better Buy After the OpenAI Scare?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-12 20:41Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-nvda-vs-broadcom-avgo-204108303.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Nvidia and AMD Reached a Historic Valuation Split. 1 Stock Is Far Safer.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-12 19:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-amd-reached-historic-valuation-195000418.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22422.5,
+  "chg_pct": 0.0,
+  "stamp": "13-Oct-2026 08:18:35",
+  "expiry": "27-Oct-2026",
+  "volume": 1621,
+  "nifty_close": {
+   "close": 22363.350000000002,
+   "stamp": "12-Oct-2026 15:30"
+  },
+  "gap_pts": 59.1,
+  "gap_pct": 0.26
+ }
+}

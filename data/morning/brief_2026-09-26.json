@@ -1,0 +1,241 @@
+{
+ "date": "2026-09-26",
+ "generated_at": "2026-09-26T08:12:59",
+ "mail": {
+  "window": "24h to 08:12 IST",
+  "n_scanned": 57,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "HRC price +marginal WoW to Rs63.8K/t (+10% since end-July); domestic premium to import parity widened to ~3% vs ~1% last week.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "12:59",
+      "detail": {
+       "summary": "Morgan Stanley stays In-Line on Indian steel: good demand plus seasonal-maintenance-driven destocking and the safeguard duty are supporting prices and spreads; medium term it stays constructive on China anti-involution and government support, expecting steel stocks to keep outperforming over the next 12 months.",
+       "points": [
+        "HRC Rs63.8K/t, +10% since end-July, marginally higher WoW",
+        "Rebar Rs50.2K/t, -2% WoW, +14% since end-July",
+        "China CFR iron ore ~$95/t, -1% WoW",
+        "Met coal (Aus HCC) ~$276/t, -2% WoW, +28% since end-July",
+        "Steel stocks +10% YTD vs Sensex -14%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Domestic steel spreads expanded ~1% WoW, near the April 2026 peak and up ~43% since mid-Dec lows, per Morgan Stanley.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "12:59"
+     },
+     {
+      "text": "India secured a 1.9MT steel export quota to the EU under its FTA, total access expected to reach 2.8MT; CBAM burden remains.",
+      "source": "Kotak — [Kotak] ESG: Weekly Wrap | September 25, 2026",
+      "received": "15:31",
+      "detail": {
+       "summary": "Kotak's ESG wrap frames the EU quota as a partial CBAM offset for Indian steel exporters, set against the UK's own CBAM taking effect January 2027 and broader domestic decarbonisation spend from Coal India and NLC India.",
+       "points": [
+        "1.9MT steel export quota secured to EU under FTA",
+        "Total EU access expected to reach 2.8MT",
+        "CBAM burden remains despite the quota",
+        "UK CBAM secondary legislation finalized, effective 1 Jan 2027"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "4.6mtpa of fresh capacity added by UltraTech Cement, per Elara's corporate news roundup.",
+      "source": "Elara — Elara Stinger: Entry-level sedans gain traction while midsized models continue to struggle",
+      "received": "09:50"
+     },
+     {
+      "text": "Cement majors' green power capacity seen rising to 5.8-6 GW by FY2028 (ICRA, via Kotak ESG wrap).",
+      "source": "Kotak — [Kotak] ESG: Weekly Wrap | September 25, 2026",
+      "received": "15:31"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Rs69,346 cr: Coal India's diversification push beyond mining into clean energy and transition tech, per Kotak's ESG wrap.",
+      "source": "Kotak — [Kotak] ESG: Weekly Wrap | September 25, 2026",
+      "received": "15:31",
+      "detail": {
+       "summary": "The weekly ESG wrap frames Coal India's diversification funding as part of a broader capital shift toward battery storage, green hydrogen and renewables that SBI's chairman expects to dominate the next global investment cycle.",
+       "points": [
+        "Rs69,346 cr Coal India investment beyond mining, into clean energy",
+        "SBI chairman: next global investment wave favours battery storage, hydrogen, renewables",
+        "NLC India parallel Rs1,17,000 cr push: 104.35 mtpa mining + 10GW+ renewables"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "30 Sep, 2pm IST: BofA webcast with ex-Coal India director on coal gasification import-substitution and execution risk.",
+      "source": "BofA — BofA India Energy Expert Call -> Webcast Sep 30: India Coal Gasification – Ambition vs Execution",
+      "received": "09:17",
+      "detail": {
+       "summary": "BofA is hosting a former Coal India director to assess how far gasification can realistically displace India's LNG, coking coal, ammonia and methanol imports, and whether current policy support suffices to scale projects.",
+       "points": [
+        "30 Sep 2026, 2pm IST webcast, ex-Coal India director host",
+        "Import-substitution case: LNG, coking coal, ammonia, methanol",
+        "Execution constraints flagged: coal linkage, water, EPC, offtake",
+        "China build-out read-across to be discussed"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "JPM stays UW on KPIT (PT Rs550): SDV client cuts (~25% of revenue) hurt growth; guides 2Q flat, 3Q growth, 4Q strong, 18% exit margin.",
+      "source": "JPM — KPIT Technologies: Growth trajectory commentary maintained",
+      "received": "08:26",
+      "detail": {
+       "summary": "JPM's channel check with KPIT's IR head found multiple top clients deprioritizing software-defined-vehicle spend, which KPIT plans to offset via account mining, new passenger-vehicle clients and commercial-vehicle expansion into new geographies; JPM stays Underweight given the tough EU auto environment.",
+       "points": [
+        "~25% of revenue hit by client SDV program deprioritization",
+        "2Q guided flat, 3Q some growth, 4Q strong growth",
+        "18% exit EBITDA margin target by 4QFY27 vs 17.2% in 1Q",
+        "PT Rs550 on 17x FY28 P/E vs Tata Elxsi's 22x",
+        "Japan account to stabilise 2Q, EU clients by 3Q"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Nifty fell 0.9% for a seventh straight weekly decline, first since Apr 2020; India 10Y yield hit 7.1%, a four-month high.",
+      "source": "CLSA (Vikash Kumar Jain) — India strategy: Weekly wrap",
+      "received": "20:05",
+      "detail": {
+       "summary": "CLSA's weekly wrap notes Nifty underperformed most EM peers again, sentiment slipping further into bearish territory even as FIIs turned net equity buyers and the CLSA India portfolio outperformed the index.",
+       "points": [
+        "0.9% weekly Nifty fall, 7th straight decline",
+        "FIIs bought $0.4bn equities, YTD outflow now $25.4bn",
+        "10Y yield up to 7.1%, 4-month high",
+        "Bull-Bear index bullish reading fell to 12.4% from 15.3%",
+        "12-month fwd PE at 17.2x, 7% below 10-yr avg"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Government set 2HFY27 gross borrowing at Rs7.86tn; Kotak expects 10Y G-Sec 6.85-7.25% and 25bp RBI hikes in Oct and Dec.",
+      "source": "Kotak (Suvodeep Rakshit) — Economy: 2HFY27 borrowing in line with expectations",
+      "received": "23:18",
+      "detail": {
+       "summary": "Kotak's borrowing note argues net G-Sec supply rises versus 1HFY27 despite lower gross issuance, pushing more supply to the long end, and expects the curve to steepen briefly before flattening again.",
+       "points": [
+        "Rs7.86tn gross borrowing 2HFY27 vs Rs8.1tn 1HFY27",
+        "Net issuance Rs6.3tn, above Rs5.4tn 1HFY27 and Rs4.8tn 2HFY26",
+        "10Y share of supply 26.3%, down from 29.3%",
+        "30-50yr supply share up to 28% from 25.2%",
+        "25bp hikes seen in both Oct and Dec policies"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India-dedicated fund outflows accelerated to a 6-month high of $700mn this week, nearly all driven by US ETFs.",
+      "source": "Elara (Sunil Jain) — Global Liquidity Tracker: GEM flows turn negative as US yields rise (+9 more in Outlook)",
+      "received": "13:27",
+      "detail": {
+       "summary": "Elara's Global Liquidity Tracker frames the India selloff as ETF-driven rather than broad long-only redemption, while South Korea sees the deepest EM outflows and gold keeps absorbing global liquidity.",
+       "points": [
+        "India outflows $700mn this week, 6-month high",
+        "US ETFs alone $565mn of last 2 weeks' outflows",
+        "Long-only India redemptions steady ~$230-250mn/week since CY26",
+        "South Korea cumulative outflows $5.5bn Aug-Sep'26",
+        "Gold inflows $31bn since Jul'26, vs $14bn Apr-Jun outflow"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak initiates Dhoot Transmission at SELL, FV Rs1,400 vs CMP Rs1,561 — 12% downside despite 23% EBITDA CAGR FY26-29E.",
+      "source": "Kotak — Dhoot Transmission (CMP: Rs1,561, FV: Rs1,400, SELL): Electrification leads the way",
+      "received": "17:26",
+      "detail": {
+       "summary": "Kotak initiates coverage on Dhoot Transmission, the 2W/3W wiring-harness market leader, with a SELL and DCF-based FV of Rs1,400, arguing the stock already prices in its shift into EV components, battery packs and sensors.",
+       "points": [
+        "FV Rs1,400 vs CMP Rs1,561 — 12% downside",
+        "Revenue & EBITDA to grow 23% CAGR FY2026-29E",
+        "EV components to grow 50% CAGR on battery-pack ramp",
+        "Core wiring-harness segment grows 17% CAGR",
+        "2W/3W wiring harness is 78%/77% of FY26 revenue"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW Group wants Volkswagen to cover a USD1.4bn India tax liability tied to their auto JV, per Bloomberg.",
+      "source": "Kotak — Kotak Auto News: JSW Group wants VW to cover USD1.4 bn tax liability (+4 more in Outlook)",
+      "received": "08:35",
+      "detail": {
+       "summary": "Kotak's daily auto-news roundup flags a Bloomberg report that JSW Group wants Volkswagen to absorb a USD1.4bn India tax demand linked to their joint venture, alongside Maruti commissioning a green hydrogen plant.",
+       "points": [
+        "USD1.4bn tax liability JSW wants VW to cover",
+        "Maruti commissions 300kW green hydrogen plant at Manesar",
+        "Rollout planned next for Haryana, Gujarat",
+        "Stellantis begins a white-collar hiring freeze",
+        "Mercedes weighs USD911mn in labor cost cuts"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous",
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "BNPP: AI capex bull/bear range implies 200-300GW of data-center capacity by 2030, a $5tn gap, gated by power and financing, not demand.",
+    "source": "BNPP — What we are reading: Rocky Balboa, AI capex opportunity by 2030"
+   },
+   {
+    "text": "BNPP: 8 of the top 10 open-weight AI models are now Chinese; MiniMax M3 prices at $0.30/1M tokens vs GPT-5.6's $4.00.",
+    "source": "BNPP — What we are reading: Rocky Balboa, AI capex opportunity by 2030"
+   },
+   {
+    "text": "CLSA: Asia semi-trade conviction intact but wary of China disruption risk migrating from downstream LLMs into upstream DRAM.",
+    "source": "CLSA — Global Equity Strategy: TGIF — week #38"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

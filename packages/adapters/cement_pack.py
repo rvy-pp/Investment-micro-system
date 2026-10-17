@@ -448,6 +448,20 @@ def main() -> int:
         # moved. Only a CHANGED value clears the month and re-stamps it at the
         # capture date. Scoped to this month and these six ids; completed months
         # are never touched, so a re-load is idempotent everywhere else.
+        # The pack SUPERSEDES the early print from Kotak's channel-check note
+        # (adapters/cement_check.py, source 'kotak_check'). Same broker, same
+        # numbers, ~7 days earlier — but stamped on the mail date, so without
+        # this the note's row (e.g. the 23rd) and the pack's (the 30th) would
+        # sit side by side as two "prints" of one month. Every month this file
+        # carries clears the note's rows for that month, BEFORE the
+        # unchanged/held logic below, so that logic only ever sees pack rows.
+        months = sorted({d[:7] for d in series[eid]})
+        superseded = conn.execute(
+            "DELETE FROM prices WHERE entity_id=? AND source='kotak_check' "
+            f"AND substr(date,1,7) IN ({','.join('?' * len(months))})",
+            (eid, *months)).rowcount if months else 0
+        if superseded:
+            print(f"  {eid}: {superseded} kotak_check row(s) superseded by the pack")
         month_start = as_of.replace(day=1).isoformat()
         incoming = {d: c for d, c in series[eid].items() if d >= month_start}
         held = conn.execute(

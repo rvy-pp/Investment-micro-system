@@ -1,0 +1,227 @@
+{
+ "date": "2026-09-10",
+ "fetched_at": "2026-09-10T09:06:12",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-09-09",
+    "close": 7636.36,
+    "prev_date": "2026-09-08",
+    "chg_pct": -0.48
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-09-09",
+    "close": 26253.34,
+    "prev_date": "2026-09-08",
+    "chg_pct": -0.64
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-09-09",
+    "close": 52380.66,
+    "prev_date": "2026-09-08",
+    "chg_pct": -0.77
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-09-09",
+    "close": 11931.32,
+    "prev_date": "2026-09-08",
+    "chg_pct": 0.37
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-09-09",
+    "close": 223.67,
+    "prev_date": "2026-09-08",
+    "chg_pct": -0.91
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-09-09",
+    "close": 521.1,
+    "prev_date": "2026-09-08",
+    "chg_pct": 3.04
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-09-09",
+    "close": 435.36,
+    "prev_date": "2026-09-08",
+    "chg_pct": -0.83
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-09-09",
+    "close": 364.38,
+    "prev_date": "2026-09-08",
+    "chg_pct": -1.13
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-09-09",
+    "close": 175.8,
+    "prev_date": "2026-09-08",
+    "chg_pct": -1.8
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-09-09",
+    "close": 58.2,
+    "prev_date": "2026-09-08",
+    "chg_pct": -2.87
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Is Accenture's Business Falling As Fast As Its Stock?",
+    "publisher": "Trefis",
+    "when": "2026-09-09 23:19Z",
+    "link": "https://finance.yahoo.com/m/13e9ec28-c5a7-3de5-868d-f42feab667ba/is-accenture%27s-business.html"
+   },
+   {
+    "title": "Accenture (ACN) Dips More Than Broader Market: What You Should Know",
+    "publisher": "Zacks",
+    "when": "2026-09-09 22:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-dips-more-broader-220002052.html"
+   },
+   {
+    "title": "Stocks making big moves yesterday: ProPetro, Bloom Energy, ABM, Accenture, and Cable One",
+    "publisher": "StockStory",
+    "when": "2026-09-09 17:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stocks-making-big-moves-yesterday-173038410.html"
+   },
+   {
+    "title": "Here's Why You Should Retain Accenture Stock in Your Portfolio Now",
+    "publisher": "Zacks",
+    "when": "2026-09-09 16:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-why-retain-accenture-stock-162500965.html"
+   },
+   {
+    "title": "Accenture and Google Cloud establish Gemini Enterprise Business Group",
+    "publisher": "Verdict",
+    "when": "2026-09-09 12:21Z",
+    "link": "https://finance.yahoo.com/m/16ac4c7a-b9e0-3136-89e8-a0bcb284f3e3/accenture-and-google-cloud.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Named in TIME World's Best Companies 2026 List",
+    "publisher": "PR Newswire",
+    "when": "2026-09-09 13:30Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-named-time-worlds-best-133000424.html"
+   },
+   {
+    "title": "Cognizant Expands US Hiring Through Universities",
+    "publisher": "MT Newswires",
+    "when": "2026-09-08 10:11Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-expands-us-hiring-universities-101112397.html"
+   },
+   {
+    "title": "Cognizant Invests in America's AI-Era Workforce",
+    "publisher": "PR Newswire",
+    "when": "2026-09-07 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-invests-americas-ai-era-130000352.html"
+   },
+   {
+    "title": "Cognizant to Present at Upcoming Investor Conferences",
+    "publisher": "PR Newswire",
+    "when": "2026-09-01 12:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-upcoming-investor-conferences-120000618.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia plans major expansion of data centre capacity in Australia to meet AI demand",
+    "publisher": "Reuters",
+    "when": "2026-09-10 03:29Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-plans-major-expansion-data-032949319.html"
+   },
+   {
+    "title": "US DOJ probes Nvidia's licensing deal with AI startup Groq, NYT reports",
+    "publisher": "Reuters",
+    "when": "2026-09-10 00:52Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/us-doj-probes-nvidias-licensing-003659525.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Is 26% Below Its High. What $10,000 Bought a Decade Ago, and When the Gains Landed.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-10 02:54Z",
+    "link": "https://finance.yahoo.com/m/b9b8468b-bb51-3b6d-9faf-b3819e75a153/broadcom-is-26%25-below-its.html"
+   },
+   {
+    "title": "Broadcom Forecasts $230 Billion in AI Semiconductor Revenue in 2028. The Stock Could Reach $900 Per Share as a Result.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-09 22:41Z",
+    "link": "https://finance.yahoo.com/m/546e37c5-3168-384d-97cd-d65407c3f4f2/broadcom-forecasts-%24230.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Q3 2026 Earnings Call Transcript",
+    "publisher": "Motley Fool",
+    "when": "2026-09-09 21:28Z",
+    "link": "https://finance.yahoo.com/m/b53a27bc-4ee3-3deb-9677-5a9a7793ec60/broadcom-%28avgo%29-q3-2026.html"
+   },
+   {
+    "title": "The Overlooked Chip Stock Poised to Outperform Nvidia, AMD, and Broadcom in the AI Semiconductor Boom",
+    "publisher": "Motley Fool",
+    "when": "2026-09-09 20:43Z",
+    "link": "https://finance.yahoo.com/m/d61d7e57-5317-325d-be33-4c371e0e4c71/the-overlooked-chip-stock.html"
+   },
+   {
+    "title": "What Investors Need To Understand About Broadcom, Credo and Snowflake Earnings",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-09-09 19:50Z",
+    "link": "https://finance.yahoo.com/m/58860697-3f20-3e0c-87fc-c1f05fd66d6a/what-investors-need-to.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Faces Google Chip Risks, But Macquarie Sees a $40 Billion Anthropic Opportunity",
+    "publisher": "Insider Monkey",
+    "when": "2026-09-09 18:46Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-avgo-faces-google-chip-184606814.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "HostColor Stocks AMD Ryzen 9 9950X Dedicated Servers in Tokyo",
+    "publisher": "GlobeNewswire",
+    "when": "2026-09-09 20:04Z",
+    "link": "https://finance.yahoo.com/technology/articles/hostcolor-stocks-amd-ryzen-9-200400352.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23495.0,
+  "chg_pct": 0.33,
+  "stamp": "10-Sep-2026 09:06:15",
+  "expiry": "29-Sep-2026",
+  "volume": 1721,
+  "nifty_close": {
+   "close": 23431.5,
+   "stamp": "10-Sep-2026 09:06"
+  },
+  "gap_pts": 63.5,
+  "gap_pct": 0.27
+ }
+}

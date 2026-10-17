@@ -1,0 +1,89 @@
+{
+  "date": "2026-09-13",
+  "generated_at": "2026-09-13T08:12:00+05:30",
+  "mail": {
+    "window": "24h to 08:05 IST",
+    "n_scanned": 9,
+    "sectors": [
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "8 of 10 F&O metals stocks broke down this week (80% breadth) - SAIL worst at -9%, JSWSTEEL -5%, HINDALCO -3%.",
+            "source": "PhillipCapital — SECTORS AND STOCKS WEEKLY BREAKOUT/BREAKDOWN (7-11 Sept)",
+            "received": "13:29"
+          },
+          {
+            "text": "12 of 14 F&O IT-Software stocks broke down this week (86% breadth) - INFY -8%, HCLTECH -7%, TCS -4%, WIPRO -5%.",
+            "source": "PhillipCapital — SECTORS AND STOCKS WEEKLY BREAKOUT/BREAKDOWN (7-11 Sept)",
+            "received": "13:29"
+          },
+          {
+            "text": "Nifty broke the 23,800-23,600 support, down ~500pts to ~23,400 this week; next support 22,800.",
+            "source": "PhillipCapital — DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (F&O), week ending 12 Sept (+3 more in Outlook)",
+            "received": "13:30"
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "Kotak's RM cost index for RAC/washers/fridges/fans up 38-47% YoY (copper +57%, aluminium +37%) - cost-stack pressure for Amber/Dixon.",
+            "source": "Kotak — India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+            "received": "10:21"
+          },
+          {
+            "text": "Monsoon rainfall 36% below LPA last week, cumulative deficit 15% LPA since June 1 - a soft signal for RAC/durables demand into season close.",
+            "source": "Kotak — India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+            "received": "10:21"
+          },
+          {
+            "text": "Citi's China Industrial SMID conference (PCB/CCL among tracks) offers 1-on-1 access Sept 22-23 - a direct read on EMS's cost-stack suppliers.",
+            "source": "Citi — China Industrial SMID Conference (1-on-1 Slots) | 22-23 Sep",
+            "received": "08:01"
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "COALINDIA flagged in a monthly-chart breakout scan: price +6.14%, volume reading 50.",
+            "source": "PhillipCapital — NSE 500 - Stocks which have given BREAKOUT this week on Monthly Chart",
+            "received": "13:31"
+          }
+        ]
+      }
+    ],
+    "quiet": [
+      "Non-ferrous",
+      "Steel",
+      "Cement",
+      "IT / AI-tech",
+      "Other coverage-adjacent"
+    ]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX +1.81% into the weekend on AMD +2.49% and TSMC ADR +1.22%; Nvidia flat at -0.03%, so the rally was the rest of the complex.",
+        "source": "morning_markets.py — US close 2026-09-11"
+      },
+      {
+        "text": "AMD raised the top of its 2030 addressable market to $3 trillion.",
+        "source": "Motley Fool headline, AMD-keyed (via morning_markets.py)"
+      }
+    ],
+    "bellwethers": [
+      {
+        "name": "Accenture",
+        "reason": null
+      },
+      {
+        "name": "Cognizant",
+        "reason": null
+      }
+    ]
+  }
+}
