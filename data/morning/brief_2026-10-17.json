@@ -1,0 +1,323 @@
+{
+ "date": "2026-10-17",
+ "generated_at": "2026-10-17T08:20:33+05:30",
+ "mail": {
+  "window": "24h to 08:3x IST (Sat 17-Oct; covers Fri 16-Oct sessions)",
+  "n_scanned": 113,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Nuvama sees Hindustan Zinc 2QFY27 EBITDA Rs84.2bn (+5% QoQ), 0.6% below street; PAT Rs57.5bn vs street Rs55.9bn; reports Mon 14:00.",
+      "source": "Nuvama — Result Estimates for 19th October 2026: BAF, UTCEM, HZ, UNBK",
+      "received": "16:07",
+      "detail": {
+       "summary": "Nuvama expects EBITDA to rise on higher average zinc, partly offset by weaker silver and lead. Margin is seen at 59.5% against street 60.3%. Futures show shorts present and rollover below its average.",
+       "points": [
+        "EBITDA Rs84.16bn vs street Rs84.66bn",
+        "Revenue Rs141.55bn vs street Rs140.35bn",
+        "Zinc price +9% QoQ; silver -10%, lead -3%",
+        "Lead vol +8.5%, silver +16% QoQ; zinc flat",
+        "Rollover 81% vs 3m avg 92%; shorts present"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: zinc keeps bearish bias as LME stocks top 150kt; aluminium bounces toward $3,000/t from $2,953 with MCX backwardation widening to Rs1.45/kg.",
+      "source": "Emkay — Commodity Market Report: Precious metals rebound as dollar weakens, crude inventories tighten",
+      "received": "09:48",
+      "detail": {
+       "summary": "Base metals attempt a recovery after two down sessions, with the dollar easing toward 102. Zinc is the weak link on rising inventories, while aluminium looks oversold with near-term tightness in the domestic spread. FOMC on 27-28 Oct is the next macro trigger.",
+       "points": [
+        "LME zinc inventories above 150,000t",
+        "LME aluminium ~$3,000/t from $2,953",
+        "MCX aluminium +0.84% to Rs322.95/kg",
+        "Backwardation widened to Rs1.45/kg",
+        "Copper $14,390/t; range $14,335-14,430"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Morgan Stanley: India HRC at Rs63.8K/t, ~1% lower WoW but +11% since July, a ~5% premium to import parity; sees limited near-term upside.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "13:39",
+      "detail": {
+       "summary": "Imports have been elevated as domestic output slowed and inventories depleted. With prices above import parity, upside is limited, but the safeguard duty keeps spreads supported into the seasonally strong period. Industry view In-Line; constructive on steel stocks' outperformance.",
+       "points": [
+        "Secondary rebar Rs51.8K/t, -2% WoW, +18% since July",
+        "Australian HCC ~US$269/t, +25% since July",
+        "China CFR iron ore ~US$90/t, -1% WoW",
+        "Spreads -1% WoW, +46% since mid-Dec lows",
+        "Steel stocks flat YTD vs Sensex -13%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Elara: covered cement stocks trade below 5-year EV/t lows, Shree and Ambuja at decade lows; prefers Shree, accumulate gradually as margins stay pressured.",
+      "source": "Elara — Cement - Looking beyond near-term headwinds - Sector Update",
+      "received": "01:02",
+      "detail": {
+       "summary": "Elara values cement on normalised earnings (5-year average EBITDA/tonne, FY29E volumes) because fuel-cost normalisation is uncertain. Elevated petcoke and coal keep margins under pressure but could prompt further price hikes; estimates retained until Q2FY27 results.",
+       "points": [
+        "Demand growth ~8% FY27E vs ~6% FY26",
+        "Effective capacity ~662mt FY26 to ~819mt FY29E",
+        "Utilisation flat ~72-73%; West & Central oversupply risk",
+        "Shree top large-cap pick; Birla Corp small-cap pick"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama expects UltraTech Q2 (Mon 19 Oct, ~14:00) EBITDA Rs37.96bn vs street 37.01bn; core PAT Rs16.99bn vs 16.04bn, with volumes ~+11% YoY.",
+      "source": "Nuvama — Result Estimates for 19th October 2026: BAF, UTCEM, HZ, UNBK",
+      "received": "16:07",
+      "detail": {
+       "summary": "Nuvama sits modestly above Bloomberg consensus on UltraTech, but flags blended EBITDA/t likely to decline on cost pressure. Derivatives show legacy shorts largely covered after delivery-based selling on 1 Oct.",
+       "points": [
+        "Revenue Rs228.16bn vs street 223.42bn",
+        "EBITDA margin 16.64% vs 16.56%",
+        "Realisations ~+1.5% QoQ; volumes ~+11% YoY",
+        "Rollover 92% vs 96% prev expiry; 11500CE peak OI"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus Spark sees India Cements Q2 (Sat 17 Oct) EBITDA Rs1.10bn vs consensus Rs0.81bn, sales Rs10.57bn vs 11.17bn; flags it among six-month consensus downgrades.",
+      "source": "Avendus Spark — Results Oct 16-17; Last 6M Earnings - Upgrades ...; Downgrades - India Cements",
+      "received": "09:19",
+      "detail": {
+       "summary": "Spark's India Cements estimate is above Bloomberg on EBITDA but below on sales. Consensus FY27 estimates for the company have been cut over the past six months.",
+       "points": [
+        "Sales 10,565mn vs consensus 11,172mn (-5%)",
+        "EBITDA 1,098mn vs 814mn (+35%)",
+        "PAT 263mn vs consensus loss of 69mn",
+        "6M consensus FY27 change: sales -13%, EBITDA +6%, PAT -14%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Memory chips are ~40% of budget-handset BoM; with prices surging, Ai+, Lava, Mivi and Boltt push sub-Rs15,000 phones while Samsung, Oppo, Vivo and Xiaomi retreat.",
+      "source": "Nomura — India Consumer Durables and EMS: Homegrown firms enter budget smartphone market as memory chip prices rise",
+      "received": "09:18",
+      "detail": {
+       "summary": "Memory-chip inflation has raised entry-level smartphone production costs sharply, and global brands are cutting exposure to the segment. Local brands are filling the gap, helped by the Mobile Phone Manufacturing Scheme incentives.",
+       "points": [
+        "Memory ~40% of budget-phone bill of materials",
+        "Noise, boAt, GoBoult exploring sub-Rs15,000 entry via e-commerce",
+        "Micromax evaluating smartphone re-entry",
+        "Samsung, Oppo, Vivo, Xiaomi reducing entry-level exposure"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTM 2QFY27 EBIT margin 15.6% missed Emkay's 15.8%; TCV $1.26bn (~1.0x book-to-bill); FY27E EPS cut 6.4%, ADD kept, TP Rs4,450.",
+      "source": "Emkay — LTM: Margin miss; soft order inflow; ADD; Target: Rs4,450",
+      "received": "00:31",
+      "detail": {
+       "summary": "Revenue was in line at +1.1% cc but margin and order intake disappointed. Management targets FY27 growth and margins roughly flat on FY26 with 2H acceleration, leaning on AI-led deals that are short-tenure. Emkay trims FY27 EPS on the miss and higher forex losses, leaves FY28-29 largely unchanged.",
+       "points": [
+        "Revenue $1,235mn, +1% qoq (+1.1% cc), in line",
+        "EBIT margin 15.6%, +10bps qoq vs Emkay 15.8%",
+        "TTM TCV $6.3bn, -2.8% yoy; OCF/EBITDA only 26%",
+        "AI revenue ~$165mn run-rate, 13.4% of revenue",
+        "TP Rs4,450 at 18x Sep-28E EPS; CMP Rs4,385"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Wipro Q3 guide of -1.5% to +0.5% cc and TCV $2.6bn (-45% yoy) disappoint; PhillipCapital stays Neutral, TP Rs180, FY27 EPS cut 3%.",
+      "source": "PhillipCapital — Wipro (WPRO IN) - Weak TCV and Guidance; Continues to Underperform",
+      "received": "12:58",
+      "detail": {
+       "summary": "Q2 revenue and margin were slightly better than feared, but fourth straight yoy fall in total and large-deal TCV and furlough-hit Q3 guidance signal weak pipeline conversion. Phillip expects FY27 to be a fourth year of revenue decline and Wipro to lag peers, with 12x FY28 valuation limiting downside.",
+       "points": [
+        "IT services flat qoq cc; EBIT margin 16.4-16.5%",
+        "Large-deal TCV $674mn; total TCV $2,595mn",
+        "PAT Rs32.0bn, 5.3% below Phillip's estimate",
+        "FY27 EPS -3.0%, FY28 -0.5%; CMP Rs174",
+        "Mgmt expects growth positive from Q4"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL upgrades Tech Mahindra to BUY (TP Rs2,000) on 2.4% cc growth, 14.8% EBIT margin, $1bn+ deals; downgrades Wipro to REDUCE (TP Rs160).",
+      "source": "IIFL Sales — Tech Mahindra upgraded to BUY, TP ₹2,000 | Wipro downgraded to REDUCE, TP ₹160 (+9 more in Outlook)",
+      "received": "09:01",
+      "detail": {
+       "summary": "IIFL sees the TechM turnaround nearing completion with growth leadership and re-rating potential, raising EPS 5-10%. On Wipro it sees flat revenue, weak TCV and falling headcount with limited valuation comfort versus TCS and Infosys.",
+       "points": [
+        "TechM TP Rs2,000 from Rs1,750, +21% upside",
+        "TechM FY27-29 revenue CAGR 7%, EPS CAGR 14%",
+        "Wipro TP Rs160 from Rs165, 8% downside",
+        "Wipro TTM TCV -26% yoy; headcount -7.4k",
+        "Wipro FY27 organic revenue seen -4%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Nifty gained 2.8% on the week, sharpest since April, as IT jumped 11.7% (18-year best) while Korea fell 16.2% and Taiwan 4.5% on AI-trade fears.",
+      "source": "CLSA — India strategy: Weekly wrap",
+      "received": "21:30",
+      "detail": {
+       "summary": "India was the best-performing market in a regional tech sell-off, but the rally was a short-covering style move: FIIs kept selling and sentiment stays in the bearish zone. Valuations rose with bond yields, widening the yield gap.",
+       "points": [
+        "FII outflows US$0.8bn on week; CY26-TD US$32.7bn",
+        "INR +1.9% vs USD on RBI measures",
+        "Nifty 12m fwd PE 17.1x; bond-earnings yield gap 1.55ppt",
+        "Bull-Bear index 27.3% bullish vs 8.9% a week ago",
+        "10-year yield up 7bps to 7.4%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs bought futures in size after the prior day's selling and DIIs bought US$590mn; Kotak sees support for Nifty to clear 23,000.",
+      "source": "Kotak — sales note: FII turn size buyers in futures",
+      "received": "09:01",
+      "detail": {
+       "summary": "Kotak's flow read says the reversal in FII futures positioning puts large-cap positioning trends back in the positive zone. Overnight cues were supportive; retail cut index longs sharply.",
+       "points": [
+        "FII cash+futures net flow flattish; DII bought US$590mn",
+        "Retail cut US$1.56bn of composite index longs",
+        "Retail net sold US$296mn of single-stock futures",
+        "Nifty 23,000 flagged as the hurdle"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA Bull & Bear indicator fell to 7.4, ending the May 26 sell signal; BofA stays risk-off until post-US midterms and sees bond yields falling further.",
+      "source": "BofA — The Flow Show: Sell Signal Ends (+9 more in Outlook)",
+      "received": "11:58",
+      "detail": {
+       "summary": "Extreme bull sentiment has unwound, though allocators are not underweight risk given record 2026 inflows. BofA expects falling yields to improve equity breadth in Q4 and favours peak-yield exposure and consumer.",
+       "points": [
+        "INR near all-time lows; -21% over five years",
+        "Tech fund inflows record, US$196bn annualised",
+        "355 S&P 500 stocks sit 10% below 52-week highs",
+        "Oil +70% YTD, gold -4.5%, global stocks +10.2%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak lifts FY27E domestic M&HCV growth to 10-11% yoy from 5-6%; upgrades Ashok Leyland to BUY (FV Rs180), keeps TMCV BUY (FV Rs500).",
+      "source": "Kotak — Automobiles & Components: M&HCV demand remains firm; operator profitability holds",
+      "received": "15:41",
+      "detail": {
+       "summary": "1HFY27 retail momentum, steady freight and healthy utilisation drive the upgrade; operators have passed costs through via higher freight rates. Growth should moderate in 2HFY27 on a high base. EBITDA estimates cut 1-3% on commodity headwinds.",
+       "points": [
+        "HGV +23%, MGV +43% yoy in 1HFY27",
+        "Freight rates +3.5% since April 2026",
+        "CV RM basket +25% vs 3QFY26; 3% price hike taken",
+        "FY26-30 industry volume CAGR 5-6%",
+        "TMCV and AL FY27-29 EBITDA cut 1-3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: 1H Oct retail stable MoM but down sharply YoY on festive timing; dealers still guide mid-to-high single-digit festive growth; M&M top pick, then Bajaj, Ather.",
+      "source": "CLSA — India autos: Auto pulse check: All eyes on festive",
+      "received": "12:58",
+      "detail": {
+       "summary": "YoY decline reflects last year's GST-cut pent-up base and an inauspicious buying period spilling into early October. Channel checks show healthy Dussehra inquiries and largely normal inventory, with some entry-level elasticity after price hikes.",
+       "points": [
+        "E-2W penetration 10%; TVSL 28%, Bajaj 20%, Ather 15%",
+        "TVSL +275bps, RE +168bps, HMCL -822bps YoY share",
+        "M&M +134bps, MSIL -359bps YoY share",
+        "CV retail +5% YoY in 1H Oct",
+        "PV electric adoption 8%; TMPV 38% share"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Crompton 2QFY27: revenue +18% yoy beat, EBITDA +24%; Kotak calls it 8% ahead, Avendus sees 9.0% margin and PAT 9.5% below its estimate.",
+      "source": "Kotak — Crompton Greaves Consumer (Rs216, BUY) 2QFY27 first cut; Avendus — Crompton 2QFY27 Snapshot (+5 more in Outlook)",
+      "received": "15:29",
+      "detail": {
+       "summary": "Both houses see revenue beating, led by ECD, but differ on profit versus their own models. Gross margin fell on raw-material inflation, offset in Kotak's read by lower A&P spend. Kotak will revisit estimates after the 5pm call.",
+       "points": [
+        "Revenue Rs22.6bn, +18.2% yoy; ECD +19%, Butterfly +17%",
+        "Gross margin down ~180bps yoy",
+        "Avendus: EBITDA Rs2.05bn, 8% below; adj PAT Rs1.19bn, +30% yoy",
+        "Working capital 22 days vs 14; operating cash flow -Rs2.3bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX -3.83%, AMD -5.95%, Broadcom -4.52%, TSMC ADR -2.28%, Nvidia -1.43%; Nasdaq -2.15% in the 16 Oct US close.",
+    "source": "Yahoo closes"
+   },
+   {
+    "text": "UBS: APAC tech de-risked Thursday, Kospi -16% week to date, Taiwan US$9.9bn foreign outflows; crowded positioning limits buying to short covering.",
+    "source": "UBS — TECH PRICE ACTION - APAC TECH SELL OFF | Semis Monthly"
+   },
+   {
+    "text": "UBS calls the 19% memory pullback from September's peak an entry point on server DDR5 demand; Samsung Electronics stays top pick.",
+    "source": "UBS — TECH PRICE ACTION - APAC TECH SELL OFF | Semis Monthly"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Deutsche Bank raised its price target to $209 from $200 (MT Newswires, 16-Oct)"
+   },
+   {
+    "name": "Cognizant",
+    "reason": "Deutsche Bank raised its price target to $75 from $70 (MT Newswires, 16-Oct)"
+   }
+  ]
+ }
+}
