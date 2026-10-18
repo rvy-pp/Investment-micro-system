@@ -1,0 +1,219 @@
+{
+ "date": "2026-10-18",
+ "generated_at": "2026-10-18T08:14:27",
+ "mail": {
+  "window": "24h to ~08:15 IST (Sun 18-Oct; Saturday mail, no Indian session)",
+  "n_scanned": 30,
+  "sectors": [
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "PhillipCapital ground checks show reasonable South price hikes from October-26, which should help pass through cost inflation; relevant to UltraTech's South exposure.",
+      "source": "PhillipCapital — First Cut: The India Cements Ltd (ICEM IN) - Q2FY27 - Largely in-line to our estimates; recovery sustains despite headwinds",
+      "received": "20:54",
+      "detail": {
+       "summary": "The broker says ICEM faced cost and price headwinds in Q2, and expects the October South hikes to offset cost-push inflation. This is a ground-check view, with no hike size given in the note.",
+       "points": [
+        "Hikes expected from October-26 in South",
+        "Q2 blended realisation -12% yoy, +2% qoq",
+        "Q2 opex/tonne +5% qoq, -17% yoy",
+        "Power, oil & fuel Rs1,583/t, +5% yoy",
+        "Hike size not quantified in the note"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India Cements Q2FY27 EBITDA/t Rs511 (+53% yoy, -15% qoq) on volumes +16% yoy, best Q2 since FY19, driven by the UltraTech brand transition.",
+      "source": "PhillipCapital — First Cut: The India Cements Ltd (ICEM IN) - Q2FY27 - Largely in-line to our estimates; recovery sustains despite headwinds",
+      "received": "20:54",
+      "detail": {
+       "summary": "The broker attributes ICEM's volume outperformance largely to the transition of its brands to 'UltraTech Cement'. It expects further operating gains from FY28, from 6-stage pre-heaters, green power and capacity expansion under UltraTech.",
+       "points": [
+        "Volume 2.83mt, +16% yoy, +10% qoq",
+        "Net realisation Rs4,035/t, -12% yoy, +2% qoq",
+        "EBITDA Rs1,446cr, +78% yoy, -7% qoq",
+        "PAT Rs388cr against Rs-69cr a year ago",
+        "Operating gains expected from FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital sits 8% above street on UltraTech Q2 EBITDA ahead of Monday 19 October's result, and was 21% above street on ICEM.",
+      "source": "PhillipCapital — First Cut: The India Cements Ltd (ICEM IN) - Q2FY27 - Largely in-line to our estimates; recovery sustains despite headwinds",
+      "received": "20:54",
+      "detail": {
+       "summary": "The note sets the broker's own EBITDA estimates against consensus for ICEM and its parent UltraTech, which reports on 19 October 2026. The gap shows the broker expects a better print than the street, with ICEM's in-line result as supporting evidence.",
+       "points": [
+        "UltraTech results due Monday 19 October 2026",
+        "Broker EBITDA 8% above street for UltraTech",
+        "Broker EBITDA 21% above street for ICEM",
+        "ICEM EBITDA Rs1,446cr vs Rs1,221cr consensus (+18%)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kotak's RM indices for RACs, washers, fridges and fans run +40-46% yoy; copper +46%, HRC +34% yoy despite a 2%/1% wow dip.",
+      "source": "Kotak — [Kotak] India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+      "received": "09:40",
+      "detail": {
+       "summary": "Input costs eased slightly week-on-week but remain far above last year, keeping pricing pressure alive across durables. Temperatures are running above normal in most regions, which supports cooling demand. Orient Electric and Havells led weekly gainers, while cable names RR Kabel, Apar and KEI lagged.",
+       "points": [
+        "LME copper -2%, aluminium -4%, domestic HRC -1% wow",
+        "Copper +46%, aluminium +16%, HRC +34% yoy",
+        "Orient Electric +21.9%, Havells +7.6% on the week",
+        "RR Kabel -11.7%, Apar -10.8% on the week",
+        "10-day max temperatures above normal across most regions"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "I-Sec keeps LTM at REDUCE, TP Rs3,720 (16x Q3FY28-Q2FY29E EPS Rs233); FY27 ~6% organic growth target needs 3.2% CQGR in H2.",
+      "source": "ICICI Securities — LTM (REDUCE): Pivoting towards shorter-tenure AI deals, yet to lift overall revenue growth",
+      "received": "19:38",
+      "detail": {
+       "summary": "Q2 revenue and EBIT margin were in line, but order inflow fell as the sales effort moved to shorter AI-led deals. AI revenue is growing quickly while non-AI revenue is still shrinking. I-Sec calls the H2 recovery needed for management's FY27 growth goal a tall ask, and it only rolls its valuation forward.",
+       "points": [
+        "TP Rs3,720 on 16x Q3FY28-Q2FY29E EPS of Rs233; REDUCE maintained",
+        "Q2 revenue USD 1,235.2mn, +1.1% QoQ CC (I-Sec 1.1%, consensus 0.9%)",
+        "Order inflow USD 1.26bn, -25.0% QoQ, -20.8% YoY",
+        "AI revenue +12.7% QoQ, 13.4% of revenue; non-AI -0.6% QoQ",
+        "EBIT margin 15.6% (I-Sec 15.5%, consensus 15.7%)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "MFs cut IT weight 43bps and Autos 29bps in Sep'26 while Metals & Mining rose 16bps, still 1.2% underweight NSE500.",
+      "source": "Ambit — Ambit Strategy: Dissecting MF Portfolio: Where's the flow?",
+      "received": "09:31",
+      "detail": {
+       "summary": "Domestic MF flows are rotating away from IT and Autos toward Capital Goods, Healthcare and Metals & Mining. Weight changes mix active flows with sector performance. Structurally, DMF demand has outpaced equity supply, shrinking the availability factor and supporting valuation floors.",
+       "points": [
+        "IT -43bps, Autos -29bps, BFSI -16bps weight change in Sep'26",
+        "Capital Goods +21bps, Healthcare +19bps, Metals & Mining +16bps",
+        "Wipro, Infosys, TCS among top 5 stocks sold by MFs",
+        "Oil & Gas -2.0%, Metals & Mining -1.2% vs NSE500",
+        "IT CY26TD flows lowest at 0.3% of free-float mcap"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "I-Sec: Nifty50 at ~17x forward on ~15% FY27 EPS growth puts PEG near 1x, among the lowest in a decade.",
+      "source": "ICICI Securities — Strategy: Positive catalysts – India upgrades, PEG ~1x, receding AI euphoria and cooling US bond yields",
+      "received": "15:19",
+      "detail": {
+       "summary": "Falling US yields and fading AI-stock euphoria ease pressure on Indian equities, while growth forecasts for India have been upgraded unanimously. With the index flat for two years, the note argues cheap PEG and credible mid-teens earnings growth favour mean-reverting returns. Elevated crude remains the main risk.",
+       "points": [
+        "Q2FY27 Nifty50 PAT growth previewed at 22%; Q1FY27 ~14%",
+        "Nifty50 flat to negative since Sep'24; 5-year CAGR ~6%",
+        "Crude struggling to rise beyond USD 110/bbl; remains a risk",
+        "IMF, OECD, World Bank and RBI all upgraded India growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus: ~45% of coverage trades >1sd below its 5-year average valuation, ~13% above, after ~65% corrected over the past month.",
+      "source": "Avendus Spark — Avendus Spark Quant-Attentive: Valuation Summary | 16-Oct-2026",
+      "received": "11:54",
+      "detail": {
+       "summary": "Valuations across Avendus Spark's coverage have de-rated alongside price corrections, leaving a large share well below their own history. The mail lists the highest-corrected BUY-rated names over three months, but the filterable detail sits in the attached spreadsheet.",
+       "points": [
+        "~45% of coverage >1sd below 5-year average valuation",
+        "~13% trades >1sd above 5-year average",
+        "~65% corrected over the past month, median -2.1%",
+        "~62% corrected over 1 year, median -7.7%",
+        "Top 3M corrected BUYs: Thermax, Aptus, Voltas, Eris, Birla Corporation"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Crompton 2QFY27 EBITDA Rs2bn beat Kotak ~8% (margin 9% vs 8.6%); EPS +1%, FV Rs350 (27x Dec-28E, from 29x), BUY.",
+      "source": "Kotak — [Kotak] Crompton Greaves Consumer (CMP: Rs216, FV: Rs350, BUY): Resilient performance",
+      "received": "19:33",
+      "detail": {
+       "summary": "Crompton beat on both topline and margin despite a tough backdrop. Price hikes, operating leverage and cost savings offset gross margin pressure from input inflation. Kotak made marginal forecast tweaks and rolled valuation forward, which trims the target multiple.",
+       "points": [
+        "Sales +18.2% yoy to Rs23bn, ~3.2% beat",
+        "EBITDA +24% yoy to Rs2bn; margin 9% vs KIE 8.6%",
+        "PBT +36% yoy to Rs1.7bn, ~13% beat",
+        "GM down 155bps yoy to 36.2% on RM inflation",
+        "Trades at 19x 1Y forward PE"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Crompton passed on ~80% of RM inflation via 14-15% price hikes (fans 17-18%); BLDC fans +40%, solar pumps slowing as PM KUSUM tapers.",
+      "source": "Kotak — [Kotak] Crompton Greaves Consumer (CMP: Rs216, FV: Rs350, BUY): Resilient performance",
+      "received": "19:33",
+      "detail": {
+       "summary": "Pricing actions are recovering most of the input-cost shock, with mix-adjusted gross margin flat over three quarters. Growth is led by BLDC fans, small appliances and exports, while e-commerce was held back by channel-profitability changes and solar pumps are cooling.",
+       "points": [
+        "Price hikes 14-15% across most segments; lighting lower",
+        "SDA grew 20%+; exports grew over 70%",
+        "LKA losses historically Rs160-250mn, to be subsumed under Butterfly",
+        "ECD margin +100bps yoy to 11.6%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous",
+   "Steel",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX -3.83%, AMD -5.95%, Broadcom -4.52%, TSMC ADR -2.28%, Nvidia -1.43%; Nasdaq -2.15% in the Fri 16 Oct US close (no session since).",
+    "source": "Yahoo closes"
+   },
+   {
+    "text": "I-Sec strategy flags receding AI euphoria and cooling US yields as a tailwind for Indian equities.",
+    "source": "ICICI Securities — Strategy: Positive catalysts – India upgrades, PEG ~1x, receding AI euphoria and cooling US bond yields"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Deutsche Bank raised its price target to $209 from $200 (MT Newswires, 16-Oct)"
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
