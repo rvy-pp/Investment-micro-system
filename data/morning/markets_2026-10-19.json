@@ -1,0 +1,220 @@
+{
+ "date": "2026-10-19",
+ "fetched_at": "2026-10-19T08:11:36",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-16",
+    "close": 7659.44,
+    "prev_date": "2026-10-15",
+    "chg_pct": -1.09
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-16",
+    "close": 26140.03,
+    "prev_date": "2026-10-15",
+    "chg_pct": -2.15
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-16",
+    "close": 52002.41,
+    "prev_date": "2026-10-15",
+    "chg_pct": -0.34
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-16",
+    "close": 11137.29,
+    "prev_date": "2026-10-15",
+    "chg_pct": -3.83
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-16",
+    "close": 214.13,
+    "prev_date": "2026-10-15",
+    "chg_pct": -1.43
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-16",
+    "close": 528.75,
+    "prev_date": "2026-10-15",
+    "chg_pct": -5.95
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-16",
+    "close": 412.61,
+    "prev_date": "2026-10-15",
+    "chg_pct": -2.28
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-16",
+    "close": 328.75,
+    "prev_date": "2026-10-15",
+    "chg_pct": -4.52
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-16",
+    "close": 229.68,
+    "prev_date": "2026-10-15",
+    "chg_pct": 2.12
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-16",
+    "close": 66.03,
+    "prev_date": "2026-10-15",
+    "chg_pct": 0.4
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Q4 Results Reinforce AI Bookings And Margin Progress",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-18 02:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-q4-results-reinforce-021317939.html"
+   },
+   {
+    "title": "Why Did Accenture Stock Jump?",
+    "publisher": "Trefis",
+    "when": "2026-10-17 02:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-did-accenture-stock-jump-020214844.html"
+   },
+   {
+    "title": "Deutsche Bank Adjusts Price Target on Accenture to $209 From $200",
+    "publisher": "MT Newswires",
+    "when": "2026-10-16 14:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-140903444.html"
+   },
+   {
+    "title": "Accenture Just Capped Employees\u2019 Claude Spending at $29 a Month. Some Were Spending $1,000",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-16 13:27Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-just-capped-employees-claude-132727075.html"
+   },
+   {
+    "title": "Accenture's $8B Acquisition Push: A Growth Catalyst for ACN Stock?",
+    "publisher": "Zacks",
+    "when": "2026-10-16 11:54Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accentures-8b-acquisition-push-growth-115400359.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Should Client Wins Require Action From Cognizant Stock Investors?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-17 04:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/client-wins-require-action-cognizant-042501830.html"
+   },
+   {
+    "title": "Deutsche Bank Adjusts Price Target on Cognizant Technology Solutions to $75 From $70",
+    "publisher": "MT Newswires",
+    "when": "2026-10-16 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-133739171.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "This Is AMD's Biggest Hurdle in an AI Sell-Off (and No, It's Not Nvidia)",
+    "publisher": "Motley Fool",
+    "when": "2026-10-19 01:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amds-biggest-hurdle-ai-sell-012000118.html"
+   },
+   {
+    "title": "Here\u2019s What a $10,000 Investment in Nvidia Stock Will Be Worth by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-10-19 01:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/10-000-investment-nvidia-stock-010602849.html"
+   },
+   {
+    "title": "The Bond Market Is Sending a Warning to Nvidia Shareholders",
+    "publisher": "Motley Fool",
+    "when": "2026-10-18 22:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bond-market-sending-warning-nvidia-223000334.html"
+   },
+   {
+    "title": "NVIDIA And 2 Other Fast Growing Stocks To Own",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-18 22:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-2-other-fast-growing-220935780.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Nine Companies, Including Broadcom and Verizon, Object to Their Shares Being Tokenized. Can They Stop It?",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-18 18:30Z",
+    "link": "https://finance.yahoo.com/markets/crypto/articles/nine-companies-including-broadcom-verizon-183029161.html"
+   },
+   {
+    "title": "What Does Broadcom (AVGO) Face As AI Chip Supply Turns Into A Bottleneck?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-18 16:09Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/does-broadcom-avgo-face-ai-160933871.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Went Nowhere for a Year. Analysts Think It Is Worth 50% More",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-18 14:34Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-went-nowhere-analysts-143448009.html"
+   },
+   {
+    "title": "Own VGT? Here's How Much of It Is Really Nvidia, Apple, Microsoft, and Broadcom.",
+    "publisher": "Motley Fool",
+    "when": "2026-10-18 13:28Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/own-vgt-heres-much-really-132800227.html"
+   },
+   {
+    "title": "$3,000 Split Across Nvidia, Broadcom, and TSMC Could Be Worth This Much by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-10-18 00:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/3-000-split-across-nvidia-002000514.html"
+   },
+   {
+    "title": "Jim Cramer Sees a Telling Change in Broadcom\u2019s (AVGO) Stock",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-17 22:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-sees-telling-change-223540159.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23125.0,
+  "chg_pct": 0.26,
+  "stamp": "19-Oct-2026 08:10:32",
+  "expiry": "27-Oct-2026",
+  "volume": 1529,
+  "nifty_close": {
+   "close": 23146.15,
+   "stamp": "16-Oct-2026 15:30"
+  },
+  "gap_pts": -21.2,
+  "gap_pct": -0.09
+ }
+}

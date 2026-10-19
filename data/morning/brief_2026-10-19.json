@@ -1,0 +1,254 @@
+{
+ "date": "2026-10-19",
+ "generated_at": "2026-10-19T08:10:55+05:30",
+ "mail": {
+  "window": "24h to 08:05 IST",
+  "n_scanned": 75,
+  "sectors": [
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "India Cements 2QFY27 EBITDA/t fell to Rs510 from Rs604 QoQ on fuel inflation despite volume +16% YoY; UltraTech OW, PT Rs14,700.",
+      "source": "Morgan Stanley — PULSE: Ultratech Cement Ltd: ICEM F2Q27 Results: Strong volume growth but cost inflation impacted margins",
+      "received": "20:46",
+      "detail": {
+       "summary": "The note covers UltraTech's subsidiary India Cements. Volume and realisation held up, but opex/t rose, led by fuel costs tied to the Middle East conflict, so margins fell QoQ. MS awaits the 19-Oct call for the cost-inflation impact.",
+       "points": [
+        "Domestic volume ~2.8mnt, +16% YoY vs +18% last quarter",
+        "Calculated realisation Rs4,035/t, +2.1% QoQ; reported Rs3,798/t, -1.3%",
+        "Opex/t Rs3,526 vs Rs3,348; fuel ~Rs1,143/t, +9% QoQ",
+        "Petcoke share of fuel 16% vs 22% in 1Q and 48% in 4QFY26",
+        "EBITDA Rs1.4bn vs Rs1.6bn; PAT Rs388mn vs Rs269mn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara prefers Shree Cement among large-caps; Shree and Ambuja at decade-low EV/tonne, all coverage below five-year lows.",
+      "source": "Elara — Cement - Looking beyond near-term headwinds",
+      "received": "11:38",
+      "detail": {
+       "summary": "Elara argues that depressed EV/tonne valuations, with multiples distorted by uncertain fuel-cost normalisation, call for judging value on normalised earnings. It uses five-year average EBITDA/tonne and FY29E volumes for this. It recommends gradual accumulation for long-term investors given near-term margin pressure.",
+       "points": [
+        "All covered cement stocks below five-year EV/tonne lows in INR",
+        "Shree, Star, Birla Corp and Ambuja at decade-low valuation",
+        "Shree top large-cap pick; Birla Corporation top small-cap pick",
+        "Margin pressure from petcoke and coal may last through Q3FY27",
+        "Earnings estimates unchanged; to be revisited after Q2FY27 results"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara sees FY27E cement demand +8% vs ~6% in FY26, but 132mn t capacity adds over FY27-29E keep utilization flat at ~72-73%.",
+      "source": "Elara — Cement - Looking beyond near-term headwinds",
+      "received": "11:38",
+      "detail": {
+       "summary": "Demand should accelerate on government housing and infrastructure spend, but supply growth absorbs the gain. Oversupply risk is concentrated in West and Central India, while North is better placed. Elevated fuel costs could prompt further price hikes, and Elara sees early signs of reduced competition.",
+       "points": [
+        "Demand growth ~8% in FY27E vs ~6% in FY26",
+        "Nameplate additions 132mn t over FY27-29E",
+        "Effective capacity ~662mn t in FY26 to ~819mn t in FY29E",
+        "Utilization flat at ~72-73%; West and Central most exposed",
+        "Organized real estate demand to stay relatively subdued"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTM 2QFY27 deal TCV fell 25% qoq to US$1.26bn, book-to-bill 1x against the usual 1.3-1.4x; Kotak keeps SELL, FV Rs4,200 on rollover.",
+      "source": "Kotak — [Kotak] LTM (CMP: Rs4,390, FV: Rs4,200, SELL): An uneventful quarter",
+      "received": "07:41",
+      "detail": {
+       "summary": "Kotak says the print was in line on revenue and slightly light on margin. The weak TCV reflects a shift to short-tenure AI deals and fewer large deals, which hurts the growth-acceleration case. Without consistent large-deal wins, top-account growth and Randstad synergies, it sees no basis for a re-rating.",
+       "points": [
+        "Revenue US$1,235mn, +1.1% qoq cc, +5.1% yoy cc",
+        "EBIT margin 15.6%, 20bps below KIE; net profit Rs14bn, -2.2% vs est",
+        "Business AI US$166mn, 13.4% of revenue, +40% yoy",
+        "Management guides 3Q and 4Q sequential growth above 2Q",
+        "FV on unchanged 18x, rolled to Sep-2028E EPS"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Middle East exposure cost LTM about 1.5% yoy of its 5.1% cc growth; BofA cuts FY27E EPS 4% for FX losses, PO Rs3,910 unchanged.",
+      "source": "BofA — LTM IN: LTM: Modest Q2 as the mid-East weighs - UNDERPERFORM - India",
+      "received": "20:48",
+      "detail": {
+       "summary": "BofA treats Q2 as in line, with the Middle East as the swing factor. It expects growth to stay near 5% for the rest of the year because of deal-win trends and the outlook for large customers. It sees the new investment plan paying off two to three years out, with profit sacrificed for growth and AI participation.",
+       "points": [
+        "Q2 revenue +1.1% qoq, +5.1% yoy cc",
+        "Middle East impact estimated at 1.5% yoy",
+        "Deal wins -25% qoq, -21% yoy on AI-focused incentives",
+        "FY27E EPS cut 4%; FY28-29E EPS largely unchanged",
+        "Underperform reiterated, PO Rs3,910 against price Rs4,390"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LTM management says 60-70% of its book has been through productivity pass-through, so deflation is largely absorbed; Morgan Stanley stays Equal-weight, PT Rs4,520.",
+      "source": "Morgan Stanley — LTM Limited: Meeting with Management – Key Takeaways (+5 more in Outlook)",
+      "received": "06:50",
+      "detail": {
+       "summary": "Morgan Stanley liked management's confidence in growth momentum, though it notes that sustaining it may need continued investment. Management says enterprises are entering the deployment phase of Gen AI, with projects coming in short sprints that convert to revenue faster. Sales incentives now favour AI-native services.",
+       "points": [
+        "60-70% of the book refreshed through productivity pass-through",
+        "Gen AI deployment seen faster than the cloud cycle",
+        "Large-deal pricing may be irrational; scope to improve",
+        "Outcome-based contracts add revenue productivity, but no hockey-stick growth",
+        "Equal-weight, PT Rs4,520"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "India September CPI jumped to 5.5% from 4.8% on 7.7% food inflation; UBS sees repo reaching 6% after Friday's 25bp hike.",
+      "source": "UBS — Hi Rajvaibhav UBS India: what's trending in India's macro",
+      "received": "07:06",
+      "detail": {
+       "summary": "Inflation is broadening beyond food, with core also firming, so UBS expects headline above 5.5% for three straight quarters. The RBI has moved to calibrated tightening and real rates are set to turn negative, which UBS argues forces further hikes.",
+       "points": [
+        "Headline CPI 5.5% YoY vs 4.8% in August",
+        "Food inflation 7.7% vs 6.0%; core 4.3% vs 4.1%",
+        "Repo hiked 25bp to 5.5%; stance now calibrated tightening",
+        "UBS expects 75bp cumulative hikes, repo to 6%",
+        "FY27 GDP forecast raised 20bp to 7.2%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA FMS shows biggest Tech overweight since Aug-2020 but long-semis crowding fell to 45% from 82%; 30% now expect an AI capex cut.",
+      "source": "BofA — BofA Global Research: Must Read Research This Week",
+      "received": "21:48",
+      "detail": {
+       "summary": "Positioning is still stretched into AI and short the consumer, though extremes have cooled. 37% say a 6% 10-year yield would trigger a shift out of equities, and Hartnett stays risk-off until the US midterms, with oil below $80 as the bullish wildcard.",
+       "points": [
+        "Net 47% expect a macro boom, most since Feb-2022",
+        "Consumer Discretionary underweight deepest since July 2008",
+        "AI capex-cut expectation 30% vs 14% last month",
+        "37% flag 6% 10-year yield as equity-exit trigger",
+        "Cash at 3.9%; little dry powder left"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nasdaq 100 fell 2.50% on Friday and WTI rose 3.21% to $108.13, with UST 10-year at 5.08%; a hostile global tape for India.",
+      "source": "Citi Velocity — Your Monday Morning Flash from Citi Velocity (+2 more in Outlook)",
+      "received": "04:39",
+      "detail": {
+       "summary": "The Citi snapshot shows risk-off in US tech, with oil rising and the 10-year yield above 5%, while Europe and Australia held up. Higher crude and US yields compound India's inflation and rate worries.",
+       "points": [
+        "S&P 500 -1.09% on the day, -1.95% on the week",
+        "Nasdaq 100 -2.50%, -5.49% on the week",
+        "WTI $108.13, +9.57% on the week",
+        "UST 10-year 5.079%; Gold $4,186",
+        "Nikkei -5.37% on the week; Hang Seng +0.52%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "ICICI Bank 2Q earnings +20% yoy on ~30% loan growth despite NIM -20bps qoq to 4.2% on FCNR; Kotak holds BUY, FV Rs1,800.",
+      "source": "Kotak — [Kotak] ICICI Bank (CMP: Rs1,397, FV: Rs1,800, BUY): Exceptional results, exceptional execution",
+      "received": "15:28",
+      "detail": {
+       "summary": "Kotak argues ICICI's lead over peers is widening, with growth coming without aggressive lending in riskier segments. FCNR deposits dented NIM, but credit cost and slippages stayed low. Estimates raised on execution and the rate cycle; FV unchanged.",
+       "points": [
+        "Earnings +20% yoy; loans +30% yoy (~25% ex-FCNR)",
+        "NIM 4.2%, -20bps qoq; CASA ratio 36%",
+        "Credit cost 0.2%, gross slippages 1.2%, RoE 17%",
+        "Valued at ~2.5x book, ~17x Sep FY28E EPS",
+        "Subsidiaries valued at ~Rs315/share"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HDFC Bank 2Q earnings only +5% yoy with NIM -10bps qoq to 3.2%; Kotak holds BUY, FV Rs1,050, but sees leadership transition delaying re-rating.",
+      "source": "Kotak — [Kotak] HDFC Bank (CMP: Rs729, FV: Rs1,050, BUY): A new chapter begins, but the challenges remain familiar",
+      "received": "14:18",
+      "detail": {
+       "summary": "Kotak sees little sign of underlying improvement: NIM compression continues and the loan mix does not yet support margin expansion. Kaizad Bharucha's exit came sooner than expected, leaving Anup Bagchi with a young team. A durable re-rating needs clarity on execution.",
+       "points": [
+        "Earnings +5% yoy; provisions +2% yoy",
+        "Loans +16% yoy, deposits +19% yoy",
+        "CASA ratio ~32%, down ~70bps qoq",
+        "Slippages 0.8%, credit cost 0.5%, RoE 13%",
+        "FV at 2x book, ~15x Sep FY28E EPS"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Axis Bank 2Q PAT Rs70bn missed consensus as opex jumped 11% qoq; PhillipCapital cuts FY28E EPS 5.5%, holds BUY, TP Rs1,540 (from Rs1,550).",
+      "source": "PhillipCapital — Axis Bank (AXSB IN) - Margin Compression, Higher Opex Drive Earnings Miss (+40 more in Outlook)",
+      "received": "16:15",
+      "detail": {
+       "summary": "PhillipCapital says margin contraction and elevated opex hurt core profitability, with lower provisions cushioning PAT. Wholesale advances and bulk deposits remain structural drags. It expects a gradual margin recovery, helped by rate hikes from Q4FY27.",
+       "points": [
+        "PAT Rs70bn, +37.6% yoy, -1.6% qoq",
+        "NII Rs153.7bn; Global NIM -10bps qoq, ~11bps FCNR hit",
+        "Opex +11% qoq on labour code and one-offs",
+        "Credit cost 47bps vs 66bps in Q1FY27",
+        "FY27E/FY28E EPS cut 5.0%/5.5%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "Mining",
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX -3.83%, AMD -5.95%, Broadcom -4.52%, TSMC ADR -2.28%, Nvidia -1.43% in Friday's US close; Nasdaq 100 -5.49% on the week.",
+    "source": "Yahoo closes; Citi Velocity — Your Monday Morning Flash"
+   },
+   {
+    "text": "BofA FMS: long semis still the most crowded trade but down to 45% from 82% in July; 30% now expect an AI capex cut.",
+    "source": "BofA — BofA Global Research: Must Read Research This Week"
+   },
+   {
+    "text": "LTM Business AI revenue US$166mn, 13.4% of sales, +40% yoy, ~141% of 2QFY27 incremental growth.",
+    "source": "Kotak — [Kotak] LTM (CMP: Rs4,390, FV: Rs4,200, SELL): An uneventful quarter"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Deutsche Bank raised its price target to $209 from $200 (MT Newswires, 16-Oct)"
+   },
+   {
+    "name": "Cognizant",
+    "reason": "Deutsche Bank raised its price target to $75 from $70 (MT Newswires, 16-Oct)"
+   }
+  ]
+ }
+}
