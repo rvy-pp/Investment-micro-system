@@ -1,0 +1,393 @@
+{
+ "date": "2026-10-20",
+ "generated_at": "2026-10-20T08:14:14+05:30",
+ "mail": {
+  "window": "24h to 07:40 IST",
+  "n_scanned": 106,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "HZL 2Q EBITDA Rs92.4bn (+15% QoQ) beat; FY27 zinc CoP guide cut to $825-850/t from $975-1,000/t, but CLSA sees $950-1,000 as acid normalises.",
+      "source": "CLSA — Vedanta (VEDL IS): HZL: 2QFY27 ahead of estimates",
+      "received": "18:19",
+      "detail": {
+       "summary": "The beat came from by-product realisations, mainly sulphuric acid, rather than structural cost savings. CLSA expects the CoP benefit to fade as acid prices normalise, so the guidance cut flatters the run-rate.",
+       "points": [
+        "Zinc CoP $703/t, -17% QoQ, -29% YoY",
+        "Refined volume guide held at 1.1mt; silver 173t, +16% QoQ",
+        "Hedges: 40kt/36kt zinc at $3,476/$3,698/t for 3Q/4Q",
+        "Debari smelter expansion on track for 2QFY29",
+        "Capex guide $500-600m; Rs27bn spent in 1H"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM sees aluminium ending 2027 near $2,700/t on a ~1mt surplus; investors bearish, Hindalco interest limited, some long-only interest in VAML, hedge funds bearish on HNDL.",
+      "source": "JPM — India Metals: Investor feedback from SG/HK – India steel preferred; coal looking peakish; no love for aluminum",
+      "received": "12:43",
+      "detail": {
+       "summary": "After ~40 investor meetings, aluminium drew the most consensus negative feedback, driven by Indonesian, Chinese and Middle East supply. Positioning is light, so sentiment is bearish but not crowded. Hindalco concerns centre on debt if LME falls sharply and Midwest premium risk.",
+       "points": [
+        "Indonesia exports ~1.5mt annualised Jul-Aug vs ~600kt 2025 average",
+        "Indonesia supply seen near ~2.5mt in 2027",
+        "Global demand growth 2.7% in 2027 vs faster supply growth",
+        "Some long-only investors asked about LME at $2,400/t cost-curve levels",
+        "Middle East supply ~90% of pre-conflict run rate by 2Q27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME aluminium 3M closed $3,008/t, -1.6% w/w after touching $2,954; MCX Oct fell over 3% to Rs324.95/kg on weakening sentiment.",
+      "source": "Emkay — Base Metals Market Report: Aluminium attempts to stabilize after sharp correction, demand remains the key (+2 more in Outlook)",
+      "received": "13:29",
+      "detail": {
+       "summary": "Aluminium bounced late on oversold conditions but stayed below the prior close of $3,057/t. A $2/t contango and rising Chinese exports point to limited immediate tightness, while MCX and SHFE falling together signals weak sentiment.",
+       "points": [
+        "LME inventories 237,875t; cash-3M $2/t contango",
+        "SHFE closed RMB23,315/t, -1.5% w/w, backwardation ~RMB300/t",
+        "Rotterdam duty-paid premium $550-585/t on 13-Oct",
+        "DXY surged to 102.94 on US CPI 3.7%, eased to 101.78",
+        "75% odds of Fed hold at 27-28 Oct meeting"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "IIFL: rebar Rs64,300/t passes HRC Rs63,700/t; flats spread 40-month high; upsides SAIL 40%, Tata 42%, JSPL 29%, JSW 18%.",
+      "source": "IIFL — [IIFL Metals] India Steel - Longs prices move up further surpassing flats",
+      "received": "08:39",
+      "detail": {
+       "summary": "IIFL expects prices rangebound near term after sharp hikes, with HRC near import parity. It reads China coking coal supply returning as a sign of peak coal cost, and sees mills passing lower coal through with a lag, keeping spreads elevated in a strong 2H.",
+       "points": [
+        "Rebar +Rs500/t w-w; HRC -Rs1,000/t w-w",
+        "Longs +Rs1,400/t in Oct; flats unchanged",
+        "Coking coal -US$4/t in Oct to US$268/t",
+        "Sep finished steel demand +8% y-y; production +2%",
+        "Stocks diverge on risk-off; weakness a buying opportunity"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM: Singapore/HK investors rank JSW Steel > SAIL > Tata; JSW is JPM's India top pick; some fear early safeguard-duty removal.",
+      "source": "JPM — India Metals: Investor feedback from SG/HK – India steel preferred; coal looking peakish; no love for aluminum",
+      "received": "12:43",
+      "detail": {
+       "summary": "Of ~40 investors met, India steel was the most preferred sector. Recent stock underperformance is put down to a slight 2Q EBITDA/t decline as price spills into 3Q, and worries about safeguard duty or export duty on inflation concerns. Most think intervention is unlikely.",
+       "points": [
+        "Pecking order: JSW > SAIL, then Tata, Jindal Steel (not covered)",
+        "Draft National Steel Plan targets ~600MT capacity by 2047",
+        "HRC and rebar seen firm into Nov-Mar peak season",
+        "Aluminium sentiment most bearish; VAML (not covered) has long-only interest"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama: HRC-Patra spread widens 8.6% w-w to Rs14,992/t versus 3-month average Rs12,091/t; negative for low-end HRC pipe makers like APL Apollo.",
+      "source": "Nuvama — HRC-Patra spread widens by 8.6% WoW to INR 14,992/ton (+2 more in Outlook)",
+      "received": "08:30",
+      "detail": {
+       "summary": "HRC slipped while Patra fell faster, so the spread over the pipe input blew out. Nuvama flags the wide spread as a squeeze for HRC-based pipe makers, particularly in the low-end segment.",
+       "points": [
+        "HRC -0.7% w-w to Rs64,550/t",
+        "Patra -3.2% w-w to Rs49,558/t",
+        "Spread above 3-month average of Rs12,091/t",
+        "HRC +14% over 3 months; Patra +10%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "UltraTech 2Q EBITDA/t Rs974 vs Rs1,214 in 1Q (-20% QoQ), EBITDA Rs37.2bn in line; volumes +14% YoY vs industry ~10%, PAT Rs14.9bn missed.",
+      "source": "Avendus — Ultratech Cement 2QFY27 Results Snapshot – In-line performance; EBITDA/t of Rs.975 declining Rs.240/t Q-o-Q",
+      "received": "15:13",
+      "detail": {
+       "summary": "The quarter was in line at EBITDA but low quality: volume strength was offset by an 8% QoQ jump in cost per tonne while grey realisation slipped 1%. Net profit came in below both Avendus's own estimate and Bloomberg consensus.",
+       "points": [
+        "EBITDA/t Rs974 vs Rs914 YoY, Rs1,214 QoQ",
+        "Costs/t Rs5,124, +8% QoQ, +5% YoY",
+        "Realisations/t Rs6,098, +2% QoQ; grey -1% QoQ",
+        "PAT Rs14,938mn vs BBG Rs16,041mn",
+        "Net debt Rs235.4bn vs Rs166.2bn in Mar-26"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Spot prices run ~5% above 2Q average, but houses split on targets: IIFL FV Rs15,000 (from 14,000), BofA Rs13,900, CLSA cut to Rs13,000.",
+      "source": "IIFL — Ultratech Cement 2QFY27 update - Steady 2Q, stronger 2H ahead - Raise estimates and Maintain BUY",
+      "received": "22:36",
+      "detail": {
+       "summary": "Management's pricing-led 2H recovery is being read very differently: IIFL raises numbers on the optimism, while CLSA cuts on cost and wants proof that hikes stick. BofA sees 4QFY27 EBITDA/t near Rs1,200 with post-festive price absorption the key watch.",
+       "points": [
+        "IIFL FY27-29 EBITDA +6-8%; fair value 18x 2YF EBITDA",
+        "CLSA FY27-29 EBITDA cut 3-7%, TP from Rs14,000",
+        "BofA EPS +3%, 4QFY27 EBITDA/t ~Rs1,200",
+        "Management FY28 exit EBITDA/t Rs1,400 if fuel stable",
+        "Emkay TP Rs13,200 (+2%), MS Overweight Rs14,700"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UltraTech net debt rose to Rs235bn from Rs166bn in Mar-26 (1.3x EBITDA) on dividend and capex; management expects below 1x by Mar-27.",
+      "source": "Emkay — UltraTech Cement: In-line show; safe bet amid volatile scenario; BUY; Target: Rs13,200 (+4 more in Outlook)",
+      "received": "23:18",
+      "detail": {
+       "summary": "Emkay calls the quarter in line and keeps UltraTech its top pick, arguing the stock at ~14x 1YF EV/EBITDA sits at Russia-Ukraine trough levels. The balance sheet stretch is dividend-funded borrowing, not an operating problem.",
+       "points": [
+        "H1 OCF Rs69bn vs capex Rs57bn, FCF ~Rs12bn",
+        "Rs70bn dividend funded by ~Rs54bn fresh borrowing",
+        "FY27 capex guidance ~Rs100bn; 240mtpa by FY28-end",
+        "Ultravolt: Rs11bn spent, Rs7bn more by year-end",
+        "TP raised ~2% to Rs13,200 at 17x Sep-28E"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "JPM: investors neutral-to-negative on Coal India; 5.5% FY27 production growth should clear inventory, and Mahanadi Coalfields IPO caps re-rating.",
+      "source": "JPM — India Metals: Investor feedback from SG/HK – India steel preferred; coal looking peakish; no love for aluminum",
+      "received": "12:43",
+      "detail": {
+       "summary": "After ~40 investor meetings in HK/Singapore, JPM finds most agree coal looks peakish, with Indonesia and China supply ramping in Oct/Nov. Coal India drew neutral-to-slightly-negative sentiment, and the subsidiary IPO adds a re-rating worry.",
+       "points": [
+        "5.5% FY27 production growth seen enough to fix India inventory",
+        "Mahanadi Coalfields IPO filed; highest PAT margin among COAL subsidiaries in FY26",
+        "Indonesia 2026 RKAB revised from 600mt to 720mt",
+        "Newcastle +2%, Indonesian low-CV +8% since early September",
+        "Interest skewed to Indonesian coal names on dividend yield"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coal India sell-off risk flagged if October production, e-auction premium or 2Q dividend yield disappoint; investors are tracking all three.",
+      "source": "JPM — India Metals: Investor feedback from SG/HK – India steel preferred; coal looking peakish; no love for aluminum",
+      "received": "12:43",
+      "detail": {
+       "summary": "JPM says investor positioning on Coal India hinges on near-term prints rather than structure. Any shortfall in these datapoints could trigger selling, given the lack of re-rating catalysts.",
+       "points": [
+        "October production and e-auction print being monitored",
+        "Dividend yield during 2Q earnings is the second test",
+        "Coal India among most discussed Indian names with JSW Steel, SAIL, Exide",
+        "Interest in India coal names lower than Indonesian peers"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM ranks Dixon (OW) > Amber (OW) > Kaynes (N) > Syrma, Avalon, Cyient DLM (UW), arguing ROCE must be baked into EMS multiples.",
+      "source": "JPM — India EMS: Revisiting the growth vs PE vs ROCE argument post Cyient DLM stock correction",
+      "received": "01:05",
+      "detail": {
+       "summary": "JPM argues EMS is capex-intensive and high-NWC, so among names with similar earnings growth, premium P/Es belong to higher-ROCE ones. The market turns to ROCE after earnings misses, growth slowdowns and high NWC, as it did late last year with Kaynes.",
+       "points": [
+        "EMS stocks down 6-22% over last month vs Nifty -2%",
+        "Cyient DLM/Avalon/Syrma down 22%/17%/10%",
+        "Dixon stands out on FY26-28E EPS CAGR and FY28 ROCE",
+        "Prefers high ROCE, high growth at lower PE"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cyient DLM fell 27% in two sessions on 2Q revenue and margin miss and FY27 margin guidance cut; JPM puts the FY27 EBITDA cut at 12%.",
+      "source": "JPM — India EMS: Revisiting the growth vs PE vs ROCE argument post Cyient DLM stock correction",
+      "received": "01:05",
+      "detail": {
+       "summary": "The stock had run 148% YTD against Nifty down 12%, so a modest earnings cut produced a more than 2x price correction. JPM thought its premium to Dixon was unjustified given lower earnings growth and ROCE.",
+       "points": [
+        "27% fall in two sessions vs Nifty flat",
+        "Up 148% YTD before the print",
+        "12% FY27 EBITDA cut",
+        "Traded at premium to Dixon despite lower growth and ROCE",
+        "JPM rates it UW"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTTS 2Q27 beat: CC revenue +2.7% QoQ, EBIT margin 16.3%, 2H guided stronger; Emkay ADD TP Rs3,900, BofA Buy, MS Equal-weight.",
+      "source": "Emkay — L&T Technology Services: Strong all-around performance; expects 2H to be better than 1H; ADD; Target: Rs3,900",
+      "received": "23:40",
+      "detail": {
+       "summary": "LTTS beat on revenue and margin, with management guiding 2H above 1H on deal wins and a pipeline up over 25% YoY. Houses split on valuation: Emkay and BofA see upside, Morgan Stanley sees limited absolute upside after the beat.",
+       "points": [
+        "Revenue $317.1mn, +2.3% QoQ ($) and +2.7% CC",
+        "EBIT margin 16.3%, +60bps QoQ, above Emkay's 16.0%",
+        "Large deal TCV $203mn; AI-led deals 50% of wins",
+        "Emkay TP Rs3,900 (from 3,800); BofA PO Rs4,050; MS PT Rs3,610 EW",
+        "Weak cash conversion: OCF/EBITDA ~48%; Europe auto and Tech soft"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA's Kunal Tayal says ACN Investor Day (HSD growth from FY29) may justify closing IT shorts; call on 26 Oct after INFY results.",
+      "source": "BofA — IT services Bull-Bear - Oct 26: Short the bounce in IT Services or stay put? (+7 more in Outlook)",
+      "received": "17:31",
+      "detail": {
+       "summary": "BofA's invite frames the debate for the INFY result week. Its read-across from the Accenture Investor Day is that a case for growth acceleration exists, which could be reason enough to close out shorts. ACN's targets sit above Street.",
+       "points": [
+        "Zoom 26 Oct, 10:30am ET, Monday after INFY's Friday results",
+        "ACN targets HSD revenue growth from FY29 with margin expansion",
+        "ACN's target is more optimistic than Street",
+        "AI expands TAM via 20 new growth arenas",
+        "Enterprise AI Stack alone a $500b opportunity"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "SOX snapped an eight-day losing streak (+1.6%) on thin breadth; US 10Y at 5.14%, Brent $109.35, with META/SPCX earnings and the Oct 28 FOMC next.",
+      "source": "JPM — JPM Overnight Brief! 10/20 - Flows are generally quiet; Earnings Preview",
+      "received": "06:06",
+      "detail": {
+       "summary": "The US rebound was a technical bounce, not broad risk-on: 65% of S&P stocks fell and equal-weight lagged. Yields rose on an unwind of last week's bond rally and French unrest. The desk sees no real AI demand and flags META capital raising as the swing factor.",
+       "points": [
+        "S&P +0.4%, NDX +1.2%, equal-weight -0.3%",
+        "10Y 5.14%, 30Y 5.47%, +5-7bp",
+        "SOX 5-day -11% before the bounce",
+        "Brent $109.35; VIX 18.44",
+        "Fed blackout; FOMC Oct 28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MSCI Nov review on 11 Nov: Coforge (~$565mn, 9.1x ADV), MEESHO, LICI high-probability adds; PI and IPRU likely deletions.",
+      "source": "Kotak — [Kotak] MSCI November Rebalance Estimates (+6 more in Outlook)",
+      "received": "13:38",
+      "detail": {
+       "summary": "Kotak expects the MSCI announcement on 11 Nov, effective at the close of 30 Nov. Coforge, MEESHO and LICI are high-probability inclusions, but Coforge and LICI already look largely positioned. PI and IPRU are the likely deletions and remain well shorted.",
+       "points": [
+        "Coforge add: $565mn, 9.1x ADV, largely positioned",
+        "LICI add: $430mn, 5.4x ADV; MEESHO $262mn",
+        "PI delete $136mn (15.7x ADV); IPRU $145mn",
+        "Coforge 1M return 10%, 11% vs Nifty",
+        "Effective 1 Dec; cut-off this week"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak upgrades Ashok Leyland to BUY (FV Rs180 unchanged) and lifts FY27 M&HCV industry growth to 10-11% from 5-6%; TMCV stays BUY, FV Rs500.",
+      "source": "Kotak — Kotak daily: CVs - Stronger UPGD AL; Juniper initiate; ICICI shines",
+      "received": "08:47",
+      "detail": {
+       "summary": "Kotak raises its FY27 domestic M&HCV volume view after 1HFY27 growth of 23% in HGVs and 43% in MGVs. Fleet operators have passed on cost increases through freight rates, so it sees no stress. Commodity headwinds lead it to cut TMCV and AL EBITDA estimates 1-3%.",
+       "points": [
+        "FY27 M&HCV growth 10-11% vs 5-6% earlier",
+        "1HFY27 HGV +23%, MGV +43% YoY",
+        "Freight rates +3.5% since April vs diesel +9%",
+        "CV RM basket +25% vs 3QFY26; 3% price hike taken",
+        "TMCV and AL FY27-29 EBITDA cut 1-3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA: autos (4Ws especially) down 20-30% YTD; calls M&M at 16x F28 PE, AL and TMCV at 10-11x EV/EBITDA dislocated; 2W picks Bajaj, Ather.",
+      "source": "BofA — Autos - India: HK feedback: Plenty to debate, little to chase",
+      "received": "07:01",
+      "detail": {
+       "summary": "HK investors saw no urgency to turn long autos despite the correction, citing GST base effects, raw material inflation, crude and rural stress. BofA argues pessimism is priced in for 4Ws and a reversal in crude or metals could trigger a rebound. In 2Ws it prefers EV and exports.",
+       "points": [
+        "Autos down 20-30% YTD despite volume beats",
+        "M&M 16x F28 PE; AL, TMCV 10-11x EV/EBITDA",
+        "2W price hikes 3-5%, fuel +7-8%: affordability at pre-GST",
+        "PV price hikes 1.5-2%; 7-8% volume CAGR F27-29",
+        "Auto comps: prefers Bharat Forge"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Motors' EUR3.91bn Iveco takeover clears a key hurdle, with N. Chandrasekaran to chair Iveco.",
+      "source": "Kotak — Kotak Auto News: Tata Motors EUR3.91bn Iveco takeover clears key hurdle (+3 more in Outlook)",
+      "received": "09:10",
+      "detail": {
+       "summary": "Kotak's daily auto news digest links a Fortune India report that Tata Motors' EUR3.91bn Iveco takeover has cleared a key hurdle. N. Chandrasekaran will chair Iveco. The digest also covers launches and Bharat Forge capex in India.",
+       "points": [
+        "Iveco takeover EUR3.91bn clears key hurdle",
+        "N. Chandrasekaran to chair Iveco",
+        "Bharat Forge invests Rs2.4bn in KSSL",
+        "Bharat Forge Rs1.63bn for AEL ammunition facility",
+        "Royal Enfield Classic 650 Hypershift at Rs426k"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +1.61% on 19 Oct led by AMD +1.76%, AVGO +1.78%, TSMC ADR +1.84% and NVDA +1.38%.",
+    "source": "Market data, 2026-10-19"
+   },
+   {
+    "text": "GS upgraded CoreWeave to Buy on the share-price drop even as its bonds fell to ~75 cents, yields above 15%.",
+    "source": "GS Sales Note — AI series: Credits related to data centers and a higher cost of capital"
+   },
+   {
+    "text": "GS credit: HY datacenter bond prices slid from above $101 in June to ~$95; project finance issuance $106bn YTD vs $37bn in 2025.",
+    "source": "GS Sales Note — AI series: Credits related to data centers and a higher cost of capital"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
