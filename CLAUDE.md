@@ -141,7 +141,11 @@ the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
 The launcher still refreshes on every double-click; `launch\Install Daily
 Task.bat` (Windows Task Scheduler) remains written and unrun.
 
-**A second task, `vahan-afternoon`, runs at 13:00 (+ jitter: 13:13) daily**
+**RETIRED 2026-10-21 with the Auto tab — `vahan-afternoon` is PAUSED (not
+deleted) and the Overview no longer reads `vahan_status.json`.** The paragraph
+below is the history of what it did.
+
+**A second task, `vahan-afternoon`, ran at 13:00 (+ jitter: 13:13) daily**
 (PM, 2026-09-29: *"Lets do vahan update in the afternoon. Remove the process for
 daily-refresh... Make sure the front-end gets updated again in the afternoon and
 no error shows up in the morning"*). It only starts `packages/vahan_refresh.py
@@ -1878,7 +1882,31 @@ calls with correct quarter labels, and `price_story.py avalon --calls …`
 reproduces the published reactions, the three drawdown episodes and the
 commodity verdict exactly.
 
-## Auto — a READ tab, added 2026-09-19 with Ather Energy
+## Auto — a READ tab, added 2026-09-19 with Ather Energy — REMOVED 2026-10-21
+
+**PM, 2026-10-21: *"auto is no longer in coverage, remove auto tab and any link
+to coverage".*** Everything from here through the SIAM/Inventory section below
+describes a tab that no longer exists; it is kept for the findings, not as a
+description of the system. What was removed, and where it went:
+
+- `engine.SECTORS` `auto` entry, `engine.auto_share()`, `engine.auto_inventory()`,
+  `engine._vahan_run()`/`VAHAN_DUE` and the Overview's `vahan` warning; the
+  `/api/auto_share` and `/api/auto_inventory` routes (serve.py, the exporter,
+  its parity set, build_frontend); app.html's Inventory sub-tab, the Vahan
+  maker-share charts, the day-share flag and the channel-inventory bars.
+- `ather` and `eicher` are out of `yahoo_prices.CANDIDATES`/`EQUITIES` (no
+  fetch; stored closes stay in `prices`) and set `active = 0` in `entities`,
+  which is what keeps them off the Results roster. **Reactivate, don't
+  re-insert** — `INSERT OR IGNORE` will not flip `active` back.
+- The two dossiers MOVED to `data/companies_archive/` (not deleted). The
+  folder-list universe is `data/companies/*/dossier.json`, so moving a folder
+  is what takes a company off every sector's Company sub-tab.
+- The Claude Desktop task `vahan-afternoon` is PAUSED. `vahan.py`,
+  `vahan_share.py`, `siam_wholesale.py` and `vahan_refresh.py` stay on disk,
+  linked from nothing, and their tables keep their rows.
+- NOT removed, deliberately: `nifty_auto` in `flow_series` (a Flows India
+  evidence series, not Auto coverage) and `ATHERENERG-BL.NS` in
+  `yahoo_prices.REJECTED` (a note that stops a re-add).
 
 PM instruction: cover "Aether (the ev company)" and "create an auto tab also".
 The company is **Ather Energy (ATHERENERG, NSE; 544397, BSE)** — "Aether" is

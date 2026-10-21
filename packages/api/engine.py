@@ -382,161 +382,9 @@ def cement_watch() -> dict:
         conn.close()
 
 
-def auto_share() -> dict:
-    """Vahan maker share by segment for the Auto tab — 2W / PV / CV.
-
-    PM, 2026-09-23: *"in the auto tab, I need a graph for market share change
-    on a daily basis. Different for PV, 2 wheelers and CV. Only include fno
-    names in the graph lines, keep rest as others."*
-
-    TWO SERIES, AND THE PAGE MUST NOT BLUR THEM, because they have different
-    lengths for a reason that is not fixable:
-
-      `monthly` — share of each completed month. Long, available immediately,
-                  read at the LATEST capture so backdated revisions are
-                  reflected rather than frozen at first sight.
-      `daily`   — share of the running month-to-date, one point per capture.
-                  FORWARD-ONLY. Vahan publishes no daily granularity on the
-                  open API (see vahan_share.py: the report builder that does is
-                  CAPTCHA-gated), so a day's share simply did not exist before
-                  we started reading it. It cannot be backfilled, and on the
-                  first day it is a single point with no change to show.
-
-    The reason both are here: a chart carrying only `daily` would have been
-    empty on the day it was asked for, and a chart carrying only `monthly`
-    would not answer the question. `daily.has_change` is false until there are
-    two captures, and the page says which state it is in rather than drawing a
-    one-point line that reads as a flat market.
-
-    Others is DERIVED in vahan_share.shares() as total - sum(named), so the
-    lines always sum to 100% and every unlisted maker is inside it. Read
-    SEGMENTS[*]['note'] before interpreting a chart — on CV especially, where
-    Tata Motors sits in Others because its CV entity left F&O at the demerger.
-    """
-    import importlib.util as _u
-    try:
-        sp = _u.spec_from_file_location(
-            "_vs", REPO / "packages" / "adapters" / "vahan_share.py")
-        mod = _u.module_from_spec(sp)
-        sp.loader.exec_module(mod)
-    except Exception as e:
-        return {"state": "error", "segments": [],
-                "note": f"vahan share unavailable: {type(e).__name__}: {e}"}
-    conn = connect()
-    try:
-        caps = [r[0] for r in conn.execute(
-            "SELECT DISTINCT capture_date FROM vahan_share ORDER BY capture_date")]
-        if not caps:
-            return {"state": "no_data", "segments": [], "captures": 0,
-                    "note": "no Vahan capture yet — run "
-                            "packages/adapters/vahan_share.py --capture"}
-        cur = mod._recent_months(1)[0]      # the in-progress month
-        out = []
-        for seg, cfg in mod.SEGMENTS.items():
-            labels = list(cfg["fno"].keys()) + [mod.OTHERS]
-
-            # MONTHLY — each period at its most recent capture.
-            periods = mod._months_sorted({r[0] for r in conn.execute(
-                "SELECT DISTINCT period FROM vahan_share WHERE segment=?", (seg,))})
-            mseries = {k: [] for k in labels}
-            mtotal = []
-            for p in periods:
-                s = mod.shares(conn, seg, period=p)
-                mtotal.append(s.get("total") if s else None)
-                for k in labels:
-                    mseries[k].append(round(s["share_pct"][k], 3)
-                                      if s and k in s["share_pct"] else None)
-
-            # DAILY — the running month's MTD share, one point per capture.
-            dseries = {k: [] for k in labels}
-            dtotal = []
-            for cd in caps:
-                s = mod.shares(conn, seg, period=cur, capture_date=cd)
-                dtotal.append(s.get("total") if s else None)
-                for k in labels:
-                    dseries[k].append(round(s["share_pct"][k], 3)
-                                      if s and k in s["share_pct"] else None)
-
-            # THE MONTH-END FORECAST. Cheap now that the skew fit reads
-            # `vahan_share` rather than the network (~0.3s for all three), so
-            # it rides on this route rather than a second one — the
-            # cement_watch precedent, and a new route would have to be added
-            # to export_static.py or the vault copy would render it empty.
-            try:
-                fc = mod.forecast(conn, seg)
-            except Exception as e:                      # noqa: BLE001
-                fc = {"state": "error", "note": f"{type(e).__name__}: {e}"}
-
-            out.append({
-                "id": seg, "label": cfg["label"], "note": cfg["note"],
-                # MHCV draws no residual line (PM). The share arithmetic still
-                # uses the FULL segment as its denominator, so the drawn lines
-                # deliberately do not sum to 100 — suppressing the line must
-                # not quietly rebase the others onto a smaller universe.
-                "no_others": bool(cfg.get("no_others")),
-                "forecast": fc,
-                "fno": [{"label": k, "symbol": v[0]} for k, v in cfg["fno"].items()],
-                "others_label": mod.OTHERS,
-                "monthly": {"periods": periods, "series": mseries,
-                            "total": mtotal, "current": cur},
-                "daily": {"dates": caps, "series": dseries, "total": dtotal,
-                          "month": cur, "has_change": len(caps) > 1},
-            })
-        return {"state": "live", "segments": out, "captures": len(caps),
-                "first_capture": caps[0], "last_capture": caps[-1],
-                "current_month": cur}
-    except Exception as e:
-        return {"state": "error", "segments": [],
-                "note": f"vahan share failed: {type(e).__name__}: {e}"}
-    finally:
-        conn.close()
-
-
-def auto_inventory() -> dict:
-    """Channel inventory flow for the Auto tab: SIAM wholesale minus Vahan retail.
-
-    PM, 2026-09-25: "Create a subtab ... for inventory tracking as frequent as
-    the data gets for whatever granularity is available."
-
-    MONTHLY, PV AND 2W, AND THAT IS THE FLOOR THE DATA SETS. Wholesale arrives
-    once a month from SIAM, ~15 days after month end; retail is daily but a
-    daily flow needs a daily wholesale, which does not exist anywhere free. CV
-    is absent because SIAM publishes no monthly CV; 3W because Vahan's count is
-    dominated by e-rickshaw makers who are not SIAM members.
-
-    FLOW, NOT A LEVEL. Each month's `net` is what went into (or out of) dealer
-    stock. There is deliberately NO running cumulative: retail includes makers
-    SIAM does not (Ola Electric ~8-16k/month), so every month reads slightly low
-    and a cumulative would drift ~150k a year into apparent destocking that did
-    not happen. The monthly flow is 1-2% biased; the cumulative would be wrong.
-    """
-    import importlib.util as _u
-    try:
-        sp = _u.spec_from_file_location(
-            "_sw", REPO / "packages" / "adapters" / "siam_wholesale.py")
-        mod = _u.module_from_spec(sp)
-        sp.loader.exec_module(mod)
-    except Exception as e:
-        return {"state": "error", "segments": [],
-                "note": f"channel unavailable: {type(e).__name__}: {e}"}
-    conn = connect()
-    try:
-        segs = []
-        labels = {"2W": "Two-wheelers", "PV": "Passenger vehicles"}
-        for seg in ("2W", "PV"):
-            ch = mod.channel(conn, seg)
-            segs.append({"id": seg, "label": labels[seg], "months": ch})
-        latest = max((c["months"][-1]["period"] for c in segs if c["months"]),
-                     key=mod._key, default=None)
-        if not any(c["months"] for c in segs):
-            return {"state": "no_data", "segments": segs,
-                    "note": "no SIAM wholesale or Vahan retail stored yet"}
-        return {"state": "live", "segments": segs, "latest": latest}
-    except Exception as e:
-        return {"state": "error", "segments": [],
-                "note": f"channel failed: {type(e).__name__}: {e}"}
-    finally:
-        conn.close()
+# auto_share() and auto_inventory() (Vahan maker share, SIAM channel
+# inventory) were REMOVED 2026-10-21 with the Auto tab — PM: "auto is no
+# longer in coverage". The adapters stay on disk, linked from nothing.
 
 
 # ---------------------------------------------------------------------------
@@ -745,63 +593,7 @@ SECTORS = [
             "IT ER&D":      ["kpit", "tata_elxsi", "ltts"],
         },
     },
-    {
-        "id": "auto",
-        "label": "Auto",
-        # Added 2026-09-19 on PM instruction, together with Ather Energy's
-        # dossier. It is a READ tab and deliberately nothing else: no specs,
-        # no peer groups, no pillars, no consensus panel. The only content is
-        # the Company historical analysis sub-view plus the context chart
-        # below — exactly the state IT was in on 2026-08-31, and the honest
-        # one, because nothing here has been through a scoring design.
-        #
-        # `peer_groups: []` is what keeps it out of every scoring path, and
-        # invariant 7 does the rest: `ather` lands in `entities` via
-        # yahoo_prices.EQUITIES with peer_group NULL, so no pillar, no pair
-        # and no backtest can reach it. Do NOT add a peer group here to make
-        # the tab look finished.
-        "peer_groups": [],
-        # Context only, linked from no spec — and the reason the list looks
-        # thin is the finding, not an omission. See the raw-materials verdict
-        # in data/companies/ather-energy/dossier.json: the input that
-        # actually moved Ather's margins is LITHIUM and the NMC cathode
-        # complex (management: $8/kg -> $24/kg, cells +30-50%, a commodity
-        # index +46% over five quarters, a 5.6pp hit to Q1FY27 gross margin)
-        # and NONE of it has a series in this store. In that same quarter
-        # every series listed here FELL — aluminium -12.8%, nickel -4.9%,
-        # HRC -2.2%, brent -43.7%. A cost overlay built on these would have
-        # read the worst commodity quarter in the company's listed life as a
-        # TAILWIND. They are displayed so a reader can see that for
-        # themselves; they are not a cost model and must not become one.
-        "commodities": [
-            "lme_aluminium", "lme_copper", "lme_nickel",
-            "hrc_india_inr", "brent", "usdinr",
-        ],
-        # BRENT, not a cost series — and that is the point of this chart.
-        # For an ICE maker crude is an input; for an EV two-wheeler maker it
-        # is the DEMAND driver, and it is the one management names first
-        # (Q1FY27: petrol/diesel availability fears and rising pump prices as
-        # structural tailwinds). Charting a cost series here would assert the
-        # cost story the evidence refuses.
-        "chart": {
-            "ids": ["brent"],
-            "divide": 1.0,
-            "unit": "USD/bbl",
-            "title": "Brent · USD/bbl · the demand driver, not a cost",
-            "caption": "Crude is displayed because for an electric "
-                       "two-wheeler maker it sits on the REVENUE side: "
-                       "Ather's Q1FY27 call names petrol availability fears "
-                       "and rising pump prices among four structural "
-                       "tailwinds, and brent is +102% over Ather's listed "
-                       "life against the stock's +442%. The caution is that "
-                       "the tape does not corroborate it at short horizons — "
-                       "21-day returns correlate -0.149, the generic "
-                       "risk-off sign, so this is a stated driver with level "
-                       "evidence and no short-horizon evidence. Nothing "
-                       "here is linked from a spec and nothing scores.",
-            "marks": [],
-        },
-    },
+    # `auto` REMOVED 2026-10-21 (PM: "auto is no longer in coverage").
 ]
 
 # Series the pack carries that no sector claims yet. Surfaced so a captured
@@ -1244,47 +1036,8 @@ def input_history(entity_id: str) -> dict:
             "first_ever": span["a"], "n_ever": span["n"]}
 
 
-# The afternoon Vahan run (packages/vahan_refresh.py) is fired by the
-# `vahan-afternoon` task at 13:00 + the scheduler's jitter (13:13 as created),
-# waits up to 3h and then takes ~3 min, so by 17:00 local it has either
-# finished or failed. Before that an absent run is just "not yet", which is
-# why the morning page is silent.
-VAHAN_DUE = (17, 0)
-
-
-def _vahan_run(today: str) -> dict:
-    """The afternoon Vahan run's state, and a warning ONLY when it earned one.
-
-    PM 2026-09-29: "no error shows up in the morning". So there is deliberately
-    no warning for yesterday's failure or for "today's has not run yet" before
-    VAHAN_DUE — only for today's run FAILING, for a run left "running" longer
-    than its own wait allows (the process died), or for no run at all by
-    VAHAN_DUE. The last one is the scheduled-task-silently-stopped case, which
-    must not read as a quiet market.
-    """
-    import datetime as dt
-    vs = _read_json(REPO / "data" / "refresh" / "vahan_status.json") or {}
-    out = {"day": vs.get("day"), "state": vs.get("state"),
-           "finished": vs.get("finished"), "warning": None}
-    now = dt.datetime.now()
-    if vs.get("day") == today:
-        if vs.get("state") == "failed":
-            out["warning"] = f"afternoon Vahan run FAILED — {vs.get('reason') or 'see data/refresh/vahan_last.log'}"
-        elif vs.get("state") == "running":
-            try:
-                started = dt.datetime.fromisoformat(vs["started"]).replace(tzinfo=None)
-                limit = float(vs.get("max_wait_h") or 0) + 0.5
-                if (now - started).total_seconds() > limit * 3600:
-                    out["warning"] = (f"afternoon Vahan run started {vs['started'][11:16]} "
-                                      f"and never finished — the process likely died; "
-                                      f"see data/refresh/vahan_last.log")
-            except (KeyError, ValueError):
-                pass
-    elif (now.hour, now.minute) >= VAHAN_DUE:
-        out["warning"] = (f"afternoon Vahan run has not run today (last: "
-                          f"{vs.get('day') or 'never'}) — the vahan-afternoon task may "
-                          f"not have fired; run: python packages/vahan_refresh.py")
-    return out
+# _vahan_run() and VAHAN_DUE REMOVED 2026-10-21 with the Auto tab: the
+# afternoon Vahan run no longer exists, so the Overview has nothing to warn on.
 
 
 def overview() -> dict:
@@ -1327,8 +1080,6 @@ def overview() -> dict:
     else:
         out["run"] = {"warning": "no data/refresh/status.json — the refresh has "
                                  "never completed on this machine"}
-
-    out["vahan"] = _vahan_run(today)
 
     fe = _read_json(REPO / "data" / "refresh" / "frontend.json")
     if fe:
@@ -2345,9 +2096,8 @@ def _results_roster() -> dict[str, dict]:
     The roster is the UNION of three places a name can be known from,
     because no single one covers the book: the entity specs (the five scored
     sectors; a reporting unit such as Novelis takes its PARENT's sector), the
-    `entities` table (IT lives only there), and the company dossiers (Ather
-    and Eicher have no spec and a NULL sector in the table — the dossier's
-    `sector` key is what puts them under Auto, joined on the NSE symbol via
+    `entities` table (IT lives only there), and the company dossiers (the
+    dossier's `sector` key, joined on the NSE symbol via
     yahoo_prices.CANDIDATES). Nothing is guessed: a name none of the three
     places lands in `other`, listed rather than dropped.
     """

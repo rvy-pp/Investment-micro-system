@@ -178,16 +178,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":
                 return self._json(engine.cement_watch())
-            if u.path == "/api/auto_inventory":
-                # Channel inventory flow (SIAM wholesale - Vahan retail). A
-                # VOLUME view: reads siam_wholesale / vahan_retail_monthly and
-                # nothing reaches `prices` or any pillar.
-                return self._json(engine.auto_inventory())
-            if u.path == "/api/auto_share":
-                # Vahan maker share by segment, for the Auto tab. Read-only:
-                # `vahan_share` is a VOLUME table and nothing here reaches
-                # `prices` or any pillar.
-                return self._json(engine.auto_share())
             if u.path == "/api/results":
                 # The Results tab (2026-09-22): sector -> company -> quarter,
                 # sell-side estimates vs the print. Both params optional;

@@ -124,11 +124,6 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
     put("/api/overview", engine.overview())
     put("/api/morning", engine.morning())
     put("/api/cement_watch", engine.cement_watch())
-    # Vahan maker share, the Auto tab. Cheap (3 segments x ~6 labels
-    # x 13 months, already aggregated in the DB) so the whole thing
-    # rides in one payload like cement_watch.
-    put("/api/auto_share", engine.auto_share())
-    put("/api/auto_inventory", engine.auto_inventory())
     put("/api/flows", engine.flows())
     put("/api/oi", engine.oi_snapshot())
     bub = engine.oi_bubbles()
@@ -405,8 +400,8 @@ def selftest() -> None:
        "/api/oi_movers?date=2026-09-19&win=5", "two params in order")
     eq(key("/api/oi_movers?win=5&date=2026-09-19"),
        "/api/oi_movers?date=2026-09-19&win=5", "two params out of order")
-    eq(key("/api/company?sector=auto&slug=eicher-motors"),
-       "/api/company?sector=auto&slug=eicher-motors", "company")
+    eq(key("/api/company?sector=ems&slug=avalon-technologies"),
+       "/api/company?sector=ems&slug=avalon-technologies", "company")
     # percent-encoded values must decode to the same key as plain ones, or the
     # page's encodeURIComponent() on an id with a separator misses.
     # THIS FIXTURE WAS WRONG ON ITS FIRST RUN AND THE CODE WAS RIGHT — it
@@ -442,7 +437,7 @@ def selftest() -> None:
                 "/api/flows", "/api/oi", "/api/oi_bubbles", "/api/book",
                 "/api/book_index", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
-                "/api/oi_movers", "/api/results", "/api/auto_share", "/api/auto_inventory"}
+                "/api/oi_movers", "/api/results"}
     missing = (app & served) - exported
     assert not missing, f"app.html fetches {missing} and the export skips it"
     ok += 1

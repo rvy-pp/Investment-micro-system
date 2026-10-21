@@ -144,30 +144,9 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "tata_elxsi":       [("TATAELXSI.NS", r"tata\s*elxsi")],
     "ofss":             [("OFSS.NS", r"oracle\s*fin")],
     "ltts":             [("LTTS.NS", r"l\s*&\s*t\s*tech")],
-    # --- equities: auto, added 2026-09-19 (PM: Ather + an Auto tab) ---
-    # Resolved with yahoo_search.py before being written here, per the VAML
-    # lesson. The search returns THREE rows for "Ather Energy" and only one
-    # is the ordinary line: ATHERENERG-BL.NS is the BL (trade-for-trade /
-    # block) series on the same company, a thin parallel listing whose closes
-    # are NOT the ones the tape quotes. The pattern cannot reject it (same
-    # longName), so the symbol is pinned explicitly and the -BL series is
-    # recorded in REJECTED below.
-    #
-    # NOTE THE DATE FLOOR: Ather IPO'd 2025-05-06. There is no price before
-    # that and `range` tokens longer than the listing return only what exists,
-    # so a "5y" ask is not an error here — it is simply 1.4 years. Anything
-    # that treats a short history as a fetch failure is wrong about this name.
-    "ather":            [("ATHERENERG.NS", r"ather\s*energy")],
-    # Eicher added 2026-09-20 with its dossier. Name-verified first, and the
-    # pattern requires "eicher" precisely because the company the market means
-    # is the HOLDCO (Royal Enfield + the 54.4% VECV JV), not "Eicher
-    # Engineering" or any of the group's unlisted arms.
-    #
-    # UNLIKE ather, THIS IS A LONG HISTORY AND IT HAS A SPLIT IN IT: 1:10 on
-    # 2020-08-25 (face value Rs10 -> Re1). Yahoo adjusts splits (it does not
-    # adjust demergers - see the VEDL note above), and the series was scanned
-    # for >35% single-day moves after loading to confirm the adjustment took.
-    "eicher":           [("EICHERMOT.NS", r"eicher\s*motors")],
+    # ather / eicher REMOVED 2026-10-21 with the Auto tab (PM: "auto is no
+    # longer in coverage"). Their stored closes stay in `prices`; nothing
+    # fetches them any more. ATHERENERG-BL.NS stays in REJECTED as a note.
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -218,7 +197,6 @@ EQUITIES = {
     "dixon", "amber", "kaynes", "pg_electroplast", "syrma_sgs", "avalon",
     "infosys", "tcs", "hcl_tech", "wipro", "tech_mahindra", "ltimindtree",
     "persistent", "coforge", "mphasis", "kpit", "tata_elxsi", "ofss", "ltts",
-    "ather", "eicher",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.

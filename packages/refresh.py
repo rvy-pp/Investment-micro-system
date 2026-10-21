@@ -100,14 +100,10 @@ STEPS = [
     # hand-set rows survive); --load tops up missing days, T-1 by publication.
     ("F&O bhavcopy",      ["packages/adapters/fo_bhavcopy.py", "--map",
                            "--load", "--days", "7"],                          False),
-    # VAHAN SHARE AND SIAM WHOLESALE LEFT THIS LIST ON 2026-09-29 (PM: "Lets do
-    # vahan update in the afternoon. Remove the process for daily-refresh").
-    # Four mornings running Vahan refused every FILTERED query at ~08:10 and
-    # recovered by midday, so these two steps could only fail here and turn the
-    # Overview amber. They run at 13:00 from packages/vahan_refresh.py (Claude
-    # Desktop task `vahan-afternoon`), which writes its OWN status file,
-    # data/refresh/vahan_status.json. Do not add them back: Vahan's MTD
-    # refreshes once overnight, so a morning read gains nothing over 13:00.
+    # VAHAN SHARE AND SIAM WHOLESALE left this list on 2026-09-29 for a 13:00
+    # run (packages/vahan_refresh.py), and that run was retired on 2026-10-21
+    # with the Auto tab (PM: "auto is no longer in coverage"). Do not add them
+    # back: nothing on the page reads them now.
     # Mining primary-source filings: CIL production/offtake + SWMA e-auction
     # from coalindia.in (timely, ~1st of the month) and the NMDC CMS lists
     # (currently ~6 months stale — the fetch no-ops until the site catches up,
