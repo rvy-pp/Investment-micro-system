@@ -1,0 +1,298 @@
+{
+ "date": "2026-10-21",
+ "generated_at": "2026-10-21T08:11:56",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 66,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Kotak keeps SELL, FV Rs500, on Hindustan Zinc: 2QFY27 EBITDA Rs92.5bn beat on zinc CoP of US$703/t, a nine-year low.",
+      "source": "Kotak — [Kotak] Hindustan Zinc (CMP: Rs538, FV: Rs500, SELL): Beat on lower costs",
+      "received": "11:28",
+      "detail": {
+       "summary": "The beat came from by-product credits, mainly sulfuric acid, plus lead concentrate sales, not from the core zinc business. Kotak expects CoP to normalise once the Middle East conflict eases, and the 2030 mine-lease expiry risk clouds expansion returns. It keeps SELL on rich valuations.",
+       "points": [
+        "EBITDA Rs92.5bn, +108% yoy, +15% qoq",
+        "Zinc CoP US$703/t, -29% yoy, -17% qoq",
+        "FY27 CoP guide cut to US$825-850/t from US$975-1,000/t",
+        "FY27/28/29 EBITDA revised +17.6%/+0.5%/-1.6%",
+        "FV Rs500 at 6.5x; stock at 8.2x FY28E EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA raises Hindustan Zinc PO to Rs540 from Rs515, stays Underperform; FY27 CoP guide cut to US$825-850/t, EBITDA estimates up 5-13%.",
+      "source": "BofA — HZ IN: Hindustan Zinc: 2Q'FY27: Slight beat, CoP guide cut; expansion on track - UNDERPERFORM - India",
+      "received": "06:44",
+      "detail": {
+       "summary": "BofA raises estimates for stronger sulfuric acid by-product credits and higher FY27 zinc prices, but premium valuation caps total return, so it stays Underperform. Silver guidance is retained, and the zinc and tailings expansions are on schedule.",
+       "points": [
+        "2Q EBITDA INR91bn, +106% yoy, ~5% above BofAe",
+        "CoP US$703/t, incl. ~US$50/t geopolitical cost offset",
+        "FY27 silver guide kept at 680t; 1H output ~340t",
+        "250ktpa expansion lifts capacity to 1.4mtpa by 2QFY29",
+        "Hedged: 76kt zinc and 8t silver at US$68/oz"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL keeps Hindustan Zinc BUY, TP Rs722 (+34%); 2QFY27 EBITDA 6% above estimate with silver contributing 45% of EBIT.",
+      "source": "IIFL — [IIFL Metals] Hindustan Zinc - 2QFY27: Price driven strong show continues",
+      "received": "07:59",
+      "detail": {
+       "summary": "IIFL calls the quarter price-driven, with lower CoP from by-product credits and silver revenue up sharply. It values HZL at 10x FY28 EBITDA assuming silver at US$60/oz. It sees favourable risk-reward but flags near-term rate-hike worries.",
+       "points": [
+        "EBITDA +15% qoq, +108% yoy, 6% above IIFLe",
+        "Consol EBITDA margin 61.3%; CoP US$703/t",
+        "Silver output 173t, +20% yoy; revenue +141% yoy",
+        "Each US$10/oz silver change moves fair value Rs61/share",
+        "Trades at 7.4x FY28 EBITDA; TP assumes zinc US$3,000/t"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "UltraTech 2QFY27 EBITDA/t fell ~Rs240 qoq to ~Rs970 on 13-14% volume growth, as fuel cost jumped 10% qoq to Rs2.09/Mcal.",
+      "source": "Kotak / Nomura — UltraTech 2QFY27 (Kotak: In-line set; Nomura: Fuel cost escalation results in margin drop)",
+      "received": "11:32",
+      "detail": {
+       "summary": "Both houses call the print in line on EBITDA. Volume beat industry growth, but fuel and fixed costs ate the realisation gain. Kotak says fuel is still rising on spot trends, so the margin dip is not yet reversed.",
+       "points": [
+        "EBITDA Rs37.2bn, +20% yoy, -26% qoq (Kotak)",
+        "Volume 12.9% yoy (Kotak); 14% yoy (Nomura)",
+        "EBITDA/t Rs974 (Kotak) vs Rs980 est; Nomura Rs970 vs Rs930 est",
+        "Cost/t +7.8% qoq; pet coke share cut to 25%",
+        "Imported coal at 3.5-year high; diesel at record"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Oct price hikes of ~5% over the 2Q average lead Nomura to forecast UltraTech 3QFY27 EBITDA/t up ~Rs80 to Rs1,050, though fuel may rise further.",
+      "source": "Nomura / Kotak — UltraTech 2QFY27 (Nomura: Fuel cost escalation results in margin drop)",
+      "received": "20:27",
+      "detail": {
+       "summary": "Nomura argues realisation gains should cover spot fuel inflation in 3Q, with costs per tonne falling 2% qoq. Management concedes costs may not have peaked, and Elara cites guidance of blended fuel rising to ~Rs2.2/kcal in 3Q-4Q.",
+       "points": [
+        "Trade prices +Rs7-10/bag late Sep (Nomura)",
+        "Sep spot realisation ~5% above 2Q average (Nomura)",
+        "3QFY27F volume +12% yoy to 40.9MT (Nomura)",
+        "Fuel cost up ~Rs6/bag so far vs hikes (Nomura)",
+        "Fuel to ~Rs2.2/kcal from Rs2.09 (Elara)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak holds SELL at Rs8,900 FV on 18x FY27E EV/EBITDA while Nomura (Rs13,700) and Elara (Rs13,006) stay Buy; CMP is Rs10,650.",
+      "source": "Kotak / Nomura / Elara — UltraTech 2QFY27 (+7 more in Outlook)",
+      "received": "11:32",
+      "detail": {
+       "summary": "The houses agree on the print but split on valuation. Kotak calls UltraTech the best growth story but sees poor risk-reward at a full multiple. Nomura and Elara point to a 15.4x forward multiple and EV/tonne below the 5-year low respectively.",
+       "points": [
+        "Kotak cuts FY27/28/29E EBITDA 5.9%/3.2%/2.9%; FV 9.5x Dec-28E",
+        "Nomura TP trimmed to Rs13,700 from Rs13,900",
+        "Nomura: trades at 15.4x one-year-forward EV/EBITDA",
+        "Elara TP Rs13,006 unchanged, 22% upside",
+        "Elara: EV/tonne below five-year low"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "PhillipCapital keeps Dixon at SELL, TP Rs8,817 (-27%), and models camera-module EBITDA margin at 4-5% against 7-8% consensus, display at 11-12% against 14-15%.",
+      "source": "PhillipCapital — Dixon Tech (DIXON IN)- Dixon's component story faces margin headwinds",
+      "received": "07:50",
+      "detail": {
+       "summary": "Peers Q Tech China and HKC, Dixon's JV partners, show margin erosion in budget-segment modules, while premium-mix peers (Sunny Optical, BOE) held margins. The memory upcycle squeezes budget handset brands and leaves little room to pass on costs. PhillipCapital therefore sees consensus component margins as too aggressive through FY28-29.",
+       "points": [
+        "Camera module FY26 EBITDA margin 4.38%, gross margin down 245bps YoY",
+        "Q Tech China EBITDA per module RMB 1.97 vs 2.87 in H1CY26",
+        "HKC gross margin down 418bps YoY in H1CY26; BOE up 31bps",
+        "Camera capacity target 180-190mn units by FY28 vs 40mn produced in FY26",
+        "Street camera margin 7-8%, display 14-15%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTTS 2QFY27 EBIT margin of 16.3% beat Kotak's 16.1% and ICICI's 16.0%, with cc revenue +2.7% qoq against Kotak's 2.0%.",
+      "source": "Kotak — [Kotak] L&T Technology Services (CMP: Rs3,611, FV: Rs3,600, REDUCE): Steady performance",
+      "received": "18:23",
+      "detail": {
+       "summary": "The beat came from sustainability and a return to growth in mobility, helped by currency and mix, and LTTS hit its 16-17% margin target early. Kotak still calls the stock full at 22x FY28E and wants December-quarter proof that the recovery lasts past seasonal support.",
+       "points": [
+        "Revenue US$317.1mn, +2.3% qoq; cc +2.7% vs KIE 2.0%",
+        "Sustainability +4.8% qoq, mobility +2.3%, tech -0.7%",
+        "Net income Rs3,796mn vs KIE Rs3,531mn",
+        "3Q wage hike 50-80bps; mid-16% EBIT margin guided",
+        "FY27-29E EPS +~2%; FV Rs3,600 from Rs3,350, REDUCE kept"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Same LTTS print, split calls: ICICI Sec stays ADD with TP Rs3,780, while Kotak (FV Rs3,600) and Avendus (TP Rs3,500) stay REDUCE.",
+      "source": "ICICI Securities — L&T Technology Services (ADD): Turnaround on track; sustained performance in Sustainability creates moat",
+      "received": "07:34",
+      "detail": {
+       "summary": "ICICI reads the beat as a durable turnaround, with sustainability becoming a moat and large deals converting to revenue. Avendus reads the same quarter as largely inline. It sees guidance slippage risk and 22x FY28 EPS offering no upside. The rating gap is about durability, not the print.",
+       "points": [
+        "ICICI TP Rs3,780 from Rs3,590 at 22x Sep'27E; EPS +1-2%",
+        "ICICI: order bookings +25% yoy; US$203mn large-deal TCV, over 50% AI-led",
+        "Avendus: 13-15% five-year CAGR guide prone to downside",
+        "Avendus: ~7% yoy growth in 2HFY27 vs 2% in 1H",
+        "Avendus TP Rs3,500 at 20x TTM Sep-28E, up from 19x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA's Tayal hosts a 26-Oct India IT webinar arguing the ACN Investor Day read-across may be reason enough to close IT services shorts.",
+      "source": "BofA — Rajvaibhav, IT services Bull-Bear - Oct 26 - 1030AM ET",
+      "received": "19:52"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "UBS sees RBI hiking 75bp to a 6% repo by end-FY27E, versus c125bp priced in, after October's 25bp hike to 5.5%.",
+      "source": "UBS — India by the Numbers (October 2026)",
+      "received": "05:07",
+      "detail": {
+       "summary": "UBS says India is in a rate hike cycle after the RBI's October move and a shift to calibrated tightening. It expects 25bp each in December and February, and sees the residual 50bp depending on inflation, El Nino food prices and oil volatility.",
+       "points": [
+        "RBI repo +25bp to 5.5% in October",
+        "UBS base case 75bp total, repo 6% by end-FY27E",
+        "Market prices c125bp of tightening",
+        "September retail 2W +33% YoY, PV +32% YoY",
+        "Manufacturing PMI 55.1 vs 52.8 in August"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays bullish copper ($15k) and short zinc and aluminium; Brent $109.15, US 10Y 5.11%, one more Fed hike seen in December.",
+      "source": "JPM — JPM Overnight Brief! 10/21 - investors remaining on the sidelines",
+      "received": "06:31",
+      "detail": {
+       "summary": "JPM's commodities and rates desks keep a bullish copper stance and short zinc and aluminium. Brent eased on Iran-deal headlines but JPM still treats dips as buying chances. Technicals flag the SOX and KOSPI at critical support.",
+       "points": [
+        "Copper $15k house view; short zinc and aluminium",
+        "Brent $109.15, -0.4%; FY26 house view $78",
+        "10Y UST 5.11%, -3bp; 30Y 5.42%",
+        "One more Fed hike in Dec 2026",
+        "S&P ~7500 seen as key support"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA says the PBOC's signalled policy-rate re-anchoring works like a rate cut but is largely priced in.",
+      "source": "CLSA — Macropulse - China (+4 more in Outlook)",
+      "received": "04:03",
+      "detail": {
+       "summary": "At the China Financial Street Forum the PBOC signalled policy rate re-anchoring, loan benchmark reform and stronger liquidity support. CLSA reads the re-anchoring as equivalent to a rate cut, but one the market has largely already priced.",
+       "points": [
+        "PBOC signalled policy rate re-anchoring",
+        "Loan benchmark reform flagged",
+        "Stronger liquidity support signalled",
+        "CLSA: works like a rate cut, largely priced in"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "IIFL says 2QFY27 peak power demand rose 18% YoY and coal PLFs reached c.68% from c.63%, a supportive read for coal offtake.",
+      "source": "IIFL — India Energy Transition: 2QFY27 - Demand surge drives thermal and BESS-led earnings growth",
+      "received": "05:37",
+      "detail": {
+       "summary": "Strong power demand and weak hydro availability lifted thermal utilisation in the quarter. Higher exchange prices also supported merchant generators. IIFL expects c.15% aggregate PAT growth across its power coverage, led by Tata Power, Adani Power and ACME Solar.",
+       "points": [
+        "Peak power demand +18% YoY; electricity consumption c.12% growth",
+        "Coal PLF c.68% vs c.63% a year ago",
+        "DAM/RTM prices +46%/+36% YoY",
+        "Aggregate 2QFY27E PAT growth c.15% YoY",
+        "Prefers ACME Solar (BUY) and Tata Power (BUY)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ABB global Q3CY26 orders rose 40% YoY to ~US$12bn, Electrification up 70%, with data centre orders growing triple-digit and visibility into CY27-28.",
+      "source": "PhillipCapital — ABB global Q3CY26 call ktas: demand visibility remains robust",
+      "received": "17:37",
+      "detail": {
+       "summary": "Demand for electrification equipment is broad-based across utilities, grid modernisation, commercial buildings and HVAC, with data centres the standout. Management raised FY26 guidance. Pricing broadly offset commodity inflation, which is a constructive read for electrification-linked copper and aluminium demand.",
+       "points": [
+        "Order backlog ~US$32bn; book-to-bill 1.24x",
+        "Electrification orders ex-data centres grew high teens",
+        "Net pricing ~2% group, ~3% Electrification, offsetting commodity inflation",
+        "Record Q3 operational EBITDA margin 20.8%",
+        "Mining sentiment showing early signs of improvement"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Steel",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SpaceX 3Q26 Super Intelligence revenue $7.6bn (+830% YoY), 4Q capex guided $35-40bn vs Bloomberg $22bn; payback seen under a year, easing Neocloud worries.",
+    "source": "BofA China Daily - CATL Miss, SpaceX Beat/Buy Lenovo?"
+   },
+   {
+    "text": "Lenovo fell 10% on AI/Neocloud concerns; Dell +6% post-market. JPM flags SOX and KOSPI at critical support, with AI-hardware leadership key to the tape.",
+    "source": "BofA China Daily; JPM Overnight Brief! 10/21"
+   },
+   {
+    "text": "Montage Technology 3Q26 profit alert: net profit up 153-175% YoY, midpoint c.31% above consensus on interconnect-chip shipments; demand to strengthen in 4Q.",
+    "source": "BofA China Daily - CATL Miss, SpaceX Beat/Buy Lenovo?"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

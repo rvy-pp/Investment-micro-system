@@ -1,0 +1,220 @@
+{
+ "date": "2026-10-21",
+ "fetched_at": "2026-10-21T08:10:45",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-20",
+    "close": 7712.57,
+    "prev_date": "2026-10-19",
+    "chg_pct": 0.28
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-20",
+    "close": 26424.82,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.02
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-20",
+    "close": 52495.88,
+    "prev_date": "2026-10-19",
+    "chg_pct": 1.02
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-20",
+    "close": 11283.81,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-20",
+    "close": 216.47,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-20",
+    "close": 534.74,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.62
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-20",
+    "close": 425.08,
+    "prev_date": "2026-10-19",
+    "chg_pct": 1.16
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-20",
+    "close": 334.37,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.07
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-20",
+    "close": 239.12,
+    "prev_date": "2026-10-19",
+    "chg_pct": 0.92
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-20",
+    "close": 68.18,
+    "prev_date": "2026-10-19",
+    "chg_pct": 2.08
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Top Stock Reports for SAP, Accenture & Moody's",
+    "publisher": "Zacks",
+    "when": "2026-10-20 19:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/top-stock-reports-sap-accenture-192000179.html"
+   },
+   {
+    "title": "Accenture, Dragos, SANS Launch Community Cyber Program",
+    "publisher": "MT Newswires",
+    "when": "2026-10-20 18:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-dragos-sans-launch-community-185158054.html"
+   },
+   {
+    "title": "Accenture, Dragos and SANS Institute Launch Foundation to Strengthen Cyber Defenses for Under-Resourced U.S. Utilities",
+    "publisher": "Business Wire",
+    "when": "2026-10-20 17:59Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-dragos-sans-institute-launch-175900146.html"
+   },
+   {
+    "title": "Accenture Acquires Construction Technology Consultancy Avicado",
+    "publisher": "MT Newswires",
+    "when": "2026-10-20 16:24Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-acquires-construction-technology-consultancy-162409076.html"
+   },
+   {
+    "title": "Accenture Acquires Digital-Native Construction Consulting Firm Avicado",
+    "publisher": "Business Wire",
+    "when": "2026-10-20 16:12Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-acquires-digital-native-construction-161200837.html"
+   },
+   {
+    "title": "Accenture spent years building in China; now it may cash out",
+    "publisher": "TheStreet",
+    "when": "2026-10-20 01:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-spent-years-building-china-010300429.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "What Gave IBM Stock Its Edge Over Cognizant?",
+    "publisher": "Trefis",
+    "when": "2026-10-20 19:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/gave-ibm-stock-edge-over-194300878.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Chosen by Ingenico as Technology Partner",
+    "publisher": "MT Newswires",
+    "when": "2026-10-20 09:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-chosen-ingenico-090350576.html"
+   },
+   {
+    "title": "Ingenico Selects Cognizant as Global Strategic Technology Partner",
+    "publisher": "PR Newswire",
+    "when": "2026-10-20 08:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/ingenico-selects-cognizant-global-strategic-080000003.html"
+   },
+   {
+    "title": "Cognizant, Google Cloud Expand Partnership With New AI Capability Group",
+    "publisher": "MT Newswires",
+    "when": "2026-10-19 17:24Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-partnership-172438191.html"
+   },
+   {
+    "title": "Cognizant and Google Cloud Expand Alliance to Accelerate Agentic Enterprise Transformation",
+    "publisher": "CNW Group",
+    "when": "2026-10-19 16:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-alliance-160000248.html"
+   },
+   {
+    "title": "Cognizant and Google Cloud Expand Alliance to Accelerate Agentic Enterprise Transformation",
+    "publisher": "PR Newswire",
+    "when": "2026-10-19 16:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-alliance-160000161.html"
+   },
+   {
+    "title": "Cognizant and Google Cloud Expand Alliance to Accelerate Agentic Enterprise Transformation",
+    "publisher": "PR Newswire",
+    "when": "2026-10-19 16:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-alliance-160000453.html"
+   },
+   {
+    "title": "Cognizant Stock Rose 12% Last Week. None of It Came From Cognizant\u2019s Numbers.",
+    "publisher": "TIKR",
+    "when": "2026-10-19 07:49Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-stock-rose-12-last-074928531.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [
+   {
+    "title": "Broadcom fought AT&T over VMware: Now a telecom giant is all in",
+    "publisher": "TheStreet",
+    "when": "2026-10-21 02:03Z",
+    "link": "https://finance.yahoo.com/technology/articles/broadcom-fought-t-over-vmware-020300795.html"
+   },
+   {
+    "title": "Broadcom Lands Major 10-Year Cloud Deal With Japanese Telecom Giant",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-20 19:42Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-lands-major-10-cloud-194258548.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Faces Key Test as AI Server Demand Surges",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-20 17:18Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-faces-key-test-ai-171816475.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23006.0,
+  "chg_pct": -0.11,
+  "stamp": "21-Oct-2026 08:10:04",
+  "expiry": "27-Oct-2026",
+  "volume": 1061,
+  "nifty_close": {
+   "close": 22888.95,
+   "stamp": "19-Oct-2026 15:30"
+  },
+  "gap_pts": 117.0,
+  "gap_pct": 0.51
+ }
+}
