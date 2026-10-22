@@ -91,6 +91,26 @@ The export is not optional: this skill writes tables the page reads outside
 unloaded is picked up at 08:00 — but the export from that run is what makes
 it visible on the phone.
 
+## Analyst views — when the PM relays a conversation (2026-10-06)
+
+When the PM says what an analyst TOLD them ("spoke to the Kotak metals
+analyst, Tata Steel Q2 EBITDA/t tracking ~₹1,000 above street"), that is a
+VIEW, not an estimate. It never goes in a staging file or `estimates`:
+
+```bash
+python packages/results/results_io.py --add-view '{"entity_id":"tata_steel","period":"Q2FY27","metric":"ebitda_per_t","firm":"Kotak","analyst":"<name>","said_on":"YYYY-MM-DD","stance":"above","note":"<what was said, in the PM words>"}'
+```
+
+- Give `value_num` + `unit` when a number was said, `stance`
+  (above / inline / below the street) when only a direction was, or both.
+  Do not convert a direction into a number.
+- `note` is required — the PM's own words, not a paraphrase that sharpens it.
+- A changed view is another `--add-view` (the latest is live); a withdrawn
+  one is `"withdraw": true` with the reason in `note`.
+- When that house later publishes its preview, stage it as usual — the tab
+  links the two by firm (`firm_key`) and grades follow-through on its own.
+- `--scorecard` prints every analyst's record. Re-export the vault copy after.
+
 ## What not to do
 
 - Do not load a sector-level number ("2QFY27F cement spread ~INR2,464/t")

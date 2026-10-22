@@ -174,8 +174,20 @@ def _read(conn, spec) -> tuple:
         "SELECT snap_date FROM book_snapshots ORDER BY snap_date")]
 
     roster, unmapped = {s: {"L": {}, "S": {}} for s in snaps}, []
+    # OPTION ROOTS ARE NOT INDEX MEMBERS. On 2026-09-29 `LTM IS 10/27/26
+    # C4100 Equity` (a call) split to the token `LTM`, entered the LONG roster
+    # as LTIMindtree and displaced the LTM future from the SHORT side — the
+    # footer read "LTIMindtree in (long)" and n went 16/16 -> 17/15, with
+    # nothing else raising. The PM asked for direction of the STOCKS held;
+    # an option is a hedge on one of them, priced by nothing in `prices`.
+    # Excluded and NAMED in the payload, never folded into its underlying.
+    from book_io import is_option_root
+    options_excluded: list = []
     for r in conn.execute("SELECT DISTINCT snap_date, root, side "
                           "FROM book_positions ORDER BY snap_date, root"):
+        if is_option_root(r["root"]):
+            options_excluded.append(r["root"])
+            continue
         tok = (r["root"].split() or [""])[0]
         eid = tmap.get(tok) or tmap.get(r["root"])
         if not eid:
@@ -194,7 +206,7 @@ def _read(conn, spec) -> tuple:
                 "ORDER BY date", (eid, spec["start"])):
             bars[eid][r["date"]] = (r["open"], r["high"], r["low"], r["close"])
             vols[eid][r["date"]] = r["volume"]
-    return snaps, roster, bars, vols, sorted(set(unmapped))
+    return snaps, roster, bars, vols, sorted(set(unmapped)), sorted(set(options_excluded))
 
 
 def sessions(bars, vols, first, quorum) -> tuple[list, list, list]:
@@ -310,7 +322,7 @@ def build(conn: sqlite3.Connection | None = None, rng: str = "5y") -> dict:
         conn = sqlite3.connect(DB)
         conn.row_factory = sqlite3.Row
     spec = _spec()
-    snaps, roster, bars, vols, unmapped = _read(conn, spec)
+    snaps, roster, bars, vols, unmapped, options_excluded = _read(conn, spec)
     if own:
         conn.close()
     if not snaps:
@@ -408,6 +420,9 @@ def build(conn: sqlite3.Connection | None = None, rng: str = "5y") -> dict:
             "phantom_sessions": phantom, "thin_sessions": thin,
             "skipped_sessions": skipped, "actions_dropped": dropped,
             "unmapped": unmapped, "no_history": no_history,
+            # option roots held in the book and kept OUT of the roster —
+            # hedges on a leg, not stocks; see _read.
+            "options_excluded": options_excluded,
             "base_level": BASE_LEVEL}
 
 
@@ -824,6 +839,7 @@ def _summary() -> None:
           f"{[(x['date'], x['name']) for x in p['actions_dropped']]}")
     print(f"post-freeze   : {len(p['changes'])} membership change(s)")
     print(f"unmapped      : {p['unmapped'] or 'none'}")
+    print(f"options out   : {p.get('options_excluded') or 'none'}")
     print("composition (n changes):")
     for c in p["composition"]:
         print(f"   {c['date']}  long {c['long']:2d}  short {c['short']}")

@@ -194,6 +194,14 @@ def load(days_back: int = 10, refill_deliv: bool = False) -> None:
                          a["trf"], a["close"], a["n"]))
                 conn.commit()
                 n_fo += 1
+                # Options layer (2026-09-30) off the SAME zip, so the daily
+                # run downloads each file once. Never fatal to the futures
+                # load; a day it misses is topped up by `fo_options.py --load`.
+                try:
+                    import fo_options
+                    fo_options.store(conn, raw, iso)
+                except Exception as e:
+                    print(f"  {iso} options store failed ({type(e).__name__}: {e})")
         if iso not in have_dv:
             try:
                 raw = _get(DELIV_URL.format(d=d))

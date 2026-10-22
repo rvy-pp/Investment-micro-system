@@ -100,6 +100,13 @@ STEPS = [
     # hand-set rows survive); --load tops up missing days, T-1 by publication.
     ("F&O bhavcopy",      ["packages/adapters/fo_bhavcopy.py", "--map",
                            "--load", "--days", "7"],                          False),
+    # Stock options (2026-09-30): OI-weighted call/put strikes + ATM IV for
+    # the Positioning tab. The bhavcopy step above already stores them off the
+    # zip it downloads; this only tops up dates that step had loaded before
+    # the options layer existed or whose options store failed — normally a
+    # no-op, zero requests.
+    ("F&O options",       ["packages/adapters/fo_options.py", "--load",
+                           "--days", "10"],                                   False),
     # VAHAN SHARE AND SIAM WHOLESALE left this list on 2026-09-29 for a 13:00
     # run (packages/vahan_refresh.py), and that run was retired on 2026-10-21
     # with the Auto tab (PM: "auto is no longer in coverage"). Do not add them
@@ -195,6 +202,13 @@ STEPS = [
     ("desk model check",  ["packages/adapters/hindalco_model.py"],            False),
     ("corporate actions", ["packages/adapters/check_corporate_actions.py"],   False),
     ("score + persist",   ["packages/score/run_scores.py"],                   True),
+    # PAIR GRADING (PM, 2026-10-05) — freezes any 13-week or exit grade whose
+    # end date now has a close, and refreshes dividends once a day. HERE and not
+    # only in daily_review because a 13-week grade falls due on a calendar date,
+    # not on a paste: a quiet week without a review must not leave it unwritten.
+    # After the equity closes it needs; never fatal; writes only book_pair_grades
+    # and equity_dividends, nothing a pillar reads. packages/book/grading.py.
+    ("pair grading",      ["packages/book/grading.py", "--run"],             False),
     # LAST, and after scoring on purpose: it checks what the PAGE will render,
     # so it has to run against the scores this refresh just persisted. Nothing
     # is compiled — app.html is served live out of the DB — so this verifies

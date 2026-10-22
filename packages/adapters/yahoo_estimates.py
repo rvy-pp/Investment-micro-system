@@ -187,6 +187,23 @@ def fetch(out_dir: pathlib.Path = STAGING) -> pathlib.Path:
     return path
 
 
+def _usable_eps(v) -> bool:
+    """An EPS value Yahoo actually has, as opposed to its 0.0 placeholder.
+
+    FOUND 2026-10-06 when the commodity legs were added: Yahoo writes an EXACT
+    0.0 where it holds no number — Hindalco's current FY27 AND FY28 consensus
+    (25 analysts, 60-days-ago 94.0, everything else 0.0) and Hindustan Zinc's
+    30- and 90-days-ago fields (current 41.0, 60-days-ago 41.0). Loaded as-is
+    the revision reads -100% for Hindalco and divides by zero for HZL —
+    plausible-looking or silent, the SILENT_BUGS shape. A consensus that
+    lands on exactly zero is not a forecast anyone made, so exact 0.0 is
+    REFUSED at load and counted. Negative EPS stays legal: a loss-maker
+    (Ather) has a real negative consensus. The staging JSON keeps Yahoo's raw
+    0.0 — it is the record of what the source returned.
+    """
+    return v is not None and float(v) != 0.0
+
+
 def latest_staging() -> pathlib.Path | None:
     files = sorted(STAGING.glob("yahoo_estimates_????-??-??.json"))
     return files[-1] if files else None
@@ -222,6 +239,7 @@ def load(path: pathlib.Path | None = None) -> int:
     conn.execute("DELETE FROM estimates WHERE source_id=?", (sid,))
 
     n = 0
+    refused: list[str] = []
     for eid, ent in (doc.get("entities") or {}).items():
         # Trailing EPS under its own period label so it can never be mistaken
         # for a fiscal-year consensus row (compute_row selects periods by the
@@ -239,6 +257,11 @@ def load(path: pathlib.Path | None = None) -> int:
         for r in ent.get("trend") or []:
             if r.get("eps") is None:
                 continue
+            if not _usable_eps(r["eps"]):
+                # the whole period goes: lags without a current value give a
+                # revision against nothing
+                refused.append(f"{eid} {r.get('period')} eps")
+                continue
             try:
                 fy = fy_label(r.get("end_date"))
             except ValueError as exc:
@@ -251,8 +274,12 @@ def load(path: pathlib.Path | None = None) -> int:
             rows = [("eps", r["eps"])]
             for k in LAGS:
                 v = (r.get("lags") or {}).get(k)
-                if v is not None:
-                    rows.append((f"eps_{k.replace('daysAgo', 'd_ago')}", v))
+                if v is None:
+                    continue
+                if not _usable_eps(v):
+                    refused.append(f"{eid} {r.get('period')} {k}")
+                    continue
+                rows.append((f"eps_{k.replace('daysAgo', 'd_ago')}", v))
             if r.get("n_analysts") is not None:
                 rows.append(("n_analysts", r["n_analysts"]))
             for metric, val in rows:
@@ -266,6 +293,9 @@ def load(path: pathlib.Path | None = None) -> int:
                 n += 1
     conn.commit()
     conn.close()
+    if refused:
+        print(f"  REFUSED {len(refused)} Yahoo 0.0 placeholder(s): "
+              + ", ".join(refused))
     print(f"loaded {n} estimate rows from {path.name} as source {sid}")
     return n
 
@@ -290,6 +320,16 @@ def selftest() -> int:
          "earningsEstimate": {"numberOfAnalysts": {"raw": 25}}}
     assert _raw(t["epsTrend"], "current") == 183.56
     assert _raw(t["epsTrend"], "90daysAgo") == 166.27
+    # Yahoo's 0.0 placeholder is refused; real values — including a NEGATIVE
+    # consensus for a loss-maker — are accepted (acceptance beside rejection).
+    for good in (41.0, 0.01, -3.2, "18.45"):
+        if not _usable_eps(good):
+            print(f"FAIL: _usable_eps refused real value {good!r}")
+            ok = False
+    for bad in (0.0, 0, "0.0", None):
+        if _usable_eps(bad):
+            print(f"FAIL: _usable_eps accepted placeholder {bad!r}")
+            ok = False
     print("selftest OK" if ok else "selftest FAILED")
     return 0 if ok else 1
 

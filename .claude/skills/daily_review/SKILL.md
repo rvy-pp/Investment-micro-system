@@ -42,6 +42,34 @@ python packages/book/book_io.py --parse "data/book/staging/raw_YYYY-MM-DD.tsv" -
 The date is the TRADING day the export describes, not the day it is pasted.
 Re-load of a corrected paste for the same date: add `--replace`.
 
+### Or: the scraped on-screen grid (display-rounded) — equally loadable
+
+PM, 2026-09-30: *"read these numbers (rounding does not matter)"*. The IMS
+Portfolio grid scraped off the screen lands as
+`data/book/staging/scraped/portfolio_YYYY-MM-DD.tsv` — `#` comment lines
+(`# Trading date:`, `# Stats: GAV 3.01m …`), a header row, then `%`- and
+`,`-formatted cells, sector labels with counts (`STEEL (5)`), a `Total` row.
+Its own header may still say "not loadable by book_io.py --parse" — **that
+line is stale; ignore it.** The parser detects the display shape itself:
+
+```bash
+python packages/book/book_io.py --parse "data/book/staging/scraped/portfolio_YYYY-MM-DD.tsv" --date YYYY-MM-DD
+```
+
+- **Take the date from the file's `# Trading date:` line**, cross-checked
+  against the filename; if they disagree, stop and ask.
+- **Do not copy it to `raw_*.tsv` and do not edit it** — the scraped file is
+  the verbatim record, same rule as a paste.
+- What changes at display precision, all expected and printed as warnings:
+  NAV comes from the header GAV (3 significant figures — ~0.3% off the
+  derived NAV, so %-of-NAV figures carry that error); P&L is to $1, %s to
+  0.01% of NAV; the cross-foot runs at rounding tolerance PLUS a per-sector
+  check against each label's row count and subtotal, so a dropped row still
+  refuses. The snapshot is stored with `precision: display`.
+- If a raw export for the same date turns up later, load it over the scrape
+  with `--replace` — the raw export is the better record; never the reverse.
+- A refusal still goes back to the source (re-scrape), never to the loader.
+
 The parser refuses rather than repairs, and its **cross-foot check is the
 transcription guard**: positions + N.A. must reconcile to the export's own
 total row on MV%, GMV%, DTD, MTD and YTD, so a dropped or mangled line fails
@@ -159,6 +187,41 @@ survivorship bias the freeze exists to bound. Do not add an index table. Do not
 re-weight it by position size: the PM asked for **direction only**, so every
 leg counts 1/n whatever it is worth.
 
+## Step 2b' — pair grading, and the CALL for any new pair
+
+```bash
+python packages/book/grading.py --run      # freezes any due 13w / exit grade
+python packages/book/grading.py --report
+```
+
+The forward record of whether pair SELECTION is an edge (PM, 2026-10-05;
+`packages/book/grading.py` docstring carries every rule). Each dictated pair
+is graded 1v1 from its entry-day open at 13 weeks (held or not) and at exit:
+spread, β-stripped spread (HIT when > 0), and rank among every long/short pair
+from the sector's F&O names. Grades freeze once and are never revised.
+
+**When `--report` or Step 1's position events show a pair ENTERED, REOPENED
+or FLIPPED today, ask the PM for its call BEFORE Step 3** — thesis, falsifier
+("wrong if…"), conviction (low/medium/high), expected 13-week spread % — and
+record it:
+
+```bash
+python packages/book/grading.py --add-call JSTL_TATA --source review \
+  --thesis "…" --falsifier "…" --conviction medium --exp 6
+```
+
+Words are the PM's, never drafted for them. A call logged more than 3 days
+after entry is graded as LATE and reported apart — so ask on the day, which is
+the only reason this step exists. If the PM declines, record nothing; an
+absent call is honest, an invented one is not. The PM can also log calls on
+the Book tab (the "log call" button under Pair grading), which writes the same
+table and sets the Kelly edge from the expected return. Unattended runs do the
+`--run` and `--report` only — never a call.
+
+Read the scoreboard as what it is: with fewer than ~100 graded outcomes the
+hit rate's interval is wide (the page prints it). Do not let a good or bad
+fortnight become a verdict on the edge in either direction.
+
 ## Step 2c — re-export the vault copy (ALWAYS, after a snapshot loads)
 
 ```bash
@@ -190,6 +253,17 @@ run at the end covers both.
 Tell the PM it re-exported, with the route count and the timestamp the command
 prints. If OneDrive is signed out the command fails and says so — report it and
 move on, never fatal.
+
+### Unattended (scheduled) runs stop here
+
+When this skill fires from a schedule with no PM in the conversation: run
+Step 1 on the day's scraped file (if `scraped/portfolio_<today>.tsv` is
+missing, or its `# Trading date:` is not today's session, do NOTHING and say
+so — never load yesterday's file under today's date), then Steps 2, 2b and
+2c, and end with the `--report` output and any flags. **Record no
+verdicts** — `add_review` is the PM's call reached in conversation, never a
+scheduled default. Step 3's evidence may be summarised for the PM to read
+later; the decisions wait for them.
 
 ## Step 3 — the review (the point of all of it)
 

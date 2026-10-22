@@ -468,6 +468,154 @@ def shares(conn: sqlite3.Connection, segment: str, period: str | None = None,
 
 
 # ---------------------------------------------------------------------------
+# DAY SHARE vs MTD — the festive-boost flag (PM, 2026-10-12).
+#
+# *"we get daily market share as well ... flags higher market share on a daily
+#  basis compared to the mtd. ... maruti for example has today's market share
+#  as 48% while monthly is still around 40%. This flags a sudden boost on sales
+#  combined with festive season."*
+#
+# THE DAY'S SHARE IS A SHARE OF THE FLOW, NOT OF THE LEVEL. Between two
+# captures, every maker's registrations that LANDED = the sum over periods of
+# MTD(b) - MTD(a). Summing over periods, rather than reading the current month
+# alone, is what makes the month seam work: the 1 October capture is mostly
+# 30 September's registrations (Vahan refreshes overnight, so a capture is
+# ~T-1), and a current-month-only delta would read that day as 91 Marutis.
+# Backdated additions to last month are inside the flow too — they are
+# registrations that landed in that batch, which is the thing being measured.
+# Only periods present in BOTH captures count, plus a period that is new in b
+# (a month starting at zero); a period that newly appears for any other reason
+# would enter as its whole history and is ignored rather than trusted.
+#
+# THE BASELINE IS THE MTD AS OF THE PREVIOUS CAPTURE, never including today —
+# today's flow is inside today's MTD, which drags the comparison toward zero.
+# The month is the one that received most of the flow. EARLY IN A MONTH that
+# MTD is a few hundred vehicles (203 PVs on 1 Oct), so below MIN_MTD_MULT x the
+# day's flow the baseline is LAST month's share instead, and the row says so.
+#
+# THE FLAG NEEDS THE DAY TO CLEAR LAST MONTH TOO. Measured on Tata Motors PV in
+# early October 2026: the month opened weak (MTD 6.2-6.7% against September's
+# 9.5%), so every ordinary 9-10% day read +2pp, x1.25 over MTD and would have
+# flagged five times as a "boost" — it was a return to normal, not a surge.
+# Requiring the day to beat last month's share by the same margin keeps the
+# flag to what the PM described: share running above where the maker usually
+# sits. Maruti on the 11 Oct capture clears both: 43.1% of the day against
+# 36.9% MTD and 39.4% for September.
+#
+# THIN DAYS ARE NOT FLAGGED. RTOs barely work on Sundays, and a Monday capture
+# carries ~1/5th of a normal day — MHCV's 5 Oct flow was 50 vehicles, where one
+# fleet order is a 20pp "share". A day whose segment flow is under THIN_FRAC of
+# the window's median is returned (with thin=True) but never flagged and not
+# drawn. Captures more than a day apart (missed runs) are a multi-day flow,
+# carried as `span_days`; a share is a ratio, so the span does not bias it.
+#
+# THRESHOLDS ARE A FIRST CUT on 16 capture pairs (24 Sep - 11 Oct 2026), so
+# re-measure at ~60: across the F&O lines the non-thin day-minus-MTD gap has an
+# sd of 0.3pp (Ather) to 3.4pp (Maruti). FLAG_PP 1.5 with FLAG_RATIO 1.15 keeps
+# the steady 2W names quiet and catches the PM's 48-vs-40 shape (+8pp, x1.2).
+# Small names (Ather at ~1.7%) need +1.5pp, which is a near-doubling — so the
+# flag is deliberately not sensitive to small-share noise.
+# ---------------------------------------------------------------------------
+
+FLAG_PP = 1.5        # day share must beat the baseline by at least this ...
+FLAG_RATIO = 1.15    # ... and by at least this multiple
+THIN_FRAC = 0.5      # segment flow under this x the window median = thin day
+MIN_MTD_MULT = 2.0   # MTD under this x the day's flow is too young to compare
+FLOW_WINDOW = 45     # capture pairs kept on the page
+
+
+def _period_key(p: str) -> tuple[int, int]:
+    y, m = p.split("-")
+    return int(y), MONTH_NAMES.index(m)
+
+
+def _prev_period(p: str) -> str:
+    y, m = _period_key(p)
+    return f"{y - 1}-December" if m == 0 else f"{y}-{MONTH_NAMES[m - 1]}"
+
+
+def daily_flow(conn: sqlite3.Connection, segment: str,
+               window: int = FLOW_WINDOW) -> dict:
+    """Each maker's share of the registrations that landed between consecutive
+    captures, against its month-to-date share at the earlier capture. See the
+    block comment above for every rule; this function only implements them."""
+    cfg = SEGMENTS[segment]
+    named = list(cfg["fno"].keys())
+    snap: dict[str, dict] = {}
+    for cd, per, lab, n in conn.execute(
+            "SELECT capture_date, period, label, registrations FROM vahan_share "
+            "WHERE segment=?", (segment,)):
+        snap.setdefault(cd, {}).setdefault(per, {})[lab] = n
+    caps = sorted(snap)
+    raw = []
+    for a, b in zip(caps, caps[1:]):
+        A, B = snap[a], snap[b]
+        newest = max(B, key=_period_key)
+        pers = [p for p in B if p in A or p == newest]
+        flow_by_p = {p: {lab: B[p].get(lab, 0) - A.get(p, {}).get(lab, 0)
+                         for lab in set(B[p]) | set(A.get(p, {}))} for p in pers}
+        total = sum(f.get(TOTAL, 0) for f in flow_by_p.values())
+        if total <= 0:
+            continue
+        flow = {lab: sum(f.get(lab, 0) for f in flow_by_p.values())
+                for lab in named}
+        flow[OTHERS] = total - sum(flow.values())
+        month = max(pers, key=lambda p: flow_by_p[p].get(TOTAL, 0))
+        raw.append((a, b, total, flow, month, A))
+    if not raw:
+        return {"state": "no_data", "days": [], "flags": [],
+                "note": "needs two captures of this segment"}
+    med = sorted(r[2] for r in raw)[len(raw) // 2]
+
+    def share(A, per, lab):
+        row = A.get(per, {})
+        t = row.get(TOTAL, 0)
+        if not t:
+            return None, 0
+        n = (t - sum(row.get(k, 0) for k in named)) if lab == OTHERS else row.get(lab, 0)
+        return 100.0 * n / t, t
+
+    days = []
+    for a, b, total, flow, month, A in raw[-window:]:
+        thin = total < THIN_FRAC * med
+        last = _prev_period(month)
+        mtd_t = A.get(month, {}).get(TOTAL, 0)
+        young = mtd_t < MIN_MTD_MULT * total
+        base_p = last if young else month
+        rows = {}
+        for lab in named + ([] if cfg.get("no_others") else [OTHERS]):
+            n = flow[lab]
+            ds = 100.0 * n / total if n >= 0 else None   # a de-dup can go negative
+            bs, _ = share(A, base_p, lab)
+            ls, _ = share(A, last, lab)
+            flag = (lab != OTHERS and not thin and ds is not None
+                    and bs is not None and ls is not None
+                    and ds - bs >= FLAG_PP and ds >= FLAG_RATIO * bs
+                    and ds - ls >= FLAG_PP)
+            rows[lab] = {"units": n,
+                         "day_pct": None if ds is None else round(ds, 2),
+                         # the BASELINE: MTD, or last month when the MTD is
+                         # too young — `baseline` on the day says which.
+                         "base_pct": None if bs is None else round(bs, 2),
+                         "last_month_pct": None if ls is None else round(ls, 2),
+                         "lift_pp": None if ds is None or bs is None
+                                    else round(ds - bs, 2),
+                         "flag": bool(flag)}
+        days.append({"capture": b, "prev_capture": a, "month": month,
+                     "baseline": "last_month" if young else "mtd",
+                     "baseline_period": base_p,
+                     "span_days": (dt.date.fromisoformat(b)
+                                   - dt.date.fromisoformat(a)).days,
+                     "total": total, "thin": thin, "rows": rows})
+    flags = [{"capture": d["capture"], "label": k, **v}
+             for d in days for k, v in d["rows"].items() if v["flag"]]
+    return {"state": "live", "days": days, "flags": flags,
+            "latest": days[-1]["capture"], "median_flow": med,
+            "rule": {"flag_pp": FLAG_PP, "flag_ratio": FLAG_RATIO,
+                     "thin_frac": THIN_FRAC, "min_mtd_mult": MIN_MTD_MULT}}
+
+
+# ---------------------------------------------------------------------------
 # MONTH SHAPE — the intra-month accrual curve, and the forecast built on it.
 #
 # THE QUESTION: given registrations from the 1st to today, what will the month
@@ -1104,6 +1252,66 @@ def selftest() -> int:
             check("a cross-foot failure refuses the file", "cross-foot" in str(e))
     except ImportError:
         print("  SKIP  openpyxl not available for the rejection fixtures")
+
+    # DAY SHARE vs MTD — an in-memory PV fixture, one case per rule, the
+    # acceptance case beside each rejection per the GLOB lesson.
+    mem = sqlite3.connect(":memory:")
+    mem.executescript(DDL)
+
+    def put(cd, per, d):
+        tot = d.pop("T")
+        mem.executemany("INSERT INTO vahan_share VALUES (?,?,?,?,?)",
+                        [(cd, per, "PV", k, v) for k, v in d.items()]
+                        + [(cd, per, "PV", TOTAL, tot)])
+    # September closes at Maruti 40%, Tata 10% of 100,000.
+    put("2026-09-30", "2026-September",
+        {"T": 100_000, "Maruti Suzuki": 40_000, "Tata Motors PV": 10_000})
+    # 1 Oct capture: 10,000 more September registrations landed (Sept 30's),
+    # 100 October ones. Maruti 4,800 of them = 47.5% of the day.
+    put("2026-10-01", "2026-September",
+        {"T": 110_000, "Maruti Suzuki": 44_800, "Tata Motors PV": 11_000})
+    put("2026-10-01", "2026-October", {"T": 100, "Maruti Suzuki": 40, "Tata Motors PV": 6})
+    for cd, mtd in (("2026-10-02", (20_000, 8_000, 1_300)),
+                    ("2026-10-03", (40_000, 16_000, 2_600)),
+                    ("2026-10-04", (60_000, 24_000, 3_900))):
+        t, m, tm = mtd
+        put(cd, "2026-September", {"T": 110_000, "Maruti Suzuki": 44_800, "Tata Motors PV": 11_000})
+        put(cd, "2026-October", {"T": t, "Maruti Suzuki": m, "Tata Motors PV": tm})
+    # 5 Oct: a thin day (1,000 vehicles) where Maruti is 80% — must NOT flag.
+    put("2026-10-05", "2026-September", {"T": 110_000, "Maruti Suzuki": 44_800, "Tata Motors PV": 11_000})
+    put("2026-10-05", "2026-October", {"T": 61_000, "Maruti Suzuki": 24_800, "Tata Motors PV": 4_000})
+    # 6 Oct: Maruti 48% of a 20,000 day vs 40.7% MTD and 40.7% Sep -> FLAG.
+    # Tata 9.5% vs its weak 6.6% MTD, but BELOW September's 10% -> recovery,
+    # NOT a boost, must not flag.
+    put("2026-10-06", "2026-September", {"T": 110_000, "Maruti Suzuki": 44_800, "Tata Motors PV": 11_000})
+    put("2026-10-06", "2026-October", {"T": 81_000, "Maruti Suzuki": 34_400, "Tata Motors PV": 5_900})
+    f = daily_flow(mem, "PV")
+    by = {d["capture"]: d for d in f["days"]}
+    d1 = by["2026-10-01"]
+    check("seam: the 1 Oct flow is September's day, not 100 October cars",
+          d1["month"] == "2026-September" and d1["total"] == 10_100,
+          f"month {d1['month']} total {d1['total']}")
+    check("seam: Maruti's share of the seam day counts both months",
+          abs(d1["rows"]["Maruti Suzuki"]["day_pct"] - 100 * 4_840 / 10_100) < 0.01,
+          str(d1["rows"]["Maruti Suzuki"]["day_pct"]))
+    d2 = by["2026-10-02"]
+    check("a young MTD (100 cars) falls back to last month's share",
+          d2["baseline"] == "last_month" and d2["baseline_period"] == "2026-September",
+          d2["baseline"])
+    check("a thin day is marked and never flagged",
+          by["2026-10-05"]["thin"] and not any(
+              r["flag"] for r in by["2026-10-05"]["rows"].values()))
+    d6 = by["2026-10-06"]["rows"]
+    check("ACCEPT: 48% of the day vs ~41% MTD and last month flags",
+          d6["Maruti Suzuki"]["flag"], str(d6["Maruti Suzuki"]))
+    check("REJECT: above a weak MTD but below last month is NOT a boost",
+          d6["Tata Motors PV"]["lift_pp"] >= FLAG_PP
+          and not d6["Tata Motors PV"]["flag"], str(d6["Tata Motors PV"]))
+    check("Others is never flagged", not any(
+        x["label"] == OTHERS for x in f["flags"]))
+    check("the baseline excludes today (MTD as of the PREVIOUS capture)",
+          abs(d6["Maruti Suzuki"]["base_pct"] - 100 * 24_800 / 61_000) < 0.01,
+          str(d6["Maruti Suzuki"]["base_pct"]))
 
 
     print(f"\n{len(fails)} failure(s)" + (f": {fails}" if fails else "")

@@ -146,6 +146,38 @@ def check() -> dict:
             r["routes"].append({"route": name, "ok": True,
                                 "detail": f"{len(d)} row(s)"})
 
+    # /api/results_board - the Results tab's sector preview board (2026-10-10).
+    # An empty board is not a defect (a sector with no previews loaded), so
+    # only an exception is; the row says how many houses and names it holds.
+    bd, _ = route("/api/results_board", lambda: engine.results_board("it"))
+    if bd is not None:
+        r["routes"].append({"route": "/api/results_board", "ok": True,
+                            "detail": f"it {bd.get('period')}: {len(bd.get('houses') or [])} "
+                                      f"house(s), {len(bd.get('rows') or [])} name(s)"})
+
+    # /api/book_analysis - the Book's Analysis sub-tab (2026-10-10). The roster
+    # is the 32 dictated legs, so anything else means specs/book.yaml and the
+    # ticker map have drifted apart — a problem, not a quiet short list.
+    ba, _ = route("/api/book_analysis", engine.book_analysis)
+    if ba is not None:
+        n = len(ba.get("stocks") or [])
+        ok = not ba.get("error") and n == 32
+        if not ok:
+            r["problems"].append(f"/api/book_analysis: {ba.get('error') or f'{n} stocks, expected 32'}")
+        r["routes"].append({"route": "/api/book_analysis", "ok": ok,
+                            "detail": f"{n} stocks, {ba.get('n_auto', 0)} priced automatically"})
+
+    # /api/concall - the Results tab's Concall notes sub-tab (2026-10-08). The
+    # notes live in the OneDrive vault, so an empty read is reported on the
+    # route row but NOT raised as a problem: OneDrive signed out is a laptop
+    # condition, and the sub-tab already says "none on file" per name.
+    cc, _ = route("/api/concall", lambda: engine.concall_notes("tata_steel"))
+    if cc is not None:
+        n = len(cc.get("notes") or [])
+        r["routes"].append({"route": "/api/concall", "ok": n > 0,
+                            "detail": f"tata_steel: {n} note(s) from "
+                                      f"{cc.get('folder') or 'NO vault folder'}"})
+
     # /api/cement_watch - the Overview banner. Checked like any other route, but
     # an EMPTY watch is not a problem: `no_data` is what a store with no sweep
     # yet correctly reports, and `calibrating` is the expected state for the

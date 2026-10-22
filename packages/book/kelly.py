@@ -1,17 +1,28 @@
 """Kelly sizing for the book's dictated pairs.
 
 PM, 2026-09-25: *"Let's start with applying kelly criterion to the book."*
-Settled the same day: the EDGE is the PM's, entered per pair ON THE BOOK TAB
-(PM, same day: "just put returns and comments then and there") and stored
-append-only in `book_kelly_edges`; the RISK is measured here from `prices`;
-the default fraction is HALF Kelly and the horizon is fixed at 13 weeks.
+The RISK is measured here from `prices`; the default fraction is HALF Kelly
+and the horizon is fixed at 13 weeks.
 
-The page recomputes live in the browser as a return is typed — `calc` in the
-payload carries the shrunk covariance, the per-pair variances and today's
-sizes at full precision, and app.html's kellyCalc() mirrors compute() here.
-Saving POSTs /api/kelly_edge -> save_edge(). The edges briefly lived in
-specs/book.yaml kelly.edges; that key is no longer read, and a non-empty one
-is reported rather than silently ignored.
+THE EDGE COMES FROM THE CASE AGENTS (PM, 2026-10-22): *"Instead of my view in
+the kelly, we put the agents view from here. I will change my view on this
+only. Remove all text from my side."* A pair's edge is the Analysis tab's
+pair juice — the long leg's lean minus the short leg's (`data.juice_pct` on
+each stock's live `price` entry, set by the PM through that stock's agent) —
+read by agent_edges(). A pair gets an edge only when BOTH legs carry a lean.
+The leans are to the next print (~mid-January for the IT names), which falls
+inside the 13-week window; that is the PM's equivalence, stated in each
+edge's note, not a scaling done here.
+
+Before that the edge was typed per pair on the Book tab and stored
+append-only in `book_kelly_edges` via POST /api/kelly_edge (2026-09-25 →
+2026-10-22). The route and the inputs are gone; the TABLE keeps its rows as
+history and nothing reads it. Earlier still the edges lived in
+specs/book.yaml kelly.edges; a non-empty key there is reported, not read.
+
+The page recomputes in the browser from `calc` (shrunk covariance, per-pair
+variances, today's sizes at full precision); app.html's kellyCalc() mirrors
+compute() here.
 
 THE SPLIT IS THE WHOLE DESIGN, and it is this repo's inversion again
 ---------------------------------------------------------------------
@@ -26,9 +37,10 @@ was considered and REFUSED —
   the spread's own drift    a back-cast of TODAY'S roster — survivorship by
                             construction, and mostly momentum. Not a forecast.
 
-So the edge is the PM's view, typed in, with a NOT-EMPTY `note` beside it —
-the book-side cousin of invariants 1 and 2 (no number without provenance). An
-edge with no note is refused, not defaulted.
+So the edge is the PM's view — now expressed as the two legs' leans — with a
+NOT-EMPTY `note` beside it naming both leans and their dates, the book-side
+cousin of invariants 1 and 2 (no number without provenance). An edge with no
+note is refused, not defaulted.
 
 WHAT A "PAIR RETURN" IS HERE
 ----------------------------
@@ -122,7 +134,9 @@ SESSIONS_PER_WEEK = 5
 SESSIONS_PER_YEAR = 252
 
 DEFAULTS = {"fraction": 0.5, "lookback_days": 730, "min_sessions": 120,
-            "horizon_weeks": 13, "shrink": "auto"}
+            "horizon_weeks": 13, "shrink": "auto",
+            "horizon_variance": "measured", "vr_lookback_days": 7300,
+            "vr_min_sessions": 750}
 
 
 # ---------------------------------------------------------------- spec ----
@@ -135,60 +149,33 @@ def _spec() -> dict:
     return k
 
 
-def _book_conn():
-    import book_io
-    return book_io.connect()          # runs the DDL, so the table exists
-
-
-def stored_edges(conn) -> dict:
-    """{pair: {ret_pct, horizon_weeks, note, set_at}} — latest row per pair,
-    cleared pairs (ret_pct NULL) omitted."""
+def agent_edges(aview: dict, H: float) -> dict:
+    """{pair: {ret_pct, horizon_weeks, note, set_at, legs}} from the Analysis
+    view (packages/book/analysis.py view()): pair juice = long lean − short
+    lean. A pair with a leg that has no lean is ABSENT — half a pair's view
+    is not a pair view, and an absent edge is not a zero one."""
+    by = {s["entity"]: s for s in aview.get("stocks") or []}
     out = {}
-    for r in conn.execute(
-            "SELECT pair, ret_pct, horizon_weeks, note, set_at FROM "
-            "book_kelly_edges ORDER BY id"):
-        if r[1] is None:
-            out.pop(r[0], None)
-        else:
-            out[r[0]] = {"ret_pct": r[1], "horizon_weeks": r[2],
-                         "note": r[3], "set_at": r[4]}
+    for p in aview.get("pairs") or []:
+        if p.get("pair_juice") is None:
+            continue
+        legs = []
+        for side, ents in (("L", p["long"]), ("S", p["short"])):
+            for e in ents:
+                s = by.get(e) or {}
+                pr = (s.get("steps") or {}).get("price") or {}
+                legs.append({"side": side, "entity": e, "name": s.get("name", e),
+                             "juice_pct": s.get("juice"), "as_of": pr.get("as_of"),
+                             "horizon": s.get("horizon")})
+        txt = " − ".join(
+            " / ".join(f"{l['name']} {l['juice_pct']:+.1f}% ({l['as_of']})"
+                       for l in legs if l["side"] == sd) for sd in ("L", "S"))
+        out[p["name"]] = {
+            "ret_pct": p["pair_juice"], "horizon_weeks": H, "legs": legs,
+            "set_at": max((l["as_of"] or "") for l in legs) or None,
+            "note": f"case agents: {txt}; each lean is to the next print, "
+                    f"inside the {H:g}-week window"}
     return out
-
-
-def save_edge(pair: str, ret_pct, note: str, known: set,
-              conn=None) -> dict:
-    """Validate and append one edge. ret_pct None/'' clears it.
-
-    Same refusals as parse_edges — a note is required to SET an edge — plus
-    the pair must be a dictated one TODAY: an edge filed under a pair name
-    that no longer exists would sit in the table reading as live.
-    """
-    if pair not in known:
-        return {"error": f"{pair!r} is not a dictated pair"}
-    note = (note or "").strip()
-    H = float(_spec()["horizon_weeks"])
-    if ret_pct in (None, ""):
-        # the clear row must not carry the old thesis as if it were current
-        ret, note = None, "cleared on the Book tab"
-    else:
-        ok, bad = parse_edges({pair: {"ret_pct": ret_pct, "note": note,
-                                      "horizon_weeks": H}}, H)
-        if bad:
-            return {"error": bad[0]}
-        ret = ok[pair]["ret_pct"]
-    own = conn is None
-    conn = conn or _book_conn()
-    try:
-        conn.execute(
-            "INSERT INTO book_kelly_edges (pair, ret_pct, horizon_weeks, "
-            "note, set_at) VALUES (?,?,?,?,?)",
-            (pair, ret, H, note,
-             dt.datetime.now().isoformat(timespec="seconds")))
-        conn.commit()
-    finally:
-        if own:
-            conn.close()
-    return {"ok": True, "pair": pair, "ret_pct": ret, "note": note}
 
 
 def parse_edges(raw: dict, default_h: float) -> tuple[dict, list]:
@@ -286,6 +273,112 @@ def covariance(series: list[list[float]], shrink="auto") -> tuple[list, float]:
     return S, d
 
 
+# ---------------------------------------------- horizon variance ratio ----
+#
+# THE 13-WEEK VARIANCE IS NOT 65 x THE DAILY ONE ON THESE SPREADS (PM ruling
+# 2026-10-06: "yes, fix the 13-week variance"). Until this date compute()
+# sized off the daily σ² with the edge spread per session, which is the same
+# as assuming 13-week variance = 65 x daily variance — i.e. that a spread's
+# daily moves are independent. They are not: pairs of same-sector names
+# partly mean-revert inside a quarter. Measured over each pair's history since
+# 2007, the 13-week variance runs at ~0.66 of 65 x daily (13w σ ~0.82 of the
+# √65-scaled daily σ). Kelly divides by variance, so every size was ~1.5x too
+# SMALL and every implied edge ~1.5x too BIG — plausible numbers, nothing
+# raised: the SILENT_BUGS shape. Wrong value 1.00, right value ~0.66; caught
+# by testing the √time assumption directly rather than by any symptom.
+#
+# The ratio is the Lo–MacKinlay overlapping-window variance ratio, bias-
+# corrected for the overlap and for the estimated mean. ONE POOLED RATIO, NOT
+# ONE PER PAIR, and that is measured rather than chosen: across the 16 pairs
+# the dispersion of the per-pair ratios (0.0325) equals what sampling noise
+# alone produces (0.0326), so the between-pair variance τ² is 0 and the
+# per-pair numbers (0.42 .. 1.13) are noise around one value. Each pair is
+# shrunk toward the pooled ratio with weight τ²/(τ² + se²) — the same
+# "measured, not chosen" rule as the covariance δ — so the day a pair's ratio
+# becomes distinguishable it keeps it, and today they all take the pool.
+#
+# What is scaled and what is not: the LEVEL of σ² still comes from the
+# lookback window (recent risk); only the daily -> 13-week SHAPE comes from
+# the long history, which is the only place with enough non-overlapping
+# quarters to measure it. Correlations are untouched (Σ_ij x √(r_i r_j)), so
+# with one pooled ratio the joint PROPORTIONS — the "at today's gross" column
+# — do not move at all; only absolute sizes and implied edges do.
+
+def variance_ratio(xs: list[float], q: int) -> float | None:
+    """Lo–MacKinlay (1988) VR(q) with overlapping q-sums, unbiased form:
+    σ²_c / σ²_a, where σ²_c = Σ_k (S_k − S_{k−q} − qμ)² / m and
+    m = q(T−q+1)(1−q/T). 1.0 for independent increments; < 1 mean-reverting.
+    None below 2q observations (fewer than two non-overlapping windows)."""
+    T = len(xs)
+    if T < 2 * q:
+        return None
+    mu = sum(xs) / T
+    sa = sum((x - mu) ** 2 for x in xs) / (T - 1)
+    if sa <= 0:
+        return None
+    S = [0.0]
+    for x in xs:
+        S.append(S[-1] + x)
+    m = q * (T - q + 1) * (1 - q / T)
+    sc = sum((S[k] - S[k - q] - q * mu) ** 2 for k in range(q, T + 1)) / m
+    return sc / sa
+
+
+def vr_se2(T: int, q: int) -> float:
+    """Asymptotic sampling variance of VR(q) under independent increments
+    (Lo–MacKinlay): 2(2q−1)(q−1) / (3qT). A floor — fat tails and volatility
+    clustering only widen it, which only strengthens the case for pooling."""
+    return 2 * (2 * q - 1) * (q - 1) / (3 * q * T)
+
+
+def horizon_ratios(raw: dict[str, tuple[float | None, int]], q: int,
+                   min_sessions: int, pin=None) -> dict:
+    """{label: (raw VR or None, n sessions)} -> the ratio each pair is sized on.
+
+    Pairs with >= min_sessions estimate the pool (inverse-variance weighted
+    mean) and τ²; each then takes w·own + (1−w)·pool, w = τ²/(τ²+se²). A pair
+    under min_sessions takes the pool, flagged. `pin` (a number) overrides
+    everything — 1.0 restores the old √time assumption. No qualifying pair at
+    all -> 1.0 with basis 'none', stated rather than silently assumed.
+    """
+    out = {"q": q, "pool": None, "tau2": None, "n_pool": 0, "pairs": {}}
+    if pin is not None:
+        p = float(pin)
+        out.update(pool=p, basis="pinned")
+        for lab, (v, n) in raw.items():
+            out["pairs"][lab] = {"raw": v, "n": n, "w": 0.0, "ratio": p,
+                                 "basis": "pinned"}
+        return out
+    own = {lab: (v, n) for lab, (v, n) in raw.items()
+           if v is not None and n >= min_sessions}
+    if not own:
+        out["basis"] = "none"
+        for lab, (v, n) in raw.items():
+            out["pairs"][lab] = {"raw": v, "n": n, "w": 0.0, "ratio": 1.0,
+                                 "basis": "none"}
+        return out
+    se2 = {lab: vr_se2(n, q) for lab, (v, n) in own.items()}
+    wsum = sum(1 / s for s in se2.values())
+    pool = sum(own[lab][0] / se2[lab] for lab in own) / wsum
+    vals = [v for v, _ in own.values()]
+    mv = sum(vals) / len(vals)
+    disp = sum((v - mv) ** 2 for v in vals) / len(vals)
+    tau2 = max(0.0, disp - sum(se2.values()) / len(se2))
+    out.update(pool=pool, tau2=tau2, n_pool=len(own), basis="measured",
+               dispersion=disp, mean_se2=sum(se2.values()) / len(se2))
+    for lab, (v, n) in raw.items():
+        if lab in own:
+            w = tau2 / (tau2 + se2[lab]) if tau2 > 0 else 0.0
+            out["pairs"][lab] = {"raw": v, "n": n, "w": w,
+                                 "ratio": w * v + (1 - w) * pool,
+                                 # w = 0 is the pool exactly; say so
+                                 "basis": "shrunk" if w > 0 else "pooled"}
+        else:
+            out["pairs"][lab] = {"raw": v, "n": n, "w": 0.0, "ratio": pool,
+                                 "basis": "pooled_short"}
+    return out
+
+
 # ------------------------------------------------------------- series ----
 
 def _load_bars(conn, eids, start):
@@ -340,14 +433,20 @@ def pair_returns(L: list, S: list, bars: dict, vols: dict,
 
 def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
             fraction: float, min_sessions: int, horizon_weeks: float,
-            shrink="auto") -> dict:
+            shrink="auto", vr: dict[str, float] | None = None) -> dict:
     """The arithmetic, separated from the store so the selftest can drive it.
 
     pairs: [{label, f_now}] — f_now is CURRENT notional per side / NAV.
     rets:  {label: {date: r}}.
     edges: parse_edges output.
+    vr:    {label: horizon variance ratio} (horizon_ratios). Missing / None
+           = 1.0, the old √time assumption. Applied as a DAILY-EQUIVALENT
+           variance (ratio x daily σ²), so everything downstream — μ per
+           session, the browser's kellyCalc — is unchanged in form: the page
+           mirrors this function by reading the scaled var/cov from `calc`.
     """
     H = horizon_weeks * SESSIONS_PER_WEEK
+    vr = vr or {}
     rows = {}
     for p in pairs:
         lab, r = p["label"], rets.get(p["label"]) or {}
@@ -357,9 +456,15 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
                "flags": list(p.get("flags") or [])}
         if n >= 3:
             m = sum(xs) / n
-            var = sum((x - m) ** 2 for x in xs) / (n - 1)
+            var_raw = sum((x - m) ** 2 for x in xs) / (n - 1)
+            ratio = float(vr.get(lab, 1.0))
+            var = var_raw * ratio            # 13-week-consistent, per session
             row["sigma_d"] = math.sqrt(var)
-            row["sigma_ann_pct"] = math.sqrt(var * SESSIONS_PER_YEAR) * 100
+            # the DAILY σ as measured (the column says "daily closes") ...
+            row["sigma_ann_pct"] = math.sqrt(var_raw * SESSIONS_PER_YEAR) * 100
+            # ... and the σ Kelly actually sizes on, over the horizon
+            row["sigma_h_pct"] = math.sqrt(var * H) * 100
+            row["vr"] = ratio
             row["var_d"] = var
             # size -> the edge that would make it exactly `fraction`-Kelly
             row["implied_edge_pct"] = (p["f_now"] * var / fraction) * H * 100
@@ -382,6 +487,12 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
         if len(common) >= min_sessions:
             series = [[rets[l][d] for d in common] for l in pool]
             Sig, delta = covariance(series, shrink)
+            # horizon scaling: variances by r_i, covariances by √(r_i r_j) —
+            # correlations untouched. With all ratios 1.0 this is a no-op,
+            # which the selftest pins.
+            sq = [math.sqrt(float(vr.get(l, 1.0))) for l in pool]
+            Sig = [[Sig[i][j] * sq[i] * sq[j] for j in range(len(pool))]
+                   for i in range(len(pool))]
             joint["delta"] = delta
             joint["_pool"], joint["_cov"] = pool, Sig
             # the REVERSE read over the whole book: Σ f_now / fraction
@@ -450,21 +561,20 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
 
 
 def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
-          spec: dict | None = None) -> dict:
+          spec: dict | None = None, aview: dict | None = None) -> dict:
     """The /api/book `kelly` block, from engine.book_view's dictated view."""
     from corporate_actions import CONFIRMED_ACTIONS
     spec = spec or _spec()
     fraction = float(spec["fraction"])
     H = float(spec["horizon_weeks"])
-    econn = _book_conn()
-    try:
-        raw = stored_edges(econn)
-    finally:
-        econn.close()
+    import analysis
+    if aview is None:
+        aview = analysis.view()
+    raw = agent_edges(aview, H)
     edges, bad = parse_edges(raw, H)
     if spec.get("spec_edges"):
-        bad.append("specs/book.yaml kelly.edges is no longer read — enter "
-                   "edges on the Book tab (" + ", ".join(spec["spec_edges"]) + ")")
+        bad.append("specs/book.yaml kelly.edges is no longer read — edges come "
+                   "from the case agents' leans (" + ", ".join(spec["spec_edges"]) + ")")
     own = conn is None
     if own:
         conn = sqlite3.connect(DB)
@@ -480,11 +590,18 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
         start = (dt.date.fromisoformat(end)
                  - dt.timedelta(days=int(spec["lookback_days"]))).isoformat()
         bars, vols = _load_bars(conn, eids, start)
+        # the long history, for the daily -> 13-week variance ratio only
+        hv = spec.get("horizon_variance", "measured")
+        lstart = (dt.date.fromisoformat(end)
+                  - dt.timedelta(days=int(spec["vr_lookback_days"]))).isoformat()
+        lbars, lvols = (_load_bars(conn, eids, lstart) if hv == "measured"
+                        else (None, None))
     finally:
         if own:
             conn.close()
 
     pairs, rets, skipped = [], {}, []
+    raw_vr: dict[str, tuple] = {}
     for p in view:
         lab = p["label"]
         if p.get("missing"):
@@ -498,6 +615,10 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
             continue
         r, dropped = pair_returns(L, S, bars, vols, CONFIRMED_ACTIONS)
         rets[lab] = r
+        if lbars is not None:
+            lr, _ = pair_returns(L, S, lbars, lvols, CONFIRMED_ACTIONS)
+            lx = [lr[d] for d in sorted(lr)]
+            raw_vr[lab] = (variance_ratio(lx, int(H * SESSIONS_PER_WEEK)), len(lx))
         lg = sum((l["gross_usd"] or 0) * (l.get("share") or 1)
                  for l in p["legs"] if l["side"] == "L")
         sg = sum((l["gross_usd"] or 0) * (l.get("share") or 1)
@@ -513,8 +634,18 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
                       "long_usd": round(lg), "short_usd": round(sg),
                       "dropped": dropped, "flags": sorted(set(flags))})
 
+    q = int(H * SESSIONS_PER_WEEK)
+    if hv == "measured":
+        hr = horizon_ratios(raw_vr, q, int(spec["vr_min_sessions"]))
+    else:   # a pinned number; 1.0 restores the old sqrt-time assumption
+        hr = horizon_ratios({p["label"]: (None, 0) for p in pairs}, q, 0,
+                            pin=float(hv))
+    for p in pairs:
+        if (hr["pairs"].get(p["label"]) or {}).get("basis") == "pooled_short":
+            p["flags"].append("vr_pooled")
     out = compute(pairs, rets, edges, fraction, int(spec["min_sessions"]), H,
-                  spec.get("shrink", "auto"))
+                  spec.get("shrink", "auto"),
+                  vr={lab: v["ratio"] for lab, v in hr["pairs"].items()})
     # full-precision inputs for the browser's live recompute: rounding a
     # variance of ~1.4e-4 to 4dp below would zero it
     j = out["joint"]
@@ -541,10 +672,22 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
     out.update({
         "fraction": fraction, "horizon_weeks": H,
         "lookback_days": int(spec["lookback_days"]), "window": [start, end],
+        "horizon_variance": {
+            "basis": hr.get("basis"), "pool": hr.get("pool"),
+            "sd_ratio": (math.sqrt(hr["pool"]) if hr.get("pool") else None),
+            "tau2": hr.get("tau2"), "dispersion": hr.get("dispersion"),
+            "mean_se2": hr.get("mean_se2"), "n_pool": hr.get("n_pool"),
+            "from": lstart if hv == "measured" else None,
+            "min_sessions": int(spec["vr_min_sessions"]),
+            "pairs": {lab: {k: (round(v, 4) if isinstance(v, float) else v)
+                            for k, v in d.items()}
+                      for lab, d in hr["pairs"].items()}},
         "min_sessions": int(spec["min_sessions"]),
         "shrink": spec.get("shrink", "auto"),
         "n_edges": len([e for e in edges if e in known]),
+        "edges_source": "case agents (long lean − short lean, Analysis tab)",
         "edges_set_at": {k_: raw[k_]["set_at"] for k_ in edges if k_ in raw},
+        "edge_legs": {k_: raw[k_]["legs"] for k_ in edges if k_ in raw},
         "bad_edges": bad,
         "unknown_edges": sorted(e for e in edges if e not in known),
         "skipped": skipped,
@@ -707,23 +850,91 @@ def _selftest() -> None:
     check(abs(r10["2026-01-02"] - 0.01) < 1e-12,
           "ordinary session: long ret minus short ret (acceptance)")
 
-    # 11. the edge store: append-only, latest wins, clear removes ---------
-    import book_io
-    mem = sqlite3.connect(":memory:")
-    mem.executescript(book_io.DDL)
-    known = {"HZ_VEDL", "JSTL_TATA"}
-    check("error" in save_edge("TYPO", 5, "x", known, mem),
-          "save refuses a pair that is not dictated")
-    check("error" in save_edge("HZ_VEDL", 5, "  ", known, mem),
-          "save refuses an edge with no comment")
-    check(save_edge("HZ_VEDL", 5, "first view", known, mem).get("ok")
-          and save_edge("HZ_VEDL", 7, "revised", known, mem).get("ok")
-          and stored_edges(mem)["HZ_VEDL"]["ret_pct"] == 7,
-          "a revised edge replaces the live one (acceptance)")
-    save_edge("HZ_VEDL", None, "", known, mem)
-    n_rows = mem.execute("SELECT COUNT(*) FROM book_kelly_edges").fetchone()[0]
-    check("HZ_VEDL" not in stored_edges(mem) and n_rows == 3,
-          "clearing removes the live edge and keeps the history")
+    # 11. edges from the case agents' leans (2026-10-22) -------------------
+    def stk(e, j, d):
+        return {"entity": e, "name": e.upper(), "juice": j, "horizon": "to Q3",
+                "steps": {"price": {"as_of": d}} if j is not None else {}}
+    av = {"stocks": [stk("a", 2.9, "2026-10-22"), stk("b", 0.6, "2026-10-21"),
+                     stk("c", 1.0, "2026-10-20"), stk("d", None, None)],
+          "pairs": [{"name": "A_B", "long": ["a"], "short": ["b"], "pair_juice": 2.3},
+                    {"name": "C_D", "long": ["c"], "short": ["d"], "pair_juice": None}]}
+    ae = agent_edges(av, H)
+    check(set(ae) == {"A_B"} and ae["A_B"]["ret_pct"] == 2.3
+          and ae["A_B"]["set_at"] == "2026-10-22",
+          "a pair with both leans becomes an edge, dated by its newest lean (acceptance)")
+    check("C_D" not in ae, "a pair with a leg missing its lean has NO edge, not a zero one")
+    pe, pb = parse_edges(ae, H)
+    check("A_B" in pe and not pb and "A +2.9% (2026-10-22)" in pe["A_B"]["note"]
+          and "B +0.6%" in pe["A_B"]["note"],
+          "the agent edge passes parse_edges with both leans named in its note")
+
+    # 12. the horizon variance ratio (2026-10-06) ---------------------------
+    q = 65
+    iid = gauss(12, 6000, 0.0, 0.01)
+    v_iid = variance_ratio(iid, q)
+    se = math.sqrt(vr_se2(6000, q))
+    check(abs(v_iid - 1) < 3 * se,
+          f"independent increments: VR {v_iid:.3f} within 3se ({se:.3f}) of 1 (acceptance)")
+    # mean-reverting increments x_t = e_t - 0.5 e_(t-1): long-run VR is
+    # (1-0.5)^2 / (1+0.25) = 0.2 — must be told apart from 1
+    rg = random.Random(13)
+    e = [rg.gauss(0, 0.01) for _ in range(6001)]
+    mr = [e[t] - 0.5 * e[t - 1] for t in range(1, 6001)]
+    v_mr = variance_ratio(mr, q)
+    check(abs(v_mr - 0.2) < 0.08 and v_mr < 1 - 3 * se,
+          f"mean-reverting increments: VR {v_mr:.3f} ~ 0.2, rejected as 1")
+    check(variance_ratio(iid[:129], q) is None and variance_ratio(iid[:130], q) is not None,
+          "VR needs two full windows: refused at 2q-1, given at 2q")
+
+    # sizing: a ratio r divides the variance, so size x 1/r and implied edge x r
+    e12, _ = parse_edges({"A": {"ret_pct": 6.5, "note": "t"}}, H)
+    base = compute([{"label": "A", "f_now": 0.02}], {"A": ser(a)}, e12, 0.5, 120, H)["rows"][0]
+    half = compute([{"label": "A", "f_now": 0.02}], {"A": ser(a)}, e12, 0.5, 120, H,
+                   vr={"A": 0.5})["rows"][0]
+    check(abs(half["f_standalone"] / base["f_standalone"] - 2) < 1e-12
+          and abs(half["f_joint"] / base["f_joint"] - 2) < 1e-12,
+          "ratio 0.5 doubles the standalone AND joint size exactly")
+    check(abs(half["implied_edge_pct"] / base["implied_edge_pct"] - 0.5) < 1e-12,
+          "...and halves the implied edge")
+    check(abs(half["sigma_ann_pct"] - base["sigma_ann_pct"]) < 1e-12
+          and abs(half["sigma_h_pct"] / base["sigma_h_pct"] - math.sqrt(0.5)) < 1e-12,
+          "the daily σ column is unchanged; the horizon σ scales by √r")
+    one = compute([{"label": "A", "f_now": 0.02}], {"A": ser(a)}, e12, 0.5, 120, H,
+                  vr={"A": 1.0})["rows"][0]
+    check(one["f_standalone"] == base["f_standalone"] and one["f_joint"] == base["f_joint"],
+          "ratio 1.0 reproduces the pre-2026-10-06 sizes exactly (regression)")
+    # one ratio for every pair: joint PROPORTIONS — the budget column — do not move
+    r4a = compute([{"label": "A", "f_now": .02}, {"label": "B", "f_now": .02}],
+                  {"A": ser(a), "B": ser(b)}, e4, 0.5, 120, H, shrink=0)
+    r4b = compute([{"label": "A", "f_now": .02}, {"label": "B", "f_now": .02}],
+                  {"A": ser(a), "B": ser(b)}, e4, 0.5, 120, H, shrink=0,
+                  vr={"A": 0.66, "B": 0.66})
+    check(all(abs(x["f_budget"] - y["f_budget"]) < 1e-12 for x, y in zip(r4a["rows"], r4b["rows"]))
+          and abs(r4b["rows"][0]["f_joint"] / r4a["rows"][0]["f_joint"] - 1 / 0.66) < 1e-9,
+          "a common ratio scales joint sizes by 1/r and leaves the allocation untouched")
+
+    # pooling: noise-only dispersion -> everyone takes the pool ...
+    T_ = 4000
+    s_ = math.sqrt(vr_se2(T_, q))
+    noisy = {f"P{i}": (0.66 + s_ * z, T_) for i, z in
+             enumerate([-1.0, -0.5, 0.0, 0.5, 1.0, -0.2, 0.3, 0.1])}
+    hr = horizon_ratios(noisy, q, 750)
+    check(hr["tau2"] == 0 and all(p_["w"] == 0 and abs(p_["ratio"] - hr["pool"]) < 1e-12
+                                  for p_ in hr["pairs"].values()),
+          "dispersion no wider than noise: tau2 = 0, every pair takes the pool")
+    # ... a genuinely different pair keeps (most of) its own
+    spread_ = dict(noisy, OUT=(1.6, T_), OUT2=(0.2, T_))
+    hr2 = horizon_ratios(spread_, q, 750)
+    check(hr2["tau2"] > 0 and hr2["pairs"]["OUT"]["w"] > 0.5
+          and hr2["pairs"]["OUT"]["ratio"] > hr2["pool"],
+          "real between-pair dispersion: an outlier keeps most of its own ratio")
+    hr3 = horizon_ratios(dict(noisy, NEW=(None, 70), YOUNG=(1.4, 500)), q, 750)
+    check(hr3["pairs"]["NEW"]["basis"] == "pooled_short"
+          and hr3["pairs"]["YOUNG"]["ratio"] == hr3["pool"],
+          "a short-history pair takes the pool, flagged, whatever its own estimate")
+    check(horizon_ratios({"A": (None, 50)}, q, 750)["pairs"]["A"]["ratio"] == 1.0
+          and horizon_ratios(noisy, q, 750, pin=1.0)["pairs"]["P0"]["ratio"] == 1.0,
+          "no qualifying pair -> 1.0 stated as basis 'none'; a pin overrides")
 
     print(f"\nkelly selftest: {ok} checks pass")
 

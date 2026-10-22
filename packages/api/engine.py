@@ -194,6 +194,9 @@ def inputs_for_ui() -> list[dict]:
     return out
 
 
+OI_PCT_SESSIONS = 42   # Positioning percentile window, ~2 months of sessions
+
+
 def oi_snapshot() -> list[dict]:
     conn = connect()
     rows = [dict(r) for r in conn.execute(
@@ -228,9 +231,28 @@ def oi_snapshot() -> list[dict]:
         # OI is NULL because the vault file stopped at 25-Aug. Same rule as
         # vault_oi.raw_pct_3m, one definition: strict-below over the last 63
         # sessions. NULL latest OI ⇒ no rank, not a stale one.
+        # WINDOW CUT TO 2 MONTHS (PM, 2026-09-30: "measure the % for rolling
+        # 2 months"): 42 sessions, same strict-below rule. The STORED
+        # oi.oi_percentile column is still the loader's 63-session rank and
+        # is rendered nowhere; this displayed number is not that column.
         r["oi_percentile"] = raw_pct_3m(
-            [{"oi": h[1]} for h in reversed(hist)])
+            [{"oi": h[1]} for h in reversed(hist)], n=OI_PCT_SESSIONS)
+        r["oi_pct_sessions"] = OI_PCT_SESSIONS
     conn.close()
+    # Options columns (2026-09-30): ATM IV + its 1y percentile, and the last
+    # 60 sessions of the weighted average range for the row's mini chart.
+    for r in rows:
+        o = options_series(r["entity_id"])
+        if not o or not o.get("dates"):
+            r["opt"] = None
+            continue
+        tail = list(zip(o["dates"], o["call"], o["fut"], o["put"]))[-60:]
+        r["opt"] = {k: o[k] for k in ("symbol", "iv_now", "iv_exp_now",
+                                      "iv_pctile", "iv_n", "iv_lo", "iv_hi",
+                                      "iv_min_obs")}
+        r["opt"]["date"] = o["dates"][-1]
+        r["opt"]["war"] = [[c, f, p] for _d, c, f, p in tail
+                           if None not in (c, f, p)]
     return rows
 
 
@@ -266,6 +288,153 @@ def oi_history(entity_id: str) -> dict:
         "name": name,
         "lot_size": (lot["lot_size"] if lot else None),
         "rows": rows,
+        # Options layer (2026-09-30) rides on the SAME route, so the vault
+        # copy's per-id oi_history bake carries it with no new enumeration.
+        "options": options_series(entity_id),
+    }
+
+
+# ---------------------------------------------------------------------------
+# OPTIONS — weighted average range + ATM IV, the Positioning tab (2026-09-30)
+# ---------------------------------------------------------------------------
+# PM: "Let the futures remain there, just add the weighted average graph.
+# Include IV %ile." Data: fo_options (packages/adapters/fo_options.py).
+#
+# WEIGHTED AVERAGE RANGE, per session: every live expiry POOLED by OI —
+# call line Σ(strike × call OI) / Σ call OI, put line likewise — against the
+# FRONT expiry's futures. Pooled rather than one expiry because a single
+# contract's series ends at its expiry and restarts thin in the next; the
+# pooled line is continuous across rolls.
+#
+# IV: the ATM IV of the front expiry, ROLLED to the next once <= IV_ROLL_DAYS
+# calendar days remain — a contract in its last week has almost no time value
+# and its ATM IV swings on a few paise of premium. The expiry actually used
+# is returned beside every point. IV percentile = share of the trailing
+# IV_WINDOW sessions' IVs strictly below today's (the raw_pct_3m convention),
+# withheld under IV_MIN_OBS readings: a rank over a month is not a 1-year
+# percentile and must not be printed as one.
+IV_ROLL_DAYS = 7
+IV_WINDOW = 252
+IV_MIN_OBS = 60
+_SPLIT_RATIOS = (1.5, 2, 2.5, 3, 4, 5, 10)
+# NSE symbol renames: the bhavcopy files history under the OLD ticker. LTM
+# (LTIMindtree, renamed "LTM Limited") is LTIM through 2026-02-26 and LTM from
+# 2026-02-27 — checked for date overlap before joining (none). Without this
+# the IV percentile ran on 144 sessions instead of 270.
+_SYMBOL_PREDECESSORS = {"LTM": ["LTIM"]}
+
+
+def _nse_symbol(entity_id: str) -> str | None:
+    """entity_id -> NSE symbol via yahoo_prices.CANDIDATES (.NS), the repo's
+    existing id->ticker source of truth. Verified 2026-09-30 for all 30
+    Positioning names against the fo_oi roster."""
+    try:
+        sys.path.insert(0, str(REPO / "packages" / "adapters"))
+        from yahoo_prices import CANDIDATES
+    except Exception:
+        return None
+    for c in CANDIDATES.get(entity_id) or []:
+        t = c[0] if isinstance(c, tuple) else c
+        if isinstance(t, str) and t.endswith(".NS"):
+            return t[:-3]
+    return None
+
+
+def options_series(entity_id: str) -> dict | None:
+    sym = _nse_symbol(entity_id)
+    if not sym:
+        return None
+    conn = connect()
+    try:
+        syms = [sym] + _SYMBOL_PREDECESSORS.get(sym, [])
+        rows = conn.execute(
+            "SELECT date, expiry, fut, spot, lot, call_oi, call_wtd, put_oi, "
+            "put_wtd, atm_strike, atm_iv FROM fo_options WHERE symbol IN (%s) "
+            "ORDER BY date, expiry" % ",".join("?" * len(syms)),
+            syms).fetchall()
+    except sqlite3.OperationalError:      # table not created yet
+        rows = []
+    conn.close()
+    if not rows:
+        return {"symbol": sym, "dates": []}
+
+    import datetime as _dt
+    by_date: dict[str, list] = {}
+    for r in rows:
+        by_date.setdefault(r["date"], []).append(r)
+    dates = sorted(by_date)
+    fut, call, put, spot, lot, iv, iv_exp, iv_k = [], [], [], [], [], [], [], []
+    for d in dates:
+        ex = by_date[d]                                  # sorted by expiry
+        front = next((e for e in ex if e["fut"]), None)
+        cs = sum(e["call_wtd"] * e["call_oi"] for e in ex if e["call_wtd"])
+        co = sum(e["call_oi"] for e in ex if e["call_wtd"])
+        ps = sum(e["put_wtd"] * e["put_oi"] for e in ex if e["put_wtd"])
+        po = sum(e["put_oi"] for e in ex if e["put_wtd"])
+        fut.append(front["fut"] if front else None)
+        call.append(cs / co if co else None)
+        put.append(ps / po if po else None)
+        spot.append(ex[0]["spot"]); lot.append(ex[0]["lot"])
+        d0 = _dt.date.fromisoformat(d)
+        pick = next((e for e in ex if (_dt.date.fromisoformat(e["expiry"])
+                                       - d0).days > IV_ROLL_DAYS), None)
+        iv.append(pick["atm_iv"] * 100 if pick and pick["atm_iv"] else None)
+        iv_exp.append(pick["expiry"] if pick else None)
+        iv_k.append(pick["atm_strike"] if pick else None)
+
+    # Splits/bonuses (the guide's rule): spot falls by a clean ratio WHILE the
+    # lot rises -> restate every earlier strike/price in today's terms. IV is
+    # a ratio and needs no restatement.
+    adj = None
+    fac = [1.0] * len(dates)
+    for i in range(1, len(dates)):
+        s0, s1, l0, l1 = spot[i - 1], spot[i], lot[i - 1], lot[i]
+        if s0 and s1 and l0 and l1 and l1 > l0:
+            rr = s0 / s1
+            fx = next((x for x in _SPLIT_RATIOS if abs(rr / x - 1) < 0.12), None)
+            if rr > 1.4 and fx:
+                for j in range(i):
+                    fac[j] *= fx
+                adj = {"date": dates[i], "ratio": fx}
+    rd = lambda v, f: None if v is None else round(v / f, 2)
+    fut = [rd(v, f) for v, f in zip(fut, fac)]
+    call = [rd(v, f) for v, f in zip(call, fac)]
+    put = [rd(v, f) for v, f in zip(put, fac)]
+    iv = [None if v is None else round(v, 2) for v in iv]
+    # CONFIRMED CORPORATE ACTIONS BLANK THE IV OF THE SESSION BEFORE THEM.
+    # Measured 2026-09-30: VEDL 2026-04-29, the eve of the demerger, solved
+    # to 2.1% ATM IV (fut == spot == 773.55, premiums priced for the NSE
+    # contract adjustment, not for volatility) — it set the 1y LOW of VEDL's
+    # range, beside a true floor near 15%. Only the hand-verified allow-list
+    # is used (core/corporate_actions), never a jump scan: a wrong entry would
+    # silently delete a real reading.
+    try:
+        sys.path.insert(0, str(REPO / "packages" / "core"))
+        from corporate_actions import CONFIRMED_ACTIONS
+        acts = sorted(CONFIRMED_ACTIONS.get(entity_id) or {})
+    except Exception:
+        acts = []
+    # The eve was not alone: 28-Apr read 10.9%, 27-Apr 13.7%. Any contract
+    # whose expiry SPANS the action is priced across the adjustment, so the
+    # rule is "the IV expiry straddles a confirmed action", not "the eve".
+    for a in acts:
+        for i, d in enumerate(dates):
+            if iv_exp[i] and d < a <= iv_exp[i]:
+                iv[i] = None
+
+    cur = iv[-1]
+    win = [v for v in iv[-IV_WINDOW:] if v is not None]
+    pct = None
+    if cur is not None and len(win) >= IV_MIN_OBS:
+        pct = round(100.0 * sum(1 for v in win if v < cur) / len(win), 1)
+    return {
+        "symbol": sym, "dates": dates, "fut": fut, "call": call, "put": put,
+        "iv": iv, "iv_exp": iv_exp, "iv_strike": iv_k, "adj": adj,
+        "iv_now": cur, "iv_exp_now": iv_exp[-1], "iv_pctile": pct,
+        "iv_n": len(win), "iv_lo": min(win) if win else None,
+        "iv_hi": max(win) if win else None,
+        "iv_window": IV_WINDOW, "iv_min_obs": IV_MIN_OBS,
+        "iv_roll_days": IV_ROLL_DAYS,
     }
 
 
@@ -1663,7 +1832,17 @@ def flows() -> dict:
     }
 
 
-def book_view() -> dict:
+def book_snap_dates() -> list[str]:
+    """Stored book snapshot dates, ascending — the Book tab's date picker."""
+    conn = connect()
+    try:
+        return [r[0] for r in conn.execute(
+            "SELECT snap_date FROM book_snapshots ORDER BY snap_date")]
+    finally:
+        conn.close()
+
+
+def book_view(date: str | None = None) -> dict:
     """The PM's ACTUAL book — /api/book. Pair-wise IMS positions from the
     daily_review skill's snapshots, P&L chained across futures rolls by
     packages/book/book_io.py. Read-only here; nothing on this path writes.
@@ -1672,10 +1851,35 @@ def book_view() -> dict:
     (Bloomberg root -> entity_id) — EMPTY until the desk fills it at
     calibration, because a guessed mapping glues the wrong model to a real
     position. An unmapped leg shows no composite, not a wrong one.
+
+    `date` REPLAYS the book as of a past snapshot (PM, 2026-10-05: "add a date
+    setting like we have for IT sector valuations"). Nothing is saved per day
+    to make this work: pair_report already recomputes the chain, the YTD
+    basis and the %-since-entry anchors from the snapshots up to `as_of`, so a
+    past date is the same arithmetic on a shorter history. A date with no
+    snapshot resolves to the latest snapshot ON OR BEFORE it, never after (a
+    view of the 24th must not show the 25th's positions). The composites and
+    review verdicts are clipped to the same date. Kelly is a today-only sizing
+    tool with editable inputs, so it is withheld on a replay rather than shown
+    with today's edges against a past book. The pair LIST is still today's
+    dictation in specs/book.yaml, so a pair that was restructured since (TCS
+    vs HCLT before 2026-09-23) shows its old legs under the current names,
+    flagged by the existing side-mismatch and unassigned callouts.
     """
     sys.path.insert(0, str(REPO / "packages" / "book"))
     import book_io
-    rep = book_io.pair_report()
+    snaps = book_snap_dates()
+    latest = snaps[-1] if snaps else None
+    req = (date or "").strip() or None
+    as_of = latest
+    if req and snaps:
+        on_or_before = [d for d in snaps if d <= req]
+        as_of = on_or_before[-1] if on_or_before else snaps[0]
+    rep = book_io.pair_report(as_of=as_of) if snaps else book_io.pair_report()
+    rep["snap_dates"] = snaps
+    rep["latest"] = latest
+    rep["requested"] = req
+    rep["is_latest"] = (rep.get("as_of") == latest)
 
     cfg_path = REPO / "specs" / "book.yaml"
     tmap, carry, names, plabels = {}, {}, {}, {}
@@ -1691,7 +1895,11 @@ def book_view() -> dict:
 
     conn = connect()
     comp = {}
-    as_of = conn.execute("SELECT MAX(as_of) FROM pillar_scores").fetchone()[0]
+    # clipped to the book's date so a replay shows the composites that stood
+    # then, not today's
+    book_day = rep.get("as_of") or "9999-12-31"
+    as_of = conn.execute("SELECT MAX(as_of) FROM pillar_scores WHERE as_of<=?",
+                         (book_day,)).fetchone()[0]
     if as_of:
         for r in conn.execute(
                 "SELECT entity_id, score FROM pillar_scores "
@@ -1701,7 +1909,8 @@ def book_view() -> dict:
     last_review = {}
     for r in conn.execute(
             "SELECT pair_tag, verdict, review_date, thesis_intact FROM "
-            "book_pair_reviews ORDER BY review_date, id"):
+            "book_pair_reviews WHERE review_date<=? ORDER BY review_date, id",
+            (book_day,)):
         last_review[r["pair_tag"]] = {
             "verdict": r["verdict"], "date": r["review_date"],
             "thesis_intact": r["thesis_intact"]}
@@ -1776,6 +1985,16 @@ def book_view() -> dict:
     rep["scores_as_of"] = as_of
     rep["n_mapped"] = sum(1 for p in rep["pairs"] for x in p["legs"]
                           if x.get("entity_id"))
+    # Closed contracts with no live leg to sit on (full-year exports only —
+    # book_io.pair_report). The dictated view is built from live legs, so
+    # without this their YTD would drop out of the page while still being
+    # in the IMS total. Listed by name on the strip, never guessed onto a pair.
+    rep["closed_unmatched"] = [
+        {**u, "tag": p["pair"]} for p in rep["pairs"]
+        for u in p.get("closed_unmatched") or []] + [
+        {"ticker": ", ".join(c["tickers"]), "tag": c["pair"],
+         "pnl_ytd": c["pnl_ytd"], "pnl_mtd": 0.0, "pnl_dtd": 0.0}
+        for c in rep.get("closed_tags") or []]
 
     # ---- the display view: the PM's dictated pairs over the stored legs ----
     # A leg may serve several pairs (TCS long vs three shorts). DOLLARS are
@@ -1785,8 +2004,31 @@ def book_view() -> dict:
     # apportioned — a % move is size-free. Falls back to the tag grouping
     # when no pairs are dictated.
     tokens: dict = {}
+    # OPTIONS ARE NOT EQUITY LEGS. `LTM IS 10/27/26 C4100 Equity` splits to
+    # the token `LTM` and, keyed that way, merged into the LTM future on
+    # 2026-09-29 (qty 14, side flipped, since-entry re-anchored to 0.0%).
+    # An option is a hedge ON a leg; it is kept out of the token merge and
+    # surfaced through `unassigned` — the tab's existing "in no dictated
+    # pair" callout — so it is loud rather than netted. book_io.is_option_root
+    # carries the reasoning.
+    hedges: list = []
     for p in rep["pairs"]:
         for leg in p["legs"]:
+            if book_io.is_option_root(leg["root"]):
+                hedges.append({
+                    "token": leg["root"], "name": leg["name"],
+                    "entity_id": leg["entity_id"], "composite": leg["composite"],
+                    "book_side": leg["side"], "qty": leg["qty"] or 0,
+                    "gross_pct": abs(leg["mv_pct"] or 0),
+                    "gross_usd": abs(leg["mv_usd"] or 0),
+                    "pnl_dtd": leg["pnl_dtd"] or 0, "pnl_mtd": leg["pnl_mtd"] or 0,
+                    "pnl_total": leg["pnl_total"] or 0, "pnl_ytd": leg["pnl_ytd"] or 0,
+                    "ytd_flags": leg.get("ytd_flags") or [],
+                    "ret_pct": None, "first_seen": leg["first_seen"],
+                    "entry_cost": leg["entry_cost"], "entry_open": None,
+                    "ticker_now": leg["ticker_now"], "rolls": 0, "gap": False,
+                    "is_option": True, "tag": p["pair"]})
+                continue
             tok = (leg["root"].split() or [""])[0]
             t = tokens.setdefault(tok, {
                 "token": tok, "name": leg["name"],
@@ -1888,18 +2130,60 @@ def book_view() -> dict:
             })
         rep["view"] = out
         rep["sectors_order"] = list(spec_pairs.keys())
+        # Options ride in `unassigned` on purpose — that list is the loud
+        # callout — and are also listed on their own as `hedges`.
         rep["unassigned"] = sorted(
-            [t for k, t in tokens.items() if k not in assigned],
+            [t for k, t in tokens.items() if k not in assigned] + hedges,
             key=lambda t: -t["gross_usd"])
+        rep["hedges"] = hedges
         # Kelly sizing over the dictated pairs (PM, 2026-09-25). Risk from
-        # `prices`, edge from specs/book.yaml kelly.edges — packages/book/
-        # kelly.py owns the rules and the selftest. A failure here must not
+        # `prices`, edge = the case agents' pair juice (long lean − short
+        # lean, PM 2026-10-22) — packages/book/kelly.py owns the rules and
+        # the selftest. A failure here must not
         # take the Book tab down with it, so it lands as an error block.
+        # Forward grading of each pair's selection (PM, 2026-10-05) —
+        # packages/book/grading.py owns the rules and the selftest. Replays
+        # with the date picker: prices and snapshots are clipped to as_of.
+        # Read-only here; grades are FROZEN by `grading.py --run` (refresh
+        # step and daily review), never by a page load.
         try:
-            import kelly
-            rep["kelly"] = kelly.build(out, rep.get("nav") or 0.0)
+            import grading
+            gconn = grading.connect()
+            try:
+                rep["grading"] = grading.build(gconn, as_of=rep.get("as_of"))
+            finally:
+                gconn.close()
         except Exception as e:                       # noqa: BLE001
-            rep["kelly"] = {"error": f"{type(e).__name__}: {e}"}
+            rep["grading"] = {"error": f"{type(e).__name__}: {e}"}
+        # Each leg's rolling 60-day move with its sector stripped out (PM,
+        # 2026-10-21: replaces the mtd column). packages/book/sector_rel.py
+        # owns the split and the selftest; replays with the date picker.
+        try:
+            import sector_rel
+            sconn = grading.connect()
+            try:
+                # rolling: the live view runs to the latest close, not the
+                # last pasted snapshot (a paste is days old by design); a
+                # replay runs to its own date
+                rel = sector_rel.build(sconn, [l["entity_id"] for p in out for l in p["legs"]],
+                                       as_of=None if rep.get("is_latest", True) else rep.get("as_of"))
+            finally:
+                sconn.close()
+            for p in out:
+                for l in p["legs"]:
+                    l["relsec"] = rel.get(l["entity_id"]) if l.get("entity_id") else None
+            rep["relsec_rules"] = {"window_days": sector_rel.WINDOW_DAYS,
+                                  "beta_sessions": sector_rel.BETA_SESSIONS}
+        except Exception as e:                       # noqa: BLE001
+            rep["relsec_rules"] = {"error": f"{type(e).__name__}: {e}"}
+        if not rep.get("is_latest", True):
+            rep["kelly"] = None          # today-only tool; see the docstring
+        else:
+            try:
+                import kelly
+                rep["kelly"] = kelly.build(out, rep.get("nav") or 0.0)
+            except Exception as e:                       # noqa: BLE001
+                rep["kelly"] = {"error": f"{type(e).__name__}: {e}"}
     else:
         # no dictated pairs: synthesize the view from the tag grouping
         rep["view"] = [{**p, "sector": (p["pair"].rstrip("0123456789 ") or
@@ -1910,17 +2194,36 @@ def book_view() -> dict:
     return rep
 
 
-def kelly_save_edge(pair, ret_pct, note) -> dict:
-    """POST /api/kelly_edge — the Book tab's edge inputs. The pair must be
-    one of the dictated pairs in specs/book.yaml today."""
+def book_save_call(pair, thesis, falsifier, conviction, exp_ret_pct=None) -> dict:
+    """POST /api/book_call — the dated call log behind the pair grading
+    (packages/book/grading.py). Append-only. Until 2026-10-22 an expected 13w
+    spread here ALSO set the pair's Kelly edge; the edge now comes from the
+    case agents' leans (kelly.agent_edges), so a call no longer touches it."""
     sys.path.insert(0, str(REPO / "packages" / "book"))
-    import kelly
-    import yaml
-    cfg = yaml.safe_load((REPO / "specs" / "book.yaml").read_text(
-        encoding="utf-8")) or {}
-    known = {str(sp.get("name")) for plist in (cfg.get("pairs") or {}).values()
-             for sp in plist or []}
-    return kelly.save_edge(str(pair or ""), ret_pct, note, known)
+    import grading
+    conn = grading.connect()
+    try:
+        cfg = grading.load_config(conn)
+        u = next((x for x in cfg["units"]
+                  if x["pair"] == str(pair or "") and x["heading"] != "RETIRED"), None)
+        if not u:
+            return {"error": f"{pair!r} is not a dictated pair"}
+        d = grading.save_call(conn, u["pair"], u["L"], u["S"], thesis, falsifier,
+                              conviction, exp_ret_pct, "page")
+    finally:
+        conn.close()
+    return d
+
+
+def results_save_view(body: dict) -> dict:
+    """POST /api/analyst_view — the Results tab's analyst-view form. All the
+    validation is results_io.save_view's; this only opens the store."""
+    import results_io as _rio
+    conn = _rio._connect()
+    try:
+        return _rio.save_view(conn, body or {}, via="page")
+    finally:
+        conn.close()
 
 
 # ---------------------------------------------------------------------------
@@ -1959,6 +2262,19 @@ def book_index(rng: str = "5y") -> dict:
     finally:
         conn.close()
     return basket_index.window(payload, rng)
+
+
+def book_analysis() -> dict:
+    """The Book tab's Analysis sub-tab (PM, 2026-10-10): one checklist per
+    stock for the 32 dictated legs, pairs derived as long juice minus short.
+    Transport shim — packages/book/analysis.py owns the roster, the automatic
+    'what's priced in' read, the append-only log and the selftest."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import analysis
+    try:
+        return analysis.view()
+    except Exception as e:                      # the tab says why, never blank
+        return {"error": f"{type(e).__name__}: {e}"}
 
 
 def dt_date(s: str):
@@ -2156,6 +2472,72 @@ def _results_roster() -> dict[str, dict]:
     return rows
 
 
+# Results tab "Concall notes" sub-tab (PM, 2026-10-08: "a subtab in the results
+# tab that just copies the concall frontend from the earlier dashboard"). The
+# old vault dashboard's Human tab rendered `AI Insights/<TICKER>_Concall/` notes
+# in a "Latest concall" drawer; this serves the same files, READ-ONLY, as text.
+# The notes are DATA (the per-quarter /concall analyses), the same files
+# vault_concall.py already reads for P4 — nothing here scores or writes.
+#
+# The roster's `nse` field resolves 36 of 45 folders on its own. IT names carry
+# no NSE symbol in `entities`, and VAML's spec still says NEEDS_CONFIRMATION, so
+# these nine are named by hand — matched against the folder list, not guessed.
+# LTIMindtree trades as LTM.NS now; the vault folder kept the old LTIM.
+CONCALL_DIRS = {
+    "tcs": "TCS", "infosys": "INFY", "wipro": "WIPRO", "hcl_tech": "HCLTECH",
+    "tech_mahindra": "TECHM", "ltimindtree": "LTIM", "persistent": "PERSISTENT",
+    "tata_elxsi": "TATAELXSI", "vaml": "VEDANTALUM",
+}
+
+
+def _concall_dir(entity: str, nse: str | None):
+    from vault_concall import VAULT as _ai
+    for t in (CONCALL_DIRS.get(entity), nse):
+        if t and (_ai / f"{t}_Concall").is_dir():
+            return t, _ai / f"{t}_Concall"
+    return None, None
+
+
+def _n_concalls(r: dict) -> int:
+    _t, folder = _concall_dir(r["id"], r.get("nse"))
+    return len(list(folder.glob("Concall*.md"))) if folder else 0
+
+
+def concall_notes(entity: str | None) -> dict:
+    """Every vault concall note for one roster name, newest quarter first.
+
+    Ordering is (FY, quarter) parsed from the FILENAME, never mtime — OneDrive
+    rewrites mtimes, and the old dashboard's build-data.js made the same call.
+    The call date comes from the note's own "**Call:**" / "Call Date:" line.
+    A name with no folder returns notes=[] and says so, rather than an error:
+    the picker offers every covered name and most IT names have two notes.
+    """
+    import re as _re
+    roster = _results_roster()
+    r = roster.get(entity or "")
+    if not r:
+        return {"entity": entity, "ticker": None, "notes": [],
+                "error": None if entity is None else f"unknown entity {entity!r}"}
+    ticker, folder = _concall_dir(r["id"], r.get("nse"))
+    notes = []
+    if folder:
+        for p in folder.glob("Concall*.md"):
+            m = _re.search(r"Q(\d)\s*FY\s*(\d{2})", p.name, _re.I)
+            text = p.read_text(encoding="utf-8", errors="replace")
+            cm = (_re.search(r"\*\*Call:\*\*\s*([^·\n]+)", text, _re.I)
+                  or _re.search(r"Call Date\s*:\s*([^\n]+)", text, _re.I))
+            notes.append({
+                "quarter": f"Q{m.group(1)} FY{m.group(2)}" if m else None,
+                "key": int(m.group(2)) * 10 + int(m.group(1)) if m else -1,
+                "call_date": cm.group(1).strip().strip("*").strip() if cm else None,
+                "file": f"AI Insights/{folder.name}/{p.name}",
+                "body": text})
+        notes.sort(key=lambda n: n["key"], reverse=True)
+    return {"entity": r["id"], "name": r["name"], "ticker": ticker,
+            "folder": f"AI Insights/{folder.name}/" if folder else None,
+            "notes": notes}
+
+
 def results_view(sector: str | None = None, entity: str | None = None) -> dict:
     """Payload for the Results tab.
 
@@ -2171,35 +2553,64 @@ def results_view(sector: str | None = None, entity: str | None = None) -> dict:
 
     roster = _results_roster()
     conn = connect()
+    conn.executescript(_rio.VIEWS_DDL)   # analyst views (2026-10-06) own their DDL
     sm = _rio.summary(conn, list(roster))
+
+    def _row(r):
+        s = sm[r["id"]]
+        return {**r, "has_data": s["has_data"],
+                "n_estimates": s["n_estimates"], "n_actuals": s["n_actuals"],
+                "n_views": s["n_views"],
+                "latest_period": s["latest_period"],
+                "next_event": s["next_event"], "brokers": s["brokers"],
+                "n_concalls": _n_concalls(r)}
+
+    def _ordered(rs):
+        return [_row(r) for r in sorted(rs, key=lambda x: (bool(x["unit_of"]), x["name"].lower()))]
+
+    # Every sector carries its own company list (PM, 2026-10-08: "each sector
+    # has a dropdown and its own companies within") so the page can open any
+    # sector's menu without a second fetch. `companies` below stays the
+    # selected sector's list — export_static enumerates from it.
     secs = []
     for s in SECTORS:
         mine = [r for r in roster.values() if r["sector"] == s["id"]]
         secs.append({"id": s["id"], "label": s["label"], "n_names": len(mine),
-                     "n_with_data": sum(1 for r in mine if sm[r["id"]]["has_data"])})
+                     "n_with_data": sum(1 for r in mine if sm[r["id"]]["has_data"]),
+                     "companies": _ordered(mine)})
     other = [r for r in roster.values() if r["sector"] is None]
     if other:
         secs.append({"id": "other", "label": "Unplaced", "n_names": len(other),
-                     "n_with_data": sum(1 for r in other if sm[r["id"]]["has_data"])})
+                     "n_with_data": sum(1 for r in other if sm[r["id"]]["has_data"]),
+                     "companies": _ordered(other)})
     ids = [s["id"] for s in secs]
     if sector not in ids:
         sector = next((s["id"] for s in secs if s["n_with_data"]), ids[0])
     mine = [r for r in roster.values()
             if (r["sector"] == sector) or (sector == "other" and r["sector"] is None)]
-    companies = []
-    for r in sorted(mine, key=lambda x: (bool(x["unit_of"]), x["name"].lower())):
-        s = sm[r["id"]]
-        companies.append({**r, "has_data": s["has_data"],
-                          "n_estimates": s["n_estimates"], "n_actuals": s["n_actuals"],
-                          "latest_period": s["latest_period"],
-                          "next_event": s["next_event"], "brokers": s["brokers"]})
+    companies = next(x["companies"] for x in secs if x["id"] == sector)
     cids = [c["id"] for c in companies]
     if entity not in cids:
         entity = next((c["id"] for c in companies if c["has_data"]),
                       cids[0] if cids else None)
     periods = _rio.periods_for(conn, entity) if entity else []
+    scorecard = _rio.analyst_scorecard(conn)
+    # firm suggestions for the view form: every house already in the store,
+    # so "Kotak" is offered before anyone types "KIE" (firm_key matches both
+    # anyway; the datalist just keeps the page tidy)
+    firms = sorted({r[0] for r in conn.execute(
+        "SELECT DISTINCT broker FROM estimates WHERE broker NOT IN "
+        "('consensus_yahoo','bloomberg') UNION SELECT DISTINCT firm FROM "
+        "results_analyst_views")}, key=str.lower)
+    units = sorted({r[0] for r in conn.execute(
+        "SELECT DISTINCT unit FROM estimates WHERE broker NOT IN "
+        "('consensus_yahoo','bloomberg') AND unit IS NOT NULL UNION SELECT "
+        "DISTINCT unit FROM observations WHERE factor='actual' AND unit IS NOT NULL")}
+        | {"INR cr", "INR/t", "%", "t", "USD mn", "INR/sh"}, key=str.lower)
     conn.close()
     sel = next((c for c in companies if c["id"] == entity), None)
+    season = _rio.season_periods(_dt.date.today())
+    period_opts = list(dict.fromkeys(season + [p["period"] for p in periods]))
     return {
         "as_of": _dt.date.today().isoformat(),
         "sectors": secs, "sector": sector,
@@ -2209,6 +2620,36 @@ def results_view(sector: str | None = None, entity: str | None = None) -> dict:
                     for m, (lab, bet) in _rio.METRICS.items()},
         "totals": {"n_names": len(roster),
                    "n_with_data": sum(1 for v in sm.values() if v["has_data"])},
+        "scorecard": scorecard,
+        "view_form": {"firms": firms, "units": units, "periods": period_opts,
+                      "stances": list(_rio.STANCES)},
+        "bands": {"inline_pct": _rio.INLINE_PCT, "inline_pp": _rio.INLINE_PP,
+                  "follow_pct": _rio.FOLLOW_PCT, "follow_pp": _rio.FOLLOW_PP},
         "loader": "python packages/results/results_io.py --load "
                   "data/results/staging/<file>.json",
     }
+
+
+def results_board(sector: str | None = None, period: str | None = None) -> dict:
+    """The Results tab's sector preview board (2026-10-10): one quarter, every
+    house's estimate for every name in the sector side by side. Transport
+    shim — the arithmetic is results_io.sector_board's. A separate route from
+    /api/results on purpose: that payload is baked once per (sector, name)
+    by export_static, and a ~50KB board inside each would be baked 13 times
+    for IT alone."""
+    import results_io as _rio
+    roster = _results_roster()
+    ids = {s["id"] for s in SECTORS}
+    if sector not in ids:
+        sector = SECTORS[0]["id"]
+    names = sorted((r for r in roster.values() if r["sector"] == sector),
+                   key=lambda r: r["name"].lower())
+    conn = connect()
+    try:
+        b = _rio.sector_board(conn, names, period)
+    finally:
+        conn.close()
+    b["sector"] = sector
+    b["n_names"] = len(names)
+    b["bands"] = {"inline_pct": _rio.INLINE_PCT, "inline_pp": _rio.INLINE_PP}
+    return b

@@ -854,6 +854,32 @@ CREATE TABLE IF NOT EXISTS fo_oi (
     CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
 
+-- Stock options off the same bhavcopy (2026-09-30), per symbol x date x live
+-- expiry: OI-weighted call/put strikes (the Positioning tab's weighted
+-- average range) and Black-76 ATM IV from TRADED premiums only. Written by
+-- packages/adapters/fo_options.py, which carries the reasoning. Never read by
+-- any pillar.
+CREATE TABLE IF NOT EXISTS fo_options (
+    symbol     TEXT NOT NULL,
+    date       TEXT NOT NULL,
+    expiry     TEXT NOT NULL,
+    fut        REAL,
+    spot       REAL,
+    lot        REAL,
+    call_oi    REAL NOT NULL,
+    call_wtd   REAL,
+    put_oi     REAL NOT NULL,
+    put_wtd    REAL,
+    atm_strike REAL,
+    iv_call    REAL,
+    iv_put     REAL,
+    atm_iv     REAL,
+    iv_legs    INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (symbol, date, expiry),
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    CHECK (expiry GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+) STRICT;
+
 CREATE TABLE IF NOT EXISTS deliveries (
     symbol       TEXT NOT NULL,
     date         TEXT NOT NULL,

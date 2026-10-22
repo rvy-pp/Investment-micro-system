@@ -134,12 +134,19 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
     # empty panel that reads as "no positions".
     if include_book:
         put("/api/book", engine.book_view())
+        # The Book's date picker resolves every pick to a stored snapshot date
+        # in the browser (bookResolve in app.html), so one payload per
+        # snapshot covers every day the picker can reach. ~0.06s each.
+        for d in engine.book_snap_dates():
+            put(f"/api/book?date={d}", engine.book_view(d))
         for r in BIX_RANGES:
             put(f"/api/book_index?range={r}", engine.book_index(r))
+        put("/api/book_analysis", engine.book_analysis())
     else:
         msg = {"error": "the Book is excluded from this offline copy "
                         "(exported with --no-book)"}
         put("/api/book", msg)
+        put("/api/book_analysis", dict(msg))
         for r in BIX_RANGES:
             put(f"/api/book_index?range={r}", dict(msg))
 
@@ -203,9 +210,19 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
     for s in res["sectors"]:
         rs = engine.results_view(s["id"])
         put(f"/api/results?sector={s['id']}", rs)
+        # the preview board (2026-10-10): one per sector, plus every quarter
+        # its period picker can offer
+        bd = engine.results_board(s["id"])
+        put(f"/api/results_board?sector={s['id']}", bd)
+        for per in bd.get("periods") or []:
+            put(f"/api/results_board?period={per}&sector={s['id']}",
+                engine.results_board(s["id"], per))
         for c in rs["companies"]:
             put(f"/api/results?sector={s['id']}&entity={c['id']}",
                 engine.results_view(s["id"], c["id"]))
+            # the Concall notes sub-tab (2026-10-08) asks for every picker
+            # name, so every one is baked — ~3.7MB of vault markdown in all
+            put(f"/api/concall?entity={c['id']}", engine.concall_notes(c["id"]))
 
     # --- per-row history, opened by clicking a row ----------------------
     # Both are lazy in the page, so a miss shows only when a row is expanded —
@@ -435,10 +452,15 @@ def selftest() -> None:
     app |= set(re.findall(r"'(/api/[a-z_]+)\?", (WEB / "app.html").read_text(encoding="utf-8")))
     exported = {"/api/nav", "/api/overview", "/api/morning", "/api/cement_watch",
                 "/api/flows", "/api/oi", "/api/oi_bubbles", "/api/book",
-                "/api/book_index", "/api/scores", "/api/tape", "/api/sector",
+                "/api/book_index", "/api/book_analysis", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
-                "/api/oi_movers", "/api/results"}
-    missing = (app & served) - exported
+                "/api/oi_movers", "/api/results",
+                "/api/concall", "/api/results_board"}
+    # WRITE routes are POST-only and an offline copy can never serve them; the
+    # page says so where the inputs are (Kelly edges, the pair-grading call
+    # log). Listed by name so a new GET route cannot hide in here.
+    post_only = {"/api/book_call", "/api/analyst_view"}
+    missing = (app & served) - exported - post_only
     assert not missing, f"app.html fetches {missing} and the export skips it"
     ok += 1
     assert exported <= served, f"export knows a route serve.py does not: " \

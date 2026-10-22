@@ -27,6 +27,14 @@ Position columns after the LONG/SHORT flag, always this order:
 NAV is DERIVED per snapshot as DTD_PNL / DTD_PNL% (median over rows where
 both are non-zero) — never hardcoded, per the spec.
 
+TWO PRECISIONS (2026-09-30). The raw export prints full floats. The daily
+routine instead copies the ON-SCREEN Portfolio grid: a header row, '%' and
+',' formatted cells (to 0.01% of NAV and $1), sector labels with row counts
+('STEEL (5)'), a 'Total' label, and a '# Stats: GAV 3.01m' comment. Both are
+accepted; a display paste is cross-footed at rounding tolerance, checked
+per sector against its printed count and subtotal, takes NAV from GAV, and
+is recorded as precision 'display'. See DISPLAY_UNIT below.
+
 WHY THIS EXISTS AT ALL — two things the company IMS cannot show:
 
 1. PAIRS. The IMS lists positions one by one; the PM tags each with a pair
@@ -173,6 +181,27 @@ CREATE TABLE IF NOT EXISTS book_kelly_edges (
     note          TEXT NOT NULL CHECK (length(note) > 0),
     set_at        TEXT NOT NULL
 ) STRICT;
+
+-- CLOSED CONTRACTS — the FLAT / FLAT_IN_MONTH / FLAT_IN_YEAR rows of a
+-- full-year export (2026-09-28 on). Not positions: every contract of the
+-- year that is no longer held, with its FINAL realised P&L as the IMS
+-- prints it. PM, 2026-09-29: "Add the ytds simply" — with these stored, a
+-- pair's YTD is the IMS's own YTD column summed over its live AND closed
+-- contracts, and the roll ledger (_ytd_leg) is not needed for that
+-- snapshot. Kept apart from book_positions because a snapshot's positions
+-- are the FULL BOOK and absence there means CLOSED.
+CREATE TABLE IF NOT EXISTS book_closed_contracts (
+    snap_date   TEXT NOT NULL,
+    pair_tag    TEXT NOT NULL,
+    ticker_raw  TEXT NOT NULL,
+    root        TEXT NOT NULL,
+    contract    TEXT,
+    flat_kind   TEXT NOT NULL,
+    pnl_dtd     REAL,
+    pnl_mtd     REAL,
+    pnl_ytd     REAL,
+    PRIMARY KEY (snap_date, pair_tag, ticker_raw)
+) STRICT;
 """
 
 RE_CONTRACT = re.compile(r"=([FGHJKMNQUVXZ]\d{1,2}|\d{1,2})(?=\s|$)")
@@ -215,6 +244,26 @@ def normalise_ticker(raw: str) -> tuple[str, str | None]:
     return root, m.group(1)
 
 
+# AN OPTION IS NOT AN EQUITY LEG, AND ITS FIRST TOKEN IS THE TRAP. On
+# 2026-09-29 the book carried `LTM IS 10/27/26 C4100 Equity` (a call, 10
+# lots) beside `LTM=V6 IS Equity` (the future, -4). normalise_ticker keeps
+# them as separate ROOTS, correctly — but every consumer that resolves a leg
+# by `root.split()[0]` gets `LTM` for both and merges them: the Book view
+# folded the call into the LTM short (qty 14, side flipped to L, since-entry
+# re-anchored to 0.0%), and the index admitted LTIMindtree as a LONG member
+# and dropped it from the short side (roster 16/16 -> 17/15). Plausible on
+# the page, wrong, and nothing raised. So option roots are recognised by
+# their own shape and kept OUT of token-keyed aggregation: they are hedges
+# on a leg, reported beside the book, never netted into it (the IMS-Spec
+# no-delta-netting rule at the display layer).
+RE_OPTION = re.compile(r"\b(IS|IN|IB)\s+\d{2}/\d{2}/\d{2}\s+[CP]\d+(\.\d+)?\b", re.I)
+
+
+def is_option_root(root: str) -> bool:
+    """'HZ IS 10/27/26 P570 Equity' -> True; 'HZ IS Equity' -> False."""
+    return RE_OPTION.search(str(root)) is not None
+
+
 def display_name(root: str) -> str:
     return re.sub(r"\s+(IS|IN|IB)?\s*(Equity|Index|Comdty|Curncy)$",
                   "", root, flags=re.I).strip() or root
@@ -235,11 +284,39 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.commit()
 
 
+def _add_na_lumped_column(conn: sqlite3.Connection) -> None:
+    """book_snapshots.na_lumped — 1 when the export's N.A. bucket carries a
+    FLAT_* member (the positions-only export's `FLAT_POS` row, 2026-09-29):
+    every closed contract of the year LUMPED into N.A. with the costs."""
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(book_snapshots)")}
+    if "na_lumped" not in cols:
+        conn.execute("ALTER TABLE book_snapshots ADD COLUMN na_lumped INTEGER")
+        conn.commit()
+
+
+def _add_total_columns(conn: sqlite3.Connection) -> None:
+    """The export's own BOOK-TOTAL row, stored per snapshot (2026-09-29).
+
+    PM: "actual ytd is 3065" — the IMS's book YTD. The pairs cannot sum to
+    it after a roll: the dying contracts' last sessions move into N.A. as one
+    lump with no per-stock split. So the Book strip's headline YTD reads the
+    IMS's own total row instead of a sum we compute. Older snapshots predate
+    the columns and read NULL; the page falls back to the pair sum for them.
+    """
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(book_snapshots)")}
+    for c in ("total_pnl_dtd", "total_pnl_mtd", "total_pnl_ytd"):
+        if cols and c not in cols:
+            conn.execute(f"ALTER TABLE book_snapshots ADD COLUMN {c} REAL")
+    conn.commit()
+
+
 def connect() -> sqlite3.Connection:
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     _migrate(conn)
     conn.executescript(DDL)
+    _add_total_columns(conn)
+    _add_na_lumped_column(conn)
     return conn
 
 
@@ -258,16 +335,124 @@ def connect() -> sqlite3.Connection:
 # carries its final realised P&L, and it cross-foots. The only difference
 # is that DTD and MTD are not yet zero. Routed identically; refusing it
 # would have blocked the one snapshot the roll check exists for.
-DIRECTIONS = ("LONG", "SHORT", "FLAT_IN_YEAR", "FLAT")
-FLAT_FLAGS = ("FLAT_IN_YEAR", "FLAT")
+#
+# FLAT_IN_MONTH arrived on 2026-09-28 (the September roll): the U6 contracts,
+# closed this month, print `0  FLAT_IN_MONTH` with DTD 0 or small, MTD and
+# YTD non-zero. Same kind again — a closed contract carrying its realised
+# P&L, cross-footing — so it routes with the other two.
+DIRECTIONS = ("LONG", "SHORT", "FLAT_IN_YEAR", "FLAT_IN_MONTH", "FLAT")
+FLAT_FLAGS = ("FLAT_IN_YEAR", "FLAT_IN_MONTH", "FLAT")
 
 NUM_TAIL = ["mv_pct", "beta_mv_pct", "pnl_dtd", "pnl_dtd_pct",
             "pnl_dtd_trading", "pnl_mtd", "pnl_ytd", "pnl_mtd_pct",
             "pnl_ytd_pct", "gmv_pct"]
 
 
+def _num(s: str) -> float:
+    """One numeric cell. The raw export prints plain floats
+    (0.009707266986559803); the ON-SCREEN grid prints display-rounded text
+    ('0.97%', '1,109', '-0.02%', '0%'). Both read to the same units: a
+    trailing % is divided by 100 so every % stays a fraction of NAV."""
+    t = s.strip().replace(",", "").replace("\u2212", "-")
+    if t.endswith("%"):
+        return float(t[:-1]) / 100.0
+    return float(t)
+
+
+def _is_display(s: str) -> bool:
+    """A cell in the display-rounded shape (a % sign or a thousands comma)."""
+    t = s.strip()
+    return t.endswith("%") or bool(re.fullmatch(r"-?\d{1,3}(,\d{3})+(\.\d+)?", t))
+
+
 def _floats(cells: list[str]) -> list[float]:
-    return [float(c) for c in cells if c.strip() != ""]
+    return [_num(c) for c in cells if c.strip() != ""]
+
+
+# ---- DISPLAY-ROUNDED PASTES (PM, 2026-09-30: "accept rounded numbers.
+# Output in the end will be more or less same") ------------------------------
+#
+# The daily routine copies the IMS Portfolio grid off the screen, which
+# prints % to 2 decimals (0.01% of NAV) and dollars to whole units. Those
+# rows cannot cross-foot to 1e-9 — each row is rounded on its own and the
+# total is rounded once — so a display paste gets a tolerance sized to the
+# rounding it actually carries: half a display unit per summed row, plus one
+# for the total. What that gives up (a dropped row smaller than the slack
+# can pass the sum check) is taken back by a check the raw export never
+# needed: the grid prints each sector's row COUNT ("STEEL (5)"), and every
+# sector's members must match that count exactly and cross-foot to its
+# subtotal. NAV cannot come from DTD / DTD% at 2 decimals (616 / 0.02% reads
+# 3.08m), so it comes from the stats header's GAV when the paste carries it.
+# Downstream the YTD ledger works on cumulative deltas, which telescope, so
+# the rounding stays within about $0.5 per leg and never compounds.
+DISPLAY_UNIT = {"mv_pct": 1e-4, "gmv_pct": 1e-4, "beta_mv_pct": 1e-4,
+                "pnl_dtd": 1.0, "pnl_mtd": 1.0, "pnl_ytd": 1.0,
+                "pnl_dtd_trading": 1.0}
+RE_GAV = re.compile(r"\bGAV\s+([\d.,]+)\s*([kmb]?)\b", re.I)
+RE_COUNT = re.compile(r"^(.*?)\s*\((\d+)\)$")
+
+
+def _display_tol(key: str, n_rows: int) -> float:
+    return 0.5 * DISPLAY_UNIT[key] * (n_rows + 1) + 1e-9
+
+
+# ---- THE NUMERIC TAIL HAS TWO ORDERS, AND THE FILE DOES NOT SAY WHICH ----
+#
+# Through 2026-09-25 the export printed  MV% βMV% DTD DTD% DTD_trading MTD YTD
+# MTD% YTD% GMV%  (NUM_TAIL, the IMS-Spec order). On 2026-09-29 — the mass
+# September roll, 28 contracts to =V6 in one paste — the same columns arrived
+# as  MV% βMV% DTD DTD% MTD YTD DTD_trading MTD% YTD% GMV%: the trading column
+# moved from slot 5 to slot 7. There is no header row, and the cross-foot
+# CANNOT catch it — every column still sums to its total under either order —
+# so reading it in the spec order files MTD as trading and YTD as MTD, passes
+# every guard, and the tab shows a plausible book that is wrong. That is the
+# SILENT_BUGS shape exactly, which is why the order is DETECTED and never
+# assumed:
+#
+#   trading is ZERO on every row that did not trade that day, so whichever
+#   of slot 5 / slot 7 is zero on a clear majority of position rows is the
+#   trading column. Neither clearly zero, or both, is REFUSED — a paste the
+#   loader cannot read is a paste that goes back to the PM, never a guess.
+#
+# Verified on the 2026-09-29 export before any code was written: the LTM
+# call opened that day reads -177.12 / -177.12 / -176.66 in slots 5/6/7 —
+# a same-day position must have MTD == YTD, so 5 and 6 are MTD and YTD and
+# the near-equal 7 is the intraday trading figure — and the ALUMINIUM sector
+# row's slot 5 (32.71) is exactly the sum of its three legs' slot-5 values.
+TAIL_TRADING_FIRST = "trading_mtd_ytd"   # NUM_TAIL as written (IMS-Spec)
+TAIL_TRADING_LAST = "mtd_ytd_trading"    # the order since 2026-09-29
+_ORDER_MAJORITY = 0.6
+
+
+def detect_tail_order(positions: list[dict]) -> str:
+    """Which of the two tail orders a parsed paste is in, from the data.
+
+    `positions` are records already mapped with NUM_TAIL (spec order), so
+    slot 5 sits in `pnl_dtd_trading` and slot 7 in `pnl_ytd`. Raises on an
+    ambiguous paste rather than picking one.
+    """
+    n = len(positions)
+    if n == 0:
+        raise ValueError("cannot detect the numeric-tail order: no position rows")
+    z5 = sum(1 for p in positions if abs(p["pnl_dtd_trading"]) < 1e-9)
+    z7 = sum(1 for p in positions if abs(p["pnl_ytd"]) < 1e-9)
+    first_ok = z5 / n >= _ORDER_MAJORITY and z7 / n < _ORDER_MAJORITY
+    last_ok = z7 / n >= _ORDER_MAJORITY and z5 / n < _ORDER_MAJORITY
+    if first_ok:
+        return TAIL_TRADING_FIRST
+    if last_ok:
+        return TAIL_TRADING_LAST
+    raise ValueError(
+        f"cannot tell which numeric column is DTD_trading: slot 5 is zero on "
+        f"{z5}/{n} position rows and slot 7 on {z7}/{n} — the export's column "
+        f"order is ambiguous; re-export or state the order, do not load")
+
+
+def remap_tail_trading_last(rec: dict) -> None:
+    """In place: a record read in spec order, re-keyed for the trading-last
+    order. slot 5 -> MTD, slot 6 -> YTD, slot 7 -> DTD_trading."""
+    s5, s6, s7 = rec["pnl_dtd_trading"], rec["pnl_mtd"], rec["pnl_ytd"]
+    rec["pnl_mtd"], rec["pnl_ytd"], rec["pnl_dtd_trading"] = s5, s6, s7
 
 
 def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
@@ -283,11 +468,27 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
     positions, na_row, total_row, sector_rows = [], None, None, []
     flat, na_members = [], []
     warnings: list[str] = []
+    display = False          # any display-rounded cell seen -> display paste
+    gav = None               # from a '# Stats: GAV 3.01m' comment line
+    header = None            # the grid's own header row, when copied
+    sector = None            # [label, declared_count, nums, members]
+    sectors: list[list] = []
     for lineno, line in enumerate(text.splitlines(), 1):
         if not line.strip():
             continue
+        if line.lstrip().startswith("#"):           # ---- comment / stats
+            m = RE_GAV.search(line)
+            if m:
+                mult = {"": 1, "k": 1e3, "m": 1e6, "b": 1e9}[m.group(2).lower()]
+                gav = float(m.group(1).replace(",", "")) * mult
+            continue
         cells = line.split("\t")
         first = cells[0].strip()
+        if first.lower() == "ticker":               # ---- grid header row
+            header = [c.strip().lower() for c in cells]
+            continue
+        if any(_is_display(c) for c in cells):
+            display = True
         if first:                                   # ---- position row
             up = [c.strip().upper() for c in cells]
             try:
@@ -303,7 +504,7 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
                 raise ValueError(f"line {lineno} ({first}): {len(nums)} "
                                  f"numeric cells after the direction flag, "
                                  f"expected {len(NUM_TAIL)}")
-            qty = float(cells[i - 1])
+            qty = _num(cells[i - 1])
             pair = cells[i - 2].strip()
             cap = cells[i - 3].strip()
             # Cost is whatever numeric sits between Group and CAP — absent is fine
@@ -346,7 +547,8 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
             #   The N.A. AGGREGATE row already equals them to machine
             #   precision, so counting both double-counts the whole bucket.
             if pair.upper() == "N.A.":
-                na_members.append(rec)
+                na_members.append({**rec, "flat_kind": up[i]}
+                                  if up[i] in FLAT_FLAGS else rec)
             elif up[i] in FLAT_FLAGS:
                 # FLAT (closed TODAY, DTD/MTD non-zero) and FLAT_IN_YEAR
                 # (closed earlier, DTD 0) are one kind: not a position,
@@ -356,10 +558,26 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
             else:
                 positions.append(
                     {**rec, "side": "L" if up[i] == "LONG" else "S"})
+            if sector is not None:          # the stored record, so a re-key
+                sector[3].append(               # of the tail reaches it too
+                    (na_members if pair.upper() == "N.A." else
+                     flat if up[i] in FLAT_FLAGS else positions)[-1])
         else:                                       # ---- aggregate rows
             label = next((c.strip() for c in cells[1:] if c.strip() and
                           not _is_num(c)), None)
-            nums = [float(c) for c in cells if c.strip() and _is_num(c)]
+            nums = [_num(c) for c in cells if c.strip() and _is_num(c)]
+            declared = None
+            if label:
+                m = RE_COUNT.match(label)
+                if m:                               # 'STEEL (5)' -> 'STEEL', 5
+                    label, declared = m.group(1).strip(), int(m.group(2))
+            if label and label.lower() == "total":  # the grid labels its total
+                label = None
+            if label:
+                sector = [label, declared, dict(zip(NUM_TAIL, nums)), []]
+                sectors.append(sector)
+            else:
+                sector = None
             if label == "N.A.":
                 na_row = dict(zip(NUM_TAIL, nums)) if len(nums) >= 10 else None
             elif label:
@@ -370,11 +588,55 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
     if not positions:
         raise ValueError("no position rows found — not an IMS export?")
 
+    # ---- THE COLUMN ORDER, DETECTED — see TAIL_TRADING_* above ------------
+    # Every record so far is keyed in NUM_TAIL (spec) order. If the paste is
+    # in the trading-LAST order that arrived on 2026-09-29, re-key EVERY
+    # numeric record the same way — positions, FLAT rows, N.A. members, the
+    # N.A. aggregate and the total row — so the cross-foot below compares
+    # like with like. An ambiguous paste raises here and loads nothing.
+    tail_order = detect_tail_order(positions)
+    if tail_order == TAIL_TRADING_LAST:
+        for rec in positions + flat + na_members:
+            remap_tail_trading_last(rec)
+        if na_row:
+            remap_tail_trading_last(na_row)
+        if total_row:
+            remap_tail_trading_last(total_row)
+        for sec in sectors:
+            if len(sec[2]) >= len(NUM_TAIL):
+                remap_tail_trading_last(sec[2])
+        warnings.append(
+            "numeric tail is in the trading-LAST order (MV% βMV% DTD DTD% MTD "
+            "YTD DTD_trading …, seen since 2026-09-29): MTD/YTD/trading "
+            "re-keyed from slots 5/6/7 — detected from the data, not assumed")
+
+    # A copied header names the order outright; the data must agree with it.
+    if header and "dtd trading pnl" in header and "mtd pnl" in header:
+        said = (TAIL_TRADING_LAST
+                if header.index("dtd trading pnl") > header.index("mtd pnl")
+                else TAIL_TRADING_FIRST)
+        if said != tail_order:
+            raise ValueError(f"header says the numeric tail is {said} but the "
+                             f"data reads as {tail_order} — do not load")
+
     # NAV: DTD / DTD% per the spec, median over usable rows
     navs = [p["pnl_dtd"] / p["pnl_dtd_pct"] for p in positions
             if p["pnl_dtd_pct"] and abs(p["pnl_dtd_pct"]) > 1e-12]
     nav = round(statistics.median(navs), 0) if navs else None
-    if navs and (max(navs) - min(navs)) / statistics.median(navs) > 0.01:
+    if display:
+        # 2-decimal % makes DTD/DTD% useless (±25% per row); GAV is 3 s.f.
+        if gav:
+            nav = round(gav, 0)
+            warnings.append(f"display-rounded paste: NAV {nav:,.0f} taken from "
+                            f"the header GAV (3 significant figures)")
+        else:
+            best = max((p for p in positions if abs(p["pnl_ytd_pct"]) > 0),
+                       key=lambda p: abs(p["pnl_ytd_pct"]), default=None)
+            nav = (round(best["pnl_ytd"] / best["pnl_ytd_pct"], -3)
+                   if best else None)
+            warnings.append("display-rounded paste with no GAV line: NAV is a "
+                            "rough YTD/YTD% estimate — USD columns approximate")
+    elif navs and (max(navs) - min(navs)) / statistics.median(navs) > 0.01:
         warnings.append(f"NAV disagrees across rows: {min(navs):,.0f} .. "
                         f"{max(navs):,.0f} — check the paste")
 
@@ -390,12 +652,38 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
             got = (sum(p[k] for p in positions) + sum(f[k] for f in flat)
                    + ((na_row or {}).get(k) or 0))
             want = total_row[k]
+            if display:
+                tol = _display_tol(k, len(positions) + len(flat)
+                                   + (1 if na_row else 0))
             if abs(got - want) > tol:
                 raise ValueError(f"cross-foot FAILED on {k}: positions+N.A. "
                                  f"sum to {got!r}, total row says {want!r} — "
                                  f"a row is missing or mis-pasted")
     else:
         warnings.append("no book-total row — cross-foot skipped")
+
+    # DISPLAY PASTES ONLY: every sector's printed row count, and its subtotal.
+    if display:
+        for label, declared, snums, members in sectors:
+            if declared is not None and declared != len(members):
+                raise ValueError(f"sector {label}: header says {declared} rows, "
+                                 f"paste has {len(members)} — a row is missing "
+                                 f"or duplicated")
+            if len(snums) < len(NUM_TAIL) or not members:
+                continue
+            for k in ("mv_pct", "gmv_pct", "pnl_dtd", "pnl_mtd", "pnl_ytd"):
+                got = sum(r[k] for r in members)
+                if abs(got - snums[k]) > _display_tol(k, len(members)):
+                    raise ValueError(f"sector {label} cross-foot FAILED on {k}: "
+                                     f"rows sum to {got!r}, subtotal says "
+                                     f"{snums[k]!r}")
+        if not any(sec[1] is not None for sec in sectors):
+            warnings.append("display-rounded paste without '(n)' sector counts "
+                            "— only the loose total cross-foot guarded it")
+        warnings.append(
+            "display-rounded paste (on-screen grid): % to 0.01% of NAV, USD to "
+            "$1 — cross-foot run at rounding tolerance plus per-sector row "
+            "counts; figures agree with the raw export to within rounding")
 
     if flat:
         same_day = [f for f in flat if f.get("flat_kind") == "FLAT"]
@@ -428,16 +716,29 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
         "pnl_basis": "contract_itd", "nav": nav,
         "na": {k: (na_row or {}).get(k) for k in
                ("pnl_dtd", "pnl_mtd", "pnl_ytd")} if na_row else None,
+        # the export's own book-total row (already re-keyed if the tail was
+        # in the trading-last order) — the IMS's book YTD, stored as printed
+        "total": {k: (total_row or {}).get(k) for k in
+                  ("pnl_dtd", "pnl_mtd", "pnl_ytd")} if total_row else None,
         "positions": positions, "warnings": warnings,
         "n_sector_rows": len(sector_rows),
         # Recorded, never chained — see the row-kind note above.
         "flat_in_year": flat, "na_members": na_members,
+        # N.A. carries the year's closed contracts LUMPED (FLAT_POS) rather
+        # than listing them — see pair_report's carried basis
+        "na_lumped": any(m.get("flat_kind") for m in na_members),
+        # Which of the two numeric-tail orders this paste arrived in —
+        # DETECTED (see TAIL_TRADING_*), recorded so the staging file says
+        # how its own numbers were read.
+        "tail_order": tail_order,
+        # 'display' = copied off the on-screen grid (rounded); 'full' = export
+        "precision": "display" if display else "full",
     }
 
 
 def _is_num(s: str) -> bool:
     try:
-        float(s)
+        _num(s)
         return True
     except ValueError:
         return False
@@ -518,6 +819,7 @@ def load_snapshot(doc: dict | pathlib.Path, replace: bool = False,
             # explicit, not via ON DELETE CASCADE — cascade silently does
             # nothing on a connection whose foreign_keys pragma is off
             conn.execute("DELETE FROM book_positions WHERE snap_date=?", (date,))
+            conn.execute("DELETE FROM book_closed_contracts WHERE snap_date=?", (date,))
             conn.execute("DELETE FROM book_snapshots WHERE snap_date=?", (date,))
         conn.execute(
             "INSERT INTO book_snapshots (snap_date, source_file, loaded_at, "
@@ -527,11 +829,33 @@ def load_snapshot(doc: dict | pathlib.Path, replace: bool = False,
              dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
              len(parsed), basis, doc.get("nav"), na.get("pnl_dtd"),
              na.get("pnl_mtd"), na.get("pnl_ytd"), doc.get("note")))
+        if any(r[1] == "na_lumped" for r in
+               conn.execute("PRAGMA table_info(book_snapshots)")):
+            conn.execute("UPDATE book_snapshots SET na_lumped=? WHERE snap_date=?",
+                         (1 if doc.get("na_lumped") else 0, date))
+        tot = doc.get("total") or {}
+        if tot and any(r[1] == "total_pnl_ytd" for r in
+                       conn.execute("PRAGMA table_info(book_snapshots)")):
+            conn.execute(
+                "UPDATE book_snapshots SET total_pnl_dtd=?, total_pnl_mtd=?, "
+                "total_pnl_ytd=? WHERE snap_date=?",
+                (tot.get("pnl_dtd"), tot.get("pnl_mtd"), tot.get("pnl_ytd"), date))
         conn.executemany(
             "INSERT INTO book_positions (snap_date, pair_tag, ticker_raw, "
             "root, contract, cap, side, qty, cost, mv_pct, beta_mv_pct, "
             "pnl_dtd, pnl_dtd_trading, pnl_mtd, pnl, note) "
             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", parsed)
+        closed_rows = []
+        for f in doc.get("flat_in_year") or []:
+            raw = str(f.get("ticker") or "").strip()
+            root, contract = normalise_ticker(raw)
+            closed_rows.append((date, str(f.get("pair") or "").strip() or "UNTAGGED",
+                                raw, root, contract, f.get("flat_kind") or "FLAT_IN_YEAR",
+                                f.get("pnl_dtd"), f.get("pnl_mtd"), f.get("pnl_ytd")))
+        conn.executemany(
+            "INSERT INTO book_closed_contracts (snap_date, pair_tag, ticker_raw, "
+            "root, contract, flat_kind, pnl_dtd, pnl_mtd, pnl_ytd) "
+            "VALUES (?,?,?,?,?,?,?,?,?)", closed_rows)
     events = _log_anchor_events(conn, date)
     nxt = conn.execute("SELECT MIN(snap_date) FROM book_snapshots "
                        "WHERE snap_date>?", (date,)).fetchone()[0]
@@ -838,20 +1162,28 @@ def _ytd_leg(rows: list[sqlite3.Row], all_dates: list[str],
         absent = any(d0 < d < d1 for d in all_dates)
         year_reset = d0[:4] != d1[:4]
         dtd, ytd = r["pnl_dtd"], r["pnl"]
+        # NO FLAGS (PM, 2026-09-29): "why is there question marks in ytd? Add
+        # the ytds simply, let it be. I just need a rough estimate. Add the
+        # last ytd with todays change." The arithmetic below already IS that
+        # rule; what went is the `ytd?` chip it used to raise. Known and
+        # accepted: on a roll across an un-snapshotted session the day figure
+        # misses that session (the 2026-09-29 mass roll: Monday's V6 accrual,
+        # ~$931 book-wide), so the figure is a rough YTD, as asked.
+        # A ROLL BRIDGES WITH THE NEW CONTRACT'S OWN YTD, not the day figure
+        # (PM, 2026-09-29: "I did miss a few uploads in between"). The day
+        # figure covers one session; the new contract's YTD covers every
+        # session since it opened, INCLUDING ones never pasted. On the
+        # 2026-09-29 mass roll the contracts opened on Monday, which had no
+        # paste, and the day figure dropped ~$931 of their Monday P&L.
+        # The day figure was chosen as a guard against a fresh ticker
+        # CARRYING the old contract's P&L; that was verified NOT to happen on
+        # all 28 observed rolls (MTD == YTD on every =V6 row, 2026-09-21 and
+        # 2026-09-29), so the guard is retired. If a future roll ever shows a
+        # new contract's MTD != YTD, this line double counts — check that.
         if year_reset:
-            ledger = ((dtd if dtd is not None else (ytd or 0.0))
-                      if rolled else (ytd or 0.0))
-            flags.append(f"year_seam:{d1}" + (":+roll" if rolled else ""))
+            ledger = (ytd or 0.0)
         elif rolled:
-            step = dtd if dtd is not None else (ytd or 0.0)
-            ledger += step
-            if dtd is None:
-                flags.append(f"roll_no_day_figure:{d1}")
-            elif ytd is not None and abs((ytd or 0.0) - dtd) > YTD_ROLL_TOL:
-                # see YTD_ROLL_TOL — roll off-snapshot, or the new ticker
-                # carries the old contract's P&L. Inspect; do not "fix".
-                flags.append(
-                    f"roll_ytd_ne_day:{d1}:ytd={ytd:+.2f}:day={dtd:+.2f}")
+            ledger += ytd if ytd is not None else (dtd or 0.0)
         elif absent:
             # closed and REOPENED — not a roll. The old position's realized
             # P&L left for N.A., so the new ticker's YTD is genuinely its own
@@ -937,6 +1269,87 @@ def pair_report(conn: sqlite3.Connection | None = None,
             t += _chain_leg(rows, basis, dates)["total"]
         return t
 
+    # ---- THE YTD BASIS -----------------------------------------------------
+    # A FULL-YEAR export (FLAT_IN_YEAR rows present, 2026-09-28 on) lists
+    # every contract of the year, closed ones included, so a pair's YTD is
+    # just the IMS YTD column summed over its live and closed contracts (PM,
+    # 2026-09-29: "Add the ytds simply"). No roll bridging, nothing to go
+    # wrong at a roll. Closed rows attach to the live leg with the same ROOT
+    # (HZ=U6 -> HZ=V6); a closed OPTION attaches to its underlying's live
+    # future in the same tag (first token); anything else stays at pair
+    # level as `closed_unmatched`, named, never guessed onto a leg. Older,
+    # positions-only snapshots keep the _ytd_leg ledger.
+    def _closed_at(d):
+        return [dict(r) for r in conn.execute(
+            "SELECT * FROM book_closed_contracts WHERE snap_date=?", (d,))]
+
+    def _full_year(rows):
+        return any(r["flat_kind"] in ("FLAT_IN_YEAR", "FLAT_IN_MONTH") for r in rows)
+
+    closed_rows = _closed_at(as_of)
+    ims_sum = _full_year(closed_rows)
+    ytd_basis = "ims_sum" if ims_sum else "ledger"
+    carried = {"pnl_ytd": 0.0, "pnl_mtd": 0.0}
+    # ---- CARRIED: a positions-only export after a full-year one ----------
+    # The 2026-09-29 export lists live positions only and LUMPS every closed
+    # contract of the year, with the costs, into one N.A. row (`FLAT_POS`,
+    # +9,581). A closed contract's P&L is FINAL, so each one's YTD is carried
+    # from the latest full-year snapshot of the same year (09-28's listing),
+    # plus any same-day FLAT rows since, plus the last-seen YTD of anything
+    # live since the base that has left the book without a closed row. The
+    # carried total is then taken back OUT of N.A., so N.A. is left as the
+    # costs alone and the book still sums to the IMS total row exactly.
+    # Checked on 09-29: 09-28 closed +10,067.14 with N.A. -488.57 is +9,578.57
+    # against FLAT_POS +9,581.19 — the 2.62 is the day's currency move.
+    if not ims_sum and "na_lumped" in meta.keys() and meta["na_lumped"]:
+        base = next((d for d in reversed(hist[:-1])
+                     if d[:4] == as_of[:4] and _full_year(_closed_at(d))), None)
+        if base:
+            keyed: dict = {}
+            span = [d for d in hist if base <= d <= as_of]
+            for d in span:
+                for r in _closed_at(d):
+                    keyed[(r["pair_tag"], r["ticker_raw"])] = {**r, "_d": d}
+            # keyed on the ROOT, never ticker_raw: on 09-29 the four cash legs
+            # came back as `... IN Equity` after `... IN CFD PPB PTF` on 09-28,
+            # and a ticker_raw test read all four as having LEFT the book and
+            # carried their YTD (-4,370) out of N.A. twice over (N.A. showed
+            # +3,885 against a true ~-486). The book total still matched, which
+            # is why only the split could show it.
+            live_now = {(r["pair_tag"], r["root"]) for r in conn.execute(
+                "SELECT pair_tag, root FROM book_positions WHERE snap_date=?",
+                (as_of,))}
+            for d in span[:-1]:
+                closed_since = {(c["pair_tag"], c["root"]) for c in keyed.values()
+                                if c["_d"] >= d}
+                for r in conn.execute(
+                        "SELECT * FROM book_positions WHERE snap_date=?", (d,)):
+                    k = (r["pair_tag"], r["root"])
+                    if k in live_now or k in closed_since:
+                        continue
+                    k = (r["pair_tag"], r["ticker_raw"])
+                    keyed[k] = {"snap_date": d, "pair_tag": r["pair_tag"],
+                                "ticker_raw": r["ticker_raw"], "root": r["root"],
+                                "contract": r["contract"], "flat_kind": "LEFT_BOOK",
+                                "pnl_dtd": 0.0, "pnl_mtd": r["pnl_mtd"],
+                                "pnl_ytd": r["pnl"], "_d": d}
+            closed_rows = []
+            for r in keyed.values():
+                if r["_d"] != as_of:
+                    # from an earlier day: no DTD today, and its MTD only
+                    # counts inside the month it was earned
+                    r["pnl_dtd"] = 0.0
+                    if r["_d"][:7] != as_of[:7]:
+                        r["pnl_mtd"] = 0.0
+                    carried["pnl_ytd"] += r["pnl_ytd"] or 0.0
+                    carried["pnl_mtd"] += r["pnl_mtd"] or 0.0
+                closed_rows.append(r)
+            ims_sum = True
+            ytd_basis = "ims_sum_carried"
+    closed_by_tag: dict = {}
+    for r in (closed_rows if ims_sum else []):
+        closed_by_tag.setdefault(r["pair_tag"], []).append(r)
+
     pairs, closed = [], []
     for pair in all_pairs:
         dates = [r["snap_date"] for r in conn.execute(
@@ -995,10 +1408,39 @@ def pair_report(conn: sqlite3.Connection | None = None,
                 "beta_mv_pct": r["beta_mv_pct"],
                 "pnl_dtd": r["pnl_dtd"], "pnl_mtd": r["pnl_mtd"],
                 "pnl_live": r["pnl"], "pnl_total": round(ch["total"], 2),
-                # OUR ledger, not the IMS YTD column — see _ytd_leg
+                # OUR ledger, not the IMS YTD column — see _ytd_leg; on a
+                # full-year export replaced below by the IMS sum
                 "pnl_ytd": round(yl["ytd"], 2), "ytd_flags": yl["flags"],
                 "rolls": ch["rolls"], "note": r["note"],
             })
+        unmatched = []
+        if ims_sum:
+            for x in legs:
+                x["pnl_ytd"] = x["pnl_live"] or 0.0      # the IMS YTD column
+                x["closed_ytd"] = x["closed_mtd"] = x["closed_dtd"] = 0.0
+                x["closed_contracts"] = []
+                x["ytd_flags"] = []
+            for c in closed_by_tag.get(pair, []):
+                tok = (c["root"].split() or [""])[0]
+                hit = next((x for x in legs if x["root"] == c["root"]), None)
+                if hit is None and is_option_root(c["root"]):
+                    hit = next((x for x in legs if not is_option_root(x["root"])
+                                and (x["root"].split() or [""])[0] == tok), None)
+                if hit is None:
+                    unmatched.append({"ticker": c["ticker_raw"], "root": c["root"],
+                                      "flat_kind": c["flat_kind"],
+                                      "pnl_dtd": c["pnl_dtd"] or 0.0,
+                                      "pnl_mtd": c["pnl_mtd"] or 0.0,
+                                      "pnl_ytd": c["pnl_ytd"] or 0.0})
+                    continue
+                hit["closed_ytd"] += c["pnl_ytd"] or 0.0
+                hit["closed_mtd"] += c["pnl_mtd"] or 0.0
+                hit["closed_dtd"] += c["pnl_dtd"] or 0.0
+                hit["closed_contracts"].append(c["ticker_raw"])
+            for x in legs:
+                x["pnl_ytd"] = round(x["pnl_ytd"] + x["closed_ytd"], 2)
+                x["pnl_mtd"] = (x["pnl_mtd"] or 0.0) + x["closed_mtd"]
+                x["pnl_dtd"] = (x["pnl_dtd"] or 0.0) + x["closed_dtd"]
         gross_pct = sum(abs(x["mv_pct"]) for x in legs
                         if x["mv_pct"] is not None) or None
         net_pct = sum(x["mv_pct"] for x in legs
@@ -1022,14 +1464,39 @@ def pair_report(conn: sqlite3.Connection | None = None,
             "gross_usd": (round(gross_pct * nav, 0)
                           if gross_pct and nav else None),
             "rolls": rolls, "gap_risk": gap_risk,
-            "legs": legs,
+            "legs": legs, "closed_unmatched": unmatched,
         })
+        if unmatched:
+            for k in ("pnl_ytd", "pnl_mtd", "pnl_dtd"):
+                pairs[-1][k] = round(pairs[-1][k] + sum(u[k] for u in unmatched), 2)
 
     pairs.sort(key=lambda p: -(p["pnl_total"] if p["pnl_total"] is not None else 0))
     out = {"as_of": as_of, "prev": prev, "pnl_basis": basis, "nav": nav,
-           "na": {"pnl_dtd": meta["na_pnl_dtd"], "pnl_mtd": meta["na_pnl_mtd"],
-                  "pnl_ytd": meta["na_pnl_ytd"]},
+           "na": {"pnl_dtd": meta["na_pnl_dtd"],
+                  "pnl_mtd": (meta["na_pnl_mtd"] - carried["pnl_mtd"]
+                              if meta["na_pnl_mtd"] is not None else None),
+                  "pnl_ytd": (meta["na_pnl_ytd"] - carried["pnl_ytd"]
+                              if meta["na_pnl_ytd"] is not None else None)},
+           # the IMS's own book-total row for the as_of snapshot (NULL on
+           # snapshots loaded before 2026-09-29) — the headline YTD
+           "ims_total": {k: (meta[f"total_{k}"] if f"total_{k}" in meta.keys()
+                             else None) for k in ("pnl_dtd", "pnl_mtd", "pnl_ytd")},
            "snapshots": len(hist), "pairs": pairs, "closed": closed,
+           # "ims_sum" on a full-year export (YTD = IMS column summed over
+           # live + closed contracts), "ledger" otherwise — see above
+           "ytd_basis": ytd_basis,
+           # the IMS's own N.A. figures; `na` above has the carried closed
+           # contracts taken back out on the carried basis
+           "na_ims": {"pnl_dtd": meta["na_pnl_dtd"], "pnl_mtd": meta["na_pnl_mtd"],
+                      "pnl_ytd": meta["na_pnl_ytd"]},
+           "closed_carried": {k: round(v, 2) for k, v in carried.items()},
+           # closed contracts in a tag with NO live position today — their
+           # YTD would otherwise fall out of every pair
+           "closed_tags": [{"pair": t, "pnl_ytd": round(sum(r["pnl_ytd"] or 0
+                            for r in rows), 2),
+                            "tickers": [r["ticker_raw"] for r in rows]}
+                           for t, rows in sorted(closed_by_tag.items())
+                           if t not in live_pairs],
            "book_pnl_total": round(sum(p["pnl_total"] for p in pairs)
                                    + sum(c["pnl_total"] for c in closed), 2),
            # the as_of snapshot's position events (entered/reopened/flipped
@@ -1100,15 +1567,12 @@ def _print_report(rep: dict) -> None:
               f"MTD {na['pnl_mtd']:+,.0f}  YTD {na['pnl_ytd']:+,.0f}")
     for p in rep["pairs"]:
         flags = ("  ⚠gap" if p["gap_risk"] else "") + \
-                (f"  rolls×{p['rolls']}" if p["rolls"] else "") + \
-                ("  ⚠ytd?" if p.get("ytd_flags") else "")
+                (f"  rolls×{p['rolls']}" if p["rolls"] else "")
         print(f"  {p['pair']:<12} L {'/'.join(p['long']) or '—':<24} "
               f"S {'/'.join(p['short']) or '—':<24} "
               f"since {p['inception']} ({p['days']}d)  "
               f"P&L {p['pnl_total']:+,.0f}  ytd {p['pnl_ytd']:+,.0f}  "
               f"mtd {p['pnl_mtd']:+,.0f}{flags}")
-        for f in p.get("ytd_flags") or []:
-            print(f"                 ytd ledger flag: {f}")
     for c in rep["closed"]:
         print(f"  {c['pair']:<12} CLOSED {c['inception']} → {c['last_seen']} "
               f"({c['days']}d)  final P&L {c['pnl_total']:+,.0f}")
@@ -1237,6 +1701,48 @@ def _selftest() -> None:
     except ValueError as e:
         assert "direction flag" in str(e)
 
+    # ---- the numeric tail's TWO orders (2026-09-29, the mass roll) ---------
+    # Same numbers, trading column moved from slot 5 to slot 7. The parser
+    # must (a) leave a spec-order paste untouched — d3 above IS that check,
+    # its rows all carry trading in slot 5 — (b) re-key a trading-LAST paste
+    # so MTD/YTD/trading land in the right fields, and (c) REFUSE a paste
+    # where neither slot is clearly the trading column. The cross-foot cannot
+    # do any of this: it sums columns, and both orders sum.
+    assert d3["positions"][0]["pnl_dtd_trading"] == 0 and d3["positions"][0]["pnl_mtd"] == n1[5]
+    # (b): the 09-29 shape — slots 5/6 are MTD/YTD (equal, opened this
+    # month), slot 7 the trading figure, zero on untraded rows.
+    m1_ = [0.01, 0.009, 52.56, 0.0000175, -151.42, -151.42, 0, -0.00005, -0.00005, 0.01]
+    m2_ = [-0.013, -0.012, -140.84, -0.0000469, 526.57, 526.57, 0, 0.000175, 0.000175, 0.013]
+    m3_ = [0.0004, 0.006, -177.12, -0.0000590, -177.12, -177.12, -176.66, -0.000059, -0.000059, 0.0004]
+    tot4 = [a + b + c for a, b, c in zip(m1_, m2_, m3_)]
+    last = "\n".join([
+        row("HNDL=V6 IS Equity", None, "LARGE CAP", "ALUMINIUM 1", 4, "LONG", m1_),
+        row("NACL=V6 IS Equity", None, "MID CAP", "ALUMINIUM 1", -6, "SHORT", m2_),
+        row("LTM IS 10/27/26 C4100 Equity", None, "LARGE CAP", "IT 3", 10, "LONG", m3_),
+        "\t".join(["", "", "", "", "", "", ""] + [repr(x) for x in tot4]),
+    ])
+    d4 = parse_ims_tsv(last, "2026-09-29", "selftest")     # must ACCEPT + re-key
+    assert any("trading-LAST" in w for w in d4["warnings"]), d4["warnings"]
+    assert d4["tail_order"] == TAIL_TRADING_LAST
+    p = {x["ticker"]: x for x in d4["positions"]}
+    assert p["NACL=V6 IS Equity"]["pnl_mtd"] == 526.57 and p["NACL=V6 IS Equity"]["pnl_ytd"] == 526.57
+    assert p["NACL=V6 IS Equity"]["pnl_dtd_trading"] == 0
+    assert p["LTM IS 10/27/26 C4100 Equity"]["pnl_dtd_trading"] == -176.66
+    assert p["LTM IS 10/27/26 C4100 Equity"]["pnl_ytd"] == -177.12
+    assert d3["tail_order"] == TAIL_TRADING_FIRST        # (a), stated explicitly
+    # (c) REJECTION: half the rows zero in slot 5, half in slot 7 — no majority
+    a1 = [0.01, 0.009, 1.0, 0.0, 0, 5.0, 7.0, 0.0, 0.0, 0.01]      # trading-first shape
+    a2 = [0.01, 0.009, 1.0, 0.0, 5.0, 7.0, 0, 0.0, 0.0, 0.01]      # trading-last shape
+    amb = "\n".join([
+        row("TCS=V6 IS Equity", None, "LARGE CAP", "IT 2", 6, "LONG", a1),
+        row("WPRO=V6 IS Equity", None, "LARGE CAP", "IT 2", -7, "SHORT", a2),
+    ])
+    try:
+        parse_ims_tsv(amb, "2026-09-29")
+        raise AssertionError("accepted a paste whose column order is ambiguous")
+    except ValueError as e:
+        assert "ambiguous" in str(e), e
+
     # the custody-wrapper alias: same root, so no close/reopen and no
     # re-anchor. 'VAML IN Equity' -> 'VAML IN CFD PPB PTF' on 2026-09-09.
     assert normalise_ticker("VAML IN CFD PPB PTF") == ("VAML IN Equity", None)
@@ -1316,7 +1822,7 @@ def _selftest() -> None:
     # ...and this is where since-inception and YEAR-to-date must DIVERGE: the
     # ledger resets on Jan 1 because that is what YTD means. 250, not 4250.
     assert x1["pnl_ytd"] == 250.0, x1["pnl_ytd"]
-    assert any(f.startswith("year_seam:2026-01-05") for f in x1["ytd_flags"])
+    assert x1["ytd_flags"] == []           # no chips since 2026-09-29 (PM)
 
     # GAP BRIDGING: a week with no snapshot. The cumulative YTD delta spans
     # every session in between; SUMMING THE DAY FIGURE would have booked only
@@ -1348,8 +1854,24 @@ def _selftest() -> None:
                   conn=c6)
     h1 = pair_report(c6)["pairs"][0]
     assert h1["pnl_total"] == 10200.0, h1["pnl_total"]  # the chain's failure
-    assert h1["pnl_ytd"] == 5200.0, h1["pnl_ytd"]       # the ledger's answer
-    assert any(f.startswith("roll_ytd_ne_day") for f in h1["ytd_flags"]),         h1["ytd_flags"]
+    # SINCE 2026-09-29 the ledger bridges a roll with the new contract's own
+    # YTD (it covers un-pasted sessions), so on this fixture — a new ticker
+    # that DOES carry the old P&L, which has never been observed in 28 real
+    # rolls — the ledger double counts exactly as the chain does. Kept as a
+    # documented failure mode, not a guarantee.
+    assert h1["pnl_ytd"] == 10200.0, h1["pnl_ytd"]
+    assert h1["ytd_flags"] == []           # no chips since 2026-09-29 (PM)
+    # ...and the case the change is FOR: a roll on a session with no paste.
+    # V6 opened on the missing day and earned 300 there plus 100 on the
+    # pasted day; the ledger must take all 400, not the day's 100.
+    c7 = sqlite3.connect(":memory:"); c7.row_factory = sqlite3.Row
+    c7.executescript(DDL)
+    load_snapshot({"date": "2026-09-25", "source_file": "t", "positions":
+                   [P("R 1", "TCS=U6 IS Equity", 1, 1000.0, dtd=10.0)]}, conn=c7)
+    load_snapshot({"date": "2026-09-29", "source_file": "t", "positions":
+                   [P("R 1", "TCS=V6 IS Equity", 1, 400.0, dtd=100.0)]}, conn=c7)
+    r1 = pair_report(c7)["pairs"][0]
+    assert r1["pnl_ytd"] == 1400.0, r1["pnl_ytd"]       # 1000 + all of V6's 400
 
     # ENTRY ANCHOR: fixed at the day entered, through resizes and retags;
     # resets only on a direction flip or a day out of the book (PM 2026-09-07)
@@ -1446,12 +1968,56 @@ def _selftest() -> None:
     load_snapshot(d, replace=True, conn=c2)
     assert any(p["pair"] == "A" for p in pair_report(c2)["pairs"])
 
+    # display-rounded paste (the on-screen grid, 2026-09-30): header row,
+    # '%' and ',' cells, '(n)' sector counts, a 'Total' label, GAV in a
+    # comment. Accept it; refuse a dropped row (count) and a mangled cell.
+    disp = "\n".join([
+        "# Stats: GAV 3.01m | DTD 0.06%",
+        "\t".join(["Ticker", "Group", "Tag3", "Tag Pair", "Qty", "LSF",
+                   "MV %", "Beta MV %", "DTD PNL", "DTD PNL%", "MTD PNL",
+                   "YTD PNL", "DTD Trading PNL", "MTD PNL%", "YTD PNL%",
+                   "GMV %"]),
+        "\t".join(["", "IT 9 (2)", "", "", "", "", "0.38%", "0.20%", "-1,003",
+                   "-0.03%", "1,200", "1,500", "0", "0.04%", "0.05%", "2.62%"]),
+        "\t".join(["TCS=V6 IS Equity", "", "LARGE CAP", "IT 9", "6", "LONG",
+                   "1.50%", "1.02%", "-1,234", "-0.04%", "2,100", "2,400", "0",
+                   "0.07%", "0.08%", "1.50%"]),
+        "\t".join(["WPRO=V6 IS Equity", "", "LARGE CAP", "IT 9", "-7", "SHORT",
+                   "-1.12%", "-0.82%", "231", "0.01%", "-900", "-900", "0",
+                   "-0.03%", "-0.03%", "1.12%"]),
+        "\t".join(["", "N.A. (1)", "", "", "", "", "0.00%", "0.00%", "0", "0%",
+                   "5,677", "9,586", "0", "0.19%", "0.32%", "0.00%"]),
+        "\t".join(["FLAT_POS", "", "N.A.", "N.A.", "0", "FLAT_IN_YEAR",
+                   "0.00%", "0.00%", "0", "0%", "5,677", "9,586", "0", "0.19%",
+                   "0.32%", "0.00%"]),
+        "\t".join(["", "Total", "", "", "", "", "0.38%", "0.20%", "-1,003",
+                   "-0.03%", "6,877", "11,086", "0", "0.23%", "0.37%", "2.62%"]),
+    ])
+    dd = parse_ims_tsv(disp, "2026-09-30", "selftest")
+    assert dd["precision"] == "display" and len(dd["positions"]) == 2
+    assert dd["nav"] == 3010000.0, dd["nav"]
+    assert dd["tail_order"] == TAIL_TRADING_LAST
+    tp = dd["positions"][0]
+    assert tp["qty"] == 6 and abs(tp["mv_pct"] - 0.015) < 1e-12
+    assert tp["pnl_mtd"] == 2100 and tp["pnl_ytd"] == 2400
+    assert dd["total"]["pnl_ytd"] == 11086 and dd["na"]["pnl_ytd"] == 9586
+    assert parse_ims_tsv(tsv, "2026-08-03")["precision"] == "full"
+    dl = disp.splitlines()
+    for bad, why in (("\n".join(dl[:3] + dl[4:]), "row"),           # dropped
+                     (disp.replace("2,400", "2,900", 1), "cross-foot")):
+        try:
+            parse_ims_tsv(bad, "2026-09-30")
+            raise AssertionError(f"display paste accepted: {why}")
+        except ValueError as e:
+            assert why in str(e), e
+
     add_review("IT 5", "hold", "thesis intact; sized right", True, conn=conn)
     assert reviews(conn=conn, pair="IT 5")[0]["verdict"] == "hold"
     print("selftest OK — ticker/option parse, TSV parse (both cost shapes), "
           "full export shape (FLAT_IN_YEAR + N.A. members + custody alias, "
           "accept & reject), "
-          "NAV derivation, cross-foot accept+reject, roll chain, closed pair, "
+          "NAV derivation, cross-foot accept+reject, display-rounded paste "
+          "(accept, count + sector cross-foot reject), roll chain, closed pair, "
           "cadence (no-split + reopen), year boundary, YTD ledger "
           "(benign roll == chain, year reset, gap bridge, double-count "
           "guard), entry anchor "

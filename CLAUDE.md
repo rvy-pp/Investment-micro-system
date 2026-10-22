@@ -487,6 +487,20 @@ only at a roll or the year boundary.
 than `YTD_ROLL_TOL`, or any year seam, lands in `ytd_flags` → a `ytd?` chip on
 the pair and a printed line in `--report`.
 
+**The `mtd` column is gone — it is now "60d vs sector" (PM, 2026-10-21: *"MTD
+is useless. Put it in commas like: TCS: +xx.x%, INFY: -yy.y%"*).** One line per
+pair, longs first: each leg's rolling 60-calendar-day move (90 for an hour,
+then *"make it 2 instead of 3 months"*) minus β × the
+equal-weighted move of the OTHER live F&O names in its sector (grading's
+sector map and fo_oi universe, so "sector" means the same thing as in pair
+grading). β comes from the 250 sessions BEFORE the window, so the move being
+explained cannot set its own beta; under 60 sessions it defaults to 1.0,
+flagged (VAML). The hover gives stock = sector + own, which sum exactly.
+`packages/book/sector_rel.py` owns it (selftest 9). The live view runs to the
+latest close, not the snapshot date; a replay runs to its own date. **Mining's
+basket is ONE name** (COAL ↔ NMDC), so those two read each other back; the
+hover flags any basket under 3. The strip's `mtd · ims` cell stays.
+
 **It advances only when a snapshot is loaded.** It recomputes from every
 stored snapshot on each request, but `refresh.py`/`pipeline.py` never write a
 `book_*` table, so on a day the PM pastes nothing the tab correctly shows the
@@ -519,10 +533,14 @@ or a day out of the book** (same ruling — `book_io._entry_anchor`,
 keyed on root across tags after the 09-07 IT retag silently re-anchored
 MPHL and TELX to 0.0%). Every position event is logged at load time into
 `book_anchor_log` (entered/reopened/flipped reset the anchor; retagged/
-resized do not; closed ends a streak) — the tab and `--report` say the
-day's events out loud, `--rebuild-log` replays history. A live position in
-no dictated pair renders as a loud callout —
-ask the PM, never guess it into a pair. Reviews key on the dictated name.
+resized do not; closed ends a streak) — `--report` says the day's events
+out loud, `--rebuild-log` replays history. A live position in no dictated
+pair is never guessed into a pair — ask the PM. **The page no longer prints
+either** (PM, 2026-10-06: the events line, the ytd-basis explainer and the
+"in no dictated pair" callout came off Positions; the callout fired daily on
+the option hedges, which are kept out of pair lines by design). `anchor_log`,
+`ytd_basis` and `unassigned` stay in the payload. Reviews key on the
+dictated name.
 
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
 joins each leg to its model composite — SEEDED from IMS-Spec's PM-confirmed
@@ -732,7 +750,14 @@ Range tokens hold `1d` up to and including `20y` and break at `max`. Tested
 both directions: the date and `1mo`/`1y` accept, `max` is refused on both the
 monthly and the hourly flavour.
 
-### Kelly sizing — a block on the Book tab, 2026-09-25
+### Kelly sizing — its own sub-tab on the Book tab, 2026-09-25
+
+**Moved 2026-10-05 into a "Kelly sizing" sub-tab** beside "Positions" (PM:
+*"move the whole kelly thing to a new sub-tab within the book tab"*). Both
+panes render on each load and toggle by `hidden`; the sub-tabs use `.btab`,
+NOT `.tab`, because `tab()` re-marks every `.tab` on each view change. On a
+replayed date the pane says Kelly is today-only rather than sizing a past
+book against today's edges.
 
 PM: *"Let's start with applying kelly criterion to the book."* Then, the
 same day: *"just put returns and comments then and there and the fraction
@@ -744,6 +769,23 @@ never saves.** Edges are stored append-only in **`book_kelly_edges`**
 kept), via the one write route on the server, `POST /api/kelly_edge`.
 **Edges do not live in `specs/book.yaml`**; they did for an hour, and a
 non-empty `kelly.edges` key there is now reported rather than read.
+
+**SUPERSEDED 2026-10-22 — the edge now comes from the CASE AGENTS** (PM:
+*"Instead of my view in the kelly, we put the agents view from here. I will
+change my view on this only. Remove all text from my side."*). A pair's edge
+is its Analysis-tab pair juice, long lean − short lean (each stock's live
+`price` entry `data.juice_pct`), read by `kelly.agent_edges()`. A pair gets an
+edge only when BOTH legs carry a lean. Today that is TECHM_LTM alone (+2.9 −
+0.6 = +2.3). The note names both leans and their dates. The leans run to the
+next print, which falls inside the 13-week window; that equivalence is the
+PM's, and the stock-case skill says to flag a lean whose print falls outside
+it. **The Kelly table is READ-ONLY**: the return and comment inputs, the save
+status, `kellySave()` and `POST /api/kelly_edge` (with `engine.kelly_save_edge`
+and `kelly.save_edge`/`stored_edges`) are deleted. A view changes only through
+a stock's agent. `book_kelly_edges` keeps its rows as history and nothing reads
+it, so the PM's typed edges (e.g. TCS_INFO +9%) no longer size anything. The
+leans are still the PM's own numbers, so "nothing the system computes is used as
+an edge" below still holds.
 
 **The risk is measured**: each pair's spread (mean long return − mean short
 return) over `lookback_days`, plus the covariance across pairs shrunk toward
@@ -775,9 +817,164 @@ spread asks for ~270% of NAV per side at half Kelly. Absolute Kelly size is
 never the binding constraint here, and the allocation column is the part to
 read.
 
+**The 13-week variance is MEASURED, not 65 × daily (PM, 2026-10-06: "yes,
+fix the 13-week variance").** The spreads partly mean-revert inside a quarter,
+so √time overstated quarterly risk. The Lo–MacKinlay variance ratio over each
+pair's history since 2007 (`vr_lookback_days`) pools to **0.646** (13w σ =
+0.80× √time); the σ LEVEL still comes from the 730-day lookback. It is ONE
+pooled ratio because the per-pair ratios (0.41–1.13) differ by exactly
+sampling noise (τ² = 0), so a pair keeps its own only when the measured shrink
+says it is distinguishable. Effect: every absolute size ×1.55, every implied
+edge ×0.65, **the "at today's gross" allocation unchanged**. The ratio scales
+the `calc` block's var/cov, so `kellyCalc()` needed no change and still
+matches the server to the 4th decimal. `horizon_variance: 1.0` in the spec
+restores the old assumption. SILENT_BUGS entry 12.
+
 **A saved edge reaches the vault copy at the next refresh**, not
 immediately. An export per keystroke-save would be ~90s each, which is why
 it was left out.
+
+### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
+
+PM: *"I think we analyze individually. Pairs can change"* and *"start with the
+32 stocks, chat first"*. Sub-tab **Analysis**, between Positions and Kelly
+sizing. One row per stock (the 32 legs dictated in `specs/book.yaml pairs`,
+side and group from that same dictation), five checks each, a `<details>` card
+with the numbers and a dated log. **Pairs are only derived** — long juice minus
+short juice, a number only when BOTH legs have juice — and ride in the payload
+as `pairs`, but are NOT rendered: the PM removed the pair table and the
+explainer line the same day (*"Remove the top description and the whole pair
+table"*). The tab is the stock list alone.
+`packages/book/analysis.py` owns the roster, the log, the automatic read and
+the selftest (14 checks); `engine.book_analysis` is a transport shim;
+`/api/book_analysis` serves it; the exporter and `build_frontend.py` know the
+route (the verifier flags any roster other than 32).
+
+**The method is the PM's, plain investing logic — no fitted parameters.** Price
+= forward P/E × consensus EPS; the PM's price = today's P/E (or a NAMED anchor:
+own history with a reason, or a named peer's P/E) × the PM's EPS; EPS built
+quarter by quarter (actuals, the PM's view of the visible quarter, later
+quarters checked against what the street has already assumed). A statistical
+version (revision β, timing haircuts, a closure fraction) was built and the PM
+rejected it the same week — *"why hide behind statistics when we are talking
+about investing logic"* — do not reintroduce it. The five checks: **priced**
+(AUTOMATIC from `estimates` for the 16 legs with a daily Yahoo consensus — IT
+and EMS — else a chat entry), **qbuild**, **h2**, **price** (the juice lives
+here as `data.juice_pct`, optional `juice_low/high/horizon`; a range with no
+lean is shown as a range and gives the pair no juice), **rerate** (is a P/E
+move earnings or multiple; re-rating = a relative-P/E shift with a nameable
+reason that survives the next print).
+
+**`book_analysis` is APPEND-ONLY**: the latest row per (stock, step) is live, a
+note is NOT NULL non-empty, and every revision stays for the "where was I
+right" review. Entries arrive via `python packages/book/analysis.py --add
+'<json>'` from chat; the pane is read-only. Like daily_review, **a chat entry
+owes the vault copy an export** (`export_static.py`). Writes `book_analysis`
+only — nothing a pillar reads. Noted for later, build only when asked: a view
+of the PM's estimates vs brokers vs consensus vs management guidance.
+
+### Case agents — one Claude Code agent per stock (2026-10-11)
+
+PM: *"agents per company that track and work on that specific analysis only
+... start with TCS."* `.claude/agents/<token>-agent.md` (PM, 2026-10-13: "use
+tcs-agent" — the IMS ticker token, lowercased) is a thin per-stock agent; the shared method is the **`stock-case` skill**; the arithmetic is
+**`packages/book/case_brief.py`** (24-check selftest) — the scripts-do-the-
+arithmetic / agent-does-the-reading split. Each stock's memory lives in
+gitignored `data/analysis/cases/<entity>/`: `case.md` (prose, rewritten each
+run), `build.json` (the quarter-by-quarter EPS build — actuals need a source,
+forecast rows carry revenue / EBIT margin / PAT-to-EBIT drivers and the EPS is
+derived, scenarios override drivers), `brief.json`. The brief computes priced
+in, consensus revisions, the exact 90-day EPS-vs-P/E split, each house's
+preview and median, what consensus leaves per remaining quarter, and
+base/bear/bull juice at today's P/E (an anchor P/E is refused without
+`anchor_why`). **It never computes a lean and the agent never writes
+`juice_pct`, a Kelly edge or a call** — `--price-entry` emits the range only.
+Draft quarters are `kind: draft` until the PM states a view (`pm`).
+**Since 2026-10-18 bear and bull are GENERATED, never hand-drawn** (PM: *"I
+will have nearly 100 companies at maturity, I simply can not create cases for
+each company"*). Only the base is written; bear/bull are the base moved by the
+sector band in `specs/book.yaml case_bands` (IT: ±50bps margin, ±0.5pp QoQ
+growth on every forecast quarter), and later years are CARRIED at the forecast
+quarters' EPS ratio. Growing FY28 off a moved FY27 would dilute the move with
+two unmoved actuals: ±0.10pp per 10bps against ±0.41pp. A hand-drawn bear/bull
+in a banded sector is refused. The PM's input per name is two numbers a
+quarter, which the agent proposes with anchors, and ONLY for the visible
+quarter. Every later quarter is `kind: street` (consensus's per-quarter rest,
+carried by the view's gap), and a later year is consensus × the same carry, so
+no growth rate is ever picked (PM: *"what is the point of doing Q4 with no
+credible information"*). Builds are always constant
+currency (`fx_basis`), and `confidence` is low / medium / high.
+`--scaffold <entity>` makes a new stock's agent; it refuses anything outside
+the 32 legs and never overwrites a case file. TCS is the first: FY28 juice
+−3.0% / +0.3% / +4.3% on the first hand-drawn cases, −2.65% / +0.17% / +3.01%
+on the IT band around the PM's Q3 (0.5% cc, 24.2%; 2026-10-18), no lean; the open question it raised is that the
+TCS_INFO Kelly edge (+9%/13w) needs Infosys to fall ~5–9% on its own, and
+Infosys has no case yet. Agent log entries carry `via: agent:<token>-agent`
+(the first TCS rows say `agent:case-tcs`, the pre-rename name; the table is
+append-only) and owe the vault copy an export like any chat entry.
+
+**IT agents also keep a deal LIST** (PM, 2026-10-13: "what major deals were
+active, what were scheduled ... are they delayed, have the older ones gone",
+then "just a list is fine, can be cross checked once quarter is near").
+`data/analysis/cases/<entity>/deals.json` → **`packages/book/it_deals.py`**
+(12-check selftest): reported TCV per quarter with its exclusions and
+book-to-bill; each named deal with its value AS REPORTED, signed quarter,
+status and a dated, sourced history; OVERDUE / PAST_END calendar flags; and
+from 21 days before `next_result`, a CROSS-CHECK DUE list of every unfinished
+deal to re-confirm. **A straight-line run-rate and revenue bridge was built
+first and removed the same day** — its inputs were mostly assumed tenures and
+start quarters. Do not rebuild it; deals do not feed build.json.
+
+### Pair grading — the forward record of SELECTION, 2026-10-05
+
+PM, after the sizing backtests found no timing edge: *"Can I assume that making
+pairs due to the close fundamental tracking I do for companies is the edge I
+can work on?"* The answer was "not from back-casts" — the pairs were formed
+after the research, so any back-test of them is partly hindsight — and the
+plan was a forward record. *"go ahead, grade at exit and 13w, 1 to 1 pair."*
+`packages/book/grading.py` owns every rule and the selftest (22 checks);
+`refresh.py` step `pair grading` and daily_review Step 2b' freeze grades.
+**BACKEND ONLY since 2026-10-22** (PM: *"keep the pair grading ... in the
+backend. remove from front end"*): the "Pair grading — is the selection
+working?" block and its Log-a-call form are deleted from app.html
+(`gradingBlock`/`wireGrading`). `bk.grading` stays in the `/api/book` payload,
+`POST /api/book_call` still records calls, `grading.py --report` prints the
+scoreboard, and grades still freeze. It used to sit above the Kelly table on
+the Kelly sizing sub-tab, which now holds Kelly alone.
+
+- **Unit:** each dictated pair as ONE long vs ONE short. An episode is a run
+  of stored snapshots holding the long long and the short short; a flip or a
+  day out ends it (book_io's anchor convention, on stored snapshot dates).
+- **Grades:** at **13 weeks** (entry + 91 days, held or not — the thesis) and
+  **at exit** (the exit-day open — the exit decision). Entry is the entry-day
+  OPEN. Spread is TOTAL return (dividends from `equity_dividends`, Yahoo
+  events; an ex-date ON the entry day is not owed). **β-strip** subtracts beta
+  x Nifty, beta from the 250 sessions BEFORE entry (≥60 or withheld); **HIT =
+  β-strip > 0**. **Rank** = percentile among every ordered long/short pair
+  from the sector's F&O names (fo_oi within 30 days) on the same open, same
+  window.
+- **Rank > 50 exactly when the spread > 0, by construction** — the set holds
+  every pair and its reverse. It does not decide hit or miss; it measures how
+  much of the sector's opportunity the pick captured, on one scale across
+  sectors. Withheld under 4 names: **mining (COAL, NMDC) always withholds.**
+  Non-ferrous ranks across zinc AND aluminium names (the tab's grouping).
+- **Frozen once, never revised** (INSERT OR IGNORE into `book_pair_grades`).
+  Open pairs show a PROVISIONAL to-date grade stored nowhere. A >25% one-day
+  leg move inside a window WITHHOLDS the grade — stored closes are split-
+  adjusted only as of fetch time, so a split would read as a crash.
+- **The call log** (`book_calls`, append-only): thesis, falsifier, conviction,
+  expected 13w spread — typed on the Book tab (POST `/api/book_call`; until
+  2026-10-22 it also set the Kelly edge, which now comes from the agents'
+  leans) or recorded in the daily review. A call more than 3 days after entry is **LATE** and reported
+  apart. **The September cohort is all `pre_capture` and has no at-entry
+  call — it is graded on price only and cannot be anything else.** The real
+  record starts with the first pair entered after 2026-10-05.
+- First 13-week grades fall due **2026-12-04**. The scoreboard prints a Wilson
+  interval on the hit rate because at n = 2 it is 9.5–90.5%. ~100 graded
+  outcomes before it says anything; do not read a fortnight as a verdict.
+- Writes `book_calls`, `book_pair_grades`, `equity_dividends` only — nothing
+  a pillar reads. Neither the desk page nor the vault copy shows the grading
+  since 2026-10-22.
 
 ## Price sources have a precedence order — read before adding a feed
 
@@ -2522,6 +2719,37 @@ per-maker skews must DIFFER, and forecast shares must sum to 100).
 **KNOWN: n=1 at d24** — one normal month per segment. The daily captures
 supply the curve empirically from October without another CAPTCHA.
 
+#### Day share vs MTD — the festive-boost flag (2026-10-12)
+
+PM: *"a sub-graph that flags higher market share on a daily basis compared to
+the mtd ... maruti for example has today's market share as 48% while monthly is
+still around 40%. This flags a sudden boost on sales combined with festive
+season. A display and a flagging system around that only."* Under each segment
+chart: a lift sub-chart (day share minus MTD share, pp, F&O names only) with ▲
+on flagged days, and a green "Share boost" callout when the LATEST capture
+flags. `vahan_share.daily_flow()` owns every rule (8 fixture checks in
+`--selftest`); `engine.auto_share` attaches it as `flow`; no new route.
+
+- **The day's share is a share of the FLOW**: Σ over periods of MTD(b)−MTD(a)
+  between consecutive captures. Summing over periods is what makes the seam
+  work — the 1-Oct capture is mostly 30-Sep's registrations (~T-1), which a
+  current-month-only delta reads as 91 Marutis.
+- **Baseline = MTD at the PREVIOUS capture** (today is inside today's MTD); if
+  that MTD is under 2× the day's flow (first days of a month) it is last
+  month's share, and the row says so.
+- **The flag also needs the day to beat LAST MONTH by 1.5pp.** Tata PV opened
+  October at 6.2-6.7% MTD against September's 9.5%, so every ordinary day read
+  +2pp ×1.25 — recovery, not a boost. Rule: day ≥ baseline +1.5pp AND ×1.15
+  AND ≥ last month +1.5pp. Others is never flagged.
+- **Thin captures** (segment flow < 0.5× the window median — Sunday
+  registrations, MHCV's 5-Oct was 50 vehicles) are kept in the payload, never
+  flagged, not drawn.
+- **Thresholds are a first cut on 16 capture pairs** — re-measure at ~60.
+  First live flag: PV 11-Oct, Maruti 43.1% of the day vs 36.9% MTD, Sep 39.4%.
+- This is NOT the MTD toggle removed 2026-09-24 (a cumulative average, flat by
+  construction); it is the day's flow, the noisy part, which is why the flag
+  rule exists.
+
 ### SIAM, and the Inventory sub-tab — 2026-09-25
 
 The original auto plan had **SIAM supplying vehicle ASP. It does not, free or
@@ -2905,6 +3133,130 @@ for the engine change.
 three times over (steel_actuals.json was loaded before load_observations grew
 its identity check). `periods_for` dedupes on (source, period, metric, quote)
 at read time; the duplicate rows are still in the table.
+
+### Analyst views — the PM's conversations, on the Results tab (2026-10-06)
+
+PM: *"capitalize on the view of the analyst of the firm. Since I talk with a
+lot of analysts who make previews, can we incorporate their view and buildup
+before actual previews, or change if something changes beforehand?"* — then
+*"make the analyst and preview analysis in the results tab"*.
+
+**A view is a dated note of a CONVERSATION, never a published estimate, so it
+lives in `results_analyst_views` and NEVER in `estimates`.** The street median
+the print is graded against must stay what houses actually published. The
+table's DDL lives in `results_io.VIEWS_DDL` (created on connect), not
+schema.sql. Append-only: a revision is a new row, a withdrawal is a row with
+`withdrawn=1`; the latest per (firm, analyst, entity, period, metric) is live.
+A view needs a number+unit or a stance (above / in line / below the street),
+and a NOT-EMPTY note; the unit guard is the staged file's.
+
+Per metric per quarter the tab shows each live view **against the street**,
+against **what the same house then PUBLISHED** (its first pre-print preview
+after the call: `followed` within 2% / 0.4pp, lead days), and **at the print**
+(closer than the street? stance right?). The "analysts" column is the median of
+the numbers (the whisper). The **track record** (all names, recomputed on read,
+no table) is per analyst: closer-than-street, mean miss on money lines only (%
+and pp do not average), stance hits, follow-through.
+
+**Firm matching goes through `firm_key()`** — "Kotak", "Kotak Institutional
+Equities" and "KIE" are one house; a raw string match would read every view as
+"never published". Aliases are listed in `FIRM_ALIASES` by name when met,
+never guessed. The in-line band now lives once in results_io
+(`INLINE_PCT/PP`) and reaches app.html through the payload's `bands`.
+
+Two entry paths: the form on the Results tab (`POST /api/analyst_view`, the
+third narrow write route) and chat (`results_io.py --add-view '<json>'`,
+stamped `via chat`). `--scorecard` prints the track record. The vault copy
+shows views and refuses to save them. **Views do not yet feed the Kelly
+edge** — that is the next step, once the track record says whose views to
+weight. Compliance was flagged to the PM: pre-publication estimate changes may
+be restricted information.
+
+**A consensus-revision edge was tried and REMOVED the same day.** The Yahoo
+capture was widened to all 32 book legs so the long-minus-short 90-day EPS
+revision gap could feed a "suggested edge" beside the Kelly box. PM, same
+day: *"remove the consensus schtick. I think we are trying to ease our way
+out. Let's stick with kelly and our conversation about the expectation of
+pair returns."* The 16 added names, their stored rows and their entries in the
+2026-10-06 staging file were deleted; `SYMS` is back to EMS + IT. **Do not
+re-propose a mechanical consensus edge** — the edge is the PM's expectation,
+informed by analyst conversations. Two things from the attempt stay because
+they are correct on their own: `_usable_eps` refuses **Yahoo's exact-0.0
+placeholder** (met on Hindalco's whole FY27/FY28 consensus and HZL's
+30/90-days-ago fields — a −100% "revision" or a division by zero otherwise),
+and a Results-tab period holding only Yahoo's FY consensus is labelled
+`consensus only`, not `calendar only`.
+
+### Concall notes — a Results sub-tab copying the old dashboard's drawer (2026-10-08)
+
+PM: *"create a subtab in the results tab that just copies the concall frontend
+from the earlier dashboard that we used"*. The Results tab now has two sub-tabs,
+**Estimates vs print** and **Concall notes**, sharing the sector chips and
+picker (`RES_SUB`, `.btab`, remembered in sessionStorage; the picker's per-name
+count follows the view). The concall pane reads the vault's
+`AI Insights/<TICKER>_Concall/Concall - … - Q<n> FY<yy>.md` notes via
+`/api/concall?entity=` → `engine.concall_notes`, **read-only, scores nothing** —
+the same files `vault_concall.py` already reads for P4, so they are data, not
+the old system's methodology.
+
+**The renderer is the old dashboard's `md()` VERBATIM** (`ccMd` in app.html:
+markdown-lite, signal-word colouring, `:emoji:` shortcodes, pre-wrap prose, ▸
+bullets, GFM tables), with its CSS copied and scoped under `.ccp`. Two additive
+departures: every quarter is listed (newest open, the rest folded and
+lazy-rendered) where the old drawer showed only the latest, and the shortcode
+map gained the codes the corpus uses that the old map lacked
+(`:yellow_circle:` ×42, `:hourglass_flowing_sand:` ×31 …, printed raw there).
+
+**Order is the quarter parsed from the FILENAME, never mtime** (OneDrive
+rewrites mtimes — build-data.js made the same call). Ticker resolution is the
+roster's `nse`, then `engine.CONCALL_DIRS` for the nine it cannot give: IT names
+carry no NSE symbol in `entities`, VAML's spec says NEEDS_CONFIRMATION, and
+LTIMindtree's folder kept the old `LTIM`. All **216 notes resolve**. A name with
+no folder renders "none on file", never an error. The vault copy bakes every
+picker name (~3.7MB of markdown); `build_frontend.py` reports an empty read on
+the route row but does not raise it (OneDrive signed out is a laptop condition).
+
+**`/concall <company> <quarter>` now runs from this project** (`.claude/skills/
+concall/`, same day). PM: either "no concall found" or the full Google Finance
+transcript, converted from the audio, analysed normally. `packages/company/
+concall_target.py` resolves name → Google symbol + vault folder + quarter +
+prior note (23-check selftest). **The Google symbol and the folder are different
+keys** (LTM vs LTIM_Concall). **Google carries ONLY each company's latest call**
+("Previous reports" never loads), so any other quarter is "no concall found",
+with no fallback source. The transcript is read from the page in the built-in
+browser, because it loads through Google's session-bound `batchexecute` calls
+and is absent from the plain HTML. The method is still the vault's `SKILLS/
+EARNINGS CALL TRANSCRIPT ANALYST.md`. The one addition is a `**Source:**`
+header line, because a machine transcript of audio is not the filed transcript.
+
+### The preview board — top of Estimates vs print (2026-10-10)
+
+PM: *"make something like this"* (the desk's `OneDrive - PinPOINT/India Q2 FY
+27 Results Dashboard.html`) *"Make for IT atleast, and the brokers we have (we
+dont have jeferries). ... the ebitda margin, %, qoq growth and yoy growth
+should be one sub sub tab instead of 4"*. A sector-level block above the
+per-company panel: house pills (All houses · compare, or one house's full
+table + two bar charts), and in compare **one tab per P&L line** (Revenue /
+EBIT & margin / PAT, + "Operating lines" for anything else) where the source
+had ten single-metric buttons. `/api/results_board?sector=&period=` →
+`engine.results_board` → `results_io.sector_board`; a separate route so it is
+baked once per sector, not once per (sector, name).
+
+**Fed by `packages/results/preview_dashboard.py`** (`--sector IT --exclude
+Jefferies --stage`, then `results_io.py --load`, then `export_static.py`).
+It writes ordinary cited `estimates` rows, so the board's street is the same
+median the per-company panel grades the print against. IT Q2FY27: 690 rows,
+7 houses (Kotak, JPM, Nuvama, Nomura, Phillip, Avendus email, MOSL email),
+12 of 13 names. **Not loaded, by design:** the dashboard's computed PAT
+margins and year-ago margins, prior-quarter actuals, Nomura's EBIT (its own
+notes say "computed by us"), other houses' consensus quotes, and eight names
+not in the roster (Cyient, Hexaware, Sagility, Firstsource, Indegene, Tata
+Tech, Birlasoft, Zensar). **MOSL's TCS `ebitda` IS EBITDA, not EBIT** —
+loading it as EBIT would overstate by ~8%; `FIELD_AS` carries the override.
+Margin changes are stored in **pp** (unit "pp"), shown as bps. Basis
+(consol/standalone/segment) rides in `sources.meta`, never the unit; Wipro
+and Tata Elxsi read "mixed basis" because Avendus' email tags them consol /
+standalone on a cc-growth-only row.
 
 ### The end labels came off every line chart — 2026-09-23
 

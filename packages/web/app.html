@@ -142,6 +142,54 @@
   .tab:hover{background:var(--sunken);color:var(--ink)}
   .tab[aria-selected=true]{color:#fff;background:var(--accent);font-weight:600}
   nav.vnav[hidden]{display:none}
+  /* The Book's own sub-tabs (Positions / Kelly sizing, 2026-10-05). Same look
+     as .tab but a separate class: tab() re-marks EVERY .tab by data-t on each
+     view change, which would deselect these. */
+  .btab{background:none;border:0;color:var(--soft);padding:5px var(--s3);
+        cursor:pointer;font-size:var(--t-body);font-weight:500;flex:0 0 auto;
+        white-space:nowrap;border-radius:var(--r-pill);transition:background .12s, color .12s}
+  .btab:hover{background:var(--sunken);color:var(--ink)}
+  .btab[aria-selected=true]{color:#fff;background:var(--accent);font-weight:600}
+  /* The Book's Analysis sub-tab (2026-10-10): one row per stock, a <details>
+     card under each, pairs derived above. Grid columns are shared by the
+     header and every row so the five checks line up down the page. */
+  /* Readability pass (PM, same day: "Why do I see ghosts writing on the whole
+     panel. Some color to it pls, some bolding of important things"). Content
+     is full-strength --ink; grey is kept for true metadata only (dates of an
+     entry, "automatic"); colour carries meaning — long green, short red,
+     status green/amber, group headings in the accent blue; numbers inside
+     notes are bolded by anaHi(). */
+  .ana-grid{display:grid;grid-template-columns:minmax(130px,1.6fr) repeat(5,minmax(40px,.55fr)) minmax(96px,1fr) minmax(72px,.7fr);
+            align-items:center;gap:0 var(--s2);padding:9px var(--s4);font-size:var(--t-md);color:var(--ink)}
+  .ana-head{color:var(--ink);font-size:var(--t-sm);font-weight:600;letter-spacing:.02em;
+            border-bottom:1px solid var(--rule);background:var(--alt)}
+  .ana-row{border-bottom:1px solid var(--hair)}
+  .ana-row > summary{list-style:none;cursor:pointer}
+  .ana-row > summary::-webkit-details-marker{display:none}
+  .ana-row > summary:hover{background:var(--sunken)}
+  .ana-row[open] > summary{background:var(--accent-soft)}
+  .ana-name{font-weight:600;font-size:var(--t-md)}
+  .ana-side{display:inline-block;font-size:var(--t-label);font-weight:600;padding:1px 8px;margin-left:6px;
+            border-radius:var(--r-pill);vertical-align:1px}
+  .ana-side.long{color:var(--up);background:var(--up-soft)} .ana-side.short{color:var(--down);background:var(--down-soft)}
+  .ana-grp{color:var(--accent);font-size:var(--t-sm);font-weight:700;letter-spacing:.04em;
+           padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--rule)}
+  .ana-ico{font-size:16px;font-weight:700}
+  .ana-ok{color:var(--up)} .ana-part{color:var(--warn)} .ana-open{color:var(--soft)}
+  .ana-card{margin:var(--s2) var(--s4) var(--s4) var(--s5);padding:var(--s3) var(--s4);background:var(--surface);
+            border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:0}
+  .ana-step{display:grid;grid-template-columns:20px minmax(190px,.7fr) 2fr;gap:var(--s3);padding:6px 0;
+            font-size:var(--t-body);line-height:1.55;border-bottom:1px solid var(--hair)}
+  .ana-step:last-of-type{border-bottom:0}
+  .ana-step .k{font-weight:600;color:var(--ink)}
+  .ana-step .v{color:var(--ink)}
+  .ana-step .v b, .ana-log b{color:#fff;font-weight:700}
+  .ana-date{color:var(--soft);font-size:var(--t-sm);white-space:nowrap}
+  .ana-log{margin-top:var(--s3);padding-top:var(--s2);border-top:1px solid var(--rule);font-size:var(--t-body);color:var(--ink)}
+  .ana-log .lh{font-size:var(--t-sm);font-weight:600;color:var(--accent);margin-bottom:var(--s1)}
+  .ana-log div.e{padding:4px 0;line-height:1.5}
+  .ana-tag{display:inline-block;font-size:var(--t-label);font-weight:600;color:var(--accent);background:var(--accent-soft);
+           padding:0 7px;border-radius:var(--r-pill);margin-right:6px}
 
   section{display:none;padding-top:var(--s5)}
   section.on{display:block}
@@ -353,6 +401,27 @@
      broker rows — the mail-bullet drawer grammar, native <details>. */
   .rs-secs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
   .rs-secs .rs-n{margin-left:6px;opacity:.7}
+  /* per-sector company dropdowns (2026-10-08) */
+  .rs-dd{position:relative}
+  .rs-secs .rs-car{margin-left:6px;font-size:9px;opacity:.7}
+  .rs-secs .rs-cur{font-weight:600}
+  .rs-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:30;min-width:300px;
+       max-width:calc(100vw - 32px);max-height:60vh;overflow:auto;background:var(--surface);
+       border:1px solid var(--rule);border-radius:8px;box-shadow:var(--shadow-2);padding:4px}
+  .rs-item{display:flex;justify-content:space-between;align-items:baseline;gap:14px;width:100%;
+       background:none;border:0;color:var(--ink);text-align:left;padding:6px 10px;border-radius:5px;
+       cursor:pointer;font-size:var(--t-sm);font-family:var(--sans)}
+  .rs-item:hover,.rs-item:focus{background:var(--sunken);outline:none}
+  .rs-item[aria-current=true]{background:var(--accent-soft);color:var(--accent)}
+  .rs-item.none .rs-nm{color:var(--soft)}
+  .rs-item .rs-tk{color:var(--faint);font-family:var(--mono);font-size:var(--t-label);margin-left:4px}
+  .rs-item .rs-meta{color:var(--faint);font-family:var(--mono);font-size:var(--t-label);white-space:nowrap}
+  @media (max-width:640px){
+    .rs-secs{position:relative}
+    .rs-dd{position:static}
+    .rs-menu{left:0;right:0;min-width:0;max-width:none}
+    .rs-item .rs-meta{white-space:normal;text-align:right}
+  }
   .rs-tab td.rs-k{white-space:normal;min-width:190px;vertical-align:top}
   details.rs-det summary{cursor:pointer;list-style:none;font-family:var(--sans);
        font-size:var(--t-body);color:var(--ink)}
@@ -364,6 +433,63 @@
   .rs-list li{margin:8px 0;font-size:var(--t-sm);font-family:var(--sans)}
   .rs-list li.rs-act{border-left:2px solid var(--up);padding-left:8px}
   .rs-q{color:var(--soft);margin:2px 0}
+  /* analyst views (2026-10-06): a view is the PM's note of a conversation,
+     drawn apart from published estimates — dashed rule, never the green
+     actual rule — so it cannot be read as a house number. */
+  .rs-list li.rs-view{border-left:2px dashed var(--accent);padding-left:8px}
+  .rs-list li.rs-old{opacity:.6}
+  .rs-vt td{vertical-align:top}
+  /* Concall notes sub-tab (2026-10-08). COPIED from the old vault dashboard
+     (Obsidian Vault/Dashboard/index.html, the Human tab's "Latest concall"
+     drawer) — px values, pre-wrap prose and ▸ bullets as they were there —
+     and scoped under .ccp so none of it leaks into the rest of app.html. */
+  .ccp details{margin-bottom:8px;background:var(--surface);border:1px solid var(--rule);border-radius:8px}
+  .ccp details summary{padding:9px 14px;cursor:pointer;font-size:13px;display:flex;gap:8px;
+       align-items:center;flex-wrap:wrap;list-style:none;color:var(--ink)}
+  .ccp details summary::-webkit-details-marker{display:none}
+  .ccp details summary::before{content:'▸';color:var(--faint)}
+  .ccp details[open] summary::before{content:'▾'}
+  .ccp .prose{font-size:12.5px;color:var(--soft);white-space:pre-wrap;line-height:1.65;
+       padding:4px 16px 14px;font-family:var(--sans)}
+  .ccp .prose ul{white-space:normal;margin:6px 0 6px 2px;padding-left:18px;list-style:none}
+  .ccp .prose li{position:relative;padding-left:14px;margin:3px 0;line-height:1.55}
+  .ccp .prose li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:11px;top:1px}
+  .ccp .prose em{color:var(--soft);font-style:italic}
+  .ccp .prose strong{color:var(--ink)}
+  .ccp .warn-t{color:var(--warn)}
+  .ccp .prose .mdh{color:var(--ink);margin:12px 0 4px;line-height:1.3}
+  .ccp .prose h4.mdh{font-size:14px} .ccp .prose h5.mdh{font-size:12.5px}
+  .ccp .prose h6.mdh{font-size:12px;color:var(--soft)}
+  .ccp .prose hr{border:none;border-top:1px solid var(--rule);margin:12px 0}
+  .ccp .prose table{border-collapse:collapse;width:100%;font-size:13px;white-space:normal;
+       display:block;overflow-x:auto}
+  .ccp .prose th{text-align:left;color:var(--soft);font-size:11px;text-transform:uppercase;
+       letter-spacing:.04em;padding:6px 10px;border-bottom:1px solid var(--rule)}
+  .ccp .prose td{padding:6px 10px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink)}
+  .ccp .prose tr:hover td{background:rgba(255,255,255,.02)}
+  .ccp .empty{color:var(--faint);font-style:italic;white-space:normal}
+  .rs-vt .sub{display:block;color:var(--faint);font-size:var(--t-micro)}
+  .rs-vt .date{white-space:nowrap}
+  .rs-vt td.rs-note{white-space:normal;min-width:200px;max-width:360px;color:var(--soft)}
+  .rs-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .rs-form input[type=text]{min-width:120px}
+  /* preview board (2026-10-10) — house pills, one tab per P&L line */
+  .rsb-pills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+  .rsb-tabs{margin:0 0 8px}
+  table.rsb td,table.rsb-in td{vertical-align:top}
+  table.rsb td.l{white-space:nowrap;min-width:170px}
+  table.rsb .sub,table.rsb-in .sub{display:block;color:var(--faint);font-size:var(--t-micro);white-space:nowrap}
+  table.rsb .sub.hot{color:var(--warn)}
+  table.rsb .rs-tk{color:var(--faint);font-family:var(--mono);font-size:var(--t-label);margin-left:2px}
+  table.rsb tr.rsb-det>td{background:var(--sunken);padding:8px 12px 12px}
+  table.rsb-in{font-size:var(--t-sm)}
+  table.rsb-in th{position:static;background:none}
+  .rsb-note{white-space:normal!important;min-width:180px;max-width:340px;color:var(--soft)}
+  table.rsb .sub.rsb-note{display:block;max-width:300px;line-height:1.35;margin-top:2px}
+  table.rsb tr.rsb-foot td{font-weight:600;border-top:1px solid var(--rule)}
+  table.rsb th.rsb-gh{text-align:center;border-bottom:1px solid var(--hair)}
+  .rsb-charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:10px}
+  @media (max-width:760px){.rsb-charts{grid-template-columns:minmax(0,1fr)}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ----------------------------------------------------------- pair view */
@@ -611,6 +737,8 @@
   .lgd .dvk{color:var(--faint);font-family:var(--sans);font-size:var(--t-label)}
   .viztip .r .dv{font-family:var(--mono);font-size:var(--t-micro);
        color:var(--warn);white-space:nowrap;margin-left:2px}
+  .viztip .r .nt{font-family:var(--mono);font-size:var(--t-micro);
+       color:var(--soft);white-space:nowrap;margin-left:2px}
 
   /* ── The Book (bk-*) — one compact table, sector as a merged column ─────
      One row per pair (PM: individual positions stay off the page; legs live
@@ -929,13 +1057,17 @@ const buChip = b => !b ? '<span class="chip c-flat">—</span>' :
    frontmatter figure (Coforge: 95th normalised, 41st raw, chart shows raw).
    The 60d sparkline column stays — this store has the history for it.
    Positioning remains a timing veto: it never flips a fundamental call. */
+/* Heatmap colour for the OI percentile (PM, 2026-09-30: "red for high to
+   green for 0%, yellowish hues in between") — a continuous hue ramp, 0th =
+   green (120°), 50th = yellow (~60°), 100th = red (0°), replacing the old
+   three-step classes. Lightness held for the dark ground. */
+const oiHeat = p => `hsl(${(120 * (1 - Math.max(0, Math.min(100, p)) / 100)).toFixed(0)},70%,55%)`;
 function oiPctileBar(p){
   if (p == null) return '<span class="neu">—</span>';
-  const cls = p >= 90 ? 'neg' : p >= 75 ? 'warn' : p <= 25 ? 'pos' : 'neu';
-  const w = Math.max(2, Math.min(100, p));
-  return `<div class="dwrap"><span class="${cls}">${p.toFixed(0)}<span
+  const w = Math.max(2, Math.min(100, p)), col = oiHeat(p);
+  return `<div class="dwrap"><span style="color:${col}">${p.toFixed(0)}<span
     style="font-size:9px">th</span></span>
-    <div class="dbar ${cls}" style="width:${w}%"></div></div>`;
+    <div class="dbar" style="width:${w}%;background:${col}"></div></div>`;
 }
 function oiBuPill(t){
   if (!t) return '<span class="neu">—</span>';
@@ -1011,6 +1143,8 @@ async function loadPos(){
       <td class="n">${r.price == null ? '—'
           : '₹' + r.price.toLocaleString('en-IN')}</td>
       <td>${spark(r.spark)}</td>
+      <td>${warMini(r.opt)}</td>
+      <td class="n">${ivCell(r.opt)}</td>
       <td>${oiStatusPill(r.date)}</td>
     </tr>`).join('');
     const label = SEC_LABEL[sec] || (sec.charAt(0).toUpperCase() + sec.slice(1));
@@ -1018,29 +1152,46 @@ async function loadPos(){
         <span class="neu" style="font-weight:400;font-size:12px">${cos.length}</span></div>
       <div class="panel"><div class="scroll"><table><thead><tr>
         <th>Company</th><th class="n">Futures OI</th>
-        <th>Buildup (3m)</th><th class="n">3m pctl</th><th class="n">Mag (3m)</th>
-        <th class="n">Spot</th><th>60d OI</th><th>Status</th>
+        <th>Buildup (3m)</th><th class="n" title="rank of today's futures OI among the last 42 sessions (~2 months, rolling)">2m pctl</th><th class="n">Mag (3m)</th>
+        <th class="n">Spot</th><th>60d OI</th>
+        <th title="OI-weighted call strike (red), futures (blue), OI-weighted put strike (green), last 60 sessions">Wtd avg range (60d)</th>
+        <th class="n" title="ATM implied vol, front expiry (the next once 7 days or fewer remain); percentile over the last 252 sessions">ATM IV · 1y %ile</th>
+        <th>Status</th>
       </tr></thead><tbody>${trs}</tbody></table></div></div>`;
   }).join('');
 
   $('#s-pos').innerHTML =
     `<div class="pgt">OI Positioning</div>
-     <div class="meta-line">Futures Open Interest · 3-month horizon only ·
-       percentile is the raw rank of today's OI over the last 63 sessions ·
+     <div class="meta-line">Futures Open Interest · buildup and Mag on a 3-month horizon ·
+       percentile is the raw rank of today's OI over the last 42 sessions
+       (rolling ~2 months) ·
        buildup type from OI+price direction — a timing veto, never a
        fundamental call</div>
      ${tiles}
      <div class="hint" style="margin-bottom:4px">🟢 Long Buildup (OI↑ Price↑) ·
        🔴 Short Buildup (OI↑ Price↓) · 🟡 Short Covering (OI↓ Price↑) ·
-       🟡 Long Unwinding (OI↓ Price↓) · click a row for its OI-vs-time chart</div>
+       🟡 Long Unwinding (OI↓ Price↓) · click a row for its OI-vs-time and
+       weighted-average-range charts</div>
      ${secTables || '<div class="panel"><div class="hint">no OI loaded</div></div>'}
-     <div class="hint" style="margin-top:16px">Percentile: raw 3-month rank
-       (not expiry-cycle normalised — the chart shows raw OI, so does this).
-       90th+ = crowded trade risk, 25th− = under-positioned.
+     <div class="hint" style="margin-top:16px">Percentile: raw rank over a rolling
+       2 months (42 sessions; not expiry-cycle normalised — the chart shows
+       raw OI, so does this), coloured as a heatmap from green at 0th through
+       yellow to red at 100th. High = crowded trade risk, low =
+       under-positioned.
        <b>Mag (3m)</b>: Z-score &amp; % vs median —
        how <em>far</em> OI has moved, not just its rank. Z ≤ −1σ / ≤ −15% = light
        positioning (green). Z ≥ +1σ / ≥ +15% = heavy (red). OI is T-1 by design.
-       The refresh pulls it daily; <code>--force</code> re-pulls.</div>`;
+       The refresh pulls it daily; <code>--force</code> re-pulls.
+       <br><b>Wtd avg range</b>: per session, Σ(strike × call OI) ÷ Σ call OI
+       across every live expiry (red, above), the same for puts (green,
+       below), against the front-month futures (blue) — where the option
+       book is positioned relative to price. History restated for
+       splits/bonuses. <b>ATM IV</b>: Black-76 on the expiry's futures at
+       6.5%, from closing premiums of options that TRADED that day (a stale
+       untraded close is never solved for), front expiry rolled to the next
+       once 7 days or fewer remain. <b>1y %ile</b>: share of the last 252
+       sessions' IVs below today's; withheld under 60 readings. 80th+ =
+       options rich. Source: NSE F&amp;O bhavcopy, T-1.</div>`;
 
   // Property assignment, not addEventListener: loadPos re-renders this section
   // wholesale on every visit, and a listener added per render would stack.
@@ -1097,8 +1248,197 @@ async function toggleOiRow(tr){
   const panel = tr.closest('.panel');
   const w = Math.max(520, Math.min(1100,
     (panel ? panel.clientWidth : 940) - 32));
-  td.innerHTML = oiChart(eid, d, w);
+  td.innerHTML = oiChart(eid, d, w) + warChart(eid, d.options, w);
   wireOiChart(eid);
+  wireWarChart(eid);
+}
+
+/* WEIGHTED AVERAGE RANGE (2026-09-30, PM: "just add the weighted average
+   graph") — the vault Options-OI guide's second chart, under the futures OI
+   chart in the same dropdown. Per session: the OI-weighted CALL strike
+   above, futures in the middle, the OI-weighted PUT strike below, every live
+   expiry pooled by OI (engine.options_series says why pooled). Calls red /
+   puts green / futures blue, the guide's grammar on this page's tokens. */
+const fmtRs = v => v == null ? '—'
+  : '₹' + v.toLocaleString('en-IN', {maximumFractionDigits: 1});
+const pctVs = (v, f) => (v == null || !f) ? '' :
+  ((v / f - 1) >= 0 ? '+' : '−') + Math.abs((v / f - 1) * 100).toFixed(1) + '%';
+
+function warMini(o){
+  const pts = o && o.war;
+  if (!pts || pts.length < 2)
+    return '<span class="neu" style="font-size:11px">no options</span>';
+  const w = 120, h = 26;
+  const all = pts.flat(), lo = Math.min(...all), hi = Math.max(...all);
+  const rng = (hi - lo) || 1;
+  const line = (k, col) => '<polyline points="' + pts.map((q, i) =>
+    (i / (pts.length - 1) * w).toFixed(1) + ',' +
+    (h - 1 - (q[k] - lo) / rng * (h - 2)).toFixed(1)).join(' ') +
+    '" fill="none" style="stroke:' + col + '" stroke-width="1.4"' +
+    ' stroke-linejoin="round"/>';
+  const q = pts[pts.length - 1];
+  return '<svg width="' + w + '" height="' + h + '" role="img" aria-label="' +
+    'call wtd ' + Math.round(q[0]) + ', futures ' + Math.round(q[1]) +
+    ', put wtd ' + Math.round(q[2]) + '">' +
+    line(0, 'var(--down)') + line(2, 'var(--up)') + line(1, 'var(--accent)') +
+    '</svg>';
+}
+
+function ivCell(o){
+  if (!o || o.iv_now == null) return '<span class="neu">—</span>';
+  const iv = o.iv_now.toFixed(1) + '%';
+  if (o.iv_pctile == null)
+    return iv + '<br><span class="neu" style="font-size:10px" title="percentile ' +
+      'withheld under ' + o.iv_min_obs + ' readings">%ile n/a · ' + o.iv_n +
+      ' readings</span>';
+  const p = o.iv_pctile, cls = p >= 80 ? 'warn' : 'neu';
+  return iv + '<div class="dwrap"><span class="' + cls + '" title="1y range ' +
+    o.iv_lo.toFixed(1) + '–' + o.iv_hi.toFixed(1) + '% over ' + o.iv_n +
+    ' sessions">' + p.toFixed(0) + '<span style="font-size:9px">th</span></span>' +
+    '<div class="dbar ' + cls + '" style="width:' + Math.max(2, p) + '%"></div></div>';
+}
+
+const WARV = {};   // entity_id -> weighted-range chart geometry, for hover
+const WAR_DAYS = 91;   // dropdown chart window, calendar days (~3 months)
+function warChart(eid, o, w){
+  if (!o || !o.dates || !o.dates.length)
+    return '<div class="hint" style="margin-top:14px">no stock options for this name in the store</div>';
+  const rows = o.dates.map((d, i) => ({date: d, c: o.call[i], f: o.fut[i],
+      p: o.put[i], iv: o.iv[i]}))
+    .filter(r => r.c != null && r.f != null && r.p != null)
+    // Last 3 months only (PM, 2026-09-30: "shrink the graph to 3 months").
+    // A VIEW window: the IV percentile in the header still ranks a full year.
+    .filter((r, _i, a) => a.length && Date.parse(r.date) >=
+      Date.parse(a[a.length - 1].date) - WAR_DAYS * 86400e3);
+  if (rows.length < 2)
+    return '<div class="hint" style="margin-top:14px">not enough options history yet</div>';
+  const h = 260, ML = 60, MR = 72, MT = 20, MB = 30;
+  const T = s => Date.parse(s);
+  const x0 = T(rows[0].date), x1 = T(rows[rows.length - 1].date);
+  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0)) * (w - ML - MR);
+  const all = rows.flatMap(r => [r.c, r.f, r.p]);
+  let lo = Math.min(...all), hi = Math.max(...all);
+  const pd = ((hi - lo) || hi || 1) * 0.06;
+  lo -= pd; hi += pd;
+  const Y = v => MT + (1 - (v - lo) / ((hi - lo) || 1)) * (h - MT - MB);
+
+  let grid = '', yl = '';
+  for (const f of [0, 1 / 3, 2 / 3, 1]){
+    const y = (MT + f * (h - MT - MB)).toFixed(1);
+    grid += '<line class="grid" x1="' + ML + '" x2="' + (w - MR) +
+            '" y1="' + y + '" y2="' + y + '"/>';
+    yl += '<text class="ax" x="' + (w - MR + 8) + '" y="' + y +
+          '" dominant-baseline="middle">' + fmtOiPrice(hi - f * (hi - lo)) + '</text>';
+  }
+  let xax = '';
+  const seen = new Set();
+  for (let i = 0; i < 6; i++){
+    const k = Math.round(i * (rows.length - 1) / 5);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    xax += '<text class="ax" x="' + X(T(rows[k].date)).toFixed(1) + '" y="' +
+      (h - 9) + '" text-anchor="middle">' + esc(dtick(rows[k].date, false)) + '</text>';
+  }
+  const pts = k => rows.map(r => X(T(r.date)).toFixed(1) + ',' + Y(r[k]).toFixed(1));
+  const band = pts('c').concat(pts('p').reverse()).join(' ');
+  const pl = (k, col) => '<polyline points="' + pts(k).join(' ') +
+    '" fill="none" style="stroke:' + col + '" stroke-width="2"' +
+    ' stroke-linejoin="round" stroke-linecap="round"/>';
+  WARV[eid] = {w: w, h: h, ML: ML, MR: MR, MT: MT, x0: x0, x1: x1, X: X, rows: rows};
+
+  const L = rows[rows.length - 1];
+  const ivTxt = o.iv_now == null ? 'ATM IV n/a' :
+    'ATM IV ' + o.iv_now.toFixed(1) + '% (' + esc(o.iv_exp_now) + ' expiry) · ' +
+    (o.iv_pctile == null ? '1y %ile withheld, ' + o.iv_n + ' readings'
+      : o.iv_pctile.toFixed(0) + 'th 1y %ile, range ' + o.iv_lo.toFixed(1) +
+        '–' + o.iv_hi.toFixed(1) + '%');
+  return '<div class="chartwrap" id="cw-war-' + eid + '" style="margin-top:18px">' +
+    '<div class="hint" style="margin-bottom:4px;font-family:var(--mono)">' +
+      '<span style="color:var(--down)">Call ' + fmtRs(L.c) + ' (' + pctVs(L.c, L.f) + ')</span> · ' +
+      '<span style="color:var(--accent)">Fut ' + fmtRs(L.f) + '</span> · ' +
+      '<span style="color:var(--up)">Put ' + fmtRs(L.p) + ' (' + pctVs(L.p, L.f) + ')</span> · ' +
+      'width ' + ((L.c - L.p) / L.f * 100).toFixed(1) + '% of fut · ' + ivTxt +
+      (o.adj ? ' · history restated for a ×' + o.adj.ratio + ' split/bonus on ' +
+        esc(o.adj.date) : '') + '</div>' +
+    '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h +
+      '" role="img" tabindex="0" aria-label="OI-weighted call and put strikes vs futures, ' +
+      esc(o.symbol) + '">' + grid +
+    '<polygon points="' + band + '" style="fill:var(--ink)" opacity="0.05"/>' +
+    '<line class="xhair" x1="0" x2="0" y1="' + MT + '" y2="' + (h - MB) +
+      '" style="display:none"/>' +
+    pl('c', 'var(--down)') + pl('p', 'var(--up)') + pl('f', 'var(--accent)') +
+    yl + xax +
+    '<text class="axl" x="' + ML + '" y="12">WEIGHTED AVERAGE RANGE — ' +
+      esc(o.symbol) + ' · last 3 months · all live expiries pooled by OI</text>' +
+    '</svg><div class="viztip" role="status"></div>' +
+    '<div class="legend">' +
+      '<span><i style="border-top:2.5px solid var(--down)"></i> OI-weighted call strike</span>' +
+      '<span><i style="border-top:2.5px solid var(--accent)"></i> Front-month futures</span>' +
+      '<span><i style="border-top:2.5px solid var(--up)"></i> OI-weighted put strike</span>' +
+    '</div></div>';
+}
+
+function wireWarChart(eid){
+  const m = WARV[eid];
+  const wrap = document.getElementById('cw-war-' + eid);
+  if (!wrap || !m) return;
+  const svg = wrap.querySelector('svg'), xh = wrap.querySelector('.xhair');
+  const tip = wrap.querySelector('.viztip');
+  let idx = -1;
+  const hide = () => { xh.style.display = 'none'; tip.classList.remove('on'); idx = -1; };
+  const line = (label, val, col) => {
+    const row = document.createElement('div'); row.className = 'r';
+    const key = document.createElement('i'); key.style.borderTopColor = col;
+    const b = document.createElement('b'); b.textContent = val;
+    const em = document.createElement('em'); em.textContent = label;
+    row.appendChild(key); row.appendChild(b); row.appendChild(em);
+    return row;
+  };
+  const draw = i => {
+    if (i < 0 || i >= m.rows.length) return hide();
+    idx = i;
+    const r = m.rows[i], x = m.X(Date.parse(r.date));
+    xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.style.display = '';
+    tip.textContent = '';
+    const hd = document.createElement('div'); hd.className = 'd'; hd.textContent = r.date;
+    tip.appendChild(hd);
+    tip.appendChild(line('call wtd ' + pctVs(r.c, r.f), fmtRs(r.c), 'var(--down)'));
+    tip.appendChild(line('futures', fmtRs(r.f), 'var(--accent)'));
+    tip.appendChild(line('put wtd ' + pctVs(r.p, r.f), fmtRs(r.p), 'var(--up)'));
+    const ex = document.createElement('div'); ex.className = 'r';
+    const em = document.createElement('em');
+    em.textContent = 'width ' + ((r.c - r.p) / r.f * 100).toFixed(1) + '%' +
+      (r.iv == null ? '' : ' · ATM IV ' + r.iv.toFixed(1) + '%');
+    ex.appendChild(em); tip.appendChild(ex);
+    tip.classList.add('on');
+    const tw = tip.offsetWidth || 170;
+    tip.style.left = Math.max(4, (x + 14 + tw > m.w) ? x - tw - 14 : x + 14) + 'px';
+    tip.style.top = (m.MT + 22) + 'px';
+  };
+  const nearest = clientX => {
+    const rc = svg.getBoundingClientRect();
+    if (!rc.width) return -1;
+    const frac = ((clientX - rc.left) * (m.w / rc.width) - m.ML) / (m.w - m.ML - m.MR);
+    if (frac < -0.03 || frac > 1.03) return -1;
+    const ms = m.x0 + Math.min(1, Math.max(0, frac)) * (m.x1 - m.x0);
+    let best = -1, bd = Infinity;
+    for (let i = 0; i < m.rows.length; i++){
+      const dd = Math.abs(Date.parse(m.rows[i].date) - ms);
+      if (dd < bd){ bd = dd; best = i; }
+    }
+    return best;
+  };
+  svg.addEventListener('pointermove', ev => draw(nearest(ev.clientX)));
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('focus', () => draw(idx < 0 ? m.rows.length - 1 : idx));
+  svg.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowLeft'){
+      draw(Math.max(0, (idx < 0 ? m.rows.length - 1 : idx) - 1)); ev.preventDefault();
+    } else if (ev.key === 'ArrowRight'){
+      draw(Math.min(m.rows.length - 1, (idx < 0 ? 0 : idx) + 1)); ev.preventDefault();
+    } else if (ev.key === 'Escape') hide();
+  });
 }
 
 const fmtOiLots = v => v == null ? '—'
@@ -1635,7 +1975,10 @@ function lineChart(cfg){
     series: series.filter(s => s.pts.length).map(s => ({
       label: s.label, slot: s.slot,
       byDate: new Map(s.pts.map(p => [p.d, p.v])),
-      divByDate: new Map((s.divs || []).map(g => [g.d, g]))
+      divByDate: new Map((s.divs || []).map(g => [g.d, g])),
+      // Optional per-point readout text (first used by the Vahan day-share
+      // sub-chart, removed with the Auto tab 2026-10-21; kept as a generic option).
+      noteByDate: new Map((s.notes || []).map(n => [n.d, n.txt]))
     }))
   };
 
@@ -1815,10 +2158,18 @@ function wireChart(id){
         // you hunting across the other chart for the half it withheld.
         const dv = document.createElement('span');
         dv.className = 'dv';
-        dv.textContent = (g.ds > 0 ? '▲' : '▼') + ' score ' +
-          (g.ds > 0 ? '+' : '') + g.ds.toFixed(2) + ' vs price ' +
-          (g.ret > 0 ? '+' : '') + g.ret.toFixed(1) + '%';
+        dv.textContent = g.txt != null ? g.txt
+          : (g.ds > 0 ? '▲' : '▼') + ' score ' +
+            (g.ds > 0 ? '+' : '') + g.ds.toFixed(2) + ' vs price ' +
+            (g.ret > 0 ? '+' : '') + g.ret.toFixed(1) + '%';
         row.appendChild(dv);
+      }
+      const nt = s.noteByDate && s.noteByDate.get(d);
+      if (nt){
+        const sp = document.createElement('span');
+        sp.className = 'nt';
+        sp.textContent = nt;
+        row.appendChild(sp);
       }
       tip.appendChild(row);
     }
@@ -2433,7 +2784,7 @@ function overnightHtml(m){
   const g = (m.brief || {}).global || {};
 
   const groupLine = rows => (rows || []).map(x =>
-    `${esc(x.label)} <span class="mono">${fmtNum(x.close)}</span> ${pctSpan(x.chg_pct)}`)
+    `${esc(x.label)} <span style="font-family:var(--mono)">${fmtNum(x.close)}</span> ${pctSpan(x.chg_pct)}`)
     .join(' &nbsp;·&nbsp; ');
 
   const reasonFor = (name, key) => {
@@ -2448,10 +2799,10 @@ function overnightHtml(m){
   const usDate = (q.us || [])[0] ? (q.us || [])[0].date : null;
   const gn = mk.gift_nifty || {};
   const gnLi = 'last' in gn
-    ? `<li><b>GIFT Nifty</b> <span class="mono">${fmtNum(gn.last)}</span> ${pctSpan(gn.chg_pct)}${
+    ? `<li><b>GIFT Nifty</b> <span style="font-family:var(--mono)">${fmtNum(gn.last)}</span> ${pctSpan(gn.chg_pct)}${
         gn.gap_pts != null ? ` — <b class="${gn.gap_pts >= 0 ? 'pos' : 'neg'}">${
         gn.gap_pts >= 0 ? '+' : ''}${gn.gap_pts} pts</b> (${
-        (gn.gap_pct >= 0 ? '+' : '') + gn.gap_pct}%) vs Nifty close <span class="mono">${
+        (gn.gap_pct >= 0 ? '+' : '') + gn.gap_pct}%) vs Nifty close <span style="font-family:var(--mono)">${
         fmtNum((gn.nifty_close || {}).close)}</span>` : ''}
         <span class="src">${esc(gn.stamp || '')} IST · ${esc(gn.expiry || '')} · ${
         gn.volume || 0} lots</span></li>`
@@ -2460,7 +2811,7 @@ function overnightHtml(m){
   const acn = (q.it || []).find(x => x.symbol === 'ACN');
   const ctsh = (q.it || []).find(x => x.symbol === 'CTSH');
   const bw = (x, name, key) => x
-    ? `<li><b>${esc(name)}</b> <span class="mono">${fmtNum(x.close)}</span> ${
+    ? `<li><b>${esc(name)}</b> <span style="font-family:var(--mono)">${fmtNum(x.close)}</span> ${
         pctSpan(x.chg_pct)} — ${reasonFor(name, key)}</li>`
     : `<li><b>${esc(name)}</b> <span class="hint">no quote</span></li>`;
 
@@ -2831,9 +3182,38 @@ const industryOf = tag => tag === 'UNTAGGED' ? 'UNTAGGED'
    goes to group headers (PM, 06-09-2026). */
 const pctf = (v, dp = 1) => v == null ? '—'
   : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(dp) + '%';
+/* 60d vs sector — replaced the mtd column (PM, 2026-10-21: "MTD is useless.
+   Put it in commas like: TCS: +xx.x%, INFY: -yy.y%" ... "Calculate sector
+   part intrinsically"). Each leg's rolling 60-day (2-month) move minus beta x its
+   sector's equal-weighted F&O basket (the leg itself excluded), longs first.
+   packages/book/sector_rel.py owns the split; the hover carries it so the
+   three numbers can be checked: stock = sector + own. One line, no layout. */
+function relCell(p){
+  const legs = (p.legs || []).filter(l => l.relsec !== undefined);
+  if (!legs.length) return '<td class="flat">—</td>';
+  const name = l => (l.relsec && l.relsec.symbol) || l.token;
+  const txt = legs.map(l => {
+    const r = l.relsec;
+    if (!r || r.withheld) return `${esc(name(l))}: <span class="flat">—</span>`;
+    const c = Math.abs(r.rel_pct) < 0.05 ? 'flat' : r.rel_pct > 0 ? 'up' : 'down';
+    return `${esc(name(l))}: <span class="${c}">${pctf(r.rel_pct)}</span>`;
+  }).join(', ');
+  const tip = legs.map(l => {
+    const r = l.relsec, s = l.side === 'L' ? '▲' : '▼';
+    if (!r || r.withheld) return `${s} ${name(l)}: withheld — ${r ? r.withheld : 'no entity'}`;
+    const thin = r.peers.length < 3 ? '  ⚠ thin basket' : '';
+    const bd = r.flags.includes('beta_default') ? '  ⚠ beta 1.0 by default (short history)' : '';
+    return `${s} ${name(l)}: stock ${pctf(r.stock_pct)} = sector ${pctf(r.sector_pct)} ` +
+      `(β ${r.beta} × basket ${pctf(r.basket_pct)}) + own ${pctf(r.rel_pct)}` +
+      `\n     ${r.sector} basket, ${r.peers.length} F&O peer${r.peers.length === 1 ? '' : 's'}: ${r.peers.join(', ')}` +
+      `\n     ${dmy(r.from)} → ${dmy(r.to)}, ${r.sessions} sessions${thin}${bd}`;
+  }).join('\n');
+  return `<td style="text-align:left" title="${esc(tip)}">${txt}</td>`;
+}
+
 /* view rows come pre-paired from specs/book.yaml (the PM's own list, names
    verbatim); sectors render in the spec's order, pairs in dictation order */
-function bookSections(view, order, nav, bookPnl){
+function bookSections(view, order, nav, bookPnl, bk){
   const groups = new Map();
   view.forEach(p => {
     const k = p.sector || industryOf(p.pair || '');
@@ -2868,7 +3248,6 @@ function bookSections(view, order, nav, bookPnl){
       const chips =
         (p.missing && p.missing.length ? ` <span class="pill warn" title="a dictated leg is not on the book today: ${esc(p.missing.join(', '))}">leg off</span>` : '') +
         (p.gap_risk ? ` <span class="pill warn" title="a roll happened across a snapshot gap — the frozen P&L may miss the old contract's last days">gap</span>` : '') +
-        (p.ytd_flags && p.ytd_flags.length ? ` <span class="pill warn" title="the YTD ledger hit something that needs a human — it is flagged, never silently corrected:\n${esc(p.ytd_flags.join('\n'))}">ytd?</span>` : '') +
         (p.review ? ` <span class="chip ${p.review.verdict === 'exit' ? 'c-down' :
             p.review.verdict === 'add' ? 'c-up' : 'c-flat'}"
             title="last reviewed ${esc(dmy(p.review.date))}${p.review.thesis_intact == null ? '' :
@@ -2895,7 +3274,7 @@ function bookSections(view, order, nav, bookPnl){
         <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span>${meter}</td>
         <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}</td>
         <td class="${usdCls(p.pnl_ytd)}">${usd(p.pnl_ytd)}</td>
-        <td class="${usdCls(p.pnl_mtd)}">${usd(p.pnl_mtd)}</td>
+        ${relCell(p)}
         <td><span class="date">${dmy(p.inception)}</span> <span class="age">${p.days}d</span></td>
       </tr>`;
     }).join('');
@@ -2906,36 +3285,61 @@ function bookSections(view, order, nav, bookPnl){
   // to the true book figures — shared legs are split, never double-counted.
   const gAll = sum(view, 'gross_pct');
   const navRet = nav ? bookPnl / nav * 100 : null;
-  const totalRow = `<tr class="total">
+  /* EVERYTHING ELSE IN THE BOOK, so the ytd/mtd total is the BOOK's, not the
+     pairs' (PM, 30-09-2026: "why is ytd total still wrong? It shows 6089" —
+     the row summed the 19 pairs only and left out the option hedges, the
+     closed contracts with no live leg and N.A.). On a full-year export these
+     four add back to the IMS total row to the cent. */
+  bk = bk || {};
+  const hedges = bk.unassigned || [], closedU = bk.closed_unmatched || [],
+        naB = bk.na || {};
+  const extras = [
+    ['option hedges', hedges.map(t => t.name || t.token).join(', '),
+     sum(hedges, 'pnl_ytd'), sum(hedges, 'pnl_mtd'), sum(hedges, 'gross_pct'), hedges.length],
+    ['closed · no live leg', closedU.map(u => u.ticker).join(', '),
+     sum(closedU, 'pnl_ytd'), sum(closedU, 'pnl_mtd'), 0, closedU.length],
+    ['n.a.', 'currency, rollover and fixed costs',
+     naB.pnl_ytd || 0, naB.pnl_mtd || 0, 0, naB.pnl_ytd != null],
+  ].filter(e => e[5]);
+  const extraRows = extras.map(([k, tip, y, m, g]) => `<tr class="extra" title="${esc(tip)}">
+    <td class="sec"><span class="a">${esc(k)}</span></td><td class="pair" style="color:var(--muted)">${k === 'n.a.' ? 'currency &amp; costs' : 'hover for names'}</td><td></td>
+    <td>${g ? (g * 100).toFixed(1) + '%' : ''}</td>
+    <td class="${usdCls(y)}">${usd(y)}</td><td></td><td></td></tr>`).join('');
+  const bookYtd = sum(view, 'pnl_ytd') + extras.reduce((s, e) => s + e[2], 0);
+  const gBook = gAll + extras.reduce((s, e) => s + e[4], 0);
+  const totalRow = extraRows + `<tr class="total">
     <td class="sec"><span class="t">total</span></td>
     <td class="pair">${view.length} pairs</td>
-    <td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
-      pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>
-    <td>${(gAll * 100).toFixed(1)}%</td>
-    <td class="${usdCls(sum(view, 'pnl_ytd'))}">${usd(sum(view, 'pnl_ytd'))}</td>
-    <td class="${usdCls(sum(view, 'pnl_mtd'))}">${usd(sum(view, 'pnl_mtd'))}</td>
+    ${(bk.ytd_basis || '').startsWith('ims_sum')
+      ? `<td class="${usdCls(bookYtd)}" title="book YTD as % of NAV — pair price-%s do not sum">${
+          pctf(nav ? bookYtd / nav * 100 : null, 2)}<span class="sub">${usd(bookYtd)}</span></td>`
+      : `<td class="${usdCls(bookPnl)}" title="chained P&L as % of NAV — pair price-%s do not sum">${
+          pctf(navRet, 2)}<span class="sub">${usd(bookPnl)}</span></td>`}
+    <td>${(gBook * 100).toFixed(1)}%</td>
+    <td class="${usdCls(bookYtd)}" title="the whole book: pairs + option hedges + closed contracts with no live leg + n.a.${
+      bk.ims_total && bk.ims_total.pnl_ytd != null ? ` · IMS total row ${usd(bk.ims_total.pnl_ytd)}` : ''}">${usd(bookYtd)}</td>
+    <td></td>
     <td></td></tr>`;
 
   return `<div class="panel" style="padding:0"><div class="scroll">
     <table class="bk"><thead><tr>
       <th class="l">sector</th><th class="l">pair</th>
       <th title="avg long price move − avg short price move SINCE TRADE ENTRY — has the pair worked out in thesis since it went on? Each leg anchors on the OPEN of its entry day (PM rule 07-09-2026; fallback when no open could be fetched: IMS avg cost, then the entry-day close — the leg hover names which). The anchor holds through resizes and pair-tag changes and resets only on a direction flip or a day out of the book · small figure: chained P&L, USD · the bar: ±10% full scale, glows beyond ±5% — moved a lot either way, revisit the pair">since entry %</th>
-      <th>gross</th><th title="CALENDAR year-to-date, USD — a ledger this system maintains itself, NOT the YTD column off the IMS paste. It is seeded once and thereafter only ever advanced by an increment, so a contract roll cannot reset it: normally by the change in the cumulative YTD (which spans sessions that were never snapshotted), and across a roll by the DAY figure, which is not a level and so cannot double count if a fresh ticker turns out to carry the old contract's P&amp;L. Resets on 1 Jan. Replaced the day column, PM 18-09-2026">ytd</th><th>mtd</th>
+      <th>gross</th><th title="CALENDAR year-to-date, USD — a ledger this system maintains itself, NOT the YTD column off the IMS paste. It is seeded once and thereafter only ever advanced by an increment, so a contract roll cannot reset it: normally by the change in the cumulative YTD (which spans sessions that were never snapshotted), and across a roll by the DAY figure, which is not a level and so cannot double count if a fresh ticker turns out to carry the old contract's P&amp;L. Resets on 1 Jan. Replaced the day column, PM 18-09-2026">ytd</th><th class="l" title="each leg's rolling 60-day (2-month) move with its SECTOR taken out: stock 60d return − β × the equal-weighted 60d return of the other live F&amp;O names in its sector (the leg itself excluded). β from the 250 sessions before the window. Longs first. Hover a cell for the split (stock = sector + own) and the basket. Replaced the mtd column, PM 21-10-2026; 90 days cut to 60 the same day">60d vs sector</th>
       <th>opened</th></tr></thead><tbody>${body}${totalRow}</tbody></table></div></div>`;
 }
 
 /* ============== Kelly sizing (PM, 2026-09-25) ==============================
    Risk is MEASURED (each pair's spread σ and the covariance across pairs,
-   from prices); the EDGE is the PM's own, TYPED HERE — a return and a
-   comment per pair (PM, same day: "just put returns and comments then and
-   there and the fraction gets calculated there"). Horizon fixed at 13w.
-   Every keystroke recomputes in the browser from `kelly.calc` (full-precision
-   shrunk covariance, variances, today's sizes) — kellyCalc() mirrors
-   packages/book/kelly.py compute(), which stays the tested reference.
-   Leaving a field (or Enter) SAVES via POST /api/kelly_edge into the
-   append-only book_kelly_edges table. A return with no comment previews but
-   does NOT save — no edge without provenance. The vault copy has no server:
-   it previews and says so.
+   from prices). The EDGE is the case agents' pair juice — long lean minus
+   short lean from the Analysis tab (PM, 2026-10-22: "Instead of my view in
+   the kelly, we put the agents view from here. I will change my view on this
+   only. Remove all text from my side"). Read-only here: the inputs, comments
+   and POST /api/kelly_edge that typed edges 2026-09-25..10-22 are gone; a
+   view changes through the stock's agent. Horizon fixed at 13w.
+   kellyCalc() computes from `kelly.calc` (full-precision shrunk covariance,
+   variances, today's sizes) and mirrors packages/book/kelly.py compute(),
+   which stays the tested reference.
    Three reads, left to right, because each answers a different question:
      implied   what today's size assumes you expect (needs no edge at all)
      ½K        the size your edge asks for — standalone, then joint (joint
@@ -3003,76 +3407,75 @@ function kellyCalc(c, edges){
   return {rows, joint};
 }
 
+/* The 13-week variance (2026-10-06): sized on 65 x daily σ² x the measured
+   variance ratio, not on 65 x daily alone — the spreads partly mean-revert.
+   kelly.py owns it; this only says it. */
+function hvLine(hv, H){
+  if (!hv || hv.pool == null) return '13-week risk = daily σ² × sessions (no variance ratio)';
+  const tip = hv.basis === 'pinned' ? 'pinned in specs/book.yaml'
+    : `Lo–MacKinlay variance ratio over each pair's history since ${dmy(hv.from)}, pooled across ${hv.n_pool} pairs: `
+      + `their spread (${hv.dispersion.toFixed(4)}) is no wider than sampling noise (${hv.mean_se2.toFixed(4)}), `
+      + `so no pair keeps its own (τ² ${hv.tau2.toFixed(4)})`;
+  return `<span title="${esc(tip)}">${H}-week variance = ${hv.pool.toFixed(2)} × daily-scaled `
+    + `(${H}w σ ${hv.sd_ratio.toFixed(2)}× √time) — the spreads partly mean-revert</span>`;
+}
 function kellyBlock(k){
   if (!k) return '';
   if (k.error) return `<div class="callout accent-amber"><div class="callout-head">
     <span class="ico">⚠</span><span class="t">Kelly sizing failed</span></div>${esc(k.error)}</div>`;
-  const offline = !!window.__IMS_SNAP;
-  KELLY = {k, offline, inp: {}};
-  k.rows.forEach(r => {
-    const e = r.edge;
-    KELLY.inp[r.label] = {ret: e ? String(e.ret_pct) : '', note: e ? e.note : '',
-      savedRet: e ? String(e.ret_pct) : '', savedNote: e ? e.note : '',
-      status: e ? 'saved' : ''};
-  });
+  KELLY = {k, edges: {}};
+  k.rows.forEach(r => { if (r.edge) KELLY.edges[r.label] = r.edge.ret_pct; });
+  const legs = k.edge_legs || {};
+  const edgeCell = r => {
+    if (!r.edge) return `<span class="flat" title="a leg has no lean yet — set it through that stock's agent">—</span>`;
+    const tip = (legs[r.label] || []).map(l => `${l.side === 'L' ? 'long' : 'short'} ${l.name} ${pctf(l.juice_pct, 1)} (lean ${l.as_of ? dmy(l.as_of) : '—'})`).join('\n');
+    const v = r.edge.ret_pct;
+    return `<span class="${v > 0 ? 'up' : v < 0 ? 'down' : 'flat'}" title="${esc(tip + '\nlong lean − short lean; change it through the stock agents')}">${pctf(r.edge.ret_pct, 1)}</span>`;
+  };
   const j = k.joint || {};
   const fr = k.fraction === 0.5 ? '½' : k.fraction === 0.25 ? '¼' : k.fraction + '×';
   const g = v => v == null ? '—' : v.toFixed(Math.abs(v) >= 10 ? 0 : 2) + '%';
   const flagTip = {short_history: `under ${k.min_sessions} sessions — standalone only, kept out of the joint solve`,
-    pre_demerger_history: 'part of the σ window predates a confirmed demerger (VEDL 30-04-2026) — a different company'};
+    pre_demerger_history: 'part of the σ window predates a confirmed demerger (VEDL 30-04-2026) — a different company',
+    vr_pooled: `under ${(k.horizon_variance || {}).min_sessions || 750} sessions of history — sized on the pooled 13-week variance ratio, not its own`};
   const rows = k.rows.map(r => {
-    const I = KELLY.inp[r.label], L = esc(r.label);
+    const L = esc(r.label);
     const chips = (r.flags || []).filter(f => f !== 'flip').map(f =>
       ` <span class="pill warn" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('')
       + ` <span class="pill warn kflip" data-k="${L}" style="display:none" title="joint Kelly is NEGATIVE: given the correlated pairs, this one works as a hedge for the others">flip</span>`;
     return `<tr class="secfirst" title="long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} (Kelly assumes a dollar-neutral pair) · ${r.n_sessions} sessions">
       <td class="pair">${L}<span class="chips">${chips}</span></td>
-      <td>${r.sigma_ann_pct == null ? '—' : r.sigma_ann_pct.toFixed(1) + '%'}</td>
+      <td>${r.sigma_ann_pct == null ? '—' : r.sigma_ann_pct.toFixed(1) + '%'}${r.sigma_h_pct == null ? '' : `<span class="sub" title="the σ Kelly sizes on: ${k.horizon_weeks}-week, after the variance ratio">${k.horizon_weeks}w ${r.sigma_h_pct.toFixed(1)}%</span>`}</td>
       <td>${g(r.gross_now_pct)}</td>
       <td>${pctf(r.implied_edge_pct, 2)}<span class="sub">joint ${pctf(r.implied_edge_joint_pct, 2)}</span></td>
-      <td><input type="number" step="0.5" class="kin kret" data-k="${L}" value="${esc(I.ret)}"
-           placeholder="—" style="width:60px;text-align:right" title="expected pair return over ${k.horizon_weeks}w, % (long minus short)"></td>
-      <td style="text-align:left"><input type="text" class="kin knote" data-k="${L}" value="${esc(I.note)}"
-           placeholder="why — required to save" style="width:100%;min-width:140px"></td>
+      <td>${edgeCell(r)}</td>
       <td data-c="sa" data-k="${L}">—</td>
       <td data-c="joint" data-k="${L}">—</td>
       <td class="tot" data-c="budget" data-k="${L}">—</td>
-      <td class="kst" data-k="${L}" style="text-align:left;font-family:var(--sans);white-space:nowrap"></td>
     </tr>`;
   }).join('');
-  const problems = [...(k.bad_edges || []).map(b => 'refused: ' + b),
-    ...(k.unknown_edges || []).map(u => `stored edge for "${u}" names no dictated pair`),
-    ...(k.skipped || []).map(s => `${s.label} not sized: ${s.why}`)];
+  // The "edges not used" callout came OFF 2026-10-06 (PM). bad_edges /
+  // unknown_edges / skipped are still in the payload.
   return `<div class="sechead" style="margin-top:var(--s4)">Kelly sizing</div>
     <div class="meta-line">${fr} Kelly · ${k.horizon_weeks}-week horizon · σ and correlation over
       ${dmy(k.window[0])}–${dmy(k.window[1])} (${j.n_common || 0} common sessions, covariance shrink δ
-      ${j.delta == null ? '—' : j.delta.toFixed(2)}) · gross = both sides, % of NAV ·
-      type a return and a comment; it recalculates as you type and ${offline
-        ? '<b style="color:var(--warn)">this offline copy cannot save</b> — enter edges on the desk'
-        : 'saves when you leave the field'}<br><span id="k-sum"></span></div>
-    ${problems.length ? `<div class="callout accent-amber"><div class="callout-head"><span class="ico">⚠</span>
-      <span class="t">edges not used</span></div><div class="hint">${problems.map(esc).join('<br>')}</div></div>` : ''}
+      ${j.delta == null ? '—' : j.delta.toFixed(2)}) · ${hvLine(k.horizon_variance, k.horizon_weeks)} · gross = both sides, % of NAV ·
+      edge = long lean − short lean from the case agents (Analysis tab)<br><span id="k-sum"></span></div>
     <div class="panel" style="padding:0"><div class="scroll"><table class="bk" id="kelly-t"><thead><tr>
       <th class="l">pair</th>
-      <th title="annualised σ of the pair spread (mean long return − mean short return), daily closes">spread vol</th>
+      <th title="annualised σ of the pair spread (mean long return − mean short return), daily closes; beneath it, the ${k.horizon_weeks}-week σ Kelly actually sizes on">spread vol</th>
       <th>gross now</th>
       <th title="the expected pair return over ${k.horizon_weeks}w at which TODAY'S size is exactly ${fr} Kelly — arithmetic on the current size, not a forecast. Joint: accounting for the other pairs' overlap">implied ${k.horizon_weeks}w edge</th>
-      <th title="your expected pair return over ${k.horizon_weeks}w, % — long minus short">your ${k.horizon_weeks}w return</th>
-      <th class="l">comment</th>
+      <th title="the case agents' pair juice: long lean − short lean, each to the next print (inside ${k.horizon_weeks}w)">agents' edge</th>
       <th title="${fr} Kelly gross for this pair on its own, μ/σ² — overcounts where pairs share a leg">${fr}K alone</th>
       <th title="${fr} Kelly gross solved jointly (Σ⁻¹μ) across every pair with an edge — correlated pairs split one bet">${fr}K joint</th>
       <th title="the joint Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross — the reallocation Kelly asks for inside today's risk budget; small figure: change vs today">at today's gross</th>
-      <th class="l"></th>
     </tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
 function kellyRefresh(){
   if (!KELLY) return;
-  const {k} = KELLY, c = k.calc, edges = {};
-  Object.entries(KELLY.inp).forEach(([l, I]) => {
-    const v = parseFloat(I.ret);
-    if (I.ret !== '' && isFinite(v)) edges[l] = v;
-  });
+  const {k, edges} = KELLY, c = k.calc;
   const res = kellyCalc(c, edges);
   const g = v => v == null ? '—' : v.toFixed(Math.abs(v) >= 10 ? 0 : 2) + '%';
   const now = {};
@@ -3090,63 +3493,21 @@ function kellyRefresh(){
     const f = (res.rows[s.dataset.k] || {}).joint;
     s.style.display = f != null && f < 0 ? '' : 'none';
   });
-  document.querySelectorAll('#kelly-t .kst').forEach(td => {
-    const I = KELLY.inp[td.dataset.k], dirty = I.ret !== I.savedRet || I.note !== I.savedNote;
-    let t = '', col = 'var(--soft)';
-    if (I.status === 'saving') t = 'saving…';
-    else if (I.status && I.status.startsWith('error')){ t = I.status; col = 'var(--down)'; }
-    else if (dirty && I.ret !== '' && !I.note.trim()){ t = 'needs a comment to save'; col = 'var(--warn)'; }
-    else if (dirty && KELLY.offline){ t = 'preview only'; col = 'var(--warn)'; }
-    else if (dirty) { t = 'unsaved'; col = 'var(--warn)'; }
-    else if (I.savedRet !== '') t = '✓ saved';
-    td.textContent = t; td.style.color = col;
-  });
   const j = res.joint, fr = k.fraction === 0.5 ? '½' : k.fraction + '×';
   const sum = document.getElementById('k-sum');
   if (sum) sum.innerHTML = j.error ? `<span style="color:var(--down)">${esc(j.error)}</span>`
     : j.members.length
-      ? `on your ${j.members.length} edge${j.members.length > 1 ? 's' : ''} today's book is
+      ? `on the agents' ${j.members.length} edge${j.members.length > 1 ? 's' : ''} today's book is
          <b>${(j.effective_fraction ?? 0).toFixed(4)}× Kelly</b> (exp ${pctf(j.now_exp_ret_ann_pct, 2)}/yr,
          vol ${j.now_vol_ann_pct.toFixed(2)}%) against ${fr}K at ${g(j.gross_pct)} gross
          (exp ${pctf(j.exp_ret_ann_pct, 1)}/yr, vol ${j.vol_ann_pct.toFixed(1)}%)`
       : (Object.keys(edges).length
           ? 'the edged pairs are all short-history — standalone sizes only'
-          : '<b>no edges entered</b> — only the implied column is live');
-}
-
-async function kellySave(l){
-  const I = KELLY.inp[l];
-  if (KELLY.offline) return kellyRefresh();
-  if (I.ret === I.savedRet && I.note === I.savedNote) return kellyRefresh();
-  if (I.ret !== '' && !I.note.trim()) return kellyRefresh();     // previews, never saves
-  I.status = 'saving'; kellyRefresh();
-  try {
-    const r = await fetch('/api/kelly_edge', {method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({pair: l, ret_pct: I.ret === '' ? null : parseFloat(I.ret), note: I.note})});
-    const d = await r.json();
-    if (d.error) I.status = 'error: ' + d.error;
-    else { I.savedRet = I.ret; I.savedNote = I.ret === '' ? '' : I.note;
-           if (I.ret === '') I.note = ''; I.status = 'saved';
-           const n = document.querySelector(`#kelly-t .knote[data-k="${CSS.escape(l)}"]`);
-           if (n) n.value = I.note; }
-  } catch (e) { I.status = 'error: ' + e.message; }
-  kellyRefresh();
+          : '<b>no pair has both leans yet</b> — only the implied column is live');
 }
 
 function wireKelly(){
-  const t = document.getElementById('kelly-t');
-  if (!t || !KELLY) return;
-  t.querySelectorAll('.kin').forEach(el => {
-    const l = el.dataset.k, fld = el.classList.contains('kret') ? 'ret' : 'note';
-    el.addEventListener('input', () => {
-      KELLY.inp[l][fld] = el.value.trim() === '' && fld === 'ret' ? '' : el.value;
-      if ((KELLY.inp[l].status || '').startsWith('error')) KELLY.inp[l].status = '';
-      kellyRefresh();
-    });
-    el.addEventListener('change', () => kellySave(l));
-    el.addEventListener('keydown', ev => { if (ev.key === 'Enter') el.blur(); });
-  });
+  if (!document.getElementById('kelly-t') || !KELLY) return;
   kellyRefresh();
 }
 
@@ -3154,8 +3515,169 @@ function wireKelly(){
    06-09-2026 (PM: "all this model view and stuff below is waste") — the
    model still lives on the Overview/sector tabs and per-leg composites ride
    in the pair tooltips. This tab is the book, nothing else. */
+/* The Book's date picker (PM, 2026-10-05: "add a date setting like we have
+   for IT sector valuations"). Same grammar as the consensus panel's
+   #est-date — ◀ date ▶ and "back to latest" — but the steps are the STORED
+   SNAPSHOT dates, because a calendar day with no paste has no book. A picked
+   day resolves HERE to the latest snapshot on or before it (never after: a
+   view of the 24th must not show the 25th's positions), so the request is
+   always a snapshot date — which is also what lets the vault copy carry one
+   payload per snapshot instead of missing every other calendar day. */
+let BOOK_DATE = null;       // null = latest snapshot
+let BOOK_SUB = (() => { try { return sessionStorage.getItem('ims-book-sub') || 'pos'; }
+                        catch (e) { return 'pos'; } })();   // 'pos' | 'kelly'
+let BOOK_ASKED = null;      // the calendar day the PM picked, when it had no paste
+function bookResolve(day, snaps){
+  const prior = (snaps || []).filter(d => d <= day);
+  return prior.length ? prior[prior.length - 1] : (snaps || [])[0] || null;
+}
+function bookPicker(bk){
+  const snaps = bk.snap_dates || [];
+  if (snaps.length < 2) return '';
+  const cur = bk.as_of;
+  const prevD = [...snaps].reverse().find(d => d < cur) || '';
+  const nextD = snaps.find(d => d > cur) || '';
+  const asked = BOOK_ASKED && BOOK_ASKED !== cur
+    ? ` — no paste on <b>${esc(dmy(BOOK_ASKED))}</b>, showing the last snapshot before it` : '';
+  return `<div class="bk-hist" style="display:flex;gap:8px;align-items:center;margin:0 0 8px">
+      <span style="color:var(--soft);font-size:var(--t-sm)">as of</span>
+      <button class="ghost" id="bk-prev" data-d="${esc(prevD)}" ${prevD ? '' : 'disabled'}
+        title="previous snapshot" aria-label="previous snapshot date">◀</button>
+      <input type="date" id="bk-date" value="${esc(cur)}"
+        min="${esc(snaps[0])}" max="${esc(bk.latest || cur)}"
+        style="background:var(--surface);color:var(--ink);border:1px solid var(--rule);
+               border-radius:6px;padding:2px 8px;font-family:var(--sans);
+               font-size:var(--t-sm);color-scheme:dark">
+      <button class="ghost" id="bk-next" data-d="${esc(nextD)}" ${nextD ? '' : 'disabled'}
+        title="next snapshot" aria-label="next snapshot date">▶</button>
+      ${bk.is_latest ? '' : '<button class="ghost" id="bk-latest">back to latest</button>'}
+      <span style="color:var(--soft);font-size:var(--t-sm)">${snaps.length} snapshots,
+        ${esc(dmy(snaps[0]))} → ${esc(dmy(snaps[snaps.length - 1]))}</span>
+    </div>
+    ${bk.is_latest ? (asked ? `<p class="note">${asked.slice(3)}.</p>` : '') : `<p class="note" style="color:var(--accent)">
+      replaying <b>${esc(dmy(cur))}</b>${asked} — positions, P&amp;L, since-entry
+      %s, composites and review verdicts as they stood that day, recomputed from
+      the stored snapshots, not a saved copy. Kelly sizing is today-only and is
+      hidden; the long/short index below always runs to the latest close; the
+      pair list is today's dictation, so a pair restructured since shows its old
+      legs under the current name.</p>`}`;
+}
+function wireBookPicker(snaps){
+  const go = d => { BOOK_DATE = d; loadBook().catch(e => showErr(String(e))); };
+  const dp = document.getElementById('bk-date');
+  if (dp) dp.addEventListener('change', () => {
+    if (!dp.value) return;
+    BOOK_ASKED = dp.value;
+    go(bookResolve(dp.value, snaps));
+  });
+  const bl = document.getElementById('bk-latest');
+  if (bl) bl.addEventListener('click', () => { BOOK_ASKED = null; go(null); });
+  for (const id of ['bk-prev', 'bk-next']){
+    const b = document.getElementById(id);
+    if (b) b.addEventListener('click', () => {
+      if (!b.dataset.d) return;
+      BOOK_ASKED = null; go(b.dataset.d);
+    });
+  }
+}
+
+/* ============== Analysis sub-tab (PM, 2026-10-10) ==========================
+   "I think we analyze individually. Pairs can change" — so the work lives on
+   the STOCK and a pair is only long juice minus short juice, derived from
+   whatever specs/book.yaml dictates today. "start with the 32 stocks, chat
+   first" — every entry arrives through chat (packages/book/analysis.py --add),
+   so this pane is read-only. The five checks are the flowchart agreed in chat:
+   priced in -> quarter build -> later quarters vs street -> price, bear,
+   confidence (the juice) -> re-rating check. A pair shows juice only when
+   BOTH legs have it: half a pair's view is not a pair view. */
+const ANA_ICON = { done: ['✓', 'ana-ok', 'done'], partial: ['◐', 'ana-part', 'partial'],
+                   open: ['○', 'ana-open', 'not started'] };
+function anaPct(v){ return v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + '%'; }
+function anaJuice(s){
+  const hasRng = s.juice_low != null && s.juice_high != null;
+  const rng = hasRng ? `${anaPct(s.juice_low)} to ${anaPct(s.juice_high)}` : '';
+  // A range with no lean is shown as a range only: the PM has not picked a
+  // number, so the pair strip treats it as no juice yet.
+  if (s.juice == null) return hasRng
+    ? `<b style="color:var(--warn)" title="range only — no lean picked yet">${rng}</b>`
+    : '<span class="ana-open">—</span>';
+  return `<b class="${s.juice >= 0 ? 'pos' : 'neg'}">${anaPct(s.juice)}</b>`
+    + (hasRng ? ` <span style="color:var(--ink)">(${rng})</span>` : '');
+}
+/* Bold the numbers inside a note — money, percentages, multiples, decimals —
+   so a line of prose reads at a glance. Runs on ESCAPED text, and only wraps
+   matches in <b>, so it cannot inject markup. Bare integers (day-of-month in
+   "29 Jun") are deliberately left plain. */
+function anaHi(escaped){
+  return escaped.replace(
+    /((?:Rs|₹)\s?[\d,]+(?:\.\d+)?(?:\s?cr)?|[+\-−]?\d+(?:\.\d+)?\s?(?:%|x\b|×|pp\b|bp\b)|\b\d+\.\d+\b)/g,
+    '<b>$1</b>');
+}
+function anaPriced(a){
+  if (!a) return '';
+  return `<b>₹${Number(a.price).toLocaleString('en-IN')}</b> <span class="ana-date">(${esc(dmy(a.price_date))})</span>`
+    + ` · ${esc(a.fy1)} EPS <b>${a.eps_fy1}</b> · forward P/E <b style="color:var(--accent)">${a.pe_fy1}×</b>`
+    + (a.rel_pe != null ? ` · <b>${a.rel_pe}</b> of sector median ${a.sector_pe_median}×` : '')
+    + (a.eps_growth != null ? ` · consensus EPS growth <b>${anaPct(a.eps_growth * 100)}</b>` : '')
+    + ` <span class="ana-date">· automatic · consensus ${esc(dmy(a.consensus_as_of))}</span>`;
+}
+function analysisPane(d){
+  if (!d) return '<p class="note">loading…</p>';
+  if (d.error) return `<div class="callout accent-amber"><div class="callout-head">
+      <span class="ico">⚠</span><span class="t">analysis view failed</span></div>${esc(d.error)}</div>`;
+  const steps = d.steps || [];
+  const icon = st => { const [g, c, t] = ANA_ICON[st] || ANA_ICON.open;
+    return `<span class="ana-ico ${c}" title="${t}">${g}</span>`; };
+  const stepName = Object.fromEntries(steps.map(k => [k.key, k.label]));
+  let lastGrp = null;
+  const rows = (d.stocks || []).map(s => {
+    const grp = s.group !== lastGrp ? `<div class="ana-grp">${esc(s.group)}</div>` : '';
+    lastGrp = s.group;
+    const card = steps.map(k => {
+      const x = s.steps[k.key] || { status: 'open' };
+      const body = k.key === 'priced' && x.auto ? anaPriced(x.data)
+        : x.note ? anaHi(esc(x.note)) + (x.as_of ? ` <span class="ana-date">· ${esc(dmy(x.as_of))}</span>` : '')
+        : '<span class="ana-open">not started</span>';
+      return `<div class="ana-step">${icon(x.status)}<span class="k">${esc(k.label)}</span><span class="v">${body}</span></div>`;
+    }).join('');
+    const log = (s.log || []).length
+      ? `<div class="ana-log"><div class="lh">Log</div>${s.log.map(e => `<div class="e">
+          <span class="ana-date">${esc(dmy(e.as_of))}</span>
+          <span class="ana-tag">${esc(stepName[e.step] || e.step)}</span>${anaHi(esc(e.note))}</div>`).join('')}</div>`
+      : `<div class="ana-log"><span class="ana-date">No entries yet. Views are logged from chat.</span></div>`;
+    return grp + `<details class="ana-row"><summary class="ana-grid">
+        <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span></span>
+        ${steps.map(k => icon((s.steps[k.key] || {}).status)).join('')}
+        <span>${anaJuice(s)}</span>
+        <span style="font-size:var(--t-sm)">${s.updated ? esc(dmy(s.updated)) : '<span class="ana-open">—</span>'}</span>
+      </summary><div class="ana-card">${card}${log}</div></details>`;
+  }).join('');
+  /* REMOVED 2026-10-10 (PM: "Remove the top description and the whole pair
+     table"): the explainer line and the derived-pairs table. The pair
+     arithmetic (long juice − short juice) still rides in the payload as
+     `pairs` for when a pair view is wanted again. */
+  return `<div class="sechead">Stocks · ${(d.stocks || []).length}</div>`
+    + `<div class="panel" style="padding:0">
+        <div class="ana-grid ana-head"><span>Stock</span>${steps.map(k =>
+          `<span title="${esc(k.label)}">${esc({priced:'Priced in', qbuild:'Quarter', h2:'Later qtrs', price:'Price', rerate:'Re-rate'}[k.key] || k.key)}</span>`).join('')}
+          <span>Juice</span><span>Updated</span></div>${rows}</div>`;
+}
+let ANALYSIS = null;
+async function loadAnalysis(){
+  const host = document.getElementById('bk-pane-ana');
+  if (!host) return;
+  if (!ANALYSIS){
+    host.innerHTML = analysisPane(null);
+    try { ANALYSIS = await (await fetch('/api/book_analysis')).json(); }
+    catch (e) { ANALYSIS = { error: String(e) }; }
+  }
+  host.innerHTML = analysisPane(ANALYSIS);
+}
+
 async function loadBook(){
-  const bk = await (await fetch('/api/book')).json();
+  const bk = await (await fetch('/api/book' +
+    (BOOK_DATE ? '?date=' + encodeURIComponent(BOOK_DATE) : ''))).json();
+  if (bk.is_latest === false) KELLY = null;   // no stale inputs behind a replay
 
   let posHtml;
   if (bk.error){
@@ -3183,53 +3705,49 @@ async function loadBook(){
       + cell('gross · net', `${(grossPct * 100).toFixed(1)}%
           <span class="u">$${Math.round(S('gross_usd')).toLocaleString('en-US')}
           · net ${(netPct * 100).toFixed(1)}%</span>`)
-      + cell('ytd', usd(S('pnl_ytd')), usdCls(S('pnl_ytd')))
-      + cell('mtd', usd(S('pnl_mtd')), usdCls(S('pnl_mtd')))
-      + cell('since start', usd(bk.book_pnl_total), usdCls(bk.book_pnl_total))
+      + (bk.ims_total && bk.ims_total.pnl_ytd != null
+          ? cell('<span title="the IMS export’s own book-total row: the book’s P&L since the start of this year (PM, 2026-09-29: “ytd ims is since start for this year, it is correct”). On a full-year export it is exactly the pairs + option hedges + closed contracts with no live leg + N.A. (currency and costs).">ytd · since start (ims)</span>',
+                 usd(bk.ims_total.pnl_ytd), usdCls(bk.ims_total.pnl_ytd))
+          : cell('ytd', usd(S('pnl_ytd')), usdCls(S('pnl_ytd'))))
+      + (bk.ims_total && bk.ims_total.pnl_mtd != null
+          ? cell('<span title="the IMS export’s own book-total row, same basis as ytd · ims">mtd · ims</span>',
+                 usd(bk.ims_total.pnl_mtd), usdCls(bk.ims_total.pnl_mtd))
+          : cell('mtd', usd(S('pnl_mtd')), usdCls(S('pnl_mtd'))))
+      // The IMS's YTD IS the book's since-start figure for the year (PM,
+      // 2026-09-29), so the chained sum is shown only when no IMS total was
+      // stored (snapshots before 2026-09-29).
+      + (bk.ims_total && bk.ims_total.pnl_ytd != null ? ''
+          : cell('since start', usd(bk.book_pnl_total), usdCls(bk.book_pnl_total)))
       + (na.pnl_ytd == null ? '' :
           cell('<span title="closed positions’ realized P&L + currency/rollover/fixed costs — the cost of carry of the operation">n.a. ytd</span>',
                usd(na.pnl_ytd), usdCls(na.pnl_ytd)))
+      + ((bk.closed_unmatched || []).length
+          ? (() => { const cu = bk.closed_unmatched,
+                t = cu.reduce((s, u) => s + (u.pnl_ytd || 0), 0);
+              return cell(`<span title="closed contracts this year with no live leg to attach to: ${cu.map(u =>
+                  `${u.ticker} ${usd(u.pnl_ytd)}`).join(' · ')}">closed · no live leg</span>`,
+                usd(t), usdCls(t)); })()
+          : '')
       + `</div>`
-      + `<div class="meta-line">contract codes stripped and P&amp;L <b>chained
-         across rolls</b> — the totals survive expiry resets · <b>ytd is our
-         own ledger</b>, seeded once and advanced by increments, so a roll
-         cannot reset it and an unsnapshotted session is not lost · hover a
-         pair for its legs</div>`
-      /* the day's position events from book_anchor_log — exception-only: a
-         snapshot with no changes renders nothing. entered/reopened/flipped
-         RESET a leg's %-since-entry anchor; retagged/resized do not (they
-         are shown so a tag move is a recorded fact, not an inference — the
-         07-09-2026 IT retag went unrecorded and silently re-anchored two
-         legs). The first-ever snapshot's 32 baseline 'entered' rows are
-         suppressed by the snapshots>1 guard. */
-      + (((bk.anchor_log || []).length && bk.snapshots > 1) ?
-          `<div class="meta-line">position events ${dmy(bk.as_of)}: ` +
-          bk.anchor_log.map(e =>
-            `<span title="${esc(e.detail || e.event)}${
-              ['entered','reopened','flipped'].includes(e.event)
-                ? ' — %-since-entry anchor reset' : ''}"${
-              ['flipped','reopened'].includes(e.event)
-                ? ' style="color:var(--warn)"' : ''}><b>${esc(e.name)}</b> ${
-              esc(e.event)}${e.detail ? ` (${esc(e.detail)})` : ''}</span>`
-          ).join(' · ') + `</div>` : '')
+      /* REMOVED 2026-10-06 (PM: "remove this from the positions in the book
+         tab"): the ytd-basis explainer line and the day's position-events
+         line. Both are still in the payload (ytd_basis, anchor_log) and
+         daily_review's --report still prints the events. */
       + (untagged ? `<div class="callout accent-amber"><div class="callout-head">
            <span class="ico">⚠</span><span class="t">UNTAGGED positions present</span></div>
            <div class="hint">rows with no pair name on the IMS snapshot are grouped
            under UNTAGGED rather than guessed into a pair.</div></div>` : '')
-      + ((bk.unassigned || []).length ? `<div class="callout accent-amber">
-           <div class="callout-head"><span class="ico">⚠</span>
-           <span class="t">positions on the book but in no dictated pair</span></div>
-           <div class="hint">${esc(bk.unassigned.map(t => t.name).join(', '))} —
-           add them to <code>specs/book.yaml pairs</code> or they stay out of
-           every pair line.</div></div>` : '')
-      + bookSections(bk.view || bk.pairs, bk.sectors_order, bk.nav, bk.book_pnl_total)
+      /* The "positions on the book but in no dictated pair" callout is
+         REMOVED (PM, 2026-10-06). It fired every day on the option hedges
+         (LTM/INFO/PSYS calls, JSTL put), which are kept out of pair lines
+         by design. `unassigned` stays in the payload. */
+      + bookSections(bk.view || bk.pairs, bk.sectors_order, bk.nav, bk.book_pnl_total, bk)
       /* The index sits BELOW the pair table (PM, 2026-09-11, on the
          charts this one replaced: "keep it below"). The pairs are the
          substance of this tab; the index is the picture that follows
          them, the same ordering the Overview uses when it reads the
          morning's words before the tape. Filled asynchronously by
          loadIndex() once this innerHTML has landed. */
-      + kellyBlock(bk.kelly)
       + `<div id="bix-host" class="panel" style="padding:var(--s4);margin:var(--s4) 0"></div>`
       + (bk.closed.length ? `<div style="margin-top:var(--s4)"></div>
          <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
@@ -3244,8 +3762,57 @@ async function loadBook(){
          </tbody></table></div></div>` : '');
   }
 
-  $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + posHtml;
-  if (!bk.error && bk.as_of){ wireKelly(); loadIndex(BIX_RANGE); }
+  /* Kelly sizing is its own sub-tab (PM, 2026-10-05: "move the whole kelly
+     thing to a new sub-tab within the book tab"). Both panes are rendered
+     on every load and toggled by `hidden`, so switching costs no fetch; the
+     index chart is redrawn when Positions is shown again, because a chart
+     drawn into a hidden pane measures zero width. Kelly is a today-only
+     tool, so on a replayed date its pane says so instead of sizing a past
+     book against today's edges. */
+  const ready = !bk.error && bk.as_of;
+  /* Pair grading ("is the selection working?") came OFF the page 2026-10-22
+     (PM: "keep the pair grading ... in the backend. remove from front end").
+     grading.py still freezes grades (refresh step, daily review), bk.grading
+     is still in the payload and POST /api/book_call still records calls —
+     there is just no block or call form here any more. */
+  const kellyPane = !ready ? '' :
+    (bk.kelly ? kellyBlock(bk.kelly)
+    : `<div class="callout"><div class="callout-head"><span class="t">Kelly sizing is
+        today-only</span></div><div class="hint">You are viewing ${esc(dmy(bk.as_of))}.
+        Kelly sizes today's book against today's edges, so it is not replayed —
+        use “back to latest” on the Positions sub-tab.</div></div>`);
+  /* Analysis sits BETWEEN Positions and Kelly sizing (PM, 2026-10-10). It is
+     today-only like Kelly and filled by loadAnalysis(), fetched once per page
+     load. A stored 'pos'/'kelly'/'ana' is honoured; anything else is Positions. */
+  if (!['pos', 'ana', 'kelly'].includes(BOOK_SUB)) BOOK_SUB = 'pos';
+  const sub = ready ? `<nav class="vnav" role="tablist" aria-label="book view" style="margin-bottom:var(--s2)">
+      <button class="btab" role="tab" data-b="pos" aria-selected="${BOOK_SUB === 'pos'}">Positions</button>
+      <button class="btab" role="tab" data-b="ana" aria-selected="${BOOK_SUB === 'ana'}">Analysis</button>
+      <button class="btab" role="tab" data-b="kelly" aria-selected="${BOOK_SUB === 'kelly'}">Kelly sizing</button>
+    </nav>` : '';
+  const showPos = !ready || BOOK_SUB === 'pos';
+  $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + sub
+    + `<div id="bk-pane-pos"${showPos ? '' : ' hidden'}>`
+    + (ready ? bookPicker(bk) : '') + posHtml + `</div>`
+    + `<div id="bk-pane-ana"${ready && BOOK_SUB === 'ana' ? '' : ' hidden'}></div>`
+    + `<div id="bk-pane-kelly"${ready && BOOK_SUB === 'kelly' ? '' : ' hidden'}>${kellyPane}</div>`;
+  if (ready){
+    document.querySelectorAll('#s-book .btab').forEach(b => b.addEventListener('click', () => {
+      BOOK_SUB = b.dataset.b;
+      try { sessionStorage.setItem('ims-book-sub', BOOK_SUB); } catch (e) {}
+      document.querySelectorAll('#s-book .btab').forEach(x =>
+        x.setAttribute('aria-selected', String(x === b)));
+      document.getElementById('bk-pane-pos').hidden = BOOK_SUB !== 'pos';
+      document.getElementById('bk-pane-ana').hidden = BOOK_SUB !== 'ana';
+      document.getElementById('bk-pane-kelly').hidden = BOOK_SUB !== 'kelly';
+      if (BOOK_SUB === 'pos') loadIndex(BIX_RANGE);
+      if (BOOK_SUB === 'ana') loadAnalysis();
+    }));
+    wireBookPicker(bk.snap_dates || []);
+    if (bk.kelly) wireKelly();
+    if (BOOK_SUB === 'pos') loadIndex(BIX_RANGE);
+    if (BOOK_SUB === 'ana') loadAnalysis();
+  }
 }
 
 /* ============== the book's equal-weighted long and short indices ==========
@@ -4473,7 +5040,6 @@ async function loadSector(){
      morning after it says yes. Calibrating is rendered as a state, not as
      absence: an empty panel would read as "no move", which is the one thing
      an uncalibrated watch cannot claim. */
-
   let watchHtml = '';
   if (d.watch && d.watch.state !== 'no_data' && d.watch.state !== 'error'){
     const w = d.watch;
@@ -5545,7 +6111,8 @@ async function loadCompany(){
 const RES_SEL = {sector: null, entity: null};
 // The "in line" band. A judgement, so it is a named constant and the page
 // prints it in the meta-line rather than implying a beat at +0.3%.
-const RS_INLINE_PCT = 1.0, RS_INLINE_PP = 0.2;
+let RS_INLINE_PCT = 1.0, RS_INLINE_PP = 0.2;   // overwritten from d.bands (results_io owns them)
+let RS_D = null;                                // last payload, for the view form's buttons
 
 function rsNum(v){
   if (v == null) return '—';
@@ -5565,6 +6132,47 @@ function rsSurprise(s){
   const col = s.beat == null ? 'var(--soft)' : s.beat ? 'var(--up)' : 'var(--down)';
   return '<td class="n" style="color:' + col + '">' + v + '</td><td>' + chip + '</td>';
 }
+function rsDiff(d){
+  if (!d) return '—';
+  return d.kind === 'pp' ? (d.value >= 0 ? '+' : '') + d.value.toFixed(2) + 'pp' : cPct(d.value, 1);
+}
+// above / in line / below the street. Neutral colour on purpose: "above" is
+// good for EBITDA and bad for cost/t, and the chip does not know which.
+function rsStance(st, implied){
+  if (!st) return '';
+  const g = {above: '▲ above', inline: '= in line', below: '▼ below'}[st] || st;
+  return '<span class="chip c-flat" title="' + (implied ? 'implied by the number vs the street' : 'stated stance vs the street') + '">'
+    + g + (implied ? '' : ' *') + '</span>';
+}
+function rsViewVal(v){
+  return v.value != null ? '<span style="font-family:var(--mono)">' + rsNum(v.value) + '</span> ' + esc(v.unit || '')
+                         : rsStance(v.stance, false);
+}
+function rsAnalystCell(m){
+  const vb = m.views;
+  if (!vb || !vb.n_live) return '<td class="n">—</td>';
+  const w = vb.whisper, t = vb.stances || {};
+  const tally = ['above', 'inline', 'below'].filter(k => t[k]).map(k =>
+    ({above: '▲', inline: '=', below: '▼'})[k] + t[k]).join(' ');
+  const tip = 'analyst views: ' + vb.n_live + ' live'
+    + (w ? ' · median of their numbers ' + rsNum(w.median) + ' (n=' + w.n + (w.n > 1 ? ', ' + rsNum(w.low) + '–' + rsNum(w.high) : '') + ')' : '')
+    + (tally ? ' · stances ' + tally : '') + ' — your notes of conversations; never part of the street median';
+  return '<td class="n" title="' + esc(tip) + '">' + (w ? rsNum(w.median)
+    + ' <span class="hint">' + rsDiff(w.vs_street) + '</span>' : '') + (tally ? ' <span class="hint">' + tally + '</span>' : '') + '</td>';
+}
+function rsViewItems(m){
+  const vb = m.views;
+  if (!vb) return '';
+  const live = vb.live.map(v => '<li class="rs-view"><b>' + esc(v.analyst) + '</b> <span class="hint">' + esc(v.firm)
+    + ' · said ' + dmy(v.said_on) + '</span> ' + rsViewVal(v)
+    + (v.vs_street ? ' <span class="hint">' + rsDiff(v.vs_street) + ' vs street</span>' : '')
+    + (v.post_print ? ' <span class="chip c-warn" title="logged after the print: shown, not graded">post-print</span>' : '')
+    + '<div class="rs-q">' + esc(v.note) + '</div></li>').join('');
+  const old = vb.history.map(h => '<li class="rs-view rs-old">' + esc(h.analyst) + ' <span class="hint">' + esc(h.firm)
+    + ' · ' + dmy(h.said_on) + ' · ' + (h.withdrawn ? 'withdrawn' : 'superseded') + '</span> '
+    + (h.withdrawn ? '' : rsViewVal(h)) + '<div class="rs-q">' + esc(h.note) + '</div></li>').join('');
+  return live + old;
+}
 function rsSrc(x){
   const s = x.source || {};
   const where = s.raw_path || x.source_id || '';
@@ -5573,20 +6181,21 @@ function rsSrc(x){
 }
 function rsDrawer(m){
   const rows = (m.estimates || []).map(r => '<li><b>' + esc(r.broker) + '</b> '
-    + '<span class="mono">' + rsNum(r.value) + '</span> ' + esc(r.unit || '')
+    + '<span style="font-family:var(--mono)">' + rsNum(r.value) + '</span> ' + esc(r.unit || '')
     + (r.post_print ? ' <span class="chip c-warn" title="dated after the print: shown, but excluded from the consensus the print is graded against">post-print</span>' : '')
     + '<div class="rs-q">' + esc(r.quote) + '</div>' + rsSrc(r) + '</li>').join('');
-  const act = m.actual ? '<li class="rs-act"><b>Actual</b> <span class="mono">' + rsNum(m.actual.value)
+  const act = m.actual ? '<li class="rs-act"><b>Actual</b> <span style="font-family:var(--mono)">' + rsNum(m.actual.value)
     + '</span> ' + esc(m.actual.unit || '') + '<div class="rs-q">' + esc(m.actual.quote) + '</div>'
     + rsSrc(m.actual) + '</li>' : '';
   const flag = m.actual_flag ? '<div class="hint" style="color:var(--warn)">⚠ ' + esc(m.actual_flag) + '</div>' : '';
-  return '<ul class="rs-list">' + act + rows + '</ul>' + flag;
+  return '<ul class="rs-list">' + act + rows + rsViewItems(m) + '</ul>' + flag;
 }
 function rsMetricRow(m){
   const c = m.consensus;
   const nEst = (m.estimates || []).length;
+  const nV = (m.views && m.views.n_live) || 0;
   const label = '<details class="rs-det"><summary>' + esc(m.label)
-    + '<span class="hint">' + (nEst ? nEst + ' est' : 'no estimate') + (m.actual ? ' · print' : '')
+    + '<span class="hint">' + (nEst ? nEst + ' est' : 'no estimate') + (nV ? ' · ' + nV + ' view' + (nV > 1 ? 's' : '') : '') + (m.actual ? ' · print' : '')
     + (m.n_post_print ? ' · ' + m.n_post_print + ' post-print' : '') + '</span></summary>'
     + rsDrawer(m) + '</details>';
   const cons = c
@@ -5598,10 +6207,11 @@ function rsMetricRow(m){
     ? '<td class="n"><b>' + rsNum(m.actual.value) + '</b>' + (m.actual_flag ? ' <span class="chip c-warn">flag</span>' : '') + '</td>'
     : '<td class="n">—</td>';
   return '<tr><td class="k rs-k">' + label + '</td><td class="hint">' + esc(m.unit || '') + '</td>'
-    + cons + act + rsSurprise(m.surprise) + '</tr>';
+    + cons + rsAnalystCell(m) + act + rsSurprise(m.surprise) + '</tr>';
 }
 function rsPeriod(p){
-  const st = {reported:'c-up', scheduled:'c-warn', 'estimates only':'c-flat', 'calendar only':'c-flat'}[p.status] || 'c-flat';
+  const st = {reported:'c-up', scheduled:'c-warn', 'estimates only':'c-flat', 'calendar only':'c-flat',
+              'analyst views only':'c-flat', 'consensus only':'c-flat'}[p.status] || 'c-flat';
   const cal = p.calendar
     ? ' <span class="pill' + (p.calendar.status === 'confirmed' ? '' : ' warn') + '" title="' + esc(p.calendar.quote) + '">print '
       + esc(p.calendar.event_date) + ' · ' + esc(p.calendar.status) + '</span>' : '';
@@ -5613,11 +6223,503 @@ function rsPeriod(p){
   const body = p.metrics.length
     ? '<div class="panel"><div class="scroll"><table class="rs-tab"><thead><tr>'
       + '<th>metric</th><th>unit</th><th class="n">consensus</th><th class="n">n</th><th class="n">range</th>'
+      + '<th class="n" title="median of the numbers analysts have told you, and how far it sits from the street; ▲=▼ count stances">analysts</th>'
       + '<th class="n">actual</th><th class="n">surprise</th><th>verdict</th></tr></thead><tbody>'
-      + p.metrics.map(rsMetricRow).join('') + '</tbody></table></div>' + y + '</div>'
-    : '<div class="panel hint">Only a result date so far — no estimate stored for this period.' + y + '</div>';
+      + p.metrics.map(rsMetricRow).join('') + '</tbody></table></div>' + y + '</div>' + rsViewsTable(p)
+    : '<div class="panel hint">' + (p.calendar ? 'Only a result date so far — no estimate stored for this period.'
+                                              : 'No house estimate stored for this period.') + y + '</div>';
   return '<div class="sechead">' + esc(p.period) + ' <span class="chip ' + st + '">' + esc(p.status) + '</span>'
     + cal + brokers + '</div>' + body;
+}
+/* Analyst views (PM 2026-10-06): "capitalize on the view of the analyst ...
+   their view and buildup before actual previews, or change if something
+   changes beforehand". Every live view on a quarter, against the street,
+   against what the house then PUBLISHED, and against the print. All the
+   arithmetic is results_io._view_block's; this only draws it. */
+function rsViewsTable(p){
+  const rows = [];
+  p.metrics.forEach(m => ((m.views || {}).live || []).forEach(v => rows.push({m, v})));
+  if (!rows.length) return '';
+  const offline = !!window.__IMS_SNAP;
+  const reported = p.status === 'reported';
+  const pub = v => {
+    const b = v.published;
+    if (!b) return reported ? '<span class="hint">no preview stored</span>' : '<span class="hint">not yet</span>';
+    const f = b.followed == null ? '' : b.followed
+      ? ' <span class="chip c-up" title="published within ' + RS_D.bands.follow_pct + '% (' + RS_D.bands.follow_pp
+        + 'pp) of what was said, or on the stated side of the street">followed</span>'
+      : ' <span class="chip c-warn" title="the published number moved away from what was said">changed</span>';
+    return '<span style="font-family:var(--mono)">' + rsNum(b.value) + '</span> <span class="hint">' + dmy(b.as_of) + ' · '
+      + b.lead_days + 'd after</span>' + (b.vs_view ? ' <span class="hint">' + rsDiff(b.vs_view) + '</span>' : '') + f;
+  };
+  const grade = v => {
+    if (v.post_print) return '<span class="chip c-warn" title="logged after the print — not graded">post-print</span>';
+    const g = v.graded;
+    if (!g) return '<span class="hint">print pending</span>';
+    const out = [];
+    if ('closer' in g) out.push('<span class="chip ' + (g.closer ? 'c-up' : 'c-down') + '" title="view off by '
+      + rsDiff(g.err) + ', street off by ' + rsDiff(g.street_err) + '">'
+      + (g.closer ? 'closer than street' : 'street closer') + '</span>');
+    if ('stance_hit' in g) out.push('<span class="chip ' + (g.stance_hit ? 'c-up' : 'c-down') + '" title="the print landed '
+      + esc(g.actual_stance || '—') + ' vs the street">stance ' + (g.stance_hit ? 'right' : 'wrong') + '</span>');
+    return out.join(' ') || '—';
+  };
+  const btn = (v, m, kind) => offline || reported || v.post_print ? '' :
+    ' <button class="ghost rs-vbtn" style="padding:0 6px" data-kind="' + kind + '" data-firm="' + esc(v.firm)
+    + '" data-analyst="' + esc(v.analyst) + '" data-period="' + esc(p.period) + '" data-metric="' + esc(m.metric)
+    + '" data-value="' + (v.value == null ? '' : v.value) + '" data-unit="' + esc(v.unit || '')
+    + '" data-stance="' + esc(v.stance || '') + '">' + kind + '</button>';
+  const body = rows.sort((a, b) => b.v.said_on.localeCompare(a.v.said_on)).map(({m, v}) => '<tr>'
+    + '<td class="l"><b>' + esc(v.analyst) + '</b><span class="sub">' + esc(v.firm) + '</span></td>'
+    + '<td class="l">' + esc(m.label) + '</td><td><span class="date">' + dmy(v.said_on) + '</span>'
+    + (v.via === 'chat' ? '<span class="sub">via chat</span>' : '') + '</td>'
+    + '<td class="n">' + rsViewVal(v) + '</td>'
+    + '<td class="n">' + (v.vs_street ? rsDiff(v.vs_street) + ' ' + rsStance(v.implied_stance, true)
+                                     : (v.stance ? rsStance(v.stance, false) : '—')) + '</td>'
+    + '<td class="l">' + pub(v) + '</td><td class="l">' + grade(v) + '</td>'
+    + '<td class="rs-note l" title="' + esc(v.note) + '">' + esc(v.note.length > 110 ? v.note.slice(0, 108) + '…' : v.note) + '</td>'
+    + '<td>' + btn(v, m, 'revise') + btn(v, m, 'withdraw') + '</td></tr>').join('');
+  return '<div class="meta-line" style="margin-top:10px"><b>Analyst views — ' + esc(p.period) + '</b> · '
+    + rows.length + ' live · <span class="u">* = stated stance; otherwise implied by the number vs the street</span></div>'
+    + '<div class="panel"><div class="scroll"><table class="rs-tab rs-vt"><thead><tr>'
+    + '<th class="l">analyst</th><th class="l">metric</th><th>said</th><th class="n">view</th>'
+    + '<th class="n" title="the view against the street median of published previews">vs street</th>'
+    + '<th class="l" title="the same house&#39;s first published preview after the conversation">published</th>'
+    + '<th class="l" title="graded at the print: was the number closer than the street, was the stance right">at the print</th>'
+    + '<th class="l">note</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
+}
+function rsViewForm(d, co){
+  if (!co) return '';
+  if (window.__IMS_SNAP) return '<div class="meta-line"><b style="color:var(--warn)">this offline copy cannot save analyst views</b> — log them on the desk</div>';
+  const f = d.view_form, today = d.as_of;
+  const mets = Object.entries(d.metrics).map(([k, m]) => '<option value="' + esc(k) + '">' + esc(m.label) + '</option>').join('');
+  return '<div class="panel" id="rs-vform" style="padding:var(--s3) var(--s4);margin-top:var(--s3)">'
+    + '<div class="meta-line" style="margin:0 0 6px"><b>Log an analyst view on ' + esc(co.name) + '</b> — what an analyst told you, '
+    + 'ahead of or instead of a preview. Append-only: a changed view is a new entry (use <i>revise</i> on a row), never an edit. '
+    + 'Give a number with its unit, a stance vs the street, or both; the note is required. A view never enters the street median.</div>'
+    + '<div class="rs-form">'
+    + '<input id="rv-firm" type="text" list="rv-firms" placeholder="firm (Kotak…)" style="width:130px">'
+    + '<datalist id="rv-firms">' + f.firms.map(x => '<option value="' + esc(x) + '">').join('') + '</datalist>'
+    + '<input id="rv-analyst" type="text" placeholder="analyst" style="width:120px">'
+    + '<select id="rv-period">' + f.periods.map(x => '<option>' + esc(x) + '</option>').join('') + '</select>'
+    + '<select id="rv-metric">' + mets + '</select>'
+    + '<input id="rv-value" type="number" step="any" placeholder="number" style="width:100px;text-align:right">'
+    + '<input id="rv-unit" type="text" list="rv-units" placeholder="unit" style="width:90px">'
+    + '<datalist id="rv-units">' + f.units.map(x => '<option value="' + esc(x) + '">').join('') + '</datalist>'
+    + '<select id="rv-stance" title="where their number sits against the street"><option value="">stance —</option>'
+    + '<option value="above">above street</option><option value="inline">in line</option><option value="below">below street</option></select>'
+    + '<input id="rv-said" type="date" value="' + esc(today) + '" max="' + esc(today) + '" title="the day they said it">'
+    + '<input id="rv-note" type="text" placeholder="what they said, and why (required)" style="flex:2;min-width:240px">'
+    + '<label class="hint" style="display:flex;gap:4px;align-items:center"><input id="rv-wd" type="checkbox"> withdraw</label>'
+    + '<button id="rv-save">save view</button><span id="rv-st" style="font-size:var(--t-sm)"></span>'
+    + '</div></div>';
+}
+function rsScorecard(sc){
+  if (!sc || !sc.length) return '';
+  const frac = (a, b) => b ? a + '/' + b + ' <span class="hint">' + Math.round(100 * a / b) + '%</span>' : '—';
+  const body = sc.map(r => '<tr><td class="l"><b>' + esc(r.analyst) + '</b><span class="sub">' + esc(r.firm) + '</span></td>'
+    + '<td class="n">' + r.n_views + '</td>'
+    + '<td class="n" title="numbers graded at a print: closer to the print than the street median">' + frac(r.n_closer, r.n_graded) + '</td>'
+    + '<td class="n" title="mean absolute miss on money lines, the analyst vs the street (margins excluded — pp and % do not average)">'
+    + (r.mean_abs_err == null ? '—' : r.mean_abs_err.toFixed(1) + '% <span class="hint">vs ' + r.street_mean_abs_err.toFixed(1) + '%</span>') + '</td>'
+    + '<td class="n" title="stance (stated or implied) vs where the print landed against the street">' + frac(r.n_stance_hit, r.n_stance) + '</td>'
+    + '<td class="n" title="the house later published within the follow-through band of what was said">' + frac(r.n_followed, r.n_published)
+    + (r.median_lead_days != null ? ' <span class="hint">' + r.median_lead_days + 'd lead</span>' : '') + '</td>'
+    + '<td class="l hint">' + r.names.map(esc).join(', ') + '</td><td><span class="date">' + dmy(r.last_said) + '</span></td></tr>').join('');
+  return '<details class="w1more" style="margin-top:10px"><summary>Analyst track record — ' + sc.length + ' analyst'
+    + (sc.length > 1 ? 's' : '') + ', all names</summary>'
+    + '<div class="meta-line">Recomputed from every view and every print; nothing is stored. Small samples — read the counts before the percentages.</div>'
+    + '<div class="panel"><div class="scroll"><table class="rs-tab rs-vt"><thead><tr><th>analyst</th><th class="n">views</th>'
+    + '<th class="n">closer than street</th><th class="n">mean miss</th><th class="n">stance right</th><th class="n">published as said</th>'
+    + '<th class="l">names</th><th>last</th></tr></thead><tbody>' + body + '</tbody></table></div></div></details>';
+}
+function wireViewForm(){
+  document.querySelectorAll('.rs-vbtn').forEach(b => b.addEventListener('click', () => {
+    const g = id => document.getElementById(id);
+    if (!g('rv-save')) return;
+    g('rv-firm').value = b.dataset.firm; g('rv-analyst').value = b.dataset.analyst;
+    if (![...g('rv-period').options].some(o => o.value === b.dataset.period))
+      g('rv-period').insertAdjacentHTML('beforeend', '<option>' + esc(b.dataset.period) + '</option>');
+    g('rv-period').value = b.dataset.period; g('rv-metric').value = b.dataset.metric;
+    g('rv-value').value = b.dataset.value; g('rv-unit').value = b.dataset.unit; g('rv-stance').value = b.dataset.stance;
+    g('rv-wd').checked = b.dataset.kind === 'withdraw'; g('rv-note').value = '';
+    g('rv-note').placeholder = b.dataset.kind === 'withdraw' ? 'why it is withdrawn (required)' : 'what changed, and why (required)';
+    g('rv-said').value = RS_D.as_of;
+    g('rs-vform').scrollIntoView({block: 'center'}); g('rv-note').focus();
+  }));
+  const sv = document.getElementById('rv-save');
+  if (!sv) return;
+  sv.addEventListener('click', async () => {
+    const st = document.getElementById('rv-st'), v = id => document.getElementById(id).value;
+    const body = {entity_id: RES_SEL.entity, firm: v('rv-firm'), analyst: v('rv-analyst'), period: v('rv-period'),
+      metric: v('rv-metric'), value_num: v('rv-value') === '' ? null : v('rv-value'), unit: v('rv-unit'),
+      stance: v('rv-stance') || null, said_on: v('rv-said'), note: v('rv-note'),
+      withdraw: document.getElementById('rv-wd').checked};
+    st.style.color = 'var(--soft)'; st.textContent = 'saving…';
+    try {
+      const d = await (await fetch('/api/analyst_view', {method: 'POST',
+        headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})).json();
+      if (d.error){ st.style.color = 'var(--down)'; st.textContent = d.error; return; }
+      st.style.color = 'var(--up)'; st.textContent = (d.withdrawn ? 'withdrawn ' : 'saved ') + d.entered_at.replace('T', ' ');
+      setTimeout(() => render('results'), 500);
+    } catch (e) { st.style.color = 'var(--down)'; st.textContent = e.message; }
+  });
+}
+/* ---- Concall notes sub-tab (PM 2026-10-08: "a subtab in the results tab
+   that just copies the concall frontend from the earlier dashboard").
+   The renderer below is the old vault dashboard's md() VERBATIM — its
+   markdown-lite, signal-word colouring and :emoji: shortcode map — so a note
+   reads exactly as it did there. Two departures, both additive: every quarter
+   is offered (newest open, the rest folded) where the old drawer showed only
+   the latest, and the shortcode map gained the codes the corpus actually uses
+   that the old map lacked (:yellow_circle: x42, :hourglass_flowing_sand: x31,
+   :card_file_box:, :triangular_flag_on_post: ... printed raw there). */
+const CC_SIGNAL_WORDS = {
+  pos: /\b(Bullish|Bull|Accelerated|Sustained|beat|beats|positive)\b/g,
+  neg: /\b(Bearish|Bear|Mean-reverted|Superseded|miss|misses|negative|guidance[- ]cut)\b/g,
+  warn: /\b(Mixed|Neutral|Absorbed|Insufficient|Cold start)\b/g,
+};
+function ccColorSignals(str){
+  return str
+    .replace(CC_SIGNAL_WORDS.pos, '<span class="pos">$1</span>')
+    .replace(CC_SIGNAL_WORDS.neg, '<span class="neg">$1</span>')
+    .replace(CC_SIGNAL_WORDS.warn, '<span class="warn-t">$1</span>');
+}
+const CC_EMOJI = {
+  zap: '⚡', chart: '📊', bar_chart: '📊', dart: '🎯', muscle: '💪',
+  white_check_mark: '✅', x: '❌', warning: '⚠️', fire: '🔥', rocket: '🚀',
+  chart_with_upwards_trend: '📈', chart_with_downwards_trend: '📉',
+  telescope: '🔭', mag: '🔍', bulb: '💡', memo: '📝', pushpin: '📌',
+  heavy_check_mark: '✔️', red_circle: '🔴', green_circle: '🟢',
+  large_blue_circle: '🔵', arrow_up: '⬆️', arrow_down: '⬇️',
+  neutral_face: '😐', slightly_smiling_face: '🙂', worried: '😟',
+  // added 2026-10-08 — present in AI Insights notes, absent from the old map
+  yellow_circle: '🟡', hourglass_flowing_sand: '⏳', hourglass: '⌛',
+  card_file_box: '🗃️', card_index_dividers: '🗂️', triangular_flag_on_post: '🚩',
+  triangular_flag: '🚩', shield: '🛡️', chart_increasing: '📈',
+  star_struck: '🤩', question: '❓',
+};
+function ccEmoji(str){
+  return str.replace(/:([a-z0-9_+-]+):/g, (m, code) =>
+    Object.prototype.hasOwnProperty.call(CC_EMOJI, code) ? CC_EMOJI[code] : m);
+}
+function ccMd(s){
+  let t = esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*(?!\s)([^*]+?)\*(?!\*)/g, '$1<em>$2</em>')
+    .replace(/\[\[(.+?)\]\]/g, '$1');
+  t = ccColorSignals(t);
+  t = ccEmoji(t);
+  const lines = t.split('\n');
+  const out = [];
+  let buf = [], tbuf = [];
+  const flushList = () => {
+    if (buf.length){ out.push('<ul>' + buf.map(li => `<li>${li}</li>`).join('') + '</ul>'); buf = []; }
+  };
+  const splitRow = ln => ln.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+  const isSep = ln => /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(ln) && ln.includes('-');
+  const flushTable = () => {
+    if (!tbuf.length) return;
+    const sepIdx = tbuf.findIndex(isSep);
+    if (sepIdx < 1){ out.push(...tbuf); tbuf = []; return; }
+    const head = tbuf.slice(0, sepIdx), bodyRows = tbuf.slice(sepIdx + 1);
+    const thead = '<thead><tr>' + splitRow(head[head.length - 1]).map(c => `<th>${c}</th>`).join('') + '</tr></thead>';
+    const tbody = '<tbody>' + bodyRows.map(r =>
+      '<tr>' + splitRow(r).map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+    out.push(`<table>${thead}${tbody}</table>`);
+    tbuf = [];
+  };
+  const isTableRow = ln => /^\s*\|.*\|\s*$/.test(ln);
+  for (const ln of lines){
+    if (isTableRow(ln) || (tbuf.length && isSep(ln))){ flushList(); tbuf.push(ln); continue; }
+    flushTable();
+    const h = ln.match(/^(#{1,6})\s+(.*)$/);
+    if (h){ flushList(); const lvl = Math.min(6, Math.max(4, h[1].length + 2)); out.push(`<h${lvl} class="mdh">${h[2]}</h${lvl}>`); continue; }
+    if (/^\s*([-=*])\1{2,}\s*$/.test(ln)){ flushList(); out.push('<hr>'); continue; }
+    const m = ln.match(/^\s*[-*]\s+(.*)$/);
+    if (m) buf.push(m[1]);
+    else { flushList(); out.push(ln); }
+  }
+  flushList(); flushTable();
+  return out.join('\n');
+}
+let RES_SUB = (() => { try { return sessionStorage.getItem('ims-results-sub') || 'est'; }
+                       catch (e) { return 'est'; } })();
+async function loadConcallPane(entity){
+  const pane = document.getElementById('rs-pane-cc');
+  if (!pane) return;
+  if (!entity){ pane.innerHTML = ''; return; }
+  pane.innerHTML = '<div class="loading">loading…</div>';
+  const d = await (await fetch('/api/concall?entity=' + encodeURIComponent(entity))).json();
+  if (d.error){ pane.innerHTML = '<div class="hint" style="color:var(--down)">' + esc(d.error) + '</div>'; return; }
+  if (!d.notes.length){
+    pane.innerHTML = '<div class="ccp"><details><summary>📄 Latest concall <span class="neu">· none on file</span></summary>'
+      + '<div class="prose"><div class="empty">No concall analysis found for this ticker. '
+      + 'Notes are read from the vault\'s <span style="font-family:var(--mono)">AI Insights/&lt;TICKER&gt;_Concall/</span> '
+      + 'folders, written by the vault\'s <span style="font-family:var(--mono)">/concall</span> command.</div></div></details></div>';
+    return;
+  }
+  const n = d.notes.length;
+  pane.innerHTML = '<div class="meta-line">' + n + ' note' + (n === 1 ? '' : 's') + ' · '
+    + '<span style="font-family:var(--mono)">' + esc(d.folder) + '</span> · newest quarter first, ordered by the quarter in the filename</div>'
+    + '<div class="ccp">' + d.notes.map((c, i) =>
+      '<details data-i="' + i + '"' + (i === 0 ? ' open' : '') + '><summary>📄 ' + (i === 0 ? 'Latest concall' : 'Concall')
+      + ' <span class="neu">· ' + esc(c.quarter || '?') + (c.call_date ? ' · ' + esc(c.call_date) : '') + '</span></summary>'
+      + '<div class="prose">' + (i === 0 ? ccMd(c.body) : '<div class="empty">Open to load…</div>') + '</div></details>'
+    ).join('') + '</div>';
+  // lazy-render on first open, as the old drawer did — 13 notes x ~15KB of
+  // markdown is not worth parsing for quarters nobody opens
+  pane.querySelectorAll('.ccp details').forEach(det => det.addEventListener('toggle', () => {
+    const slot = det.querySelector('.prose');
+    if (det.open && !slot.dataset.loaded){ slot.innerHTML = ccMd(d.notes[+det.dataset.i].body); slot.dataset.loaded = '1'; }
+  }));
+  const first = pane.querySelector('.ccp .prose'); if (first) first.dataset.loaded = '1';
+}
+/* Preview board (PM, 2026-10-10): "In the estimates vs print sub tab in the
+   results tab, make something like this" — the desk's India Q2FY27 Results
+   Preview page, rebuilt on THIS store: house pills with an all-houses
+   compare, and ONE metric tab per P&L line ("the ebitda margin, %, qoq
+   growth and yoy growth should be one sub sub tab instead of 4") where the
+   source had ten single-metric buttons. All arithmetic is
+   results_io.sector_board's; the street is the same median the per-company
+   panel below prints, so the two cannot disagree. */
+let RSB = (() => { try { return JSON.parse(sessionStorage.getItem('ims-rsb') || '{}'); }
+                   catch (e) { return {}; } })();
+RSB.house = RSB.house || {}; RSB.group = RSB.group || {}; RSB.period = RSB.period || {};
+const rsbSave = () => { try { sessionStorage.setItem('ims-rsb', JSON.stringify(RSB)); } catch (e) {} };
+let RSB_D = null;
+// level (money) | margin level | growth % | margin CHANGE (stored pp, shown bps)
+function rsbKind(m){
+  if (m.endsWith('_pp')) return 'pp';
+  if (m.endsWith('_margin_pct')) return 'mgn';
+  if (m.endsWith('_pct')) return 'gr';
+  return 'lvl';
+}
+function rsbFmt(m, v){
+  if (v == null) return '—';
+  const k = rsbKind(m);
+  if (k === 'pp') return (v >= 0 ? '+' : '') + Math.round(v * 100) + 'bps';
+  if (k === 'mgn') return v.toFixed(1) + '%';
+  if (k === 'gr') return cPct(v, 1);
+  return cNum(v, Math.abs(v) >= 100 ? 0 : 1);
+}
+// disagreement between houses, in the unit a reader thinks in: % for a level,
+// bps for a margin, pp for a growth rate. `hot` thresholds are display only.
+function rsbSpread(m, lo, hi){
+  const k = rsbKind(m);
+  if (k === 'lvl'){
+    if (!(lo > 0)) return ['', false];
+    const s = (hi / lo - 1) * 100; return [s.toFixed(1) + '%', s > 5];
+  }
+  if (k === 'mgn' || k === 'pp'){ const s = (hi - lo) * 100; return [Math.round(s) + 'bps', s >= 100]; }
+  const s = hi - lo; return [s.toFixed(1) + 'pp', s >= 1];
+}
+function rsbHead(m){
+  const md = RSB_D.metrics[m] || {};
+  const u = md.unit === 'INR cr' ? ' ₹cr' : md.unit === 'USD mn' ? ' US$m' : '';
+  return esc((md.label || m) + u);
+}
+function rsbBasis(b){
+  if (!b || !b.basis || b.basis === 'Consol') return '';
+  const t = b.basis === 'Segment' ? 'seg' : b.basis === 'Standalone' ? 'SA' : b.basis;
+  const tip = b.basis + (b.segment ? ' — ' + b.segment : '') + ' · ' + (b.src === 'stated' ? 'stated by the house' : 'inferred')
+    + (b.note ? ': ' + b.note : '');
+  return ' <span class="chip c-flat" title="' + esc(tip) + '">' + esc(t) + '</span>';
+}
+function rsbPrint(r, m){
+  if (!(m in (r.actual || {}))) return '';
+  const s = r.surprise[m], md = RSB_D.metrics[m] || {};
+  let d = '', col = 'var(--soft)';
+  if (s){
+    const big = s.kind === 'pp' ? Math.abs(s.value) >= RSB_D.bands.inline_pp : Math.abs(s.value) >= RSB_D.bands.inline_pct;
+    d = s.kind === 'pp' ? (rsbKind(m) === 'pp' ? (s.value >= 0 ? '+' : '') + Math.round(s.value * 100) + 'bps'
+                                                : (s.value >= 0 ? '+' : '') + s.value.toFixed(2) + 'pp')
+                        : cPct(s.value, 1);
+    if (big && md.better) col = ((s.value > 0) === (md.better === 'higher')) ? 'var(--up)' : 'var(--down)';
+  }
+  return '<span class="sub" style="color:' + col + '">print ' + rsbFmt(m, r.actual[m]) + (d ? ' (' + d + ')' : '') + '</span>';
+}
+// the ROW's date, not the house's latest: one house block can span mails
+// (MOSL's TCS note is 08-10, its HCL note 09-10)
+function rsbHouseDate(r, h){
+  const d = (r.dates || {})[h] || (RSB_D.houses.find(z => z.house === h) || {}).as_of;
+  return d ? dmy(d) : '';
+}
+const rsbTk = r => r.nse && r.nse.toUpperCase() !== r.name.toUpperCase() && !r.name.toUpperCase().startsWith(r.nse.toUpperCase())
+  ? ' <span class="rs-tk">' + esc(r.nse) + '</span>' : '';
+function rsbCompare(g){
+  const ms = g.metrics;
+  const rows = RSB_D.rows.filter(r => ms.some(m => r.street[m]))
+    .sort((a, b) => Object.keys(b.cells).length - Object.keys(a.cells).length || a.name.localeCompare(b.name));
+  if (!rows.length) return '<div class="panel hint">No house gave a figure on this line.</div>';
+  const cols = ms.length + 2;
+  const body = rows.map((r, i) => {
+    const anyB = Object.values(r.basis).find(b => b.basis && b.basis !== 'Consol');
+    const cells = ms.map(m => {
+      const s = r.street[m];
+      if (!s) return '<td class="n flat">·</td>';
+      const [sp, hot] = s.n > 1 ? rsbSpread(m, s.low, s.high) : ['', false];
+      return '<td class="n"><b>' + rsbFmt(m, s.median) + '</b>'
+        + (s.n > 1 ? '<span class="sub' + (hot ? ' hot' : '') + '" title="lowest – highest house · spread ' + sp + ' · ' + s.n + ' houses">'
+          + rsbFmt(m, s.low) + ' – ' + rsbFmt(m, s.high) + '</span>' : '<span class="sub">one house</span>')
+        + rsbPrint(r, m) + '</td>';
+    }).join('');
+    const hs = Object.keys(r.cells).filter(h => ms.some(m => m in r.cells[h])).sort((a, b) => a.localeCompare(b));
+    const dm = ms.filter(m => r.street[m]);          // the drawer drops lines nobody gave for THIS name
+    const det = '<table class="rsb-in"><thead><tr><th>house</th><th>dated</th>' + dm.map(m => '<th class="n">' + rsbHead(m) + '</th>').join('')
+      + '<th>house note</th></tr></thead><tbody>' + hs.map(h => '<tr><td style="white-space:nowrap"><b>' + esc(h) + '</b>' + rsbBasis(r.basis[h]) + '</td>'
+        + '<td class="hint" style="white-space:nowrap">' + rsbHouseDate(r, h) + '</td>'
+        + dm.map(m => '<td class="n">' + (m in r.cells[h] ? rsbFmt(m, r.cells[h][m]) : '<span class="flat">·</span>') + '</td>').join('')
+        + '<td class="rsb-note">' + esc(r.notes[h] || '') + '</td></tr>').join('') + '</tbody></table>'
+      + '<button class="ghost rsb-open" data-e="' + esc(r.id) + '" style="margin-top:6px;padding:2px 10px">open ' + esc(r.name) + ' below ↓</button>';
+    return '<tr class="mvrow rsb-row" data-i="' + i + '" aria-expanded="false"><td class="l"><span class="oicaret">▸</span> ' + esc(r.name)
+      + rsbTk(r)
+      + (r.mixed_basis ? ' <span class="chip c-warn" title="' + esc(Object.keys(r.basis).map(h => h + ': ' + (r.basis[h].basis || '?')).join(' · '))
+          + '">mixed basis</span>' : rsbBasis(anyB)) + '</td>'
+      + cells + '<td class="n">' + hs.length + '</td></tr>'
+      + '<tr class="rsb-det" data-i="' + i + '" hidden><td colspan="' + cols + '">' + det + '</td></tr>';
+  }).join('');
+  // sector line: median across names of each name's street, rates only —
+  // summing rupees across companies is not a number anyone reads
+  const med = a => { const s = a.slice().sort((x, y) => x - y), n = s.length;
+                     return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : null; };
+  const foot = '<tr class="rsb-foot"><td class="l">Sector · median of names</td>' + ms.map(m => {
+    if (rsbKind(m) === 'lvl') return '<td></td>';
+    const v = med(rows.filter(r => r.street[m]).map(r => r.street[m].median));
+    return '<td class="n">' + rsbFmt(m, v) + '</td>';
+  }).join('') + '<td></td></tr>';
+  return '<div class="scroll"><table class="rsb"><thead><tr><th>company</th>'
+    + ms.map(m => '<th class="n">' + rsbHead(m) + '</th>').join('') + '<th class="n" title="houses with any figure on this line">houses</th></tr></thead><tbody>'
+    + body + foot + '</tbody></table></div>'
+    + '<div class="hint">Bold = street (median of each house\'s latest pre-print figure). Beneath it the lowest – highest house, '
+    + '<span style="color:var(--warn)">amber</span> where houses disagree by more than 5% on a level, 100bps on a margin or 1pp on a growth rate. '
+    + 'Click a row for every house\'s number and note. seg / SA = a segment or standalone figure, hover for which.</div>';
+}
+function rsbBars(title, labels, series, fmt){
+  const vals = series.flatMap(s => s.vals).filter(v => v != null);
+  if (!vals.length) return '';
+  const W = 560, H = 230, ML = 40, MB = 62, MT = 12, pw = W - ML - 8, ph = H - MT - MB;
+  let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  if (hi === lo) hi = lo + 1;
+  const pad = (hi - lo) * 0.08; hi += pad; if (lo < 0) lo -= pad;
+  const y = v => MT + ph - (v - lo) / (hi - lo) * ph;
+  const bw = pw / labels.length, gw = bw * 0.72 / series.length;
+  let s = '';
+  for (let t = 0; t <= 4; t++){
+    const v = lo + (hi - lo) * t / 4;
+    s += '<line x1="' + ML + '" x2="' + (W - 8) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '" stroke="var(--hair)"/>'
+      + '<text x="' + (ML - 4) + '" y="' + (y(v) + 3).toFixed(1) + '" text-anchor="end" font-size="9" fill="var(--faint)">' + esc(fmt(v)) + '</text>';
+  }
+  s += '<line x1="' + ML + '" x2="' + (W - 8) + '" y1="' + y(0).toFixed(1) + '" y2="' + y(0).toFixed(1) + '" stroke="var(--rule)"/>';
+  labels.forEach((l, i) => {
+    series.forEach((se, j) => {
+      const v = se.vals[i]; if (v == null) return;
+      const x = ML + i * bw + bw * 0.14 + j * gw, y0 = y(Math.max(0, v)), h = Math.abs(y(v) - y(0));
+      s += '<rect x="' + x.toFixed(1) + '" y="' + y0.toFixed(1) + '" width="' + Math.max(gw - 1, 1).toFixed(1) + '" height="' + Math.max(h, 1).toFixed(1)
+        + '" rx="1.5" fill="' + se.color + '"><title>' + esc(l + ' · ' + se.name + ': ' + fmt(v)) + '</title></rect>';
+    });
+    const lx = ML + i * bw + bw / 2;
+    s += '<text transform="translate(' + lx.toFixed(1) + ',' + (MT + ph + 10) + ') rotate(-40)" text-anchor="end" font-size="9.5" fill="var(--soft)">'
+      + esc(l.length > 16 ? l.slice(0, 15) + '…' : l) + '</text>';
+  });
+  const leg = series.map(se => '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">'
+    + '<i style="width:10px;height:10px;border-radius:2px;background:' + se.color + ';display:inline-block"></i>' + esc(se.name) + '</span>').join('');
+  return '<div class="panel rsb-chart"><div class="hint" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">' + esc(title)
+    + '</div><div class="hint" style="margin-bottom:2px">' + leg + '</div><svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="'
+    + esc(title) + '">' + s + '</svg></div>';
+}
+function rsbHouse(h){
+  const order = RSB_D.groups.flatMap(g => g.metrics);
+  const rows = RSB_D.rows.filter(r => r.cells[h]).sort((a, b) => a.name.localeCompare(b.name));
+  const ms = order.filter(m => rows.some(r => m in r.cells[h]));
+  if (!rows.length) return '<div class="panel hint">' + esc(h) + ' has nothing on this quarter.</div>';
+  const hdr = RSB_D.houses.find(x => x.house === h) || {sources: []};
+  const grpRow = RSB_D.groups.map(g => {
+    const n = g.metrics.filter(m => ms.includes(m)).length;
+    return n ? '<th colspan="' + n + '" class="rsb-gh">' + esc(g.label) + '</th>' : '';
+  }).join('');
+  const body = rows.map(r => '<tr><td class="l">' + esc(r.name) + rsbBasis(r.basis[h])
+    + (r.notes[h] ? '<span class="sub rsb-note">' + esc(r.notes[h]) + '</span>' : '') + '</td>'
+    + ms.map(m => '<td class="n">' + (m in r.cells[h] ? rsbFmt(m, r.cells[h][m]) : '<span class="flat">·</span>')
+      + (r.street[m] && r.street[m].n > 1 && m in r.cells[h]
+          ? '<span class="sub" title="the street median across every house on the board">st ' + rsbFmt(m, r.street[m].median) + '</span>' : '')
+      + rsbPrint(r, m) + '</td>').join('') + '</tr>').join('');
+  const src = hdr.sources.map(s => '<div class="hint"><b>' + esc(s.title || '') + '</b> · ' + dmy(s.date) + (s.email ? ' · from the email body, often partial' : '')
+    + (s.notes ? '<br>' + esc(s.notes) : '') + '</div>').join('');
+  const mt = RSB_D.margin_type, mk = mt.toLowerCase();
+  const withM = rows.filter(r => (mk + '_margin_pct') in r.cells[h]);
+  const margin = rsbBars(mt + ' margin — ' + RSB_D.period + ' estimate vs prior quarter (implied by the house\'s Δ QoQ)',
+    withM.map(r => r.name), [
+      {name: RSB_D.period + 'E', color: 'var(--accent)', vals: withM.map(r => r.cells[h][mk + '_margin_pct'])},
+      {name: 'prior quarter', color: 'var(--faint)', vals: withM.map(r => {
+        const q = r.cells[h][mk + '_margin_qoq_pp'];
+        return q == null ? null : r.cells[h][mk + '_margin_pct'] - q; })}],
+    v => v.toFixed(0) + '%');
+  const lead = (RSB_D.groups.find(g => g.id === 'revenue') || {}).lead;
+  const withR = lead ? rows.filter(r => lead in r.cells[h]) : [];
+  const rev = lead ? rsbBars(((RSB_D.metrics[lead] || {}).label || lead) + ' — ' + h + ' vs street', withR.map(r => r.name),
+    [{name: h, color: 'var(--accent)', vals: withR.map(r => r.cells[h][lead])},
+     {name: 'street', color: 'var(--faint)', vals: withR.map(r => (r.street[lead] || {}).median)}],
+    v => rsbFmt(lead, v)) : '';
+  return '<div class="panel" style="padding:10px 14px">' + src + '</div>'
+    + '<div class="scroll"><table class="rsb"><thead><tr><th rowspan="2">company</th>' + grpRow + '</tr><tr>'
+    + ms.map(m => '<th class="n">' + rsbHead(m) + '</th>').join('') + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+    + '<div class="hint">“st” = the street median across every house on the board.</div>'
+    + '<div class="rsb-charts">' + margin + rev + '</div>';
+}
+function drawResultsBoard(){
+  const box = document.getElementById('rs-board');
+  const d = RSB_D;
+  if (!box || !d) return;
+  if (!d.rows.length){
+    box.innerHTML = '<div class="hint" style="margin:4px 0 10px">No house previews stored for this sector yet — '
+      + '<span style="font-family:var(--mono)">packages/results/preview_dashboard.py</span> stages them from the desk\'s preview dashboard.</div>';
+    return;
+  }
+  const sec = d.sector;
+  const house = d.houses.some(h => h.house === RSB.house[sec]) ? RSB.house[sec] : 'all';
+  const gid = d.groups.some(g => g.id === RSB.group[sec]) ? RSB.group[sec] : d.groups[0].id;
+  const g = d.groups.find(x => x.id === gid);
+  const latest = d.houses.reduce((a, h) => h.as_of > a ? h.as_of : a, '');
+  const per = d.periods.length > 1
+    ? ' <select id="rsb-per" aria-label="quarter">' + d.periods.map(p => '<option' + (p === d.period ? ' selected' : '') + '>' + esc(p) + '</option>').join('') + '</select>'
+    : '';
+  const email = h => h.sources.some(s => s.email);
+  const pills = '<button class="bbtn rsb-h" data-h="all" aria-pressed="' + (house === 'all') + '"><b>All houses · compare</b></button>'
+    + d.houses.map(h => '<button class="bbtn rsb-h" data-h="' + esc(h.house) + '" aria-pressed="' + (house === h.house) + '"'
+      + ' title="' + esc(h.sources.map(s => s.title).join(' | ')) + (email(h) ? ' — from the email body, often growth rates and margins only' : '') + '">'
+      + esc(h.house) + (email(h) ? ' ✉' : '') + ' <span style="opacity:.65">' + dmy(h.as_of).slice(0, 5) + ' · ' + h.names + '</span></button>').join('');
+  const tabs = house === 'all'
+    ? '<nav class="vnav rsb-tabs" role="tablist" aria-label="metric">' + d.groups.map(x => '<button class="btab rsb-g" role="tab" data-g="'
+        + esc(x.id) + '" aria-selected="' + (x.id === gid) + '">' + esc(x.label) + '</button>').join('') + '</nav>'
+    : '';
+  box.innerHTML = '<div class="sechead" style="margin-top:6px">' + esc(d.period) + ' preview board' + per
+    + ' <span class="hint">' + d.houses.length + ' houses · ' + d.rows.length + ' of ' + d.n_names + ' names · '
+    + (d.n_prints ? d.n_prints + ' printed' : 'no prints yet') + ' · latest preview ' + dmy(latest) + '</span></div>'
+    + '<div class="rsb-pills">' + pills + '</div>' + tabs
+    + (house === 'all' ? rsbCompare(g) : rsbHouse(house));
+  box.querySelectorAll('.rsb-h').forEach(b => b.addEventListener('click', () => {
+    RSB.house[sec] = b.dataset.h; rsbSave(); drawResultsBoard(); }));
+  box.querySelectorAll('.rsb-g').forEach(b => b.addEventListener('click', () => {
+    RSB.group[sec] = b.dataset.g; rsbSave(); drawResultsBoard(); }));
+  box.querySelectorAll('tr.rsb-row').forEach(tr => tr.addEventListener('click', () => {
+    const det = box.querySelector('tr.rsb-det[data-i="' + tr.dataset.i + '"]');
+    const open = det.hidden; det.hidden = !open; tr.setAttribute('aria-expanded', String(open));
+  }));
+  box.querySelectorAll('.rsb-open').forEach(b => b.addEventListener('click', ev => {
+    ev.stopPropagation(); RES_SEL.entity = b.dataset.e; render('results'); }));
+  const ps = document.getElementById('rsb-per');
+  if (ps) ps.addEventListener('change', () => { RSB.period[sec] = ps.value; rsbSave(); loadResultsBoard(sec); });
+}
+async function loadResultsBoard(sector){
+  const box = document.getElementById('rs-board');
+  if (!box) return;
+  const qs = ['sector=' + encodeURIComponent(sector)];
+  if (RSB.period[sector]) qs.push('period=' + encodeURIComponent(RSB.period[sector]));
+  const d = await (await fetch('/api/results_board?' + qs.join('&'))).json();
+  if (d.error){ box.innerHTML = '<div class="hint" style="color:var(--down)">' + esc(d.error) + '</div>'; return; }
+  RSB_D = d;
+  drawResultsBoard();
 }
 async function loadResults(){
   const qs = [];
@@ -5626,15 +6728,40 @@ async function loadResults(){
   const d = await (await fetch('/api/results' + (qs.length ? '?' + qs.join('&') : ''))).json();
   if (d.error) throw new Error(d.error);
   RES_SEL.sector = d.sector; RES_SEL.entity = d.selected;
-  const chips = d.sectors.map(s => '<button class="bbtn rs-sec" data-s="' + esc(s.id) + '" aria-pressed="'
-    + (s.id === d.sector) + '" title="' + s.n_with_data + ' of ' + s.n_names + ' names hold estimates or prints">'
-    + esc(s.label) + '<span class="rs-n">' + s.n_with_data + '/' + s.n_names + '</span></button>').join('');
-  const pick = d.companies.map(c => '<option value="' + esc(c.id) + '"' + (c.id === d.selected ? ' selected' : '') + '>'
-    + esc(c.name) + (c.nse ? ' (' + esc(c.nse) + ')' : '') + (c.unit_of ? ' — unit of ' + esc(c.unit_of) : '')
-    + (c.has_data
-        ? ' · ' + (c.latest_period || '') + (c.n_estimates ? ' · ' + c.n_estimates + ' est' : '')
-          + (c.n_actuals ? ' · ' + c.n_actuals + ' print' : '')
-        : ' · nothing stored') + '</option>').join('');
+  RS_D = d;
+  if (d.bands){ RS_INLINE_PCT = d.bands.inline_pct; RS_INLINE_PP = d.bands.inline_pp; }
+  // One control (PM, 2026-10-08): each sector chip opens its OWN dropdown of
+  // that sector's companies, replacing the chips + separate <select>. Every
+  // sector's list rides in the payload (engine.results_view sectors[].companies),
+  // so opening another sector's menu costs no fetch; picking a name fetches
+  // /api/results?sector=&entity= — the same keys export_static already bakes.
+  const rsMeta = c => RES_SUB === 'concall'
+    ? (c.n_concalls ? c.n_concalls + ' concall' + (c.n_concalls === 1 ? '' : 's') : 'no notes')
+    : c.has_data
+      ? [c.latest_period, c.n_estimates ? c.n_estimates + ' est' : '', c.n_actuals ? c.n_actuals + ' print' : '',
+         c.n_views ? c.n_views + ' view' : ''].filter(Boolean).join(' · ')
+      : 'nothing stored';
+  const rsHas = c => RES_SUB === 'concall' ? c.n_concalls > 0 : c.has_data;
+  const selName = (d.company && d.company.name) || '';
+  const chips = d.sectors.map(s => {
+    const on = s.id === d.sector;
+    const cos = s.companies || [];
+    const n = RES_SUB === 'concall' ? cos.filter(c => c.n_concalls).length : s.n_with_data;
+    const items = cos.length
+      ? cos.map(c => '<button class="rs-item' + (rsHas(c) ? '' : ' none') + '" role="menuitem" data-s="'
+          + esc(s.id) + '" data-e="' + esc(c.id) + '" aria-current="' + (on && c.id === d.selected) + '">'
+          + '<span class="rs-nm">' + esc(c.name)
+          + (c.nse && /^[A-Z0-9&-]+$/.test(c.nse) ? ' <span class="rs-tk">' + esc(c.nse) + '</span>' : '')
+          + (c.unit_of ? ' <span class="rs-tk">unit of ' + esc(c.unit_of) + '</span>' : '') + '</span>'
+          + '<span class="rs-meta">' + esc(rsMeta(c)) + '</span></button>').join('')
+      : '<div class="rs-item none">no names in this sector yet</div>';
+    return '<div class="rs-dd"><button class="bbtn rs-sec" data-s="' + esc(s.id) + '" aria-pressed="' + on
+      + '" aria-haspopup="menu" aria-expanded="false" title="' + n + ' of ' + s.n_names + ' names hold '
+      + (RES_SUB === 'concall' ? 'concall notes' : 'estimates or prints') + '">'
+      + esc(s.label) + (on && selName ? '<span class="rs-cur"> · ' + esc(selName) + '</span>' : '')
+      + '<span class="rs-n">' + n + '/' + s.n_names + '</span><span class="rs-car">&#9662;</span></button>'
+      + '<div class="rs-menu" role="menu" hidden>' + items + '</div></div>';
+  }).join('');
   const co = d.company;
   let body;
   if (!co) body = '<div class="callout accent-amber"><div class="callout-head"><span class="ico">&#9888;</span>'
@@ -5643,24 +6770,74 @@ async function loadResults(){
   else if (!d.periods.length) body = '<div class="callout"><div class="callout-head"><span class="ico">&#128203;</span>'
     + '<span class="t">Nothing stored for ' + esc(co.name) + '</span></div>'
     + 'No estimate, print or result date has been loaded for this name. Stage a cited JSON under '
-    + '<span class="mono">data/results/staging/</span> and run <span class="mono">' + esc(d.loader) + '</span> '
-    + '(the <span class="mono">/results-ingest</span> skill does both from a broker note or a digest line).</div>';
+    + '<span style="font-family:var(--mono)">data/results/staging/</span> and run <span style="font-family:var(--mono)">' + esc(d.loader) + '</span> '
+    + '(the <span style="font-family:var(--mono)">/results-ingest</span> skill does both from a broker note or a digest line).</div>';
   else body = d.periods.map(rsPeriod).join('');
   const nextEv = co && co.next_event ? ' · next print ' + esc(co.next_event.date) + ' (' + esc(co.next_event.period) + ')' : '';
+  // Title pill and method explainer removed (PM, 2026-10-08). The in-line
+  // band still drives every verdict via RS_INLINE_PCT/PP; it is just not
+  // re-printed above the chips any more.
   $('#s-results').innerHTML =
-    '<div class="pgt">Results <span class="pill">' + d.totals.n_with_data + ' of ' + d.totals.n_names + ' covered names hold data</span></div>'
-    + '<div class="meta-line">Sell-side estimates against the reported print, per company per quarter. '
-    + 'Consensus is the <b>median of each broker\'s latest pre-print estimate</b>; an estimate dated after the print is shown but excluded. '
-    + 'Beat/miss follows the metric\'s direction (a lower cost/t beats); "in line" is within ' + RS_INLINE_PCT + '% ('
-    + RS_INLINE_PP + 'pp on margins). Every number opens to its quote and source. as of ' + esc(d.as_of) + '</div>'
-    + '<div class="rs-secs">' + chips + '</div>'
-    + '<div class="meta-line" style="margin-top:10px"><select id="rpick" style="margin-right:10px">' + pick + '</select>'
-    + (co ? esc(co.name) + (co.scored ? '' : ' <span class="pill">not scored</span>') + nextEv : '') + '</div>'
-    + body;
-  document.querySelectorAll('.rs-sec').forEach(b => b.addEventListener('click', () => {
-    RES_SEL.sector = b.dataset.s; RES_SEL.entity = null; render('results'); }));
-  const sel = document.getElementById('rpick');
-  if (sel) sel.addEventListener('change', () => { RES_SEL.entity = sel.value; render('results'); });
+    '<div class="rs-secs" style="margin-top:var(--s2)">' + chips + '</div>'
+    + (co && (!co.scored || nextEv) ? '<div class="meta-line" style="margin-top:6px">'
+        + (co.scored ? '' : '<span class="pill">not scored</span>') + nextEv + '</div>' : '')
+    + '<nav class="vnav" role="tablist" aria-label="results view" style="margin:var(--s2) 0">'
+    + '<button class="btab" role="tab" data-r="est" aria-selected="' + (RES_SUB !== 'concall') + '">Estimates vs print</button>'
+    + '<button class="btab" role="tab" data-r="concall" aria-selected="' + (RES_SUB === 'concall') + '">Concall notes</button></nav>'
+    + '<div id="rs-pane-est"' + (RES_SUB === 'concall' ? ' hidden' : '') + '>'
+    + '<div id="rs-board"></div>'
+    + rsScorecard(d.scorecard) + rsViewForm(d, co)
+    + body + '</div>'
+    + '<div id="rs-pane-cc"' + (RES_SUB === 'concall' ? '' : ' hidden') + '></div>';
+  const closeMenus = except => document.querySelectorAll('#s-results .rs-dd').forEach(dd => {
+    if (dd === except) return;
+    dd.querySelector('.rs-menu').hidden = true;
+    dd.querySelector('.rs-sec').setAttribute('aria-expanded', 'false');
+  });
+  document.querySelectorAll('#s-results .rs-sec').forEach(b => b.addEventListener('click', ev => {
+    ev.stopPropagation();
+    const dd = b.parentElement, m = dd.querySelector('.rs-menu');
+    // measured BEFORE the menu shows: an overflowing open menu widens the
+    // layout viewport on a phone, so a width read afterwards grows with it
+    const vw = document.documentElement.clientWidth;
+    closeMenus(dd);
+    m.hidden = !m.hidden;
+    b.setAttribute('aria-expanded', String(!m.hidden));
+    if (!m.hidden){
+      // keep the menu on screen. Flipping a right-hand menu to right:0 was
+      // tried first and overshot the LEFT edge by 61px at phone width (Auto,
+      // 375px), so clamp the offset instead. Under 640px the CSS takes over
+      // (full-width panel under the chip row) and this is skipped.
+      m.style.left = ''; m.style.right = '';
+      if (vw > 640){
+        const r = m.getBoundingClientRect();
+        if (r.right > vw - 8){
+          const pl = dd.getBoundingClientRect().left;
+          m.style.left = Math.max(8 - pl, vw - 8 - r.width - pl) + 'px';
+        }
+      }
+      (m.querySelector('[aria-current=true]') || m.querySelector('.rs-item'))?.focus?.();
+    }
+  }));
+  document.querySelectorAll('#s-results .rs-item[data-e]').forEach(it => it.addEventListener('click', () => {
+    RES_SEL.sector = it.dataset.s; RES_SEL.entity = it.dataset.e; render('results'); }));
+  // one document-level closer for the life of the page (the section re-renders)
+  if (!window.__rsMenuCloser){
+    window.__rsMenuCloser = true;
+    document.addEventListener('click', e => { if (!e.target.closest('#s-results .rs-dd')) closeMenus(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+  }
+  // Sub-tabs share the sector chips and the picker; switching re-renders so
+  // the picker's per-name counts follow the view (estimates vs concall notes).
+  document.querySelectorAll('#s-results .btab[data-r]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.r === RES_SUB) return;
+    RES_SUB = b.dataset.r;
+    try { sessionStorage.setItem('ims-results-sub', RES_SUB); } catch (e) {}
+    render('results');
+  }));
+  wireViewForm();
+  if (RES_SUB === 'concall') loadConcallPane(d.selected);
+  else loadResultsBoard(d.sector).catch(e => showErr(e.message));
 }
 
 const loaders = {pair:loadPair, scores:loadScores, pos:loadPos,

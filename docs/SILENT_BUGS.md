@@ -190,6 +190,36 @@ missing: *can this number move at all, and what would it take?* For a median
 over a panel, the answer is "more than half of it, together", and nobody had
 asked.
 
+### 12. A scaling law assumed, not measured — Kelly's 13-week variance
+
+*Found 2026-10-06, on the PM asking whether pairs are normally distributed.*
+
+`kelly.compute` sized every pair as if its 13-week variance were **65 × the
+daily variance**, the √time law that holds only when daily moves are
+independent. Same-sector spreads partly mean-revert inside a quarter: the
+Lo–MacKinlay variance ratio over each pair's history since 2007 pools to
+**0.646** (13-week σ at 0.80× the √65-scaled daily σ), and 15 of 16 pairs sit
+below 1. Kelly divides by variance, so every size was **1.55× too small** and
+every implied edge 1.55× too large. TCS_INFO at a +9% edge: 929% of NAV gross
+then, 1,438% now.
+
+Nothing about the old output looked wrong. The sizes were already far above
+anything the book runs, so being 35% short changed no decision anyone could
+see, and the "at today's gross" allocation, the column actually read, is
+identical under a common ratio. It was found by testing the assumption
+directly (variance of rolling 13-week sums against daily × 65), not through a
+symptom.
+
+**What this one adds:** the divisor was not mis-coded. It was a modelling
+assumption that the code made silently, by converting the edge to a per-
+session μ. The defence is the same as for a period you did not check (#10):
+when arithmetic moves a number from one horizon to another, measure the
+scaling on the data rather than assume it. A related trap the fix avoids: the
+per-pair ratios range from 0.41 to 1.13, but their spread equals sampling
+noise exactly (0.0325 vs 0.0326), so using them would have swapped one
+silent error for 16 noisy ones. They are pooled, with a measured shrink that
+lets a pair keep its own ratio the day it becomes distinguishable.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:

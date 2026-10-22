@@ -199,6 +199,38 @@ kelly:
   min_sessions: 120      # fewer -> standalone only, kept out of the joint solve
   horizon_weeks: 13      # default horizon for an edge, and for the implied-edge read
   shrink: auto           # Schafer-Strimmer intensity; or pin a number in [0, 1]
-  # EDGES ARE NOT HERE. They are typed on the Book tab (return + comment per
-  # pair, recomputed live) and stored append-only in book_kelly_edges
-  # (PM, 2026-09-25). An `edges:` key here is reported, not read.
+  # 13-week variance vs 65 x daily (PM, 2026-10-06: "fix the 13-week variance").
+  # The spreads partly mean-revert, so 65 x daily sigma^2 overstates quarterly
+  # risk. `measured` = Lo-MacKinlay variance ratio over each pair's long
+  # history, pooled across pairs (they differ only by noise today); a number
+  # pins it (1.0 = the old sqrt-time assumption).
+  horizon_variance: measured
+  vr_lookback_days: 7300 # history for the ratio only; sigma's level stays on lookback_days
+  vr_min_sessions: 750   # fewer -> the pair takes the pooled ratio, flagged
+  # EDGES ARE NOT HERE. Since 2026-10-22 a pair's edge is the case agents'
+  # pair juice — long lean minus short lean, from the Analysis tab (PM:
+  # "we put the agents view from here"). Typed edges (book_kelly_edges,
+  # 2026-09-25..10-22) are history nothing reads. An `edges:` key here is
+  # reported, not read.
+
+# ---------------------------------------------------------------------------
+# case_bands: the range around a case's base (PM, 2026-10-18). Bear and bull
+# are NOT hand-drawn. They are the base build moved mechanically on the PM's
+# two inputs, so the range means "how wrong can these two numbers plausibly
+# be" rather than a story per name — the only way it scales to ~100 names.
+# PM: "Go with (a): fixed sector band, ±50bps margin and ±0.5pp growth for
+# IT, carried convention."
+#
+#   margin_bps  every forecast quarter's EBIT margin moves by this, both ways
+#   growth_pp   every forecast quarter's QoQ growth moves by this, so the
+#               revenue LEVEL compounds (k-th forecast quarter x (1±g)^k)
+#   carried     later years (no quarter build, e.g. FY28) scale by the same
+#               EPS ratio as the forecast quarters — the street re-bases on the
+#               new margin level after a print. Without it a Q3 move barely
+#               reaches FY28 (±0.10pp per 10bps against ±0.41pp carried).
+#
+# Keyed by sector: every IT LARGECAP / IT MIDCAP leg reads `IT`; other groups
+# read their own name (STEEL, CEMENT, ...). A sector with no band keeps
+# hand-drawn bear/bull in its build.json until the PM sets one.
+case_bands:
+  IT: {margin_bps: 50, growth_pp: 0.5}

@@ -163,8 +163,10 @@ class Handler(BaseHTTPRequestHandler):
                 })
             if u.path == "/api/book":
                 # the PM's actual positions, pair-wise (daily_review skill);
-                # read-only — snapshots load via packages/book/book_io.py
-                return self._json(engine.book_view())
+                # read-only — snapshots load via packages/book/book_io.py.
+                # `date` replays a past snapshot (resolves to the latest
+                # snapshot on or before it; engine.book_view documents why)
+                return self._json(engine.book_view(q.get("date", [None])[0]))
             if u.path == "/api/book_index":
                 # The book's equal-weighted long and short indices, from 2007
                 # (PM, 2026-09-17). THIS REPLACED /api/book_ohlc and the first
@@ -174,6 +176,12 @@ class Handler(BaseHTTPRequestHandler):
                 # basket_index.py carries the rules and the selftest.
                 d = engine.book_index(q.get("range", ["5y"])[0])
                 return self._json(d, 404 if d.get("error") else 200)
+            if u.path == "/api/book_analysis":
+                # The Book's Analysis sub-tab (PM, 2026-10-10): per-stock
+                # checklist + derived pairs. Read-only — entries arrive via
+                # chat (packages/book/analysis.py --add), "chat first".
+                d = engine.book_analysis()
+                return self._json(d, 500 if d.get("error") else 200)
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":
@@ -185,6 +193,18 @@ class Handler(BaseHTTPRequestHandler):
                 # selection cannot render the tab empty.
                 return self._json(engine.results_view(
                     q.get("sector", [""])[0] or None,
+                    q.get("entity", [""])[0] or None))
+            if u.path == "/api/results_board":
+                # Results tab preview board (2026-10-10): one sector, one
+                # quarter, every house side by side. Read-only.
+                return self._json(engine.results_board(
+                    q.get("sector", [""])[0] or None,
+                    q.get("period", [""])[0] or None))
+            if u.path == "/api/concall":
+                # Results tab "Concall notes" sub-tab (2026-10-08): the vault's
+                # AI Insights/<TICKER>_Concall/ notes for one name, read-only,
+                # rendered the way the old vault dashboard rendered them.
+                return self._json(engine.concall_notes(
                     q.get("entity", [""])[0] or None))
             return self._json({"error": "not found"}, 404)
         except Exception as exc:                    # surface, do not swallow
@@ -219,21 +239,35 @@ class Handler(BaseHTTPRequestHandler):
 
 
 # ---------------- POST ----------------
-# One write route, and it is narrow on purpose: this server is the book's
-# research view and has no auth, so the only thing it may write is a Kelly
-# edge the PM typed on the Book tab (packages/book/kelly.py save_edge
-# validates it — a note is required, the pair must be a dictated one).
+# Write routes are narrow on purpose: this server is the book's research view
+# and has no auth. The first, POST /api/kelly_edge (a Kelly edge typed on the
+# Book tab), is GONE since 2026-10-22 — the edge is now the case agents' pair
+# juice (packages/book/kelly.py agent_edges), so nothing on the page writes it.
+#
+# A write route, narrow (2026-10-05): the
+# pair-grading call log — thesis, falsifier, conviction, expected 13w spread —
+# appended to book_calls by packages/book/grading.py save_call, which refuses
+# an empty thesis or falsifier. Append-only: a changed view is a new row.
+#
+# A THIRD (2026-10-06): an analyst's view on a quarter, typed on the Results
+# tab — appended to results_analyst_views by results_io.save_view, which
+# refuses an empty note, a number without a unit, or a unit that disagrees
+# with the store. Append-only, withdrawals included.
 def _do_POST(self):
     u = urlparse(self.path)
     try:
-        if u.path != "/api/kelly_edge":
+        if u.path not in ("/api/book_call", "/api/analyst_view"):
             return self._json({"error": "not found"}, 404)
         n = int(self.headers.get("Content-Length") or 0)
         if n <= 0 or n > 10_000:
             return self._json({"error": "bad body"}, 400)
         body = json.loads(self.rfile.read(n).decode("utf-8"))
-        d = engine.kelly_save_edge(body.get("pair"), body.get("ret_pct"),
-                                   body.get("note"))
+        if u.path == "/api/analyst_view":
+            d = engine.results_save_view(body)
+            return self._json(d, 400 if d.get("error") else 200)
+        d = engine.book_save_call(body.get("pair"), body.get("thesis"),
+                                  body.get("falsifier"), body.get("conviction"),
+                                  body.get("exp_ret_pct"))
         return self._json(d, 400 if d.get("error") else 200)
     except Exception as exc:                      # noqa: BLE001
         import traceback

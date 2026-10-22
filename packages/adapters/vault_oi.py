@@ -154,13 +154,14 @@ BUILDUP_OK = {"long_buildup", "short_buildup", "short_covering",
 LOOKBACK_3M = 63  # sessions — the vault's own 3m window, kept for comparability
 
 
-def raw_pct_3m(rows_newest_first: list[dict]) -> float | None:
+def raw_pct_3m(rows_newest_first: list[dict],
+               n: int = LOOKBACK_3M) -> float | None:
     """Percentile rank (0-100) of the latest OI among the last LOOKBACK_3M
     sessions, strict-below count over n, rounded — the same rank the vault
     used BEFORE its cycle normalisation, so 41 here means what 41 meant
     there. Raw on purpose: the expiry sawtooth is real, but the chart shows
     raw OI and the Mag cell is raw, so the rank must be too."""
-    vals = [r["oi"] for r in rows_newest_first[:LOOKBACK_3M]
+    vals = [r["oi"] for r in rows_newest_first[:n]
             if r.get("oi") is not None]
     if not vals or rows_newest_first[0].get("oi") is None:
         return None

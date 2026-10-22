@@ -87,15 +87,129 @@ METRICS: dict[str, tuple[str, str | None]] = {
     "realisation":           ("Realisation",        "higher"),
     "ebitda_per_t":          ("EBITDA/t",           "higher"),
     "cost_per_t":            ("Cost/t",             "lower"),
-    "revenue_growth_cc_pct": ("Revenue growth (cc)", "higher"),
+    "revenue_growth_cc_pct": ("Revenue QoQ (cc)",   "higher"),
     "order_inflow":          ("Order inflow",       "higher"),
     "order_book":            ("Order book",         "higher"),
     "capex":                 ("Capex",              None),
     "net_debt":              ("Net debt",           "lower"),
+    # Preview-board lines (2026-10-10, preview_dashboard.py). Growths are %
+    # and margin CHANGES are stored in pp (unit "pp"), so both grade on the
+    # existing pp branch: a print of +1.9% QoQ against a street of +1.5% is
+    # +0.4pp, which is what a growth surprise means.
+    "revenue_usd":           ("Revenue (US$)",      "higher"),
+    "revenue_usd_qoq_pct":   ("Revenue QoQ (US$)",  "higher"),
+    "revenue_qoq_pct":       ("Revenue QoQ",        "higher"),
+    "revenue_yoy_pct":       ("Revenue YoY",        "higher"),
+    "ebitda_yoy_pct":        ("EBITDA YoY",         "higher"),
+    "ebit_yoy_pct":          ("EBIT YoY",           "higher"),
+    "ebitda_margin_qoq_pp":  ("EBITDA margin Δ QoQ", "higher"),
+    "ebitda_margin_yoy_pp":  ("EBITDA margin Δ YoY", "higher"),
+    "ebit_margin_qoq_pp":    ("EBIT margin Δ QoQ",  "higher"),
+    "ebit_margin_yoy_pp":    ("EBIT margin Δ YoY",  "higher"),
+    "pat_qoq_pct":           ("PAT QoQ",            "higher"),
+    "pat_yoy_pct":           ("PAT YoY",            "higher"),
 }
 
 # Display order inside a period: the P&L first, then the operating drivers.
-METRIC_ORDER = list(METRICS)
+_FIRST = ["revenue", "revenue_usd", "revenue_growth_cc_pct", "revenue_usd_qoq_pct",
+          "revenue_qoq_pct", "revenue_yoy_pct",
+          "ebitda", "ebitda_yoy_pct", "ebitda_margin_pct", "ebitda_margin_qoq_pp",
+          "ebitda_margin_yoy_pp", "ebit", "ebit_yoy_pct", "ebit_margin_pct",
+          "ebit_margin_qoq_pp", "ebit_margin_yoy_pp",
+          "pat", "pat_qoq_pct", "pat_yoy_pct", "eps"]
+METRIC_ORDER = _FIRST + [m for m in METRICS if m not in _FIRST]
+
+# The preview board's metric tabs (PM, 2026-10-10: "the ebitda margin, %, qoq
+# growth and yoy growth should be one sub sub tab instead of 4"). ONE tab per
+# P&L line, every way of reading that line side by side — the source
+# dashboard had ten single-metric buttons. `lead` is the column the board
+# ranks and charts on. "{m}" is the sector's margin line (ebit for IT).
+BOARD_GROUPS = [
+    {"id": "revenue", "label": "Revenue", "lead": "revenue_growth_cc_pct",
+     "metrics": ["revenue_growth_cc_pct", "revenue_usd_qoq_pct", "revenue_usd",
+                 "revenue_qoq_pct", "revenue_yoy_pct", "revenue"]},
+    {"id": "margin", "label": "{M} & margin", "lead": "{m}_margin_pct",
+     "metrics": ["{m}_margin_pct", "{m}_margin_qoq_pp", "{m}_margin_yoy_pp",
+                 "{m}", "{m}_yoy_pct"]},
+    {"id": "pat", "label": "PAT", "lead": "pat_yoy_pct",
+     "metrics": ["pat", "pat_qoq_pct", "pat_yoy_pct"]},
+]
+
+# The "in line" band, used for every verdict that needs one: the print vs the
+# street, an analyst's number vs the street (its implied stance), and a stance
+# graded at the print. ONE copy, sent in the payload — app.html reads it from
+# there rather than carrying a twin constant that can drift.
+INLINE_PCT, INLINE_PP = 1.0, 0.2
+
+# ---------------------------------------------------------- analyst views
+# PM, 2026-10-06: "capitalize on the view of the analyst of the firm. Since I
+# talk with a lot of analysts who make previews, can we incorporate their
+# view and buildup before actual previews, or change if something changes
+# beforehand?" — then: "make the analyst and preview analysis in the results
+# tab".
+#
+# A view is the PM's dated note of a CONVERSATION, not a published estimate,
+# so it lives in its own table and never in `estimates`: the street median the
+# print is graded against must stay what the houses actually published.
+# Append-only — a changed view is a new row, a withdrawn one is a row with
+# withdrawn=1; the latest per (firm, analyst, entity, period, metric) is live.
+# A view carries a NUMBER (value + unit) or a STANCE vs the street, or both;
+# the note is required (no number without provenance — the cousin of
+# invariants 1 and 2, as for Kelly edges).
+VIEWS_DDL = """
+CREATE TABLE IF NOT EXISTS results_analyst_views (
+    id           INTEGER PRIMARY KEY,
+    entity_id    TEXT NOT NULL REFERENCES entities (id),
+    period       TEXT NOT NULL,
+    metric       TEXT NOT NULL,
+    firm         TEXT NOT NULL CHECK (length(trim(firm)) > 0),
+    analyst      TEXT NOT NULL CHECK (length(trim(analyst)) > 0),
+    said_on      TEXT NOT NULL CHECK (said_on GLOB
+                   '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    value_num    REAL,
+    unit         TEXT,
+    stance       TEXT CHECK (stance IS NULL OR stance IN ('above','inline','below')),
+    withdrawn    INTEGER NOT NULL DEFAULT 0 CHECK (withdrawn IN (0, 1)),
+    note         TEXT NOT NULL CHECK (length(trim(note)) > 0),
+    entered_via  TEXT NOT NULL,
+    entered_at   TEXT NOT NULL,
+    CHECK (withdrawn = 1 OR value_num IS NOT NULL OR stance IS NOT NULL),
+    CHECK (value_num IS NULL OR length(trim(IFNULL(unit, ''))) > 0)
+) STRICT;
+CREATE INDEX IF NOT EXISTS ix_resview ON results_analyst_views
+    (entity_id, period, metric);
+"""
+STANCES = ("above", "inline", "below")
+
+# "Followed through": the house's next published number lands within this of
+# what the analyst told you. Same scale as the in-line band, doubled — a
+# published figure is a rounded model output, a conversation is rougher.
+FOLLOW_PCT, FOLLOW_PP = 2.0, 0.4
+
+# Firm names are typed by hand on two different paths (the staged previews'
+# `broker`, the PM's view form). "Kotak" and "Kotak Institutional Equities"
+# and "KIE" are one house; matching them by raw string would show every view
+# as "never published" — plausible and wrong. Normalised, never guessed:
+# an alias is listed here, by name, when it is met.
+_FIRM_SUFFIX = re.compile(r"(institutionalequities|institutional|securities|"
+                          r"capital|research|equities|financial|limited|ltd|"
+                          r"india|global)$")
+FIRM_ALIASES = {"kie": "kotak", "kotaksecurities": "kotak",
+                "jmfinancial": "jm", "jmfl": "jm", "ms": "morganstanley",
+                "gs": "goldmansachs", "jpm": "jpmorgan", "jpmorganchase": "jpmorgan",
+                "iifl": "iifl", "mosl": "motilaloswal", "mofsl": "motilaloswal"}
+
+
+def firm_key(name) -> str:
+    s = re.sub(r"[^a-z0-9]", "", str(name or "").lower())
+    if s in FIRM_ALIASES:
+        return FIRM_ALIASES[s]
+    for _ in range(3):                      # "kotak securities india ltd"
+        t = _FIRM_SUFFIX.sub("", s)
+        if t == s or not t:
+            break
+        s = t
+    return FIRM_ALIASES.get(s, s)
 
 _PERIOD = re.compile(r"^(?:Q([1-4])FY(\d{2})|FY(\d{2}))$")
 # The digests write "1QFY27", "1QFY27E", "2QFY27F", "FY27E" — all the same
@@ -155,7 +269,46 @@ def _connect(db=None) -> sqlite3.Connection:
     conn = sqlite3.connect(db or DB)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.executescript(VIEWS_DDL)            # the views table owns its DDL here
     return conn
+
+
+def period_of(d: dt.date) -> str:
+    """The Indian fiscal quarter CONTAINING a date: Apr-Jun Q1 ... Jan-Mar Q4,
+    the year labelled by its March close."""
+    q = {4: 1, 5: 1, 6: 1, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 3}.get(d.month, 4)
+    fy = d.year + 1 if d.month >= 4 else d.year
+    return f"Q{q}FY{fy % 100:02d}"
+
+
+def season_periods(today: dt.date) -> list[str]:
+    """[last ENDED quarter, the one in progress] — what an analyst is
+    previewing in results season, and the one after it. On 2026-10-06 that is
+    Q2FY27 (Jul-Sep, reports in Oct-Nov) then Q3FY27."""
+    cur = period_of(today)
+    prev = period_of(today - dt.timedelta(days=92))
+    return [prev, cur] if prev != cur else [cur]
+
+
+def _diff(value, base, is_pp: bool):
+    """value vs base as (kind, number): pp for a margin, % otherwise."""
+    if value is None or base is None:
+        return None
+    if is_pp:
+        return {"kind": "pp", "value": value - base}
+    if base == 0:
+        return None
+    return {"kind": "pct", "value": (value - base) / abs(base) * 100.0}
+
+
+def _stance_of(d) -> str | None:
+    """A diff -> above / inline / below, on the INLINE band."""
+    if d is None:
+        return None
+    band = INLINE_PP if d["kind"] == "pp" else INLINE_PCT
+    if abs(d["value"]) < band:
+        return "inline"
+    return "above" if d["value"] > 0 else "below"
 
 
 # ----------------------------------------------------------------- loading
@@ -406,6 +559,257 @@ def load_all(folder: pathlib.Path = STAGING) -> list[dict]:
     return out
 
 
+# ----------------------------------------------------------- analyst views
+
+def save_view(conn: sqlite3.Connection, d: dict, today: dt.date | None = None,
+              via: str = "page") -> dict:
+    """Validate and append ONE analyst view. Returns {ok, id, ...} or {error}.
+
+    Refuses rather than defaults, every problem listed at once. The same unit
+    guard as a staged file: a view in INR bn against a stored INR cr preview
+    would make "vs street" read 1% for a number 100x out.
+    `d['withdraw']` true appends a withdrawal of the live view for that key
+    (the note says why); it needs a live view to withdraw.
+    """
+    today = today or dt.date.today()
+    p: list[str] = []
+    eid = str(d.get("entity_id") or "").strip()
+    if not conn.execute("SELECT 1 FROM entities WHERE id=?", (eid,)).fetchone():
+        p.append(f"entity {eid!r} is not in `entities`")
+    per = norm_period(d.get("period"))
+    if per is None:
+        p.append(f"period {d.get('period')!r} must be Q1-Q4FYyy or FYyy")
+    met = d.get("metric")
+    if met not in METRICS:
+        p.append(f"metric {met!r} is not in the vocabulary")
+    firm = str(d.get("firm") or "").strip()
+    analyst = str(d.get("analyst") or "").strip()
+    if not firm:
+        p.append("firm is empty — a view needs the house it came from")
+    elif firm.lower() in MACHINE_BROKERS:
+        p.append(f"firm {firm!r} is an adapter's name, not a house")
+    if not analyst:
+        p.append("analyst is empty — name who said it")
+    said = str(d.get("said_on") or today.isoformat()).strip()
+    if not _is_date(said):
+        p.append(f"said_on {said!r} is not an ISO date")
+    elif dt.date.fromisoformat(said) > today:
+        p.append(f"said_on {said} is in the future")
+    note = str(d.get("note") or "").strip()
+    if not note:
+        p.append("note is empty — say what was said and why it matters")
+    withdraw = bool(d.get("withdraw"))
+    val, unit, stance = d.get("value_num"), str(d.get("unit") or "").strip(), d.get("stance")
+    if val in ("", None):
+        val = None
+    else:
+        try:
+            val = float(val)
+            if not math.isfinite(val):
+                raise ValueError
+        except (TypeError, ValueError):
+            p.append(f"value {d.get('value_num')!r} is not a number")
+            val = None
+    stance = (str(stance).strip().lower() or None) if stance not in (None, "") else None
+    if stance is not None and stance not in STANCES:
+        p.append(f"stance {stance!r} must be one of {STANCES}")
+    if withdraw:
+        val, unit, stance = None, "", None
+    else:
+        if val is None and stance is None:
+            p.append("give a number or a stance vs the street (above / in line / below)")
+        if val is not None and not unit:
+            p.append("a number needs its unit (INR cr, INR/t, %, t, USD mn, INR/sh)")
+    if not p and val is not None:
+        stored = {norm_unit(r[0]) for r in conn.execute(
+            "SELECT unit FROM estimates WHERE entity_id=? AND period=? AND metric=? "
+            "AND broker NOT IN ('consensus_yahoo','bloomberg') "
+            "UNION SELECT unit FROM observations WHERE entity_id=? AND period=? "
+            "AND metric=? AND factor='actual' "
+            "UNION SELECT unit FROM results_analyst_views WHERE entity_id=? AND "
+            "period=? AND metric=? AND value_num IS NOT NULL",
+            (eid, per, met) * 3)} - {""}
+        if stored and norm_unit(unit) not in stored:
+            p.append(f"unit {unit!r} disagrees with what is stored for {eid} "
+                     f"{per} {met}: {sorted(stored)} — state it in that unit")
+    if not p and withdraw:
+        live = _live_views(conn, eid, per, met)
+        if (firm_key(firm), analyst.lower()) not in live:
+            p.append(f"no live view from {analyst} ({firm}) on {eid} {per} "
+                     f"{METRICS[met][0]} to withdraw")
+    if p:
+        return {"error": "; ".join(p), "problems": p}
+    ts = now()
+    cur = conn.execute(
+        "INSERT INTO results_analyst_views (entity_id,period,metric,firm,analyst,"
+        "said_on,value_num,unit,stance,withdrawn,note,entered_via,entered_at) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (eid, per, met, firm, analyst, said, val, unit or None, stance,
+         1 if withdraw else 0, note, via, ts))
+    conn.commit()
+    return {"ok": True, "id": cur.lastrowid, "entity_id": eid, "period": per,
+            "metric": met, "withdrawn": withdraw, "entered_at": ts}
+
+
+def _views(conn, entity_id: str) -> list[dict]:
+    return [dict(r) for r in conn.execute(
+        "SELECT * FROM results_analyst_views WHERE entity_id=? "
+        "ORDER BY said_on, id", (entity_id,))]
+
+
+def _latest_views(rows: list[dict]) -> dict:
+    """{(firm_key, analyst_lower): latest row} — withdrawn rows included, so
+    the caller can tell a withdrawn view from one never given."""
+    out = {}
+    for r in sorted(rows, key=lambda r: (r["said_on"], r["id"])):
+        out[(firm_key(r["firm"]), r["analyst"].strip().lower())] = r
+    return out
+
+
+def _live_views(conn, eid, per, met) -> dict:
+    rows = [r for r in _views(conn, eid) if r["period"] == per and r["metric"] == met]
+    return {k: r for k, r in _latest_views(rows).items() if not r["withdrawn"]}
+
+
+def _view_block(vrows: list[dict], ests: list[dict], cons, actual,
+                is_pp: bool) -> dict | None:
+    """Everything the page says about analyst views on ONE metric of ONE
+    period: each live view against the street, against what the house then
+    PUBLISHED, and against the print; plus the median of the numbers (the
+    'whisper') and the history of superseded / withdrawn rows.
+    """
+    if not vrows:
+        return None
+    cutoff = actual["as_of"] if actual else None
+    street = cons["median"] if cons else None
+    latest = _latest_views(vrows)
+    live, history = [], []
+    for r in sorted(vrows, key=lambda r: (r["said_on"], r["id"]), reverse=True):
+        k = (firm_key(r["firm"]), r["analyst"].strip().lower())
+        is_live = latest.get(k) is r and not r["withdrawn"]
+        if not is_live:
+            history.append({"firm": r["firm"], "analyst": r["analyst"],
+                            "said_on": r["said_on"], "value": r["value_num"],
+                            "unit": r["unit"], "stance": r["stance"],
+                            "withdrawn": bool(r["withdrawn"]), "note": r["note"],
+                            "superseded": latest.get(k) is not r})
+            continue
+        post = bool(cutoff and r["said_on"] > cutoff)
+        vs = _diff(r["value_num"], street, is_pp)
+        implied = _stance_of(vs)
+        stance = r["stance"] or implied
+        # what the same house PUBLISHED after the conversation (pre-print)
+        pub = sorted([e for e in ests
+                      if firm_key(e["broker"]) == k[0] and e["as_of"] >= r["said_on"]
+                      and not (cutoff and e["as_of"] > cutoff)],
+                     key=lambda e: (e["as_of"], e["id"]))
+        published = None
+        if pub:
+            e = pub[0]
+            published = {"value": e["value_num"], "as_of": e["as_of"],
+                         "broker": e["broker"], "quote": e["quote"],
+                         "lead_days": (dt.date.fromisoformat(e["as_of"])
+                                       - dt.date.fromisoformat(r["said_on"])).days}
+            if r["value_num"] is not None:
+                g = _diff(e["value_num"], r["value_num"], is_pp)
+                published["vs_view"] = g
+                tol = FOLLOW_PP if is_pp else FOLLOW_PCT
+                published["followed"] = (g is not None and abs(g["value"]) <= tol)
+            elif r["stance"] and street is not None:
+                published["followed"] = (
+                    _stance_of(_diff(e["value_num"], street, is_pp)) == r["stance"])
+        graded = None
+        if actual and not post:
+            a = actual["value"]
+            graded = {}
+            if r["value_num"] is not None:
+                ev, es = _diff(r["value_num"], a, is_pp), _diff(street, a, is_pp)
+                graded["err"] = ev
+                graded["street_err"] = es
+                if ev is not None and es is not None:
+                    graded["closer"] = abs(ev["value"]) < abs(es["value"])
+            if stance and street is not None:
+                truth = _stance_of(_diff(a, street, is_pp))
+                graded["actual_stance"] = truth
+                graded["stance_hit"] = (truth == stance)
+        live.append({"id": r["id"], "firm": r["firm"], "analyst": r["analyst"],
+                     "said_on": r["said_on"], "value": r["value_num"],
+                     "unit": r["unit"], "stance": r["stance"],
+                     "implied_stance": implied, "vs_street": vs,
+                     "note": r["note"], "via": r["entered_via"],
+                     "post_print": post, "published": published,
+                     "graded": graded})
+    nums = [v["value"] for v in live if v["value"] is not None and not v["post_print"]]
+    whisper = None
+    if nums:
+        med = _median(nums)
+        whisper = {"median": med, "n": len(nums), "low": min(nums),
+                   "high": max(nums), "vs_street": _diff(med, street, is_pp)}
+    tally = {s: sum(1 for v in live if not v["post_print"]
+                    and (v["stance"] or v["implied_stance"]) == s) for s in STANCES}
+    return {"live": live, "history": history, "whisper": whisper,
+            "stances": tally, "n_live": len(live)}
+
+
+def analyst_scorecard(conn: sqlite3.Connection) -> list[dict]:
+    """Per (firm, analyst), across every name and period: how often their
+    number beat the street at the print, how often the stance was right, and
+    whether the house published what was said. Recomputed on read from the
+    views and the prints — there is no scorecard table to go stale."""
+    ents = [r[0] for r in conn.execute(
+        "SELECT DISTINCT entity_id FROM results_analyst_views")]
+    acc: dict[tuple, dict] = {}
+    for eid in ents:
+        for per in periods_for(conn, eid):
+            for m in per["metrics"]:
+                vb = m.get("views")
+                if not vb:
+                    continue
+                for v in vb["live"]:
+                    k = (firm_key(v["firm"]), v["analyst"].strip().lower())
+                    a = acc.setdefault(k, {"firm": v["firm"], "analyst": v["analyst"],
+                                           "n_views": 0, "n_graded": 0, "n_closer": 0,
+                                           "abs_err": [], "street_abs_err": [],
+                                           "n_stance": 0, "n_stance_hit": 0,
+                                           "n_published": 0, "n_followed": 0,
+                                           "lead_days": [], "names": set(),
+                                           "last_said": v["said_on"]})
+                    a["n_views"] += 1
+                    a["names"].add(eid)
+                    a["last_said"] = max(a["last_said"], v["said_on"])
+                    g = v.get("graded") or {}
+                    if "closer" in g:
+                        a["n_graded"] += 1
+                        a["n_closer"] += bool(g["closer"])
+                        # the error AVERAGE is % only: a margin's pp error and a
+                        # money line's % error are different scales, and their
+                        # mean is a number of nothing. "closer" counts both.
+                        if g["err"]["kind"] == "pct":
+                            a["abs_err"].append(abs(g["err"]["value"]))
+                            a["street_abs_err"].append(abs(g["street_err"]["value"]))
+                    if "stance_hit" in g:
+                        a["n_stance"] += 1
+                        a["n_stance_hit"] += bool(g["stance_hit"])
+                    pb = v.get("published")
+                    if pb:
+                        a["n_published"] += 1
+                        a["n_followed"] += bool(pb.get("followed"))
+                        a["lead_days"].append(pb["lead_days"])
+    out = []
+    for a in acc.values():
+        out.append({**{k: a[k] for k in ("firm", "analyst", "n_views", "n_graded",
+                                         "n_closer", "n_stance", "n_stance_hit",
+                                         "n_published", "n_followed", "last_said")},
+                    "names": sorted(a["names"]),
+                    "mean_abs_err": (sum(a["abs_err"]) / len(a["abs_err"])
+                                     if a["abs_err"] else None),
+                    "street_mean_abs_err": (sum(a["street_abs_err"]) / len(a["street_abs_err"])
+                                            if a["street_abs_err"] else None),
+                    "median_lead_days": _median(a["lead_days"])})
+    out.sort(key=lambda x: (-x["n_graded"], -x["n_views"], x["firm"].lower()))
+    return out
+
+
 # ----------------------------------------------------------------- reading
 
 def _median(xs):
@@ -444,6 +848,7 @@ def periods_for(conn: sqlite3.Connection, entity_id: str,
             "SELECT period, value_num, as_of FROM estimates WHERE entity_id=? AND "
             "broker='consensus_yahoo' AND metric='eps' ORDER BY as_of", (entity_id,)):
         yahoo[r["period"]] = {"eps": r["value_num"], "as_of": r["as_of"]}
+    views = _views(conn, entity_id)
     cal = {}
     for r in conn.execute(
             "SELECT period, event_date, status, quote, source_id FROM results_calendar "
@@ -451,7 +856,8 @@ def periods_for(conn: sqlite3.Connection, entity_id: str,
         cal[r["period"]] = dict(r)           # newest notice wins
 
     periods = sorted({e["period"] for e in ests} | {a["period"] for a in acts}
-                     | set(cal) | {p for p in yahoo if p.startswith("FY")},
+                     | set(cal) | {p for p in yahoo if p.startswith("FY")}
+                     | {v["period"] for v in views},
                      key=period_key, reverse=True)
     src_meta = {r["id"]: dict(r) for r in conn.execute(
         "SELECT id, origin, title, source_date, raw_path FROM sources WHERE id IN (%s)"
@@ -463,7 +869,9 @@ def periods_for(conn: sqlite3.Connection, entity_id: str,
     for per in periods:
         pe = [e for e in ests if e["period"] == per]
         pa = [a for a in acts if a["period"] == per]
-        metrics = sorted({e["metric"] for e in pe} | {a["metric"] for a in pa},
+        pv = [v for v in views if v["period"] == per]
+        metrics = sorted({e["metric"] for e in pe} | {a["metric"] for a in pa}
+                         | {v["metric"] for v in pv},
                          key=lambda m: METRIC_ORDER.index(m) if m in METRIC_ORDER
                          else len(METRIC_ORDER))
         mrows = []
@@ -526,8 +934,12 @@ def periods_for(conn: sqlite3.Connection, entity_id: str,
                         surprise["beat"] = None
                     else:
                         surprise["beat"] = (d > 0) if better == "higher" else (d < 0)
-            unit = (actual or {}).get("unit") or (rows[0]["unit"] if rows else None)
-            mrows.append({"metric": m, "label": label, "better": better,
+            mv = [v for v in pv if v["metric"] == m]
+            unit = ((actual or {}).get("unit") or (rows[0]["unit"] if rows else None)
+                    or next((v["unit"] for v in mv if v["unit"]), None))
+            is_pp_m = m.endswith("_pct") or norm_unit(unit) in ("%", "pct", "pp")
+            vblock = _view_block(mv, me, cons, actual, is_pp_m)
+            mrows.append({"views": vblock,"metric": m, "label": label, "better": better,
                           "unit": unit, "estimates": rows, "consensus": cons,
                           "actual": actual, "actual_flag": act_flag,
                           "surprise": surprise,
@@ -538,25 +950,181 @@ def periods_for(conn: sqlite3.Connection, entity_id: str,
             status = "reported"
         elif c and dt.date.fromisoformat(c["event_date"]) >= today:
             status = "scheduled"
-        elif mrows:
+        elif any(r["consensus"] for r in mrows):
             status = "estimates only"
-        else:
+        elif mrows:
+            status = "analyst views only"
+        elif c:
             status = "calendar only"
+        else:
+            # only Yahoo's machine consensus. Reachable for every book leg
+            # since 2026-10-06 (the capture widened); labelling it "calendar
+            # only" claimed a result date nobody had loaded.
+            status = "consensus only"
         out.append({"period": per, "status": status,
                     "calendar": c, "metrics": mrows,
                     "yahoo_eps": yahoo.get(per),
                     "n_estimates": len(pe), "n_actuals": len(pa),
+                    "n_views": sum((r["views"] or {}).get("n_live", 0) for r in mrows),
                     "brokers": sorted({e["broker"] for e in pe})})
     return out
 
 
-def summary(conn: sqlite3.Connection, entity_ids: list[str]) -> dict[str, dict]:
+def sector_board(conn: sqlite3.Connection, names: list[dict],
+                 period: str | None = None, today: dt.date | None = None) -> dict:
+    """The preview board: one quarter, one sector, every house side by side.
+
+    `names` is the sector's roster rows ({id, name, nse}). Per (house, name,
+    metric) the house's LATEST PRE-PRINT estimate for the quarter; per
+    (name, metric) the print, and the street median the same way periods_for
+    builds it — so the board and the per-company panel cannot disagree about
+    a consensus. Basis (consol / standalone / segment) and each house's
+    per-name note come from the source's `meta` (preview_dashboard.py writes
+    them there).
+
+    The period defaults to the newest SEASON quarter holding a house estimate
+    for this sector, else the newest any; a board for a quarter with nothing
+    in it is returned empty with the reason, never filled from another one.
+    """
+    today = today or dt.date.today()
+    ids = [n["id"] for n in names]
+    empty = {"period": None, "periods": [], "houses": [], "rows": [], "groups": [],
+             "metrics": {}, "margin_type": None}
+    if not ids:
+        return empty
+    q = ",".join("?" * len(ids))
+    est = [dict(r) for r in conn.execute(
+        f"SELECT id, source_id, entity_id, broker, as_of, period, metric, value_num, "
+        f"unit, quote FROM estimates WHERE entity_id IN ({q}) AND broker NOT IN "
+        f"('consensus_yahoo','bloomberg')", ids)]
+    pers = sorted({e["period"] for e in est if not e["period"].startswith("FY")},
+                  key=period_key, reverse=True)
+    if not pers:
+        return empty
+    season = [p for p in season_periods(today) if p in pers]
+    per = period if period in pers else (season[0] if season else pers[0])
+    est = [e for e in est if e["period"] == per]
+    acts: dict[tuple, dict] = {}
+    for r in conn.execute(
+            f"SELECT entity_id, metric, value_num, unit, as_of, quote FROM observations "
+            f"WHERE entity_id IN ({q}) AND factor='actual' AND period=? AND value_num "
+            f"IS NOT NULL ORDER BY as_of, id", [*ids, per]):
+        acts[(r["entity_id"], r["metric"])] = dict(r)      # latest wins
+    srcs = {r["id"]: dict(r) for r in conn.execute(
+        "SELECT id, kind, origin, title, source_date, meta FROM sources WHERE id IN (%s)"
+        % (",".join("?" * len({e["source_id"] for e in est})) or "''"),
+        list({e["source_id"] for e in est}))}
+    for s in srcs.values():
+        try:
+            s["meta"] = json.loads(s["meta"]) if s["meta"] else {}
+        except ValueError:
+            s["meta"] = {}
+
+    # latest pre-print estimate per (house, entity, metric)
+    latest: dict[tuple, dict] = {}
+    for e in est:
+        a = acts.get((e["entity_id"], e["metric"]))
+        if a and e["as_of"] > a["as_of"]:
+            continue                       # post-print: not a forecast
+        k = (e["broker"], e["entity_id"], e["metric"])
+        if k not in latest or (e["as_of"], e["id"]) > (latest[k]["as_of"], latest[k]["id"]):
+            latest[k] = e
+    houses: dict[str, dict] = {}
+    for (b, eid, m), e in latest.items():
+        h = houses.setdefault(b, {"house": b, "as_of": e["as_of"], "sources": {},
+                                  "names": set(), "n": 0})
+        h["as_of"] = max(h["as_of"], e["as_of"])
+        h["names"].add(eid)
+        h["n"] += 1
+        s = srcs.get(e["source_id"]) or {}
+        h["sources"][e["source_id"]] = {"title": s.get("title"), "date": s.get("source_date"),
+                                        "email": s.get("kind") == "broker_email",
+                                        "notes": (s.get("meta") or {}).get("block_notes", "")}
+    mts = {(srcs.get(e["source_id"]) or {}).get("meta", {}).get("margin_type") for e in est} - {None}
+    mt = "EBIT" if "EBIT" in mts or any(e["metric"].startswith("ebit_") for e in est) else "EBITDA"
+    m = mt.lower()
+
+    rows = []
+    for n in names:
+        eid = n["id"]
+        cells: dict[str, dict] = {}
+        basis: dict[str, dict] = {}
+        notes: dict[str, str] = {}
+        dates: dict[str, str] = {}
+        for (b, e2, met), e in latest.items():
+            if e2 != eid:
+                continue
+            cells.setdefault(b, {})[met] = e["value_num"]
+            dates[b] = max(dates.get(b, ""), e["as_of"])
+            meta = (srcs.get(e["source_id"]) or {}).get("meta") or {}
+            if eid in (meta.get("basis") or {}):
+                basis[b] = meta["basis"][eid]
+            if (meta.get("notes") or {}).get(eid):
+                notes[b] = meta["notes"][eid]
+        if not cells:
+            continue
+        mets = sorted({k for c in cells.values() for k in c})
+        street, actual, surprise = {}, {}, {}
+        for met in mets:
+            vals = [c[met] for c in cells.values() if met in c]
+            street[met] = {"median": _median(vals), "low": min(vals), "high": max(vals),
+                           "n": len(vals)}
+            a = acts.get((eid, met))
+            if a:
+                actual[met] = a["value_num"]
+                is_pp = met.endswith(("_pct", "_pp")) or norm_unit(a["unit"]) in ("%", "pp")
+                surprise[met] = _diff(a["value_num"], street[met]["median"], is_pp)
+        bset = {v.get("basis") for v in basis.values()}
+        rows.append({"id": eid, "name": n.get("name") or eid, "nse": n.get("nse"),
+                     "cells": cells, "street": street, "actual": actual,
+                     "surprise": surprise, "basis": basis, "notes": notes,
+                     "dates": dates,
+                     "mixed_basis": len(bset) > 1})
+    used = {met for r in rows for met in r["street"]}
+    other = "ebitda" if m == "ebit" else "ebit"
+    groups = []
+    for g in BOARD_GROUPS:
+        ms = [x.format(m=m) for x in g["metrics"]]
+        if g["id"] == "margin":             # a house that printed the OTHER margin line
+            ms += [f"{other}_margin_pct", other, f"{other}_yoy_pct"]
+        ms = [x for x in ms if x in used]
+        if ms:
+            lead = g["lead"].format(m=m)
+            groups.append({"id": g["id"], "label": g["label"].format(M=mt),
+                           "metrics": ms, "lead": lead if lead in ms else ms[0]})
+    # anything the three P&L tabs do not hold (EBITDA/t, volume, order book)
+    # gets one more tab rather than vanishing from the board
+    rest = [x for x in METRIC_ORDER if x in used
+            and not any(x in g["metrics"] for g in groups)]
+    if rest:
+        groups.append({"id": "other", "label": "Operating lines", "metrics": rest,
+                       "lead": rest[0]})
+    units = {}
+    for e in est:
+        units.setdefault(e["metric"], e["unit"])
+    hs = sorted(houses.values(), key=lambda h: (-len(h["names"]), h["house"].lower()))
+    for h in hs:
+        h["names"] = len(h["names"])
+        h["sources"] = list(h["sources"].values())
+    return {"period": per, "periods": pers, "houses": hs, "rows": rows,
+            "groups": groups, "margin_type": mt,
+            "n_prints": sum(1 for r in rows if r["actual"]),
+            "metrics": {k: {"label": METRICS.get(k, (k, None))[0],
+                            "better": METRICS.get(k, (k, None))[1],
+                            "unit": units.get(k)} for k in sorted(used)}}
+
+
+def summary(conn: sqlite3.Connection, entity_ids: list[str],
+            today: str | None = None) -> dict[str, dict]:
     """Cheap per-entity counts for the roster picker: what is stored, the
-    newest period, the next calendar date."""
+    newest period, the next calendar date. `today` exists for the selftest:
+    its fixture dates a print 2026-10-20, and against the real clock the
+    "next event" check began failing on 2026-10-21 — the code was right,
+    the test had a calendar in it."""
     if not entity_ids:
         return {}
     q = ",".join("?" * len(entity_ids))
-    out = {e: {"n_estimates": 0, "n_actuals": 0, "periods": set(),
+    out = {e: {"n_estimates": 0, "n_actuals": 0, "n_views": 0, "periods": set(),
                "brokers": set(), "next_event": None} for e in entity_ids}
     for r in conn.execute(
             f"SELECT entity_id, period, broker FROM estimates WHERE entity_id IN ({q}) "
@@ -571,7 +1139,13 @@ def summary(conn: sqlite3.Connection, entity_ids: list[str]) -> dict[str, dict]:
         o = out[r["entity_id"]]
         o["n_actuals"] += 1
         o["periods"].add(r["period"])
-    today = dt.date.today().isoformat()
+    for r in conn.execute(
+            f"SELECT entity_id, period FROM results_analyst_views WHERE entity_id "
+            f"IN ({q}) AND withdrawn=0", entity_ids):
+        o = out[r["entity_id"]]
+        o["n_views"] += 1
+        o["periods"].add(r["period"])
+    today = today or dt.date.today().isoformat()
     for r in conn.execute(
             f"SELECT entity_id, period, MIN(event_date) d FROM results_calendar "
             f"WHERE entity_id IN ({q}) AND event_date >= ? GROUP BY entity_id",
@@ -630,6 +1204,7 @@ def _fixture_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA.read_text(encoding="utf-8"))
+    conn.executescript(VIEWS_DDL)
     conn.executemany("INSERT INTO entities (id,kind,name,sector) VALUES (?,?,?,?)",
                      [("acme", "company", "Acme Steel", "steel"),
                       ("beta", "company", "Beta Cement", "cement")])
@@ -731,7 +1306,7 @@ def selftest() -> int:
     assert norm_period("1QFY27E") == "Q1FY27" and norm_period("FY27E") == "FY27" \
         and norm_period("Q5FY27") is None and norm_period("H1FY27") is None
     ok += 1
-    sm = summary(conn, ["acme", "beta"])
+    sm = summary(conn, ["acme", "beta"], today="2026-10-01")   # pinned: see summary()
     assert sm["acme"]["has_data"] and not sm["beta"]["has_data"]
     assert sm["acme"]["next_event"] == {"period": "Q2FY27", "date": "2026-10-20"}
     ok += 1
@@ -825,8 +1400,109 @@ def selftest() -> int:
         {"entity_id": "acme", "period": "Q2FY27", "event_date": "2026-10-20",
          "status": "maybe", "source_id": "t-preview", "quote": "x"}]), "status 'maybe'")
 
+    ok += _selftest_views(tmp, SRC, est, act, T)
     print(f"results_io selftest: {ok} checks passed")
     return 0
+
+
+def _selftest_views(tmp, SRC, est, act, T) -> int:
+    """Analyst views: acceptance beside rejection (the GLOB lesson)."""
+    ok = 0
+    # firm matching — the alias table and the suffix strip, both directions
+    assert firm_key("Kotak Institutional Equities") == firm_key("Kotak")         == firm_key("KIE") == firm_key("kotak securities ltd") == "kotak"
+    assert firm_key("JM Financial") == "jm" and firm_key("Nomura") != firm_key("Kotak")
+    ok += 1
+    assert period_of(dt.date(2026, 10, 6)) == "Q3FY27"         and period_of(dt.date(2026, 3, 31)) == "Q4FY26"         and period_of(dt.date(2026, 4, 1)) == "Q1FY27"
+    assert season_periods(dt.date(2026, 10, 6)) == ["Q2FY27", "Q3FY27"]
+    ok += 1
+
+    conn = _fixture_db()
+    load(_write(tmp, "v_seed.json", {"sources": SRC,
+        "estimates": [est("Kotak", "ebitda", 118, "2026-07-07"),
+                      est("Nomura", "ebitda", 120, "2026-07-06"),
+                      est("Emkay", "ebitda", 130, "2026-07-08")],
+        "actuals": [act("ebitda", 126)]}), conn, T)
+
+    def sv(**k):
+        base = {"entity_id": "acme", "period": "Q1FY27", "metric": "ebitda",
+                "unit": "INR cr", "note": "call note"}
+        return save_view(conn, {**base, **k}, T)
+
+    # acceptance
+    assert sv(firm="Kotak", analyst="Ravi", said_on="2026-06-25", value_num=105)["ok"]
+    assert sv(firm="Kotak Institutional Equities", analyst="ravi",   # same person, revised
+              said_on="2026-07-01", value_num=117)["ok"]
+    assert sv(firm="Nomura", analyst="Lee", said_on="2026-07-02", stance="above",
+              unit="")["ok"]
+    assert sv(firm="UBS", analyst="Kim", said_on="2026-07-03", value_num=140)["ok"]
+    assert sv(firm="UBS", analyst="Kim", said_on="2026-07-04", withdraw=True,
+              note="Kim pulled the number after the channel check")["ok"]
+    assert sv(firm="Emkay", analyst="Raj", said_on="2026-07-30", value_num=131)["ok"]
+    assert sv(firm="Kotak", analyst="Ravi", period="2QFY27E", said_on="2026-09-01",
+              value_num=150)["ok"]
+    ok += 1
+
+    ps = {x["period"]: x for x in periods_for(conn, "acme", T)}
+    vb = ps["Q1FY27"]["metrics"][0]["views"]
+    live = {(v["firm"], v["analyst"]): v for v in vb["live"]}
+    assert set(live) == {("Kotak Institutional Equities", "ravi"), ("Nomura", "Lee"),
+                         ("Emkay", "Raj")}, set(live)
+    ok += 1                                    # revision replaces, withdrawal removes
+    assert len(vb["history"]) == 3 and sum(h["withdrawn"] for h in vb["history"]) == 1
+    ok += 1
+    r = live[("Kotak Institutional Equities", "ravi")]
+    # street = median(118, 120, 130) = 120; the view 117 is 2.5% below it
+    assert abs(r["vs_street"]["value"] + 2.5) < 1e-9 and r["implied_stance"] == "below"
+    ok += 1
+    # the house PUBLISHED 118 six days later, 0.85% from what was said: followed
+    pb = r["published"]
+    assert pb["value"] == 118 and pb["lead_days"] == 6 and pb["followed"] is True, pb
+    ok += 1
+    # at the print (126): the view missed by 7.1%, the street by 4.8% -> not closer
+    g = r["graded"]
+    assert g["closer"] is False and abs(g["err"]["value"] - (117 - 126) / 126 * 100) < 1e-9
+    assert g["stance_hit"] is False and g["actual_stance"] == "above"
+    ok += 1
+    lee = live[("Nomura", "Lee")]
+    assert lee["graded"]["stance_hit"] is True, "stance 'above' and the print beat"
+    assert lee["published"]["followed"] is False,         "Nomura then published AT the street — 'above' did not follow through"
+    ok += 1
+    raj = live[("Emkay", "Raj")]
+    assert raj["post_print"] is True and raj["graded"] is None
+    assert vb["whisper"]["n"] == 1 and vb["whisper"]["median"] == 117,         "a post-print view must not enter the whisper"
+    ok += 1
+    assert ps["Q2FY27"]["status"] == "analyst views only"
+    ok += 1
+    sc = {(x["firm"].lower()[:5], x["analyst"].lower()): x for x in analyst_scorecard(conn)}
+    rv = sc[("kotak", "ravi")]
+    assert rv["n_views"] == 2 and rv["n_graded"] == 1 and rv["n_closer"] == 0         and rv["n_published"] == 1 and rv["n_followed"] == 1, rv
+    assert sc[("nomur", "lee")]["n_stance_hit"] == 1
+    ok += 1
+
+    # rejection — each refused, nothing written
+    def refused(needle, **k):
+        nonlocal ok
+        n0 = conn.execute("SELECT count(*) FROM results_analyst_views").fetchone()[0]
+        d = sv(**{"firm": "Kotak", "analyst": "Ravi", "said_on": "2026-07-05",
+                  "value_num": 119, **k})
+        assert "error" in d and needle in d["error"], (needle, d)
+        assert conn.execute("SELECT count(*) FROM results_analyst_views").fetchone()[0] == n0
+        ok += 1
+    refused("note is empty", note=" ")
+    refused("a number or a stance", value_num=None)
+    refused("needs its unit", unit="")
+    refused("disagrees with what is stored", unit="INR bn")
+    refused("in the future", said_on="2026-09-23")
+    refused("stance 'bullish'", value_num=None, stance="bullish")
+    refused("adapter's name", firm="consensus_yahoo")
+    refused("not in `entities`", entity_id="acmee")
+    refused("to withdraw", firm="Jefferies", withdraw=True)
+    refused("is not a number", value_num="41.5bn")
+    # acceptance twin of the unit guard: case/spacing is not a conflict
+    assert sv(firm="Jefferies", analyst="Ann", said_on="2026-07-05",
+              value_num=119, unit="inr  CR")["ok"]
+    ok += 1
+    return ok
 
 
 # ----------------------------------------------------------------- main
@@ -837,6 +1513,14 @@ def main() -> int:
     ap.add_argument("--load-all", action="store_true",
                     help=f"every *.json under {STAGING.relative_to(REPO)}")
     ap.add_argument("--report", metavar="ENTITY_ID")
+    ap.add_argument("--add-view", metavar="JSON",
+                    help="one analyst view, e.g. '{\"entity_id\":\"tata_steel\","
+                         "\"period\":\"Q2FY27\",\"metric\":\"ebitda_per_t\","
+                         "\"firm\":\"Kotak\",\"analyst\":\"...\",\"value_num\":"
+                         "9800,\"unit\":\"INR/t India\",\"note\":\"...\"}' "
+                         "(the chat path; the Results tab form is the other)")
+    ap.add_argument("--scorecard", action="store_true",
+                    help="every analyst's record: closer than street, stance hits, follow-through")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
@@ -858,6 +1542,24 @@ def main() -> int:
         return 2 if any("refused" in r for r in rs) else 0
     if a.report:
         return report(a.report)
+    if a.add_view:
+        conn = _connect()
+        d = save_view(conn, json.loads(a.add_view), via="chat")
+        conn.close()
+        print(json.dumps(d, indent=1))
+        return 2 if d.get("error") else 0
+    if a.scorecard:
+        conn = _connect()
+        rows = analyst_scorecard(conn)
+        conn.close()
+        if not rows:
+            print("no analyst views stored")
+        for r in rows:
+            print(f"{r['firm']:<22} {r['analyst']:<16} views {r['n_views']:>3}  "
+                  f"closer {r['n_closer']}/{r['n_graded']}  stance {r['n_stance_hit']}"
+                  f"/{r['n_stance']}  published {r['n_published']} (followed "
+                  f"{r['n_followed']})  names {', '.join(r['names'])}")
+        return 0
     ap.print_help()
     return 1
 
