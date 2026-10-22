@@ -1,0 +1,233 @@
+{
+ "date": "2026-10-22",
+ "fetched_at": "2026-10-22T08:13:45",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-21",
+    "close": 7757.17,
+    "prev_date": "2026-10-20",
+    "chg_pct": 0.58
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-21",
+    "close": 26702.86,
+    "prev_date": "2026-10-20",
+    "chg_pct": 1.05
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-21",
+    "close": 52856.09,
+    "prev_date": "2026-10-20",
+    "chg_pct": 0.69
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-21",
+    "close": 11505.56,
+    "prev_date": "2026-10-20",
+    "chg_pct": 1.97
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-20",
+    "close": 216.47,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.29
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-20",
+    "close": 534.74,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.62
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-20",
+    "close": 425.08,
+    "prev_date": "2026-10-19",
+    "chg_pct": 1.16
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-20",
+    "close": 334.37,
+    "prev_date": "2026-10-19",
+    "chg_pct": -0.07
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-20",
+    "close": 239.12,
+    "prev_date": "2026-10-19",
+    "chg_pct": 0.92
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-20",
+    "close": 68.18,
+    "prev_date": "2026-10-19",
+    "chg_pct": 2.08
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Stock Gets Downgraded as the Good News May Already Be Priced In",
+    "publisher": "Barrons.com",
+    "when": "2026-10-21 15:32Z",
+    "link": "https://finance.yahoo.com/m/33a59162-2840-349b-a008-1431392a7cf7/accenture-stock-gets.html"
+   },
+   {
+    "title": "Accenture, TUV SUD Collaborate on Physical AI Certification Using Nvidia Tech",
+    "publisher": "MT Newswires",
+    "when": "2026-10-21 12:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-tuv-sud-collaborate-physical-121544478.html"
+   },
+   {
+    "title": "The Zacks Analyst Blog Highlights SAP, Accenture, Moody and Peoples Bancorp of North Carolina",
+    "publisher": "Zacks",
+    "when": "2026-10-21 12:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-analyst-blog-highlights-sap-121300181.html"
+   },
+   {
+    "title": "T\u00dcV S\u00dcD and Accenture Accelerate Certification of Physical AI in Automated Factories and Warehouses with NVIDIA Technologies to Drive Manufacturing Productivity",
+    "publisher": "Business Wire",
+    "when": "2026-10-21 11:29Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/t-v-d-accenture-accelerate-112900342.html"
+   },
+   {
+    "title": "ISRG, NFLX, ACN Stocks Slide Before The Bell: Why Intuitive Surgical, Netflix And Accenture Are Heading Lower",
+    "publisher": "Stocktwits",
+    "when": "2026-10-21 11:24Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/isrg-nflx-acn-stocks-slide-112417519.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant to Acquire DyFlex Solutions, Accelerating AI-Led Enterprise Transformation for SAP Clients in Australia and New Zealand",
+    "publisher": "PR Newswire",
+    "when": "2026-10-21 23:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-acquire-dyflex-solutions-accelerating-232500308.html"
+   },
+   {
+    "title": "Cognizant to Acquire DyFlex Solutions, Accelerating AI-Led Enterprise Transformation for SAP Clients in Australia and New Zealand",
+    "publisher": "PR Newswire",
+    "when": "2026-10-21 23:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-acquire-dyflex-solutions-accelerating-232500739.html"
+   },
+   {
+    "title": "Cognizant launches dedicated Gemini group to scale agentic AI",
+    "publisher": "Verdict",
+    "when": "2026-10-21 09:20Z",
+    "link": "https://finance.yahoo.com/news/cognizant-launches-dedicated-gemini-group-092004851.html"
+   },
+   {
+    "title": "What Gave IBM Stock Its Edge Over Cognizant?",
+    "publisher": "Trefis",
+    "when": "2026-10-20 19:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/gave-ibm-stock-edge-over-194300878.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Chosen by Ingenico as Technology Partner",
+    "publisher": "MT Newswires",
+    "when": "2026-10-20 09:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-chosen-ingenico-090350576.html"
+   },
+   {
+    "title": "Ingenico Selects Cognizant as Global Strategic Technology Partner",
+    "publisher": "PR Newswire",
+    "when": "2026-10-20 08:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/ingenico-selects-cognizant-global-strategic-080000003.html"
+   },
+   {
+    "title": "Cognizant, Google Cloud Expand Partnership With New AI Capability Group",
+    "publisher": "MT Newswires",
+    "when": "2026-10-19 17:24Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-partnership-172438191.html"
+   },
+   {
+    "title": "Cognizant and Google Cloud Expand Alliance to Accelerate Agentic Enterprise Transformation",
+    "publisher": "CNW Group",
+    "when": "2026-10-19 16:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-google-cloud-expand-alliance-160000248.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "TIER IV and Technical University of Munich Bring NVIDIA Hyperion to Level 4 Autonomous Driving in Germany",
+    "publisher": "PR Newswire",
+    "when": "2026-10-22 02:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/tier-iv-technical-university-munich-023200077.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stocks Edge Lower as Arcot Targets AI Payment Scams",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-21 22:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-edge-lower-arcot-220133350.html"
+   },
+   {
+    "title": "Broadcom\u2019s AI Revenue Surges 221%, But is Growth Becoming Too Dependent on AI Spending?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-21 15:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-ai-revenue-surges-221-152533215.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Teradyne, Vishay Intertechnology, Allegro MicroSystems, Entegris, and AMD shares are soaring, what you need to know",
+    "publisher": "StockStory",
+    "when": "2026-10-21 23:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/teradyne-vishay-intertechnology-allegro-microsystems-231839928.html"
+   },
+   {
+    "title": "Susquehanna Raises AMD and Qualcomm, Cuts Intel Target",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-21 22:20Z",
+    "link": "https://finance.yahoo.com/technology/articles/susquehanna-raises-amd-qualcomm-cuts-222030479.html"
+   },
+   {
+    "title": "AMD Stocks Gain 1.8% as AI Ambition Pulls Valuation Higher",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-21 21:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-gain-1-8-214209469.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22651.5,
+  "chg_pct": -0.42,
+  "stamp": "22-Oct-2026 08:13:42",
+  "expiry": "27-Oct-2026",
+  "volume": 7786,
+  "nifty_close": {
+   "close": 22811.350000000002,
+   "stamp": "21-Oct-2026 15:30"
+  },
+  "gap_pts": -159.9,
+  "gap_pct": -0.7
+ }
+}
