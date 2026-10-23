@@ -496,10 +496,53 @@ sector map and fo_oi universe, so "sector" means the same thing as in pair
 grading). β comes from the 250 sessions BEFORE the window, so the move being
 explained cannot set its own beta; under 60 sessions it defaults to 1.0,
 flagged (VAML). The hover gives stock = sector + own, which sum exactly.
-`packages/book/sector_rel.py` owns it (selftest 9). The live view runs to the
+`packages/book/sector_rel.py` owns it (selftest 12). The live view runs to the
 latest close, not the snapshot date; a replay runs to its own date. **Mining's
 basket is ONE name** (COAL ↔ NMDC), so those two read each other back; the
 hover flags any basket under 3. The strip's `mtd · ims` cell stays.
+
+**Two silent bugs in the split, fixed 2026-10-22** (SILENT_BUGS entry 13).
+First, the stock and the basket were paired day by day, so a session the
+STOCK lacked dropped out of the basket. LTIMindtree has no 21-Oct close (a
+Yahoo hole), so the IT rally that day vanished from its "sector": 7 days read
+sector −0.0 / own +1.4 while every peer was up 5–9%, and the 60-day own move
+read −3.4 against a true −6.4. Both sides now run between common dates of the
+stock's closes and the basket's compounded LEVEL. Second, a basket day now
+needs a quorum of half its members, the `basket_index` rule. With only the two
+pair legs' intraday bars loaded, each leg's "sector" had been its own partner.
+
+### Pair check — why did a leg move? (2026-10-22)
+
+PM: *"Add these 5 + 2 blind spot checks. If I ever [ask about] a pair, this
+should be checked and told."* The **`pair-check` skill** runs on any question
+about a dictated pair, and inside daily_review for every pair discussed.
+`packages/book/move_check.py <PAIR>` (selftest 19, read-only) runs five data
+checks per leg over 7 and 30 calendar days:
+- **sector:** `sector_rel.split`, own move vs sector;
+- **consensus:** Yahoo FY+1/FY+2 EPS change;
+- **mail:** brief bullets, staged mail, house estimates and analyst views naming the stock;
+- **positioning:** OI change vs price, the four-way build-up read;
+- **read-across:** ACN/CTSH for IT, the sector's top movers, peer result bullets.
+
+It prints a reading: *moved with its sector* / *stock-specific, with information* /
+*positioning only* / *unexplained so far*. It **never says noise**.
+
+The two blind spots are not in the store and are done by hand each time:
+**NSE block/bulk deals**, and **conference / analyst-meet commentary**
+(company-specific mail search plus news). A skipped one is said to be skipped.
+
+Both legs are measured to the SAME close. When a leg or its sector lacks the
+latest bars, the pair is aligned to the last close all of them share, and the
+report says so.
+
+**The trap the name matcher carries:** "LTM" is LTIMindtree in the mail corpus
+(10 of 10 measured hits). But TechM's own notes use "LTM TCV" for last twelve
+months, so a metric-word disqualifier keeps TechM news from counting as
+LTIMindtree's.
+
+The rule it serves, agreed the same day: Kelly size ∝ (target ÷ price − 1),
+floored at zero and capped per pair. **Re-mark the target only on information,
+never on price.** The check is what tells you which one a move was.
 
 **It advances only when a snapshot is loaded.** It recomputes from every
 stored snapshot on each request, but `refresh.py`/`pipeline.py` never write a

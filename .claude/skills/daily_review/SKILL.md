@@ -288,6 +288,13 @@ name (`book_io.add_review('JINDA_SAIL', ...)`).
   ~5-10 trading days, as a % change of the score where the base makes
   that meaningful. A widening or narrowing of the PAIR's score spread is
   the pair-level read; a level ranking is not.
+- **Why the legs moved — the pair-check skill, for every pair discussed**
+  (PM, 2026-10-22: "If I ever [ask about] a pair, this should be checked and
+  told"). `python packages/book/move_check.py <PAIR>` gives the five data
+  checks (sector vs own, consensus, mail, OI, read-across). Do the two blind
+  spots by hand (NSE block/bulk deals; conference / analyst-meet commentary)
+  and put the seven-row result in front of the PM before the verdict.
+  `.claude/skills/pair-check/SKILL.md` is the method.
 - **Positioning**: `/api/oi` for OI percentile + buildup per leg.
 - **Regime**: `/api/flows` — `w1.lead` is the rolling past-week state,
   updated every US session (the Friday weekly layer is the trend behind

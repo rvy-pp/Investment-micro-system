@@ -220,6 +220,36 @@ noise exactly (0.0325 vs 0.0326), so using them would have swapped one
 silent error for 16 noisy ones. They are pooled, with a measured shrink that
 lets a pair keep its own ratio the day it becomes distinguishable.
 
+### 13. A missing session dropped from one side only — the sector split
+
+*Found 2026-10-22, by the first live run of `move_check.py`.*
+
+`sector_rel.split` paired the stock's daily returns with the basket's day by
+day and kept only days present in BOTH. LTIMindtree has no 21-Oct close (a hole
+at Yahoo), so its 22-Oct return spanned two sessions, while the basket's
+21-Oct return, an IT rally, was simply dropped. The stock side kept the day
+and the sector side lost it. The 7-day split read **sector −0.0% / own +1.4%**
+while every IT peer was up 5–9%. The Book tab's 60-day column read **own
+−3.4** against a true **−6.4**. Plausible numbers, signed sensibly, nothing
+raised.
+
+A second shape sat behind it. A basket day counted whenever ANY member printed,
+so with only the pair legs' intraday bars loaded, each leg's "sector" for that
+day was its own pair partner: TechM's −2.1% standing in for eleven IT names.
+
+**Fix:** both sides now run between the common dates of the stock's closes
+and the basket's compounded level, so a session the stock lacks is carried by
+the next interval on both sides. A basket day needs half its members
+(`QUORUM`, the `basket_index` rule). Selftest gained the mirror case (the
+stock lacks a day on which the basket moved 10%: basket and stock spans must
+match) and a quorum acceptance/rejection pair.
+
+**What this one adds:** it was caught by a cross-check, not a symptom. The new
+report printed each peer's own move next to the "sector" figure, and the two
+could not both be true. The defence is to show a derived number beside the raw
+numbers it was derived from. Then a gap that is invisible inside one figure
+becomes a contradiction between two.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:

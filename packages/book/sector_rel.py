@@ -48,7 +48,7 @@ sys.path.insert(0, str(HERE))
 WINDOW_DAYS = 60          # calendar days, rolling (PM, 2026-10-21: "make it 2 instead of 3 months")
 BETA_SESSIONS = 250       # sessions before the window opens
 BETA_MIN = 60
-LOAD_DAYS = WINDOW_DAYS + 420   # enough calendar history for 250 sessions before the window
+# build() loads window + 420 calendar days: enough for 250 sessions before the window
 
 
 def _rets(px: dict) -> dict:
@@ -56,14 +56,21 @@ def _rets(px: dict) -> dict:
     return {d[i]: px[d[i]] / px[d[i - 1]] - 1 for i in range(1, len(d)) if px[d[i - 1]]}
 
 
+QUORUM = 0.5      # share of the basket that must print for a day to count
+
+
 def _basket(rets: dict, members: list[str]) -> dict:
     """Equal-weighted daily return over whichever members printed both ends
-    of that day; a day no member carries is absent."""
+    of that day. A day under QUORUM of the members is ABSENT, not a thin
+    basket: on 2026-10-22 only the two pair legs had intraday bars loaded,
+    so each leg's "sector" that day was its own pair partner alone (TechM's
+    -2.1% standing in for eleven IT names). basket_index uses the same rule."""
     days = sorted(set().union(*(rets[m].keys() for m in members))) if members else []
+    need = max(1, -(-len(members) * QUORUM // 1))
     out = {}
     for d in days:
         xs = [rets[m][d] for m in members if d in rets[m]]
-        if xs:
+        if len(xs) >= need:
             out[d] = sum(xs) / len(xs)
     return out
 
@@ -85,22 +92,40 @@ def _beta(pairs) -> tuple[float, float] | None:
 def split(px: dict, peers: dict[str, dict], start: str, end: str) -> dict | None:
     """The arithmetic on plain {date: close} dicts — testable without a DB.
     `start` is the window's anchor session (the close the window runs from)."""
-    rs = _rets(px)
     pr = {m: _rets(p) for m, p in peers.items()}
     pr = {m: r for m, r in pr.items() if r}
     if not pr:
         return None
     bk = _basket(pr, sorted(pr))
-    win = [d for d in sorted(rs) if start < d <= end and d in bk]
+    # Both legs of the split run between the SAME dates: the dates where the
+    # stock has a close AND the basket has a level. The basket's level
+    # compounds every basket day, so a session the stock is missing is carried
+    # by the next interval on BOTH sides. The first version paired returns day
+    # by day and silently dropped any basket day the stock lacked:
+    # LTIMindtree has no 2026-10-21 close (Yahoo hole), so its 22-Oct return
+    # spanned two sessions while the basket's 21-Oct IT rally vanished, and
+    # the 7-day split read sector -0.0% / own +1.4% while every peer was up
+    # 5-9%, and the Book tab's 60-day own move read -3.4 against a true -6.4.
+    # Caught by move_check's first live run (2026-10-22) disagreeing with the
+    # peers' own moves.
+    lvl, x = {}, 1.0
+    for d in sorted(bk):
+        x *= 1 + bk[d]
+        lvl[d] = x
+    common = [d for d in sorted(px) if d in lvl and px[d]]
+    iv = [(common[i - 1], common[i]) for i in range(1, len(common))]
+    rs = {b: px[b] / px[a] - 1 for a, b in iv}
+    bs = {b: lvl[b] / lvl[a] - 1 for a, b in iv}
+    win = [d for d in sorted(rs) if start < d <= end]
     if not win:
         return None
-    est = [d for d in sorted(rs) if d <= start and d in bk][-BETA_SESSIONS:]
-    fit = _beta([(bk[d], rs[d]) for d in est])
+    est = [d for d in sorted(rs) if d <= start][-BETA_SESSIONS:]
+    fit = _beta([(bs[d], rs[d]) for d in est])
     beta, r2, flags = (fit[0], fit[1], []) if fit else (1.0, None, ["beta_default"])
     s = b = 1.0
     for d in win:
         s *= 1 + rs[d]
-        b *= 1 + bk[d]
+        b *= 1 + bs[d]
     stock, sector = round((s - 1) * 100, 1), round(beta * (b - 1) * 100, 1)
     # rel is the difference of the two ROUNDED figures so the hover's three
     # numbers sum exactly (price_story.decompose's convention).
@@ -121,8 +146,11 @@ def _closes(conn, eids, lo, hi) -> dict:
     return out
 
 
-def build(conn, eids, as_of: str | None = None, cfg: dict | None = None) -> dict:
-    """{entity_id: split | {"withheld": reason}} for every leg entity."""
+def build(conn, eids, as_of: str | None = None, cfg: dict | None = None,
+          window_days: int = WINDOW_DAYS) -> dict:
+    """{entity_id: split | {"withheld": reason}} for every leg entity.
+    `window_days` defaults to the Book column's 60; move_check.py asks for
+    short windows (7 / 30) with the same split, so "sector" means one thing."""
     import grading
     cfg = cfg or grading.load_config(conn)
     eids = [e for e in dict.fromkeys(eids) if e]
@@ -130,8 +158,8 @@ def build(conn, eids, as_of: str | None = None, cfg: dict | None = None) -> dict
         q = ",".join("?" * len(eids))
         as_of = conn.execute(f"SELECT MAX(date) FROM prices WHERE entity_id IN ({q})", eids).fetchone()[0]
     end = dt.date.fromisoformat(as_of)
-    lo = (end - dt.timedelta(days=LOAD_DAYS)).isoformat()
-    wstart = (end - dt.timedelta(days=WINDOW_DAYS)).isoformat()
+    lo = (end - dt.timedelta(days=window_days + 420)).isoformat()
+    wstart = (end - dt.timedelta(days=window_days)).isoformat()
     universe = {}
     for e in eids:
         sec = cfg["sector_of"].get(e)
@@ -192,6 +220,28 @@ def _selftest() -> None:
     # a day the basket lacks is dropped from the window, not filled
     gap = {k: {d: v for d, v in p.items() if d != days[-5]} for k, p in (("a", pa), ("b", pb))}
     assert split(st, gap, start, days[-1])["sessions"] == 89; ok += 1
+    # ...and the mirror case, the one that actually happened (LTIMindtree,
+    # 2026-10-21): the STOCK lacks a day the basket has. The basket must
+    # compound THROUGH it, so stock and sector still cover the same span.
+    # A big basket move on the missing day is the case that exposed the bug.
+    pa2, pb2 = dict(pa), dict(pb)
+    pa2[days[-5]] = pa2[days[-6]] * 1.10
+    pb2[days[-5]] = pb2[days[-6]] * 1.10
+    for k in days[-4:]:
+        pa2[k], pb2[k] = pa[k] * 1.10 * pa[days[-6]] / pa[days[-5]], pb[k] * 1.10 * pb[days[-6]] / pb[days[-5]]
+    hole = {d: v for d, v in st.items() if d != days[-5]}
+    full = split(st, {"a": pa2, "b": pb2}, start, days[-1])
+    holed = split(hole, {"a": pa2, "b": pb2}, start, days[-1])
+    assert abs(holed["basket_pct"] - full["basket_pct"]) < 1e-9, (holed["basket_pct"], full["basket_pct"]); ok += 1
+    assert holed["stock_pct"] == full["stock_pct"] and holed["sessions"] == 89; ok += 1
+    # quorum: a day only one of four peers printed is no basket (rejection);
+    # a day three of four printed is (acceptance)
+    r4 = {m: {"d1": 0.01, "d2": 0.02} for m in "wxyz"}
+    r4["w"]["d3"] = -0.05
+    for m in "wxy":
+        r4[m]["d4"] = 0.03
+    bq = _basket(r4, list("wxyz"))
+    assert "d3" not in bq and abs(bq["d4"] - 0.03) < 1e-12; ok += 1
     # DB path: phantom zero-volume rows dropped, prices clipped to as_of
     conn = sqlite3.connect(":memory:")
     conn.execute("CREATE TABLE prices (entity_id TEXT, date TEXT, close REAL, volume REAL)")
