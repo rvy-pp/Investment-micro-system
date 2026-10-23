@@ -36,7 +36,7 @@
           "growth": 0.5859
         }
       ],
-      "trailing_eps": 339.25
+      "trailing_eps": 342.03
     },
     "amber": {
       "symbol": "AMBER.NS",
@@ -180,7 +180,7 @@
           "growth": 0.4051
         }
       ],
-      "trailing_eps": 19.52
+      "trailing_eps": 19.23
     },
     "avalon": {
       "symbol": "AVALON.NS",
@@ -324,7 +324,7 @@
           "growth": 0.0456
         }
       ],
-      "trailing_eps": 142.66
+      "trailing_eps": 143.92
     },
     "hcl_tech": {
       "symbol": "HCLTECH.NS",
@@ -396,7 +396,7 @@
           "growth": 0.0498
         }
       ],
-      "trailing_eps": 12.81
+      "trailing_eps": 12.73
     },
     "tech_mahindra": {
       "symbol": "TECHM.NS",
@@ -468,7 +468,7 @@
           "growth": 0.2643
         }
       ],
-      "trailing_eps": 114.32
+      "trailing_eps": 116.67
     },
     "coforge": {
       "symbol": "COFORGE.NS",
@@ -540,7 +540,7 @@
           "growth": 0.12640001
         }
       ],
-      "trailing_eps": 99.96
+      "trailing_eps": 102.98
     },
     "kpit": {
       "symbol": "KPITTECH.NS",
@@ -576,7 +576,7 @@
           "growth": 0.4037
         }
       ],
-      "trailing_eps": 21.01
+      "trailing_eps": 21.28
     },
     "tata_elxsi": {
       "symbol": "TATAELXSI.NS",
@@ -648,7 +648,7 @@
           "growth": 0.0394
         }
       ],
-      "trailing_eps": 391.27
+      "trailing_eps": 375.25
     },
     "ltts": {
       "symbol": "LTTS.NS",

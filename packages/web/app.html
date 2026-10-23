@@ -2783,8 +2783,22 @@ function overnightHtml(m){
   const q = mk.quotes || {};
   const g = (m.brief || {}).global || {};
 
+  // A change whose prior close is more than one weekday back is not an
+  // overnight move: on 2026-10-23 Yahoo had no 21-Oct bar for the US indices,
+  // so S&P / SOX printed 20->22 Oct as one session. Computed from the dates,
+  // not the file's weekdays_skipped, so markets files written before that
+  // field existed are covered too. A US holiday gets the tag as well, and
+  // "since <date>" is true either way.
+  const since = x => {
+    if (!x || !x.prev_date || !x.date) return '';
+    const a = new Date(x.prev_date + 'T00:00:00Z'), b = new Date(x.date + 'T00:00:00Z');
+    let n = 0;
+    for (let d = new Date(a.getTime() + 864e5); d < b; d = new Date(d.getTime() + 864e5))
+      if (d.getUTCDay() % 6) n++;
+    return n ? ` <span class="hint">since ${esc(x.prev_date.slice(5))}</span>` : '';
+  };
   const groupLine = rows => (rows || []).map(x =>
-    `${esc(x.label)} <span style="font-family:var(--mono)">${fmtNum(x.close)}</span> ${pctSpan(x.chg_pct)}`)
+    `${esc(x.label)} <span style="font-family:var(--mono)">${fmtNum(x.close)}</span> ${pctSpan(x.chg_pct)}${since(x)}`)
     .join(' &nbsp;·&nbsp; ');
 
   const reasonFor = (name, key) => {
@@ -2812,7 +2826,7 @@ function overnightHtml(m){
   const ctsh = (q.it || []).find(x => x.symbol === 'CTSH');
   const bw = (x, name, key) => x
     ? `<li><b>${esc(name)}</b> <span style="font-family:var(--mono)">${fmtNum(x.close)}</span> ${
-        pctSpan(x.chg_pct)} — ${reasonFor(name, key)}</li>`
+        pctSpan(x.chg_pct)}${since(x)} — ${reasonFor(name, key)}</li>`
     : `<li><b>${esc(name)}</b> <span class="hint">no quote</span></li>`;
 
   const aiLis = (g.ai_semis || []).map(x => `<li>${esc(x.text || x)}${

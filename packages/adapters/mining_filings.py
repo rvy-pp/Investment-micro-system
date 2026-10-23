@@ -185,13 +185,35 @@ def parse_cil_swma(text: str) -> dict | None:
     prem_lines = re.findall(r"% increase over Notified Price([^\n]+)", text)
     if not qty_lines or not prem_lines:
         return None
-    qtys = [float(x) for x in re.findall(r"-?[\d.]+", qty_lines[0])]
-    prems = [float(x) for x in re.findall(r"-?[\d.]+", prem_lines[0])]
-    if not qtys or not prems:
+    # A subsidiary with no auction that month prints "--" (NEC, Sep-26). It
+    # MUST count as a column. The first version tokenised on numbers only, so
+    # Sep-26's 8 subsidiaries + CIL total read as 8 values, fell into the
+    # first-format branch, and volume-weighted the CIL TOTAL in as if it were
+    # a ninth subsidiary: 89.9% premium / 187.28 LT stored against the
+    # filing's 94% / 93.64 LT. Nothing raised; it scored Coal India from
+    # 2026-10-02 until a read of the staged row on 2026-10-23 (alloc_lt was
+    # exactly 2x the month's total). SILENT_BUGS entry 14.
+    def cells(line):
+        return [None if t == "--" else float(t)
+                for t in re.findall(r"--|-?\d[\d.]*", line)]
+    qtys, prems = cells(qty_lines[0]), cells(prem_lines[0])
+    if not qtys or len(qtys) != len(prems):
         return None
+    subs_q = [q for q in qtys[:-1] if q is not None]
     if len(prems) == 9:          # 8 subsidiaries + CIL total
+        if prems[-1] is None or qtys[-1] is None:
+            return None
+        # cross-foot: the total column must be the sum of the subsidiaries,
+        # or the columns are not what this parser thinks they are
+        if abs(sum(subs_q) - qtys[-1]) > 0.1:
+            return None
         return {"premium_pct": prems[-1], "alloc_lt": qtys[-1]}
-    if len(prems) == len(qtys) == 8:   # first-format filing: no total column
+    if len(prems) == 8 and None not in qtys and None not in prems:
+        # first-format filing (Feb-26): no total column. Refuse if the last
+        # value IS the sum of the other seven — that is a total column with a
+        # subsidiary missing, the exact shape of the Sep-26 bug.
+        if abs(sum(qtys[:-1]) - qtys[-1]) <= 0.1:
+            return None
         w = sum(q * p for q, p in zip(qtys, prems)) / (sum(qtys) or 1)
         return {"premium_pct": round(w, 1), "alloc_lt": round(sum(qtys), 2)}
     return None
@@ -548,6 +570,22 @@ def selftest() -> int:
         "Lump – ₹ 6,100- Per Ton.\nFines – ₹ 5,250/-\n"
         "The above FOR prices are inclusive of Royalty, DMF, NMET")["basis"]
         == "incl_royalty", "basis parser reads 'inclusive' (and the 6,100- no-slash form)")
+    # SWMA parser: the Sep-26 filing's month table, NEC printing "--"
+    sep26 = ("Qty. allocated (in Lakh Tonnes) 11.32 4.88 25.43 2.23 8.89 5.32 35.57 -- 93.64\n"
+             "% increase over Notified Price 118% 30% 84% 231% 105% 211% 52% -- 94%\n")
+    chk(parse_cil_swma(sep26) == {"premium_pct": 94.0, "alloc_lt": 93.64},
+        "SWMA Sep-26: '--' cell counts as a column, CIL total = 94% / 93.64 LT")
+    full = sep26.replace("35.57 -- 93.64", "35.57 1.00 94.64").replace("52% --", "52% 40%")
+    chk(parse_cil_swma(full) == {"premium_pct": 94.0, "alloc_lt": 94.64},
+        "SWMA with all nine columns populated reads the CIL total")
+    chk(parse_cil_swma(sep26.replace("93.64", "99.00")) is None,
+        "SWMA refuses a total that does not cross-foot to its subsidiaries")
+    chk(parse_cil_swma(sep26.replace(" -- 93.64", " 93.64").replace(" -- 94%", " 94%")) is None,
+        "SWMA refuses 8 columns whose last is the sum of the other seven")
+    feb = ("Qty. allocated (in Lakh Tonnes) 10 10 10 10 10 10 10 10\n"
+           "% increase over Notified Price 30% 30% 30% 30% 40% 40% 40% 40%\n")
+    chk(parse_cil_swma(feb) == {"premium_pct": 35.0, "alloc_lt": 80.0},
+        "SWMA first-format filing (no total column) volume-weights 8 subsidiaries")
     print("selftest " + ("PASSED" if ok else "FAILED"))
     return 0 if ok else 1
 

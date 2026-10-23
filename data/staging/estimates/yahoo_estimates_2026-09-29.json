@@ -36,7 +36,7 @@
           "growth": 0.5456
         }
       ],
-      "trailing_eps": 306.63
+      "trailing_eps": 312.36
     },
     "amber": {
       "symbol": "AMBER.NS",
@@ -324,7 +324,7 @@
           "growth": 0.0482
         }
       ],
-      "trailing_eps": 137.62
+      "trailing_eps": 136.87
     },
     "hcl_tech": {
       "symbol": "HCLTECH.NS",

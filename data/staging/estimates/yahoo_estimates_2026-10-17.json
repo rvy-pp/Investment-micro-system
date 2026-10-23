@@ -72,7 +72,7 @@
           "growth": 0.82989997
         }
       ],
-      "trailing_eps": 27.12
+      "trailing_eps": 27.21
     },
     "kaynes": {
       "symbol": "KAYNES.NS",
@@ -252,7 +252,7 @@
           "growth": 0.1393
         }
       ],
-      "trailing_eps": 176.29
+      "trailing_eps": 176.17
     },
     "infosys": {
       "symbol": "INFY.NS",
@@ -648,7 +648,7 @@
           "growth": 0.0394
         }
       ],
-      "trailing_eps": 391.27
+      "trailing_eps": 386.15
     },
     "ltts": {
       "symbol": "LTTS.NS",
@@ -684,7 +684,7 @@
           "growth": 0.146
         }
       ],
-      "trailing_eps": 122.73
+      "trailing_eps": 121.81
     }
   }
 }

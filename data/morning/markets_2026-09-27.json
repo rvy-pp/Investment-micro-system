@@ -1,6 +1,6 @@
 {
  "date": "2026-09-27",
- "fetched_at": "2026-09-27T08:09:37",
+ "fetched_at": "2026-09-27T21:06:35",
  "quotes": {
   "us": [
    {
@@ -114,12 +114,6 @@
     "publisher": "Trefis",
     "when": "2026-09-25 15:32Z",
     "link": "https://finance.yahoo.com/markets/stocks/articles/much-downside-left-accenture-stock-153228027.html"
-   },
-   {
-    "title": "JPMorgan Adjusts Price Target on Accenture to $200 From $179, Maintains Overweight Rating",
-    "publisher": "MT Newswires",
-    "when": "2026-09-25 09:40Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/jpmorgan-adjusts-price-target-accenture-094023485.html"
    }
   ],
   "CTSH": [
@@ -154,8 +148,21 @@
     "link": "https://finance.yahoo.com/technology/articles/belcan-cognizant-company-recognized-2025-120000803.html"
    }
   ],
-  "NVDA": [],
+  "NVDA": [
+   {
+    "title": "China weighs allowing ByteDance, Alibaba to buy new Nvidia chips, The Information reports",
+    "publisher": "Reuters",
+    "when": "2026-09-27 15:24Z",
+    "link": "https://finance.yahoo.com/technology/articles/china-weighs-allowing-bytedance-alibaba-152402813.html"
+   }
+  ],
   "AVGO": [
+   {
+    "title": "Broadcom Stock Is Back Where It Ended 2025, but Its Earnings Are About 43% Higher. Is It a Buy?",
+    "publisher": "Motley Fool",
+    "when": "2026-09-27 07:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-back-where-ended-070301799.html"
+   },
    {
     "title": "Broadcom Has More Than One Way to Win. Here\u2019s Where I See the Stock Going",
     "publisher": "24/7 Wall St.",
@@ -173,33 +180,27 @@
     "publisher": "Insider Monkey",
     "when": "2026-09-26 04:51Z",
     "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-vs-broadcom-avgo-045101419.html"
-   },
-   {
-    "title": "Nvidia Would Have to Add Almost a Whole Broadcom to Reach $7 Trillion",
-    "publisher": "Motley Fool",
-    "when": "2026-09-25 23:44Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-add-almost-whole-broadcom-234401557.html"
    }
   ],
   "TSM": [],
   "AMD": [
    {
+    "title": "Intel CEO Lip-Bu Tan Has Incredible News for AMD Stock Investors",
+    "publisher": "Motley Fool",
+    "when": "2026-09-27 15:23Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/intel-ceo-lip-bu-tan-152301599.html"
+   },
+   {
+    "title": "AMD Just Hit $1 Trillion After A Blistering 194% Surge YTD \u2014 Beth Kindig Says The \u2018Dark Horse\u2019 Still Has Room To Run",
+    "publisher": "Stocktwits",
+    "when": "2026-09-27 14:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-just-hit-1-trillion-140602169.html"
+   },
+   {
     "title": "Prediction: Here's What a $5,000 Investment in AMD Could Be Worth by 2030",
     "publisher": "Motley Fool",
     "when": "2026-09-27 01:58Z",
     "link": "https://finance.yahoo.com/markets/stocks/articles/prediction-heres-5-000-investment-015800908.html"
-   },
-   {
-    "title": "If You Invest $500 a Month in AMD Starting Now, This is What You\u2019d Have in 2030",
-    "publisher": "24/7 Wall St.",
-    "when": "2026-09-26 14:00Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/invest-500-month-amd-starting-140015320.html"
-   },
-   {
-    "title": "Bank of America Just Upped Its Price Target on AMD Stock",
-    "publisher": "Barchart",
-    "when": "2026-09-25 20:56Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/bank-america-just-upped-price-205619805.html"
    }
   ]
  },

@@ -1,6 +1,6 @@
 {
  "date": "2026-09-29",
- "fetched_at": "2026-09-29T08:10:46",
+ "fetched_at": "2026-09-29T12:45:22",
  "quotes": {
   "us": [
    {
@@ -92,6 +92,18 @@
  "news": {
   "ACN": [
    {
+    "title": "Accenture Helps Sodiaal Complete International Integration of Yoplait Libert\u00e9 Canada to Accelerate Its Global Dairy Expansion",
+    "publisher": "Business Wire",
+    "when": "2026-09-29 06:59Z",
+    "link": "https://finance.yahoo.com/small-business/articles/accenture-helps-sodiaal-complete-international-065900534.html"
+   },
+   {
+    "title": "Accenture (ACN) Lands Supply Chain And Oracle Cloud Transformation Wins",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-29 06:09Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-acn-lands-supply-chain-060935991.html"
+   },
+   {
     "title": "Accenture (ACN): A 50% Rally Into Earnings, and a Street That Cannot Agree on What It Means",
     "publisher": "Insider Monkey",
     "when": "2026-09-29 00:58Z",
@@ -156,13 +168,43 @@
   ],
   "NVDA": [
    {
-    "title": "Is CEO Jensen Huang Becoming Nvidia (NVDA)\u2019s Most Valuable Political Asset?",
-    "publisher": "Insider Monkey",
-    "when": "2026-09-29 01:30Z",
-    "link": "https://finance.yahoo.com/technology/ai/articles/ceo-jensen-huang-becoming-nvidia-013038328.html"
+    "title": "Is Arm (ARM) Quietly Becoming the Linchpin of Nvidia\u2019s AI Security and Compute Strategy?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-09-29 06:09Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/arm-arm-quietly-becoming-linchpin-060935833.html"
+   },
+   {
+    "title": "The Zacks Analyst Blog Highlights Micron, Nvidia and Philadelphia Semiconductor Index",
+    "publisher": "Zacks",
+    "when": "2026-09-29 05:48Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-analyst-blog-highlights-micron-054800227.html"
+   },
+   {
+    "title": "Nvidia turns to insurers to spread risk of AI build-out - FT",
+    "publisher": "Investing.com",
+    "when": "2026-09-29 05:21Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-turns-insurers-spread-risk-052145747.html"
+   },
+   {
+    "title": "Zacks Investment Ideas feature highlights: Nvidia, Bloom Energy and Amphenol",
+    "publisher": "Zacks",
+    "when": "2026-09-29 05:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-investment-ideas-feature-highlights-050500252.html"
+   },
+   {
+    "title": "Samsung Commits $1.0 Billion to AI Infrastructure Firm Backed by KKR, Nvidia",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-09-29 04:41Z",
+    "link": "https://finance.yahoo.com/m/50baa67b-93a6-396f-82ee-218fab2de56a/samsung-commits-%241.0-billion.html"
    }
   ],
   "AVGO": [
+   {
+    "title": "Broadcom's Dividend Has Grown About 90-Fold Since 2010. Its Next Raise Usually Comes in December.",
+    "publisher": "Motley Fool",
+    "when": "2026-09-29 02:57Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcoms-dividend-grown-90-fold-025701385.html"
+   },
    {
     "title": "Not Nvidia, Not AMD. Broadcom's Custom Silicon Business Is Quietly Becoming an AI Chip Powerhouse",
     "publisher": "Motley Fool",
@@ -184,6 +226,12 @@
   ],
   "TSM": [],
   "AMD": [
+   {
+    "title": "AMD Stock Dips Overnight After $8.2B World Labs Deal \u2014 Senior Exec Says It's 'Not The Intent' To Compete With AI Customers",
+    "publisher": "Stocktwits",
+    "when": "2026-09-29 04:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-dips-overnight-8-045010112.html"
+   },
    {
     "title": "Bank of America resets AMD price target after major milestone",
     "publisher": "TheStreet",
@@ -207,27 +255,21 @@
     "publisher": "Fortune",
     "when": "2026-09-28 21:56Z",
     "link": "https://finance.yahoo.com/technology/ai/articles/amd-acquires-startup-cofounded-godmother-215604650.html"
-   },
-   {
-    "title": "AMD Bolsters AI Vision With $8.2B Acquisition Of Fei-Fei Li\u2019s World Labs, Stock Drops 4%",
-    "publisher": "Stocktwits",
-    "when": "2026-09-28 21:37Z",
-    "link": "https://finance.yahoo.com/technology/ai/articles/amd-bolsters-ai-vision-8-213731913.html"
    }
   ]
  },
  "errors": [],
  "gift_nifty": {
-  "last": 22890.5,
-  "chg_pct": -0.05,
-  "stamp": "29-Sep-2026 08:09:27",
+  "last": 22782.0,
+  "chg_pct": -0.53,
+  "stamp": "29-Sep-2026 12:45:20",
   "expiry": "27-Oct-2026",
-  "volume": 1551,
+  "volume": 43348,
   "nifty_close": {
    "close": 22780.25,
-   "stamp": "28-Sep-2026 15:30"
+   "stamp": "29-Sep-2026 12:45"
   },
-  "gap_pts": 110.2,
-  "gap_pct": 0.48
+  "gap_pts": 1.8,
+  "gap_pct": 0.01
  }
 }

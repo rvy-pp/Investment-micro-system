@@ -132,6 +132,18 @@
    "cumsales": 44.34,
    "cumsales_ly": 40.2,
    "doc": "NMDC CMS productiondetails id 106"
+  },
+  {
+   "month": "2026-03",
+   "prod": 5.35,
+   "prod_ly": 3.55,
+   "sales": 5.9,
+   "sales_ly": 4.21,
+   "cumprod": 53.15,
+   "cumprod_ly": 44.07,
+   "cumsales": 50.23,
+   "cumsales_ly": 44.4,
+   "doc": "NMDC CMS productiondetails id 107"
   }
  ]
 }

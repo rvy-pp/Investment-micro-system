@@ -101,11 +101,21 @@ def quote(symbol: str, label: str, pattern: str) -> dict:
     if len(rows) < 2:
         raise ValueError(f"{symbol}: {len(rows)} close(s) in a month")
     (d_prev, c_prev), (d_last, c_last) = rows[-2], rows[-1]
+    # Weekdays between the two closes that carry no bar. On 2026-10-23 Yahoo
+    # had no 21-Oct bar for ^GSPC/^IXIC/^DJI/^SOX (and, by 10:38, ACN/CTSH),
+    # so "overnight" S&P -0.64% and SOX -4.89% were TWO-session moves, 20->22
+    # Oct, rendered as one. Same source hole as LTIMindtree's 21-Oct close
+    # (SILENT_BUGS 13). Flagged, never filled: a US holiday leaves the same
+    # gap legitimately, and the render ("since 20 Oct") is true either way.
+    a, b = dt.date.fromisoformat(d_prev), dt.date.fromisoformat(d_last)
+    gap = sum(1 for k in range(1, (b - a).days)
+              if (a + dt.timedelta(k)).weekday() < 5)
     return {
         "symbol": symbol, "label": label,
         "date": d_last, "close": round(c_last, 2),
         "prev_date": d_prev,
         "chg_pct": round((c_last / c_prev - 1.0) * 100, 2),
+        "weekdays_skipped": gap,
     }
 
 

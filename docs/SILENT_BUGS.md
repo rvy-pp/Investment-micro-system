@@ -250,6 +250,37 @@ could not both be true. The defence is to show a derived number beside the raw
 numbers it was derived from. Then a gap that is invisible inside one figure
 becomes a contradiction between two.
 
+### 14. A blank cell that stopped being a column — the CIL e-auction premium
+
+*Found 2026-10-23, reading an uncommitted staging row.*
+
+`parse_cil_swma` took every NUMBER on the "% increase over Notified Price" line
+and chose its branch by the count: nine values meant eight subsidiaries plus the
+CIL total, and eight meant the Feb-26 first-format filing with no total column,
+volume-weighted. In the Sep-26 filing NEC held no auction and printed `--`. The
+number regex skipped it, so eight subsidiaries plus the total read as eight
+values and took the first-format branch. **The CIL TOTAL was weighted in as if
+it were a subsidiary**: premium **89.9%** against the filing's **94%**, and
+allocation **187.28 LT**, exactly twice the true **93.64**. Realisation went into
+`prices` at **3,065 Rs/t** against **3,131**.
+
+It reached no stored score, by luck: Coal India's economics was already
+withheld because the Aug and Sep offtake filings extract too badly to parse, so
+`coalindia_offtake_ttm_mt` went stale. Had the offtake feed been healthy, the
+premium would have scored from 2026-10-02.
+
+**Fix:** a `--` is a cell, and it counts as a column. The total column must
+cross-foot to the sum of the subsidiaries within 0.1 LT or the filing is
+refused, and an eight-column line whose last value IS the sum of the other
+seven is refused too, because that is this bug's shape. Selftest covers the
+Sep-26 line verbatim, a fully populated line, a total that does not cross-foot,
+the hidden-total shape, and the first format.
+
+**What this one adds:** the tell was a quantity that had no reason to be
+there. Nothing reads `alloc_lt`, and it was exactly 2x the month's real figure.
+A field kept only for provenance is still a check, provided someone sets it
+beside the source.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:

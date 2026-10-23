@@ -1,6 +1,6 @@
 {
  "date": "2026-10-17",
- "fetched_at": "2026-10-17T08:10:54",
+ "fetched_at": "2026-10-17T13:43:41",
  "quotes": {
   "us": [
    {
@@ -130,26 +130,19 @@
   ],
   "CTSH": [
    {
+    "title": "Should Client Wins Require Action From Cognizant Stock Investors?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-17 04:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/client-wins-require-action-cognizant-042501830.html"
+   },
+   {
     "title": "Deutsche Bank Adjusts Price Target on Cognizant Technology Solutions to $75 From $70",
     "publisher": "MT Newswires",
     "when": "2026-10-16 13:37Z",
     "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-adjusts-price-target-133739171.html"
    }
   ],
-  "NVDA": [
-   {
-    "title": "CoreWeave's not-so-secret weapons: Price hikes and an Nvidia trump card",
-    "publisher": "Pitchbook",
-    "when": "2026-10-16 23:30Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/coreweaves-not-secret-weapons-price-233000657.html"
-   },
-   {
-    "title": "1 Obvious Metric That Makes Nvidia a Top Stock to Buy Now",
-    "publisher": "Motley Fool",
-    "when": "2026-10-16 23:04Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/1-obvious-metric-makes-nvidia-230400433.html"
-   }
-  ],
+  "NVDA": [],
   "AVGO": [
    {
     "title": "Broadcom Inc. (AVGO) Falls More Steeply Than Broader Market: What Investors Need to Know",

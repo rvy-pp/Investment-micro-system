@@ -1,6 +1,6 @@
 {
  "date": "2026-09-28",
- "fetched_at": "2026-09-28T08:09:46",
+ "fetched_at": "2026-09-28T12:38:35",
  "quotes": {
   "us": [
    {
@@ -92,6 +92,18 @@
  "news": {
   "ACN": [
    {
+    "title": "Accenture and osapiens Make DS Smith\u2019s Global Supply Chain More Transparent and Ready for Evolving EU Regulation",
+    "publisher": "Business Wire",
+    "when": "2026-09-28 06:59Z",
+    "link": "https://finance.yahoo.com/technology/articles/accenture-osapiens-ds-smith-global-065900529.html"
+   },
+   {
+    "title": "The AI Fear That Crushed Accenture Just Created Its Biggest Opportunity. Here\u2019s What The Anthropic Partnership Means.",
+    "publisher": "Barchart",
+    "when": "2026-09-27 22:42Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-fear-crushed-accenture-just-224251797.html"
+   },
+   {
     "title": "Here Is How to Play Accenture Stock After a New AWS Collaboration",
     "publisher": "Barchart",
     "when": "2026-09-26 19:30Z",
@@ -150,10 +162,22 @@
   ],
   "NVDA": [
    {
-    "title": "Elon Musk Just Gave Nvidia Investors More Good News. Is the Stock a Buy?",
-    "publisher": "Motley Fool",
-    "when": "2026-09-28 00:20Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/elon-musk-just-gave-nvidia-002000003.html"
+    "title": "China chipmaking stocks tumble as Beijing reportedly mulls allowing Nvidia sales",
+    "publisher": "Investing.com",
+    "when": "2026-09-28 06:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/china-chipmaking-stocks-tumble-beijing-062228002.html"
+   },
+   {
+    "title": "Zacks Investment Ideas feature highlights: Alphabet, Apple and NVIDIA",
+    "publisher": "Zacks",
+    "when": "2026-09-28 05:19Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-investment-ideas-feature-highlights-051900169.html"
+   },
+   {
+    "title": "Nvidia, Micron, Alphabet, Oracle and Adobe are part of Zacks Earnings Preview",
+    "publisher": "Zacks",
+    "when": "2026-09-28 05:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-micron-alphabet-oracle-adobe-050100697.html"
    }
   ],
   "AVGO": [
@@ -201,27 +225,21 @@
     "publisher": "Stocktwits",
     "when": "2026-09-27 14:06Z",
     "link": "https://finance.yahoo.com/markets/stocks/articles/amd-just-hit-1-trillion-140602169.html"
-   },
-   {
-    "title": "Prediction: Here's What a $5,000 Investment in AMD Could Be Worth by 2030",
-    "publisher": "Motley Fool",
-    "when": "2026-09-27 01:58Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/prediction-heres-5-000-investment-015800908.html"
    }
   ]
  },
  "errors": [],
  "gift_nifty": {
-  "last": 23145.5,
-  "chg_pct": -0.6,
-  "stamp": "28-Sep-2026 08:09:46",
+  "last": 22910.0,
+  "chg_pct": -1.61,
+  "stamp": "28-Sep-2026 12:38:38",
   "expiry": "27-Oct-2026",
-  "volume": 3271,
+  "volume": 61625,
   "nifty_close": {
    "close": 23140.5,
-   "stamp": "25-Sep-2026 15:30"
+   "stamp": "28-Sep-2026 12:38"
   },
-  "gap_pts": 5.0,
-  "gap_pct": 0.02
+  "gap_pts": -230.5,
+  "gap_pct": -1.0
  }
 }
