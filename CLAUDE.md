@@ -13,8 +13,19 @@ python packages/score/combined.py     # composite + pillar disagreement
 python packages/core/db_state.py      # what is actually in the store
 ```
 
-Remote: **https://github.com/rvy-pp/Investment-micro-system** (private).
+Remote: **https://github.com/rvy-pp/Investment-micro-system** — **PUBLIC**
+(GitHub reports `visibility: PUBLIC`, checked 2026-10-23; this line said
+"private" until then). Anything committed, commit messages included, is world-readable.
 Push after any spec or override change — `data/` and `snapshots/` are ignored.
+
+**`main` carries everything (PM, 2026-10-23: "from now on merge everything to
+main").** After every `git push origin <branch>`, also `git push origin HEAD:main`;
+if that is rejected as non-fast-forward, fetch, merge `origin/main` into the branch
+and push both. Never force-push `main`. A side session or worktree is not done
+until its branch is in `main` (`git rev-list --count origin/main..<branch>` = 0).
+Why: on 2026-10-23 `main` was found stuck at 2026-09-07, 96 commits behind
+`refresh/2026-09-07`. A fork of `main` had no `/concall` skill and no case agents,
+and an `outlook_pack` fix from 7-Sep sat unmerged on a side branch.
 
 **There is no `daily.py` and there must not be.** The deprecated vault system
 has a `/daily` skill that ran for about a month; sharing that word would get the
