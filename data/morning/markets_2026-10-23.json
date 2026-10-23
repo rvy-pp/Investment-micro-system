@@ -1,0 +1,226 @@
+{
+ "date": "2026-10-23",
+ "fetched_at": "2026-10-23T08:10:30",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-22",
+    "close": 7663.43,
+    "prev_date": "2026-10-20",
+    "chg_pct": -0.64
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-22",
+    "close": 26008.86,
+    "prev_date": "2026-10-20",
+    "chg_pct": -1.57
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-22",
+    "close": 52867.98,
+    "prev_date": "2026-10-20",
+    "chg_pct": 0.71
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-22",
+    "close": 10731.98,
+    "prev_date": "2026-10-20",
+    "chg_pct": -4.89
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-22",
+    "close": 212.21,
+    "prev_date": "2026-10-21",
+    "chg_pct": -4.4
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-22",
+    "close": 507.93,
+    "prev_date": "2026-10-21",
+    "chg_pct": -8.1
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-22",
+    "close": 412.35,
+    "prev_date": "2026-10-21",
+    "chg_pct": -4.52
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-22",
+    "close": 323.24,
+    "prev_date": "2026-10-21",
+    "chg_pct": -4.31
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-22",
+    "close": 258.74,
+    "prev_date": "2026-10-21",
+    "chg_pct": 7.69
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-22",
+    "close": 73.72,
+    "prev_date": "2026-10-21",
+    "chg_pct": 6.0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture Insider Sold Shares Worth $1,430,826, According to a Recent SEC Filing",
+    "publisher": "MT Newswires",
+    "when": "2026-10-22 20:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-insider-sold-shares-worth-202055846.html"
+   },
+   {
+    "title": "What Is Accenture (ACN) Signaling With Its Federal AI Push And China Review?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-22 18:10Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-signaling-federal-ai-181013411.html"
+   },
+   {
+    "title": "IBM Sinks 7% as CEO\u2019s AI Spending Caution Overshadows Earnings Beat; Accenture and Infosys Ease Back",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-10-22 13:03Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ibm-sinks-7-ceo-ai-130351021.html"
+   },
+   {
+    "title": "Zacks Investment Ideas feature highlights: Accenture, Hasbro and MSCI",
+    "publisher": "Zacks",
+    "when": "2026-10-22 08:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-investment-ideas-feature-highlights-080800045.html"
+   },
+   {
+    "title": "Accenture Stock Gets Downgraded as the Good News May Already Be Priced In",
+    "publisher": "Barrons.com",
+    "when": "2026-10-21 15:32Z",
+    "link": "https://finance.yahoo.com/m/33a59162-2840-349b-a008-1431392a7cf7/accenture-stock-gets.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant's DyFlex Acquisition to Likely Boost SAP, AI Capabilities, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-22 15:33Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-apos-dyflex-acquisition-likely-153325811.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Earnings Expected to Grow: What to Know Ahead of Next Week's Release",
+    "publisher": "Zacks",
+    "when": "2026-10-22 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-earnings-expected-grow-130008144.html"
+   },
+   {
+    "title": "Introducing Cognizant AI Nexus: helping enterprises govern the cost, quality and results of AI",
+    "publisher": "PR Newswire",
+    "when": "2026-10-22 10:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/introducing-cognizant-ai-nexus-helping-103000812.html"
+   },
+   {
+    "title": "Cognizant to Acquire DyFlex Solutions, Accelerating AI-Led Enterprise Transformation for SAP Clients in Australia and New Zealand",
+    "publisher": "PR Newswire",
+    "when": "2026-10-21 23:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-acquire-dyflex-solutions-accelerating-232500308.html"
+   },
+   {
+    "title": "Cognizant to Acquire DyFlex Solutions, Accelerating AI-Led Enterprise Transformation for SAP Clients in Australia and New Zealand",
+    "publisher": "PR Newswire",
+    "when": "2026-10-21 23:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-acquire-dyflex-solutions-accelerating-232500739.html"
+   },
+   {
+    "title": "Cognizant launches dedicated Gemini group to scale agentic AI",
+    "publisher": "Verdict",
+    "when": "2026-10-21 09:20Z",
+    "link": "https://finance.yahoo.com/news/cognizant-launches-dedicated-gemini-group-092004851.html"
+   },
+   {
+    "title": "What Gave IBM Stock Its Edge Over Cognizant?",
+    "publisher": "Trefis",
+    "when": "2026-10-20 19:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/gave-ibm-stock-edge-over-194300878.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [
+   {
+    "title": "Broadcom (AVGO) Stock Could Be A Bargain Following Its 5.7x Run",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-23 01:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-avgo-stock-could-bargain-011039774.html"
+   },
+   {
+    "title": "Broadcom Inc. (AVGO) Suffers a Larger Drop Than the General Market: Key Insights",
+    "publisher": "Zacks",
+    "when": "2026-10-22 20:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-inc-avgo-suffers-larger-204502208.html"
+   },
+   {
+    "title": "Broadcom Stocks Dip 4.5% After New AI Fraud Defense Launch",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-22 18:33Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-dip-4-5-183352325.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Is nVent Electric (NVT) Undervalued On Its AMD AI Data Center Cooling Deal?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-22 22:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvent-electric-nvt-undervalued-amd-221535600.html"
+   },
+   {
+    "title": "AMD Stocks Drop 7.53% as AI Spending Fears Challenge a $620 Target",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-22 18:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-drop-7-53-182905189.html"
+   },
+   {
+    "title": "What Does an AI Agent Need a CPU For? Why Nvidia Wants In on the Business Dominated by AMD and Intel",
+    "publisher": "Motley Fool",
+    "when": "2026-10-22 18:25Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/does-ai-agent-cpu-why-182500550.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22835.5,
+  "chg_pct": -0.14,
+  "stamp": "23-Oct-2026 08:10:04",
+  "expiry": "27-Oct-2026",
+  "volume": 4315,
+  "nifty_close": {
+   "close": 22687.65,
+   "stamp": "22-Oct-2026 15:30"
+  },
+  "gap_pts": 147.8,
+  "gap_pct": 0.65
+ }
+}

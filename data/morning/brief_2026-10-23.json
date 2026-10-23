@@ -1,0 +1,399 @@
+{
+ "date": "2026-10-23",
+ "generated_at": "2026-10-23T08:13:03+05:30",
+ "mail": {
+  "window": "24h to 08:04 IST",
+  "n_scanned": 172,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Ambit (SELL): every US$100/t fall in LME aluminium cuts Hindalco EPS Rs4-5 and value Rs40-50/share; Bay Minette contribution delayed.",
+      "source": "Ambit — Ambit Metals: HNDL (SELL) - New capacity, delayed earnings contribution",
+      "received": "09:40",
+      "detail": {
+       "summary": "Ambit argues Novelis' new Bay Minette plant will take several quarters to contribute to PAT, using Steel Dynamics' loss-making flat-rolled division as the precedent. Lower aluminium prices also hurt Hindalco's upstream earnings and Indian recycling profitability. Ambit prefers ferrous over non-ferrous metals.",
+       "points": [
+        "Every US$100/t LME aluminium fall: EPS -Rs4-5/share",
+        "Stock impact: -Rs40-50/share per US$100/t",
+        "Steel Dynamics FRP: EBIT losses for 5 straight quarters",
+        "Bay Minette may take several quarters to turn EBITDA-positive",
+        "Hindalco more defensive than upstream-focused VAML in falling prices"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: LME zinc stocks above 163,000t and Brent above $110 after the Aramco strike; base metals seen staying under selling pressure.",
+      "source": "Emkay — Commodity Market Report: Middle East flare-Up pushes oil higher, weighs on gold and base metals",
+      "received": "09:42",
+      "detail": {
+       "summary": "Base metals are weak on a 1-2% equity decline, with Brent above $110 after a drone strike on a Saudi Aramco facility. Emkay expects base metals to stay under pressure with selling at higher levels, though lead is showing early stabilisation on the LME.",
+       "points": [
+        "LME zinc inventory above 163,000t",
+        "MCX zinc backwardation above 22",
+        "US dollar index around 101.66; Brent above $110/bbl",
+        "Codelco 2027 European copper premium a record $350/t, +7.7% YoY",
+        "Copper contango on MCX narrowed to below 7 from 8"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura initiated India aluminium ('Beyond war premium') with a group call at 11:30 IST on 22 Oct; ratings and targets are not in the mail.",
+      "source": "Nomura — Analyst Group Call - New Initiations: India Aluminum - Beyond war premium",
+      "received": "10:46"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "JSW Steel reports today ~15:00; Nuvama sees EBITDA Rs103.4bn and PAT Rs51.6bn, 8% and 19% above Bloomberg consensus.",
+      "source": "Nuvama — Result Estimates for 23rd October 2026",
+      "received": "17:35",
+      "detail": {
+       "summary": "Nuvama's pre-result estimates for JSW Steel sit above Bloomberg consensus on every line shown, with the largest gap on PAT.",
+       "points": [
+        "EBITDA Rs103.43bn vs consensus Rs96.11bn",
+        "PAT Rs51.61bn vs consensus Rs43.50bn",
+        "EBITDA margin 19.39% vs consensus 18.21%",
+        "Revenue Rs533.51bn vs consensus Rs527.68bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Jindal Steel reports today ~13:00; Nuvama PAT Rs5.26bn is 24% below the Rs6.88bn consensus, though EBITDA is 3% above.",
+      "source": "Nuvama — Result Estimates for 23rd October 2026",
+      "received": "17:35",
+      "detail": {
+       "summary": "Nuvama's EBITDA and revenue estimates for Jindal Steel are slightly above consensus, but its PAT estimate is well below. The ticker in the mail is JINDALST.",
+       "points": [
+        "PAT Rs5.26bn vs consensus Rs6.88bn",
+        "EBITDA Rs23.22bn vs consensus Rs22.57bn",
+        "EBITDA margin 14.75% vs consensus 14.44%",
+        "Revenue Rs157.43bn vs consensus Rs156.30bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Jindal Stainless 2Q EBITDA Rs14.3bn in line; volumes 0.66MT (+14% QoQ), EBITDA/t Rs21,600 beat the Rs18-20k guide.",
+      "source": "Ambit — Ambit Metals: Jindal Stainless (BUY) - 2QFY27 Volumes rebound, margins hold up",
+      "received": "07:52",
+      "detail": {
+       "summary": "Volumes recovered from the 1Q gas disruption and EBITDA matched Ambit and consensus. Raw material cost/t rose 12% QoQ, but a 36% fall in power & fuel cost/t offset most of it. Call questions centre on the 7-9% FY27 volume guide, Chinese imports and 2H EBITDA/t.",
+       "points": [
+        "EBITDA Rs14.3bn in line; EBITDA/t Rs21,600, -6% QoQ",
+        "Volumes 0.66MT, +3% YoY, +14% QoQ",
+        "Exports +20% QoQ, +36% YoY; 11% of mix",
+        "Net debt Rs31.2bn; four subsidiaries to merge into JSL",
+        "FY27 guide 7-9% implies ~0.75-0.78MT per 2H quarter"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Shree reports today (call 4:30pm): Emkay sees EBITDA/t ~Rs850, -23% yoy and -17% qoq; Nuvama EBITDA Rs7.72bn vs Rs7.80bn consensus.",
+      "source": "Emkay — Cement Corner: Shree preview, Nuvoco result first cut",
+      "received": "20:05",
+      "detail": {
+       "summary": "Emkay expects Shree's 2QFY27 volumes up about 15% yoy while grey realisation slips about 1% qoq, compressing blended EBITDA/t. It keeps ADD with a Rs27,000 TP on 16x 2QFY29E EV/EBITDA. Nuvama's preview has EBITDA marginally below consensus.",
+       "points": [
+        "EBITDA/t ~Rs850, -23% yoy, -17% qoq (Emkay)",
+        "Volumes +15% yoy; grey realisation -1% qoq (Emkay)",
+        "Emkay ADD, TP Rs27,000, CMP Rs22,330",
+        "Nuvama EBITDA Rs7.72bn vs consensus Rs7.80bn; margin 15.82% vs 16.38%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvoco 2Q EBITDA Rs4.1bn beat by ~5% on realisation, yet EBITDA/t fell 18% qoq to Rs869 as expected price hikes failed.",
+      "source": "Nomura — Quick Note - Nuvoco Vistas (Buy) - Strong volume growth amid sequential EBITDA weakness",
+      "received": "04:10",
+      "detail": {
+       "summary": "Nuvoco beat on realisation and volumes, but management said expected cement price increases did not materialise, so higher input costs could not be passed on. Cost per tonne rose on fuel and monsoon-hit domestic coal supply, and spot petcoke and coal are firming again. Nomura keeps Buy, TP Rs400.",
+       "points": [
+        "EBITDA Rs4.1bn, +11% yoy, -28% qoq",
+        "EBITDA/t Rs869 vs Rs1,065 qoq; realisation Rs5,936/t, +1% qoq",
+        "Cost/t Rs5,067, +5.7% qoq on rm-energy (+10.9%)",
+        "Volumes 4.7mt, +9% yoy, -12% qoq",
+        "Nomura Buy, TP Rs400 (8x EV/EBITDA)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Petcoke at ~USD187/t keeps 2HFY27 costs high; Nuvama says October trade hikes of Rs10-15/bag fall short, stays neutral.",
+      "source": "Nuvama — Nuvama Daily: Sector Update: Cement (+1 more in Outlook)",
+      "received": "09:34",
+      "detail": {
+       "summary": "Nuvama says demand improved month on month in October on easing rains and pre-festive buying, with government capex strong. Petcoke has jumped on geopolitical volatility, so costs stay elevated in the second half and more price hikes are needed.",
+       "points": [
+        "Petcoke ~USD187/t; H2FY27E costs to stay elevated",
+        "Oct hikes: Rs10-15/bag trade, Rs15-20/bag non-trade",
+        "Govt capex +40% yoy Apr-Aug'26; residential launches -10% yoy",
+        "Neutral on cement; JK Cement top pick"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "October coal generation +25.07% YoY to 20 Oct on peak demand of 260,730MW (+23.7%); YTD coal generation +11.84%.",
+      "source": "Nuvama — Weekly Power Demand",
+      "received": "09:14",
+      "detail": {
+       "summary": "Nuvama's weekly power data to 20 Oct shows power demand and coal-fired generation well above last year, with the October run-rate far faster than the YTD pace.",
+       "points": [
+        "Oct'26 peak demand 260,730MW, +23.7% YoY",
+        "Oct coal generation +25.07% YoY",
+        "YTD coal generation +11.84% YoY",
+        "Data till 20 Oct"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "September core sector output +7.9%, with coal production rebounding +10.7% after earlier declines.",
+      "source": "CLSA — CLSA India Research | Eternal | Mahindra Finance | India Power | India Economics",
+      "received": "09:02",
+      "detail": {
+       "summary": "The headlines in CLSA's pack report September core sector growth of 7.9%, led by coal and electricity, on a favourable base. Electricity generation growth eased slightly on heatwave conditions.",
+       "points": [
+        "Core sector growth Sep: 7.9%",
+        "Coal production +10.7%, after negative trend",
+        "Favourable base effect cited",
+        "Electricity generation growth eased (heatwave)"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM: FIIs turned net buyers of EMS in 2QFY27 for the first time in four quarters while DIIs sold; retail selling led by Dixon & Kaynes.",
+      "source": "JPM — India Daily: India EMS: Ownership analysis",
+      "received": "09:28",
+      "detail": {
+       "summary": "JPM's ownership analysis of six EMS stocks at Sep-26 shows a reversal of the prior flow pattern: FIIs bought broadly, DIIs turned sellers, retail also sold. The sector rose 15% in 2QFY27 against a 5% Nifty fall.",
+       "points": [
+        "EMS stocks +15% in 2QFY27 vs Nifty -5%",
+        "FII buying led by Avalon, Cyient DLM, Syrma",
+        "DII selling led by Cyient DLM, Avalon, Syrma",
+        "Retail ownership -50bps QoQ; led by Dixon & Kaynes"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Press flagged by Nomura: mobiles under 30% of festive e-commerce sales vs ~35% last year, with no GST boost; a mild negative for Dixon.",
+      "source": "Nomura — India Consumer Durables and EMS: Why festive sales are losing their sparkle this year",
+      "received": "09:06",
+      "detail": {
+       "summary": "A news item relayed in Nomura's digest says festive e-commerce started subdued: pricier smartphones, no repeat of last year's GST-cut boost and cautious spending weighed on high-value categories. A Flipkart release separately says Big Billion Days orders and buyers grew 20-22%. Both are clippings, not Nomura estimates.",
+       "points": [
+        "Mobile phones under 30% of festive sales vs ~35% last year",
+        "No repeat of last year's GST-cut appliance boost",
+        "Flipkart: orders, units & buyers +20-22% YoY",
+        "Large appliances +30% in opening hour"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Infosys reports today: Nuvama expects the FY27 CC guide trimmed to 1.0-2.5% (from 1.5-3%); options price a 4.09% straddle, IV 39.8.",
+      "source": "Nuvama — Result Estimates for 23rd October 2026 (+ derivatives pre-positioning 23/10)",
+      "received": "17:35",
+      "detail": {
+       "summary": "Nuvama's estimates are marginally above Bloomberg consensus on revenue, EBIT and PAT; it expects a guidance trim with margin guidance held. The derivatives desk reads the pre-result rally as in line with the IT sector uptick and the straddle as a moderate-reaction setup.",
+       "points": [
+        "Revenue INR 492.43bn vs street 491.08bn",
+        "EBIT margin 21.41% vs street 21.20%",
+        "Revenue +1.7% CC QoQ incl 0.5% inorganic",
+        "PAT INR 79.46bn vs street 79.04bn",
+        "IV 39.8 vs 32.96 average; PCR 0.83 vs 0.74"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge reports today (call 17:30): Nuvama sees revenue +13.2% CC QoQ (4.0% organic), PAT Rs7.07bn vs street Rs6.61bn; straddle 5.35%.",
+      "source": "Nuvama — Result Estimates for 23rd October 2026 (+ derivatives pre-positioning 23/10)",
+      "received": "17:35",
+      "detail": {
+       "summary": "Nuvama is above street on all lines, mostly through PAT. The derivatives desk flags year-low OI, call build at 1960/2000 and expensive IV, so the reaction could be sharp. Watch points: board composition, Encora integration, demand.",
+       "points": [
+        "Revenue INR 64.10bn vs street 63.19bn",
+        "EBIT margin 16.14% vs street 16.05%",
+        "PAT INR 7.07bn vs street 6.61bn",
+        "IV 47.21 vs 35.55 average",
+        "Resistance 1980, support 1865"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cyient DET EBIT margin 14.2% beat Kotak's 13.2% on 1.6% organic cc growth; management holds 14%+ into 2H despite wages.",
+      "source": "Kotak — Cyient (FV Rs1,350, ADD): Strong quarter lends credibility to turnaround (+5 more in Outlook)",
+      "received": "02:29",
+      "detail": {
+       "summary": "Kotak raised its FV on a margin beat and record September-quarter order intake. Morgan Stanley stays Underweight on relative valuation, saying Cyient still lags ER&D peers on organic growth. For LTTS, KPIT and Tata Elxsi the read is margin resilience, with growth still acquisition-aided.",
+       "points": [
+        "Kotak FV Rs1,350 from Rs1,100; EPS up ~5-12% FY27-29",
+        "Revenue +7.5% cc; TAO added 590bp inorganic",
+        "Order intake US$158mn, +20.8% YoY",
+        "Morgan Stanley UW, PT Rs982 from Rs820"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "US 10-year fell 15bp to 4.97%, the biggest one-day drop since March 2023, alongside a semis rout and Brent +3.9% to $113.09.",
+      "source": "JPM — JPM Overnight Brief! 10/23",
+      "received": "06:03",
+      "detail": {
+       "summary": "A flight-to-quality rally ran alongside a tech rout and an oil spike. JPM calls the selloff a buyers' strike on risk, not a fundamental break, and expects a volatile tape until geopolitics settle or hyperscalers give a firmer capex message.",
+       "points": [
+        "META -7% on capital-raise language; LRCX -11.4%",
+        "Brent +3.9% to $113.09 on reported Iran strike plans",
+        "French 10Y above 5%; EM equities -1.4%, Japan -2.7%",
+        "Hyperscaler results next week: GOOGL, MSFT, AMZN"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA sees 100bps cumulative RBI hikes after October's 25bp; MPC minutes show two members most hawkish on inflation expectations.",
+      "source": "BofA — BofA India Insight: RBI MPC Minutes",
+      "received": "08:50",
+      "detail": {
+       "summary": "The MPC minutes reiterate the hawkish pivot that began with the October 25bp hike. Two members argued for a pre-emptive move on rising inflation expectations; two were relatively neutral, stressing supply-side inflation.",
+       "points": [
+        "25bps hike at the October meeting",
+        "Two members most hawkish, citing inflation expectations",
+        "Two relatively neutral, stressing supply-side inflation",
+        "BofA forecast: cumulative 100bps hikes"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: US$217bn of 12M net foreign EM equity selling looks like capitulation; India saw genuine foreign-ownership cuts.",
+      "source": "CLSA — Global Equity Strategy: Paradoxical performance (+7 more in Outlook)",
+      "received": "22:02",
+      "detail": {
+       "summary": "EM net foreign selling is the most severe since 2009 even as EM momentum and foreign ownership rose. In Korea and Taiwan this is mechanical; India and Indonesia saw typical bearish reductions. The 6ppt earnings-yield gap argues for partial rotation from EM debt to equities.",
+       "points": [
+        "US$217bn 12M net foreign EM equity selling",
+        "Net selling 1.5% of market cap, severest since 2009",
+        "EM foreign ownership rose 30.0% to 33.7%",
+        "EM earnings yield above bond yield by 6ppts"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "KEI 2Q EBITDA margin 10% missed Kotak's 12.1% and FY27 guide cut to ~11%; Kotak cuts EPS 4-5%, CLSA upgrades to O-PF anyway.",
+      "source": "Kotak — KEI Industries (FV Rs4,000, REDUCE): Margin outlook turns cautious",
+      "received": "06:37",
+      "detail": {
+       "summary": "Revenue beat but margin missed, and management now guides FY27 EBITDA margin (incl. other income) to ~11%. Kotak sees new competition weighing on wires & cables profitability; CLSA reads the post-correction price as already pricing it in.",
+       "points": [
+        "Sales +39%, EBITDA +40% yoy",
+        "Gross margin 22.2% vs Kotak 25.5%",
+        "Kotak FV Rs4,000 (from Rs4,400); EPS cut 4-5%",
+        "CLSA: HLD to O-PF, TP Rs4,845 from Rs5,170",
+        "Order book Rs51.9bn, +36.5% yoy"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: Navratri PV retail -22% and 2W -3% yoy on the GST-cut base, but Sep+Oct to date flat; TVS +200bps, M&M +100bps share.",
+      "source": "CLSA — India Autos: Festive pulse",
+      "received": "14:05",
+      "detail": {
+       "summary": "Last year's GST-cut pent-up demand makes Navratri look weak, but cumulative Sep + Oct-to-date PV and 2W volumes are broadly flat. CLSA expects mid to high-single-digit festive growth across Sep-Nov; CV and tractor retail held up.",
+       "points": [
+        "CV retail +15% yoy, tractors +9% yoy, Sep + Oct YTD",
+        "Hero -240bps, Maruti -160bps share",
+        "M&M tractor wholesales -21% yoy in Sep-26"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Havells 2Q revenue +35%, EBITDA +31% (~8%/3% ahead of Kotak); W&C EBIT margin down 360bps to 10.1%; 5-7% price hikes planned for 3Q.",
+      "source": "Kotak — Havells India (FV Rs1,250, ADD): A concentrated beat on profitability (+2 more in Outlook)",
+      "received": "06:47",
+      "detail": {
+       "summary": "The beat was concentrated in switchgear, while W&C and Lloyd margins were hurt by raw-material volatility and under-absorption. Kotak keeps ADD with FV unchanged at Rs1,250.",
+       "points": [
+        "Switchgear sales +31%, EBIT +49% yoy",
+        "Lloyd EBIT loss Rs1bn",
+        "5-7% more price hikes planned in 3Q",
+        "FV Rs1,250 at 35x Dec-2028E PE"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "META fell 7% on capital-raise language and LRCX lost 11.4%, leading the overnight semis selloff; GOOGL, MSFT, AMZN report next week.",
+    "source": "JPM — JPM Overnight Brief! 10/23"
+   },
+   {
+    "text": "GS lifts Wiwynn TP to NT$4,000 on September revenue 19% above estimates; keeps CoreWeave Buy as funding for its $129bn backlog comes into focus.",
+    "source": "GS — [GS Daily] 23 Oct"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
