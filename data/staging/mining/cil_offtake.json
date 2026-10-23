@@ -77,6 +77,24 @@
    "fytd_ly": 245.2,
    "doc": "production_1.pdf (Jul'26)",
    "how": "pypdf row parse; digest: 'July 2026 dispatch 63.7mt (+17.4% YoY)' (Kotak 03-08)"
+  },
+  {
+   "month": "2026-08",
+   "offtake": 60.6,
+   "offtake_ly": 57.4,
+   "fytd": 322.9,
+   "fytd_ly": 302.6,
+   "doc": "Production_August.pdf (coalindia.in, Aug'26)",
+   "how": "scanned filing, pypdf text unparseable; read from the rendered page 2026-10-23 and hand-verified: subsidiaries sum to 60.5 / 322.9, printed growth 5.5% / 6.7% reproduces, Jul FYTD_LY 245.2 + 57.4 = 302.6. Corroboration: 'Coal India Aug dispatches +5.5% yoy against production -5.7% yoy' (morning brief 2026-09-01, Emkay); 'August 2026: Offtake grew ~6% YoY' (PULSE note, mail 2026-09-01)"
+  },
+  {
+   "month": "2026-09",
+   "offtake": 61.2,
+   "offtake_ly": 54.4,
+   "fytd": 384.2,
+   "fytd_ly": 357.0,
+   "doc": "Production_Sep_26.pdf (coalindia.in, Sep'26)",
+   "how": "scanned filing, pypdf text unparseable; read from the rendered page 2026-10-23 and hand-verified: subsidiaries sum to 61.2 / 384.2, printed growth 12.5% / 7.6% reproduces, Aug FYTD 322.9 + 61.2 = 384.1 (rounding), FYTD_LY 302.6 + 54.4 = 357.0. Corroboration: 'September 2026: Offtake grew ~13% YoY' (PULSE note, mail 2026-10-02)"
   }
  ]
 }
