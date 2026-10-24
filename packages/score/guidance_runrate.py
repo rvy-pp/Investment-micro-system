@@ -67,7 +67,37 @@ POLARITY = {
     "coal_volume": +1, "ebitda": +1,
     "ebitda_per_t": +1, "margin": +1, "realisation": +1,
     "cost_per_t": -1, "capex": -1, "net_debt": -1,
+    # Added 2026-10-24 with the Q2 FY27 concall load. fuel_cost is Rs per
+    # '000 kcal (Shree), eps is per share, ebit_margin_pct is the Results-tab
+    # name so an IT margin print grades there and here off one row.
+    "fuel_cost": -1, "eps": +1, "ebit_margin_pct": +1,
+    # DELIBERATELY ABSENT: revenue_growth_cc_yoy. gap_of() takes a RATIO to the
+    # target, which is right for a level (21.0% margin vs 20%) and wrong for a
+    # growth rate: 0.5% against a 1% floor reads -50%, 1.9% against 2% reads
+    # -5%, for the same kind of miss. A growth target needs a pp gap. Until
+    # that exists the commitment is stored and refused, not mis-scored.
 }
+
+
+def period_matches(guided: str, reported: str | None) -> bool:
+    """Does an actual for `reported` count toward a target for `guided`?
+
+    A FULL-YEAR target takes every quarter of its year; a QUARTERLY target takes
+    only its own quarter. The first version tested `guided[-4:] in reported` for
+    both, so a Q3FY27 target averaged the Q1 and Q2 prints of FY27 and scored a
+    quarter that had not reported. Caught 2026-10-24 loading Shree's Q3 fuel
+    guide (Rs2.15-2.20/kcal): the Q1 1.95 and Q2 2.09 prints averaged to 2.02
+    and read +6.0% "ahead" of a quarter three weeks old. No stored commitment
+    had triggered it before (Tata's two Q2FY27 lines carry no matching actual),
+    which is why nothing complained.
+    """
+    if not reported:
+        return False
+    g = guided.upper().replace(" ", "")
+    r = reported.upper().replace(" ", "")
+    if g.startswith("Q"):
+        return r == g
+    return g[-4:] in r
 
 
 def fy_window(period: str) -> tuple[dt.date, dt.date, int] | None:
@@ -180,7 +210,7 @@ def score_entity(conn, entity_id: str, as_of: str) -> tuple:
             "SELECT value_num, period FROM observations WHERE entity_id=? "
             "AND factor='actual' AND metric=? AND as_of<=?",
             (entity_id, g["metric"], as_of)).fetchall()
-        acts = [r for r in acts if r[1] and g["period"][-4:] in r[1]]
+        acts = [r for r in acts if period_matches(g["period"], r[1])]
         if not acts:
             skipped.append(f"{label} no actual")
             continue
@@ -246,7 +276,7 @@ def main() -> int:
             "SELECT as_of, value_num, period, quote FROM observations "
             "WHERE entity_id=? AND factor='actual' AND metric=? AND as_of<=? "
             "ORDER BY as_of", (a.entity, g["metric"], a.as_of)).fetchall()
-        acts = [r for r in acts if r["period"] and g["period"][-4:] in r["period"]]
+        acts = [r for r in acts if period_matches(g["period"], r["period"])]
         if not acts:
             withheld.append((label, "no cited actual yet — unanswered, not neutral"))
             continue
