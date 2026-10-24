@@ -1,5 +1,6 @@
 """Load P4 commitments and actuals from the Q2 FY27 concall notes: Infosys,
-Coforge, Shree Cement — plus the Q1 FY27 commitments those notes grade.
+Coforge, Shree Cement, JSW Steel, Jindal Steel — plus the Q1 FY27 commitments
+those notes grade.
 
 Hand-transcribed per the `concall-ingest` skill from
 `AI Insights/<TICKER>_Concall/Concall - <TICKER> - Q<n> FY27.md`. Every row
@@ -10,7 +11,20 @@ None of the three had a guidance row before this. The Q1 commitments are loaded
 here for the first time, those the Q2 call settled are loaded RESOLVED (met /
 missed, resolved on the Q2 call date), and the rest stay open.
 
-WHO THIS SCORES. Shree only. Infosys and Coforge are IT, which has no specs and
+STEEL (added the same day). Coking-coal guides are QoQ CHANGES in USD/t and go in
+`cost_per_t` with unit "USD/t coking coal, qoq", Tata's convention, so
+guidance_forward's OBSERVABLE map reads them against coking_coal_spot_aus. JSW's
+Q1 call date is not in its note ("exact date not stated"); 2026-07-19, the day it
+was analysed, is the latest the call can have been, so no row claims foresight.
+JSW's FY27 sales 28.6 MT comes from the Q4 FY26 call (14 May 2026): it was
+never loaded and is still live. Its scope includes BMM Ispat, while the reported
+consolidated sales it is graded against do not, so the run-rate reads slightly
+low. Jindal's FY27 10.5-11 MT is already stored (id 35) and is not duplicated.
+Existing row id 31 (jsw, FY27 cost_per_t 12-15, missed) is left alone. Its quote
+fits either the Q4-call guide for Q1 or the Q1-call guide for Q2, and only the
+latter is loaded here, under Q2FY27.
+
+WHO THIS SCORES. Shree, JSW and Jindal. Infosys and Coforge are IT, which has no specs and
 no peer_group, so run_scores never reaches them (CLAUDE.md: "IT still scores
 NOTHING"). Their rows are a delivery record for v_guidance_track_record and the
 Results tab, nothing more.
@@ -68,6 +82,11 @@ CALLS = {
     "concall-coforge-q2fy27":  ("COFORGE", "Q2 FY27", "coforge", "2026-10-23"),
     "concall-shreecem-q1fy27": ("SHREECEM", "Q1 FY27", "shree", "2026-07-31"),
     "concall-shreecem-q2fy27": ("SHREECEM", "Q2 FY27", "shree", "2026-10-23"),
+    "concall-jswsteel-q4fy26":  ("JSWSTEEL", "Q4 FY26", "jsw_steel", "2026-05-14"),
+    "concall-jswsteel-q1fy27":  ("JSWSTEEL", "Q1 FY27", "jsw_steel", "2026-07-19"),
+    "concall-jswsteel-q2fy27":  ("JSWSTEEL", "Q2 FY27", "jsw_steel", "2026-10-23"),
+    "concall-jindalstel-q1fy27": ("JINDALSTEL", "Q1 FY27", "jindal_steel", "2026-07-25"),
+    "concall-jindalstel-q2fy27": ("JINDALSTEL", "Q2 FY27", "jindal_steel", "2026-10-23"),
 }
 Q2_CALL = "2026-10-23"
 
@@ -156,6 +175,102 @@ GUIDANCE = [
      None, "INR/'000 kcal",
      "For the coming quarter, we believe this will be around INR 2.15-INR 2.20.",
      "open", None, None),
+    # ---- JSW STEEL ---------------------------------------------------------
+    ("concall-jswsteel-q4fy26", "volume", "FY27", "point", 28_600_000.0, None, None,
+     None, "t consol sales",
+     "FY27 production: 29.75 MT; sales: 28.6 MT — excluding BPSL JV, including "
+     "BMM Ispat; like-to-like growth of ~13% production and ~10% sales",
+     "open", None, None),
+    ("concall-jswsteel-q1fy27", "volume", "Q2FY27", "direction", None, None, None,
+     "up", "t consol sales",
+     "Q2 volumes higher QoQ — BF-3 ramp (already ~80%) + Ohio recovery",
+     "met", Q2_CALL, 7_460_000.0),
+    ("concall-jswsteel-q1fy27", "cost_per_t", "Q2FY27", "range", None, 12.0, 15.0,
+     None, "USD/t coking coal, qoq",
+     "Q2 coking coal +$12–15/t; recent coal softening reflects in Q3; iron ore "
+     "relief late-Q2 and Q3",
+     "met", Q2_CALL, 10.0),
+    ("concall-jswsteel-q1fy27", "cost_per_t", "Q3FY27", "direction", None, None, None,
+     "down", "USD/t coking coal, qoq",
+     "Q2 coking coal +$12–15/t; recent coal softening reflects in Q3; iron ore "
+     "relief late-Q2 and Q3",
+     "open", None, None),
+    ("concall-jswsteel-q2fy27", "cost_per_t", "Q3FY27", "point", 25.0, None, None,
+     None, "USD/t coking coal, qoq",
+     "Coking coal costs are expected to rise by about $25 in Q3, in line with the "
+     "sharp increase in prices in the latter half of Q2.",
+     "open", None, None),
+    ("concall-jswsteel-q2fy27", "volume", "Q3FY27", "direction", None, None, None,
+     "up", "t consol sales",
+     "Looking ahead, we expect volumes to increase in Q3 with stronger production "
+     "on the back of full production of Vijayanagar BF-3 and JVML operations.",
+     "open", None, None),
+    ("concall-jswsteel-q2fy27", "capacity", "Q4FY27", "point", 15_000_000.0, None,
+     None, None, "t iron ore Karnataka",
+     "The three new mines in Karnataka are now expected to be commissioned in Q4 "
+     "of FY 2027. This will provide additional capacity of around 4 million tons, "
+     "taking the overall capacity in Karnataka to about 15 million tons per annum "
+     "of iron ore.",
+     "open", None, None),
+    # ---- JINDAL STEEL ------------------------------------------------------
+    ("concall-jindalstel-q1fy27", "cost_per_t", "Q2FY27", "range", None, 12.0, 15.0,
+     None, "USD/t coking coal, qoq",
+     "Q2 coking coal: +$12–15/t (moderating from Q1's +$23/t).",
+     # Met: the CFO says "within the guidance", the MD "$12-$14". No single
+     # number was stated, so actual_value stays NULL rather than a picked point.
+     "met", Q2_CALL, None),
+    ("concall-jindalstel-q1fy27", "hot_metal_rate", "Q2FY27", "point", 12000.0, None,
+     None, None, "t/day Angul BF2",
+     "Angul BF2 ramp: ~11,000 t/day now → 12,000 t/day by Sept, 13,000 t/day "
+     "(100%) by Dec 2026",
+     "missed", Q2_CALL, 10000.0),
+    ("concall-jindalstel-q1fy27", "hot_metal_rate", "Q3FY27", "point", 13000.0, None,
+     None, None, "t/day Angul BF2",
+     "Angul BF2 ramp: ~11,000 t/day now → 12,000 t/day by Sept, 13,000 t/day "
+     "(100%) by Dec 2026",
+     "open", None, None),
+    ("concall-jindalstel-q1fy27", "capacity", "Q2FY27", "point", 18_000_000.0, None,
+     None, None, "t/yr slurry pipeline",
+     "Slurry pipeline: commission first half August 2026 (rain caveat: could slip "
+     "to end-Aug); 18 MTPA (up to 20 at lower water); saving reflects \"from "
+     "September.\"",
+     # Commissioned only by the 23-Oct call, commercial flow from 24-Oct: after
+     # the quarter the promise named. Nothing flowed in Q2, so no actual value.
+     "missed", Q2_CALL, None),
+    ("concall-jindalstel-q1fy27", "net_debt_ebitda", "Q2FY27", "point", 1.5, None,
+     None, None, "x, sub-",
+     "Net debt/EBITDA sub-1.5x by Q2 FY27 (reaffirmed).",
+     # 1.51x is not sub-1.5x. The note grades it Partial; the ledger is binary
+     # and the promise was a ceiling.
+     "missed", Q2_CALL, 1.51),
+    ("concall-jindalstel-q1fy27", "ebitda_per_t", "Q2FY27", "direction", None, None,
+     None, "up", "INR/t",
+     "Operating-leverage reversal ~Rs 2,000/t in Q2 as shutdown ends and volumes "
+     "recover.",
+     "missed", Q2_CALL, 10529.0),
+    ("concall-jindalstel-q1fy27", "captive_ore_share", "FY27", "point", 40.0, None,
+     None, None, "% backward-integrated iron ore, exit",
+     "Iron-ore backward integration 28% → ~40% exit FY27.",
+     "open", None, None),
+    ("concall-jindalstel-q2fy27", "hot_metal_rate", "Q3FY27", "point", 12000.0, None,
+     None, None, "t/day Angul BF2",
+     "In November, we are aiming for 11,000 tons, and then December, 12,000 tons "
+     "per day.",
+     "open", None, None),
+    ("concall-jindalstel-q2fy27", "cost_per_t", "Q3FY27", "range", None, 20.0, 25.0,
+     None, "USD/t coking coal, qoq",
+     "Coking coal, I would say $20-$25.",
+     "open", None, None),
+    ("concall-jindalstel-q2fy27", "capacity", "Q1FY28", "point", 2_000_000.0, None,
+     None, None, "t/yr DRI2",
+     "The DRI plant will be commissioned again in June 2027.",
+     "open", None, None),
+    ("concall-jindalstel-q2fy27", "capacity", "Q1FY28", "point", 6_000_000.0, None,
+     None, None, "t/yr Pellet Plant 2",
+     "Hopefully by June next year, this will be fully commissioned. So by March, we "
+     "will be doing the complete installation, and maybe end of March or early "
+     "April, we'll start our trials. June it should be in commercial production.",
+     "open", None, None),
 ]
 
 # source, metric, period, value, unit, quote
@@ -197,6 +312,31 @@ ACTUALS = [
     ("concall-shreecem-q2fy27", "ebitda_per_t", "Q2FY27", 966.0, "INR/t consol",
      "However, consolidated EBITDA per ton declined to INR 966 from INR 1,055 a "
      "year ago, primarily due to a higher fuel cost."),
+    # ---- JSW STEEL ---------------------------------------------------------
+    ("concall-jswsteel-q1fy27", "volume", "Q1FY27", 6_250_000.0, "t",
+     "FY27 production 29.75 MT / sales 28.6 MT | Q1: 6.59 / 6.25 MT (~22% of "
+     "guide)"),
+    ("concall-jswsteel-q2fy27", "volume", "Q2FY27", 7_460_000.0, "t",
+     "Our consolidated sales were the highest at 7.46 million tons, growing at 13% "
+     "year-on-year."),
+    ("concall-jswsteel-q1fy27", "cost_per_t", "Q1FY27", 17.0, "USD/t coking coal, qoq",
+     "Q1 coking coal +$12–15/t | +$17/t — \"slightly higher than our guidance\""),
+    ("concall-jswsteel-q2fy27", "cost_per_t", "Q2FY27", 10.0, "USD/t coking coal, qoq",
+     "Overall input costs were higher, particularly coking coal, which increased by "
+     "about $10 a ton. A bit lower than our earlier guidance of $12-$15 for this "
+     "quarter."),
+    # ---- JINDAL STEEL ------------------------------------------------------
+    # The stored Q1 actuals (digest-2026-07-25: 2.2 MT, Rs12,000/t) are a broker's
+    # reading; the call's own figures are 2.23 MT and Rs11,197/t adjusted. Left
+    # as they are: two different Q1 prints would be averaged as two quarters.
+    ("concall-jindalstel-q2fy27", "volume", "Q2FY27", 2_380_000.0, "t",
+     "This was driven by the record Q2 sales volume, as Mr. Sharma said, of 2.38 "
+     "million tons and higher average selling prices"),
+    ("concall-jindalstel-q2fy27", "ebitda_per_t", "Q2FY27", 10529.0, "INR/t",
+     "Our adjusted EBITDA stood at INR 2,504 crore, up 34% year-on-year, while "
+     "adjusted EBITDA per ton increased 5% year-over-year to INR 10,529 per ton."),
+    ("concall-jindalstel-q1fy27", "cost_per_t", "Q1FY27", 23.0, "USD/t coking coal, qoq",
+     "Q1 FY27 coking coal cost +$20–25/t sequentially | +$23/t (confirmed by CFO)"),
 ]
 
 

@@ -166,6 +166,20 @@ OBSERVABLE = {
                 "proxy for realisation, not the same series — Tata's realisation "
                 "carries a value-added mix HRC does not.",
     },
+    # Added 2026-10-24 with the Q2 FY27 concall load, which gave both mills an
+    # OPEN coal guide for the first time (JSW +$25/t, Jindal +$20-25/t for Q3).
+    # Same guide, same unit, same series as Tata's: the qoq CHANGE in imported
+    # coking coal, USD/t.
+    ("jsw_steel", "cost_per_t"): {
+        "driver": "coking_coal_spot_aus", "worse_if_up": True,
+        "target_kind": "delta",
+        "note": "guides the qoq CHANGE in imported coking coal, in USD/t",
+    },
+    ("jindal_steel", "cost_per_t"): {
+        "driver": "coking_coal_spot_aus", "worse_if_up": True,
+        "target_kind": "delta",
+        "note": "guides the qoq CHANGE in imported coking coal, in USD/t",
+    },
     # ---------------------------------------------------------------------
     # DELIBERATELY ABSENT, with the reason, so nobody adds them casually:
     #
@@ -174,9 +188,6 @@ OBSERVABLE = {
     #        grade, power and royalty, not a traded price.
     #   (nalco, cost_per_t)           aluminium CoP, a LEVEL in INR/t. Same.
     #   (vaml, cost_per_t)            aluminium CoP, a LEVEL in USD/t. Same.
-    #   (jsw_steel, cost_per_t)       coking coal inflation — WOULD map exactly
-    #        like Tata's, but its only commitment is already resolved, so there
-    #        is nothing open to score.
     #   any (*, volume)               unobservable, see above.
     #   any (*, capex)                a multi-year spend commitment; no series.
     # ---------------------------------------------------------------------
