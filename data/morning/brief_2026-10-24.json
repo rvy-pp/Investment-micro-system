@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-24",
+  "generated_at": "2026-10-24T08:20:00+05:30",
+  "mail": {
+    "window": "24h to 08:04 IST",
+    "n_scanned": 135,
+    "sectors": [
+      {"sector": "Non-ferrous", "bullets": [
+        {"text": "Zinc and copper fell nearly 2% on risk-off with Brent above $112; MCX zinc backwardation held near Rs21/kg on ~1 tonne of domestic exchange stock.",
+         "source": "Emkay - Commodity Market Report: Oil surges on Saudi attacks as risk-off selling hits precious and base metals",
+         "received": "09:44",
+         "detail": {"summary": "Emkay's daily call is bearish for base metals on rising LME stocks, weak momentum and West Asia risk. Zinc's domestic tightness is the counterweight: backwardation survived the price correction. Rebounds are possible but a sustained recovery looks uncertain.",
+                    "points": ["Zinc and copper down nearly 2% on Thursday", "MCX zinc backwardation ~Rs21/kg; domestic exchange stock ~1 tonne", "LME copper stocks +27,000t in a day to 273,000t", "Rising LME zinc inventories add to the bearish undertone", "Brent above $112/bbl after attacks in Saudi Arabia"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Steel", "bullets": [
+        {"text": "Jindal Steel 2Q adj. EBITDA Rs25.0bn, 11% above consensus; Emkay keeps BUY, TP Rs1,400 (38% upside), raises FY28-29E earnings 3-4%.",
+         "source": "Emkay - Jindal Steel: Strong 2Q; firing on all cylinders; BUY; Target: Rs1,400",
+         "received": "02:06",
+         "detail": {"summary": "Emkay argues the sequential dip in EBITDA/t came from costs (coking coal, freight) rather than demand. It leans on the 2H volume ramp at Angul and the newly commissioned slurry pipeline to lift EBITDA/t to about Rs14,000 by FY28E. TP is unchanged.",
+                    "points": ["EBITDA/t Rs10,522 vs Rs11,957 in 1QFY27", "Slurry pipeline saves ~Rs700/t from 3Q", "FY27 volume guide 10.5-11.0mt; ~3mt/quarter in 2H", "Net debt Rs147bn; net debt/EBITDA 1.5x vs 1.7x", "Flat mix 61%; target 65% by FY28"],
+                    "read": "body"}},
+        {"text": "JSW Steel 2QFY27 India EBITDA/t fell to Rs13.3k from Rs15.1k as sales jumped 21% qoq to 7.3mt; Avendus Spark stays REDUCE, ~8x FY28E EV/EBITDA.",
+         "source": "Avendus Spark - JSW Steel 2QFY27 Snapshot: India Adj. EBITDA/tn of Rs.13.3k vs Rs.15.1k in Q1'27 (+4 more in Outlook)",
+         "received": "17:57",
+         "detail": {"summary": "Volume carried a quarter in which unit margins slipped: adjusted consolidated EBITDA of Rs99bn was in line with the street, but per-tonne profit fell on higher raw material cost. The board also approved a large Odisha expansion. Avendus keeps REDUCE at Rs1,185.",
+                    "points": ["India EBITDA/t Rs13.3k vs Rs15.1k in 1Q27", "India sales 7.3mt, +21% qoq, +14% yoy", "Net debt Rs445bn vs Rs462bn in Jun-26", "New 5mt Odisha plant, Rs162bn capex, due 1QFY31", "~8x FY28E EV/EBITDA at CMP Rs1,185"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Cement", "bullets": [
+        {"text": "Shree 2QFY27 standalone EBITDA Rs8.5bn beat Emkay by ~10% and street by ~9%; EBITDA/t Rs912 vs Rs850 est, but PAT missed by 7-10%.",
+         "source": "Emkay - Shree 2QFY27 Result First Cut: ~10% EBITDA beat on EMKAY/Street est. EBITDA/t Rs912 vs est 850",
+         "received": "12:37",
+         "detail": {"summary": "The beat is a volume and revenue story, not a margin one. EBITDA/t fell sequentially and year on year, and below-EBITDA lines (lower other income, higher depreciation and interest) pulled PAT under both Emkay and Bloomberg estimates. Emkay expects a neutral-to-positive reaction.",
+                    "points": ["EBITDA Rs8,494mn vs Emkay Rs7,737mn, Bloomberg Rs7,795mn", "EBITDA/t Rs912 vs Rs1,024 QoQ, Rs1,106 YoY", "Volume 9.3mt, +17.7% YoY; realization Rs5,486/t vs Rs5,310 est", "PAT Rs2,053mn vs Emkay Rs2,202mn, Bloomberg Rs2,269mn", "Power & fuel Rs16.3bn, +56.5% YoY"],
+                    "read": "body"}},
+        {"text": "BofA stays Underperform (PO Rs23,800 vs Rs22,735 price) despite a 7% standalone beat; consol EBITDA only in line on weak overseas margins.",
+         "source": "BofA - SRCM IN: Shree Cement: Strong domestic performance in 2Q but consol in-line - UNDERPERFORM",
+         "received": "00:01",
+         "detail": {"summary": "BofA grants the domestic beat, driven by 18% volume growth against its 11%, but says consolidated EBITDA was in line because of lower overseas margins. It keeps Underperform on Shree's premium valuation versus peers. It expects EBITDA/t to bottom in 2Q, with cost inflation still a risk.",
+                    "points": ["Standalone EBITDA Rs8.5bn (Rs905/MT), 7% beat; consol EBITDA ~Rs10bn in line", "Volume +18% YoY vs BofAe 11%", "FY27 exit EBITDA/MT ~Rs1,100, if post-festive price hikes stick", "Fuel guide Rs2.15-2.2/kcal vs Rs2.09 in 2Q; pet coke near $200/MT", "Premium mix 29% vs 24% in 1Q"],
+                    "read": "body"}},
+        {"text": "Emkay raises Shree TP ~2% to Rs27,500 from Rs27,000, keeps ADD (21% upside), expecting 2H margin recovery and FY27 volume above 41mt.",
+         "source": "Emkay - Shree Cement: Healthy quarter; paves way for margin recovery in 2H; ADD; Target: Rs27,500 (+4 more in Outlook)",
+         "received": "02:23",
+         "detail": {"summary": "Emkay's target change reflects a revenue-led estimate tweak, with the valuation basis unchanged. It cites September/October cement price recovery and guidance for controlled fuel inflation in 3Q as the basis for sequential unit-margin improvement. It also flags weak 1H operating cash flow, funded partly by short-term borrowings.",
+                    "points": ["TP Rs27,500 (from Rs27,000), 16x 2QFY29E EV/EBITDA; CMP Rs22,735", "FY27E volume above 41mt, ~14% YoY", "FY27E/FY28E EBITDA Rs42.1bn/Rs50.3bn; FY28E EPS Rs567.8", "Unit opex +5.5% QoQ (~Rs240/t); freight down ~Rs150/t QoQ", "Consol net cash ~Rs82bn at Sep-26; consol capex guide Rs16-17bn for FY27"],
+                    "read": "body"}}
+      ]},
+      {"sector": "EMS", "bullets": [
+        {"text": "Samsung plans to raise India phone exports under the new Mobile Phone Manufacturing Scheme; $2.6bn shipped in 5 months of FY27, pointing to a record year.",
+         "source": "Nomura - India Consumer Durables and EMS: Havells Neutral 2QFY27; Samsung to boost India phone exports under new incentive scheme",
+         "received": "09:13",
+         "detail": {"summary": "Nomura's note quotes an Economic Times report that Samsung may expand India production, including fresh investment, to export more. The scheme pays higher incentives on incremental shipments. Samsung could shift capacity if global demand keeps shrinking on high memory-chip costs.",
+                    "points": ["Samsung India phone exports ~$2.6bn in first five months of FY27", "Eligibility: brand must add at least Rs5,000cr annual sales each year", "Base year for the incremental test is FY26", "Fresh India investment under consideration", "Capacity could shift if overseas demand contracts on memory costs"],
+                    "read": "body"}}
+      ]},
+      {"sector": "IT / AI-tech", "bullets": [
+        {"text": "Infosys cut FY27 guidance to 1-2% cc (from 1.5-3%), implying -1% to +0.3% CQGR in 2H; Kotak holds ADD, FV Rs1,200.",
+         "source": "Kotak - Infosys (CMP Rs1,154, FV Rs1,200, ADD): Weak show",
+         "received": "02:40",
+         "detail": {"summary": "Kotak calls the quarter weak. Growth quality was poor, retail and hi-tech fell sharply, and a key client share loss plus pricing pressure add risk. Strong AI revenue and the mega deal are positives, but it still trims US$ revenue estimates and keeps the target unchanged.",
+                    "points": ["Revenue +1.2% cc qoq; EBIT margin 21%, down 10 bps", "Retail -9%, hi-tech -10.6% qoq", "FY27 organic guide -0.5% to +0.5%", "TCV US$5.2bn incl. US$2bn net-new 7-yr deal; AI revenue US$540mn", "US$ revenue estimates cut ~1% for FY27-29; FV Rs1,200 at 15x"],
+                    "read": "body"}},
+        {"text": "IIFL downgraded Infosys to ADD from BUY, TP unchanged at Rs1,150, after a 13% one-month rally leaves no re-rating trigger.",
+         "source": "IIFL - Infosys [INFO IN, ADD]: Another guidance cut leaves little room to rally",
+         "received": "22:33",
+         "detail": {"summary": "IIFL sees a seasonally soft 2H, with the 4Q ramp-down of a large manufacturing client. Macro recovery signs are limited and the stock has already rallied with peers. Valuation at 14.5x FY28 P/E (8% discount to TCS) looks fair, so it moves to ADD.",
+                    "points": ["TP Rs1,150 at 14x 2-year forward P/E", "EPS cut by up to 1%", "EBIT margin 21% vs IIFL estimate 21.5%", "US$2bn+ mega deal ramps from mid-4Q, adds 1ppt+ to FY28 growth", "Risk flagged: AI deflation"],
+                    "read": "body"}},
+        {"text": "Coforge: Kotak raises FV to Rs2,300 from Rs2,000 (BUY) on record US$1.04bn bookings and a FY28 EBIT margin guide of at least 17%.",
+         "source": "Kotak - Coforge (CMP Rs1,901, FV Rs2,300, BUY): Record bookings lend comfort on growth sustenance (+16 more in Outlook)",
+         "received": "03:20",
+         "detail": {"summary": "Kotak looks past a revenue miss that came from flat Encora revenue. Record deal wins, a higher margin outlook and healthy cash conversion outweigh it. It raises EPS and the target, while noting the AI capabilities are not truly differentiated.",
+                    "points": ["Revenue US$652mn, 2.4% below Kotak estimate; EBIT margin 16.0%", "Order intake above US$1bn, +102% yoy; eight large deals", "FY28 EBIT margin guide at least 17% (was 15.5-16%)", "FY27-29E EPS raised 2-7%; target multiple 27x", "FCF/PAT 89%; Encora debt repayment starts 3QFY27"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Macro & strategy", "bullets": [
+        {"text": "Brent above $112/bbl on deadly Saudi attacks; copper and zinc fell nearly 2%, gold near $4,025 with $3,940 swing-low retest risk.",
+         "source": "Emkay - Commodity Market Report: Oil surges on Saudi attacks as risk-off selling hits precious and base metals",
+         "received": "09:44",
+         "detail": {"summary": "Emkay's daily report links the oil spike to West Asia supply fears and a risk-off deleveraging that hit gold and base metals. It keeps a bearish bias for the day on rising LME copper and zinc stocks and weak momentum, expecting only technical rebounds.",
+                    "points": ["Brent above $112/bbl", "LME copper stocks +27,000t in a day to 273,000t", "Domestic copper low Rs1,335/kg, recovered to Rs1,362/kg", "MCX zinc backwardation ~Rs21/kg; exchange stocks ~1 tonne", "Gold ~$4,025/oz; $3,940 swing low in view"],
+                    "read": "body"}},
+        {"text": "EM equities -8% MTD, worst month since March; Taiwan foreign selling US$8.7bn this week, but EM earnings yield beats bonds by 6ppts.",
+         "source": "CLSA - Global Equity Strategy: TGIF - week #42",
+         "received": "11:28",
+         "detail": {"summary": "CLSA calls current EM foreign selling capitulation-level, a paradox given strong momentum and rising foreign ownership until July. It flags the EM monetary policy bias leaving accommodative territory for the first time since 1Q24, and sees valuation support as the counterweight.",
+                    "points": ["US$217bn net foreign EM equity selling over 12M", "Taiwan net selling US$8.7bn this week after record US$16.8bn", "EM earnings yield 6ppts above bond yield", "EM ex-China net selling US$8.7bn; only Brazil bought, US$429m", "MSCI Indonesia standalone proposal; CLSA keeps 30% underweight"],
+                    "read": "body"}},
+        {"text": "Nifty -2.4% WoW; FIIs bought US$0.4bn after three weeks of selling, 10-year G-sec up a tenth straight week to 7.5%, longest streak since 2008.",
+         "source": "CLSA - India strategy: Weekly wrap (+9 more in Outlook)",
+         "received": "20:07",
+         "detail": {"summary": "CLSA says the Nifty gave back most of the prior week's gains, with every sector but IT lower and capital goods the laggard. Sentiment stays in the bearish zone while bond yields keep rising, squeezing the equity risk premium.",
+                    "points": ["FII YTD equity outflow US$32.3bn; debt inflow US$7.9bn", "Nifty 12m forward PE 16.7x, 2.6% premium to long-term average", "Bond yield minus earnings yield gap 1.47ppts vs c.1ppt average", "Bull-Bear Index 27.5% bullish vs 29.2% prior week", "IT best sector; capital goods worst"],
+                    "read": "body"}}
+      ]},
+      {"sector": "Other coverage-adjacent", "bullets": [
+        {"text": "BofA keeps Tata Motors CV at BUY, PO Rs515 unchanged; FY28/FY29 EBITDA raised 7%/3%, FY27 truck industry growth seen at 12-13%.",
+         "source": "BofA - TMCV IN: Tata Motors CV: Upcycle in top gear, looking past near-term margin pain - BUY",
+         "received": "01:22",
+         "detail": {"summary": "BofA sees the truck upcycle surprising positively, with Q2 volumes up 43% y/y. Management flagged a further 1.5-2pp cost drag that pushes margin recovery to Q4. The PO is held by cutting the target multiple to 12.5x from 13.5x on macro risk.",
+                    "points": ["Q2 standalone EBITDA Rs28B, +31% y/y; margin flat at 11.7% q/q", "FY27 truck industry growth 12-13% vs 6-7% earlier", "Iveco open offer closes 26 Oct; offer price raised to EUR14.4", "Exports seen above 65K vs 28K last year", "Valuation 10.2x FY28 EV/EBITDA"],
+                    "read": "body"}},
+        {"text": "CGPOWER 2Q beat: revenue/EBITDA/PBT 9%/17%/16% above Kotak, order inflow Rs85bn (>2x sales); Kotak stays SELL, FV Rs630, pending the concall.",
+         "source": "Kotak - CGPOWER results: Solid print across key metrics barring hardening working capital cycle",
+         "received": "15:15",
+         "detail": {"summary": "Kotak calls the quarter strong, led by Power Systems at roughly 25% EBIT margin, but flags hardening receivable days. It sees scope to raise estimates on 1H strength while holding its SELL rating until the 3:30pm concall.",
+                    "points": ["Revenue/EBITDA/PBT +30%/+43%/+44% y/y", "EBITDA margin 14.2%, 90bps above Kotak's estimate", "Power Systems order inflow ~3.5x sales", "1H operating cash flow Rs3.1bn vs Rs4.4bn a year ago", "New capex plan Rs4bn over three years"],
+                    "read": "body"}},
+        {"text": "Kotak cuts KEI Industries FV to Rs4,000 from Rs4,400 and trims FY27-29E EPS 4-5% as margin outlook turns cautious on new competition.",
+         "source": "Kotak - India Daily: Results; Results, Change in Reco - KEI Industries; Update - ESG (+4 more in Outlook)",
+         "received": "08:15",
+         "detail": {"summary": "Kotak's daily alert shows KEI's 2QFY27 topline beat was more than offset by a margin miss. The cautious margin view rests on new competition and geopolitical uncertainty. The note is headed as a change in recommendation, but the email gives no new rating.",
+                    "points": ["FV Rs4,000 vs Rs4,400 earlier", "FY2027-29E EPS cut 4-5%", "2QFY27 topline beat, margin miss", "Margin caution: new competition, geopolitical uncertainty"],
+                    "read": "body"}}
+      ]}
+    ],
+    "quiet": ["Mining"]
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "BofA: AI capex has risen ~1.2% of GDP since 1Q20 versus ~1.5% in the 1990s tech boom, so only that cycle ranks ahead.",
+       "source": "BofA Institute - Daily Insights: AI investment boom now trails the 1990s tech cycle"},
+      {"text": "CLSA: US corporate investment-to-GDP is stable at ~21.4%, so AI capex is substituting for other capex, not adding to it.",
+       "source": "CLSA (Nikhil Gupta) - India Economics: AI-capex: Substitution not addition"},
+      {"text": "SOX +0.44% overnight with AMD +1.7% and TSMC ADR +1.5%, while Nvidia -0.6% and Broadcom -0.5%.",
+       "source": "morning markets file (Yahoo closes, 2026-10-23)"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}
