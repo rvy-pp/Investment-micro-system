@@ -324,7 +324,12 @@ Scores nothing, reaches neither `prices` nor `pillar_scores`.
   **`fo-basis-dayend`** runs it weekdays 20:00 and re-exports the vault copy;
   refresh.py's `F&O basis` step tops up whatever the evening missed. Its own
   step matters: on 2026-10-25 the `F&O bhavcopy` step died in `--map`
-  (niftyindices HTTP 302) before ever reaching `--load`.
+  (niftyindices HTTP 302, transient — 200 minutes later) before ever reaching
+  `--load`. **Fixed the same day:** `--map` retries 3x, and a map that still
+  fails keeps the stored map, runs `--load` anyway, and exits 1 with one line.
+  A guard also refuses a map built off a 200-that-is-not-the-file (floors
+  150 F&O / 400 N500 / 150 mapped), which would otherwise have rewritten every
+  sector to `unmapped`. `fo_bhavcopy.py --selftest` covers both.
 
 ## The 2026-08-30 reskin — the vault dashboard's face on this system's data
 

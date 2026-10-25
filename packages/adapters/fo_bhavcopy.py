@@ -231,8 +231,44 @@ def load(days_back: int = 10, refill_deliv: bool = False) -> None:
           f"({n_skip} dates had no session/file)")
 
 
+MAP_TRIES = 3
+
+
+def _get_retry(url: str, tries: int = MAP_TRIES, wait: float = 5.0) -> bytes:
+    """_get with retries, raising after the last one. A 404 (None) counts as
+    a failure here: unlike a bhavcopy date, these two files always exist."""
+    err = "?"
+    for i in range(tries):
+        try:
+            raw = _get(url)
+            if raw:
+                return raw
+            err = "HTTP 404"
+        except Exception as e:
+            err = f"{type(e).__name__}: {e}"
+        if i < tries - 1:
+            time.sleep(wait * (i + 1))
+    raise RuntimeError(f"{url.rsplit('/', 1)[-1]} failed {tries}x ({err})")
+
+
+# A 200 that is not the file would rewrite EVERY symbol's sector to
+# 'unmapped' (the upsert overwrites anything not hand-set), and the Flows
+# tape would quietly lose its sectors. Measured 2026-10-25: 213 F&O names,
+# 501 Nifty 500 rows, 211 mapped. Floors sit well under all three.
+MIN_FO, MIN_N500, MIN_MAPPED = 150, 400, 150
+
+
+def _check_map(fo_syms: set, n500: dict) -> None:
+    mapped = sum(1 for s in fo_syms if s in n500)
+    if len(fo_syms) < MIN_FO or len(n500) < MIN_N500 or mapped < MIN_MAPPED:
+        raise RuntimeError(
+            f"refusing to rebuild sector map: {len(fo_syms)} F&O names, "
+            f"{len(n500)} Nifty 500 rows, {mapped} mapped (floors "
+            f"{MIN_FO}/{MIN_N500}/{MIN_MAPPED}) - a source served the wrong file")
+
+
 def build_map() -> None:
-    raw = _get(LOTS_URL)
+    raw = _get_retry(LOTS_URL)
     fo_syms = set()
     for line in raw.decode("utf-8", "replace").splitlines()[1:]:
         parts = [p.strip() for p in line.split(",")]
@@ -245,9 +281,11 @@ def build_map() -> None:
             continue
         fo_syms.add(parts[1])
     n500 = {}
-    raw = _get(N500_URL)
+    raw = _get_retry(N500_URL)
     for r in csv.DictReader(io.StringIO(raw.decode("utf-8", "replace"))):
-        n500[r["Symbol"].strip()] = r["Industry"].strip()
+        if r.get("Symbol") and r.get("Industry"):
+            n500[r["Symbol"].strip()] = r["Industry"].strip()
+    _check_map(fo_syms, n500)
 
     conn = sqlite3.connect(DB)
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
@@ -295,14 +333,81 @@ def main() -> int:
                     help="re-fetch delivery files for already-loaded dates "
                          "(after the keep-set grows)")
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
+    if a.selftest:
+        return selftest()
+    return run(a)
+
+
+def run(a) -> int:
+    """--map must never cost the day's --load. On 2026-10-25 the 02:43 run
+    died on a niftyindices HTTP 302 inside build_map(), before load() was
+    reached, so fo_oi, deliveries, fo_options and fo_basis all skipped the
+    day; the same URL answered 200 minutes later. The sector map is slow
+    reference data and yesterday's is fine, so a map failure now keeps the
+    stored map, still loads, and exits 1 with ONE line, so the Overview
+    names the miss without a 20-line traceback."""
+    rc = 0
     if a.map:
-        build_map()
+        try:
+            build_map()
+        except Exception as e:
+            print(f"sector map NOT rebuilt, stored map kept ({e}); "
+                  f"{'OI and deliveries still loaded' if a.load else 'no load requested'}",
+                  file=sys.stderr)
+            rc = 1
     if a.load:
         load(a.days, refill_deliv=a.refill_deliv)
     if a.status or not (a.map or a.load):
         status()
-    return 0
+    return rc
+
+
+def selftest() -> int:
+    fails = 0
+
+    def ok(cond, msg):
+        nonlocal fails
+        print(("  ok   " if cond else "  FAIL ") + msg)
+        fails += 0 if cond else 1
+
+    fo = {f"S{i}" for i in range(213)}
+    good = {f"S{i}": "X" for i in range(501)}
+    try:
+        _check_map(fo, good); ok(True, "a real-sized map passes the guard")
+    except RuntimeError as e:
+        ok(False, f"real-sized map refused: {e}")
+    for lab, f, n in (("an error page (no Nifty 500 rows)", fo, {}),
+                      ("a truncated lots file", {"S1", "S2"}, good),
+                      ("a Nifty 500 that matches no F&O name", fo,
+                       {f"Z{i}": "X" for i in range(501)})):
+        try:
+            _check_map(f, n); ok(False, f"{lab} was accepted")
+        except RuntimeError:
+            ok(True, f"{lab} is refused")
+
+    # a map failure must not cost the load, and must still exit non-zero
+    global build_map, load
+    real_map, real_load = build_map, load
+    called = []
+
+    def boom():
+        raise RuntimeError("HTTP Error 302")
+    build_map = boom
+    load = lambda days, refill_deliv=False: called.append(days)
+    try:
+        ns = argparse.Namespace(map=True, load=True, days=7, refill_deliv=False, status=False)
+        rc = run(ns)
+        ok(called == [7], "load still runs after the map fails")
+        ok(rc == 1, "and the step exits 1, so the miss is named")
+        called.clear()
+        build_map = lambda: None
+        ok(run(ns) == 0 and called == [7], "healthy map: load runs, exit 0")
+    finally:
+        build_map, load = real_map, real_load
+    print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
+    return 1 if fails else 0
 
 
 if __name__ == "__main__":
