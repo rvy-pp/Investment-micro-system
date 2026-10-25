@@ -3539,16 +3539,34 @@ function riskBlock(v){
   const $ = x => x == null ? '—' : '$' + Math.round(x).toLocaleString('en-US');
   const pn = x => x == null ? '' : (x / nav * 100).toFixed(2) + '%';
   const both = x => `${$(x)}<span class="sub">${pn(x)}</span>`;
+  // A level with fewer than one observation beyond it is the worst day (or
+  // window) in the sample, not a quantile: printed, but greyed and said so.
+  const thinTd = (x, isThin, n) => isThin
+    ? `<td style="color:var(--faint)" title="${esc(`fewer than one of ${n} observations lies beyond this level, so this is the worst in the sample, not a quantile`)}">${$(x)}<span class="sub">${pn(x)} · thin</span></td>`
+    : `<td>${both(x)}</td>`;
   const cell = (k, val, tip) => `<div class="cell"${tip ? ` title="${esc(tip)}"` : ''}><div class="k">${k}</div><div class="v">${val}</div></div>`;
-  const hz = v.horizon || {}, pc = c => `${Math.round(c * 100)}%`;
+  // 0.999 must print as 99.9%, not round to 100%
+  const pc = c => `${+(c * 100).toFixed(1)}%`;
+  const hzs = v.horizons || [], hk = v.horizon_headline || 'ewma_vr';
+  const hzOf = d => hzs.find(x => x.days === d);
+  const fhs = v.methods.find(m => m.key === 'fhs');
+  const ewm = v.methods.find(m => m.key === 'ewma');
+  const hzCell = (d, lbl) => {
+    const z = hzOf(d);
+    return z ? cell(`${lbl} VaR ${pc(h.confidence)}`,
+      `${$(z[hk][ck])} <span class="u">${pn(z[hk][ck])}</span>`,
+      `${z.days} sessions. The 1-day EWMA × √(${z.days} × VR), VR ${z.vr.toFixed(2)} = the book's measured variance ratio over ${z.n_windows} windows. √time alone: ${$(z.sqrt[ck])}; historical overlapping windows: ${$(z.hist[ck])}${z.hist_thin[ck] ? ' (thin)' : ''}`) : '';
+  };
   const strip = `<div class="bk-strip">`
     + cell(`1-day VaR ${pc(h.confidence)}`, `${$(h.var)} <span class="u">${pn(h.var)} of nav</span>`,
            `${h.label}: the loss today's book should exceed on about ${Math.round((1 - h.confidence) * 100)} day in 100`)
     + cell(`ES ${pc(h.confidence)}`, `${$(h.es)} <span class="u">${pn(h.es)}</span>`,
            'expected shortfall: the average loss on the days beyond the VaR')
-    + cell(`${hz.days}-day ${pc(h.confidence)}`,
-           `${$((hz.hist_overlap || {})[ck])} <span class="u">√${hz.days}: ${$((hz.sqrt_ewma || {})[ck])}</span>`,
-           `left: the ${pc(h.confidence)} loss over actual overlapping ${hz.days}-session windows (${hz.n_windows} of them). right: the 1-day EWMA × √${hz.days}. The spreads partly mean-revert, so √time overstates`)
+    + hzCell(5, '1-week') + hzCell(21, '1-month')
+    + (fhs && fhs.var['0.999'] != null
+        ? cell('1-day VaR 99.9%', `${$(fhs.var['0.999'])} <span class="u">normal ${$(ewm && ewm.var['0.999'])}</span>`,
+               `filtered historical: today's EWMA vol × the book's own standardised tail, which is fatter than the normal's (see the tail line under the table). Fewer than one day in ${fhs.n} lies beyond 99.9%, so read it as an order of magnitude`)
+        : '')
     + cell('gross · net', `${$(v.gross_usd)} <span class="u">net ${usd(v.net_usd)}</span>`)
     + cell('β-adj. net', `${usd(v.beta_net_usd)} <span class="u">${usd(v.beta_net_usd / 100)} per 1% nifty</span>`,
            'sum of the IMS beta-adjusted MV: what a broad market move costs, before any spread move')
@@ -3558,8 +3576,22 @@ function riskBlock(v){
   const meth = v.methods.map(m => `<tr class="secfirst">
       <td class="pair">${esc(m.label)}${m.key === h.method ? ' <span class="pill">headline</span>' : ''}</td>
       <td><span class="date">${dmy(m.start)} – ${dmy(m.end)}</span><span class="sub">${m.n} sessions</span></td>
-      ${confs.map(c => `<td>${both(m.var[c])}</td>`).join('')}
-      ${confs.map(c => `<td>${both(m.es[c])}</td>`).join('')}</tr>`).join('');
+      ${confs.map(c => thinTd(m.var[c], (m.thin || {})[c], m.n)).join('')}
+      ${confs.map(c => thinTd(m.es[c], (m.thin || {})[c], m.n)).join('')}</tr>`).join('');
+  const tl = v.tails;
+  const tailLine = tl ? `tails: the book's daily P&amp;L scaled by the vol known the day before has excess kurtosis
+    <b>${tl.excess_kurtosis.toFixed(2)}</b>, and <b>${tl.beyond_normal_999_pct.toFixed(2)}%</b> of ${tl.n} days fell beyond the
+    normal's 99.9% line, against 0.10% if it were normal — so the EWMA normal's 99.9% understates, and the filtered
+    historical row is the better 99.9% read · greyed = fewer than one observation beyond that level: the worst day in the
+    window, not a quantile` : '';
+
+  const hzRows = hzs.map(z => [['ewma_vr', `EWMA × √(h·VR)`, 'today’s vol, scaled by the book’s measured variance ratio — the strip uses this'],
+                               ['sqrt', 'EWMA × √h', 'today’s vol, iid scaling: overstates when the spreads mean-revert'],
+                               ['hist', 'historical, overlapping', `every ${z.days}-session window since ${dmy(z.start)}: ${z.n_windows} windows, ${z.n_independent} independent`]]
+    .map(([k, lbl, tip], i) => `<tr${i === 0 ? ' class="secfirst"' : ''}>
+      ${i === 0 ? `<td class="sec" rowspan="3"><span class="t">${esc(z.label)}</span><span class="a">${z.days} sessions · VR ${z.vr.toFixed(2)}</span></td>` : ''}
+      <td class="pair" title="${esc(tip)}">${lbl}${k === hk ? ' <span class="pill">strip</span>' : ''}</td>
+      ${confs.map(c => thinTd(z[k][c], k === 'hist' && z.hist_thin[c], z.n_independent)).join('')}</tr>`).join('')).join('');
 
   const maxC = Math.max(1, ...v.pairs.map(p => Math.abs(p.contrib)));
   const legTip = p => p.legs.map(l => `${l.side === 'L' ? 'long' : 'short'} ${l.name} ${usd(l.usd)}${l.side_mismatch ? ' (side differs from the dictation)' : ''}`).join('\n');
@@ -3616,6 +3648,14 @@ function riskBlock(v){
       <th class="l">method</th><th>window</th>
       ${confs.map(c => th('VaR ' + pc(+c))).join('')}${confs.map(c => th('ES ' + pc(+c), 'average loss beyond the VaR')).join('')}
     </tr></thead><tbody>${meth}</tbody></table></div></div>
+    <div class="hint" style="margin-top:var(--s2)">${tailLine}</div>
+
+    <div class="sechead" style="margin-top:var(--s4)">Longer horizons</div>
+    <div class="meta-line">today's book held for a week, ten days or a month with no trading · VR below 1 means the
+      spreads partly mean-revert, so √time overstates · hover a method for what it assumes</div>
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+      <th class="l">horizon</th><th class="l">method</th>${confs.map(c => th('VaR ' + pc(+c))).join('')}
+    </tr></thead><tbody>${hzRows}</tbody></table></div></div>
 
     <div class="sechead" style="margin-top:var(--s4)">Where the risk sits</div>
     <div class="meta-line">contribution to the ${pc(h.confidence)} headline VaR by dictated pair (Euler: the

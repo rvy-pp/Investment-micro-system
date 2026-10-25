@@ -126,7 +126,12 @@ pairs:
     - {name: MPHL_PSYS,     long: [MPHL],     short: [PSYS]}
   STEEL:
     - {name: JSTL_TATA,     long: [JSTL],     short: [TATA]}
-    - {name: JINDA_SAIL,    long: [JINDA],    short: [SAIL]}
+    # PM, 2026-10-25: "Jindal and SAIL are two different pairs with Tata steel
+    # as a short for now." JINDA_SAIL (SAIL short 04-09 .. 30-09) closed 01-10
+    # and retires with its frozen exit grade; SAIL came back LONG on 08-10.
+    # Tata's short now backs three longs (JSTL, JINDA, SAIL).
+    - {name: JINDA_TATA,    long: [JINDA],    short: [TATA]}
+    - {name: SAIL_TATA,     long: [SAIL],     short: [TATA]}
     - {name: JSTL_APAT,     long: [JSTL],     short: [APAT]}
   EMS:
     - {name: KAYNES_DIXON,  long: [KAYNE],    short: [DIXON]}
@@ -229,6 +234,9 @@ kelly:
 # returns. One-day, USD.
 #
 #   windows        historical VaR lookbacks, in COMMON sessions (every leg printed)
+#   99.9%          a year holds 0.25 days beyond it, so a HISTORICAL 99.9% is
+#                  the worst day in the window; the page greys such cells
+#                  ("thin") rather than presenting them as quantiles
 #   ewma_lambda    RiskMetrics decay; 0.94 = ~16-session half-life
 #   headline       the number the strip leads with. EWMA because it is the
 #                  only method that weights the current regime (and, today,
@@ -239,11 +247,21 @@ kelly:
 #   stress         today's dollars replayed through each episode; a leg not
 #                  yet listed then contributes ZERO, and the page says how many
 var:
-  confidence: [0.95, 0.99]
+  confidence: [0.95, 0.99, 0.999]   # 99.9% added 2026-10-25 (PM)
   windows: [250, 500]
   ewma_lambda: 0.94
   ewma_sessions: 500
-  horizon_days: 10
+  # Multi-day horizons (PM, 2026-10-25: "VaR for 1 week and 1 month as well"),
+  # in SESSIONS. Each is shown three ways: historical overlapping windows over
+  # up to horizon_lookback common sessions, EWMA x sqrt(h), and EWMA x
+  # sqrt(h x VR) — VR the book's measured variance ratio, the headline,
+  # because the spreads mean-revert and sqrt-time overstates.
+  horizons:
+    - {label: "1 week",  days: 5}
+    - {label: "10 days", days: 10}
+    - {label: "1 month", days: 21}
+  horizon_lookback: 1250
+  horizon_headline: ewma_vr
   headline: {method: ewma, confidence: 0.99}
   jump_flag: 0.25
   min_sessions: 60       # fewer common sessions -> no VaR for that snapshot (VAML listed 2026-06-15)

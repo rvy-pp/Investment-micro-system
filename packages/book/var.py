@@ -78,11 +78,14 @@ sys.path.insert(0, str(REPO / "packages" / "book"))
 SPEC = REPO / "specs" / "book.yaml"
 
 DEFAULTS = {
-    "confidence": [0.95, 0.99],
+    "confidence": [0.95, 0.99, 0.999],
     "windows": [250, 500],
     "ewma_lambda": 0.94,
     "ewma_sessions": 500,
-    "horizon_days": 10,
+    "horizons": [{"label": "1 week", "days": 5}, {"label": "10 days", "days": 10},
+                 {"label": "1 month", "days": 21}],
+    "horizon_lookback": 1250,
+    "horizon_headline": "ewma_vr",
     "headline": {"method": "ewma", "confidence": 0.99},
     "jump_flag": 0.25,
     "min_sessions": 60,
@@ -128,6 +131,25 @@ def ewma_weights(n: int, lam: float) -> list[float]:
 def ewma_sd(pnl: list[float], lam: float) -> float:
     w = ewma_weights(len(pnl), lam)
     return math.sqrt(sum(wi * x * x for wi, x in zip(w, pnl)))
+
+
+def thin(n: int, c: float) -> bool:
+    """Fewer than one observation expected beyond the level: a historical
+    'quantile' there is just the worst day (or window) in the sample."""
+    return n * (1 - c) < 1
+
+
+def filtered_residuals(pnl: list[float], lam: float, warm: int = 60) -> list[float]:
+    """pnl_t / sigma_{t-1}, sigma the running EWMA known BEFORE day t."""
+    if len(pnl) <= warm:
+        return []
+    v = sum(p * p for p in pnl[:warm]) / warm
+    out = []
+    for p in pnl[warm:]:
+        if v > 0:
+            out.append(p / math.sqrt(v))
+        v = lam * v + (1 - lam) * p * p
+    return out
 
 
 def z_of(c: float) -> float:
@@ -241,10 +263,11 @@ def measure(x: list[float], R: list[list[float]], dates: list[str], cfg: dict) -
             continue
         m = {"key": f"hist{n}", "label": f"historical, last {n} sessions",
              "n": len(p), "start": dates[-len(p)], "end": dates[-1],
-             "var": {}, "es": {}}
+             "var": {}, "es": {}, "thin": {}}
         for c in confs:
             v, es = hist_var(p, c)
             m["var"][f"{c:g}"], m["es"][f"{c:g}"] = round(v, 0), round(es, 0)
+            m["thin"][f"{c:g}"] = thin(len(p), c)
         out["methods"].append(m)
     ne = int(cfg["ewma_sessions"])
     lam = float(cfg["ewma_lambda"])
@@ -258,15 +281,62 @@ def measure(x: list[float], R: list[list[float]], dates: list[str], cfg: dict) -
         m["es"][f"{c:g}"] = round(normal_es(sd, c), 0)
     out["methods"].append(m)
     out["ewma_sd"] = sd
+    # The normal assumes thin tails, which matters most at 99.9%. The book's
+    # own P&L, each day divided by the EWMA sd known the day before (filtered
+    # residuals, so a calm year and a wild one are on one scale), says how fat
+    # they really are: excess kurtosis, and the share of days beyond the
+    # normal's 99.9% line (the normal expects 0.1%).
+    res = filtered_residuals(pnl, lam)
+    if len(res) >= 250:
+        # FILTERED HISTORICAL: today's EWMA sd x the book's own standardised
+        # tail. Keeps the fat tails the normal drops (on 2026-10-23, 0.33% of
+        # 907 days fell beyond the normal's 99.9% line against 0.1%), on
+        # today's vol rather than an average year's. Uses every common
+        # session, so its 99.9% is less thin than a 1y window's — still
+        # flagged when under one observation lies beyond it.
+        m = {"key": "fhs", "label": "filtered historical (EWMA × own tail)",
+             "n": len(res), "start": dates[-len(res)], "end": dates[-1],
+             "var": {}, "es": {}, "thin": {}}
+        for c in confs:
+            v, es = hist_var(res, c)
+            m["var"][f"{c:g}"], m["es"][f"{c:g}"] = round(v * sd, 0), round(es * sd, 0)
+            m["thin"][f"{c:g}"] = thin(len(res), c)
+        out["methods"].append(m)
+    if len(res) >= 100:
+        mu = sum(res) / len(res)
+        var_ = sum((r - mu) ** 2 for r in res) / len(res)
+        k = sum((r - mu) ** 4 for r in res) / len(res) / var_ ** 2 - 3
+        z999 = z_of(0.999)
+        out["tails"] = {"n": len(res), "excess_kurtosis": round(k, 2),
+                        "beyond_normal_999_pct": round(
+                            sum(1 for r in res if r < -z999) / len(res) * 100, 2)}
 
-    h = int(cfg["horizon_days"])
-    ph = [sum(pe[i:i + h]) for i in range(len(pe) - h + 1)]
-    out["horizon"] = {"days": h,
-                      "hist_overlap": {f"{c:g}": round(-quantile(ph, 1 - c), 0)
-                                       for c in confs},
-                      "sqrt_ewma": {f"{c:g}": round(z_of(c) * sd * math.sqrt(h), 0)
-                                    for c in confs},
-                      "n_windows": len(ph)}
+    # Multi-day horizons. Three estimates each, because each fails differently:
+    #   hist     overlapping h-session sums over ALL common history — the real
+    #            path, but n/h independent windows only (a month: ~46 on today's
+    #            966 sessions), so its 99.9% is the worst month, flagged thin
+    #   sqrt     the 1-day EWMA x sqrt(h): today's vol, iid scaling — overstates
+    #            when the spreads mean-revert, as they do (kelly.py's 0.646)
+    #   ewma_vr  the 1-day EWMA x sqrt(h x VR(h)), VR measured on the same long
+    #            history: today's vol with the book's own horizon scaling
+    pl = pnl[-int(cfg.get("horizon_lookback", len(pnl))):]
+    var1 = sum(p * p for p in pl) / len(pl)
+    out["horizons"] = []
+    for hz in cfg["horizons"]:
+        h = int(hz["days"])
+        ph = [sum(pl[i:i + h]) for i in range(len(pl) - h + 1)]
+        if len(pl) // h < 10:
+            continue
+        vr = (sum(p * p for p in ph) / len(ph)) / (h * var1)
+        indep = len(pl) // h
+        out["horizons"].append({
+            "label": hz["label"], "days": h, "n_windows": len(ph), "n_independent": indep,
+            "start": dates[-len(pl)], "end": dates[-1], "vr": round(vr, 3),
+            "hist": {f"{c:g}": round(-quantile(ph, 1 - c), 0) for c in confs},
+            "hist_thin": {f"{c:g}": thin(indep, c) for c in confs},
+            "sqrt": {f"{c:g}": round(z_of(c) * sd * math.sqrt(h), 0) for c in confs},
+            "ewma_vr": {f"{c:g}": round(z_of(c) * sd * math.sqrt(h * vr), 0) for c in confs},
+        })
     worst = sorted(range(len(pe)), key=lambda i: pe[i])[:5]
     off = len(pnl) - len(pe)
     out["worst_days"] = [{"date": dates[off + i], "pnl": round(pe[i], 0)}
@@ -319,7 +389,8 @@ def stress(x: dict, bars, grid, actions, episodes) -> list[dict]:
 
 # ------------------------------------------------------------------ build --
 
-def _at(conn, snap, upto, tmap, cfg, bars_all, vols_all, grid_all, actions):
+def _at(conn, snap, upto, tmap, cfg, bars_all, vols_all, grid_all, actions,
+        long_history=False):
     """VaR of one snapshot's book with prices up to `upto` (None = all)."""
     ex = exposures(conn, snap, tmap)
     eids = sorted(ex["legs"])
@@ -327,7 +398,8 @@ def _at(conn, snap, upto, tmap, cfg, bars_all, vols_all, grid_all, actions):
     # grid is clipped, so no date after `upto` can be read
     bars = {e: bars_all[e] for e in eids}
     grid = [d for d in grid_all if not upto or d <= upto]
-    n_max = max([int(n) for n in cfg["windows"]] + [int(cfg["ewma_sessions"])])
+    n_max = max([int(n) for n in cfg["windows"]] + [int(cfg["ewma_sessions"])]
+                + ([int(cfg["horizon_lookback"])] if long_history else []))
     dates, R, zeroed = common_returns(bars, grid, eids, n_max, actions)
     x = [ex["legs"][e]["usd"] for e in eids]
     return ex, eids, bars, grid, dates, R, zeroed, x
@@ -365,7 +437,8 @@ def build(conn: sqlite3.Connection | None = None, as_of: str | None = None,
         actions = CONFIRMED_ACTIONS
 
         ex, eids, bars, grid, dates, R, zeroed, x = _at(
-            conn, snap, upto, tmap, cfg, bars_all, vols_all, grid_all, actions)
+            conn, snap, upto, tmap, cfg, bars_all, vols_all, grid_all, actions,
+            long_history=True)
         if len(R) < int(cfg["min_sessions"]):
             return {"error": f"only {len(R)} common sessions for {snap}'s legs"}
         nav = ex["nav"]
@@ -507,7 +580,9 @@ def build(conn: sqlite3.Connection | None = None, as_of: str | None = None,
             "headline": {"method": head["key"], "label": head["label"],
                          "confidence": hc, "var": head["var"][hk],
                          "es": head["es"][hk], "check_sum": round(total, 0)},
-            "methods": m["methods"], "horizon": m["horizon"],
+            "methods": m["methods"], "horizons": m["horizons"],
+            "tails": m.get("tails"),
+            "horizon_headline": cfg["horizon_headline"],
             "worst_days": m["worst_days"],
             "legs": sorted(legs, key=lambda r: -r["contrib"]),
             "pairs": pairs,
@@ -521,7 +596,7 @@ def build(conn: sqlite3.Connection | None = None, as_of: str | None = None,
                       "pre_demerger_history": pre_dm},
             "cash_legs_usd": round(sum(ex["legs"][e]["cash_usd"] for e in eids), 0),
             "params": {k: cfg[k] for k in ("confidence", "windows", "ewma_lambda",
-                                           "ewma_sessions", "horizon_days",
+                                           "ewma_sessions", "horizon_lookback",
                                            "jump_flag", "min_sessions")},
         }
     finally:
@@ -609,13 +684,52 @@ def _selftest() -> None:
     m = measure(x, R, dts, cfg)
     keys = [mm["key"] for mm in m["methods"]]
     check(keys == ["hist100", "hist200", "ewma"], f"methods present {keys}")
-    check(all(mm["var"]["0.99"] >= mm["var"]["0.95"] for mm in m["methods"]),
-          "VaR99 >= VaR95 for every method")
+    check(all(mm["var"]["0.999"] >= mm["var"]["0.99"] >= mm["var"]["0.95"]
+              for mm in m["methods"]), "VaR99.9 >= VaR99 >= VaR95 for every method")
+    h100 = m["methods"][0]
+    check(h100["thin"]["0.999"] and not h100["thin"]["0.95"],
+          "100 sessions: 99.9% is flagged thin (0.1 obs beyond it), 95% is not")
+    check(thin(250, 0.999) and not thin(1000, 0.999) and not thin(500, 0.99),
+          "thin = fewer than ONE observation expected beyond the level")
     check(m["worst_days"][0]["pnl"] == round(min(m["pnl"][-200:]), 0), "worst day is the minimum")
     # sqrt-time is exact for iid; overlapping hist should be in its neighbourhood
-    hz = m["horizon"]
-    check(0.5 < hz["hist_overlap"]["0.99"] / hz["sqrt_ewma"]["0.99"] < 1.6,
+    hzs = {hz["days"]: hz for hz in m["horizons"]}
+    check(sorted(hzs) == [5, 10, 21], f"horizons present {sorted(hzs)}")
+    hz = hzs[10]
+    check(0.5 < hz["hist"]["0.99"] / hz["sqrt"]["0.99"] < 1.6,
           "10-day overlapping vs sqrt-time agree to within noise on iid data")
+    check(all(0.6 < hzs[h]["vr"] < 1.5 for h in hzs), "iid data: variance ratio near 1")
+    check(hzs[21]["hist_thin"]["0.999"] and not hzs[5]["hist_thin"]["0.95"],
+          "a month's 99.9% on 14 independent windows is thin; a week's 95% is not")
+    # MEAN REVERSION: an MA(1) with theta -0.5 has VR -> 0.25/1.25 = 0.2, so
+    # sqrt-time must overstate and the VR-scaled estimate must come in under it
+    e = [rng.gauss(0, 0.01) for _ in range(1201)]
+    Rm = [[e[t] - 0.5 * e[t - 1]] for t in range(1, 1201)]
+    mm = measure([1000.0], Rm, [f"m{i:04d}" for i in range(1200)],
+                 {**DEFAULTS, "windows": [250], "ewma_sessions": 500})
+    h21 = next(hz for hz in mm["horizons"] if hz["days"] == 21)
+    check(h21["vr"] < 0.4, f"mean-reverting P&L: VR(21) {h21['vr']} well under 1")
+    check(h21["ewma_vr"]["0.99"] < 0.7 * h21["sqrt"]["0.99"],
+          "mean-reverting P&L: VR-scaled month VaR is well under sqrt-time")
+    # tails: a constant-vol gaussian has ~zero excess kurtosis
+    tl = mm["tails"]
+    check(abs(tl["excess_kurtosis"]) < 1.0, f"gaussian P&L excess kurtosis {tl['excess_kurtosis']} ~ 0")
+    meth = {x["key"]: x for x in mm["methods"]}
+    check("fhs" in meth and 0.8 < meth["fhs"]["var"]["0.99"] / meth["ewma"]["var"]["0.99"] < 1.25,
+          "gaussian P&L: filtered historical 99% ~ the EWMA normal's")
+    # FAT TAILS: 1 day in 50 is a x5 shock. The normal's 99.9% must come in
+    # under the filtered historical one, and kurtosis must say so
+    g2 = [rng.gauss(0, 0.01) * (5 if rng.random() < 0.02 else 1) for _ in range(1500)]
+    mf = measure([1000.0], [[v] for v in g2], [f"f{i:04d}" for i in range(1500)],
+                 {**DEFAULTS, "windows": [250], "ewma_sessions": 500})
+    mf_m = {x["key"]: x for x in mf["methods"]}
+    check(mf_m["fhs"]["var"]["0.999"] > mf_m["ewma"]["var"]["0.999"],
+          "fat-tailed P&L: filtered historical 99.9% exceeds the normal's")
+    check(mf["tails"]["excess_kurtosis"] > 2 and mf["tails"]["beyond_normal_999_pct"] > 0.1,
+          "fat-tailed P&L: kurtosis and the beyond-99.9% share both flag it")
+    fr = filtered_residuals([1.0, -1.0] * 40, 0.94, warm=10)
+    check(len(fr) == 70 and all(abs(abs(f) - 1) < 1e-9 for f in fr),
+          "filtered residuals use the sd known the day BEFORE, |r| = 1 on a flat-vol path")
     # a window longer than the history is SKIPPED, never silently shortened
     m2 = measure(x, R[:150], dts[:150], cfg)
     check([mm["key"] for mm in m2["methods"]] == ["hist100", "ewma"],
@@ -643,11 +757,21 @@ def _report() -> None:
     print(f"HEADLINE 1d {h['confidence']:.0%} ({h['label']}): {pc(h['var'])}  ES {pc(h['es'])}")
     for m in r["methods"]:
         print(f"  {m['label']:32s} {m['start']}..{m['end']}  "
-              + "  ".join(f"VaR{k[2:]} {pc(v)}" for k, v in m["var"].items())
-              + "  " + "  ".join(f"ES{k[2:]} ${v:,.0f}" for k, v in m["es"].items()))
-    hz = r["horizon"]
-    print(f"  {hz['days']}-day 99%: overlapping hist {pc(hz['hist_overlap']['0.99'])}  "
-          f"sqrt-time EWMA {pc(hz['sqrt_ewma']['0.99'])}")
+              + "  ".join(f"VaR{float(k) * 100:g}{'*' if m.get('thin', {}).get(k) else ''} {pc(v)}"
+                          for k, v in m["var"].items())
+              + "  " + "  ".join(f"ES{float(k) * 100:g} ${v:,.0f}" for k, v in m["es"].items()))
+    if r.get("tails"):
+        t = r["tails"]
+        print(f"  tails: excess kurtosis {t['excess_kurtosis']}, {t['beyond_normal_999_pct']}% of "
+              f"{t['n']} days beyond the normal's 99.9% line (normal: 0.1%)")
+    print("horizons (VR = measured variance ratio):")
+    for hz in r["horizons"]:
+        for key, lbl in (("ewma_vr", "EWMA x sqrt(h VR)"), ("sqrt", "EWMA x sqrt(h)"),
+                         ("hist", "historical overlap")):
+            print(f"  {hz['label']:8s} VR {hz['vr']:.2f}  {lbl:20s} "
+                  + "  ".join(f"{float(k) * 100:>4g} {pc(v)}{'*' if key == 'hist' and hz['hist_thin'][k] else ' '}"
+                              for k, v in hz[key].items()))
+    print("  * thin: fewer than one independent window beyond the level")
     print("worst days:", ", ".join(f"{w['date']} ${w['pnl']:,.0f}" for w in r["worst_days"]))
     print(f"\ncontribution to the headline VaR (sum of standalones "
           f"${r['diversification']['sum_standalone']:,.0f} vs book ${h['var']:,.0f}):")

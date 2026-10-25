@@ -893,7 +893,7 @@ it was left out.
 PM: *"Can we calculate the VaR for our book?"*, then *"build VaR into the Book
 tab as a tested module, recomputed from each snapshot"*. Sub-tab **Risk**,
 after Kelly sizing. `packages/book/var.py` owns the method, the backtest and
-the selftest (25 checks); `engine.book_view` attaches it as `var` (no new
+the selftest (37 checks); `engine.book_view` attaches it as `var` (no new
 route, so the vault copy needed nothing); parameters in `specs/book.yaml var:`.
 `python packages/book/var.py` prints the report.
 
@@ -953,9 +953,33 @@ retired pair only if it carried a call, and this one has none, so that 13w grade
 would silently never have been written. A retired pair with a STORED grade is
 now a unit too. The Analysis roster is 33 legs: the hardcoded 32 in
 `build_frontend.py` and the analysis selftest became `analysis.expected_legs()`,
-counted from the dictation. **Still open: JINDA_SAIL** is dictated with SAIL
-short while the book holds SAIL long (STEEL 2 is two longs). The Risk tab
-flags it with a `side` chip until the PM dictates it.
+counted from the dictation. **JINDA_SAIL retired the same way** (PM: *"Jindal
+and SAIL are two different pairs with Tata steel as a short for now"*). SAIL was
+short 04-09 .. 30-09 and came back LONG on 08-10. The dictation now has
+**JINDA_TATA** and **SAIL_TATA**, so Tata's short backs three longs (JSTL,
+JINDA, SAIL), split by the opposite-side gross as usual.
+
+**99.9% and longer horizons (PM, same day: *"VaR for 1 week and 1 month as
+well ... repeat this with a 99.9% interval"*).** Confidence is now
+0.95/0.99/0.999. Horizons are 5/10/21 sessions, each estimated three ways:
+- historical overlapping windows over up to `horizon_lookback` (1,250) common
+  sessions;
+- EWMA × √h;
+- **EWMA × √(h·VR)**, where VR is the book's measured variance ratio. This one
+  leads the strip: 1 week **$10,345**, 1 month **$20,739** at 99% (VR 0.91 /
+  0.87).
+
+**A historical 99.9% is the worst day in the window, not a quantile.** A year
+holds a quarter of one observation beyond it, so a cell with fewer than one
+observation beyond its level is flagged `thin` and greyed. The same goes for
+a month's 99% from 46 independent windows.
+
+**The normal understates the tail**, measured rather than assumed: scaled by
+the EWMA vol known the day before, 0.33% of 907 days fell beyond the normal's
+99.9% line, against 0.10% (excess kurtosis 0.96). So a **filtered historical**
+method was added: today's EWMA sd × the book's own standardised tail. It
+reads $7,371 at 1-day 99.9% against the normal's $6,444, and the strip shows
+the filtered figure.
 
 ### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
 
