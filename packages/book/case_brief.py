@@ -72,6 +72,7 @@ QKINDS = ("actual", "pm", "draft", "street")  # draft = the agent's proposal; st
 # ~half of TCS's base juice before this existed.
 CONFIDENCE = ("low", "medium", "high")  # the PM's; displayed only, never a weight
 STREET_METRICS = ("revenue", "revenue_growth_cc_pct", "ebit_margin_pct", "ebit", "pat")
+STREET_METRICS_EV = ("revenue", "volume", "ebitda", "ebitda_per_t", "pat")
 RERATE_DAYS = 90                         # Yahoo carries a 90-days-ago anchor in every capture
 
 
@@ -165,7 +166,7 @@ def rerate(conn, ent: str, fy: str) -> dict | None:
             "rel": rel}
 
 
-def street(conn, ent: str, period: str) -> dict:
+def street(conn, ent: str, period: str, metrics: tuple = STREET_METRICS) -> dict:
     """Every house's latest preview for one period, and the median per metric.
     The machine consensus is excluded here — it is shown under `priced`."""
     rows = conn.execute(
@@ -175,7 +176,7 @@ def street(conn, ent: str, period: str) -> dict:
     for r in rows:
         latest[(r["broker"], r["metric"])] = r          # ordered, last wins
     out = {}
-    for m in STREET_METRICS:
+    for m in metrics:
         vals = [(b, r["value_num"], r["unit"], r["as_of"]) for (b, mm), r in latest.items() if mm == m]
         if vals:
             out[m] = {"median": round(st.median(v[1] for v in vals), 2), "unit": vals[0][2],
@@ -186,13 +187,60 @@ def street(conn, ent: str, period: str) -> dict:
 
 DRIVERS = ("revenue_cr", "ebit_margin_pct", "pat_to_ebit")
 
+# EV/EBITDA cases (PM, 2026-10-25, cement: "we will use EV/EBITDA instead of
+# P/E. Process is similar"). The quarter machinery is IDENTICAL — actuals,
+# one viewed quarter, street quarters carried, pins, the band — only the line
+# the multiple applies to changes: EBITDA (Rs cr) instead of EPS. So an EV
+# build is normalised ONCE at the boundary (`internal`) into the slot the
+# machinery already reads, named `eps` below for history's sake: in an EV
+# build that slot holds quarterly EBITDA in Rs cr, never an EPS.
+VALUATIONS = ("pe", "ev_ebitda")
+EV_DRIVERS = ("volume_mt", "ebitda_per_t")      # cement's two numbers a quarter
 
-def resolve_row(row: dict, shares_cr: float | None) -> dict:
+
+def is_ev(b: dict | None) -> bool:
+    return (b or {}).get("valuation") == "ev_ebitda"
+
+
+def drivers(b: dict | None) -> tuple:
+    return EV_DRIVERS if is_ev(b) else DRIVERS
+
+
+def internal(b: dict) -> dict:
+    """An EV build in the machinery's shape: each quarter's and pin's
+    `ebitda_cr` into the earnings slot, `anchor_multiple` into the anchor slot.
+    A P/E build passes through untouched (bit-identical — the selftest's P/E
+    cases are the regression). A P/E build may also name its anchor
+    `anchor_multiple`; `anchor_pe` stays its legacy spelling."""
+    b = json.loads(json.dumps(b))
+    for sc in (b.get("scenarios") or {}).values():
+        if "anchor_multiple" in sc:
+            sc["anchor_pe"] = sc.pop("anchor_multiple")
+    if not is_ev(b):
+        return b
+    for row in (b.get("quarters") or {}).values():
+        if "ebitda_cr" in row:
+            row["eps"] = row.pop("ebitda_cr")
+    for pin in (b.get("street_q") or {}).values():
+        if isinstance(pin, dict) and "ebitda_cr" in pin:
+            pin["eps"] = pin.pop("ebitda_cr")
+    return b
+
+
+def resolve_row(row: dict, shares_cr: float | None, ev: bool = False) -> dict:
     """A quarter's EPS: as stated for an actual (the reported figure wins), or
     from drivers — revenue x EBIT margin x PAT/EBIT / shares — for a pm or
     draft row that carries all three. Drivers keep a forecast decomposable:
-    "Q3 at 23.9%" is an argument, "Q3 EPS 38.6" is only a number."""
+    "Q3 at 23.9%" is an argument, "Q3 EPS 38.6" is only a number.
+
+    EV: EBITDA Rs cr = volume (mt) x EBITDA/t (Rs) / 10 — 1e6 t x Rs / 1e7.
+    Checked on UltraTech's own Q1FY27: 41.3mt x Rs1,214 = Rs5,014cr against
+    the cited Rs50.2bn. A x10 error here would read as a 10x EBITDA beat."""
     row = dict(row)
+    if ev:
+        if row.get("kind") != "actual" and all(isinstance(row.get(k), (int, float)) for k in EV_DRIVERS):
+            row["eps"] = round(row["volume_mt"] * row["ebitda_per_t"] / 10, 1)
+        return row
     if row.get("kind") != "actual" and shares_cr and all(isinstance(row.get(k), (int, float)) for k in DRIVERS):
         row["eps"] = round(row["revenue_cr"] * row["ebit_margin_pct"] / 100 * row["pat_to_ebit"] / shares_cr, 2)
     return row
@@ -202,15 +250,15 @@ def resolve_quarters(b: dict, overrides: dict | None = None) -> dict:
     """Base quarters with a scenario's overrides applied — a number replaces
     the EPS, a dict is merged into the row (e.g. just a lower margin) and the
     EPS re-derived from drivers."""
-    qs = {}
+    qs, dv = {}, drivers(b)
     for q, row in (b.get("quarters") or {}).items():
         row = dict(row)
         ov = (overrides or {}).get(q)
         if isinstance(ov, (int, float)):
-            row = {**row, "eps": ov, **{k: None for k in DRIVERS}}
+            row = {**row, "eps": ov, **{k: None for k in dv}}
         elif isinstance(ov, dict):
             row.update(ov)
-        qs[q] = resolve_row(row, b.get("shares_cr"))
+        qs[q] = resolve_row(row, b.get("shares_cr"), is_ev(b))
     return qs
 
 
@@ -290,6 +338,15 @@ def case_band(group: str | None, cfg: dict | None = None) -> dict | None:
     return {**band, "key": band_key(group)} if band else None
 
 
+def case_valuation(group: str | None, cfg: dict | None = None) -> str:
+    """Which multiple a leg's case runs on: specs/book.yaml `case_valuation`
+    by sector (CEMENT: ev_ebitda, PM 2026-10-25), else P/E. A sector setting,
+    like the band — never chosen name by name."""
+    import yaml
+    cfg = cfg if cfg is not None else yaml.safe_load(analysis.BOOK_YAML.read_text(encoding="utf-8"))
+    return (cfg.get("case_valuation") or {}).get(band_key(group), "pe")
+
+
 def band_scenarios(b: dict, band: dict) -> dict:
     """Bear and bull as the BASE moved by the sector band (PM, 2026-10-18:
     "fixed sector band, ±50bps margin and ±0.5pp growth for IT, carried").
@@ -303,18 +360,31 @@ def band_scenarios(b: dict, band: dict) -> dict:
     base = (b.get("scenarios") or {}).get("base") or {}
     qs = resolve_quarters(b, base.get("quarters"))
     fc = viewed(qs)            # street quarters follow by the carry ratio, never moved directly
-    m, g = band["margin_bps"] / 100, band["growth_pp"] / 100
     out = {}
     for name, s in (("bear", -1), ("bull", 1)):
-        ov = {q: {"revenue_cr": round(qs[q]["revenue_cr"] * (1 + s * g) ** k, 1),
-                  "ebit_margin_pct": round(qs[q]["ebit_margin_pct"] + s * m, 4),
-                  "pat_to_ebit": qs[q]["pat_to_ebit"]}
-              for k, q in enumerate(fc, 1)}
-        out[name] = {"band": True, "quarters": ov,
-                     "why": (f"{band.get('key', '')} band: every forecast quarter's EBIT margin "
-                             f"{'+' if s > 0 else '-'}{band['margin_bps']}bps and QoQ growth "
-                             f"{'+' if s > 0 else '-'}{band['growth_pp']}pp (revenue level compounds), "
-                             f"carried into later years at the same EPS ratio. Mechanical, not a story.")}
+        sg = "+" if s > 0 else "-"
+        if is_ev(b):
+            # EV band: EBITDA/t moves by per_t_inr, volume growth by growth_pp
+            # per forecast quarter (the volume LEVEL compounds), the same
+            # two-input shape as IT's margin / growth.
+            g = band["growth_pp"] / 100
+            ov = {q: {"volume_mt": round(qs[q]["volume_mt"] * (1 + s * g) ** k, 3),
+                      "ebitda_per_t": round(qs[q]["ebitda_per_t"] + s * band["per_t_inr"], 2)}
+                  for k, q in enumerate(fc, 1)}
+            why = (f"{band.get('key', '')} band: every forecast quarter's EBITDA/t {sg}Rs{band['per_t_inr']} "
+                   f"and volume growth {sg}{band['growth_pp']}pp (volume level compounds), carried into "
+                   f"later years at the same EBITDA ratio. Mechanical, not a story.")
+        else:
+            m, g = band["margin_bps"] / 100, band["growth_pp"] / 100
+            ov = {q: {"revenue_cr": round(qs[q]["revenue_cr"] * (1 + s * g) ** k, 1),
+                      "ebit_margin_pct": round(qs[q]["ebit_margin_pct"] + s * m, 4),
+                      "pat_to_ebit": qs[q]["pat_to_ebit"]}
+                  for k, q in enumerate(fc, 1)}
+            why = (f"{band.get('key', '')} band: every forecast quarter's EBIT margin "
+                   f"{sg}{band['margin_bps']}bps and QoQ growth "
+                   f"{sg}{band['growth_pp']}pp (revenue level compounds), "
+                   f"carried into later years at the same EPS ratio. Mechanical, not a story.")
+        out[name] = {"band": True, "quarters": ov, "why": why}
         # The band moves EPS, never the multiple: a base anchor P/E (PM,
         # 2026-10-20 — TCS on the broker-median implied multiple) is carried
         # into bear and bull. Without this the base read at the anchor while
@@ -325,15 +395,136 @@ def band_scenarios(b: dict, band: dict) -> dict:
     return out
 
 
+ANCHOR_STATS = ("mean", "median")
+
+
+def implied_anchor(b: dict, cons: dict, ev: dict | None, fy: str) -> dict | None:
+    """Each house's IMPLIED multiple on `fy` and their mean and median, from
+    build.json `house_tps` — the PM's anchor rule made mechanical (TCS
+    2026-10-20 "adopt median"; cement 2026-10-25 "get latest valuations,
+    select mean").
+
+        P/E        implied = TP / consensus EPS
+        EV/EBITDA  implied = (TP x shares + net debt) / consensus EBITDA
+
+    Implied, never the stated multiple: the houses state theirs on mixed bases
+    (FY28E, Sep-28E, Dec-28E, 2YF), and only the implied one puts every TP on
+    the year and the earnings line the juice is measured on. The EV form uses
+    the SAME net debt as ev_juice, so the round trip is exact: the mean implied
+    multiple on consensus EBITDA gives back the mean TP (tested)."""
+    tps = b.get("house_tps") or []
+    if fy not in cons or not tps:
+        return None
+    rows = []
+    for t in tps:
+        if ev is not None:
+            m = (t["tp"] * ev["shares_cr"] + ev["net_debt_cr"]) / cons[fy]
+        else:
+            m = t["tp"] / cons[fy]
+        rows.append({**t, "implied": round(m, 2), "_m": m})
+    ms = [r.pop("_m") for r in rows]
+    tp = [t["tp"] for t in tps]
+    # Full precision, rounded only when printed: a 0.005x rounding is ~Rs3.7 a
+    # share on UltraTech's ~Rs22,000cr EBITDA, enough to break the round trip.
+    return {"fy": fy, "n": len(rows), "houses": rows,
+            "mean": st.mean(ms), "median": st.median(ms),
+            "tp_mean": round(st.mean(tp), 1), "tp_median": round(st.median(tp), 1)}
+
+
+def apply_anchor(b: dict, anc: dict | None) -> dict:
+    """A base scenario with `"anchor": "mean"` (or "median") takes that
+    statistic of the implied multiples as its anchor, with an anchor_why that
+    names every house, TP and date. Returns the build unchanged otherwise."""
+    base = (b.get("scenarios") or {}).get("base") or {}
+    stat = base.get("anchor")
+    if stat not in ANCHOR_STATS or not anc:
+        return b
+    b = json.loads(json.dumps(b))
+    names = " / ".join(f"{h['house']} {h['tp']:,.0f} ({h['date']})" for h in anc["houses"])
+    b["scenarios"]["base"]["anchor_pe"] = anc[stat]
+    b["scenarios"]["base"]["anchor_why"] = (
+        f"{stat} of {anc['n']} houses' implied {anc['fy']} multiples = {anc[stat]:.2f}x "
+        f"(mean {anc['mean']:.2f}x, median {anc['median']:.2f}x; TP mean {anc['tp_mean']:,.0f}, median "
+        f"{anc['tp_median']:,.0f}): {names}. " + (base.get("anchor_note") or "")).strip()
+    return b
+
+
+def _validate_tps(b: dict) -> list[str]:
+    probs = []
+    base = (b.get("scenarios") or {}).get("base") or {}
+    if "anchor" in base:
+        if base["anchor"] not in ANCHOR_STATS:
+            probs.append(f"base anchor {base['anchor']!r} not in {ANCHOR_STATS}")
+        if not b.get("house_tps"):
+            probs.append("base anchor from house TPs needs house_tps")
+        if base.get("anchor_pe") is not None or base.get("anchor_multiple") is not None:
+            probs.append("base carries both a computed anchor and a typed one — keep one")
+    for i, t in enumerate(b.get("house_tps") or []):
+        if not (isinstance(t, dict) and (t.get("house") or "").strip()):
+            probs.append(f"house_tps[{i}]: needs a house"); continue
+        if not (isinstance(t.get("tp"), (int, float)) and t["tp"] > 0):
+            probs.append(f"house_tps {t['house']}: needs a positive tp")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", t.get("date") or ""):
+            probs.append(f"house_tps {t['house']}: needs an ISO date")
+        if not (t.get("source") or "").strip():
+            probs.append(f"house_tps {t['house']}: needs a source")
+    return probs
+
+
+def _validate_ev(b: dict) -> list[str]:
+    """What an EV/EBITDA build needs that a P/E build gets from the store.
+
+    There is no daily consensus for these names (the Yahoo capture is EMS + IT
+    only, and Yahoo carries no EBITDA anyway), so the consensus EBITDA, the
+    share count and the net debt are written into build.json — each sourced,
+    because each moves the juice: net debt is the wedge between an EBITDA gap
+    and an equity return, and a missing one makes every case read as if the
+    company were debt-free."""
+    probs = []
+    if not (isinstance(b.get("shares_cr"), (int, float)) and b["shares_cr"] > 0):
+        probs.append("an EV build needs shares_cr (equity value / shares = price)")
+    if not isinstance(b.get("net_debt_cr"), (int, float)):
+        probs.append("an EV build needs net_debt_cr (negative for net cash)")
+    if not (b.get("net_debt_source") or "").strip():
+        probs.append("net_debt_cr needs a net_debt_source")
+    cons = b.get("consensus") or {}
+    if not cons:
+        probs.append("an EV build needs consensus EBITDA per fiscal year (consensus: {FY: {ebitda_cr, source}})")
+    for fy, c in cons.items():
+        if not re.fullmatch(r"FY\d{2}", fy):
+            probs.append(f"consensus {fy!r} is not FYyy")
+        elif not (isinstance(c, dict) and isinstance(c.get("ebitda_cr"), (int, float)) and c["ebitda_cr"] > 0):
+            probs.append(f"consensus {fy}: needs a positive ebitda_cr")
+        elif not (c.get("source") or "").strip():
+            probs.append(f"consensus {fy}: needs a source (which houses, which notes)")
+    if b.get("headline_fy") and cons and b["headline_fy"] not in cons:
+        probs.append(f"headline {b['headline_fy']} has no consensus EBITDA")
+    for name, sc in (b.get("scenarios") or {}).items():
+        if "anchor_pe" in sc:
+            probs.append(f"scenario {name}: anchor_pe in an EV/EBITDA build — the anchor is anchor_multiple")
+    for q, row in (b.get("quarters") or {}).items():
+        if "eps" in row:
+            probs.append(f"{q}: an EV build's quarters carry ebitda_cr, not eps")
+    return probs
+
+
 def validate_build(b: dict, band: dict | None = None) -> list[str]:
     """Every problem with a build.json, named. An actual needs a source; a
     quarter label must parse; a scenario may override only quarters that exist.
     With a sector band, bear/bull are generated — a hand-drawn one is refused,
     and every forecast quarter must carry drivers for the band to move."""
     probs = []
+    raw, b = b, internal(b)
+    dv = drivers(b)
+    if (raw.get("valuation") or "pe") not in VALUATIONS:
+        probs.append(f"valuation {raw.get('valuation')!r} not in {VALUATIONS}")
+    if is_ev(raw):
+        probs += _validate_ev(raw)
+    probs += _validate_tps(raw)
     if band is not None:
-        if not all(isinstance(band.get(k), (int, float)) and band[k] > 0 for k in ("margin_bps", "growth_pp")):
-            probs.append(f"case band {band!r}: margin_bps and growth_pp must be positive numbers")
+        bk = ("per_t_inr", "growth_pp") if is_ev(b) else ("margin_bps", "growth_pp")
+        if not all(isinstance(band.get(k), (int, float)) and band[k] > 0 for k in bk):
+            probs.append(f"case band {band!r}: {' and '.join(bk)} must be positive numbers")
         hand = [k for k in ("bear", "bull") if k in (b.get("scenarios") or {})]
         if hand:
             probs.append(f"scenario {', '.join(hand)}: bear/bull come from the {band.get('key')} case band — "
@@ -341,9 +532,9 @@ def validate_build(b: dict, band: dict | None = None) -> list[str]:
         if "base" not in (b.get("scenarios") or {}):
             probs.append("a banded build needs a base scenario")
         for q, row in resolve_quarters(b, ((b.get("scenarios") or {}).get("base") or {}).get("quarters")).items():
-            if row.get("kind") in ("pm", "draft") and not all(isinstance(row.get(k), (int, float)) for k in DRIVERS):
-                probs.append(f"{q}: the band moves drivers, so a forecast quarter needs revenue_cr, "
-                             "ebit_margin_pct and pat_to_ebit")
+            if row.get("kind") in ("pm", "draft") and not all(isinstance(row.get(k), (int, float)) for k in dv):
+                probs.append(f"{q}: the band moves drivers, so a forecast quarter needs {', '.join(dv)}")
+    line = "ebitda_cr" if is_ev(b) else "eps"
     qs = resolve_quarters(b)
     for q, row in qs.items():
         try:
@@ -353,11 +544,11 @@ def validate_build(b: dict, band: dict | None = None) -> list[str]:
         if row.get("kind") not in QKINDS:
             probs.append(f"{q}: kind {row.get('kind')!r} not in {QKINDS}")
         if row.get("kind") == "street":
-            if any(row.get(k) is not None for k in ("eps",) + DRIVERS):
-                probs.append(f"{q}: a street quarter takes consensus — it carries no eps or drivers")
+            if any(row.get(k) is not None for k in ("eps",) + dv):
+                probs.append(f"{q}: a street quarter takes consensus — it carries no {line} or drivers")
             continue
         if not isinstance(row.get("eps"), (int, float)):
-            probs.append(f"{q}: eps must be a number, got {row.get('eps')!r}")
+            probs.append(f"{q}: {line} must be a number, got {row.get('eps')!r}")
         if row.get("kind") == "actual" and not (row.get("source") or "").strip():
             probs.append(f"{q}: an actual needs a source")
     for name, sc in (b.get("scenarios") or {}).items():
@@ -383,7 +574,7 @@ def validate_build(b: dict, band: dict | None = None) -> list[str]:
         except ValueError as e:
             probs.append(f"street_q {e}"); continue
         if not isinstance(pin, dict) or not isinstance(pin.get("eps"), (int, float)) or pin["eps"] <= 0:
-            probs.append(f"street_q {q}: needs a positive eps")
+            probs.append(f"street_q {q}: needs a positive {line}")
             continue
         if not (pin.get("source") or "").strip():
             probs.append(f"street_q {q}: a pinned street quarter needs a source")
@@ -430,8 +621,32 @@ def implied_rest(quarters: dict, cons_fy_eps: float, fy: str) -> dict | None:
             "step_vs_last_pct": round((per_q / acts[last_q]["eps"] - 1) * 100, 2)}
 
 
+def ev_juice(e: float, c: float, mult_today: float, anchor: float | None, ev: dict) -> dict:
+    """EV/EBITDA juice on one year: the multiple prices the ENTERPRISE, and
+    net debt sits between it and the equity.
+
+        target equity = M x EBITDA - net debt,   M = anchor or today's multiple
+        juice         = target equity / today's market cap - 1
+
+    Today's market cap is exactly mult_today x consensus - net debt, so with no
+    anchor a view equal to consensus is zero juice (tested), and an EBITDA gap
+    reaches the equity LEVERED by EV / market cap — a 5% EBITDA beat is ~5.4%
+    of equity at UltraTech's ~0.07x net debt to market cap, and much more on a
+    geared name. Reading the EBITDA gap as the return would be the P/E rule on
+    the wrong line: right for a debt-free company and silently wrong elsewhere.
+    Net debt is held at today's figure in every case; the method re-marks the
+    multiple and the earnings line, it does not forecast the balance sheet."""
+    m = anchor if anchor else mult_today
+    eq = m * e - ev["net_debt_cr"]
+    return {"eps": round(e, 1), "cons": round(c, 1),
+            "eps_gap_pct": round((e / c - 1) * 100, 2),
+            "pe_today": round(mult_today, 2), "pe_target": round(m, 2),
+            "target_price": round(eq / ev["shares_cr"], 1),
+            "juice_pct": round((eq / ev["mcap_cr"] - 1) * 100, 2)}
+
+
 def scenario_juice(b: dict, cons: dict[str, float], pe_today: dict[str, float],
-                   band: dict | None = None) -> dict:
+                   band: dict | None = None, ev: dict | None = None) -> dict:
     """Per scenario: its quarter build (base quarters with overrides), FY sums,
     and juice on each FY that consensus covers.
 
@@ -453,7 +668,11 @@ def scenario_juice(b: dict, cons: dict[str, float], pe_today: dict[str, float],
     later year with no stated fy_eps/growth_pct is consensus x r0. A band
     scenario moves r0 by its own ratio on the viewed quarters, so the street
     quarters and later years follow the moved view by the same rule.
+
+    EV builds (`ev` = net debt, market cap, shares): the same build on EBITDA,
+    valued by ev_juice. `pe_today` then holds today's EV/EBITDA per year.
     """
+    b = internal(b)
     specs = dict(b.get("scenarios") or {})
     if band is not None:
         specs = {"base": specs.get("base") or {}, **band_scenarios(b, band)}
@@ -492,7 +711,9 @@ def scenario_juice(b: dict, cons: dict[str, float], pe_today: dict[str, float],
                     eps_fy[fy] = round(v * rel, 2)
         juice = {}
         for fy, e in eps_fy.items():
-            if fy in cons and fy in pe_today:
+            if fy in cons and fy in pe_today and ev is not None:
+                juice[fy] = ev_juice(e, cons[fy], pe_today[fy], sc.get("anchor_pe"), ev)
+            elif fy in cons and fy in pe_today:
                 mult = (sc["anchor_pe"] / pe_today[fy]) if sc.get("anchor_pe") else 1.0
                 juice[fy] = {"eps": round(e, 2), "cons": round(cons[fy], 2),
                              "eps_gap_pct": round((e / cons[fy] - 1) * 100, 2),
@@ -534,6 +755,16 @@ def concall_notes(ent: str, token: str) -> list[str]:
     """Vault concall notes on file for the stock (read-only; the Results tab's
     Concall sub-tab reads the same files)."""
     names = {token, token.upper()}
+    # The vault folder is keyed on the NSE symbol (ULTRACEMCO_Concall), which
+    # the IMS token (UTCEM) is not; the entity specs carry it.
+    try:
+        import yaml
+        for f in (REPO / "specs" / "entities").glob("*.yaml"):
+            for e in (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("entities") or []:
+                if e.get("id") == ent and e.get("nse_symbol"):
+                    names.add(str(e["nse_symbol"]))
+    except Exception:
+        pass
     try:
         sys.path.insert(0, str(REPO / "packages" / "api"))
         import engine
@@ -570,13 +801,32 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
         px = analysis._close(conn, ent)
         pe_today = {fy: px[1] / e for fy, e in cons.items()} if px else {}
         build = build if build is not None else load_build(ent)
+        valuation = case_valuation(me["group"])
+        ev = None
+        if valuation == "ev_ebitda":
+            # No feed carries these names' consensus EBITDA, so the build does
+            # (sourced); Yahoo's EPS rows, if any, are not this case's line.
+            bc = (build or {}).get("consensus") or {}
+            cons = {fy: c["ebitda_cr"] for fy, c in bc.items()
+                    if isinstance(c, dict) and isinstance(c.get("ebitda_cr"), (int, float)) and c["ebitda_cr"] > 0}
+            sh, nd = (build or {}).get("shares_cr"), (build or {}).get("net_debt_cr")
+            if px and isinstance(sh, (int, float)) and sh > 0 and isinstance(nd, (int, float)):
+                mcap = px[1] * sh
+                ev = {"price": px[1], "price_date": px[0], "shares_cr": sh, "mcap_cr": round(mcap, 1),
+                      "net_debt_cr": nd, "net_debt_source": build.get("net_debt_source"),
+                      "ev_cr": round(mcap + nd, 1)}
+                pe_today = {fy: (mcap + nd) / c for fy, c in cons.items()}
+            else:
+                pe_today = {}
         out = {"entity": ent, "name": me["name"], "token": me["token"], "side": me["side"],
-               "group": me["group"], "as_of": today.isoformat(),
-               "open_quarter": quarter_of(today),
+               "group": me["group"], "as_of": today.isoformat(), "valuation": valuation,
+               "multiple": "EV/EBITDA" if valuation == "ev_ebitda" else "P/E",
+               "ev": ev, "consensus": cons, "open_quarter": quarter_of(today),
                "priced": priced, "revisions": revs,
                "pe_today": {k: round(v, 2) for k, v in pe_today.items()},
                "rerate": rerate(conn, ent, fy1),
-               "street": {q: street(conn, ent, q) for q in sorted(
+               "street": {q: street(conn, ent, q, STREET_METRICS_EV if valuation == "ev_ebitda" else STREET_METRICS)
+                          for q in sorted(
                    {r["period"] for r in conn.execute(
                        "SELECT DISTINCT period FROM estimates WHERE entity_id=? AND period LIKE 'Q_FY__' "
                        "AND broker NOT IN ('consensus_yahoo','bloomberg')", (ent,))}, key=qlabel_key)},
@@ -586,6 +836,18 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
             band = case_band(me["group"])
             out["band"] = band
             probs = validate_build(build, band)
+            if (build.get("valuation") or "pe") != valuation:
+                probs.append(f"build says valuation {build.get('valuation') or 'pe'!r} but the {band_key(me['group'])} "
+                             f"sector runs on {valuation!r} (specs/book.yaml case_valuation)")
+            if valuation == "ev_ebitda" and ev is None and not probs:
+                probs.append("no close in prices for the EV bridge")
+            build = internal(build)
+            anc = implied_anchor(build, cons, ev, build.get("headline_fy", fy1))
+            out["anchor"] = anc
+            if ((build.get("scenarios") or {}).get("base") or {}).get("anchor") and anc is None:
+                probs.append("base anchor from house TPs, but no implied multiple could be computed "
+                             f"(needs {build.get('headline_fy', fy1)} consensus and, for EV, the EV bridge)")
+            build = apply_anchor(build, anc)
             qs = resolve_quarters(build, ((build.get("scenarios") or {}).get("base") or {}).get("quarters"))
             sq = build.get("street_q") or {}
             r0 = street_ratio(qs, cons, sq)
@@ -599,7 +861,7 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
                 out["quarters"] = qs
                 out["fy_sums"] = fy_sums(qs)
                 out["implied"] = {fy: implied_rest(qs, cons[fy], fy) for fy in cons}
-                out["scenarios"] = scenario_juice(build, cons, pe_today, band)
+                out["scenarios"] = scenario_juice(build, cons, pe_today, band, ev)
                 out["confidence"] = build.get("confidence")
                 out["horizon"] = build.get("horizon")
                 out["headline_fy"] = build.get("headline_fy", fy1)
@@ -632,8 +894,9 @@ def price_entry(b: dict) -> dict:
     # P/E" unconditionally, which was false the first time an anchor was set
     # (TCS, 2026-10-20 — juice at 14.54x printed as "today's P/E", 15.27x).
     jb = (sc.get("base") or {}).get("juice", {}).get(fy) or {}
-    at = (f"the anchor P/E {jb['pe_target']}x (today {jb['pe_today']}x)"
-          if jb and jb.get("pe_target") != jb.get("pe_today") else "today's P/E")
+    mu = b.get("multiple") or "P/E"
+    at = (f"the anchor {mu} {jb['pe_target']}x (today {jb['pe_today']}x)"
+          if jb and jb.get("pe_target") != jb.get("pe_today") else f"today's {mu}")
     note = (f"{fy} juice at {at}: bear {j['bear']:+.1f}%, base {j.get('base', float('nan')):+.1f}%, "
             f"bull {j['bull']:+.1f}% (horizon: {b.get('horizon') or 'unstated'}).{how} No lean picked — PM to choose.")
     return {"entity": b["entity"], "step": "price", "status": "partial", "via": f"agent:{agent_name(b['token'])}",
@@ -644,8 +907,18 @@ def price_entry(b: dict) -> dict:
 def render(b: dict) -> str:
     L = [f"{b['name']} ({b['entity']}) — {b['side']} leg, {b['group']} · as of {b['as_of']} "
          f"· open quarter {b['open_quarter']}"]
+    ev = b.get("ev")
+    line = "EBITDA" if ev is not None or b.get("valuation") == "ev_ebitda" else "EPS"
+    if ev:
+        L.append(f"PRICED  close {ev['price']} ({ev['price_date']}) x {ev['shares_cr']}cr shares = mcap "
+                 f"Rs{ev['mcap_cr']:,.0f}cr + net debt Rs{ev['net_debt_cr']:,.0f}cr = EV Rs{ev['ev_cr']:,.0f}cr")
+        for fy, m in (b.get("pe_today") or {}).items():
+            c = (b.get("consensus") or {}).get(fy)
+            L.append(f"        {fy} consensus EBITDA Rs{c:,.1f}cr → EV/EBITDA {m}x")
+    elif b.get("valuation") == "ev_ebitda":
+        L.append("PRICED  no EV bridge yet — build.json needs shares_cr, net_debt_cr and consensus")
     p = b.get("priced")
-    if p:
+    if p and not ev:
         L.append(f"PRICED  close {p['price']} ({p['price_date']}) · {p['fy1']} EPS {p['eps_fy1']} → "
                  f"P/E {p['pe_fy1']}x · sector median {p['sector_pe_median']}x · rel {p['rel_pe']} "
                  f"(n={p['n_peers']}) · {p['fy0']}→{p['fy1']} EPS growth "
@@ -666,23 +939,33 @@ def render(b: dict) -> str:
     if b.get("build_problems"):
         L.append("BUILD   REFUSED: " + "; ".join(b["build_problems"]))
     for fy, d in (b.get("fy_sums") or {}).items():
-        L.append(f"BUILD   {fy}: EPS {d['eps']} from {d['n']}/4 quarters {d['kinds']}")
+        L.append(f"BUILD   {fy}: {line} {d['eps']} from {d['n']}/4 quarters {d['kinds']}")
     for q, pin in sorted((b.get("street_q") or {}).items(), key=lambda x: qlabel_key(x[0])):
         L.append(f"STREET  {q}: pinned at {pin['eps']} ({pin.get('source', '')[:90]}) — the view is "
                  f"compared with this, the rest of the year splits what consensus leaves")
     for q, r in sorted((b.get("quarters") or {}).items(), key=lambda x: qlabel_key(x[0])):
         if r.get("kind") == "street":
             L.append(f"STREET  {q}: no view — takes what consensus leaves per quarter x the view's carry "
-                     f"{b.get('street_ratio')} = EPS {r['eps']}")
+                     f"{b.get('street_ratio')} = {line} {r['eps']}")
     for fy, im in (b.get("implied") or {}).items():
         if im:
             L.append(f"IMPLIED {fy} consensus leaves {im['implied_per_q']}/qtr for {im['left']} quarters "
                      f"= {im['step_vs_last_pct']:+}% on {im['last_actual']} ({im['last_actual_eps']})")
     for name, sc in (b.get("scenarios") or {}).items():
-        js = " · ".join(f"{fy} EPS {j['eps']} vs {j['cons']} → juice {j['juice_pct']:+}%"
-                        + (f" (P/E {j['pe_today']}→{j['pe_target']})" if j['pe_target'] != j['pe_today'] else "")
+        mu = b.get("multiple") or "P/E"
+        js = " · ".join(f"{fy} {line} {j['eps']} vs {j['cons']} → juice {j['juice_pct']:+}%"
+                        + (f" (TP {j['target_price']:,.0f})" if "target_price" in j else "")
+                        + (f" ({mu} {j['pe_today']}→{j['pe_target']})" if j['pe_target'] != j['pe_today'] else "")
                         for fy, j in sc["juice"].items())
         L.append(f"SCEN    {name:5s} {js}")
+    an = b.get("anchor")
+    if an:
+        mu = b.get("multiple") or "P/E"
+        L.append(f"ANCHOR  {an['n']} houses' implied {an['fy']} {mu}: mean {an['mean']:.2f}x · median {an['median']:.2f}x "
+                 f"(TP mean {an['tp_mean']:,.0f} · median {an['tp_median']:,.0f})")
+        L += [f"        {h['house']:14s} TP {h['tp']:>9,.0f} ({h['date']}) → {h['implied']}x"
+              + (f"   stated: {h['basis']}" if h.get("basis") else "")
+              for h in sorted(an["houses"], key=lambda h: h["implied"])]
     if b.get("scenarios") and b.get("band"):
         bd = b["band"]
         L.append(f"        bear/bull = base moved by the {bd['key']} band: margin ±{bd['margin_bps']}bps, "
@@ -720,7 +1003,7 @@ def is_it(group: str | None) -> bool:
 
 AGENT_TEMPLATE = """---
 name: {agent}
-description: {name}'s case agent — works ONLY on {name} ({token}) for the Book tab's Analysis sub-tab - what's priced in, the quarter-by-quarter EPS build, later quarters vs the street, base/bear/bull juice, the re-rating check{deals_desc} - and keeps {name}'s case file current. Use when the PM asks about {name}'s case, juice, expected return, EPS build, or "run the {name} agent". Never sets a Kelly edge or a lean.
+description: {name}'s case agent — works ONLY on {name} ({token}) for the Book tab's Analysis sub-tab - what's priced in, the quarter-by-quarter {earn} build, later quarters vs the street, base/bear/bull juice, the re-rating check{deals_desc} - and keeps {name}'s case file current. Use when the PM asks about {name}'s case, juice, expected return, {earn} build, or "run the {name} agent". Never sets a Kelly edge or a lean.
 ---
 
 You are the case agent for **{name}** ({token}, entity `{entity}`), the
@@ -733,13 +1016,13 @@ else. If asked about another name, say which agent owns it and stop.
 2. `data/analysis/cases/{entity}/case.md` — your own memory: thesis, scenarios,
    open questions, what you said last time. Pick up from it.
 3. `python packages/book/case_brief.py {entity}` — today's facts from the
-   store and the arithmetic on your build. Never do EPS or P/E arithmetic in
+   store and the arithmetic on your build. Never do {earn} or {mult} arithmetic in
    your head; edit `build.json` and re-run the brief.
 
 **What you may write:** `data/analysis/cases/{entity}/case.md` and
 `build.json`, and Analysis-log entries for **{entity} only** via
 `python packages/book/analysis.py --add '<json>'` with
-`"via": "agent:{agent}"`.{it_block}
+`"via": "agent:{agent}"`.{it_block}{ev_block}
 
 **What you never write:** a `juice_pct` lean (the PM's number — and since
 2026-10-22 the Kelly edge IS long lean − short lean, so a lean sizes the book),
@@ -767,6 +1050,21 @@ CROSS-CHECK DUE (21 days before `next_result`), re-confirm every unfinished
 deal's status before the print. The stock-case skill's "IT deals" section is
 the method."""
 
+EV_BLOCK = """
+
+**{group} runs on EV/EBITDA, not P/E** (PM, 2026-10-25). The build is
+quarterly consolidated EBITDA (Rs cr); a forecast quarter is two numbers,
+volume (mt) and EBITDA/t (Rs), and the brief derives the EBITDA. Consensus
+EBITDA per year, the share count and net debt are written into `build.json`
+(no feed carries them), each with a source; re-strike them when a house
+publishes or the company reports. The anchor multiple is the MEAN of the
+houses' implied EV/EBITDA on the headline year (PM: "get latest valuations,
+select mean"): list every post-result TP in `house_tps` and set the base
+`"anchor": "mean"`. The brief computes each (TP x shares + net debt) /
+consensus EBITDA and the mean, and names every TP in `anchor_why`. Never type
+a multiple yourself. The stock-case skill's "EV/EBITDA sectors" section is the
+method."""
+
 CASE_TEMPLATE = """# {name} — case file
 
 *Maintained by the `{agent}` agent. Rewritten each run; the Analysis
@@ -780,7 +1078,7 @@ _Not yet written._
 ## What's priced in
 _Run the brief._
 
-## EPS build
+## {earn} build
 _See build.json._
 
 ## Scenarios and juice
@@ -813,7 +1111,9 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
         raise SystemExit(f"{ent!r} is not one of the 32 dictated legs")
     r = ros[ent]
     it = is_it(r["group"])
-    fill = {"entity": ent, "name": r["name"], "token": r["token"], "group": r["group"],
+    evs = case_valuation(r["group"]) == "ev_ebitda"
+    fill = {"earn": "EBITDA" if evs else "EPS", "mult": "EV/EBITDA" if evs else "P/E",
+            "ev_block": EV_BLOCK.format(group=band_key(r["group"])) if evs else "","entity": ent, "name": r["name"], "token": r["token"], "group": r["group"],
             "side_word": r["side"], "pairs": ", ".join(r["pairs"]), "agent": agent_name(r["token"]),
             "it_block": IT_BLOCK.format(entity=ent, name=r["name"]) if it else "",
             "deals_desc": (" - and the deal list: reported TCV, named deals, what is delayed and "
@@ -830,6 +1130,11 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
     if not (d / "build.json").exists():
         today = today or dt.date.today()
         b = dict(BUILD_TEMPLATE, entity=ent, headline_fy=analysis.fy_label(today, 1))
+        if evs:
+            b = {**b, "valuation": "ev_ebitda", "eps_basis": None,
+                 "ebitda_basis": "consolidated, reported, ex one-offs", "net_debt_cr": None,
+                 "net_debt_source": None, "consensus": {}}
+            b.pop("eps_basis")
         (d / "build.json").write_text(json.dumps(b, indent=2), encoding="utf-8"); wrote.append(str(d / "build.json"))
     if it and not (d / "deals.json").exists():
         (d / "deals.json").write_text(json.dumps({"entity": ent, "currency": "USD m", "quarters": {},
@@ -1008,6 +1313,98 @@ def _selftest() -> None:
         bx = json.loads(json.dumps(bs)); mut(bx)
         assert any(why in p for p in validate_build(bx, band)), why; ok += 1
 
+    # EV/EBITDA (PM, 2026-10-25, cement). Acceptance first — the arithmetic —
+    # then the refusals.
+    assert resolve_row({"kind": "draft", "volume_mt": 41.3, "ebitda_per_t": 1214}, None, ev=True)["eps"] == 5013.8; ok += 1
+    assert "eps" not in resolve_row({"kind": "actual", "volume_mt": 41.3, "ebitda_per_t": 1214}, None, ev=True); ok += 1
+    evx = {"shares_cr": 30.0, "mcap_cr": 300000.0, "net_debt_cr": 20000.0}       # price 10,000
+    c = 20000.0; m0 = (300000 + 20000) / c                                         # EV/EBITDA 16.0x
+    z = ev_juice(c, c, m0, None, evx)
+    assert z["juice_pct"] == 0.0 and z["target_price"] == 10000.0; ok += 1        # view = street: zero, at today's price
+    up = ev_juice(c * 1.05, c, m0, None, evx)
+    assert up["juice_pct"] == round(5 * 320000 / 300000, 2) == 5.33; ok += 1      # levered by EV / mcap, NOT the EBITDA gap
+    # the anchor round trip: the implied multiple of a TP, applied to consensus,
+    # gives back exactly that TP — so a mean of implied multiples targets the mean TP
+    tp = 12000.0; mi = (tp * 30 + 20000) / c
+    assert ev_juice(c, c, m0, mi, evx)["target_price"] == tp; ok += 1
+    cfgv = {"case_valuation": {"CEMENT": "ev_ebitda"},
+            "case_bands": {"CEMENT": {"per_t_inr": 50, "growth_pp": 1.0}}}
+    assert case_valuation("CEMENT", cfgv) == "ev_ebitda" and case_valuation("IT LARGECAP", cfgv) == "pe"; ok += 1
+    be = {"entity": "x", "valuation": "ev_ebitda", "shares_cr": 30.0, "net_debt_cr": 20000.0,
+          "net_debt_source": "Sep-26 balance sheet", "headline_fy": "FY28",
+          "consensus": {"FY27": {"ebitda_cr": 17000.0, "source": "mean of 3 houses"},
+                        "FY28": {"ebitda_cr": 20000.0, "source": "mean of 3 houses"}},
+          "quarters": {"Q1FY27": {"kind": "actual", "ebitda_cr": 5000.0, "source": "filing"},
+                       "Q2FY27": {"kind": "actual", "ebitda_cr": 3700.0, "source": "filing"},
+                       "Q3FY27": {"kind": "draft", "volume_mt": 40.0, "ebitda_per_t": 1050.0},
+                       "Q4FY27": {"kind": "street"}},
+          "scenarios": {"base": {"why": "Q3 drafted, Q4 street"}}}
+    assert validate_build(be) == []; ok += 1
+    bandc = case_band("CEMENT", cfgv)
+    assert validate_build(be, bandc) == []; ok += 1
+    sev = scenario_juice(be, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, bandc, evx)
+    # street leaves (17000-8700)/2 = 4150 a quarter; the Q3 view is 40 x 1050 / 10 = 4200
+    r0 = 4200 / 4150
+    assert sev["base"]["quarters"]["Q4FY27"] == round(4150 * r0, 1); ok += 1
+    assert sev["base"]["fy_eps"]["FY28"] == round(20000 * r0, 2); ok += 1          # carried, no growth picked
+    jb28 = sev["base"]["juice"]["FY28"]
+    assert jb28["juice_pct"] == round((m0 * 20000 * r0 - 20000) / 300000 * 100 - 100, 2); ok += 1
+    lq = sev["bear"]["quarters"]["Q3FY27"]
+    assert lq == round(40 * 0.99 * 1000 / 10, 1); ok += 1                         # -1pp volume, -Rs50/t
+    jv = {k: sev[k]["juice"]["FY28"]["juice_pct"] for k in ("bear", "base", "bull")}
+    assert jv["bear"] < jv["base"] < jv["bull"]; ok += 1
+    eqv = json.loads(json.dumps(be)); eqv["quarters"]["Q3FY27"].update(volume_mt=41.5, ebitda_per_t=1000.0)
+    ze = scenario_juice(eqv, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, None, evx)
+    assert ze["base"]["juice"]["FY28"]["juice_pct"] == 0.0; ok += 1               # view = street (4150): zero
+    pinv = json.loads(json.dumps(be)); pinv["street_q"] = {"Q3FY27": {"ebitda_cr": 4000.0, "source": "house median"}}
+    assert validate_build(pinv) == []; ok += 1
+    sp = scenario_juice(pinv, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, None, evx)
+    assert sp["base"]["quarters"]["Q4FY27"] == round((17000 - 8700 - 4000) * 4200 / 4000, 1); ok += 1
+    anc = json.loads(json.dumps(be)); anc["scenarios"]["base"].update(anchor_multiple=mi, anchor_why="mean of TPs")
+    assert validate_build(anc) == []; ok += 1
+    sa = scenario_juice(anc, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, bandc, evx)
+    assert sa["bull"]["juice"]["FY28"]["pe_target"] == round(mi, 2); ok += 1      # the band carries the anchor
+    pe_ev = {"entity": "x", "token": "X", "headline_fy": "FY28", "horizon": "h", "multiple": "EV/EBITDA",
+             "scenarios": {k: {"juice": {"FY28": sa[k]["juice"]["FY28"]}} for k in sa}}
+    assert "anchor EV/EBITDA" in price_entry(pe_ev)["note"]; ok += 1
+    for mut, why in [(lambda b: b.pop("net_debt_source"), "net_debt_source"),
+                     (lambda b: b.pop("net_debt_cr"), "net_debt_cr"),
+                     (lambda b: b["consensus"]["FY28"].pop("source"), "needs a source"),
+                     (lambda b: b["consensus"].pop("FY28"), "headline FY28 has no consensus"),
+                     (lambda b: b["scenarios"]["base"].update(anchor_pe=15.0, anchor_why="x"), "anchor_multiple"),
+                     (lambda b: b["quarters"]["Q1FY27"].update(eps=5000.0), "carry ebitda_cr, not eps"),
+                     (lambda b: b["scenarios"]["base"].update(anchor_multiple=15.0), "named anchor"),
+                     (lambda b: b.update(valuation="ev_sales"), "valuation"),
+                     (lambda b: b["quarters"]["Q3FY27"].pop("ebitda_per_t"), "ebitda_cr must be a number")]:
+        bx = json.loads(json.dumps(be)); mut(bx)
+        assert any(why in p for p in validate_build(bx)), (why, validate_build(bx)); ok += 1
+    bx = json.loads(json.dumps(be)); bx["quarters"]["Q3FY27"] = {"kind": "draft", "ebitda_cr": 4200.0}
+    assert any("volume_mt" in p for p in validate_build(bx, bandc)); ok += 1        # the band needs drivers
+    assert any("per_t_inr" in p for p in validate_build(be, {"key": "CEMENT", "margin_bps": 50, "growth_pp": 1})); ok += 1
+
+    # house-TP anchor: implied multiples, mean/median, and the exact round trip
+    tps = [{"house": h, "tp": t, "date": "2026-10-20", "source": "note"} for h, t in
+           (("A", 9000.0), ("B", 12000.0), ("C", 15000.0), ("D", 13000.0))]
+    ta = json.loads(json.dumps(be)); ta["house_tps"] = tps; ta["scenarios"]["base"]["anchor"] = "mean"
+    assert validate_build(ta) == []; ok += 1
+    an = implied_anchor(ta, {"FY28": 20000.0}, evx, "FY28")
+    assert an["houses"][0]["implied"] == round((9000 * 30 + 20000) / 20000, 2) and an["tp_mean"] == 12250.0; ok += 1
+    assert abs(an["median"] - st.median([h["implied"] for h in an["houses"]])) < 0.01; ok += 1
+    tb = apply_anchor(internal(ta), an)
+    assert tb["scenarios"]["base"]["anchor_pe"] == an["mean"] and "C 15,000 (2026-10-20)" in tb["scenarios"]["base"]["anchor_why"]; ok += 1
+    eqa = json.loads(json.dumps(tb)); eqa["quarters"]["Q3FY27"].update(volume_mt=41.5, ebitda_per_t=1000.0)
+    tj = scenario_juice(eqa, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, None, evx)
+    assert abs(tj["base"]["juice"]["FY28"]["target_price"] - 12250.0) < 1.0; ok += 1   # view = street -> the mean TP
+    pa = implied_anchor({"house_tps": tps}, {"FY28": 100.0}, None, "FY28")            # P/E form: TP / EPS
+    assert pa["houses"][1]["implied"] == 120.0; ok += 1
+    for mut, why in [(lambda b: b["scenarios"]["base"].update(anchor="mode"), "not in"),
+                     (lambda b: b.pop("house_tps"), "needs house_tps"),
+                     (lambda b: b["house_tps"][0].pop("date"), "ISO date"),
+                     (lambda b: b["house_tps"][1].pop("source"), "needs a source"),
+                     (lambda b: b["scenarios"]["base"].update(anchor_multiple=15.0, anchor_why="x"), "keep one")]:
+        bx = json.loads(json.dumps(ta)); mut(bx)
+        assert any(why in p for p in validate_build(bx)), (why, validate_build(bx)); ok += 1
+
     # price entry carries the range, never a lean
     pe_doc = price_entry({"entity": "x", "token": "X", "headline_fy": "FY28", "horizon": "13w", "scenarios": sj})
     assert "juice_pct" not in pe_doc["data"] and pe_doc["data"]["juice_low"] == sj["bear"]["juice"]["FY28"]["juice_pct"]; ok += 1
@@ -1046,6 +1443,14 @@ def _selftest() -> None:
         (d / "cases" / "tcs" / "case.md").write_text("MY MEMORY", encoding="utf-8")
         scaffold("tcs", force=True, agents_dir=d / "agents", cases_dir=d / "cases")
         assert (d / "cases" / "tcs" / "case.md").read_text(encoding="utf-8") == "MY MEMORY"; ok += 1
+        live = AGENTS / "tcs-agent.md"                     # the EV parametrisation left P/E text alone
+        if live.exists():
+            assert (d / "agents" / "tcs-agent.md").read_text(encoding="utf-8") == live.read_text(encoding="utf-8"); ok += 1
+        scaffold("ultratech", agents_dir=d / "agents", cases_dir=d / "cases", today=dt.date(2026, 10, 25))
+        ub = json.loads((d / "cases" / "ultratech" / "build.json").read_text(encoding="utf-8"))
+        ua = (d / "agents" / "utcem-agent.md").read_text(encoding="utf-8")
+        assert ub["valuation"] == "ev_ebitda" and "consensus" in ub and "eps_basis" not in ub
+        assert "EV/EBITDA" in ua and "EPS" not in ua and not (d / "cases" / "ultratech" / "deals.json").exists(); ok += 1
         try:
             scaffold("not_a_leg", agents_dir=d / "agents", cases_dir=d / "cases"); raise AssertionError
         except SystemExit:

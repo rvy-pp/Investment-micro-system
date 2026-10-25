@@ -967,6 +967,18 @@ Infosys has no case yet. Agent log entries carry `via: agent:<token>-agent`
 (the first TCS rows say `agent:case-tcs`, the pre-rename name; the table is
 append-only) and owe the vault copy an export like any chat entry.
 
+**Cement agents run on EV/EBITDA, not P/E (PM, 2026-10-25: "get latest
+valuations, select mean, draft earnings").** `specs/book.yaml case_valuation:
+{CEMENT: ev_ebitda}`. The build is quarterly EBITDA (volume x EBITDA/t), and
+consensus EBITDA, shares and net debt are written into build.json, sourced,
+because no feed carries them. Juice = (M x EBITDA − net debt) / market cap −
+1. The anchor M is computed by the brief from `house_tps`: the MEAN of each
+house's implied (TP x shares + net debt) / consensus EBITDA, which round-trips
+exactly to the mean TP. The same `anchor: mean|median` works on P/E legs. P/E
+output is unchanged, checked against TCS's brief and agent file. UltraTech
+(`utcem-agent`) is the first: 14 TPs, mean implied FY28 18.52x vs 15.68x
+today, base +19.4%, all multiple. There is no cement band yet, so no bear/bull.
+
 **IT agents also keep a deal LIST** (PM, 2026-10-13: "what major deals were
 active, what were scheduled ... are they delayed, have the older ones gone",
 then "just a list is fine, can be cross checked once quarter is near").

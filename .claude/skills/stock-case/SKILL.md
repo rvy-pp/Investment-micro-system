@@ -157,6 +157,41 @@ sector band, ±50bps margin and ±0.5pp growth for IT, carried convention."*
 - `conflicts`: when sources disagree on a number, list every value, the one
   used and why. Never pick silently (the silent-arithmetic rule).
 
+## EV/EBITDA sectors (cement first)
+
+PM, 2026-10-25: *"cement sector agents ... we will use EV/EBITDA instead of
+P/E. Process is similar, get latest valuations, select mean, draft
+earnings."* `specs/book.yaml case_valuation` names the sectors (CEMENT today);
+the brief refuses a build whose `valuation` disagrees. Everything above holds
+with EBITDA in place of EPS. These are the differences:
+
+- **The line is quarterly consolidated EBITDA, Rs cr.** A forecast quarter is
+  two numbers, `volume_mt` and `ebitda_per_t`, and EBITDA = volume x EBITDA/t
+  / 10. Actuals carry `ebitda_cr` with a source.
+- **No feed carries these names**, so build.json carries `consensus`
+  ({FY: {ebitda_cr, source}}, the houses that print an absolute figure),
+  `shares_cr` and `net_debt_cr` + `net_debt_source`. Re-strike them when a
+  house publishes or the company reports.
+- **Juice = (M x EBITDA − net debt) / today's market cap − 1**, where M is the
+  anchor (or today's EV/EBITDA). Net debt stays at today's figure. An EBITDA
+  gap reaches the equity levered by EV / market cap, so it is not the return.
+- **"Get latest valuations, select mean":** list every post-result house TP in
+  `house_tps` (house, tp, date, stated basis, source) and set the base
+  `"anchor": "mean"`. The brief computes each house's IMPLIED multiple on the
+  headline year, (TP x shares + net debt) / consensus EBITDA, and their mean
+  (median printed beside it), and writes `anchor_why` naming every TP. Stated
+  multiples sit on mixed bases and are recorded, not used. The same `anchor`
+  key works for a P/E leg (implied = TP / consensus EPS).
+- **Bands:** `case_bands` for an EV sector take `per_t_inr` and `growth_pp`
+  (QoQ volume, compounding). Cement has none until the PM sets one, so there
+  is no bear/bull and no price entry. Show a preview if asked, and never write
+  a hand-drawn case.
+- `street_q` pins take `ebitda_cr`. Cement's Q4 is the seasonal peak, so an
+  even split of H2 understates Q4 and overstates Q3. Pin Q3 from house numbers
+  whenever any exist.
+- There is no automatic rerate split (no dated consensus history). Read it
+  from the houses' revisions and say what is missing.
+
 ## IT deals — a list, cross-checked as the quarter nears (IT agents only)
 
 PM, 2026-10-13: *"What major deals were active, what were scheduled ... were
