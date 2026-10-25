@@ -1,0 +1,315 @@
+{
+ "date": "2026-10-25",
+ "generated_at": "2026-10-25T08:11:00",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 57,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Elara upgrades JSW Steel to Accumulate from Reduce, TP Rs1,320 (from Rs1,259); FY27 EBITDA estimate raised ~11%, FY28 and FY29 ~5% each.",
+      "source": "Elara - Ferrous Metals - JSW Steel - Prepping for the next leg of growth - Q2FY27 Update - Accumulate - TP: INR 1,320 - Upside: 11%",
+      "received": "19:50",
+      "detail": {
+       "summary": "Elara says Q2 EBITDA of ~INR101bn was in line with its estimate and ahead of consensus (~INR96bn). It expects coking coal inflation and EU CBAM to weigh on margin, but sees capacity ramp-up, better prices and new expansions offsetting that. The rating upgrade rests on long-term volume visibility.",
+       "points": [
+        "TP INR1,320 vs INR1,259 earlier, 7.0x Sep-28E EV/EBITDA",
+        "FY27 EBITDA estimate +11%; FY28 and FY29 +5% each",
+        "EBITDA/t INR13,566, -10% QoQ, +26% YoY, below Elara's INR14,271",
+        "Coking coal seen +USD20-25/t in Q3; 27-day NMDC supply disruption in Q2",
+        "Capex outlay raised to ~INR1.6tn from INR1.3tn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Jindal Steel Q2 EBITDA ~INR25bn beat Elara's INR23.2bn and Street's INR22.7bn; Accumulate kept, TP raised to Rs1,212 from Rs1,168 on roll-forward.",
+      "source": "Elara - Ferrous Metals - Jindal Steel - Commissioned slurry pipeline - Q2FY27 Update - Accumulate - TP: INR 1,212 - Upside: 19%",
+      "received": "19:20",
+      "detail": {
+       "summary": "Elara attributes the beat to better volume and realisation. It flags a further USD20-25/t coking coal jump in Q3 as a near-term drag. It expects margin to recover on the volume ramp-up, captive coal, slurry pipeline savings and a higher flat mix. EBITDA estimates are largely unchanged.",
+       "points": [
+        "TP INR1,212 vs INR1,168; 7.0x Sep-28E EV/EBITDA",
+        "Net debt INR147.9bn vs INR159.3bn in Q1",
+        "EBITDA/t INR10,522, down from INR11,957 in Q1FY27",
+        "Flats 61% of sales vs 53% in Q1; target ~65%",
+        "Barbil-Angul slurry pipeline saves ~INR700/t on freight"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities keeps Jindal Steel at BUY with revised TP Rs1,225 (7x FY28E EV/EBITDA); guides H2 EBITDA improvement on ~INR1,000/t savings.",
+      "source": "ICICI Securities - Jindal Steel (BUY): Volume uptick and margin improvement story intact (+4 more in Outlook)",
+      "received": "20:06",
+      "detail": {
+       "summary": "ICICI says consolidated EBITDA of INR25.7bn beat its estimates on record volumes and better realisations. It expects H2FY27 to improve on a volume ramp-up and cost savings from the slurry pipeline, coal mines and value-added capacity. Coking coal inflation of USD20-25/t in Q3 remains the key monitorable.",
+       "points": [
+        "TP INR1,225, 7x FY28E EV/EBITDA",
+        "EBITDA INR25.7bn, +24% YoY, -3% QoQ; EBITDA/t INR10,808",
+        "FY27 sales guidance 10.5-11mnt maintained; H2 production ~6mnt",
+        "Net debt/EBITDA 1.51x vs 1.71x in Q1",
+        "New DRI plant and coal gasifiers due by Jun'27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Shree Q2 standalone EBITDA Rs8.5bn beat Elara's Rs7.5bn; EBITDA/t gap to UltraTech narrowed to ~Rs10 from ~Rs100; Buy, TP Rs30,272 unchanged.",
+      "source": "Elara - Cement - Shree Cement - Outperforming peers across key metrics - Q2FY27 Update - Buy - TP: INR 30,272 - Upside: 33%",
+      "received": "19:27",
+      "detail": {
+       "summary": "Elara says Shree is outperforming peers: domestic volume grew 18% YoY, the highest among cement names reported so far, which it reads as market share gains. A rising premium mix should support margin against higher fuel cost. TP is unchanged on 15x March 2029E EV/EBITDA.",
+       "points": [
+        "TP Rs30,272 unchanged; Buy; 33% upside vs CMP Rs22,735",
+        "Standalone EBITDA Rs8.5bn vs Elara Rs7.5bn, consensus Rs7.9bn",
+        "EBITDA/t ~Rs966 vs Rs1,111 in Q1; fall smaller than peers",
+        "Fuel Rs2.09/kcal in Q2; Q3 guided Rs2.15-2.20",
+        "FY28 and FY29 EBITDA raised ~1% each; net cash Rs81.7bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Shree management says October cement prices are higher and should sustain; FY27 volume guide 41m MT; IIFL raises FY28-29 EBITDA 3-4%, ADD, TP Rs27,000.",
+      "source": "IIFL - Shree Cement 2QFY27 update - Volume growth surprises; ramp-up in UAE - Maintain ADD",
+      "received": "16:19",
+      "detail": {
+       "summary": "IIFL says Q2 EBITDA beat on volume, while per-tonne profit fell as fuel cost rose. Management expects to keep outgrowing the industry and sees opex/t flat on operating leverage despite higher fuel. Estimates rise only for faster UAE ramp-up; the target is unchanged at a 25% discount to UltraTech's multiple.",
+       "points": [
+        "EBITDA Rs8.5bn, -3% YoY, 6% above IIFL estimate",
+        "EBITDA/t Rs912, -11% QoQ; fuel cost +24% QoQ to Rs1,747/t",
+        "Fuel cost guided +5-10% QoQ in Q3; opex/t flat",
+        "TP Rs27,000 unchanged, 19% upside; 13.5x 2YF EBITDA",
+        "FY27 capex guide Rs16-17bn; Meghalaya unit by end-FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital: Ambuja voluntarily giving up non-trade share is boosting JK Cement, Shree and UltraTech; ranks Q2 prints Shree best, then UltraTech, then JK.",
+      "source": "PhillipCapital - First Cut - JK Cement Ltd (JKCE IN) - Q2FY27 - Comfortably ahead of estimates, once again! (+3 more in Outlook)",
+      "received": "18:07",
+      "detail": {
+       "summary": "PhillipCapital cites its ground feedback that Ambuja is voluntarily ceding non-trade share, and names Shree, UltraTech and JK as the main beneficiaries. It says JK and Shree are the only two fixing the trade/non-trade mix flaw. JK's Q2 beat is standalone EBITDA Rs5bn, +6% vs consensus.",
+       "points": [
+        "JK standalone EBITDA Rs4,995mn, +14% YoY, -22% QoQ",
+        "JK EBITDA/t Rs852 vs PhillipCapital Rs828 and consensus Rs800",
+        "JK volume +20% YoY to 5.87mn t; blended realisation +3% QoQ",
+        "Q2 ranking among reported: Shree best, UltraTech next, JK third",
+        "JK remains PhillipCapital's top mid-cap pick; earnings call 27-Oct"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NMDC supply to JSW Steel was disrupted for 27 days in Q2FY27 by a landslide; no volume impact stated.",
+      "source": "Elara - Ferrous Metals - JSW Steel - Prepping for the next leg of growth - Q2FY27 Update - Accumulate - TP: INR 1,320 - Upside: 11%",
+      "received": "19:50"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "RAC/washer/fridge/fan theoretical RM indices up 38-45% YoY; LME copper +43%, aluminium +17%, HRC +34% YoY; temperatures above normal in most regions.",
+      "source": "Kotak - [Kotak] India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+      "received": "12:55",
+      "detail": {
+       "summary": "Weekly durables wrap shows input costs still sharply higher YoY across the metals that drive AC and appliance bill of materials. Weather is running above normal on a rolling 10-day basis, which supports cooling demand. News flow includes Haier's planned Rs70 bn Andhra facility.",
+       "points": [
+        "LME copper -3% WoW, +43% YoY",
+        "LME aluminium +1% WoW, +17% YoY",
+        "Domestic HRC flat WoW, +34% YoY",
+        "RM indices for RAC, washers, fridges and fans up 38-45% YoY",
+        "Haier India to invest Rs70 bn in new Andhra facility"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Infosys cut FY27 CC revenue guidance to 1-2% from 1.5-3%; PhillipCapital trims TP to Rs1,270 from Rs1,320, keeps BUY.",
+      "source": "PhillipCapital - Infosys Ltd (INFO IN) - Modest performance; Deal Conversions Key to FY28 Recovery - (PhillipCapital India)",
+      "received": "22:17",
+      "detail": {
+       "summary": "Q2 growth was modest and FY27 will be one of Infosys's weakest years, but a $5.2bn TCV quarter and a $2bn BFSI mega deal underpin an FY28 recovery. PhillipCapital cuts the target multiple to 15x from 16x on the soft H1 and the guidance cut, and says the stock is already near -2SD on PE.",
+       "points": [
+        "TP Rs1,270 vs Rs1,320 earlier; BUY maintained",
+        "Guidance 1-2% CC; organic -0.7% to 0.3%",
+        "Q2 CC revenue +1.2% QoQ vs 1.6% est",
+        "TCV $5.2bn; net new $3.2bn; $2bn BFSI mega deal",
+        "FY28 EPS cut 2%; FY27 EPS cut 0.3%; margin guide 20-22% kept"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge FY27 EBIT margin guidance raised to 16% from 15.5%, Q4 exit target 17%; Emkay lifts TP 5% to Rs2,100, BUY.",
+      "source": "Emkay - Coforge: Mixed print; EBITM guidance revised upward; BUY; Target: Rs2,100",
+      "received": "19:07",
+      "detail": {
+       "summary": "Revenue missed on a lower Encora contribution, but margin and order intake were strong and management expects FY28 margin to mirror the Q4 FY27 exit rate. Emkay expects EPS to gain from margin expansion, falling hedge losses and the end of acquisition-related exceptional costs from Q3. Weak cash conversion is the main negative.",
+       "points": [
+        "TP Rs2,100 at 26x Sep-28E EPS; CMP Rs1,900",
+        "FY27-29E EPS raised 3-5%",
+        "Q2 revenue $652.2mn vs $666mn est; EBITM 16% vs 15.8% est",
+        "8 large deals in Q2; next-12M executable orderbook $2.38bn",
+        "OCF/EBITDA only 42%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coforge posted record Q2 deal TCV of $1,040mn (+50.6% QoQ); ICICI Securities raises FY28E EPS 7% and sets TP Rs2,290, BUY.",
+      "source": "ICICI Securities - Coforge (BUY): Raising the bar, quarter after quarter (+2 more in Outlook)",
+      "received": "20:32",
+      "detail": {
+       "summary": "ICICI Securities argues that broad-based deals with an immediate ramp-up give near-term growth visibility. It also credits AI-led efficiencies and utilisation headroom for the 16% EBIT guidance, with a 17% exit margin. Reported revenue missed only because the Encora contribution was lower; organic growth was in line.",
+       "points": [
+        "TP Rs2,290 at 28x Q3FY28E-Q2FY29E EPS of Rs82",
+        "FY28E EPS +7% on 100bps higher EBIT margin estimate",
+        "Order intake $1,040mn, +102% YoY; 8 large deals",
+        "Organic growth 3.8% QoQ CC vs 3.7% est",
+        "FY27 FCF/PAT guidance 100%; Q2 was 89%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Avendus 2QFY27 scorecard (187 cos): PAT +31% y/y, EBITDA margin 21.8%; 40% beat, 22% miss; metals & mining EBITDA +60%, IT EBITDA +10%.",
+      "source": "Avendus Spark - Avendus Spark Quant-Attentive: 2QFY27 Results Analysis | Market Cap >Rs.1,000 Cr - 187 Companies Reported",
+      "received": "20:29",
+      "detail": {
+       "summary": "Aggregate scorecard for the 187 reporting companies above Rs.1,000 Cr market cap. Earnings are running well ahead of sales, helped by margin expansion. Consensus FY27 PAT revisions skew mildly negative for large caps. Metals lead the sector table, while IT and construction materials lag.",
+       "points": [
+        "Overall: sales +18%, EBITDA +26%, PAT +31% y/y",
+        "EBITDA margin 21.8% vs 20.4% in 2QFY26",
+        "Beat 40%, miss 22%, in line 38% (1QFY27 beat 50%)",
+        "Metals & Mining: sales +27%, EBITDA +60%, PAT +135%",
+        "IT: EBITDA +10%; Construction Materials: PAT +13%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Sec: 2026 monsoon all-India deficit 12.6%; high-rural-MPCE states less vulnerable, so pan-India rural consumption impact seen inconsequential; agri NPAs may rise.",
+      "source": "ICICI Securities - Strategy: Deficient rainfall - states with higher per capita rural consumption less vulnerable",
+      "received": "16:19",
+      "detail": {
+       "summary": "The note argues the deficient-rain states are split by rural spending power. Low-consumption states (Bihar, Maharashtra, Rajasthan) are the vulnerable ones, while Punjab, Kerala, Tamil Nadu and Karnataka are better cushioned. Net impact on rural demand is judged small, with the main risk being agriculture loan stress and possible further state relief.",
+       "points": [
+        "All-India deficit 12.6% (87% of LTA)",
+        "Lowest rural MPCE: Bihar INR 3,788, Maharashtra INR 4,249, Rajasthan INR 4,626",
+        "Drought declared in Maharashtra and Rajasthan",
+        "Maharashtra and Karnataka announced drought relief; no loan waiver expected",
+        "Northeast monsoon picked up from mid-October, helping southern states"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Elara cuts KEI TP to INR 4,660 from 5,820 and upgrades to Buy; EPS cut 6-9% as UltraTech enters cables from Q3FY27.",
+      "source": "Elara - Capital Goods - KEI Industries - Price-led sales growth; miss on margins - Q2FY27 Update - Buy - TP: INR 4,660 (from 5,820)",
+      "received": "23:15",
+      "detail": {
+       "summary": "Elara sees UltraTech's entry as a margin risk for cables and wires from next quarter. It also expects H2 growth to dip on a high base. It upgrades only because the stock has underperformed Nifty by 19% in three months.",
+       "points": [
+        "TP INR 4,660 from INR 5,820, now on 28x Sep-28E P/E (was 34x)",
+        "EPS cut 6% FY27E, 7% FY28E, 9% FY29E",
+        "Q2 sales INR 31.8bn, +39% YoY; EBITDA margin 10%",
+        "FY27 guidance: sales growth 25%+, EBITDA margin ~11%",
+        "Key risk named: margin pressure from UltraTech entry"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Motors CV: steel and rubber inflation cost 540bps YoY in Q2, with another 150-200bps expected in Q3; Emkay cuts TP to Rs550 from Rs700.",
+      "source": "Emkay - Tata Motors: Strong 2Q; robust growth outlook despite higher base; BUY; Target: Rs550",
+      "received": "19:20",
+      "detail": {
+       "summary": "Volume rose 42.5% YoY and EBITDA margin held at 11.4% despite commodity pressure. Management offset it with cost savings and calibrated price hikes, including ~1% from Oct-26. Emkay cuts EPS and lowers the SA-business multiple to 12x as the post-GST-cut growth phase is behind.",
+       "points": [
+        "TP Rs550 from Rs700 (-21.4%); BUY retained, CMP Rs394",
+        "Q2 revenue +42% YoY to Rs239.3bn; EBITDAM 11.4% vs 11.3% in Q1",
+        "Commodity hit ~540bps YoY and ~200bps QoQ in Q2",
+        "Q3 outlook: high-single to low-double-digit growth",
+        "EPS cut ~6% FY27E, 9% FY28E, 11% FY29E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kajaria Q2 volumes +10% YoY, EBITDA margin 19.5% (+~150bps YoY); revenue Rs14.7bn, 2% above Nuvama; gas prices are the open question.",
+      "source": "Nuvama - Oven Fresh: Kajaria Ceramics reported a strong set of results with margins expanding by ~150bps YoY and volumes growing by ~10% YoY",
+      "received": "19:53",
+      "detail": {
+       "summary": "Nuvama flags a beat on revenue, EBITDA and PAT against its own estimates and consensus. It is waiting for the 26-Oct call for demand and gas-price guidance. Peer Varmora Granito's margin expanded 670bps YoY.",
+       "points": [
+        "Revenue Rs14.7bn, +23.8% YoY; realisations +11.4%",
+        "EBITDA Rs2.87bn, +34% YoY; 5% above Nuvama estimate",
+        "Adj PAT Rs1.94bn, +43% YoY; 8% above Nuvama estimate",
+        "Varmora EBITDA margin 16.2%, +670bps YoY",
+        "Call on 26-Oct at 09:00"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +0.4% Friday: AMD +1.7% and TSMC ADR +1.5% offset Nvidia -0.6% and Broadcom -0.5%.",
+    "source": "Yahoo closes 23-Oct (morning markets)"
+   },
+   {
+    "text": "US IT services sold off Friday: Accenture -3.6%, Cognizant -4.3%, against S&P 500 -0.5%; Cognizant reports next week.",
+    "source": "Yahoo closes 23-Oct; Zacks 22-Oct (CTSH earnings next week)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
