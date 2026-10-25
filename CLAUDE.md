@@ -943,13 +943,19 @@ the book its VAML_NACL share is 0. `share or 1.0` counted a whole second
 NALCO, and the contributions summed to $4,929 against $4,851. Caught by summing
 them; `build_frontend.py` now checks the sum on every run.
 
-**PGEL was missing from `ticker_map`** (on the book since EMS 2, long vs Amber
-short). It was added 2026-10-25 on the PM's instruction. It is still in NO
-dictated pair, and the dictation's AMBER_DIXON has Amber LONG while the book
-is short Amber; JINDA_SAIL is dictated with SAIL short while the book holds
-SAIL long (STEEL 2 is two longs). The
-Risk tab shows PGEL as "not in a dictated pair" and those two pairs with a
-`side` chip. The fix is a dictation from the PM, not a guess.
+**PGEL was missing from `ticker_map`** (on the book since 16-Oct, IMS tag EMS
+2, long vs Amber short). It was added 2026-10-25 on the PM's instruction, and the
+same day the PM dictated **PGEL_AMBER** (long PGEL / short Amber, *"Amber is
+short everywhere"*). **AMBER_DIXON left the dictation.** It was real (long
+Amber / short Dixon, 04-09 .. 30-09) and closed 01-10. Its exit grade is
+frozen, and its 13-week grade is due 04-12. `grading.load_config` used to keep a
+retired pair only if it carried a call, and this one has none, so that 13w grade
+would silently never have been written. A retired pair with a STORED grade is
+now a unit too. The Analysis roster is 33 legs: the hardcoded 32 in
+`build_frontend.py` and the analysis selftest became `analysis.expected_legs()`,
+counted from the dictation. **Still open: JINDA_SAIL** is dictated with SAIL
+short while the book holds SAIL long (STEEL 2 is two longs). The Risk tab
+flags it with a `side` chip until the PM dictates it.
 
 ### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
 

@@ -156,14 +156,18 @@ def check() -> dict:
                                       f"house(s), {len(bd.get('rows') or [])} name(s)"})
 
     # /api/book_analysis - the Book's Analysis sub-tab (2026-10-10). The roster
-    # is the 32 dictated legs, so anything else means specs/book.yaml and the
+    # is the dictated legs (32 until PGEL_AMBER made it 33, 2026-10-25), so a
+    # count short of what the dictation names means specs/book.yaml and the
     # ticker map have drifted apart — a problem, not a quiet short list.
     ba, _ = route("/api/book_analysis", engine.book_analysis)
     if ba is not None:
+        sys.path.insert(0, str(REPO / "packages" / "book"))
+        import analysis as _analysis
+        want = _analysis.expected_legs()
         n = len(ba.get("stocks") or [])
-        ok = not ba.get("error") and n == 32
+        ok = not ba.get("error") and n == want
         if not ok:
-            r["problems"].append(f"/api/book_analysis: {ba.get('error') or f'{n} stocks, expected 32'}")
+            r["problems"].append(f"/api/book_analysis: {ba.get('error') or f'{n} stocks, expected {want}'}")
         r["routes"].append({"route": "/api/book_analysis", "ok": ok,
                             "detail": f"{n} stocks, {ba.get('n_auto', 0)} priced automatically"})
 

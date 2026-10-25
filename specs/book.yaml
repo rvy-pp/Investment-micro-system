@@ -131,7 +131,13 @@ pairs:
   EMS:
     - {name: KAYNES_DIXON,  long: [KAYNE],    short: [DIXON]}
     - {name: SYRMA_DIXON,   long: [SYRMA],    short: [DIXON]}
-    - {name: AMBER_DIXON,   long: [AMBER],    short: [DIXON]}
+    # PM, 2026-10-25: "PGEL_AMBER is long PGEL / short AMBER. Amber is short
+    # everywhere." AMBER_DIXON (long Amber / short Dixon, 04-09 .. 30-09)
+    # CLOSED on 01-10 and leaves the dictation; Amber reopened SHORT on 16-10
+    # against the new PGEL long (IMS tag EMS 2). Its frozen exit grade stays in
+    # book_pair_grades, and grading keeps grading it (13w due 04-12) because a
+    # retired pair with a stored grade is still a unit.
+    - {name: PGEL_AMBER,    long: [PGEL],     short: [AMBER]}
   CEMENT:
     - {name: UTCEM_SRCM,    long: [UTCEM],    short: [SRCM]}
     - {name: DALBHARA_ACEM, long: [DALBHARA], short: [ACEM]}

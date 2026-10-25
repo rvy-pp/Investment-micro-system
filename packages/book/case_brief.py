@@ -801,7 +801,7 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
         today = today or dt.date.today()
         ros = {r["entity"]: r for r in analysis.roster()}
         if ent not in ros:
-            raise SystemExit(f"{ent!r} is not one of the 32 dictated legs")
+            raise SystemExit(f"{ent!r} is not one of the dictated legs")
         me = ros[ent]
         fy0, fy1 = analysis.fy_label(today), analysis.fy_label(today, 1)
         priced = analysis.priced_auto(conn, ent, today)
@@ -1117,7 +1117,7 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
     force, since its text is generated and carries nothing hand-written."""
     ros = {r["entity"]: r for r in analysis.roster()}
     if ent not in ros:
-        raise SystemExit(f"{ent!r} is not one of the 32 dictated legs")
+        raise SystemExit(f"{ent!r} is not one of the dictated legs")
     r = ros[ent]
     it = is_it(r["group"])
     evs = case_valuation(r["group"]) == "ev_ebitda"

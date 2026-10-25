@@ -174,8 +174,23 @@ def load_config(conn) -> dict:
     known = {u["pair"] for u in units}
     for r in conn.execute("SELECT pair, long_token, short_token, MAX(id) FROM book_calls GROUP BY pair"):
         if r[0] not in known:
+            known.add(r[0])
             units.append({"pair": r[0], "heading": "RETIRED", "L": r[1], "S": r[2],
                           "long": tmap.get(r[1]), "short": tmap.get(r[2])})
+    # ...and so do those with a STORED grade, call or not. AMBER_DIXON (closed
+    # 01-10, no call) left the dictation on 2026-10-25 with its exit grade
+    # frozen and its 13-week grade due 04-12; under the call-only rule that
+    # 13w grade would silently never be written. Tokens come back through
+    # the ticker map (first token per entity, the same one the book prints).
+    tok_of: dict = {}
+    for t, e in tmap.items():
+        tok_of.setdefault(e, t)
+    for r in conn.execute("SELECT DISTINCT pair, long_eid, short_eid FROM book_pair_grades"):
+        if r[0] not in known and ":" not in r[0]:
+            known.add(r[0])
+            units.append({"pair": r[0], "heading": "RETIRED",
+                          "L": tok_of.get(r[1], r[1]), "S": tok_of.get(r[2], r[2]),
+                          "long": r[1], "short": r[2]})
     sector_of, symbol_of = {}, {}
     from yahoo_prices import CANDIDATES
     for f, sec in SPEC_SECTOR.items():

@@ -267,5 +267,5 @@ the range honest and the questions sharp.
 `.claude/agents/<token>-agent.md` and an empty case folder (plus `deals.json`
 for an IT leg) (case files are
 never overwritten; `--force` regenerates only the agent file). The entity must
-be one of the 32 dictated legs in `specs/book.yaml`. A new agent file is
+be one of the dictated legs in `specs/book.yaml` (33 since PGEL_AMBER, 2026-10-25). A new agent file is
 picked up by a new Claude Code session.

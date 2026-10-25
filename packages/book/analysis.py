@@ -108,6 +108,21 @@ def roster(cfg: dict | None = None) -> list[dict]:
     return list(out.values())
 
 
+def expected_legs(cfg: dict | None = None) -> int:
+    """How many stocks the dictation names, counting an UNMAPPED token too.
+
+    roster() skips a token with no ticker_map entry, so len(roster()) falling
+    short of this is the drift check. It replaced a hardcoded 32 on 2026-10-25,
+    when PGEL_AMBER made it 33 — a constant would have flagged a correct
+    dictation as a broken one.
+    """
+    cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    tmap = cfg.get("ticker_map") or {}
+    return len({tmap.get(t) or f"UNMAPPED:{t}"
+                for ps in (cfg.get("pairs") or {}).values() for p in ps
+                for side in ("long", "short") for t in p.get(side) or []})
+
+
 def dictated_pairs(cfg: dict | None = None) -> list[dict]:
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
     tmap = cfg.get("ticker_map") or {}
@@ -180,7 +195,7 @@ def add_entry(conn, doc: dict, today: dt.date | None = None) -> int:
     note = (doc.get("note") or "").strip()
     probs = []
     if ent not in ents:
-        probs.append(f"entity {ent!r} is not one of the 32 dictated legs")
+        probs.append(f"entity {ent!r} is not one of the dictated legs")
     if step not in STEP_KEYS + ["note"]:
         probs.append(f"step {step!r} not in {STEP_KEYS + ['note']}")
     if status not in STATUSES:
@@ -332,7 +347,8 @@ def _selftest() -> None:
 
         # roster is the dictated legs, every one mapped, sides from the dictation
         r = roster()
-        assert len(r) == 32, len(r)
+        assert len(r) == expected_legs(), (len(r), expected_legs())
+        assert all(x["side"] != "both" for x in r), [x["entity"] for x in r if x["side"] == "both"]
         assert next(x for x in r if x["entity"] == "tech_mahindra")["side"] == "long"
         assert next(x for x in r if x["entity"] == "ltimindtree")["side"] == "short"; ok += 1
         conn.close()
@@ -358,7 +374,7 @@ def main(argv=None) -> None:
     if a.show:
         s = next((x for x in view()["stocks"] if x["entity"] == a.show), None)
         if not s:
-            sys.exit(f"{a.show!r} is not one of the 32 dictated legs")
+            sys.exit(f"{a.show!r} is not one of the dictated legs")
         print(f"{s['name']} ({s['side']}, {s['group']})  juice: {s['juice']}")
         for k, lbl in STEPS:
             st_ = s["steps"][k]
