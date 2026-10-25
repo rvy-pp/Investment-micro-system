@@ -293,6 +293,39 @@ the top on-entity headline from the markets file, and an empty headline list
 after the on-entity filter means NO SIGNAL, not "no move" (macro-fetch's
 Yahoo-search lesson: the endpoint is entity-keyed, not a search engine).
 
+## Futures vs cash — an Overview sub-tab (2026-10-25)
+
+PM: *"In the daily tab, create a futures vs cash sub tab that updates daily at
+day end for each stock in the coverage ... %premium/discount (in red) for this
+month's future as well as the next and next to next."* The Overview now has two
+`.btab` sub-tabs, **Morning read** (everything that was there, order untouched)
+and **Futures vs cash**. `fo_basis` table ← `packages/adapters/fo_basis.py`
+(8-check selftest) ← the same NSE bhavcopy zip fo_bhavcopy downloads (its
+`store()` is hooked beside fo_options'); `engine.fo_basis_view` →
+`/api/fo_basis`. Coverage is grading's sector + NSE-symbol map (30 F&O names);
+the 9 coverage names without futures are listed under the table, not dropped.
+Scores nothing, reaches neither `prices` nor `pillar_scores`.
+
+- **CLOSE, never settle.** An untraded contract's settle is NSE's theoretical
+  price: Kaynes, PGEL and APL Apollo's Dec all "printed" exactly +1.06% on
+  23-Oct, the model rate. Zero volume renders `no trade`.
+- **Thin is greyed** (< 100 contracts). Ambuja's Dec on 23-Oct traded 4 lots
+  and printed below Nov; checked the same day, no record date or dividend
+  before 29-Dec. The real Nov premium came from a ~42m-share Oct→Nov roll on
+  22-23 Oct.
+- **The glow** (PM, same day: *"just so that I remember to look"*): the
+  Futures vs cash SUB-TAB pulses amber, and the cell is outlined, while any
+  TRADED, non-thin contract sits at ≥ `fo_basis.GLOW_PCT` (3.0%) RAW premium.
+  A thin or untraded print never lights it. The payload carries `alerts`.
+  The top-level Daily Overview tab glowed too for an hour; the PM took it off
+  ("make the sub tab glow only").
+- **Day end:** NSE publishes ~18:00-19:00 IST, and fo_bhavcopy.load walks only
+  to YESTERDAY, so `fo_basis.load` includes TODAY. The Claude Desktop task
+  **`fo-basis-dayend`** runs it weekdays 20:00 and re-exports the vault copy;
+  refresh.py's `F&O basis` step tops up whatever the evening missed. Its own
+  step matters: on 2026-10-25 the `F&O bhavcopy` step died in `--map`
+  (niftyindices HTTP 302) before ever reaching `--load`.
+
 ## The 2026-08-30 reskin — the vault dashboard's face on this system's data
 
 PM instruction, verbatim intent: *"that front-end was way better and

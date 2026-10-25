@@ -113,6 +113,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(engine.overview())
             if u.path == "/api/morning":
                 return self._json(engine.morning())
+            if u.path == "/api/fo_basis":
+                return self._json(engine.fo_basis_view())
             # Read-only passthrough for filed company documents, so a
             # citation on the Company tab can link AT the PDF and its note.
             # Confined to data/companies/ AFTER normalisation - a path that

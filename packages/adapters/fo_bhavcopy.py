@@ -202,6 +202,13 @@ def load(days_back: int = 10, refill_deliv: bool = False) -> None:
                     fo_options.store(conn, raw, iso)
                 except Exception as e:
                     print(f"  {iso} options store failed ({type(e).__name__}: {e})")
+                # Futures basis (2026-10-25), same zip, same never-fatal rule;
+                # `fo_basis.py --load` tops up a day it misses.
+                try:
+                    import fo_basis
+                    fo_basis.store(conn, raw, iso)
+                except Exception as e:
+                    print(f"  {iso} basis store failed ({type(e).__name__}: {e})")
         if iso not in have_dv:
             try:
                 raw = _get(DELIV_URL.format(d=d))

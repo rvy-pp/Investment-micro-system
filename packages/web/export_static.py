@@ -124,6 +124,7 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
     put("/api/overview", engine.overview())
     put("/api/morning", engine.morning())
     put("/api/cement_watch", engine.cement_watch())
+    put("/api/fo_basis", engine.fo_basis_view())
     put("/api/flows", engine.flows())
     put("/api/oi", engine.oi_snapshot())
     bub = engine.oi_bubbles()
@@ -455,7 +456,7 @@ def selftest() -> None:
                 "/api/book_index", "/api/book_analysis", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
                 "/api/oi_movers", "/api/results",
-                "/api/concall", "/api/results_board"}
+                "/api/concall", "/api/results_board", "/api/fo_basis"}
     # WRITE routes are POST-only and an offline copy can never serve them; the
     # page says so where the inputs are (Kelly edges, the pair-grading call
     # log). Listed by name so a new GET route cannot hide in here.

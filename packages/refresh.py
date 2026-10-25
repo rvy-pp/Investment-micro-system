@@ -107,6 +107,12 @@ STEPS = [
     # no-op, zero requests.
     ("F&O options",       ["packages/adapters/fo_options.py", "--load",
                            "--days", "10"],                                   False),
+    # Futures vs cash (2026-10-25): each live contract's close against the
+    # cash close, for the Overview's "Futures vs cash" sub-tab. Same zip,
+    # stored by the bhavcopy step above; this tops up a missed day. The
+    # evening task `fo-basis-dayend` runs it too, since it includes TODAY.
+    ("F&O basis",         ["packages/adapters/fo_basis.py", "--load",
+                           "--days", "10"],                                   False),
     # VAHAN SHARE AND SIAM WHOLESALE left this list on 2026-09-29 for a 13:00
     # run (packages/vahan_refresh.py), and that run was retired on 2026-10-21
     # with the Auto tab (PM: "auto is no longer in coverage"). Do not add them

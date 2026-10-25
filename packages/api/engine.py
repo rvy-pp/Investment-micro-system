@@ -2663,3 +2663,32 @@ def results_board(sector: str | None = None, period: str | None = None) -> dict:
     b["n_names"] = len(names)
     b["bands"] = {"inline_pct": _rio.INLINE_PCT, "inline_pp": _rio.INLINE_PP}
     return b
+
+
+def fo_basis_view(date: str | None = None) -> dict:
+    """The Overview's "Futures vs cash" sub-tab (PM, 2026-10-25): every F&O
+    name in coverage, this month / next / far futures close against the cash
+    close. Transport shim — the arithmetic, the thin/untraded rules and the
+    selftest are fo_basis.py's. Coverage is grading's sector + NSE-symbol map
+    (the same "the sector's names" the Book uses), ordered by SECTORS."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import fo_basis
+    import grading
+    conn = connect()
+    try:
+        cfg = grading.load_config(conn)
+        try:
+            entities, _u, _f = load_specs()
+        except Exception:
+            entities = {}
+        db_ent = {r["id"]: r["name"] for r in conn.execute("SELECT id, name FROM entities")}
+        order = {s["id"]: i for i, s in enumerate(SECTORS)}
+        roster = [{"id": eid, "symbol": sym, "sector": cfg["sector_of"].get(eid, "other"),
+                   "name": (entities.get(eid) or {}).get("name") or db_ent.get(eid) or eid}
+                  for eid, sym in cfg["symbol_of"].items()]
+        roster.sort(key=lambda r: (order.get(r["sector"], 99), r["symbol"]))
+        v = fo_basis.view(conn, roster, date)
+    finally:
+        conn.close()
+    v["sector_labels"] = {s["id"]: s["label"] for s in SECTORS}
+    return v

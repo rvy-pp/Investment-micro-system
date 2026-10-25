@@ -150,6 +150,16 @@
         white-space:nowrap;border-radius:var(--r-pill);transition:background .12s, color .12s}
   .btab:hover{background:var(--sunken);color:var(--ink)}
   .btab[aria-selected=true]{color:#fff;background:var(--accent);font-weight:600}
+  /* Futures-premium reminder (PM 2026-10-25): an amber pulse on the Overview's
+     Futures vs cash sub-tab (not the top-level tab) while any traded contract
+     sits at >= fo_basis.GLOW_PCT premium. Still, not pulsing, for reduced motion. */
+  @keyframes basisGlow{0%,100%{box-shadow:0 0 4px 1px rgba(210,153,34,.35)}
+                       50%{box-shadow:0 0 18px 5px rgba(210,153,34,.9)}}
+  .glow{animation:basisGlow 1.6s ease-in-out infinite;border-radius:6px;
+        background:rgba(210,153,34,.16)!important;color:#e3b341!important}
+  @media (prefers-reduced-motion:reduce){
+    .glow{animation:none;box-shadow:0 0 12px 3px rgba(210,153,34,.8)}}
+  td.bglow{font-weight:700;box-shadow:inset 0 0 0 1px rgba(210,153,34,.85)}
   /* The Book's Analysis sub-tab (2026-10-10): one row per stock, a <details>
      card under each, pairs derived above. Grid columns are shared by the
      header and every row so the five checks line up down the page. */
@@ -3029,10 +3039,20 @@ async function loadOverview(){
       <td class="k flat">${m.moved_on ? 'carried since ' + esc(m.moved_on) : 'moved today'}</td>
     </tr>`).join('');
 
+  /* Two sub-tabs (2026-10-25): the morning read, and Futures vs cash. The
+     PM's ordering inside the morning read is untouched; the basis pane is
+     fetched on first open. `.btab`, not `.tab` — tab() re-marks every .tab. */
+  if (!['brief', 'basis'].includes(OV_SUB)) OV_SUB = 'brief';
   $('#s-overview').innerHTML =
     `<div class="pgt">Daily Overview</div>
      <div class="meta-line">${metaBits.join(' · ')}</div>`
     + warnLine
+    + `<nav class="vnav" role="tablist" aria-label="overview view" style="margin-bottom:var(--s2)">
+        <button class="btab" role="tab" data-o="brief" aria-selected="${OV_SUB === 'brief'}">Morning read</button>
+        <button class="btab" role="tab" data-o="basis" aria-selected="${OV_SUB === 'basis'}">Futures vs cash</button>
+      </nav>`
+    + `<div id="ov-pane-basis"${OV_SUB === 'basis' ? '' : ' hidden'}><div class="loading">loading…</div></div>`
+    + `<div id="ov-pane-brief"${OV_SUB === 'brief' ? '' : ' hidden'}>`
     + overnightHtml(morn)
     + cwHtml
     + mailHtml(morn)
@@ -3046,14 +3066,111 @@ async function loadOverview(){
          years), same as the OI rows.</p>
        <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
          <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
-       </tr></thead><tbody>${moverRows}</tbody></table></div></div>`;
+       </tr></thead><tbody>${moverRows}</tbody></table></div></div>`
+    + `</div>`;
 
   // Property assignment, not addEventListener — loadOverview re-renders this
   // section wholesale on every visit (same reasoning as the Positioning tab).
   $('#s-overview').onclick = ev => {
+    const b = ev.target.closest('.btab[data-o]');
+    if (b){
+      OV_SUB = b.dataset.o;
+      try { sessionStorage.setItem('ims-ov-sub', OV_SUB); } catch (e) {}
+      document.querySelectorAll('#s-overview .btab[data-o]').forEach(x =>
+        x.setAttribute('aria-selected', String(x === b)));
+      $('#ov-pane-brief').hidden = OV_SUB !== 'brief';
+      $('#ov-pane-basis').hidden = OV_SUB !== 'basis';
+      if (OV_SUB === 'basis') loadBasis();
+      return;
+    }
     const tr = ev.target.closest('tr.mvrow');
     if (tr) toggleMvRow(tr);
   };
+  getBasis().then(basisGlow);
+  if (OV_SUB === 'basis') loadBasis();
+}
+
+/* FUTURES VS CASH (PM, 2026-10-25): every F&O name in coverage, this month /
+   next / far futures CLOSE against the cash close, from the NSE bhavcopy —
+   fo_basis.py owns the rules. Discount red, premium green. A contract under
+   the thin threshold is greyed (Ambuja's Dec on 23-Oct: 4 contracts, printed
+   below Nov, no event behind it), and one that did not trade is blank: its
+   close is carried and its settle is NSE's model price. */
+let OV_SUB = (() => { try { return sessionStorage.getItem('ims-ov-sub') || 'brief'; }
+                      catch (e) { return 'brief'; } })();
+
+/* One fetch per page load, shared by the sub-tab glow (fired when the
+   Overview renders) and the table. The page is reloaded by
+   the Refresh button, which is how a day-end update reaches an open tab. */
+let BASIS_P = null;
+function getBasis(){
+  if (!BASIS_P) BASIS_P = fetch('/api/fo_basis').then(r => r.json())
+    .catch(e => ({error: String(e)}));
+  return BASIS_P;
+}
+function basisGlow(d){
+  const a = (d && d.alerts) || [];
+  const tip = a.length ? `Futures at ≥${d.glow_pct}% premium (${d.date}): ` + a.map(x =>
+    `${x.symbol} ${x.expiry.slice(8)}-${x.expiry.slice(5, 7)} +${x.pct.toFixed(2)}%`).join(', ') : '';
+  /* The SUB-TAB only (PM, 2026-10-25: "make the sub tab glow only, not the
+     main daily overview"). The top-level tab carried it for an hour. */
+  [document.querySelector('#s-overview .btab[data-o="basis"]')].forEach(el => {
+    if (!el) return;
+    el.classList.toggle('glow', a.length > 0);
+    if (a.length) el.title = tip; else el.removeAttribute('title');
+  });
+}
+
+async function loadBasis(){
+  const box = $('#ov-pane-basis');
+  const d = await getBasis();
+  if (d.error || !d.date){
+    box.innerHTML = `<div class="hint" style="color:var(--warn)">No futures basis stored yet${d.error ? ': ' + esc(d.error) : ''}.</div>`;
+    return;
+  }
+  const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dm = s => `${+s.slice(8, 10)} ${mon[+s.slice(5, 7) - 1]}`;
+  const lab = ['This month', 'Next', 'Far'];
+  const sg = (v, dp) => (v >= 0 ? '+' : '') + v.toFixed(dp);
+  const cell = c => {
+    if (!c) return '<td class="n flat">—</td>';
+    if (c.untraded) return `<td class="n flat" title="no trade on ${esc(dm(d.date))}; close carried, settle is NSE's model price">no trade</td>`;
+    const tip = [`future ${fmtNum(c.fut)}`, `${c.days}d to expiry`,
+      c.ann == null ? null : `${sg(c.ann, 1)}% annualised`,
+      c.prev_pct == null ? null : `prev session ${sg(c.prev_pct, 2)}%`,
+      `${Math.round(c.vol).toLocaleString('en-IN')} contracts`,
+      `OI ${(c.oi / 1e6).toFixed(2)}m sh`].filter(Boolean).join(' · ');
+    const cls = (c.thin ? 'flat' : c.pct > 0 ? 'pos' : c.pct < 0 ? 'neg' : 'neu')
+      + (!c.thin && c.pct >= d.glow_pct ? ' bglow' : '');
+    return `<td class="n ${cls}" title="${esc(tip)}">${sg(c.pct, 2)}%${
+      c.thin ? '<sup class="hint"> thin</sup>' : ''}<div class="hint" style="font-size:11px">${
+      c.ann == null || c.days < 7 ? '&nbsp;' : sg(c.ann, 1) + '% ann'}</div></td>`;
+  };
+  let body = '', sec = null;
+  for (const r of d.rows){
+    if (r.sector !== sec){
+      sec = r.sector;
+      body += `<tr><td colspan="${2 + d.expiries.length}" class="k" style="font-weight:600;padding-top:10px">${
+        esc(d.sector_labels[sec] || sec)}</td></tr>`;
+    }
+    body += `<tr><td class="k" title="${esc(r.name)}">${esc(r.symbol)}</td>
+      <td class="n">${fmtNum(r.spot)}</td>${r.cells.map(cell).join('')}</tr>`;
+  }
+  const al = d.alerts || [];
+  box.innerHTML = `<div class="panel">
+      ${al.length ? `<p class="note" style="margin-top:0;color:var(--warn)">▲ ${al.length} contract${
+        al.length > 1 ? 's' : ''} at ≥${d.glow_pct}% premium: ${esc(al.map(x =>
+        `${x.symbol} ${dm(x.expiry)} +${x.pct.toFixed(2)}%`).join(', '))} (outlined below).</p>` : ''}
+      <p class="note" style="margin-top:0">Futures <b>close</b> vs cash close, NSE F&amp;O bhavcopy of
+        <b>${esc(dm(d.date))}</b>. Updates at day end. <span class="pos">Premium</span> green,
+        <span class="neg">discount</span> red. Greyed = thin, under ${d.thin_contracts} contracts traded,
+        a price nobody could deal size at. Hover a cell for the future, annualised rate, volume and OI;
+        no annualised figure inside 7 days of expiry, where it explodes.</p>
+      <div class="scroll"><table><thead><tr><th>stock</th><th class="n">cash</th>${
+        d.expiries.map((x, i) => `<th class="n">${lab[i]}<br><span class="hint">${esc(dm(x.expiry))} · ${x.days}d</span></th>`).join('')
+      }</tr></thead><tbody>${body}</tbody></table></div>
+      ${d.no_futures.length ? `<p class="hint">In coverage, no stock futures: ${esc(d.no_futures.join(', '))}.</p>` : ''}
+    </div>`;
 }
 
 /* INPUT PRICE CHART — the what-moved rows expand inline into a single-series

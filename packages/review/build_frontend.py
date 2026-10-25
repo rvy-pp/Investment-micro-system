@@ -234,6 +234,19 @@ def check() -> dict:
                f"{len(mo.get('warnings') or [])} warning(s)")
         r["routes"].append({"route": "/api/morning", "ok": True, "detail": det})
 
+    # /api/fo_basis - the Overview's Futures vs cash sub-tab (2026-10-25).
+    # A store with no basis day yet is a problem: the bhavcopy step writes it
+    # every morning, so an empty table means that hook broke.
+    fb, _ = route("/api/fo_basis", engine.fo_basis_view)
+    if fb is not None:
+        okb = bool(fb.get("date")) and bool(fb.get("rows"))
+        if not okb:
+            r["problems"].append("/api/fo_basis: no futures basis stored")
+        r["routes"].append({"route": "/api/fo_basis", "ok": okb,
+                            "detail": f"{fb.get('date') or 'none'}, "
+                                      f"{len(fb.get('rows') or [])} names, "
+                                      f"{len(fb.get('expiries') or [])} expiries"})
+
     r["ok"] = not r["problems"]
     r["n_warnings"] = len(r["warnings"])
     r["n_routes"] = len(r["routes"])
