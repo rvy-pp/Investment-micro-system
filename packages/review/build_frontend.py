@@ -167,6 +167,30 @@ def check() -> dict:
         r["routes"].append({"route": "/api/book_analysis", "ok": ok,
                             "detail": f"{n} stocks, {ba.get('n_auto', 0)} priced automatically"})
 
+    # /api/book's `var` block - the Book's Risk sub-tab (2026-10-25). Two
+    # things fail it: an error, and pair contributions that do not add up to
+    # the headline (the zero-share bug summed to $4,929 against $4,851). A
+    # leg missing from ticker_map is excluded from the VaR, so it is a
+    # problem too — that is how PGEL sat outside the map until 2026-10-25.
+    bk, _ = route("/api/book", engine.book_view)
+    if bk is not None and bk.get("as_of"):
+        v = bk.get("var") or {"error": "no var block"}
+        if v.get("error"):
+            r["problems"].append(f"/api/book var: {v['error']}")
+            r["routes"].append({"route": "/api/book (var)", "ok": False, "detail": v["error"]})
+        else:
+            h = v["headline"]
+            gap = abs(sum(p["contrib"] for p in v.get("pairs") or []) - h["var"])
+            um = [o["root"] for o in (v.get("excluded") or {}).get("unmapped") or []]
+            ok = gap <= len(v.get("pairs") or []) and not um   # rounding: <=$1 a row
+            if not ok:
+                r["problems"].append(f"/api/book var: contributions off by ${gap:,.0f}"
+                                     + (f"; unmapped {', '.join(um)}" if um else ""))
+            r["routes"].append({"route": "/api/book (var)", "ok": ok,
+                                "detail": f"{v['snap']}: 1d {h['confidence']:.0%} ${h['var']:,.0f} "
+                                          f"({h['var'] / v['nav'] * 100:.2f}% nav), "
+                                          f"backtest {v['backtest']['n']} days"})
+
     # /api/concall - the Results tab's Concall notes sub-tab (2026-10-08). The
     # notes live in the OneDrive vault, so an empty read is reported on the
     # route row but NOT raised as a problem: OneDrive signed out is a laptop

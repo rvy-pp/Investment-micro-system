@@ -2184,6 +2184,16 @@ def book_view(date: str | None = None) -> dict:
                 rep["kelly"] = kelly.build(out, rep.get("nav") or 0.0)
             except Exception as e:                       # noqa: BLE001
                 rep["kelly"] = {"error": f"{type(e).__name__}: {e}"}
+        # Value at Risk, the Risk sub-tab (PM, 2026-10-25) — packages/book/
+        # var.py owns the method and the selftest. Unlike Kelly it REPLAYS:
+        # a past snapshot is measured on prices up to its own date, the VaR
+        # that could have been computed that day. `out` only attributes it.
+        try:
+            import var as book_var
+            rep["var"] = book_var.build(as_of=rep.get("as_of"), view=out,
+                                        live=rep.get("is_latest", True))
+        except Exception as e:                       # noqa: BLE001
+            rep["var"] = {"error": f"{type(e).__name__}: {e}"}
     else:
         # no dictated pairs: synthesize the view from the tag grouping
         rep["view"] = [{**p, "sector": (p["pair"].rstrip("0123456789 ") or

@@ -65,6 +65,7 @@ ticker_map:
   SYRMA: syrma_sgs
   DIXON: dixon
   KAYNE: kaynes
+  PGEL: pg_electroplast   # on the book since EMS 2; added on the PM's instruction 2026-10-25
   # IT
   TCS: tcs
   INFO: infosys
@@ -153,6 +154,7 @@ names:
   SYRMA: Syrma
   DIXON: Dixon
   KAYNE: Kaynes
+  PGEL: PG Electroplast
   TCS: TCS
   INFO: Infosys
   WPRO: Wipro
@@ -212,6 +214,38 @@ kelly:
   # "we put the agents view from here"). Typed edges (book_kelly_edges,
   # 2026-09-25..10-22) are history nothing reads. An `edges:` key here is
   # reported, not read.
+
+# ---------------------------------------------------------------------------
+# var: Value at Risk, the Book tab's Risk sub-tab (PM, 2026-10-25: "build VaR
+# into the Book tab as a tested module, recomputed from each snapshot").
+# packages/book/var.py owns the method and the selftest. Today's book held
+# constant in DOLLARS (IMS MV% x NAV per leg) through the legs' own daily
+# returns. One-day, USD.
+#
+#   windows        historical VaR lookbacks, in COMMON sessions (every leg printed)
+#   ewma_lambda    RiskMetrics decay; 0.94 = ~16-session half-life
+#   headline       the number the strip leads with. EWMA because it is the
+#                  only method that weights the current regime (and, today,
+#                  the most conservative). var.py's docstring has the first
+#                  backtest.
+#   jump_flag      a one-day leg move beyond this is LISTED (kept, not dropped
+#                  — tape.py's allow-list rule; only confirmed actions zero)
+#   stress         today's dollars replayed through each episode; a leg not
+#                  yet listed then contributes ZERO, and the page says how many
+var:
+  confidence: [0.95, 0.99]
+  windows: [250, 500]
+  ewma_lambda: 0.94
+  ewma_sessions: 500
+  horizon_days: 10
+  headline: {method: ewma, confidence: 0.99}
+  jump_flag: 0.25
+  min_sessions: 60       # fewer common sessions -> no VaR for that snapshot (VAML listed 2026-06-15)
+  stress:
+    - {label: "GFC 2008-09",           start: "2008-09-01", end: "2009-03-31"}
+    - {label: "COVID 2020",            start: "2020-02-15", end: "2020-04-30"}
+    - {label: "Election result 2024",  start: "2024-06-03", end: "2024-06-05"}
+    - {label: "Small-cap correction 2024-25", start: "2024-12-01", end: "2025-03-31"}
 
 # ---------------------------------------------------------------------------
 # case_bands: the range around a case's base (PM, 2026-10-18). Bear and bull

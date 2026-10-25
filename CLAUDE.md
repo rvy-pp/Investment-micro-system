@@ -888,6 +888,69 @@ restores the old assumption. SILENT_BUGS entry 12.
 immediately. An export per keystroke-save would be ~90s each, which is why
 it was left out.
 
+### Risk — Value at Risk, the Book's last sub-tab (2026-10-25)
+
+PM: *"Can we calculate the VaR for our book?"*, then *"build VaR into the Book
+tab as a tested module, recomputed from each snapshot"*. Sub-tab **Risk**,
+after Kelly sizing. `packages/book/var.py` owns the method, the backtest and
+the selftest (25 checks); `engine.book_view` attaches it as `var` (no new
+route, so the vault copy needed nothing); parameters in `specs/book.yaml var:`.
+`python packages/book/var.py` prints the report.
+
+**What is measured:** today's book held constant in DOLLARS (IMS MV% x NAV per
+leg) through the legs' own daily returns, one day, USD. MV is the true USD
+exposure of a futures leg — the IMS day P&L over MV x the stored move has a
+median of **0.96** across 116 legs. Every number comes from ONE series, the
+book's daily P&L, because x'Σx IS that series' variance and the EWMA variance
+is exactly Σw·pnl² — so there is no covariance matrix, and component VaR needs
+one more pass per leg. Historical over 250 and 500 common sessions, EWMA
+λ 0.94 (the **headline**: the only method that weights the current regime),
+10-day both as overlapping windows and as √10 (the spreads mean-revert, so √10
+overstates: $9,240 against $15,340 on 2026-10-23), stress replays of named
+episodes, and contributions by dictated pair (Euler — they add up to the
+headline exactly; the verifier checks that).
+
+**First read, 2026-10-21 book, returns to 2026-10-23:** 1-day 99% EWMA
+**$4,851 (0.16% of NAV)**, ES $5,557; historical 99% $3,534 (1y) / $4,010
+(2y). Pairs alone add up to $33,899, so ~86% diversifies away. TECHM_LTM is the
+largest contributor (22%), then HZ_VEDL (11%). Net β-adjusted exposure is
++$13.5k, about $135 per 1% on the Nifty.
+
+**It REPLAYS, unlike Kelly:** a past snapshot is measured on prices up to its
+own date, the VaR that could have been computed that day. **The backtest is
+ex-ante for the same reason:** snapshot a's VaR against snapshot b's summed IMS
+day P&L. 27 usable pairs: no 99% break on either method; EWMA 95% broke on
+15-Sep and 06-Oct, against 1.35 expected. **15-Sep DOES break TODAY's 1y
+historical 99% ($3,534)**, which was said in chat before the backtest existed.
+Ex-ante, on 11-Sep, it was $4,163, so it was not a break. Only the ex-ante
+number counts. Pastes on exchange holidays (02-Oct, 20-Oct) are skipped,
+because a near-zero DTD is a free non-break. Snapshots whose legs share under
+`min_sessions` (60) common sessions are skipped too (VAML, listed 2026-06-15,
+was in the September book). Above that floor EWMA runs on what exists and the
+1y historical is WITHHELD, never computed on fewer days.
+
+**Session hygiene is basket_index's, imported:** phantom sessions out, quorum,
+all-or-nothing. A CONFIRMED corporate action is a zero return; VEDL's
+2026-04-30 demerger would otherwise be a +65% gain on today's short. VEDL's
+pre-demerger history is flagged, not dropped (kelly.py's convention).
+**Excluded and named:** option roots, tickers missing from `ticker_map`. FX is
+not modelled: futures carry it only on P&L, and the cash lines are ~1.2% of
+NAV.
+
+**A bug in the pair attribution, fixed at the site:** a shared leg's share of
+**0.0** is a share. NALCO sits in HNDL_NACL and VAML_NACL, and with VAML off
+the book its VAML_NACL share is 0. `share or 1.0` counted a whole second
+NALCO, and the contributions summed to $4,929 against $4,851. Caught by summing
+them; `build_frontend.py` now checks the sum on every run.
+
+**PGEL was missing from `ticker_map`** (on the book since EMS 2, long vs Amber
+short). It was added 2026-10-25 on the PM's instruction. It is still in NO
+dictated pair, and the dictation's AMBER_DIXON has Amber LONG while the book
+is short Amber; JINDA_SAIL is dictated with SAIL short while the book holds
+SAIL long (STEEL 2 is two longs). The
+Risk tab shows PGEL as "not in a dictated pair" and those two pairs with a
+`side` chip. The fix is a dictation from the PM, not a guess.
+
 ### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
 
 PM: *"I think we analyze individually. Pairs can change"* and *"start with the

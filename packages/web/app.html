@@ -3525,6 +3525,124 @@ function wireKelly(){
   kellyRefresh();
 }
 
+/* Risk sub-tab — Value at Risk (PM, 2026-10-25: "build VaR into the Book
+   tab as a tested module, recomputed from each snapshot"). Everything is
+   computed by packages/book/var.py and rendered as stored; nothing here
+   recomputes. VaR and ES are LOSSES, printed as positive dollars with % of
+   NAV beneath. Unlike Kelly it replays: a past snapshot shows the VaR that
+   could have been computed that day, on prices up to its own date. */
+function riskBlock(v){
+  if (!v) return '';
+  if (v.error) return `<div class="callout accent-amber"><div class="callout-head">
+    <span class="ico">⚠</span><span class="t">VaR failed</span></div>${esc(v.error)}</div>`;
+  const nav = v.nav || 1, h = v.headline, ck = String(h.confidence);
+  const $ = x => x == null ? '—' : '$' + Math.round(x).toLocaleString('en-US');
+  const pn = x => x == null ? '' : (x / nav * 100).toFixed(2) + '%';
+  const both = x => `${$(x)}<span class="sub">${pn(x)}</span>`;
+  const cell = (k, val, tip) => `<div class="cell"${tip ? ` title="${esc(tip)}"` : ''}><div class="k">${k}</div><div class="v">${val}</div></div>`;
+  const hz = v.horizon || {}, pc = c => `${Math.round(c * 100)}%`;
+  const strip = `<div class="bk-strip">`
+    + cell(`1-day VaR ${pc(h.confidence)}`, `${$(h.var)} <span class="u">${pn(h.var)} of nav</span>`,
+           `${h.label}: the loss today's book should exceed on about ${Math.round((1 - h.confidence) * 100)} day in 100`)
+    + cell(`ES ${pc(h.confidence)}`, `${$(h.es)} <span class="u">${pn(h.es)}</span>`,
+           'expected shortfall: the average loss on the days beyond the VaR')
+    + cell(`${hz.days}-day ${pc(h.confidence)}`,
+           `${$((hz.hist_overlap || {})[ck])} <span class="u">√${hz.days}: ${$((hz.sqrt_ewma || {})[ck])}</span>`,
+           `left: the ${pc(h.confidence)} loss over actual overlapping ${hz.days}-session windows (${hz.n_windows} of them). right: the 1-day EWMA × √${hz.days}. The spreads partly mean-revert, so √time overstates`)
+    + cell('gross · net', `${$(v.gross_usd)} <span class="u">net ${usd(v.net_usd)}</span>`)
+    + cell('β-adj. net', `${usd(v.beta_net_usd)} <span class="u">${usd(v.beta_net_usd / 100)} per 1% nifty</span>`,
+           'sum of the IMS beta-adjusted MV: what a broad market move costs, before any spread move')
+    + `</div>`;
+
+  const confs = (v.params.confidence || []).map(String);
+  const meth = v.methods.map(m => `<tr class="secfirst">
+      <td class="pair">${esc(m.label)}${m.key === h.method ? ' <span class="pill">headline</span>' : ''}</td>
+      <td><span class="date">${dmy(m.start)} – ${dmy(m.end)}</span><span class="sub">${m.n} sessions</span></td>
+      ${confs.map(c => `<td>${both(m.var[c])}</td>`).join('')}
+      ${confs.map(c => `<td>${both(m.es[c])}</td>`).join('')}</tr>`).join('');
+
+  const maxC = Math.max(1, ...v.pairs.map(p => Math.abs(p.contrib)));
+  const legTip = p => p.legs.map(l => `${l.side === 'L' ? 'long' : 'short'} ${l.name} ${usd(l.usd)}${l.side_mismatch ? ' (side differs from the dictation)' : ''}`).join('\n');
+  const prow = p => {
+    const mis = p.legs.some(l => l.side_mismatch);
+    const share = p.contrib / h.var * 100;
+    return `<tr class="secfirst" title="${esc(legTip(p))}">
+      <td class="pair">${esc(p.label)}${p.unassigned ? ` <span class="pill warn" title="${esc('on the book but in no dictated pair (specs/book.yaml pairs): ' + p.legs.map(l => l.name).join(', '))}">${esc(p.legs.map(l => l.name).join(', '))}</span>` : ''}${mis ? ' <span class="pill warn" title="a leg is held on the opposite side to the dictated pair">side</span>' : ''}</td>
+      <td>${$(p.gross_usd)}</td>
+      <td>${$(p.standalone)}</td>
+      <td class="tot"><div class="dwrap"><span class="${p.contrib < 0 ? 'up' : ''}">${p.contrib < 0 ? '−' : ''}${$(Math.abs(p.contrib))}<span class="sub">${pctf(share, 1)}</span></span>
+        <div class="dbar ${p.contrib < 0 ? 'pos' : 'neg'}" style="width:${Math.round(Math.abs(p.contrib) / maxC * 76)}px"></div></div></td></tr>`;
+  };
+  const dv = v.diversification;
+
+  const stress = (v.stress || []).map(s => `<tr class="secfirst">
+      <td class="pair">${esc(s.label)}${s.legs_priced < s.legs_total ? ` <span class="pill warn" title="legs not yet listed then contribute ZERO, so this understates">${s.legs_priced}/${s.legs_total} legs</span>` : ''}</td>
+      <td><span class="date">${dmy(s.start)} – ${dmy(s.end)}</span><span class="sub">${s.sessions} sessions</span></td>
+      <td class="${usdCls(s.worst_day.pnl)}">${usd(s.worst_day.pnl)}<span class="sub">${pn(Math.abs(s.worst_day.pnl))} · ${dmy(s.worst_day.date)}</span></td>
+      <td class="${usdCls(s.peak_to_trough)}">${usd(s.peak_to_trough)}<span class="sub">${pn(Math.abs(s.peak_to_trough))}</span></td>
+      <td class="${usdCls(s.cum)}">${usd(s.cum)}</td></tr>`).join('');
+
+  const bt = v.backtest || {}, sm = bt.summary || {};
+  const btLine = ['ewma', 'hist'].map(mk => confs.map(c => {
+      const s = sm[`${mk}_${c}`];
+      if (!s || !s.n) return '';
+      return `${mk === 'ewma' ? 'EWMA' : `historical ${v.params.windows[0]}`} ${pc(+c)}: <b>${s.breaks}</b> break${s.breaks === 1 ? '' : 's'} in ${s.n} (expected ${s.expected})${s.dates.length ? ' — ' + s.dates.map(dmy).join(', ') : ''}`;
+    }).filter(Boolean).join(' · ')).filter(Boolean).join('<br>');
+  const btRows = (bt.rows || []).slice().reverse().map(r => {
+    const brk = confs.some(c => r[`ewma_${c}`] != null && r.realised < -r[`ewma_${c}`]);
+    return `<tr class="secfirst"><td><span class="date">${dmy(r.to)}</span>${r.sessions > 1 ? `<span class="sub" title="${r.sessions} sessions since the previous snapshot; the IMS day P&L covers only the last">${r.sessions}s</span>` : ''}</td>
+      <td class="${usdCls(r.realised)}">${usd(r.realised)}${brk ? ' <span class="pill warn">break</span>' : ''}</td>
+      ${confs.map(c => `<td>${$(r[`ewma_${c}`])}</td>`).join('')}
+      ${confs.map(c => `<td>${$(r[`hist_${c}`])}</td>`).join('')}</tr>`;
+  }).join('');
+
+  const ex = v.excluded || {}, fl = v.flags || {};
+  const notes = [
+    (ex.options || []).length ? `options excluded (priced by nothing here): ${ex.options.map(o => esc(o.root)).join(', ')}` : '',
+    (ex.unmapped || []).length ? `<span style="color:var(--warn)">not in ticker_map, excluded: ${ex.unmapped.map(o => esc(o.root)).join(', ')}</span>` : '',
+    (fl.zeroed || []).length ? `confirmed corporate action taken as a zero return: ${fl.zeroed.map(z => `${esc(z.entity_id)} ${dmy(z.date)}`).join(', ')}` : '',
+    (fl.pre_demerger_history || []).length ? `pre-demerger history inside the window: ${fl.pre_demerger_history.map(esc).join(', ')}` : '',
+    (fl.jumps || []).length ? `<span style="color:var(--warn)">one-day leg moves beyond ${Math.round(v.params.jump_flag * 100 || 25)}% kept in the window: ${fl.jumps.map(j => `${esc(j.entity_id)} ${dmy(j.date)} ${pctf(j.ret_pct)}`).join(', ')}</span>` : '',
+    `FX not modelled (futures carry it on P&amp;L only; cash lines ${$(Math.abs(v.cash_legs_usd || 0))})`,
+  ].filter(Boolean).join(' · ');
+
+  const th = (t, tip) => `<th${tip ? ` title="${esc(tip)}"` : ''}>${t}</th>`;
+  return `<div class="sechead" style="margin-top:var(--s4)">Value at Risk</div>
+    <div class="meta-line">one day, USD · today's book held constant in dollars (IMS MV × NAV per leg) through
+      the legs' own daily returns · positions ${dmy(v.snap)} · returns to ${dmy(v.upto)}${v.live ? '' : ' (replay: prices stop at the snapshot)'}
+      · sessions count only when every leg printed</div>
+    ${strip}
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+      <th class="l">method</th><th>window</th>
+      ${confs.map(c => th('VaR ' + pc(+c))).join('')}${confs.map(c => th('ES ' + pc(+c), 'average loss beyond the VaR')).join('')}
+    </tr></thead><tbody>${meth}</tbody></table></div></div>
+
+    <div class="sechead" style="margin-top:var(--s4)">Where the risk sits</div>
+    <div class="meta-line">contribution to the ${pc(h.confidence)} headline VaR by dictated pair (Euler: the
+      contributions add up to the book's ${$(h.var)}; a negative one is a hedge to the rest of the book) ·
+      standalone = the pair's own VaR · pairs alone add up to ${$(dv.sum_standalone)} against the book's ${$(dv.book)}, so
+      ${Math.round((1 - dv.book / dv.sum_standalone) * 100)}% of it diversifies away · a shared leg splits across its pairs as on Positions · hover a row for its legs</div>
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+      <th class="l">pair</th><th>gross</th>${th('standalone ' + pc(h.confidence))}${th('contribution', 'share of the book VaR; green = reduces it')}
+    </tr></thead><tbody>${v.pairs.map(prow).join('')}</tbody></table></div></div>
+
+    <div class="sechead" style="margin-top:var(--s4)">Stress — today's book through past episodes</div>
+    <div class="meta-line">constant dollars, the same exposure every day; a leg that had not listed yet contributes nothing</div>
+    <div class="panel" style="padding:0"><div class="scroll"><table class="bk"><thead><tr>
+      <th class="l">episode</th><th>dates</th><th>worst day</th><th>peak to trough</th><th>over the episode</th>
+    </tr></thead><tbody>${stress}</tbody></table></div></div>
+
+    <div class="sechead" style="margin-top:var(--s4)">Backtest</div>
+    <div class="meta-line">each stored snapshot's VaR, computed from its own positions and prices up to its own date, against
+      the IMS day P&amp;L of the next snapshot (which also carries intraday trading and any option hedges) ·
+      ${(bt.skipped || []).length} pair${(bt.skipped || []).length === 1 ? '' : 's'} skipped (holiday pastes, short history)<br>${btLine}</div>
+    <details class="panel" style="padding:0"><summary style="padding:8px 14px;cursor:pointer;color:var(--soft)">${bt.n} days</summary>
+      <div class="scroll"><table class="bk"><thead><tr>
+        <th class="l">day</th><th>ims day p&amp;l</th>${confs.map(c => th('EWMA ' + pc(+c))).join('')}${confs.map(c => th(`hist ${v.params.windows[0]} ` + pc(+c), 'withheld while a leg had under a year of history (VAML)')).join('')}
+      </tr></thead><tbody>${btRows}</tbody></table></div></details>
+    <div class="hint" style="margin-top:var(--s2)">${notes}</div>`;
+}
+
 /* The model-scores table, tiles and placeholder callouts came OFF this tab
    06-09-2026 (PM: "all this model view and stuff below is waste") — the
    model still lives on the Overview/sector tabs and per-leg composites ride
@@ -3539,7 +3657,7 @@ function wireKelly(){
    payload per snapshot instead of missing every other calendar day. */
 let BOOK_DATE = null;       // null = latest snapshot
 let BOOK_SUB = (() => { try { return sessionStorage.getItem('ims-book-sub') || 'pos'; }
-                        catch (e) { return 'pos'; } })();   // 'pos' | 'kelly'
+                        catch (e) { return 'pos'; } })();   // 'pos' | 'ana' | 'kelly' | 'risk'
 let BOOK_ASKED = null;      // the calendar day the PM picked, when it had no paste
 function bookResolve(day, snaps){
   const prior = (snaps || []).filter(d => d <= day);
@@ -3798,18 +3916,22 @@ async function loadBook(){
   /* Analysis sits BETWEEN Positions and Kelly sizing (PM, 2026-10-10). It is
      today-only like Kelly and filled by loadAnalysis(), fetched once per page
      load. A stored 'pos'/'kelly'/'ana' is honoured; anything else is Positions. */
-  if (!['pos', 'ana', 'kelly'].includes(BOOK_SUB)) BOOK_SUB = 'pos';
+  if (!['pos', 'ana', 'kelly', 'risk'].includes(BOOK_SUB)) BOOK_SUB = 'pos';
   const sub = ready ? `<nav class="vnav" role="tablist" aria-label="book view" style="margin-bottom:var(--s2)">
       <button class="btab" role="tab" data-b="pos" aria-selected="${BOOK_SUB === 'pos'}">Positions</button>
       <button class="btab" role="tab" data-b="ana" aria-selected="${BOOK_SUB === 'ana'}">Analysis</button>
       <button class="btab" role="tab" data-b="kelly" aria-selected="${BOOK_SUB === 'kelly'}">Kelly sizing</button>
+      <button class="btab" role="tab" data-b="risk" aria-selected="${BOOK_SUB === 'risk'}">Risk</button>
     </nav>` : '';
   const showPos = !ready || BOOK_SUB === 'pos';
   $('#s-book').innerHTML = `<div class="pgt">The Book</div>` + sub
     + `<div id="bk-pane-pos"${showPos ? '' : ' hidden'}>`
     + (ready ? bookPicker(bk) : '') + posHtml + `</div>`
     + `<div id="bk-pane-ana"${ready && BOOK_SUB === 'ana' ? '' : ' hidden'}></div>`
-    + `<div id="bk-pane-kelly"${ready && BOOK_SUB === 'kelly' ? '' : ' hidden'}>${kellyPane}</div>`;
+    + `<div id="bk-pane-kelly"${ready && BOOK_SUB === 'kelly' ? '' : ' hidden'}>${kellyPane}</div>`
+    /* Risk (VaR) is the last sub-tab (2026-10-25). Unlike Kelly it replays
+       with the date picker — the picker itself lives on Positions. */
+    + `<div id="bk-pane-risk"${ready && BOOK_SUB === 'risk' ? '' : ' hidden'}>${ready ? riskBlock(bk.var) : ''}</div>`;
   if (ready){
     document.querySelectorAll('#s-book .btab').forEach(b => b.addEventListener('click', () => {
       BOOK_SUB = b.dataset.b;
@@ -3819,6 +3941,7 @@ async function loadBook(){
       document.getElementById('bk-pane-pos').hidden = BOOK_SUB !== 'pos';
       document.getElementById('bk-pane-ana').hidden = BOOK_SUB !== 'ana';
       document.getElementById('bk-pane-kelly').hidden = BOOK_SUB !== 'kelly';
+      document.getElementById('bk-pane-risk').hidden = BOOK_SUB !== 'risk';
       if (BOOK_SUB === 'pos') loadIndex(BIX_RANGE);
       if (BOOK_SUB === 'ana') loadAnalysis();
     }));
