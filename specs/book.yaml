@@ -235,8 +235,9 @@ kelly:
 case_bands:
   IT: {margin_bps: 50, growth_pp: 0.5}
   # An EV/EBITDA sector's band takes per_t_inr (EBITDA/t, Rs, both ways) and
-  # growth_pp (QoQ volume growth, compounding). CEMENT has none yet: the PM's
-  # call, once for the sector.
+  # growth_pp (QoQ volume growth, compounding). PM, 2026-10-25: "set the
+  # cement band at ±Rs50/t EBITDA/t and ±1pp volume growth".
+  CEMENT: {per_t_inr: 50, growth_pp: 1.0}
 
 # case_valuation: the multiple a sector's case agents run on (PM, 2026-10-25:
 # "cement sector agents ... we will use EV/EBITDA instead of P/E. Process is

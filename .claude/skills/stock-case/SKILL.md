@@ -183,9 +183,9 @@ with EBITDA in place of EPS. These are the differences:
   multiples sit on mixed bases and are recorded, not used. The same `anchor`
   key works for a P/E leg (implied = TP / consensus EPS).
 - **Bands:** `case_bands` for an EV sector take `per_t_inr` and `growth_pp`
-  (QoQ volume, compounding). Cement has none until the PM sets one, so there
-  is no bear/bull and no price entry. Show a preview if asked, and never write
-  a hand-drawn case.
+  (QoQ volume, compounding). CEMENT is ±Rs50/t and ±1pp (PM, 2026-10-25).
+  A future EV sector without a band has no bear/bull and no price entry until
+  the PM sets one. Never write a hand-drawn case.
 - `street_q` pins take `ebitda_cr`. Cement's Q4 is the seasonal peak, so an
   even split of H2 understates Q4 and overstates Q3. Pin Q3 from house numbers
   whenever any exist.

@@ -977,7 +977,8 @@ house's implied (TP x shares + net debt) / consensus EBITDA, which round-trips
 exactly to the mean TP. The same `anchor: mean|median` works on P/E legs. P/E
 output is unchanged, checked against TCS's brief and agent file. UltraTech
 (`utcem-agent`) is the first: 14 TPs, mean implied FY28 18.52x vs 15.68x
-today, base +19.4%, all multiple. There is no cement band yet, so no bear/bull.
+today, base +19.4%, all multiple. CEMENT band (PM, same day): EBITDA/t ±Rs50, volume
+growth ±1pp; range +12.1% / +26.7%. Q3 is the PM's (Nomura's 40.9mt / Rs1,050/t).
 
 **IT agents also keep a deal LIST** (PM, 2026-10-13: "what major deals were
 active, what were scheduled ... are they delayed, have the older ones gone",

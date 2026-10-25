@@ -347,6 +347,15 @@ def case_valuation(group: str | None, cfg: dict | None = None) -> str:
     return (cfg.get("case_valuation") or {}).get(band_key(group), "pe")
 
 
+def band_text(bd: dict) -> str:
+    """The band's two inputs in words, for either shape (IT margin/growth,
+    EV sector EBITDA-per-tonne/volume). Both print sites read it: they
+    assumed IT's keys and raised KeyError on the first cement band."""
+    if "per_t_inr" in bd:
+        return f"EBITDA/t ±Rs{bd['per_t_inr']}, volume growth ±{bd['growth_pp']}pp"
+    return f"margin ±{bd['margin_bps']}bps, growth ±{bd['growth_pp']}pp"
+
+
 def band_scenarios(b: dict, band: dict) -> dict:
     """Bear and bull as the BASE moved by the sector band (PM, 2026-10-18:
     "fixed sector band, ±50bps margin and ±0.5pp growth for IT, carried").
@@ -888,8 +897,8 @@ def price_entry(b: dict) -> dict:
     if "bear" not in j or "bull" not in j:
         raise SystemExit("price entry needs bear and bull scenarios on the headline FY")
     bd = b.get("band")
-    how = (f" Range = base moved by the {bd['key']} band (margin ±{bd['margin_bps']}bps, growth "
-           f"±{bd['growth_pp']}pp per forecast quarter, carried)." if bd else "")
+    how = (f" Range = base moved by the {bd['key']} band ({band_text(bd)} per forecast quarter, carried)."
+           if bd else "")
     # The multiple is named from the scenario itself: this line said "at today's
     # P/E" unconditionally, which was false the first time an anchor was set
     # (TCS, 2026-10-20 — juice at 14.54x printed as "today's P/E", 15.27x).
@@ -968,8 +977,8 @@ def render(b: dict) -> str:
               for h in sorted(an["houses"], key=lambda h: h["implied"])]
     if b.get("scenarios") and b.get("band"):
         bd = b["band"]
-        L.append(f"        bear/bull = base moved by the {bd['key']} band: margin ±{bd['margin_bps']}bps, "
-                 f"growth ±{bd['growth_pp']}pp per forecast quarter, carried into later years")
+        L.append(f"        bear/bull = base moved by the {bd['key']} band: {band_text(bd)} "
+                 f"per forecast quarter, carried into later years")
     if b.get("scenarios"):
         L.append(f"        confidence {b.get('confidence')} · horizon {b.get('horizon')} · "
                  f"headline {b.get('headline_fy')} · lean: the PM's to pick")
@@ -1367,6 +1376,9 @@ def _selftest() -> None:
     pe_ev = {"entity": "x", "token": "X", "headline_fy": "FY28", "horizon": "h", "multiple": "EV/EBITDA",
              "scenarios": {k: {"juice": {"FY28": sa[k]["juice"]["FY28"]}} for k in sa}}
     assert "anchor EV/EBITDA" in price_entry(pe_ev)["note"]; ok += 1
+    pe_ev["band"] = bandc                                                         # an EV band prints in its own words
+    assert "EBITDA/t ±Rs50, volume growth ±1.0pp" in price_entry(pe_ev)["note"]; ok += 1
+    assert band_text({"margin_bps": 50, "growth_pp": 0.5}) == "margin ±50bps, growth ±0.5pp"; ok += 1
     for mut, why in [(lambda b: b.pop("net_debt_source"), "net_debt_source"),
                      (lambda b: b.pop("net_debt_cr"), "net_debt_cr"),
                      (lambda b: b["consensus"]["FY28"].pop("source"), "needs a source"),
