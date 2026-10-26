@@ -227,6 +227,45 @@ def internal(b: dict) -> dict:
     return b
 
 
+def bridge_per_t(br: dict, volume_mt: float) -> float:
+    """EBITDA/t from a per-tonne P&L (PM, 2026-10-26: "what is the revenue-cost
+    per ton you are taking to reach ebitda? Let's work on that"):
+
+        revenue/t - sum(variable costs/t) - sum(fixed costs, Rs cr) x 10 / volume
+
+    Fixed costs are carried in RUPEES, not per tonne, so operating leverage is
+    arithmetic rather than an input: the same Rs4,591cr is 1,202/t on 38.2mt
+    and 1,122/t on 40.9mt. Typing a fixed cost per tonne would hide exactly the
+    effect the PM asked to see, and a band volume move would then leave EBITDA/t
+    untouched."""
+    return (br["revenue_t"] - sum(br.get("var_t", {}).values())
+            - sum(br.get("fixed_cr", {}).values()) * 10 / volume_mt)
+
+
+def _bridge_problems(q: str, row: dict) -> list[str]:
+    br = row.get("bridge")
+    if br is None:
+        return []
+    probs = []
+    if not (isinstance(br, dict) and isinstance(br.get("revenue_t"), (int, float)) and br["revenue_t"] > 0):
+        return [f"{q}: a bridge needs a positive revenue_t"]
+    for k in ("var_t", "fixed_cr"):
+        if not (isinstance(br.get(k), dict) and br[k] and all(isinstance(v, (int, float)) for v in br[k].values())):
+            probs.append(f"{q}: bridge {k} must be a non-empty {{line: number}}")
+    if not (isinstance(row.get("volume_mt"), (int, float)) and row["volume_mt"] > 0):
+        probs.append(f"{q}: a bridge needs volume_mt (fixed costs are spread over it)")
+    if probs:
+        return probs
+    if row.get("kind") != "actual" and "ebitda_per_t" in row:
+        probs.append(f"{q}: a bridged quarter derives ebitda_per_t — remove the typed one")
+    if row.get("kind") == "actual" and isinstance(row.get("ebitda_cr"), (int, float)):
+        # An actual's bridge is a description of the print; it must add back to it.
+        got = bridge_per_t(br, row["volume_mt"]) * row["volume_mt"] / 10
+        if abs(got / row["ebitda_cr"] - 1) > 0.01:
+            probs.append(f"{q}: bridge gives EBITDA Rs{got:,.1f}cr against the reported Rs{row['ebitda_cr']:,.1f}cr")
+    return probs
+
+
 def resolve_row(row: dict, shares_cr: float | None, ev: bool = False) -> dict:
     """A quarter's EPS: as stated for an actual (the reported figure wins), or
     from drivers — revenue x EBIT margin x PAT/EBIT / shares — for a pm or
@@ -238,6 +277,10 @@ def resolve_row(row: dict, shares_cr: float | None, ev: bool = False) -> dict:
     the cited Rs50.2bn. A x10 error here would read as a 10x EBITDA beat."""
     row = dict(row)
     if ev:
+        if (row.get("kind") != "actual" and isinstance(row.get("bridge"), dict)
+                and isinstance(row.get("volume_mt"), (int, float)) and row["volume_mt"] > 0
+                and isinstance(row["bridge"].get("revenue_t"), (int, float))):
+            row["ebitda_per_t"] = round(bridge_per_t(row["bridge"], row["volume_mt"]), 2)
         if row.get("kind") != "actual" and all(isinstance(row.get(k), (int, float)) for k in EV_DRIVERS):
             row["eps"] = round(row["volume_mt"] * row["ebitda_per_t"] / 10, 1)
         return row
@@ -376,10 +419,19 @@ def band_scenarios(b: dict, band: dict) -> dict:
             # EV band: EBITDA/t moves by per_t_inr, volume growth by growth_pp
             # per forecast quarter (the volume LEVEL compounds), the same
             # two-input shape as IT's margin / growth.
+            # A bridged quarter moves its REVENUE/t by per_t_inr instead, so
+            # a volume move also moves fixed cost per tonne: the bear's -1pp
+            # volume costs leverage on top of its -Rs50, as it would in a P&L.
             g = band["growth_pp"] / 100
-            ov = {q: {"volume_mt": round(qs[q]["volume_mt"] * (1 + s * g) ** k, 3),
-                      "ebitda_per_t": round(qs[q]["ebitda_per_t"] + s * band["per_t_inr"], 2)}
-                  for k, q in enumerate(fc, 1)}
+            ov = {}
+            for k, q in enumerate(fc, 1):
+                vol = round(qs[q]["volume_mt"] * (1 + s * g) ** k, 3)
+                br = (b.get("quarters") or {}).get(q, {}).get("bridge")
+                if isinstance(br, dict):
+                    br = (((b.get("scenarios") or {}).get("base") or {}).get("quarters") or {}).get(q, {}).get("bridge", br)
+                    ov[q] = {"volume_mt": vol, "bridge": {**br, "revenue_t": br["revenue_t"] + s * band["per_t_inr"]}}
+                else:
+                    ov[q] = {"volume_mt": vol, "ebitda_per_t": round(qs[q]["ebitda_per_t"] + s * band["per_t_inr"], 2)}
             why = (f"{band.get('key', '')} band: every forecast quarter's EBITDA/t {sg}Rs{band['per_t_inr']} "
                    f"and volume growth {sg}{band['growth_pp']}pp (volume level compounds), carried into "
                    f"later years at the same EBITDA ratio. Mechanical, not a story.")
@@ -514,6 +566,10 @@ def _validate_ev(b: dict) -> list[str]:
     for q, row in (b.get("quarters") or {}).items():
         if "eps" in row:
             probs.append(f"{q}: an EV build's quarters carry ebitda_cr, not eps")
+        probs += _bridge_problems(q, row)
+        ref = (row.get("bridge") or {}).get("ref") if isinstance(row.get("bridge"), dict) else None
+        if ref and not isinstance(((b.get("quarters") or {}).get(ref) or {}).get("bridge"), dict):
+            probs.append(f"{q}: bridge ref {ref} has no bridge of its own to compare with")
     return probs
 
 
@@ -913,6 +969,34 @@ def price_entry(b: dict) -> dict:
                                    "horizon": b.get("horizon")}}
 
 
+def render_bridges(qs: dict) -> list[str]:
+    """Each bridged quarter as a per-tonne P&L; a forecast with a `ref` prints
+    every line's change against that quarter, and the fixed-cost change split
+    into OPERATING LEVERAGE (the ref's rupees over this quarter's tonnes) and
+    SPEND (the change in rupees) — the two sum exactly to the fixed/t move."""
+    L = []
+    for q in sorted((q for q, r in qs.items() if isinstance(r.get("bridge"), dict)), key=qlabel_key):
+        r = qs[q]; br = r["bridge"]; v = r["volume_mt"]
+        ref = qs.get(br.get("ref")) if br.get("ref") else None
+        rb = ref["bridge"] if ref and isinstance(ref.get("bridge"), dict) else None
+        d = lambda now, then: f" ({now - then:+,.0f})" if rb is not None else ""
+        L.append(f"BRIDGE  {q} [{r.get('kind')}] {v}mt" + (f" vs {br['ref']} {ref['volume_mt']}mt" if rb else ""))
+        L.append(f"          {'revenue/t':28s}{br['revenue_t']:>7,.0f}" + (d(br['revenue_t'], rb['revenue_t']) if rb else ""))
+        for k, val in br["var_t"].items():
+            L.append(f"          - {k:26s}{val:>7,.0f}" + (d(val, rb['var_t'].get(k, 0)) if rb else ""))
+        fx, ft = sum(br["fixed_cr"].values()), sum(br["fixed_cr"].values()) * 10 / v
+        line = f"          - {'fixed Rs%s cr / %s mt' % (f'{fx:,.0f}', v):26s}{ft:>7,.0f}"
+        if rb:
+            rfx = sum(rb["fixed_cr"].values()); rft = rfx * 10 / ref["volume_mt"]
+            lev, spend = rfx * 10 / v - rft, (fx - rfx) * 10 / v
+            line += f" ({ft - rft:+,.0f} = leverage {lev:+,.0f} + spend {spend:+,.0f})"
+        L.append(line)
+        e = bridge_per_t(br, v)
+        L.append(f"          {'= EBITDA/t':28s}{e:>7,.0f}" + (d(e, bridge_per_t(rb, ref['volume_mt'])) if rb else "")
+                 + f"  → EBITDA Rs{e * v / 10:,.1f}cr")
+    return L
+
+
 def render(b: dict) -> str:
     L = [f"{b['name']} ({b['entity']}) — {b['side']} leg, {b['group']} · as of {b['as_of']} "
          f"· open quarter {b['open_quarter']}"]
@@ -956,6 +1040,7 @@ def render(b: dict) -> str:
         if r.get("kind") == "street":
             L.append(f"STREET  {q}: no view — takes what consensus leaves per quarter x the view's carry "
                      f"{b.get('street_ratio')} = {line} {r['eps']}")
+    L += render_bridges(b.get("quarters") or {})
     for fy, im in (b.get("implied") or {}).items():
         if im:
             L.append(f"IMPLIED {fy} consensus leaves {im['implied_per_q']}/qtr for {im['left']} quarters "
@@ -1405,6 +1490,32 @@ def _selftest() -> None:
     bx = json.loads(json.dumps(be)); bx["quarters"]["Q3FY27"] = {"kind": "draft", "ebitda_cr": 4200.0}
     assert any("volume_mt" in p for p in validate_build(bx, bandc)); ok += 1        # the band needs drivers
     assert any("per_t_inr" in p for p in validate_build(be, {"key": "CEMENT", "margin_bps": 50, "growth_pp": 1})); ok += 1
+
+    # per-tonne bridge (PM, 2026-10-26). Fixed costs in rupees, so leverage is
+    # arithmetic: Rs4,591cr is 1,202/t on 38.2mt and 1,122/t on 40.9mt.
+    brq = {"revenue_t": 6095.0, "var_t": {"prod": 2442.0, "freight": 1258.0, "purchased": 220.0},
+           "fixed_cr": {"emp_other": 4591.0}}
+    assert round(bridge_per_t(brq, 38.2)) == round(6095 - 3920 - 45910 / 38.2); ok += 1
+    assert round(bridge_per_t(brq, 40.9) - bridge_per_t(brq, 38.2)) == 79; ok += 1          # pure leverage
+    bb2 = json.loads(json.dumps(be))
+    bb2["quarters"]["Q2FY27"].update(volume_mt=38.2, bridge=brq, ebitda_cr=round(bridge_per_t(brq, 38.2) * 3.82, 1))
+    bb2["quarters"]["Q3FY27"] = {"kind": "draft", "volume_mt": 40.9,
+                                 "bridge": {**brq, "revenue_t": 6156.0, "fixed_cr": {"emp_other": 4397.0}, "ref": "Q2FY27"}}
+    assert validate_build(bb2, bandc) == [], validate_build(bb2, bandc); ok += 1
+    r3 = resolve_quarters(internal(bb2))["Q3FY27"]
+    assert r3["ebitda_per_t"] == round(6156 - 3920 - 43970 / 40.9, 2) and r3["eps"] == round(40.9 * r3["ebitda_per_t"] / 10, 1); ok += 1
+    sb = scenario_juice(bb2, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, bandc, evx)
+    vb = 40.9 * 0.99                                       # the bear: -1pp volume, -Rs50 revenue/t, leverage on top
+    assert sb["bear"]["quarters"]["Q3FY27"] == round(vb * round(6106 - 3920 - 43970 / round(vb, 3), 2) / 10, 1); ok += 1
+    assert r3["ebitda_per_t"] - (6106 - 3920 - 43970 / vb) > 50; ok += 1                # leverage makes it worse than -50
+    assert render_bridges(resolve_quarters(internal(bb2)))[0].startswith("BRIDGE  Q2FY27"); ok += 1
+    for mut, why in [(lambda b: b["quarters"]["Q2FY27"].update(ebitda_cr=3000.0), "against the reported"),
+                     (lambda b: b["quarters"]["Q3FY27"].update(ebitda_per_t=1100.0), "remove the typed one"),
+                     (lambda b: b["quarters"]["Q3FY27"]["bridge"].update(ref="Q1FY27"), "has no bridge"),
+                     (lambda b: b["quarters"]["Q3FY27"]["bridge"].update(fixed_cr={}), "fixed_cr must be"),
+                     (lambda b: b["quarters"]["Q3FY27"].pop("volume_mt"), "needs volume_mt")]:
+        bx = json.loads(json.dumps(bb2)); mut(bx)
+        assert any(why in p for p in validate_build(bx)), (why, validate_build(bx)); ok += 1
 
     # house-TP anchor: implied multiples, mean/median, and the exact round trip
     tps = [{"house": h, "tp": t, "date": "2026-10-20", "source": "note"} for h, t in

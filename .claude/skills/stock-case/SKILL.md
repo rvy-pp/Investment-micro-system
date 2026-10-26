@@ -193,6 +193,16 @@ with EBITDA in place of EPS. These are the differences:
 - `street_q` pins take `ebitda_cr`. Cement's Q4 is the seasonal peak, so an
   even split of H2 understates Q4 and overstates Q3. Pin Q3 from house numbers
   whenever any exist.
+- **Per-tonne bridge (PM, 2026-10-26).** A quarter may carry `bridge`:
+  `revenue_t`, `var_t` {line: Rs/t}, `fixed_cr` {line: Rs cr}, optional `ref`
+  (a quarter whose own bridge it is compared with). EBITDA/t = revenue −
+  variable − fixed x 10 / volume, so operating leverage is arithmetic and the
+  band moves revenue/t and volume through it. An actual's bridge must add back
+  to its `ebitda_cr` within 1%. A bridged forecast must not also type
+  `ebitda_per_t`. When the PM gives a number, decompose it on management-
+  guided costs and SOLVE the revenue, so the number stays theirs and the
+  implied price is visible. Keep RM + power & fuel + stock change as one line
+  whenever a quarter carries an inventory build or release.
 - There is no automatic rerate split (no dated consensus history). Read it
   from the houses' revisions and say what is missing.
 
