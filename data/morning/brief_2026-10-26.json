@@ -1,0 +1,305 @@
+{
+ "date": "2026-10-26",
+ "generated_at": "2026-10-26T08:18:00",
+ "mail": {
+  "window": "24h to 08:09 IST",
+  "n_scanned": 121,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Kotak: JSW Steel 2QFY27 EBITDA in line at Rs99.4bn; FV raised to Rs1,475 (from Rs1,450), BUY; spot rebar +20% vs 2Q average.",
+      "source": "Kotak — [Kotak] JSW Steel (CMP: Rs1,186, FV: Rs1,475, BUY): In-line set; margins set to expand",
+      "received": "06:44",
+      "detail": {
+       "summary": "In-line quarter with India EBITDA/t down sequentially on seasonal long-product weakness. Kotak expects 3Q margins to expand as spot rebar and HRC gains outweigh higher coal costs, and a further 10mtpa expansion lifts the pipeline to ~65mtpa by FY2031.",
+       "points": [
+        "India EBITDA Rs13,254/t, +22% YoY, -12.3% QoQ",
+        "Spot rebar ~+20%, HRC ~+7% vs 2QFY27 averages",
+        "FY27/28/29E EBITDA revised +5.5%/-1.3%/-0.8%",
+        "FV Rs1,475 at 7.5x EV/EBITDA; 6.5x FY28E",
+        "3Q coal cost up ~US$25/t"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: Jindal Steel 2QFY27 EBITDA beat on 27% YoY volume growth, but FV cut to Rs1,300 (from Rs1,350); BUY, \"margins have bottomed\".",
+      "source": "Kotak — [Kotak] Jindal Steel (CMP: Rs1,016, FV: Rs1,300, BUY): Strong set; margins have bottomed",
+      "received": "06:48",
+      "detail": {
+       "summary": "Beat came from volume and a richer flat-product mix. The slurry pipeline and captive coal should cut costs in 2HFY27, and spreads plus operating leverage should lift margins; the FV cut reflects lower out-year estimates.",
+       "points": [
+        "EBITDA Rs25bn, -34% YoY, -6.1% QoQ; Rs10,522/t, +5.3% vs KIE",
+        "Sales 2.4mn t, +27% YoY; flat mix 61% vs 53%",
+        "FY27/28/29E EBITDA/t Rs12,756/13,525/14,630",
+        "Slurry pipeline saves ~Rs700/t on iron ore",
+        "FY27 EBITDA +3.3%; FY28/29 -3%/-2.2%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit rates JSW Steel and Jindal Steel SELL despite 5%/11% Street EBITDA beats; TPs Rs1,250 (from 1,100) and Rs620 (from 590).",
+      "source": "Ambit — Ambit Metals: Steel Results Takeaways (JSW Steel, JSP, JSL) (+11 more in Outlook)",
+      "received": "07:54",
+      "detail": {
+       "summary": "Ambit sees 3Q margins improving at JSW Steel and JSP as steel prices outrun coking coal, though domestic HRC is above import parity. JSW's capex pipeline has swelled and its net debt fall was a one-off, so it wants more correction before turning constructive.",
+       "points": [
+        "JSW SELL, TP Rs1,250 from Rs1,100; 9.3x FY28 EBITDA",
+        "Jindal Steel SELL, TP Rs620 from Rs590; 5.5x FY28 EBITDA",
+        "JSW capex pipeline Rs1.48trn; FY27-29E EBITDA +12%/+11%/+10%",
+        "JSP FY27-29E EBITDA 6%/11%/16% below consensus",
+        "JSP DRI-II and pellet plant pushed to June 2027"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Morgan Stanley cuts Shree TP to Rs22,900 from Rs25,500 (UW) despite a 2Q EBITDA beat; 2H fuel and freight keep margins weak.",
+      "source": "Morgan Stanley — Shree Cement Ltd (SHCM.NS): Good EBITDA beat; 2H margins to stay weak (+Kotak, JPM, ICICI, Emkay Shree notes in Outlook)",
+      "received": "02:27",
+      "detail": {
+       "summary": "MS says the 2QFY27 beat on volume and costs does not fix the 2H outlook: Middle East conflict lifts fuel and freight even with recent price hikes. It sees limited margin levers, so Shree keeps trading at a discount to UltraTech.",
+       "points": [
+        "PT Rs22,900 vs Rs25,500; relative UW kept",
+        "Consol EBITDA/t Rs966 vs MS est Rs838 (1Q Rs1,111)",
+        "Domestic volume +18% YoY vs MS est 12%",
+        "Fuel Rs2.09/Kcal vs Rs1.95; 3Q guide Rs2.15-2.20",
+        "FY28/29 EBITDA cut 10%/5%; FY27-29 EPS -2%/-25%/-18%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: JK Cement 2Q EBITDA 15% above estimate at Rs852/t on 21% volume growth; Dalmia preview sees EBITDA/t down ~23% QoQ to ~Rs815.",
+      "source": "Emkay — Cement Corner: JK Cement RU, Leaderboard, Dalmia Bharat preview, Shree Results",
+      "received": "07:29",
+      "detail": {
+       "summary": "JK beat on realisation and freight, with white cement pricing up and new grey capacity lifting volume; higher fixed cost per tonne and capex-funded debt are the offsets. Dalmia's preview expects a weak margin quarter; JK call is Tuesday.",
+       "points": [
+        "JK SA EBITDA Rs5bn, +14% YoY; EBITDA/t Rs852 vs Emkay Rs726",
+        "JK grey volume +21% YoY to 5.4mt; net debt Rs45.7bn, 1.95x",
+        "JK BUY, TP Rs6,000; Dalmia BUY, TP Rs2,050",
+        "Dalmia volume ~+11% YoY, realisation -1.5% QoQ",
+        "Shree EBITDA/t Rs912; Emkay ADD, TP Rs27,500 from Rs27,000"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities: Nuvoco 2Q EBITDA 9% above estimate at Rs869/t but TP trimmed to Rs348 from Rs358 on higher debt and capex; HOLD kept.",
+      "source": "ICICI Securities — Nuvoco Vistas Corporation (HOLD): EBITDA beat; yet, we stay neutral",
+      "received": "07:19",
+      "detail": {
+       "summary": "The beat came from volume, realisation and fixed costs, but ICICI will not upgrade earnings given rising fuel costs and unabated competition. Leverage and low RoE keep the 8x multiple unchanged; the TP cut is debt and capex driven.",
+       "points": [
+        "TP Rs348 vs Rs358, HOLD, 8x FY28E EV/EBITDA",
+        "EBITDA Rs4.1bn, +11% YoY, -28% QoQ",
+        "EBITDA/t Rs869, +2% YoY, -19% QoQ",
+        "Volume +9% YoY vs est 7.5%; realisation -1.1% QoQ",
+        "FY27E/FY28E EBITDA/t Rs982/Rs917; net debt/EBITDA ~2x"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Avendus keeps Infosys REDUCE, TP Rs1,040 on 13x (14x earlier), after FY27 cc revenue guide cut to 1-2% from 1.5-3%.",
+      "source": "Avendus Spark — 2QFY27 Outlook reviews: Infosys (Rating: REDUCE, TP: Rs. 1,040); Coforge (Rating: REDUCE, TP: Rs. 1,780)",
+      "received": "06:48",
+      "detail": {
+       "summary": "Avendus stays negative on Infosys: volumes weak, pricing pressure from competition, and deal wins are not converting to revenue. FY28 recovery depends on conversion; at ~15x FY28 EPS risk-reward is unfavourable. Coforge also stays REDUCE at Rs1,780 after a 2Q revenue miss.",
+       "points": [
+        "Infosys TP Rs1,040 on 13x Sep-28 EPS (14x earlier)",
+        "FY27 guide 1-2% YoY cc vs 1.5-3% earlier",
+        "AI revenue mix 10.5% vs 8.2% in 1Q",
+        "US$2bn net-new deal plus US$1bn renewal signed",
+        "Coforge TP Rs1,780 on 22x; FY27 USD revenue +39%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley keeps Coforge Overweight, TP Rs2,300, despite a 1.7% USD revenue miss; FY27 EBIT margin guide raised to 16% from 15.5%, 4QF27 exit 17%.",
+      "source": "Morgan Stanley — IDEA: Coforge Ltd: 2QF27: Headline miss but internals are strong; we see re-rating potential",
+      "received": "02:39",
+      "detail": {
+       "summary": "MS reads the miss as headline-only: order intake, executable order book and top-client growth are strong, and synergy deals with Encora are tracking. It sees Coforge's P/E discount to Persistent closing as growth is similar and margins reach mid-cap best.",
+       "points": [
+        "Revenue USD652mn vs MS USD665mn; EBIT Rs9.85bn, 5% below MS",
+        "Order intake above USD1.04bn; executable book USD2.38bn, +6.7% QoQ",
+        "Two-year forward P/E 24.5x, 22% discount to Persistent",
+        "520 AI engagements across more than 225 clients"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA holds Infosys Buy, PO Rs1,310 (price Rs1,154): Q2 miss reflects pricing discipline, not lost wallet share; US$5.2bn wins, 62% net new.",
+      "source": "BofA — INFO IN: Infosys: Q2 miss: Pricing approach or wallet share issue? - BUY - India (+8 more in Outlook)",
+      "received": "04:02",
+      "detail": {
+       "summary": "BofA argues the second straight quarter of undershooting industry growth reflects pricing style and weak-client exposure; management kept wallet share at the troubled hi-tech client and walked from one large deal. Deal wins bridge into FY28 and valuation versus TCS/HCL already prices a soft 2H.",
+       "points": [
+        "Q2 deal wins US$5.2bn, 62% net new",
+        "US$2bn+ seven-year deal adds more than 1% to FY28 revenue",
+        "AI now about 10% of revenue",
+        "PO Rs1,310 retained; estimates tweaked for Q2"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "UBS: RBI hiked repo 25bp to 5.5%, stance now calibrated tightening; expects 75bp cumulative this cycle, repo to 6%, as Sept CPI hit 5.5%.",
+      "source": "UBS — Hi Rajvaibhav UBS India: what's trending in India's macro",
+      "received": "07:29",
+      "detail": {
+       "summary": "UBS expects inflation to stay elevated and real policy rates to turn negative, forcing further tightening. Growth is seen softening in H2 FY27 on tighter global conditions, oil volatility and weak rainfall, even though the September-quarter leading indicator was firm.",
+       "points": [
+        "Repo +25bp to 5.5%; stance now calibrated tightening",
+        "Sept CPI 5.5% YoY vs 4.8% in Aug",
+        "Food inflation 7.7% vs 6.0%; core 4.3% vs 4.1%",
+        "CPI above 5.5% for three quarters from Q3 FY27",
+        "India-CEI +2% QoQ seasonally adjusted in Sept quarter",
+        "Cycle call: cumulative 75bp of hikes, repo to 6%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: India saw US$1.8bn listed-fund outflows in September, the largest in EM; Asia ex-Japan allocation to India fell to 7.4% from 7.9%.",
+      "source": "Kotak — [Kotak] Strategy: Foreign fund flow tracker",
+      "received": "19:10",
+      "detail": {
+       "summary": "Listed fund flows turned negative after August inflows, with India the biggest EM outflow ahead of South Korea and China. Taiwan and Brazil attracted money while India's allocation share kept slipping across fund types.",
+       "points": [
+        "India-dedicated outflows US$1.8bn: ETF US$772mn, non-ETF US$983mn",
+        "Total listed outflows US$1.8bn, non-ETF US$1.5bn",
+        "GEM allocation to India 11.7% vs 12.2%",
+        "Taiwan GEM allocation 29.6% vs 27.8%",
+        "South Korea outflow US$1.7bn, China US$1.3bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities flags crude >$115, India 10Y >7.3%, possible hikes and drought as a 'deadly soup'; Top 20 includes Bharti, L&T, HAL, JSW Steel (+11-52% upside).",
+      "source": "ISEC — ISEC Top 20 Ideas | Rot or a Storm (+2 more in Outlook)",
+      "received": "18:15",
+      "detail": {
+       "summary": "The desk frames the macro stress as either a slow rot or an external storm, and argues a storm can be survived. It offers one idea per company across market caps and sectors to evaluate.",
+       "points": [
+        "Bharti Airtel TP 2,410, 27% upside",
+        "L&T TP 4,040, 11% upside",
+        "HAL TP 5,760, 22% upside",
+        "Hitachi Energy India TP 40,000, 52% upside",
+        "Grasim TP 4,175, 44% upside"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "CG Power 2QFY27 beats: EBITDA +43% YoY to Rs5.4bn, order inflow Rs84.9bn (+78%); Emkay keeps ADD, TP Rs925 (13.5% upside at Rs815).",
+      "source": "Emkay — CG Power: Beat on all fronts; retain ADD; Target: Rs925",
+      "received": "23:12",
+      "detail": {
+       "summary": "Revenue beat came from Industrial Systems; EBITDA beat from richer Power Systems mix. Demand is healthy and backlog is strong, but Emkay holds ADD on premium valuation, with TP unchanged at 55x Sep-28E core EPS plus OSAT at Rs55/share.",
+       "points": [
+        "Revenue Rs38bn (+30.1%), EBITDA Rs5.4bn (+43.2%), PAT Rs4.1bn (+43.7%)",
+        "Power Systems EBIT margin 25.1% (+430bps YoY); inflow Rs62.6bn (+137%)",
+        "Order backlog Rs236.5bn (+58.1%); Industrial margin 8.6% (+100bps QoQ)",
+        "Motor prices raised 30% over 12 months; railway business to be scaled down",
+        "Stock -8.9% in 1M; 65,000 MVA transformer plant at full use"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA lifts HPCL to Hold from U-PF on a Rs34.8bn 2Q PAT beat, but widens FY27 loss estimate; spot integrated margins negative, TP Rs330 kept.",
+      "source": "CLSA — CLSA: Hindustan Petro (HPCL IB): Strong 2Q but staring at a weak 3Q",
+      "received": "04:51",
+      "detail": {
+       "summary": "2Q beat both refining and marketing, but the recent crude spike is expected to worsen petrol and diesel marketing losses in 3Q. CLSA upgrades only because the stock now implies 2% downside to an unchanged target based on normalised FY28 margin.",
+       "points": [
+        "2Q PAT Rs34.8bn vs CLSA est net loss Rs29.1bn",
+        "GRM US$32.2/bbl vs US$25.0 forecast; EBITDA Rs65.4bn",
+        "LPG loss Oct/Nov Rs245/327 per cylinder; 1H loss Rs348",
+        "Rajasthan refinery at US$16/bbl in Oct; full run by Dec 2026",
+        "Rajasthan debt refinancing saves Rs4.7-5.0bn a year"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA cuts Tata Motors CV TP to Rs540 from Rs596 on a 10x domestic CV multiple (was 12x); O-PF kept, 2Q margin flat QoQ at 11.4%.",
+      "source": "CLSA — CLSA: Tata Motors (TMCV IN): Demand steady despite price hikes (+17 more in Outlook)",
+      "received": "03:26",
+      "detail": {
+       "summary": "TMCV held margin despite roughly 200bps of commodity inflation through operating leverage and price hikes. Management flagged another 150-200bps in 3Q, partly offset by an October price rise. CLSA cuts the multiple for near-term margin pressure but stays constructive on demand.",
+       "points": [
+        "TP Rs540 vs Rs596; FY28 EPS -2%, FY27 EPS +2%",
+        "2Q EBITDA margin 11.4%, in line; revenue 3% below expectations",
+        "Price hikes of 1%/2%/2.5% in Jan/Apr/Jul, further 1-2% from October",
+        "1HFY27 FCF Rs57bn; net cash Rs113bn",
+        "Iveco tender offer to close by end-October; consolidation from 3QFY27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Mining",
+   "EMS"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "GS floor saw ~$20bn net TMT selling over two weeks, nearing July's $23bn AI selling episode; supply most acute in tech last week.",
+    "source": "Goldman Sachs — [GS Daily] US TMT Selling close to July episode"
+   },
+   {
+    "text": "CLSA says AI investor mood has darkened; Anthropic IPO reportedly files 26 Oct for a 9 Nov launch, hyperscaler capex guides in Jan-Feb next clearing event.",
+    "source": "CLSA — Global Technology: AI: Living on the edge"
+   },
+   {
+    "text": "Amazon CEO Jassy: 2027 AWS compute essentially sold out, some orders locked into 2028; Jensen Huang sees memory oversupply by 2029 unlikely.",
+    "source": "BOCI — BOCI TMT Daily (26 Oct)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

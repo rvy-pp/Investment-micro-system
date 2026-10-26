@@ -1,0 +1,231 @@
+{
+ "date": "2026-10-26",
+ "fetched_at": "2026-10-26T08:18:53",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-23",
+    "close": 7623.68,
+    "prev_date": "2026-10-22",
+    "chg_pct": -0.52,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-23",
+    "close": 25955.34,
+    "prev_date": "2026-10-22",
+    "chg_pct": -0.21,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-23",
+    "close": 52215.16,
+    "prev_date": "2026-10-22",
+    "chg_pct": -1.23,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-23",
+    "close": 10779.46,
+    "prev_date": "2026-10-22",
+    "chg_pct": 0.44,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-23",
+    "close": 210.96,
+    "prev_date": "2026-10-22",
+    "chg_pct": -0.59,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-23",
+    "close": 516.79,
+    "prev_date": "2026-10-22",
+    "chg_pct": 1.74,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-23",
+    "close": 418.51,
+    "prev_date": "2026-10-22",
+    "chg_pct": 1.49,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-23",
+    "close": 321.68,
+    "prev_date": "2026-10-22",
+    "chg_pct": -0.48,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-23",
+    "close": 249.37,
+    "prev_date": "2026-10-22",
+    "chg_pct": -3.62,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-23",
+    "close": 70.54,
+    "prev_date": "2026-10-22",
+    "chg_pct": -4.31,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Sees a More Significant Dip Than Broader Market: Some Facts to Know",
+    "publisher": "Zacks",
+    "when": "2026-10-23 20:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-sees-more-significant-205002419.html"
+   },
+   {
+    "title": "What Is The Biggest Threat To Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-10-23 10:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/biggest-threat-accenture-stock-101357981.html"
+   },
+   {
+    "title": "Accenture Insider Sold Shares Worth $1,430,826, According to a Recent SEC Filing",
+    "publisher": "MT Newswires",
+    "when": "2026-10-22 20:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-insider-sold-shares-worth-202055846.html"
+   },
+   {
+    "title": "What Is Accenture (ACN) Signaling With Its Federal AI Push And China Review?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-22 18:10Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-signaling-federal-ai-181013411.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Worth More Than Its Price?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-24 00:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-worth-001824513.html"
+   },
+   {
+    "title": "Why Is Cognizant Technology Solutions (CTSH) Redrawing Its AI Growth Playbook?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-23 21:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/why-cognizant-technology-solutions-ctsh-211319251.html"
+   },
+   {
+    "title": "Here's What to Expect From Cognizant Technology Solutions' Next Earnings Report",
+    "publisher": "Barchart",
+    "when": "2026-10-23 15:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-expect-cognizant-technology-solutions-151008241.html"
+   },
+   {
+    "title": "Cognizant's DyFlex Acquisition to Likely Boost SAP, AI Capabilities, Wedbush Says",
+    "publisher": "MT Newswires",
+    "when": "2026-10-22 15:33Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-apos-dyflex-acquisition-likely-153325811.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Earnings Expected to Grow: What to Know Ahead of Next Week's Release",
+    "publisher": "Zacks",
+    "when": "2026-10-22 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-earnings-expected-grow-130008144.html"
+   },
+   {
+    "title": "Introducing Cognizant AI Nexus: helping enterprises govern the cost, quality and results of AI",
+    "publisher": "PR Newswire",
+    "when": "2026-10-22 10:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/introducing-cognizant-ai-nexus-helping-103000812.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia (NVDA) Stock Still Looks Reasonable Following Its 7x Five Year Run",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-26 01:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-nvda-stock-still-looks-010644376.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Here's What $10,000 Invested Equally in Nvidia, AMD, and Broadcom Could Be Worth by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-10-25 13:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-10-000-invested-equally-133500843.html"
+   },
+   {
+    "title": "Where Will Broadcom Stock Be in 5 Years?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-25 11:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/where-broadcom-stock-5-years-110000655.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Prediction: 2 Stocks That Will Be Worth More Than AMD 5 Years From Now",
+    "publisher": "Motley Fool",
+    "when": "2026-10-25 23:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/prediction-2-stocks-worth-more-232000479.html"
+   },
+   {
+    "title": "AMD Stock Is Up 131% This Year. Here\u2019s Where It Stands After a $1 Trillion Run",
+    "publisher": "TIKR",
+    "when": "2026-10-25 13:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-131-where-stands-130739026.html"
+   },
+   {
+    "title": "1 Red Flag That Keeps Me From Buying AMD Stock",
+    "publisher": "Motley Fool",
+    "when": "2026-10-25 00:54Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/1-red-flag-keeps-buying-005400416.html"
+   },
+   {
+    "title": "Here's Why AMD Investors Should Consider Selling Before Nov. 3",
+    "publisher": "Motley Fool",
+    "when": "2026-10-24 11:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-why-amd-investors-consider-113300940.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22661.0,
+  "chg_pct": 0.2,
+  "stamp": "26-Oct-2026 08:18:57",
+  "expiry": "23-Nov-2026",
+  "volume": 2537,
+  "nifty_close": {
+   "close": 22600.0,
+   "stamp": "23-Oct-2026 15:30"
+  },
+  "gap_pts": 61.0,
+  "gap_pct": 0.27
+ }
+}
