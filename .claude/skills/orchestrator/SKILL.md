@@ -17,6 +17,12 @@ You dispatch the case agents (`tcs-agent`, `utcem-agent`, …) with the Agent
 tool. The usual split holds: `packages/book/orchestrator.py` does the
 arithmetic and the flags; you do the reading.
 
+**Only stocks with a case agent are watched** (PM, 2026-10-26: *"do not
+create anything for stocks with no agents build yet"*). A leg with no
+`.claude/agents/<token>-agent.md` gets no sweep, no flag, no material file
+and no summary. The script filters on the agent file, so a leg joins the
+watch the day its agent is created. Never scaffold one unless the PM asks.
+
 The rota and every threshold live in `specs/book.yaml orchestrator:`. Every
 dictated group must sit on exactly one weekday. The script refuses to run if
 one does not, because a group missing from the rota would never be reviewed.
@@ -28,7 +34,7 @@ one does not, because a group missing from the rota would never be reviewed.
    Yahoo has not posted the close yet. Wait 20 minutes and run it once more
    before believing either.
 2. **The sweep.** `python packages/book/orchestrator.py --day`. It prints every
-   leg's 1-day stock / sector / own split, each case's bear / base / bull juice
+   watched leg's 1-day stock / sector / own split, each case's bear / base / bull juice
    on its headline year at today's price, the PM's lean where one is set, and
    the FLAGS. It writes `data/orchestrator/day_<date>.json`, which is what
    tomorrow's juice and revision flags compare against.
@@ -55,7 +61,9 @@ one does not, because a group missing from the rota would never be reviewed.
 ## On the sector day
 
 5. **The pack.** `python packages/book/orchestrator.py --sector today`. (Run
-   no sector step on a weekend.) Per leg it gives the window (since that
+   no sector step on a weekend.) **If it says no leg has a case agent, the
+   sector day ends there: skip steps 6–11 and do not `--mark`.** Per watched
+   leg it gives the window (since that
    group's last review, or 7 days), the move, the consensus change, stored
    mail/brief mentions, the agent if one exists, and the search terms. It
    writes `data/orchestrator/sector_<date>_<slug>.json`.
@@ -90,11 +98,9 @@ one does not, because a group missing from the rota would never be reviewed.
    > questions for the PM.
 
    Agents write their own case files and Analysis-log entries under their
-   own rules. You write neither. **A leg with no agent gets no case work:**
-   summarize its material yourself in the report. Never scaffold a new agent
-   unless the PM asks for it. List the legs without one.
-10. **Pairs.** `python packages/book/move_check.py <PAIR>` for every pair in the
-    sector. One line each in the report: the 7-day and 30-day reading.
+   own rules. You write neither.
+10. **Pairs.** `python packages/book/move_check.py <PAIR>` for every pair the
+    pack lists (a pair with at least one watched leg). One line each in the report: the 7-day and 30-day reading.
 11. **Mark it done.** `python packages/book/orchestrator.py --mark "<groups>"`
     (the groups the pack printed). The next review's window starts here.
 
@@ -107,8 +113,8 @@ one does not, because a group missing from the rota would never be reviewed.
     - **Day-end:** closes to which date, the flags and what each pair-check
       read, juice and consensus moves.
     - **Sector review** (on a sector day): pair by pair, what was new for each
-      leg, what each agent changed (quote its juice range), and the legs that
-      have no agent.
+      leg, what each agent changed (quote its juice range). The pack's count
+      of unwatched legs goes in as one clause, never a list or a summary.
     - **Questions for the PM:** the agents' questions, gathered and
       de-duplicated.
 

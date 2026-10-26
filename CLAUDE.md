@@ -1157,7 +1157,7 @@ at 16:15 IST. It is a skill run by the main session rather than a file in
 is to dispatch the case agents.
 
 - **Every weekday:** `--prices` (every Yahoo candidate, 1mo, ~40s), then
-  `--day`. For all 33 legs it prints the 1-day stock / sector / own split and,
+  `--day`. For every watched leg it prints the 1-day stock / sector / own split and,
   for a leg with a case, the bear/base/bull juice at today's price and the PM's
   lean. It writes `data/orchestrator/day_<date>.json`. Flags compare with the
   previous day-end file: own move ≥ 3pp, base juice moved ≥ 1pp, headline
@@ -1177,8 +1177,13 @@ is to dispatch the case agents.
   case agents in parallel and runs move_check on every pair. The agents read
   the material file as PM-supplied and still never sweep Outlook themselves.
   The report goes to `data/orchestrator/reports/<date>.md`, in prose.
-- Legs without an agent get the sweep but no case work, and the orchestrator
-  never scaffolds an agent unasked. On 2026-10-26, 7 of 33 legs had one.
+- **Only legs with a case agent are watched** (PM, same day: *"do not create
+  anything for stocks with no agents build yet"*). `orchestrator.watched()`
+  filters on the agent file, so a leg without one gets no sweep, no flag, no
+  material file and no summary, and joins the watch the day its agent exists.
+  A sector with no agent (steel, metals, mining, EMS today) has no sector day:
+  the pack says so and nothing is marked. Never scaffold unasked. On
+  2026-10-26, 7 of 33 legs had an agent (5 IT largecap, Persistent, UltraTech).
 
 **A silent bug it found on day one:** six of the seven case agents never loaded.
 `case_brief.AGENT_TEMPLATE` wrote the description as a plain YAML scalar, and

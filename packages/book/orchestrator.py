@@ -102,6 +102,16 @@ def agent_file(token: str) -> pathlib.Path:
     return cb.AGENTS / f"{cb.agent_name(token)}.md"
 
 
+def watched(legs: list[dict], has=None) -> tuple[list[dict], list[dict]]:
+    """(legs with an agent, legs without). PM, 2026-10-26: "do not create
+    anything for stocks with no agents build yet" — the orchestrator sweeps,
+    flags and files material ONLY for a stock whose agent exists. A leg joins
+    the watch the day its agent file appears; nothing here lists it by hand."""
+    has = has or (lambda tok: agent_file(tok).exists())
+    yes = [g for g in legs if has(g["token"])]
+    return yes, [g for g in legs if not has(g["token"])]
+
+
 def has_case(ent: str) -> bool:
     return (cb.CASES / ent / "build.json").exists()
 
@@ -224,7 +234,9 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
     if probs:
         raise SystemExit("rota refused:\n  " + "\n  ".join(probs))
     th = {k: v for k, v in cfg["orchestrator"].items() if k != "rota"}
-    legs = analysis.roster(cfg)
+    legs, unwatched = watched(analysis.roster(cfg))
+    if not legs:
+        raise SystemExit("no leg has a case agent yet; nothing to watch")
     conn = grading.connect()
     try:
         eids = [g["entity"] for g in legs]
@@ -243,7 +255,7 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
     finally:
         conn.close()
     doc = {"date": today.isoformat(), "as_of": as_of, "session_today": as_of == today.isoformat(),
-           "sector_day": groups_for(cfg, today), "previous": (next(iter(prev.values()))["_date"] if prev else None),
+           "sector_day": groups_for(cfg, today), "unwatched": len(unwatched), "previous": (next(iter(prev.values()))["_date"] if prev else None),
            "legs": recs}
     if write:
         OUT.mkdir(parents=True, exist_ok=True)
@@ -255,7 +267,8 @@ def render_day(doc: dict) -> str:
     L = [f"DAY-END {doc['date']}  closes to {doc['as_of']}"
          + ("" if doc["session_today"] else "  (NO SESSION TODAY: holiday, or closes not in yet)")
          + f"  sector day: {', '.join(doc['sector_day']) or 'none'}"
-         + f"  vs {doc['previous'] or 'no previous day-end'}", ""]
+         + f"  vs {doc['previous'] or 'no previous day-end'}",
+         f"{len(doc['legs'])} legs with a case agent; {doc.get('unwatched', 0)} without one are not watched", ""]
     L.append(f"{'leg':14} {'side':5} {'stock':>6} {'sect':>6} {'own':>6}  {'bear':>6} {'base':>6} {'bull':>6} {'lean':>6}  agent")
     cur = None
     for r in doc["legs"]:
@@ -292,8 +305,10 @@ def sector(groups: list[str], today: dt.date | None = None, write: bool = True) 
         raise SystemExit(f"not a dictated group: {bad}")
     th = cfg["orchestrator"]
     runs = load_state()["sector_runs"]
-    legs = [g for g in analysis.roster(cfg) if g["group"] in groups]
-    pairs = [p for p in analysis.dictated_pairs(cfg) if p["group"] in groups]
+    legs, unwatched = watched([g for g in analysis.roster(cfg) if g["group"] in groups])
+    mine = {g["entity"] for g in legs}
+    pairs = [p for p in analysis.dictated_pairs(cfg)        # a pair is reviewed if EITHER leg is watched
+             if p["group"] in groups and mine & {*p["long"], *p["short"]}]
     conn = grading.connect()
     try:
         gcfg = grading.load_config(conn)
@@ -318,6 +333,7 @@ def sector(groups: list[str], today: dt.date | None = None, write: bool = True) 
     finally:
         conn.close()
     doc = {"date": today.isoformat(), "groups": groups, "pairs": [p["name"] for p in pairs],
+           "unwatched": len(unwatched),
            "material_dir": str((OUT / "material" / today.isoformat()).relative_to(REPO)).replace("\\", "/"),
            "legs": out_legs}
     if write:
@@ -328,7 +344,11 @@ def sector(groups: list[str], today: dt.date | None = None, write: bool = True) 
 
 
 def render_sector(doc: dict) -> str:
-    L = [f"SECTOR REVIEW {doc['date']}: {', '.join(doc['groups'])}",
+    if not doc["legs"]:
+        return (f"SECTOR REVIEW {doc['date']}: {', '.join(doc['groups'])}: no leg has a case agent, "
+                f"nothing to review ({doc['unwatched']} legs not watched). Do not --mark.")
+    L = [f"SECTOR REVIEW {doc['date']}: {', '.join(doc['groups'])}  "
+         f"({len(doc['legs'])} legs with an agent, {doc['unwatched']} without, not watched)",
          f"pairs: {', '.join(doc['pairs'])}", f"material -> {doc['material_dir']}/<entity>.md", ""]
     for g in doc["legs"]:
         m = g["move"]
@@ -338,7 +358,7 @@ def render_sector(doc: dict) -> str:
                 if v.get("chg_pct") is not None]
         sm = g["stored_mail"]
         L.append(f"{g['token']} ({g['name']}, {g['side']}, {', '.join(g['pairs'])}) since {g['window_from']}")
-        L.append(f"   agent: {g['agent'] or 'NONE'}" + (f", last run {g['last_agent_run']}" if g["last_agent_run"] else "")
+        L.append(f"   agent: {g['agent']}" + (f", last run {g['last_agent_run']}" if g["last_agent_run"] else "")
                  + (f"   next print {g['next_print']}" if g["next_print"] else ""))
         L.append(f"   {mv}   consensus: {', '.join(cons) or 'no daily feed'}")
         L.append(f"   stored mail/brief hits {len(sm['hits'])}, house estimates {len(sm['house_estimates'])}, "
@@ -398,6 +418,10 @@ def _selftest() -> None:
     evp = {**prev, "consensus": {"fy": "FY28", "ebitda_cr": 22500.0}}
     assert any("consensus ebitda_cr -2.2%" in x for x in flags(ev, evp, th, "2026-10-26", t)); ok += 1
     assert _slug(["IT LARGECAP", "IT MIDCAP"]) == "it-largecap_it-midcap"; ok += 1
+    lg = [{"token": "A"}, {"token": "B"}, {"token": "C"}]
+    yes, no = watched(lg, has=lambda tk: tk != "B")
+    assert [g["token"] for g in yes] == ["A", "C"] and [g["token"] for g in no] == ["B"]; ok += 1
+    assert watched(lg, has=lambda tk: False) == ([], lg); ok += 1          # no agent: nothing watched
     print(f"orchestrator selftest: {ok} checks passed")
 
 
