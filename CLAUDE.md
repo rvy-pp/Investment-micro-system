@@ -1144,6 +1144,50 @@ deal to re-confirm. **A straight-line run-rate and revenue bridge was built
 first and removed the same day** — its inputs were mostly assumed tenures and
 start quarters. Do not rebuild it; deals do not feed build.json.
 
+### The orchestrator — day-end watch over the case agents (2026-10-26)
+
+PM: *"an orchestrator agent that monitors all company-agents. It will update
+all prices on a daily basis, check each sector periodically for updates (say
+IT on tuesday, steel on wednesday etc; look at mails, news, give feedback at
+market end)."* The **`orchestrator` skill** is the procedure;
+**`packages/book/orchestrator.py`** (15-check selftest) does the arithmetic
+and the flags; the Claude Desktop task **`case-orchestrator`** runs it weekdays
+at 16:15 IST. It is a skill run by the main session rather than a file in
+`.claude/agents`, because a subagent cannot start another subagent and its job
+is to dispatch the case agents.
+
+- **Every weekday:** `--prices` (every Yahoo candidate, 1mo, ~40s), then
+  `--day`. For all 33 legs it prints the 1-day stock / sector / own split and,
+  for a leg with a case, the bear/base/bull juice at today's price and the PM's
+  lean. It writes `data/orchestrator/day_<date>.json`. Flags compare with the
+  previous day-end file: own move ≥ 3pp, base juice moved ≥ 1pp, headline
+  consensus moved ≥ 1%, a print within 7 days, a refused build, a deal
+  cross-check due. **An own-move flag gets a pair-check, never a re-mark.**
+  Only a check that finds information sends the leg's agent back to its case,
+  off-rota.
+- **The rota** (`specs/book.yaml orchestrator:`): Mon cement, Tue IT (PM),
+  Wed steel (PM), Thu zinc/aluminium/mining, Fri EMS. **Every dictated group
+  must sit on exactly one weekday**, and each run refuses it otherwise. A group
+  added to `pairs` and missing from the rota would never be reviewed.
+- **Sector day:** `--sector today` builds the pack: the window since the
+  group's last review (`--mark`, `data/orchestrator/state.json`) and the
+  search terms. The skill sweeps those names' mail (sanctioned for this
+  sweep, read-only) and news, checks every hit is the right company, writes
+  `data/orchestrator/material/<date>/<entity>.md`, dispatches the sector's
+  case agents in parallel and runs move_check on every pair. The agents read
+  the material file as PM-supplied and still never sweep Outlook themselves.
+  The report goes to `data/orchestrator/reports/<date>.md`, in prose.
+- Legs without an agent get the sweep but no case work, and the orchestrator
+  never scaffolds an agent unasked. On 2026-10-26, 7 of 33 legs had one.
+
+**A silent bug it found on day one:** six of the seven case agents never loaded.
+`case_brief.AGENT_TEMPLATE` wrote the description as a plain YAML scalar, and
+the IT agents' "the deal list: reported TCV" contains ": ". The front-matter
+failed to parse, and Claude Code listed only `utcem-agent` as a subagent. The
+description is now JSON-quoted, all seven files were regenerated (only that
+line changed), and the case_brief selftest parses every generated
+front-matter.
+
 ### Pair grading — the forward record of SELECTION, 2026-10-05
 
 PM, after the sizing backtests found no timing edge: *"Can I assume that making

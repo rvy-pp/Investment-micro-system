@@ -1010,9 +1010,18 @@ def agent_name(token: str) -> str:
 def is_it(group: str | None) -> bool:
     return (group or "").upper().startswith("IT ")
 
+# The description is emitted as a JSON (= YAML double-quoted) string. It was a
+# plain scalar until 2026-10-26, and the IT agents' "the deal list: reported
+# TCV" carries ": ", which YAML reads as a second mapping key. The front-matter
+# failed to parse, so Claude Code silently registered NONE of the six IT agents
+# as subagents (only utcem-agent, whose text has no ": ", was listed), and
+# nothing raised. Caught while building the orchestrator, which dispatches them.
+# The selftest now parses every generated front-matter.
+AGENT_DESC = "{name}'s case agent — works ONLY on {name} ({token}) for the Book tab's Analysis sub-tab - what's priced in, the quarter-by-quarter {earn} build, later quarters vs the street, base/bear/bull juice, the re-rating check{deals_desc} - and keeps {name}'s case file current. Use when the PM asks about {name}'s case, juice, expected return, {earn} build, or \"run the {name} agent\". Never sets a Kelly edge or a lean."
+
 AGENT_TEMPLATE = """---
 name: {agent}
-description: {name}'s case agent — works ONLY on {name} ({token}) for the Book tab's Analysis sub-tab - what's priced in, the quarter-by-quarter {earn} build, later quarters vs the street, base/bear/bull juice, the re-rating check{deals_desc} - and keeps {name}'s case file current. Use when the PM asks about {name}'s case, juice, expected return, {earn} build, or "run the {name} agent". Never sets a Kelly edge or a lean.
+description: {description}
 ---
 
 You are the case agent for **{name}** ({token}, entity `{entity}`), the
@@ -1039,7 +1048,9 @@ a call (`book_calls`), anything in `prices`,
 `estimates` or a pillar table, or another stock's log.
 
 **Sources:** the store, the vault's concall notes for {name}, broker notes the
-PM hands you, public results filings. Do not sweep Outlook unless the PM asks.
+PM hands you, the orchestrator's sector-day material file
+(`data/orchestrator/material/<date>/{entity}.md`), public results filings. Do
+not sweep Outlook unless the PM asks.
 When sources disagree on a number, record both and the one you used, never
 pick silently.
 
@@ -1127,6 +1138,7 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
             "it_block": IT_BLOCK.format(entity=ent, name=r["name"]) if it else "",
             "deals_desc": (" - and the deal list: reported TCV, named deals, what is delayed and "
                            "what has rolled off, cross-checked before each result") if it else ""}
+    fill["description"] = json.dumps(AGENT_DESC.format(**fill), ensure_ascii=False)
     wrote = []
     agents_dir.mkdir(parents=True, exist_ok=True)
     af = agents_dir / f"{fill['agent']}.md"
@@ -1463,6 +1475,12 @@ def _selftest() -> None:
         ua = (d / "agents" / "utcem-agent.md").read_text(encoding="utf-8")
         assert ub["valuation"] == "ev_ebitda" and "consensus" in ub and "eps_basis" not in ub
         assert "EV/EBITDA" in ua and "EPS" not in ua and not (d / "cases" / "ultratech" / "deals.json").exists(); ok += 1
+        import yaml                                     # front-matter must PARSE, or the agent never loads
+        for f in (d / "agents").glob("*.md"):
+            fm = yaml.safe_load(f.read_text(encoding="utf-8").split("---")[1])
+            assert fm["name"] == f.stem and fm["description"].startswith(("TCS", "UltraTech"))
+        assert "deal list: reported" in yaml.safe_load(
+            (d / "agents" / "tcs-agent.md").read_text(encoding="utf-8").split("---")[1])["description"]; ok += 1
         try:
             scaffold("not_a_leg", agents_dir=d / "agents", cases_dir=d / "cases"); raise AssertionError
         except SystemExit:

@@ -303,3 +303,41 @@ case_bands:
 # sectors are P/E. The brief refuses a build whose `valuation` disagrees.
 case_valuation:
   CEMENT: ev_ebitda
+
+# orchestrator: the day-end watch over every dictated leg and its case agent
+# (PM, 2026-10-26: "an orchestrator agent that monitors all company-agents. It
+# will update all prices on a daily basis, check each sector periodically for
+# updates (say IT on tuesday, steel on wednesday etc; look at mails, news,
+# give feedback at market end)"). packages/book/orchestrator.py owns the
+# arithmetic and the flags; .claude/skills/orchestrator is the procedure.
+#
+#   rota       weekday -> the dictated groups (the `pairs` headings above)
+#              whose mail and news are swept and whose case agents are run
+#              that day. EVERY group must sit on exactly one day: a group
+#              added to `pairs` and missing here would never be reviewed, and
+#              nothing else would notice. The selftest and every run refuse it.
+#              IT Tuesday and Steel Wednesday are the PM's; the rest is a
+#              first cut for the PM to move.
+#   move_flag_pp       |1-day own move| (stock minus beta x sector) that flags a
+#                      leg for a pair-check. A flag is never a re-mark: the
+#                      target moves on information, never on price.
+#   juice_flag_pp      base juice on the headline year moved this much since the
+#                      previous day-end (a price move against an anchored target,
+#                      or a consensus revision).
+#   revision_flag_pct  headline-year consensus changed this much since the
+#                      previous day-end.
+#   result_soon_days   a print this close (deals.json next_result or
+#                      results_calendar) is named every day until it lands.
+#   default_window_days  a sector's first review looks back this far.
+orchestrator:
+  rota:
+    Mon: [CEMENT]
+    Tue: [IT LARGECAP, IT MIDCAP]
+    Wed: [STEEL]
+    Thu: [ZINC, ALUMINIUM, MINING]
+    Fri: [EMS]
+  move_flag_pp: 3.0
+  juice_flag_pp: 1.0
+  revision_flag_pct: 1.0
+  result_soon_days: 7
+  default_window_days: 7

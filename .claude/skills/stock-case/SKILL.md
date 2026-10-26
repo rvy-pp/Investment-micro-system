@@ -57,7 +57,11 @@ all share. TCS was the first.
    consensus revision, a price move. The brief's revisions and log are the
    quick check. **Do not sweep Outlook unless the PM asks** — the PM supplies
    broker documents. The morning-brief files under `data/morning/` are already
-   on disk and may be read.
+   on disk and may be read. On its sector day the orchestrator (the
+   `orchestrator` skill, 2026-10-26) sweeps your name's mail and news and
+   hands you `data/orchestrator/material/<date>/<entity>.md`. Read it as
+   material the PM handed you, and if nothing in it moves the build, say so
+   and change nothing.
 4. Update `build.json` (below). Actuals need a source; forecast quarters
    should carry drivers so the argument is visible. Re-run the brief.
 5. Log what moved: `python packages/book/analysis.py --add '<json>'` with
