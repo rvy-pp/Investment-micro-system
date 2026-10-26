@@ -1019,6 +1019,27 @@ method was added: today's EWMA sd × the book's own standardised tail. It
 reads $7,371 at 1-day 99.9% against the normal's $6,444, and the strip shows
 the filtered figure.
 
+**The Risk tab was REDESIGNED on 2026-10-26** (PM: *"make it more sleek and
+easier to comprehend ... more like those company websites like Apple. Try with
+the risk sub tab first"*). It is the first tab to leave the page's
+mono/gridded grammar, and it is a trial for the rest of the site. The layout:
+- one question per section, in plain words;
+- a 95 / 99 / 99.9% switch, so one confidence level shows at a time;
+- one hero number with a sentence saying how often it should be exceeded;
+- four cards, a centred bar list of each pair's share of the risk, and a
+  backtest chart (daily IMS P&L against the VaR set the day before);
+- the method tables folded under "Methods and assumptions".
+
+The type is the system sans (SF / Segoe UI) with tabular figures. All styles
+are scoped to `.rk`. Two traps from the page's global CSS:
+- `section{display:none}` (tab views) hid every block until the sections
+  became divs;
+- the page-wide `.bar` (`min-width:70px`, pill radius) drew every small share
+  at one length and pushed the hedges across the axis, so the risk bars are
+  `.rkb`.
+
+Both carry a comment at the site.
+
 ### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
 
 PM: *"I think we analyze individually. Pairs can change"* and *"start with the
