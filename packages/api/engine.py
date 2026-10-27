@@ -1648,7 +1648,12 @@ def morning() -> dict:
         if key == "brief":
             # deterministic repeat-mail marking — see _mark_repeated_bullets
             _mark_repeated_bullets(doc, mdir, d)
-        if d != today:
+        # PM, 2026-10-27: weekends run the MAIL only (daily-full-refresh), so
+        # Saturday and Sunday write a brief but no markets file. Friday's
+        # markets file is then the current one, not a failure to warn about.
+        td = dt.date.today()
+        fri = (td - dt.timedelta(days=td.weekday() - 4)).isoformat() if td.weekday() >= 5 else None
+        if d != today and not (key == "markets" and fri and d >= fri):
             out["warnings"].append(
                 f"{prefix} is from {d}, not {today} — run {maker}")
     return out

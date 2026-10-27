@@ -16,6 +16,30 @@ Working directory for every command:
 C:\Users\rajvaibhav.yadav\Investment-micro-system
 ```
 
+## Weekends: MAIL ONLY (PM, 2026-10-27)
+
+PM: *"do not run it on weekends, at least the prices part"*, then *"only run
+mails"*. On a **Saturday or Sunday** the run is:
+
+1. **Step 1:** mail-fetch, as written.
+2. **Step 1b:** the morning brief, as written, EXCEPT its first step. Do not run
+   `morning_markets.py`, because that is a price fetch and markets are shut.
+   The brief's global section takes no bellwether reasons from a markets file.
+   The Overview treats Friday's markets file as current over the weekend (see
+   `engine.morning`), so no warning fires.
+3. `python packages/web/export_static.py`, so the weekend brief reaches the
+   vault copy. Without it, the OneDrive copy shows Friday's mail all weekend.
+4. Commit only the new dated `data/staging/mail_*` and `data/morning/brief_*`
+   files, and push the branch and `main` as in the weekday run.
+5. Report in one short paragraph: mail-only weekend run, how many mails and
+   bullets per sector, and whether main was pushed.
+
+**Skip everything else:** Step 2 (metals pack), 2b and 2b' (cement), 2c (BBG),
+Step 3 (`refresh.py`, i.e. closes, packs, scores, corporate actions), and the
+Step 4 front-end check. Nothing on that list belongs to a day with no session.
+A double-click on the launcher still runs `refresh.py`, because the PM asked
+for it.
+
 ---
 
 ## Step 1 — broker mail (MCP, agent only)

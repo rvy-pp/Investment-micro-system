@@ -151,6 +151,14 @@ the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
 `outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
 The launcher still refreshes on every double-click; `launch\Install Daily
 Task.bat` (Windows Task Scheduler) remains written and unrun.
+**Weekends are MAIL ONLY (PM, 2026-10-27: *"only run mails"*).** On Saturday
+and Sunday the 08:00 task runs mail-fetch and the morning brief (WITHOUT
+`morning_markets.py`), re-exports the vault copy, commits the mail and brief
+files and stops: no packs, no `refresh.py`, no scores. `engine.morning` treats
+Friday's markets file as current on a weekend, so the Overview raises no
+false warning. The procedure is the full-refresh skill's "Weekends: MAIL ONLY"
+section. The day-end orchestrator also refuses weekends (see the orchestrator
+section).
 
 **RETIRED 2026-10-21 with the Auto tab — `vahan-afternoon` is PAUSED (not
 deleted) and the Overview no longer reads `vahan_status.json`.** The paragraph
