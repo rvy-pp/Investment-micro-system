@@ -224,7 +224,31 @@ def _entries(conn, ent: str) -> list[dict]:
 
 
 # --------------------------------------------------------------- view
-def view(conn=None, today: dt.date | None = None) -> dict:
+# PM, 2026-10-27: "for stocks with no lean, put medium by default", which the PM
+# then defined as the BASE case (the middle scenario), and on EV/EBITDA legs the
+# base AT THE ANCHOR. So a stock with a case build and no PM lean takes its live
+# base juice on the headline year as a DEFAULT lean, labelled
+# juice_source='default_base' everywhere it travels (Analysis pane, pair juice,
+# the Kelly edge note, the orchestrator). The PM's own juice_pct always wins.
+# It is computed at read time, never written: a stored default would freeze at
+# the day it was written while the base moves with the price.
+_DEFAULT_LEAN: dict = {}
+
+
+def default_lean(conn, ent: str, today: dt.date) -> float | None:
+    key = (ent, today.isoformat(), id(conn))
+    if key not in _DEFAULT_LEAN:
+        import case_brief as cb                       # lazy: case_brief imports this module
+        v = None
+        if cb.load_build(ent):
+            b = cb.brief(ent, conn, today, pairs=False)
+            hfy = b.get("headline_fy")
+            v = (((b.get("scenarios") or {}).get("base") or {}).get("juice") or {}).get(hfy, {}).get("juice_pct")
+        _DEFAULT_LEAN[key] = v
+    return _DEFAULT_LEAN[key]
+
+
+def view(conn=None, today: dt.date | None = None, defaults: bool = True) -> dict:
     own = conn is None
     conn = conn or connect()
     try:
@@ -250,8 +274,12 @@ def view(conn=None, today: dt.date | None = None) -> dict:
                     steps[k] = {"status": "open"}
             pr = live.get("price")
             juice = pr["data"].get("juice_pct") if pr else None
+            src = "pm" if juice is not None else None
+            if juice is None and defaults:
+                juice = default_lean(conn, s["entity"], today)
+                src = "default_base" if juice is not None else None
             stocks.append({**s, "priced_auto": auto, "steps": steps,
-                           "juice": juice,
+                           "juice": juice, "juice_source": src,
                            "juice_low": pr["data"].get("juice_low") if pr else None,
                            "juice_high": pr["data"].get("juice_high") if pr else None,
                            "horizon": pr["data"].get("horizon") if pr else None,
@@ -332,14 +360,31 @@ def _selftest() -> None:
                          "note": "first view", "data": {"juice_pct": 1.0}}, today)
         add_entry(conn, {"entity": "tech_mahindra", "step": "price", "status": "done",
                          "note": "revised", "data": {"juice_pct": 2.0, "juice_low": -1, "juice_high": 4}}, today)
-        v = view(conn, today)
+        # defaults=False: the real case builds on disk would otherwise lend
+        # their base juice to this fixture through default_lean()
+        v = view(conn, today, defaults=False)
         tm = next(s for s in v["stocks"] if s["entity"] == "tech_mahindra")
         assert tm["juice"] == 2.0 and tm["steps"]["price"]["note"] == "revised" and len(tm["log"]) == 2; ok += 1
-        assert tm["steps"]["priced"].get("auto") is True; ok += 1
+        assert tm["steps"]["priced"].get("auto") is True and tm["juice_source"] == "pm"; ok += 1
 
         # pair juice only when BOTH legs have juice
         p = next(x for x in v["pairs"] if x["name"] == "TECHM_LTM")
         assert p["pair_juice"] is None and p["long_juice"] == 2.0; ok += 1
+
+        # PM 2026-10-27: no lean -> the base is the default lean, labelled; a PM
+        # lean always wins over a default (injected through the cache)
+        for e, val in (("ltimindtree", 6.5), ("tech_mahindra", 9.9)):
+            _DEFAULT_LEAN[(e, today.isoformat(), id(conn))] = val
+        vd = view(conn, today)
+        lt = next(s for s in vd["stocks"] if s["entity"] == "ltimindtree")
+        tm = next(s for s in vd["stocks"] if s["entity"] == "tech_mahindra")
+        assert lt["juice"] == 6.5 and lt["juice_source"] == "default_base"; ok += 1
+        assert tm["juice"] == 2.0 and tm["juice_source"] == "pm"; ok += 1      # the PM's lean wins
+        p = next(x for x in vd["pairs"] if x["name"] == "TECHM_LTM")
+        assert p["pair_juice"] == round(2.0 - 6.5, 2); ok += 1
+        _DEFAULT_LEAN[("ltimindtree", today.isoformat(), id(conn))] = None  # no build: still no juice
+        assert next(s for s in view(conn, today)["stocks"] if s["entity"] == "ltimindtree")["juice"] is None; ok += 1
+
         add_entry(conn, {"entity": "ltimindtree", "step": "price", "note": "short leg view",
                          "data": {"juice_pct": -1.5}}, today)
         p = next(x for x in view(conn, today)["pairs"] if x["name"] == "TECHM_LTM")

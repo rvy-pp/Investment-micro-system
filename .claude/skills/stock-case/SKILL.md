@@ -267,6 +267,15 @@ a pair gets an edge only when both legs carry a lean. So when the PM sets a lean
 say what it does to the pair's edge, and flag a lean whose print falls OUTSIDE
 the 13-week window — that is the one case where the equivalence fails.
 
+**Default lean (PM, 2026-10-27: "for stocks with no lean, put medium by
+default").** Until the PM picks a lean, a stock with a case build takes its
+live BASE juice on the headline year as the lean, at the anchor on EV/EBITDA
+legs. It is computed at read time (`analysis.default_lean`), never written,
+and labelled `default_base` on the Analysis pane, in the Kelly edge note and
+in the orchestrator. A blank `confidence` reads `medium`. So every re-strike of
+your base also moves a default-lean pair's Kelly edge: say so in your report
+when it does. You still never write `juice_pct`.
+
 ## What a case agent never does
 
 Sets `juice_pct` (since 2026-10-22 the pair's Kelly edge is long lean − short lean, so a lean

@@ -14,6 +14,13 @@ The leans are to the next print (~mid-January for the IT names), which falls
 inside the 13-week window; that is the PM's equivalence, stated in each
 edge's note, not a scaling done here.
 
+DEFAULT LEAN (PM, 2026-10-27: "for stocks with no lean, put medium by
+default" = the base case, at the anchor on EV/EBITDA legs). A leg with a case
+build and no PM lean carries its live base juice (analysis.default_lean), so
+such a pair HAS an edge now. Every such leg is named in the edge's note as
+"default base", and the leg carries source 'default_base', so a sized pair
+never hides that half its view is a default.
+
 Before that the edge was typed per pair on the Book tab and stored
 append-only in `book_kelly_edges` via POST /api/kelly_edge (2026-09-25 →
 2026-10-22). The route and the inputs are gone; the TABLE keeps its rows as
@@ -166,15 +173,19 @@ def agent_edges(aview: dict, H: float) -> dict:
                 pr = (s.get("steps") or {}).get("price") or {}
                 legs.append({"side": side, "entity": e, "name": s.get("name", e),
                              "juice_pct": s.get("juice"), "as_of": pr.get("as_of"),
-                             "horizon": s.get("horizon")})
+                             "horizon": s.get("horizon"), "source": s.get("juice_source") or "pm"})
         txt = " − ".join(
-            " / ".join(f"{l['name']} {l['juice_pct']:+.1f}% ({l['as_of']})"
+            " / ".join(f"{l['name']} {l['juice_pct']:+.1f}% "
+                       + ("(default base)" if l["source"] == "default_base" else f"({l['as_of']})")
                        for l in legs if l["side"] == sd) for sd in ("L", "S"))
+        dflt = any(l["source"] == "default_base" for l in legs)
         out[p["name"]] = {
-            "ret_pct": p["pair_juice"], "horizon_weeks": H, "legs": legs,
+            "ret_pct": p["pair_juice"], "horizon_weeks": H, "legs": legs, "default": dflt,
             "set_at": max((l["as_of"] or "") for l in legs) or None,
             "note": f"case agents: {txt}; each lean is to the next print, "
-                    f"inside the {H:g}-week window"}
+                    f"inside the {H:g}-week window"
+                    + ("; a default base is the headline-year case juice (at the anchor on "
+                       "EV/EBITDA legs), taken as the window's edge until a lean is picked" if dflt else "")}
     return out
 
 

@@ -183,6 +183,9 @@ def leg_day(conn, leg: dict, as_of: str, split: dict, today: dt.date) -> dict:
             rec["consensus"] = {"fy": hfy, "ebitda_cr": c} if c else None
         cc = ((b.get("deals") or {}).get("cross_check")) or {}
         rec["cross_check_open"] = bool(cc.get("open"))
+        # PM, 2026-10-27: no lean -> the base is the default lean (analysis.default_lean).
+        if rec["lean"] is None and isinstance(rec["juice"].get("base"), (int, float)):
+            rec["lean"], rec["lean_default"] = rec["juice"]["base"], True
     return rec
 
 
@@ -455,7 +458,10 @@ def render_day(doc: dict) -> str:
         j = r.get("juice") or {}
         ag = ("agent" if r["agent"] else "no agent") + (f", last run {r['last_agent_run']}" if r["last_agent_run"] else "")
         L.append(f"{r['token']:14} {r['side']:5} {f(m.get('stock_pct'))} {f(m.get('sector_pct'))} {f(m.get('rel_pct'))}  "
-                 f"{f(j.get('bear'))} {f(j.get('base'))} {f(j.get('bull'))} {f(r.get('lean'))}  {ag}")
+                 f"{f(j.get('bear'))} {f(j.get('base'))} {f(j.get('bull'))} {f(r.get('lean'))}"
+                 f"{'*' if r.get('lean_default') else ' '} {ag}")
+    if any(r.get("lean_default") for r in doc["legs"]):
+        L.append("* lean = the base, by default (PM 2026-10-27), until the PM picks one")
     fl = [(r["token"], x) for r in doc["legs"] for x in r["flags"]]
     L += ["", f"FLAGS ({len(fl)})"] + [f"  {t:8} {x}" for t, x in fl] + ([] if fl else ["  none"])
     L += render_watches(doc.get("watches") or [])

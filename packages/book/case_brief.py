@@ -812,7 +812,9 @@ def pair_context(conn, ent: str, base_juice: float | None) -> list[dict]:
         out.append({"pair": p["name"], "side": side,
                     "partners": [by.get(e, {}).get("name", e) for e in other],
                     "partner_juice": oj_mean, "pair_juice_if_base": what_if,
-                    "pair_juice_logged": p["pair_juice"]})
+                    "pair_juice_logged": p["pair_juice"],
+                    "default_legs": [by[e]["name"] for e in p["long"] + p["short"]
+                                     if by.get(e, {}).get("juice_source") == "default_base"]})
     return out
 
 
@@ -850,7 +852,11 @@ def load_build(ent: str) -> dict | None:
     return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
 
 
-def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None = None) -> dict:
+def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None = None,
+          pairs: bool = True) -> dict:
+    """pairs=False skips pair_context, which reads analysis.view(); view()
+    calls brief(pairs=False) for a stock's default lean, and with pairs on
+    the two would recurse."""
     own = conn is None
     conn = conn or analysis.connect()
     try:
@@ -927,7 +933,9 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
                 out["fy_sums"] = fy_sums(qs)
                 out["implied"] = {fy: implied_rest(qs, cons[fy], fy) for fy in cons}
                 out["scenarios"] = scenario_juice(build, cons, pe_today, band, ev)
-                out["confidence"] = build.get("confidence")
+                # PM, 2026-10-27: a stock with no confidence set reads MEDIUM.
+                out["confidence"] = build.get("confidence") or "medium"
+                out["confidence_default"] = not build.get("confidence")
                 out["horizon"] = build.get("horizon")
                 out["headline_fy"] = build.get("headline_fy", fy1)
         if is_it(me["group"]):
@@ -935,7 +943,8 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
             doc = it_deals.load(ent)
             out["deals"] = it_deals.summary(doc, today) if doc else None
         base = (out.get("scenarios") or {}).get("base", {}).get("juice", {}).get(out.get("headline_fy", fy1), {})
-        out["pairs"] = pair_context(conn, ent, base.get("juice_pct"))
+        if pairs:
+            out["pairs"] = pair_context(conn, ent, base.get("juice_pct"))
         return out
     finally:
         if own:
@@ -1065,13 +1074,16 @@ def render(b: dict) -> str:
         L.append(f"        bear/bull = base moved by the {bd['key']} band: {band_text(bd)} "
                  f"per forecast quarter, carried into later years")
     if b.get("scenarios"):
-        L.append(f"        confidence {b.get('confidence')} · horizon {b.get('horizon')} · "
-                 f"headline {b.get('headline_fy')} · lean: the PM's to pick")
+        L.append(f"        confidence {b.get('confidence')}{' (default)' if b.get('confidence_default') else ''} · "
+                 f"horizon {b.get('horizon')} · headline {b.get('headline_fy')} · "
+                 f"lean: the PM's to pick (until then the base is the default lean)")
     for pc in b.get("pairs") or []:
         ke = pc["pair_juice_logged"]
+        dl = pc.get("default_legs") or []
         L.append(f"PAIR    {pc['pair']} ({pc['side']}) vs {', '.join(pc['partners'])}: partner juice "
                  f"{pc['partner_juice']} · pair juice if base {pc['pair_juice_if_base']} · Kelly edge "
-                 f"(both leans) {str(ke) + '%' if ke is not None else 'none — a leg has no lean'}")
+                 f"(both leans) {str(ke) + '%' if ke is not None else 'none — a leg has no lean'}"
+                 + (f" [default base lean: {', '.join(dl)}]" if ke is not None and dl else ""))
     if "deals" in b:
         if b["deals"] is None:
             L.append("DEALS   no deals.json yet — an IT case needs one (--scaffold creates it)")

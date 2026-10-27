@@ -3644,7 +3644,7 @@ function kellyBlock(k){
   const legs = k.edge_legs || {};
   const edgeCell = r => {
     if (!r.edge) return `<span class="flat" title="a leg has no lean yet — set it through that stock's agent">—</span>`;
-    const tip = (legs[r.label] || []).map(l => `${l.side === 'L' ? 'long' : 'short'} ${l.name} ${pctf(l.juice_pct, 1)} (lean ${l.as_of ? dmy(l.as_of) : '—'})`).join('\n');
+    const tip = (legs[r.label] || []).map(l => `${l.side === 'L' ? 'long' : 'short'} ${l.name} ${pctf(l.juice_pct, 1)} (${l.source === 'default_base' ? 'default lean: base case' : 'lean ' + (l.as_of ? dmy(l.as_of) : '—')})`).join('\n');
     const v = r.edge.ret_pct;
     return `<span class="${v > 0 ? 'up' : v < 0 ? 'down' : 'flat'}" title="${esc(tip + '\nlong lean − short lean; change it through the stock agents')}">${pctf(r.edge.ret_pct, 1)}</span>`;
   };
@@ -4057,7 +4057,11 @@ function anaJuice(s){
   if (s.juice == null) return hasRng
     ? `<b style="color:var(--warn)" title="range only — no lean picked yet">${rng}</b>`
     : '<span class="ana-open">—</span>';
-  return `<b class="${s.juice >= 0 ? 'pos' : 'neg'}">${anaPct(s.juice)}</b>`
+  // PM, 2026-10-27: no lean -> the base case is the default lean. Shown
+  // italic with a "base" tag so a default never reads as a picked number.
+  const dflt = s.juice_source === 'default_base';
+  return `<b class="${s.juice >= 0 ? 'pos' : 'neg'}"${dflt ? ' style="font-style:italic" title="default lean: the base case (PM, 27 Oct), until a lean is picked"' : ''}>${anaPct(s.juice)}</b>`
+    + (dflt ? ' <span style="color:var(--warn)">base, default</span>' : '')
     + (hasRng ? ` <span style="color:var(--ink)">(${rng})</span>` : '');
 }
 /* Bold the numbers inside a note — money, percentages, multiples, decimals —

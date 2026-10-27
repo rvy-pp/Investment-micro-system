@@ -867,8 +867,20 @@ non-empty `kelly.edges` key there is now reported rather than read.
 change my view on this only. Remove all text from my side."*). A pair's edge
 is its Analysis-tab pair juice, long lean − short lean (each stock's live
 `price` entry `data.juice_pct`), read by `kelly.agent_edges()`. A pair gets an
-edge only when BOTH legs carry a lean. Today that is TECHM_LTM alone (+2.9 −
-0.6 = +2.3). The note names both leans and their dates. The leans run to the
+edge only when BOTH legs carry a lean. The note names both leans and their
+dates. **Since 2026-10-27, a leg with a case build and no PM lean takes its
+live BASE juice as a DEFAULT lean** (PM: *"for stocks with no lean, put medium
+by default"*, then "Lean = base case" and, for EV/EBITDA legs, "At the mean
+anchor"). `analysis.default_lean` computes it at read time and never stores
+it, so it moves with the price and with every re-strike. It is labelled
+`juice_source: default_base` on the Analysis pane (italic, "base, default"),
+in the Kelly edge note and in the orchestrator (`*`), and a PM lean always
+wins. A blank case `confidence` reads `medium`, flagged as the default.
+`case_brief.brief(pairs=False)` exists because `view()` calls `brief()` for
+the default and `brief()` calls `view()` for its pair context. On 27-Oct the
+edges are TECHM_LTM +2.3, HCLT_WPRO +7.2 and UTCEM_SRCM +14.1 (both legs on
+the default). At half Kelly that asks for about 25x gross on UTCEM_SRCM, the
+usual scale finding. At today's gross budget it is 4.95% against 2.71% held. The leans run to the
 next print, which falls inside the 13-week window; that equivalence is the
 PM's, and the stock-case skill says to flag a lean whose print falls outside
 it. **The Kelly table is READ-ONLY**: the return and comment inputs, the save
