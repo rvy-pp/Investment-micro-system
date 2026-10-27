@@ -1193,6 +1193,36 @@ description is now JSON-quoted, all seven files were regenerated (only that
 line changed), and the case_brief selftest parses every generated
 front-matter.
 
+**Watches: a named risk to one pair, checked every day-end (2026-10-27).**
+PM, on UTCEM_SRCM: *"It loses if the market decides Shree deserves
+UltraTech's multiple, or if petcoke normalises quickly. Watch for both through
+Q3: the November dealer price checks, Shree's trade share, and petcoke. On a
+daily basis."* Thresholds live in `specs/book.yaml orchestrator.watches`, and
+each watch carries `since`/`until` (this one runs to 2027-01-31, through both
+Q3 prints). `--day` prints a WATCH block per watch and writes it into
+`day_<date>.json`.
+- **The multiple gap:** the short's FY28 EV/EBITDA over the long's, at the
+  day's closes, on each build's consensus. It was −10.9% on 27-Oct (Shree
+  14.02x vs UltraTech 15.75x). WARN at −5%, ALERT at par (I-Sec's 16x/16x), and
+  a flag on any 2pp move in a day.
+- **Petcoke:** `cp_coke` level and its 4-week change. WARN at $170 (about what
+  Brent $127 implies), ALERT at $150 (back to the Q2 cargoes Q3 burns), and a
+  flag on a 15% fall in 4 weeks.
+- **The Kotak pack's monthly price:** weighted to each leg's regions and set
+  against each build's own Q3 `price_path_rs_bag` (UltraTech Oct/Nov/Dec
+  Rs373.4/371.5/365.0 all-India; Shree Rs372.7/371.9/370.7 on its mix). It
+  fires when a new month lands, and warns 1% or more below the path.
+  `build_path()` skips `Sep_exit` and `Q2_avg`, because `"Sep_exit"[:3]` would
+  read as September; the selftest proves it.
+- **Trade share** is quarterly (Shree 61% in Q2; ≥63% works against the pair),
+  so it is printed as a reminder.
+
+The skill (step 4b) runs the watch's narrow `mail_terms` search daily: Nomura's
+monthly "Cement channel checks", Kotak's "Construction Materials", dealer
+checks, and Shree trade share. It sets the numbers against the build paths. A
+watch flag is a prompt to read, never a re-mark. The `case-orchestrator` task
+prompt carries the step. orchestrator selftest 32.
+
 ### Pair grading — the forward record of SELECTION, 2026-10-05
 
 PM, after the sizing backtests found no timing edge: *"Can I assume that making

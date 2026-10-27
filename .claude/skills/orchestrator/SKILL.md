@@ -58,6 +58,37 @@ one does not, because a group missing from the rota would never be reviewed.
    `consensus … %`: report them. A juice move from price alone, against an
    anchored target, is arithmetic, not news. Say which kind it was.
 
+4b. **Watches** (the `WATCH` blocks at the end of `--day`; thresholds in
+   `specs/book.yaml orchestrator.watches`). A watch is a named risk to one
+   pair, run every weekday until its `until` date. The first one is
+   UTCEM_SRCM (PM, 2026-10-27: *"It loses if the market decides Shree deserves
+   UltraTech's multiple, or if petcoke normalises quickly. Watch for both
+   through Q3: the November dealer price checks, Shree's trade share, and
+   petcoke. On a daily basis."*). The script computes three things:
+   - **the multiple gap:** the short's FY28 EV/EBITDA over the long's, at today's closes;
+   - **petcoke:** the level and its 4-week change;
+   - **the Kotak pack's monthly price:** weighted to each leg's regions, against each build's price path. It prints the months still awaited, with the build's Rs/bag.
+
+   You do the rest:
+   - **Mail, daily, narrow.** Run `outlook_email_search` with each `mail_terms`
+     entry as `query`, `afterDateTime` = the previous day-end's date. The PM
+     asked for this search, so it is sanctioned, but only these terms.
+     Read the body of any dealer or channel check that gives numbers (cap: 6
+     bodies). Note the month, the region, the Rs/bag change, trade vs
+     non-trade, and the house. Set each against the build path the WATCH
+     block prints, for example *"Nuvama: November North flat, East −Rs5 → Shree mix ≈
+     Rs369 vs build Rs371.9"*. Report any Shree trade-share number with its
+     source. Only the Q3 call gives the real figure.
+   - **An ALERT** (gap at or past par, petcoke at or below the alert level):
+     run `move_check` on the pair and lead the report with it. A WARN or a
+     NEW pack month gets one sentence each.
+   - **A quiet day is stated:** *"watch quiet: gap −10.9%, petcoke $189,
+     no new pack month, N mails searched, no dealer checks"*.
+   - **Never re-mark a build from a watch.** A dealer check that undercuts a
+     build's path is material for that leg's agent on its next run (write it to
+     the material file if the agent runs today). The PM decides what changes.
+   - **An expired watch** gets one line asking the PM to extend or drop it.
+
 ## On the sector day
 
 5. **The pack.** `python packages/book/orchestrator.py --sector today`. (Run
@@ -112,6 +143,9 @@ one does not, because a group missing from the rota would never be reviewed.
     (the PM's standing preference: paragraphs, never one sentence per line):
     - **Day-end:** closes to which date, the flags and what each pair-check
       read, juice and consensus moves.
+    - **Watches:** each watch's numbers and flags, the dealer checks found in
+      mail set against the build paths, or the stated quiet. An ALERT leads the
+      whole report.
     - **Sector review** (on a sector day): pair by pair, what was new for each
       leg, what each agent changed (quote its juice range). The pack's count
       of unwatched legs goes in as one clause, never a list or a summary.
@@ -127,6 +161,6 @@ one does not, because a group missing from the rota would never be reviewed.
 - Calls a move noise.
 - Writes `prices` by any route but `--prices`, or writes `estimates`, a
   pillar table, or another stock's case.
-- Sweeps mail beyond the day's sector names and flagged legs. Sends, replies
-  to or labels mail.
+- Sweeps mail beyond the day's sector names, the flagged legs and the
+  watches' `mail_terms`. Sends, replies to or labels mail.
 - Commits or pushes. Code changes are not its job.

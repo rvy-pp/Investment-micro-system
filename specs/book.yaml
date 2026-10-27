@@ -329,6 +329,25 @@ case_valuation:
 #   result_soon_days   a print this close (deals.json next_result or
 #                      results_calendar) is named every day until it lands.
 #   default_window_days  a sector's first review looks back this far.
+#   watches      named risks to one pair, checked every --day until `until`.
+#                Each is a set of numbers the script reads from the store and
+#                the case builds, plus the mail the skill searches daily.
+#                A watch flag is a prompt to read, never a re-mark.
+#     multiple_gap   the short's FY28 EV/EBITDA over the long's, minus 1 (%),
+#                    each at its close on its build's consensus. Negative =
+#                    the short trades at a discount. warn/alert when the
+#                    discount narrows past the level; move_pp is a day's change.
+#     petcoke        cp_coke level (USD/t) and its change over 4 weeks (28
+#                    calendar days: windows here are calendar days, never rows).
+#     cement_price   the Kotak pack's latest monthly retail price, weighted to
+#                    each leg's regional mix, against that leg's build path
+#                    (build.json Q3 price_path_rs_bag). warn_pct = a print this
+#                    far below the path. The pack lands ~15 days late, so this
+#                    fires on the month's arrival, not daily.
+#     trade_share    quarterly only (the call). Printed as a reminder with its
+#                    thresholds; the daily mail search is what can move it.
+#     mail_terms     the skill's narrow daily search (PM-sanctioned for this
+#                    watch only): dealer / channel checks and trade share.
 orchestrator:
   rota:
     Mon: [CEMENT]
@@ -341,3 +360,30 @@ orchestrator:
   revision_flag_pct: 1.0
   result_soon_days: 7
   default_window_days: 7
+  watches:
+    - pair: UTCEM_SRCM
+      since: "2026-10-27"
+      until: "2027-01-31"      # through both Q3FY27 prints
+      why: >-
+        PM, 2026-10-27: "It loses if the market decides Shree deserves
+        UltraTech's multiple, or if petcoke normalises quickly. Watch for both
+        through Q3: the November dealer price checks, Shree's trade share, and
+        petcoke. On a daily basis."
+      multiple_gap: {long: ultratech, short: shree, warn_pct: -5.0, alert_pct: 0.0, move_pp: 2.0}
+      # 27-Oct: Shree 14.02x vs UltraTech 15.74x FY28 = -10.9%. Houses: IIFL holds
+      # a 25% discount, I-Sec puts both at 16x (par), BNPP/MS say it sustains.
+      petcoke: {series: cp_coke, warn_usd: 170, alert_usd: 150, drop_pct_4w: -15.0}
+      # $189 on 27-Oct. $170 is about what Brent $127 implies (petcoke = 41.3 +
+      # 1.029 x Brent); $150 is back to the Q2 average ($147), the cargoes Q3 burns.
+      cement_price:
+        warn_pct: -1.0
+        mix:
+          ultratech: {india: 1.0}
+          shree: {north: 0.396, east: 0.367, south: 0.171, west: 0.066}
+      trade_share: {entity: shree, last_pct: 61, as_of: Q2FY27, against_pair_at: 63, for_pair_at: 59,
+                    next: "Q3FY27 call, late January"}
+      # Nomura publishes "India Cement - Cement channel checks — <Mon>'26" in the
+      # first week of each month (Oct'26 on 5-Oct); Kotak's "Construction
+      # Materials" channel check, the pack a week early, lands ~23rd.
+      mail_terms: ["Cement channel checks", "cement dealer check", "Construction Materials", "cement price hike",
+                   "Shree trade share"]

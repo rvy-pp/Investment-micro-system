@@ -217,12 +217,186 @@ def flags(cur: dict, prev: dict | None, th: dict, as_of: str, today: dt.date) ->
     return out
 
 
-def previous_day(before: str) -> dict | None:
+def previous_doc(before: str) -> dict | None:
     files = sorted(f for f in OUT.glob("day_*.json") if f.stem[4:] < before)
-    if not files:
+    return json.loads(files[-1].read_text(encoding="utf-8")) if files else None
+
+
+def previous_day(before: str) -> dict | None:
+    doc = previous_doc(before)
+    if not doc:
         return None
-    doc = json.loads(files[-1].read_text(encoding="utf-8"))
     return {r["entity"]: {**r, "_date": doc["date"]} for r in doc["legs"]}
+
+
+# --------------------------------------------------------------- watches
+# PM, 2026-10-27, on UTCEM_SRCM: "It loses if the market decides Shree deserves
+# UltraTech's multiple, or if petcoke normalises quickly. Watch for both through
+# Q3: the November dealer price checks, Shree's trade share, and petcoke. On a
+# daily basis." A watch is a named risk to one pair, with its thresholds in
+# specs/book.yaml orchestrator.watches. The script computes the numbers it can
+# (the multiple gap, petcoke, the pack's monthly price against each build's
+# path); the skill runs the narrow mail search for dealer checks and trade
+# share. A watch flag is a prompt to read, never a re-mark.
+MON = {m: i for i, m in enumerate(("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1)}
+
+
+def build_path(build: dict) -> dict[str, float]:
+    """{'2026-10': Rs/bag, ...} from each quarter's bridge.price_path_rs_bag.
+    Only plain month keys count: 'Q2_avg' and 'Sep_exit' are the previous
+    quarter's levels, and 'Sep_exit'[:3] would otherwise read as September."""
+    out = {}
+    for q, rec in (build.get("quarters") or {}).items():
+        m = re.match(r"Q[1-4]FY(\d\d)$", q)
+        path = ((rec or {}).get("bridge") or {}).get("price_path_rs_bag") or {}
+        if not m or not path:
+            continue
+        fy = 2000 + int(m.group(1))
+        for k, v in path.items():
+            if "_" in k or k[:3] not in MON:
+                continue
+            mo = MON[k[:3]]
+            out[f"{fy - 1 if mo >= 4 else fy}-{mo:02d}"] = float(v)
+    return out
+
+
+def pack_mix(conn, weights: dict, as_of: str) -> dict[str, dict]:
+    """{'YYYY-MM': {'bag': Rs/bag, 'source': ...}} for months where every
+    weighted region has a print. prices holds Rs per TONNE (cement_pack
+    multiplies the sheet's Rs/bag by 20 on load), so /20 gives back the bag
+    price the builds' paths use. The latest row in a month wins: the current
+    month is a month-to-date average, re-stamped when it changes."""
+    per = {}
+    for reg in weights:
+        rows = conn.execute("SELECT date, close, source FROM prices WHERE entity_id=? AND date<=? ORDER BY date",
+                            (f"cement_price_{reg}_inr", as_of)).fetchall()
+        per[reg] = {d[:7]: (c / 20.0, s) for d, c, s in rows}
+    months = set.intersection(*(set(v) for v in per.values())) if per else set()
+    tot = sum(weights.values())
+    return {m: {"bag": sum(w * per[r][m][0] for r, w in weights.items()) / tot,
+                "source": sorted({per[r][m][1] or "?" for r in weights})} for m in sorted(months)}
+
+
+def _series_at(conn, sid: str, on: str) -> tuple[str, float] | None:
+    r = conn.execute("SELECT date, close FROM prices WHERE entity_id=? AND date<=? ORDER BY date DESC LIMIT 1",
+                     (sid, on)).fetchone()
+    return (r[0], r[1]) if r else None
+
+
+def ev_multiple(conn, ent: str, today: dt.date) -> dict | None:
+    b = cb.brief(ent, conn, today)
+    hfy, ev = b.get("headline_fy"), b.get("ev") or {}
+    c = (b.get("consensus") or {}).get(hfy)
+    if b.get("multiple") != "EV/EBITDA" or not c or not ev.get("ev_cr"):
+        return None
+    return {"fy": hfy, "x": ev["ev_cr"] / c, "price": ev.get("price"), "price_date": ev.get("price_date")}
+
+
+def watch_numbers(conn, w: dict, as_of: str, today: dt.date) -> dict:
+    out = {"pair": w["pair"], "until": w.get("until"), "why": w.get("why")}
+    g = w.get("multiple_gap")
+    if g:
+        lo, sh = ev_multiple(conn, g["long"], today), ev_multiple(conn, g["short"], today)
+        out["gap"] = ({"long": g["long"], "short": g["short"], "long_x": lo["x"], "short_x": sh["x"], "fy": lo["fy"],
+                       "pct": (sh["x"] / lo["x"] - 1) * 100}
+                      if lo and sh else {"withheld": "no EV/EBITDA on one leg"})
+    p = w.get("petcoke")
+    if p:
+        now = _series_at(conn, p["series"], as_of)
+        ago = _series_at(conn, p["series"], (dt.date.fromisoformat(as_of) - dt.timedelta(days=28)).isoformat())
+        out["petcoke"] = ({"date": now[0], "usd": now[1], "chg_4w_pct": (now[1] / ago[1] - 1) * 100 if ago else None}
+                          if now else {"withheld": f"no {p['series']} price"})
+    cp = w.get("cement_price")
+    if cp:
+        legs = {}
+        for ent, wts in (cp.get("mix") or {}).items():
+            f = cb.CASES / ent / "build.json"
+            path = build_path(json.loads(f.read_text(encoding="utf-8"))) if f.exists() else {}
+            mix = pack_mix(conn, wts, as_of)
+            m = max(mix) if mix else None
+            legs[ent] = {"month": m, "bag": mix[m]["bag"] if m else None, "source": mix[m]["source"] if m else None,
+                         "path": path.get(m) if m else None, "path_months": path}
+        out["cement"] = legs
+    if w.get("trade_share"):
+        out["trade_share"] = w["trade_share"]
+    out["mail_terms"] = w.get("mail_terms") or []
+    return out
+
+
+def watch_flags(cur: dict, prev: dict | None, w: dict, today: dt.date) -> list[str]:
+    """The day's flags for one watch. Pure, so the selftest can drive it."""
+    out = []
+    if w.get("until") and today.isoformat() > w["until"]:
+        out.append(f"watch EXPIRED {w['until']}: extend or drop it in specs/book.yaml")
+    g, gs = cur.get("gap") or {}, w.get("multiple_gap") or {}
+    if "pct" in g:
+        lbl = f"{g['short']} {g['short_x']:.2f}x vs {g['long']} {g['long_x']:.2f}x {g['fy']} EV/EBITDA = {g['pct']:+.1f}%"
+        if g["pct"] >= gs["alert_pct"]:
+            out.append(f"ALERT multiple gap at/over par: {lbl}")
+        elif g["pct"] >= gs["warn_pct"]:
+            out.append(f"WARN multiple gap narrowed past {gs['warn_pct']:+.0f}%: {lbl}")
+        pg = ((prev or {}).get("gap") or {}).get("pct")
+        if isinstance(pg, (int, float)) and abs(g["pct"] - pg) >= gs["move_pp"]:
+            out.append(f"multiple gap moved {pg:+.1f}% -> {g['pct']:+.1f}% in a day")
+    pc, ps = cur.get("petcoke") or {}, w.get("petcoke") or {}
+    if "usd" in pc:
+        if pc["usd"] <= ps["alert_usd"]:
+            out.append(f"ALERT petcoke ${pc['usd']:.0f} <= ${ps['alert_usd']} (normalising)")
+        elif pc["usd"] <= ps["warn_usd"]:
+            out.append(f"WARN petcoke ${pc['usd']:.0f} <= ${ps['warn_usd']}")
+        if isinstance(pc.get("chg_4w_pct"), (int, float)) and pc["chg_4w_pct"] <= ps["drop_pct_4w"]:
+            out.append(f"petcoke {pc['chg_4w_pct']:+.1f}% in 4 weeks (fast fall)")
+    warn = (w.get("cement_price") or {}).get("warn_pct")
+    for ent, c in (cur.get("cement") or {}).items():
+        if not c.get("month"):
+            continue
+        pm_ = (((prev or {}).get("cement") or {}).get(ent) or {}).get("month")
+        vs = (c["bag"] / c["path"] - 1) * 100 if c.get("path") else None
+        txt = f"{ent} mix {c['month']} Rs{c['bag']:.1f}/bag" + (f" vs build Rs{c['path']:.1f} ({vs:+.1f}%)" if vs is not None else "")
+        if pm_ and c["month"] > pm_:
+            out.append(f"NEW pack month: {txt}")
+        if vs is not None and warn is not None and vs <= warn:
+            out.append(f"WARN pack below the build path: {txt}")
+    return out
+
+
+def watches_day(conn, cfg: dict, as_of: str, today: dt.date, prev_doc: dict | None) -> list[dict]:
+    prev = {x["pair"]: x for x in ((prev_doc or {}).get("watches") or [])}
+    out = []
+    for w in (cfg.get("orchestrator") or {}).get("watches") or []:
+        if w.get("since") and today.isoformat() < w["since"]:
+            continue
+        cur = watch_numbers(conn, w, as_of, today)
+        cur["flags"] = watch_flags(cur, prev.get(w["pair"]), w, today)
+        out.append(cur)
+    return out
+
+
+def render_watches(ws: list[dict]) -> list[str]:
+    L = []
+    for x in ws:
+        L += ["", f"WATCH {x['pair']} (until {x.get('until')})"]
+        g = x.get("gap") or {}
+        L.append(f"  multiple  " + (f"{g['short']} {g['short_x']:.2f}x / {g['long']} {g['long_x']:.2f}x {g['fy']} "
+                                    f"EV/EBITDA -> gap {g['pct']:+.1f}%" if "pct" in g else g.get("withheld", "-")))
+        pc = x.get("petcoke") or {}
+        L.append("  petcoke   " + (f"${pc['usd']:.0f} ({pc['date']})" + (f", {pc['chg_4w_pct']:+.1f}% in 4 weeks"
+                                    if isinstance(pc.get("chg_4w_pct"), (int, float)) else "")
+                                    if "usd" in pc else pc.get("withheld", "-")))
+        for ent, c in (x.get("cement") or {}).items():
+            pm_ = c.get("path_months") or {}
+            nxt = ", ".join(f"{k} (build Rs{pm_[k]:.1f})" for k in sorted(pm_) if not c.get("month") or k > c["month"])
+            got = (f"{c['month']} Rs{c['bag']:.1f}/bag ({'/'.join(c['source'])})"
+                   + (f" vs build Rs{c['path']:.1f}" if c.get("path") else "")) if c.get("month") else "no pack month"
+            L.append(f"  pack      {ent}: {got}" + (f"; awaiting {nxt}" if nxt else ""))
+        t = x.get("trade_share")
+        if t:
+            L.append(f"  trade     {t['entity']} {t['last_pct']}% ({t['as_of']}); >= {t['against_pair_at']}% works against "
+                     f"the pair, <= {t['for_pair_at']}% for it; next: {t['next']}")
+        L.append(f"  mail      search today: {' | '.join(x.get('mail_terms') or [])}")
+        L += [f"  FLAG {f}" for f in x["flags"]] or ["  no watch flags"]
+    return L
 
 
 def day(today: dt.date | None = None, write: bool = True) -> dict:
@@ -233,7 +407,7 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
     probs = check_rota(cfg)
     if probs:
         raise SystemExit("rota refused:\n  " + "\n  ".join(probs))
-    th = {k: v for k, v in cfg["orchestrator"].items() if k != "rota"}
+    th = {k: v for k, v in cfg["orchestrator"].items() if k not in ("rota", "watches")}
     legs, unwatched = watched(analysis.roster(cfg))
     if not legs:
         raise SystemExit("no leg has a case agent yet; nothing to watch")
@@ -252,11 +426,12 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
             r = leg_day(conn, g, as_of, split, today)
             r["flags"] = flags(r, (prev or {}).get(g["entity"]), th, as_of, today)
             recs.append(r)
+        watches = watches_day(conn, cfg, as_of, today, previous_doc(today.isoformat()))
     finally:
         conn.close()
     doc = {"date": today.isoformat(), "as_of": as_of, "session_today": as_of == today.isoformat(),
            "sector_day": groups_for(cfg, today), "unwatched": len(unwatched), "previous": (next(iter(prev.values()))["_date"] if prev else None),
-           "legs": recs}
+           "legs": recs, "watches": watches}
     if write:
         OUT.mkdir(parents=True, exist_ok=True)
         (OUT / f"day_{today.isoformat()}.json").write_text(json.dumps(doc, indent=1, default=str), encoding="utf-8")
@@ -283,6 +458,7 @@ def render_day(doc: dict) -> str:
                  f"{f(j.get('bear'))} {f(j.get('base'))} {f(j.get('bull'))} {f(r.get('lean'))}  {ag}")
     fl = [(r["token"], x) for r in doc["legs"] for x in r["flags"]]
     L += ["", f"FLAGS ({len(fl)})"] + [f"  {t:8} {x}" for t, x in fl] + ([] if fl else ["  none"])
+    L += render_watches(doc.get("watches") or [])
     return "\n".join(L)
 
 
@@ -422,6 +598,56 @@ def _selftest() -> None:
     yes, no = watched(lg, has=lambda tk: tk != "B")
     assert [g["token"] for g in yes] == ["A", "C"] and [g["token"] for g in no] == ["B"]; ok += 1
     assert watched(lg, has=lambda tk: False) == ([], lg); ok += 1          # no agent: nothing watched
+
+    # ---- watches (UTCEM_SRCM, PM 2026-10-27)
+    bp = build_path({"quarters": {"Q3FY27": {"bridge": {"price_path_rs_bag": {
+        "Q2_avg": 353.7, "Sep_exit": 358.3, "Oct": 372.7, "Nov": 371.9, "Dec": 370.7}}},
+        "Q4FY27": {"bridge": {"price_path_rs_bag": {"Jan": 375.0}}}, "Q2FY27": {"kind": "actual"}}})
+    # Sep_exit must NOT become 2026-09: it is last quarter's level (rejection beside acceptance)
+    assert bp == {"2026-10": 372.7, "2026-11": 371.9, "2026-12": 370.7, "2027-01": 375.0}, bp; ok += 1
+    import sqlite3
+    mem = sqlite3.connect(":memory:")
+    mem.execute("CREATE TABLE prices (entity_id TEXT, date TEXT, close REAL, source TEXT)")
+    mem.executemany("INSERT INTO prices VALUES (?,?,?,?)", [
+        ("cement_price_north_inr", "2026-09-30", 7000.0, "cement_pack"),
+        ("cement_price_east_inr", "2026-09-30", 7200.0, "cement_pack"),
+        ("cement_price_north_inr", "2026-10-23", 7400.0, "kotak_check"),   # east has no October yet
+        ("cement_price_north_inr", "2026-08-20", 6800.0, "cement_pack"),   # month-to-date, superseded
+        ("cement_price_north_inr", "2026-08-31", 6900.0, "cement_pack"),
+        ("cement_price_east_inr", "2026-08-31", 7100.0, "cement_pack")])
+    pm = pack_mix(mem, {"north": 0.75, "east": 0.25}, "2026-10-27")
+    assert list(pm) == ["2026-08", "2026-09"]; ok += 1                     # October needs both regions
+    assert abs(pm["2026-09"]["bag"] - (0.75 * 350 + 0.25 * 360)) < 1e-9; ok += 1   # Rs/t / 20, weighted
+    assert abs(pm["2026-08"]["bag"] - (0.75 * 345 + 0.25 * 355)) < 1e-9; ok += 1   # latest row in a month wins
+    wspec = {"until": "2027-01-31", "multiple_gap": {"warn_pct": -5.0, "alert_pct": 0.0, "move_pp": 2.0},
+             "petcoke": {"warn_usd": 170, "alert_usd": 150, "drop_pct_4w": -15.0}, "cement_price": {"warn_pct": -1.0}}
+    gap = lambda p: {"short": "shree", "long": "ultratech", "short_x": 14.0, "long_x": 15.7, "fy": "FY28", "pct": p}
+    calm = {"gap": gap(-10.9), "petcoke": {"usd": 189.0, "date": "2026-10-27", "chg_4w_pct": 17.0},
+            "cement": {"shree": {"month": "2026-09", "bag": 358.3, "path": None}}}
+    pcalm = {**calm}
+    td = dt.date(2026, 10, 28)
+    assert watch_flags(calm, pcalm, wspec, td) == []; ok += 1             # today's state: quiet
+    assert watch_flags({**calm, "gap": gap(-4.0)}, pcalm, wspec, td)[0].startswith("WARN multiple gap"); ok += 1
+    f2 = watch_flags({**calm, "gap": gap(0.4)}, pcalm, wspec, td)
+    assert f2[0].startswith("ALERT multiple gap") and any("moved -10.9% -> +0.4%" in x for x in f2); ok += 1
+    assert watch_flags({**calm, "gap": gap(-9.0)}, pcalm, wspec, td) == []; ok += 1   # 1.9pp: under move_pp
+    assert watch_flags({**calm, "petcoke": {"usd": 165.0, "chg_4w_pct": -5.0}}, pcalm, wspec, td) == [
+        "WARN petcoke $165 <= $170"]; ok += 1
+    f3 = watch_flags({**calm, "petcoke": {"usd": 148.0, "chg_4w_pct": -20.0}}, pcalm, wspec, td)
+    assert f3 == ["ALERT petcoke $148 <= $150 (normalising)", "petcoke -20.0% in 4 weeks (fast fall)"], f3; ok += 1
+    octo = {**calm, "cement": {"shree": {"month": "2026-10", "bag": 366.0, "path": 372.7}}}
+    f4 = watch_flags(octo, pcalm, wspec, td)
+    assert len(f4) == 2 and f4[0].startswith("NEW pack month") and f4[1].startswith("WARN pack below"); ok += 1
+    held = {**calm, "cement": {"shree": {"month": "2026-10", "bag": 371.0, "path": 372.7}}}
+    assert [x[:14] for x in watch_flags(held, pcalm, wspec, td)] == ["NEW pack month"]; ok += 1   # -0.5%: no warn
+    assert watch_flags(held, held, wspec, td) == []; ok += 1             # same month again: not new
+    assert watch_flags(calm, pcalm, wspec, dt.date(2027, 2, 1))[0].startswith("watch EXPIRED"); ok += 1
+    live = load_cfg()
+    names = {p["name"] for p in analysis.dictated_pairs(live)}
+    for w in live["orchestrator"].get("watches") or []:
+        assert w["pair"] in names, f"watch on {w['pair']!r}, not a dictated pair"
+        assert {"warn_pct", "alert_pct", "move_pp"} <= set(w.get("multiple_gap") or {"warn_pct": 0, "alert_pct": 0, "move_pp": 0})
+    ok += 1
     print(f"orchestrator selftest: {ok} checks passed")
 
 
