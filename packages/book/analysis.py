@@ -217,6 +217,29 @@ def add_entry(conn, doc: dict, today: dt.date | None = None) -> int:
     return cur.lastrowid
 
 
+def pm_lean(log: list[dict]) -> dict | None:
+    """The `price` entry holding the PM's live lean: the latest one that CARRIES
+    a juice_pct, unless a later price entry says {"clear_lean": true}.
+
+    NOT the latest price entry. Agents log price entries with the range only
+    (juice_low/high, never juice_pct), and the view used to read the lean off
+    the latest one — so an agent re-striking its anchor AFTER the PM set a lean
+    would have silently replaced, say, Wipro's -20.6% with the default base,
+    and moved the Kelly edge with it. Nothing would have raised: a default lean
+    is a valid state. Caught 2026-10-27 while wiring the daily target search,
+    whose whole job is to send agents back to re-strike; no lean had been lost
+    yet (every leg's last price entry carried its lean)."""
+    for e in reversed(log):
+        if e["step"] != "price":
+            continue
+        d = e.get("data") or {}
+        if d.get("clear_lean"):
+            return None
+        if isinstance(d.get("juice_pct"), (int, float)):
+            return e
+    return None
+
+
 def _entries(conn, ent: str) -> list[dict]:
     rows = conn.execute("SELECT * FROM book_analysis WHERE entity_id=? ORDER BY as_of, id",
                         (ent,)).fetchall()
@@ -273,7 +296,8 @@ def view(conn=None, today: dt.date | None = None, defaults: bool = True) -> dict
                 else:
                     steps[k] = {"status": "open"}
             pr = live.get("price")
-            juice = pr["data"].get("juice_pct") if pr else None
+            le = pm_lean(log)
+            juice = le["data"]["juice_pct"] if le else None
             src = "pm" if juice is not None else None
             if juice is None and defaults:
                 juice = default_lean(conn, s["entity"], today)
@@ -389,6 +413,17 @@ def _selftest() -> None:
                          "data": {"juice_pct": -1.5}}, today)
         p = next(x for x in view(conn, today)["pairs"] if x["name"] == "TECHM_LTM")
         assert p["pair_juice"] == 3.5; ok += 1     # long +2.0 minus short -1.5
+
+        # an agent's re-strike logs the RANGE only, after the PM's lean: the lean
+        # must survive it (it used to fall to the default base) and the range moves
+        add_entry(conn, {"entity": "ltimindtree", "step": "price", "status": "partial", "via": "agent:ltm-agent",
+                         "note": "anchor re-struck", "data": {"juice_low": -4.0, "juice_high": 1.0}}, today)
+        lt = next(s for s in view(conn, today)["stocks"] if s["entity"] == "ltimindtree")
+        assert lt["juice"] == -1.5 and lt["juice_source"] == "pm" and lt["juice_low"] == -4.0; ok += 1
+        add_entry(conn, {"entity": "ltimindtree", "step": "price", "note": "PM drops the lean",
+                         "data": {"clear_lean": True}}, today)
+        lt = next(s for s in view(conn, today, defaults=False)["stocks"] if s["entity"] == "ltimindtree")
+        assert lt["juice"] is None and lt["juice_source"] is None; ok += 1         # an explicit clear clears
 
         # roster is the dictated legs, every one mapped, sides from the dictation
         r = roster()

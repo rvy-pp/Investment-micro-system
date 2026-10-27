@@ -1,6 +1,6 @@
 ---
 name: orchestrator
-description: "The day-end watch over every book leg and its case agent: load today's closes, re-mark every case's juice, flag own moves / juice moves / revisions / prints due, and on the rota's sector day (Mon cement, Tue IT, Wed steel, Thu metals & mining, Fri EMS) sweep that sector's mail and news, hand it to the case agents, run them, and report at market end. Use for the case-orchestrator scheduled task, or when asked to run the orchestrator, the day-end check, the sector review, or to have the agents check in."
+description: "The day-end watch over every book leg and its case agent: load today's closes, re-mark every case's juice, flag own moves / juice moves / revisions / prints due, search mail daily for new house targets and send the leg's agent to re-strike its anchor, and on the rota's sector day (Mon cement, Tue IT, Wed steel, Thu metals & mining, Fri EMS) sweep that sector's mail and news, hand it to the case agents, run them, and report at market end. Use for the case-orchestrator scheduled task, or when asked to run the orchestrator, the day-end check, the sector review, or to have the agents check in."
 ---
 
 # Orchestrator — the day-end watch over the case agents
@@ -89,6 +89,50 @@ one does not, because a group missing from the rota would never be reviewed.
      the material file if the agent runs today). The PM decides what changes.
    - **An expired watch** gets one line asking the PM to extend or drop it.
 
+4c. **Targets, daily** (PM, 2026-10-27: *"Add a daily narrow mail search for
+   rating/TP changes on every watched leg to the orchestrator; a new TP goes
+   to that leg's material file and its agent re-strikes the anchor."*). Every
+   case anchors on the houses' targets, so one house re-striking moves the base
+   juice. The `TARGETS` block of `--day` gives, per leg, the search terms, the
+   window (`since` = the previous day-end) and the targets the anchor already
+   **holds**. A leg marked `sector day` is skipped here, because step 6's sweep
+   covers it, but its TP mails are judged the same way.
+   - **Mail, narrow.** For each leg, run `outlook_email_search` with each
+     search term as `query`, `afterDateTime` = `since`, and page it. Keep a hit
+     only if its subject or preview carries a rating or target word: TP, PT,
+     FV, PO, target, price objective, fair value, upgrade, downgrade, initiate,
+     rating, or a rating word (BUY / ADD / HOLD / REDUCE / SELL / OW / UW /
+     Neutral). Read the body of each one you keep (cap: 3 per leg, 15 a day,
+     and say so if the cap binds). Check it is the right company (the traps in
+     step 6), and run a word search, never this sweep, for anything else.
+   - **New or not.** A target is NEW when the `held` list lacks that house at
+     that price. A sales note re-quoting a held target is not new, and neither is
+     a pre-result target (the anchors are post-result). The usual case is a house
+     whose TP changed, or a house not held at all. Note the house, the rating
+     (and its change), the new TP, the prior TP, the note's date, the basis and
+     the quote.
+   - **A new target → the material file → the agent, today, off-rota.** Write
+     it to `data/orchestrator/material/<date>/<entity>.md` (append if the file
+     exists) and dispatch that leg's agent:
+     > Target re-strike, orchestrator, <date>. New house target(s) since
+     > <since> are in `<material file>`. Read them as material the PM handed
+     > you; do not sweep Outlook yourself. Add each to your target table and
+     > re-strike the anchor per the stock-case skill's "Re-striking" rule,
+     > re-run the brief, and log the new range. Never touch the lean. End with:
+     > the old and new anchor, bear / base / bull juice before and after, and
+     > where the PM's lean now sits against the new range.
+     Several legs: dispatch them together. A rating change with an unchanged
+     TP is reported, never dispatched.
+   - **The next day-end flags it.** `--day` compares each leg's held targets
+     with the previous day-end and prints `targets RE-STRUCK: House a -> b;
+     anchor x -> y`, so a re-strike is on the record even if today's report is
+     never read.
+   - **A quiet day is stated in one clause:** *"targets: N mails across 8 legs,
+     no new TP"*.
+   - **The PM's lean never moves here.** If a re-strike puts the lean outside
+     the new bear–bull range, say so, with both numbers, in the report's
+     questions. Only the PM re-sets a lean.
+
 ## On the sector day
 
 5. **The pack.** `python packages/book/orchestrator.py --sector today`. (Run
@@ -116,7 +160,10 @@ one does not, because a group missing from the rota would never be reviewed.
    it is connected, else `WebSearch`). Keep dated, on-entity items only.
 8. **Material files.** Write `data/orchestrator/material/<date>/<entity>.md`
    per leg. Each item gets its date, its source (sender and subject, or outlet
-   and URL) and what it says, numbers first, in two or three lines. A quiet
+   and URL) and what it says, numbers first, in two or three lines. Judge any
+   house target in the sweep against the `TARGETS` held list exactly as in
+   step 4c. A new one goes in under a heading **New targets: re-strike the
+   anchor**, so the agent re-strikes on this run. A quiet
    leg's file says *"nothing new since <window start>: N mails searched, M
    news results, none on-entity"*. That is a stated quiet, not an omission.
 9. **Dispatch the agents**, all of the sector's at once (one message, several
@@ -143,6 +190,9 @@ one does not, because a group missing from the rota would never be reviewed.
     (the PM's standing preference: paragraphs, never one sentence per line):
     - **Day-end:** closes to which date, the flags and what each pair-check
       read, juice and consensus moves.
+    - **Targets:** every new house target found today (house, old → new TP,
+      rating), what each re-strike did to the anchor and the bear / base / bull
+      range, and where the PM's lean sits against it; or the one-clause quiet.
     - **Watches:** each watch's numbers and flags, the dealer checks found in
       mail set against the build paths, or the stated quiet. An ALERT leads the
       whole report.
@@ -161,6 +211,6 @@ one does not, because a group missing from the rota would never be reviewed.
 - Calls a move noise.
 - Writes `prices` by any route but `--prices`, or writes `estimates`, a
   pillar table, or another stock's case.
-- Sweeps mail beyond the day's sector names, the flagged legs and the
-  watches' `mail_terms`. Sends, replies to or labels mail.
+- Sweeps mail beyond the day's sector names, the flagged legs, the
+  watches' `mail_terms` and the daily target search (step 4c). Sends, replies to or labels mail.
 - Commits or pushes. Code changes are not its job.

@@ -21,7 +21,10 @@ Three things, every weekday after the close:
              with a case, the base/bear/bull juice re-marked at today's price
              plus the lean if the PM set one. Compared with the previous
              day-end file, it raises flags (own move, juice move, consensus
-             revision, a print due, a broken build, a deal cross-check due).
+             revision, a print due, a broken build, a deal cross-check due,
+             a house target re-struck). It also prints the TARGETS block the
+             skill's daily target search runs on: the window, the search
+             terms and the house targets each anchor already holds.
              Writes data/orchestrator/day_<date>.json.
   --sector   the rota's groups for today (or named ones): per leg, the move,
              consensus change and stored mail/brief mentions since the group's
@@ -123,12 +126,10 @@ def last_agent_run(conn, ent: str) -> str | None:
 
 
 def live_lean(conn, ent: str) -> float | None:
-    """The PM's lean, if one is set: the latest `price` entry's juice_pct."""
-    for e in reversed(analysis._entries(conn, ent)):
-        if e["step"] == "price":
-            v = (e.get("data") or {}).get("juice_pct")
-            return v if isinstance(v, (int, float)) else None
-    return None
+    """The PM's lean, if one is set (analysis.pm_lean: the latest price entry
+    that CARRIES a juice_pct, so an agent's later range entry cannot erase it)."""
+    e = analysis.pm_lean(analysis._entries(conn, ent))
+    return e["data"]["juice_pct"] if e else None
 
 
 def next_print(conn, ent: str, today: dt.date) -> str | None:
@@ -144,6 +145,85 @@ def next_print(conn, ent: str, today: dt.date) -> str | None:
         if nr and nr >= today.isoformat():
             return nr
     return None
+
+
+# --------------------------------------------------------------- targets
+# PM, 2026-10-27: "Add a daily narrow mail search for rating/TP changes on every
+# watched leg to the orchestrator; a new TP goes to that leg's material file and
+# its agent re-strikes the anchor." Every case anchors on the houses' targets
+# (median of the implied P/Es on IT, mean of the implied EV/EBITDAs on cement),
+# so one house re-striking moves the base juice — and until now only the weekly
+# sector day looked, so a Wednesday re-strike sat unseen until the next rota
+# day. The script supplies what the comparison needs: the window, the search
+# terms and the targets the anchor already holds. The skill reads the mail.
+NAME_TP = r"([A-Z][A-Za-z&.\-]*(?:\s[A-Z][A-Za-z&.\-]*)*)\s+(\d[\d,]*(?:\.\d+)?)"
+
+
+def _tps_from_why(why: str) -> list[dict]:
+    """The houses an anchor_why names, 'ICICI 1,920 / CLSA 2,038 / ... /
+    Nuvama 2,750) = Rs2,342.5, / FY28 consensus ...'. The list runs from the
+    LAST name-number pair of the first ' / ' segment until a segment stops
+    starting with one — so the trailing '/ FY28 consensus Rs161.13' (no space
+    before the number) ends it rather than being read as a house."""
+    segs = (why or "").split(" / ")
+    if len(segs) < 2:
+        return []
+    first = list(re.finditer(NAME_TP, segs[0]))
+    if not first:
+        return []
+    out = [first[-1].groups()]
+    for s in segs[1:]:
+        m = re.match(NAME_TP + r"(?=[\s),]|$)", s.strip())
+        if not m:
+            break
+        out.append(m.groups())
+    return [{"house": h, "tp": float(t.replace(",", ""))} for h, t in out]
+
+
+def known_tps(ent: str, build: dict | None) -> dict:
+    """The targets the leg's anchor already holds, from the most structured
+    place that has them: build.json house_tps (the mechanical anchor, cement
+    today), else valuation.json's houses table (Wipro, HCL Tech, Persistent),
+    else the houses named in the base's anchor_why (TCS, LTIMindtree, TechM).
+    A TP the sweep finds is NEW only if this does not already hold that house at
+    that price: sales notes re-quote a target for weeks after it was struck."""
+    b = build or {}
+    if b.get("house_tps"):
+        return {"source": "build.json house_tps",
+                "houses": [{"house": t["house"], "tp": t["tp"], "date": t.get("date")} for t in b["house_tps"]]}
+    f = cb.CASES / ent / "valuation.json"
+    if f.exists():
+        v = json.loads(f.read_text(encoding="utf-8"))
+        hs = [{"house": h["house"], "tp": h["tp_rs"], "date": h.get("note_date")}
+              for h in v.get("houses") or [] if isinstance(h.get("tp_rs"), (int, float))]
+        if hs:
+            return {"source": "valuation.json", "houses": hs}
+    why = (((b.get("scenarios") or {}).get("base")) or {}).get("anchor_why")
+    hs = _tps_from_why(why)
+    return {"source": "anchor_why" if hs else None, "houses": hs}
+
+
+def search_terms(leg: dict, gcfg: dict) -> list[str]:
+    """The names a leg's mail search runs on: print name, IMS token, NSE symbol
+    and move_check's aliases. One list for the sector sweep and the daily
+    target search, so the two can never look for different companies."""
+    import move_check
+    ent = leg["entity"]
+    return sorted({x for x in [leg["name"], leg["token"], gcfg["symbol_of"].get(ent),
+                               *move_check.ALIASES.get(ent, [])] if x})
+
+
+def tp_signature(known: dict) -> dict[str, float]:
+    return {h["house"]: h["tp"] for h in (known or {}).get("houses") or []}
+
+
+def tp_changes(cur: dict, prev: dict) -> list[str]:
+    """'House 160 -> 170', 'House new 175', 'House dropped' between two
+    day-ends' held targets. Pure, for the selftest."""
+    out = [f"{h} {prev[h]:g} -> {t:g}" for h, t in cur.items() if h in prev and prev[h] != t]
+    out += [f"{h} new {t:g}" for h, t in cur.items() if h not in prev]
+    out += [f"{h} dropped" for h in prev if h not in cur]
+    return out
 
 
 # --------------------------------------------------------------- prices
@@ -183,6 +263,15 @@ def leg_day(conn, leg: dict, as_of: str, split: dict, today: dt.date) -> dict:
             rec["consensus"] = {"fy": hfy, "ebitda_cr": c} if c else None
         cc = ((b.get("deals") or {}).get("cross_check")) or {}
         rec["cross_check_open"] = bool(cc.get("open"))
+        build = cb.load_build(ent)
+        base = ((build or {}).get("scenarios") or {}).get("base") or {}
+        stat = base.get("anchor")
+        # stat: "mean"/"median" when the brief computes it from house_tps; a P/E
+        # leg whose anchor_pe was struck by hand from the houses reads "hand-set".
+        rec["anchor"] = {"stat": stat or ("hand-set" if base.get("anchor_pe") else None),
+                         "x": (b.get("anchor") or {}).get(stat) if stat else base.get("anchor_pe"),
+                         "multiple": b.get("multiple") or "P/E"}
+        rec["targets"] = known_tps(ent, build)
         # PM, 2026-10-27: no lean -> the base is the default lean (analysis.default_lean).
         if rec["lean"] is None and isinstance(rec["juice"].get("base"), (int, float)):
             rec["lean"], rec["lean_default"] = rec["juice"]["base"], True
@@ -207,6 +296,14 @@ def flags(cur: dict, prev: dict | None, th: dict, as_of: str, today: dt.date) ->
         days = (dt.date.fromisoformat(np_) - today).days
         if days <= th["result_soon_days"]:
             out.append(f"prints {np_} ({days}d)" if days else f"prints TODAY ({np_})")
+    if prev and prev.get("targets") is not None and cur.get("targets") is not None:
+        ch = tp_changes(tp_signature(cur["targets"]), tp_signature(prev["targets"]))
+        if ch:
+            a, pa = (cur.get("anchor") or {}).get("x"), (prev.get("anchor") or {}).get("x")
+            ax = f"; anchor {pa:.2f}x -> {a:.2f}x" if isinstance(a, (int, float)) and isinstance(pa, (int, float)) else ""
+            ln = (f"; lean {cur['lean']:+.1f}% is the PM's and stays" if isinstance(cur.get("lean"), (int, float))
+                  and not cur.get("lean_default") else "")
+            out.append(f"targets RE-STRUCK since {prev.get('_date')}: {', '.join(ch)}{ax}{ln}")
     if prev:
         jb, pb = (cur.get("juice") or {}).get("base"), (prev.get("juice") or {}).get("base")
         if isinstance(jb, (int, float)) and isinstance(pb, (int, float)) and abs(jb - pb) >= th["juice_flag_pp"]:
@@ -402,6 +499,27 @@ def render_watches(ws: list[dict]) -> list[str]:
     return L
 
 
+def render_targets(legs: list[dict]) -> list[str]:
+    """The daily target search, one block per leg: what to search since when,
+    and the targets the anchor already holds, so a mail re-quoting one of them
+    is recognised as old."""
+    rs = [r for r in legs if r.get("tp_check")]
+    if not rs:
+        return []
+    L = ["", f"TARGETS  search mail since {rs[0]['tp_check']['since']} for rating / TP changes"]
+    for r in rs:
+        t, a, tc = r.get("targets") or {}, r.get("anchor") or {}, r["tp_check"]
+        hs = t.get("houses") or []
+        ax = (f"{a['x']:.2f}x {a.get('multiple')} ({a['stat']})" if isinstance(a.get("x"), (int, float))
+              else "no anchor")
+        held = (", ".join(f"{h['house']} {h['tp']:g}" for h in hs) + f"  [{t.get('source')}]") if hs else \
+            "none on file: any TP found is new"
+        L.append(f"  {r['token']:8} anchor {ax}; search {' | '.join(tc['terms'])}"
+                 + ("  (sector day: the sweep covers it)" if tc.get("sector_day") else ""))
+        L.append(f"           held: {held}")
+    return L
+
+
 def day(today: dt.date | None = None, write: bool = True) -> dict:
     import grading
     import sector_rel
@@ -424,10 +542,18 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
         # reads against Friday and a post-holiday day against the last session.
         split = sector_rel.build(conn, eids, as_of, grading.load_config(conn), window_days=1)
         prev = previous_day(today.isoformat())
+        gcfg = grading.load_config(conn)
+        # The target search runs from the previous day-end (a Monday reaches back
+        # over the weekend); with no previous file, three days.
+        since = (next(iter(prev.values()))["_date"] if prev
+                 else (today - dt.timedelta(days=3)).isoformat())
+        today_groups = set(groups_for(cfg, today))
         recs = []
         for g in legs:
             r = leg_day(conn, g, as_of, split, today)
             r["flags"] = flags(r, (prev or {}).get(g["entity"]), th, as_of, today)
+            r["tp_check"] = {"since": since, "terms": search_terms(g, gcfg),
+                             "sector_day": g["group"] in today_groups}
             recs.append(r)
         watches = watches_day(conn, cfg, as_of, today, previous_doc(today.isoformat()))
     finally:
@@ -464,6 +590,7 @@ def render_day(doc: dict) -> str:
         L.append("* lean = the base, by default (PM 2026-10-27), until the PM picks one")
     fl = [(r["token"], x) for r in doc["legs"] for x in r["flags"]]
     L += ["", f"FLAGS ({len(fl)})"] + [f"  {t:8} {x}" for t, x in fl] + ([] if fl else ["  none"])
+    L += render_targets(doc["legs"])
     L += render_watches(doc.get("watches") or [])
     return "\n".join(L)
 
@@ -508,7 +635,7 @@ def sector(groups: list[str], today: dt.date | None = None, write: bool = True) 
                 "agent": cb.agent_name(g["token"]) if agent_file(g["token"]).exists() else None,
                 "case": has_case(ent), "last_agent_run": last_agent_run(conn, ent),
                 "next_print": next_print(conn, ent, today),
-                "search_terms": sorted({x for x in [g["name"], g["token"], sym, *move_check.ALIASES.get(ent, [])] if x}),
+                "search_terms": search_terms(g, gcfg),
                 "move": {k: sec.get(k) for k in ("stock_pct", "sector_pct", "rel_pct", "from", "to", "withheld") if k in sec},
                 "consensus": move_check.check_consensus(conn, ent, start, today.isoformat()),
                 "stored_mail": move_check.check_mail(conn, ent, pats, start, today.isoformat(), REPO)})
@@ -604,6 +731,31 @@ def _selftest() -> None:
     yes, no = watched(lg, has=lambda tk: tk != "B")
     assert [g["token"] for g in yes] == ["A", "C"] and [g["token"] for g in no] == ["B"]; ok += 1
     assert watched(lg, has=lambda tk: False) == ([], lg); ok += 1          # no agent: nothing watched
+
+    # ---- daily target search (PM 2026-10-27)
+    why = ("PM: 'adopt median'. Median of 3 houses' post-Q2 TPs (8-9 Oct notes; ICICI 1,920 / ICICI Sec 2,038.5 / "
+           "Morgan Stanley 2,750) = Rs2,038.5, / FY28 consensus Rs161.13 = 12.65x implied (mean 13.0x).")
+    tw = _tps_from_why(why)
+    assert [(h["house"], h["tp"]) for h in tw] == [("ICICI", 1920.0), ("ICICI Sec", 2038.5),
+                                                   ("Morgan Stanley", 2750.0)], tw; ok += 1
+    # the trailing '/ FY28 consensus Rs161.13' and a text with no list are not houses (rejection)
+    assert _tps_from_why("Anchor at today's P/E, no houses named.") == []; ok += 1
+    assert tp_changes({"A": 160.0, "B": 150.0}, {"A": 160.0, "B": 150.0}) == []; ok += 1
+    assert tp_changes({"A": 170.0, "C": 175.0}, {"A": 160.0, "B": 150.0}) == ["A 160 -> 170", "C new 175", "B dropped"]; ok += 1
+    tq = {**quiet, "targets": {"houses": [{"house": "A", "tp": 170.0}]}, "anchor": {"x": 11.8}, "lean": -20.6}
+    tp_prev = {**prev, "targets": {"houses": [{"house": "A", "tp": 160.0}]}, "anchor": {"x": 11.33}}
+    fr = flags(tq, tp_prev, th, "2026-10-26", t)
+    assert fr == ["targets RE-STRUCK since 2026-10-23: A 160 -> 170; anchor 11.33x -> 11.80x; "
+                  "lean -20.6% is the PM's and stays"], fr; ok += 1
+    assert flags(tq, {**tp_prev, "targets": tq["targets"]}, th, "2026-10-26", t) == []; ok += 1   # held: no flag
+    # a previous day-end written before this existed carries no targets: not "every house new"
+    assert flags(tq, prev, th, "2026-10-26", t) == []; ok += 1
+    assert "stays" not in flags({**tq, "lean_default": True}, tp_prev, th, "2026-10-26", t)[0]; ok += 1
+    for g in watched(analysis.roster(live := load_cfg()))[0]:                 # every watched case holds its targets
+        if has_case(g["entity"]):
+            kt = known_tps(g["entity"], cb.load_build(g["entity"]))
+            assert len(kt["houses"]) >= 5, (g["entity"], kt)
+    ok += 1
 
     # ---- watches (UTCEM_SRCM, PM 2026-10-27)
     bp = build_path({"quarters": {"Q3FY27": {"bridge": {"price_path_rs_bag": {

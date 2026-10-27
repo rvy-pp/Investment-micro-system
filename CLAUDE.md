@@ -1233,7 +1233,36 @@ The skill (step 4b) runs the watch's narrow `mail_terms` search daily: Nomura's
 monthly "Cement channel checks", Kotak's "Construction Materials", dealer
 checks, and Shree trade share. It sets the numbers against the build paths. A
 watch flag is a prompt to read, never a re-mark. The `case-orchestrator` task
-prompt carries the step. orchestrator selftest 32.
+prompt carries the step.
+
+**Targets: a daily search for new house TPs (2026-10-27).** PM: *"Add a daily
+narrow mail search for rating/TP changes on every watched leg to the
+orchestrator; a new TP goes to that leg's material file and its agent
+re-strikes the anchor."* Every case anchors on the houses' targets (the median
+implied P/E on IT, the mean implied EV/EBITDA on cement). Before this, only the
+weekly sector day looked, so a target changed on a Wednesday went unseen until
+the next rota day. The pieces:
+- **The TARGETS block.** `--day` prints, per watched leg, the search terms (one
+  `search_terms()` shared with the sector pack), the window since the previous
+  day-end, and the targets the anchor HOLDS. `known_tps()` reads them from
+  build.json `house_tps`, else `valuation.json`, else the houses named in
+  `anchor_why`.
+- **The search (skill step 4c).** It keeps only TP and rating mails and reads up
+  to 3 bodies per leg. A house at a price not held is new. Each new one goes to
+  the material file, and that leg's agent re-strikes off-rota. Under the
+  stock-case "Re-striking" rule, a hand-set `anchor_pe` moves to `house_tps` +
+  `"anchor"` on its first re-strike, so the brief computes the multiple.
+- **The record.** The next `--day` compares held targets day-end to day-end
+  and flags `targets RE-STRUCK: House a -> b; anchor x -> y`.
+
+**A silent bug it would have tripped, fixed first** (`analysis.pm_lean`). The
+lean was read off the LATEST `price` entry. Agents log the range only, so a
+re-strike logged after the PM's lean would have dropped Wipro's −20.6% to the
+default base, and moved the Kelly edge with it. Nothing would have raised,
+because a default lean is a valid state. The lean is now the latest entry that
+CARRIES a `juice_pct`, and `{"clear_lean": true}` clears it explicitly. No lean
+had been lost: every leg's last price entry still carried its lean.
+orchestrator selftest 41, analysis 20.
 
 ### Pair grading — the forward record of SELECTION, 2026-10-05
 

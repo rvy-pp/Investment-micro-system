@@ -186,6 +186,30 @@ with EBITDA in place of EPS. These are the differences:
   (median printed beside it), and writes `anchor_why` naming every TP. Stated
   multiples sit on mixed bases and are recorded, not used. The same `anchor`
   key works for a P/E leg (implied = TP / consensus EPS).
+- **Re-striking (PM, 2026-10-27).** The orchestrator's daily target search
+  hands you new house targets in a material file. For each one:
+  - **Update the table.** In `house_tps` (house, tp, date, basis, source),
+    REPLACE that house's row; never add a second row for it. A house absent
+    from `valuation.json` or `anchor_why` is added. Keep `valuation.json`'s
+    `houses` row in step (tp_rs, prior_tp_rs, note_date, quote, uri) and add a
+    `revisions` line.
+  - **Let the brief compute the anchor; never compute it in your head.** A leg
+    whose base carries a hand-set `anchor_pe` (IT today) moves on its first
+    re-strike: every held TP goes into `house_tps`, `anchor_pe` comes out, and
+    `"anchor"` takes the statistic the PM chose (`median` for IT, `mean` for
+    cement). The implied P/E is then TP / TODAY's consensus EPS. Expect that
+    alone to move the multiple a little, and report the move separately from
+    the new house's effect (run the brief once before adding the house, once
+    after).
+  - **Re-run the brief, rewrite `anchor_why`** (every TP and date, the CMP
+    they were struck at), log a `price` entry with the new range (`--price-entry`,
+    `juice_low/high` only), and say in the case file's run log what moved.
+  - **Never the lean.** The PM's `juice_pct` survives your range entry
+    (`analysis.pm_lean` reads the latest entry that CARRIES one). If it now sits
+    outside bear–bull, put that, with both numbers, in your questions for the
+    PM.
+  - **The pair partner** gets the same treatment only when its own houses
+    move; do not re-strike a partner on this leg's news.
 - **Bands:** `case_bands` for an EV sector take `per_t_inr` and `growth_pp`
   (QoQ volume, compounding). CEMENT is ±Rs50/t and ±1pp (PM, 2026-10-25).
   A future EV sector without a band has no bear/bull and no price entry until
