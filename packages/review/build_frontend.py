@@ -156,7 +156,9 @@ def check() -> dict:
                                       f"house(s), {len(bd.get('rows') or [])} name(s)"})
 
     # /api/book_analysis - the Book's Analysis sub-tab (2026-10-10). The roster
-    # is the dictated legs (32 until PGEL_AMBER made it 33, 2026-10-25), so a
+    # is the dictated legs (32 until PGEL_AMBER made it 33, 2026-10-25; 31 from
+    # 2026-10-27, when the cash names DALBHARA and LTTS came off via
+    # specs/book.yaml analysis_exclude, which expected_legs() honours), so a
     # count short of what the dictation names means specs/book.yaml and the
     # ticker map have drifted apart — a problem, not a quiet short list.
     ba, _ = route("/api/book_analysis", engine.book_analysis)

@@ -158,6 +158,18 @@ pairs:
   MINING:
     - {name: COAL_NMDC,     long: [COAL],     short: [NMDC]}
 
+# analysis_exclude: dictated legs kept OFF the Book tab's Analysis sub-tab,
+# and with it off the case agents, the orchestrator and every per-stock check.
+# PM, 2026-10-27: "remove cash names from the analysis. i will remove LTTS
+# entirely", then "let Syrma be there, it will come in fno". A cash name is a
+# leg the IMS prints with no futures contract (the "IN Equity" lines: DALBHARA,
+# SYRMA, LTTS on the 21-10 snapshot), so Syrma is the one cash leg kept. This
+# is the Analysis ROSTER only: the pairs, their P&L, the index, Kelly and VaR
+# still carry these legs while they are on the book. Token -> reason.
+analysis_exclude:
+  DALBHARA: cash line, Dalmia is out of F&O
+  LTTS: cash line, not in F&O; the PM is removing it from the book
+
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
 names:

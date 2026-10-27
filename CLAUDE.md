@@ -1011,7 +1011,14 @@ retired pair only if it carried a call, and this one has none, so that 13w grade
 would silently never have been written. A retired pair with a STORED grade is
 now a unit too. The Analysis roster is 33 legs: the hardcoded 32 in
 `build_frontend.py` and the analysis selftest became `analysis.expected_legs()`,
-counted from the dictation. **JINDA_SAIL retired the same way** (PM: *"Jindal
+counted from the dictation. **It is 31 since 2026-10-27: the cash names are
+off** (PM: *"remove cash names from the analysis. i will remove LTTS entirely"*,
+then *"let Syrma be there, it will come in fno"*). A cash name is a leg the IMS
+prints with no futures contract (the `IN Equity` lines): DALBHARA, SYRMA and
+LTTS. `specs/book.yaml analysis_exclude` lists DALBHARA and LTTS with reasons,
+and `roster()` and `expected_legs()` both honour it. Syrma stays. Only the
+Analysis roster changes (and so the case agents and the orchestrator). Their
+pairs, P&L, the index, Kelly and VaR still carry them while they are on the book. **JINDA_SAIL retired the same way** (PM: *"Jindal
 and SAIL are two different pairs with Tata steel as a short for now"*). SAIL was
 short 04-09 .. 30-09 and came back LONG on 08-10. The dictation now has
 **JINDA_TATA** and **SAIL_TATA**, so Tata's short backs three longs (JSTL,

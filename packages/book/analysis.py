@@ -90,13 +90,16 @@ def roster(cfg: dict | None = None) -> list[dict]:
     """
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
     tmap, names = cfg.get("ticker_map") or {}, cfg.get("names") or {}
+    # PM, 2026-10-27: cash names off the Analysis roster (Syrma kept). The
+    # tokens live in specs/book.yaml analysis_exclude with the reason.
+    skip = set(cfg.get("analysis_exclude") or {})
     out: dict[str, dict] = {}
     for group, pairs in (cfg.get("pairs") or {}).items():
         for p in pairs:
             for side in ("long", "short"):
                 for tok in p.get(side) or []:
                     ent = tmap.get(tok)
-                    if not ent:
+                    if not ent or tok in skip:
                         continue
                     if ent in out:
                         if out[ent]["side"] != side:
@@ -118,9 +121,10 @@ def expected_legs(cfg: dict | None = None) -> int:
     """
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
     tmap = cfg.get("ticker_map") or {}
+    skip = set(cfg.get("analysis_exclude") or {})        # counted out by name, as roster() leaves them out
     return len({tmap.get(t) or f"UNMAPPED:{t}"
                 for ps in (cfg.get("pairs") or {}).values() for p in ps
-                for side in ("long", "short") for t in p.get(side) or []})
+                for side in ("long", "short") for t in p.get(side) or [] if t not in skip})
 
 
 def dictated_pairs(cfg: dict | None = None) -> list[dict]:
@@ -431,6 +435,15 @@ def _selftest() -> None:
         assert all(x["side"] != "both" for x in r), [x["entity"] for x in r if x["side"] == "both"]
         assert next(x for x in r if x["entity"] == "tech_mahindra")["side"] == "long"
         assert next(x for x in r if x["entity"] == "ltimindtree")["side"] == "short"; ok += 1
+        # cash names off (PM 2026-10-27), Syrma kept; the count follows the exclusion
+        fx = {"ticker_map": {"A": "a", "B": "b", "C": "c"},
+              "pairs": {"G": [{"name": "A_B", "long": ["A"], "short": ["B"]},
+                              {"name": "C_B", "long": ["C"], "short": ["B"]}]}}
+        assert [x["entity"] for x in roster(fx)] == ["a", "b", "c"] and expected_legs(fx) == 3; ok += 1
+        fx["analysis_exclude"] = {"C": "cash"}
+        assert [x["entity"] for x in roster(fx)] == ["a", "b"] and expected_legs(fx) == 2; ok += 1
+        live = {x["token"] for x in r}
+        assert "SYRMA" in live and not live & {"DALBHARA", "LTTS"}, live; ok += 1
         conn.close()
     finally:
         os.unlink(tmp.name)
