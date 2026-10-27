@@ -1,0 +1,417 @@
+{
+ "date": "2026-10-27",
+ "generated_at": "2026-10-27T11:05:07",
+ "mail": {
+  "window": "24h to 10:41 IST",
+  "n_scanned": 202,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Zinc leads base metals: LME $3,823/t, backwardation above $100/t from ~$35 last week; HZL/Vedanta tailwind, resistance at $3,840-3,860.",
+      "source": "Emkay — Commodity Market Report: Gold steadies at $4,000 before Fed; Zinc tightens as oil retreats",
+      "received": "09:44",
+      "detail": {
+       "summary": "Zinc outperformed on tight prompt supply, with MCX inventories falling and Peru mine output weak. Emkay stays constructive on MCX but flags profit-booking risk on LME near resistance.",
+       "points": [
+        "LME zinc $3,823/t; MCX Nov Rs412/kg",
+        "LME cash-3M backwardation >$100/t vs ~$35",
+        "Peru Aug-26 zinc 105,625t, -28.1% yoy",
+        "LME resistance zone $3,840-3,860/t",
+        "Copper backwardation ~$188/t"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HZL raises zinc and lead benchmark prices as LME strengthens.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:59",
+      "detail": {
+       "summary": "Kotak's daily news list carries the headline only, sourced to BigMint; no price levels are given in the mail body.",
+       "points": [
+        "HZL raised zinc and lead benchmarks",
+        "Cited driver: stronger LME prices",
+        "Headline only; no figures in body"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NALCO raises aluminium P1020 prices despite declining LME prices.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:59",
+      "detail": {
+       "summary": "Domestic primary aluminium pricing by NALCO moved up against a falling LME, a positive realisation datapoint. The mail gives the headline only.",
+       "points": [
+        "NALCO raised P1020 prices",
+        "LME aluminium declining at the time",
+        "Headline only; no figures in body"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "IIFL downgrades APL Apollo to ADD, TP Rs2,095 (from Rs2,171); FY27-29 volumes cut 8%, though Ebitda/t Rs5,999 and ~Rs6,000 called sustainable.",
+      "source": "IIFL Metals — [IIFL Metals] APL Apollo (Downgrade to ADD) - Strong profitability but weak FY27 vol. outlook",
+      "received": "07:50",
+      "detail": {
+       "summary": "Margin beat came from brand-led pricing, richer mix and operating leverage, not steel prices. Volume guidance now ~15% growth only for Apollo brand and roofing, so IIFL cuts volumes and sees limited valuation upside at 35x Sep-27e PAT.",
+       "points": [
+        "Q2 volumes 963kt, +12.6% yoy, +29% qoq",
+        "FY27-29 Ebitda/t raised 6%/5%/1%; PAT cut 3%/4%/7%",
+        "FY28/29 Ebitda/t modelled at ~Rs5,750",
+        "Net cash Rs16.2bn; capacity expansion to 8mt on track"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Jindal Steel 2Q Ebitda Rs25.7bn, 8% above IIFL; Ebitda/t Rs10,522 on record 2.38mt, 3Q to improve as HRC/TMT rose Rs8-9k/t; BUY, TP Rs1,350.",
+      "source": "IIFL Metals — [IIFL Metals] Jindal Steel - Higher volumes and better spreads in 2HFY27",
+      "received": "13:01",
+      "detail": {
+       "summary": "Qoq margin fell on coking coal, freight and monsoon costs, but price rises through 2Q flow fully into 3Q. Slurry pipeline is commissioned and management is confident of 6mt in 2H for FY27 sales guidance of 10.5-11mt.",
+       "points": [
+        "Adj Ebitda/t -Rs1,437 qoq; flats share 61% vs 49% yoy",
+        "HRC Rs51k to Rs60k/t; TMT Rs52k to ~Rs60k/t in 2Q",
+        "3Q coking coal guided +US$20-25/t",
+        "Captive ore share 33% vs 25%; DRI/pellet slipped to Jun-27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW Steel 2Q Ebitda Rs101bn (+42% yoy) on record 7.46mt; price hikes seen offsetting ~US$25/t 3Q coal rise; ADD, TP Rs1,435.",
+      "source": "IIFL Metals — [IIFL Metals] JSW Steel - Record volumes; Continued focus on expansion (+9 more in Outlook)",
+      "received": "12:59",
+      "detail": {
+       "summary": "Volume more than offset weaker longs-led NSR and higher coal cost. FY27 guidance of 28.6mt sales is reiterated, implying ~14.9mt in 2H, with leverage trending down despite the larger capex plan.",
+       "points": [
+        "Standalone Ebitda/t Rs11,370, down ~Rs1,380 qoq",
+        "Net debt/Ebitda 1.28x; net debt/equity 0.39x",
+        "BF-3 at ~90% utilisation; India utilisation 88%",
+        "FY27 capex guided Rs220-240bn; 78mtpa target by FY32"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Dalmia 2Q EBITDA Rs4.9bn missed street by ~16% on 3% volume growth; Kotak cuts FV to Rs1,670 (REDUCE), Emkay downgrades to ADD, TP Rs1,850.",
+      "source": "Kotak — [Kotak] Dalmia Bharat (CMP: Rs1,625, FV: Rs1,670, REDUCE): A disappointing quarter (+ Emkay downgrade; ~10 more Dalmia notes in Outlook)",
+      "received": "08:00",
+      "detail": {
+       "summary": "Miss came from weak East demand, lower realisation and losses in acquired JPA assets. Kotak sees cost inflation outpacing price hikes near term and cuts FY27-29E EBITDA; Emkay cites market share loss and ~9x 1YF EV/EBITDA leaving limited upside.",
+       "points": [
+        "EBITDA/t Rs698 (Kotak) vs Rs785 est; Emkay Rs694 vs Rs1,013 yoy",
+        "Volumes 7.1mt, +2.8% yoy, -7.5% qoq",
+        "Kotak cuts FY27/28/29E EBITDA 16%/6.4%/8.7%",
+        "JPA breakeven target end-4QFY27; pet costs +Rs75-80/t in 3Q",
+        "Oct prices Rs15/bag above 2Q average; CMO moves to advisory Jan-27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay leaderboard 2QFY27 EBITDA/t: UltraTech Rs974, Shree Rs912, JK Cement Rs852 (15% above est), Dalmia Rs694; ACC and JSW Cement report today.",
+      "source": "Emkay — Cement Corner: Leaderboard, Dalmia Bharat, JK Cement, Grasim, Result Calendar",
+      "received": "07:50",
+      "detail": {
+       "summary": "Dalmia ranks fifth of six on unit profit, down from Rs1,013 a year ago, while UltraTech is the only one up yoy among the leaders. JK Cement beat on realisation and freight; Ambuja reports 29-Oct.",
+       "points": [
+        "Shree EBITDA/t 912 vs 1,106 yoy; volume +17.7%",
+        "JK Cement SA EBITDA Rs5bn, +14% yoy; call today 12pm",
+        "JK net debt Rs45.7bn, 1.95x EBITDA on 7mtpa North expansion",
+        "JSW Cement 2Q preview: EBITDA/t ~Rs655, -24% yoy",
+        "Ambuja 29-Oct; Birla Corp 31-Oct; JK Lakshmi 4-Nov"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Shree 2Q EBITDA/t Rs912 in line with PhillipCapital (+1% on absolute EBITDA vs us, +6% vs street); Buy kept, TP cut to Rs29,900 from Rs31,600.",
+      "source": "PhillipCapital — Shree Cement (SRCM IN) - The return of Sustainable Healthy Robust Earnings Everytime!",
+      "received": "12:21 (26-Oct)",
+      "detail": {
+       "summary": "Phillip calls Shree the relative outperformer as it accepts a higher non-trade mix. It trims FY27/28 EBITDA 5% on the industry's delay in passing on cost pressure; implied EV/tonne at target is US$145 against 105 now.",
+       "points": [
+        "EBITDA Rs8.5bn; EBITDA/t 912 vs 924 est, 966 consolidated",
+        "Volume +18% yoy, -11% qoq; EBITDA/t -18% yoy",
+        "H2FY27 volume growth likely +9-10%",
+        "FY27E EPS Rs447.6, down 9%",
+        "CMP Rs22,735; TP implies +32%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "PhillipCapital: stop loss triggered on Buy Coal India / Sell Powergrid pair from 14 Oct, entered at ratio 1.679 against a 1.620 stop.",
+      "source": "PhillipCapital (Subodh Gupta) — Stop Loss triggered….BUY COAL INDIA SELL POWERGRID….Call given on 14th OCT",
+      "received": "10:36",
+      "detail": {
+       "summary": "The technical pair call on the weekly Coal India/Powergrid ratio chart has hit its closing-basis stop. The body only forwards the 14 Oct initiation, which set the levels.",
+       "points": [
+        "Entry 14-Oct: Coal India 418, Powergrid 249",
+        "Entry ratio 1.67871; target 1.84659 (+10%)",
+        "Stop 1.61996 (-3.5%), daily closing basis",
+        "Delta neutral: 1 lot each, 1350 vs 1900 shares"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "PGEL reports Q2 today at 17:00; Nuvama sees EBITDA Rs0.42bn (4.89% margin) vs street Rs0.51bn (5.99%), PAT in line at Rs0.11bn; stock -8.5% in 5 days.",
+      "source": "Nuvama — FW: Result Estimates for 27th October 2026 : LT, MSIL, BJAUT, TATA, SBILIFE, CIPLA, SAIL, RADICO, MAXF, PGEL",
+      "received": "16:51",
+      "detail": {
+       "summary": "Nuvama pre-result sheet puts PGEL revenue in line with street but EBITDA about 18% below Bloomberg consensus. It expects products growth on a favourable RAC base and price hikes from cost inflation. Positioning shows legacy shorts and delivery-based selling.",
+       "points": [
+        "Revenue Rs8.51bn vs street Rs8.50bn",
+        "EBITDA Rs0.42bn vs Rs0.51bn; margin 4.89% vs 5.99%",
+        "Products segment +65% YoY; RAC +100% YoY",
+        "5-day price -8.47%, OI +24.83%",
+        "Highest call OI 510CE, put OI 450PE"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: Aequs Q2 EBITDA Rs139mn, 44% below estimate; consumer utilisation 17%, breakeven guidance withdrawn; REDUCE kept, FV cut to Rs235 from Rs240.",
+      "source": "Kotak — [Kotak] Aequs (CMP: Rs242, FV: Rs235, REDUCE): Aerospace delivers; consumer ramp-up disappoints",
+      "received": "06:15",
+      "detail": {
+       "summary": "Aerospace beat but consumer electronics and toys lagged on qualification delays and supply-chain disruption, widening losses. Management withdrew the consumer EBITDA breakeven target of 4QFY27 and now aims for 50% utilisation by then. Kotak cuts estimates and rolls forward to December 2028E.",
+       "points": [
+        "Revenue Rs4.1bn, +45% YoY, 7% below estimate",
+        "Consumer revenue Rs577mn, 42% below estimate",
+        "Reported loss Rs524mn vs Kotak Rs356mn",
+        "FY27-29 EPS cut 1.5-22%; EBITDA cut 0.5-9.4%",
+        "Aerospace order book US$1.09bn, +9% QoQ"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Counterpoint: Indian phone brands (Lava, Ai+) hit 7% share in Sept quarter vs 2% a year ago, as Chinese brands retreat and memory costs squeeze budget phones.",
+      "source": "Nomura — India Consumer Durables and EMS: Chinese phone companies lag but Indian phone brands gain share, but in a shrinking market",
+      "received": "09:08",
+      "detail": {
+       "summary": "News roundup flags Indian brands gaining share in a shrinking smartphone market as rising memory chip prices hurt budget phones. Consumers are delaying purchases and incumbents retain technology and distribution advantages. Separately, Apple Operations India reported Rs650 crore of FY26 software revenue.",
+       "points": [
+        "Indian brands 7% share vs 2% a year earlier",
+        "Highest share since December quarter 2018",
+        "Lava and Ai+ about 95% of Indian-brand contribution",
+        "Apple Ops India total revenue above Rs1,400 crore",
+        "Manufacturing support revenue nearly doubled"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Avendus cuts Mastek to ADD, TP Rs1,820 (11x FY28 EPS vs 12x); FY27/28 US$ revenue estimates cut 2%/6%, margins 40/60bps.",
+      "source": "Avendus Spark — 2QFY27 Outlook review: Mastek (Rating: Revised to ADD, TP: Rs. 1,820)",
+      "received": "06:49",
+      "detail": {
+       "summary": "Thesis intact but near-term growth is pressured: UK public-sector deals were put on hold after government leadership changes, and the Middle East outlook is cautious. Backlog conversion, not demand, is the issue; FY28 recovery is expected.",
+       "points": [
+        "12M order backlog +2% yoy, down ~8% qoq",
+        "FY27/28 US$ revenue growth 2%/9%",
+        "Revenue estimates cut 2%/6%; margins 40/60bps",
+        "Valuation 11x TTM Sep-28 EPS, ~9% EPS CAGR FY26-29",
+        "UK public sector, Middle East weak into 2HFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA reads Accenture's investor day as a case for IT growth acceleration, with HSD growth from FY29 above Street, and for covering shorts.",
+      "source": "BofA — Bull-Bear on IT Services (Kunal Tayal, post-INFY results)",
+      "received": "17:59",
+      "detail": {
+       "summary": "Event note ahead of a call debating whether to short the post-results bounce in Indian IT or stay put. Tayal sees ACN's targets as more optimistic than Street and AI widening the addressable market.",
+       "points": [
+        "ACN targets HSD revenue growth from FY29 with margin expansion",
+        "20 new growth arenas; Enterprise AI Stack a $500b opportunity",
+        "Call 26-Oct 10:30am ET, after INFY Friday results"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Semis +2.8% as AI financing deals land: Broadcom $63bn chip-purchase financing, META $35bn equity plan anchored by NVDA/AVGO/AMD, AWS capacity sold out through 2027.",
+      "source": "JPM — Overnight Brief! 10/27 - shallow hiking cycle is taking shape, Equities rebound led by Semis",
+      "received": "05:18",
+      "detail": {
+       "summary": "The semi correction had been driven by worries over how data-centre capex gets financed; the cluster of deals eases that. Neoclouds stayed weak after Musk warned of stranded compute and shut debt markets.",
+       "points": [
+        "SPCX $40bn GPU lease with Apollo, from 1H27",
+        "LITE +8.2%, ARM +6.2%, INTC +4.0%, NVDA +2.4%",
+        "NBIS -3.4% on Musk stranded-compute comments",
+        "Software +0.7%; ADBE -2.0%, TEAM -1.8%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Govt seeks investor and expert views on LTCG and STT amid FPI exodus; FIIs Oct MTD -$4.75bn, YTD -$32.56bn.",
+      "source": "UBS — INDIA CATALYST - Govt seeks views on LTCG/STT",
+      "received": "09:46",
+      "detail": {
+       "summary": "The government has begun reassessing capital market levies, consulting investors and tax experts as FPI outflows persist. The debate follows the FM's 13 Oct remark that there is a lot of debate; the upcoming budget is the likely venue for any change.",
+       "points": [
+        "FIIs cash Oct MTD -$4.75bn, YTD -$32.56bn (SEBI total)",
+        "DIIs secondary Oct MTD +$6.43bn, YTD +$74.57bn",
+        "Nifty 22,753 (+0.7%); metals/pharma +2%",
+        "FIIs bought $496m stock futures, $47m index futures",
+        "Crude $114.73/bbl"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "SBI chairman expects another 50bp RBI hike in December and a pause in February 2027; call money 5.81%.",
+      "source": "CLSA — India Financials – India 10 year G-sec yield near 7.5%",
+      "received": "09:18",
+      "detail": {
+       "summary": "Rate-hike cycle may dent consumption and discretionary credit demand but not system retail asset quality, per SBI's Setty. Separately, banks backed off buy-sell FX swaps after sensing RBI disapproval; the dollars had been parked in US government paper.",
+       "points": [
+        "Another 50bp hike expected at December RBI review",
+        "Pause expected at February 2027 meeting",
+        "Banks placed Rs341bn on 26-Oct vs Rs394bn on 23-Oct",
+        "Interbank call rate 5.81% on 26-Oct",
+        "Banks backed off buy-sell FX swap deals"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Liquidity surplus collapsed to about Rs400bn from Rs11tn peak on 6-Sep; Kotak holds 25bp repo hikes in December and February.",
+      "source": "Kotak — [Kotak] Economy: Liquidity: From an ocean to a trickle",
+      "received": "23:56",
+      "detail": {
+       "summary": "FX intervention, OMO sales, festive currency demand and muted government spending drained surplus faster than expected, and financial conditions stay tight despite record FCNR inflows. Kotak sees the INR rally as transient and does not rule out import curbs (gold) or select capital controls.",
+       "points": [
+        "FX interventions absorbed Rs5.5-6tn; OMO sales Rs1.25tn",
+        "Markets price incremental 50-75bp of hikes",
+        "Possible extra 25-50bp or MSF hike if inflation spikes",
+        "Yields hinge mostly on crude prices",
+        "INR depreciation pressure to persist"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Oct power demand +21.6% YoY MTD, coal generation +25.8%, peak 260,258MW (+23.7%); IEX Oct average Rs7.32/kWh, +174% YoY.",
+      "source": "Nuvama — Daily Power Demand",
+      "received": "09:15",
+      "detail": {
+       "summary": "Nuvama's daily file to 25 Oct shows power demand and coal generation running far above last year, with spot power prices more than doubling. Read-across is to coal offtake and to power cost for smelters.",
+       "points": [
+        "Oct MTD demand +21.55% YoY; YTD +11.51%",
+        "Oct MTD coal generation +25.79%; YTD +12.20%",
+        "Peak demand 260,258MW, +23.7% YoY",
+        "IEX Oct average Rs7.32/kWh, +174.2% YoY",
+        "IEX 17:00-23:00 average Rs9.82/kWh, +116.9%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Festive demand grinds lower: 2Ws +11%, cars -9%, tractors down low single digits; TVS +110bps share, Hero/Bajaj -90/-80bps, M&M +240bps in cars.",
+      "source": "UBS — India Catalyst: AUTOS - FESTIVE Decline",
+      "received": "09:46",
+      "detail": {
+       "summary": "UBS auto channel checks say festive demand is weakening, with a tougher base from here. Two-wheelers hold up while cars and tractors lag, which tempers the festive pull on steel and aluminium.",
+       "points": [
+        "2W +11%, cars -9% in festive",
+        "Tractors: low single digit decline so far",
+        "TVS +110bps 2W share; Hero -90bps, Bajaj -80bps",
+        "M&M +240bps share in cars",
+        "Prefers TVS/Eicher in 2Ws"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Anthropic S1: H1 2026 revenue $16.3b vs $4.6b in all 2025; CLSA flags a revived global AI trade as a flow negative for India.",
+      "source": "CLSA — Anthropic S1 | Balanco: 4Q18 Analogue | ATHERENE: PBT positive",
+      "received": "09:12",
+      "detail": {
+       "summary": "CLSA reads the filing as proof AI demand is scaling faster than bears expected, with operating losses near 4% of revenue. It argues FIIs treat India as AI-agnostic, so renewed global AI momentum could pull flows away from India.",
+       "points": [
+        "H1 2026 revenue $16.3b vs $4.6b in FY2025",
+        "Operating loss only ~4% of revenue",
+        "FII flows revived Jul-Aug 2026, then turned",
+        "Also leans against chasing the selloff; tactical rebound favoured"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Broadcom arranged a $63bn financing structure with Blackstone and banks for AI chip purchases; semis +2.8% on financing relief.",
+    "source": "JPM — Overnight Brief 10/27"
+   },
+   {
+    "text": "META's $35bn equity plan has NVDA, AVGO and AMD interested in up to $5bn of shares combined.",
+    "source": "JPM — Overnight Brief 10/27"
+   },
+   {
+    "text": "AWS says cloud capacity is largely sold out through 2027 with commitments into 2028; Musk warns of stranded compute and shut debt markets.",
+    "source": "JPM — Overnight Brief 10/27"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
