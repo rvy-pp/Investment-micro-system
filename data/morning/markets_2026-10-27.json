@@ -1,0 +1,243 @@
+{
+ "date": "2026-10-27",
+ "fetched_at": "2026-10-27T10:57:59",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-26",
+    "close": 7676.77,
+    "prev_date": "2026-10-23",
+    "chg_pct": 0.7,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-26",
+    "close": 26169.38,
+    "prev_date": "2026-10-23",
+    "chg_pct": 0.82,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-26",
+    "close": 52361.58,
+    "prev_date": "2026-10-23",
+    "chg_pct": 0.28,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-26",
+    "close": 11083.47,
+    "prev_date": "2026-10-23",
+    "chg_pct": 2.82,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-26",
+    "close": 216.0,
+    "prev_date": "2026-10-23",
+    "chg_pct": 2.39,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-26",
+    "close": 531.28,
+    "prev_date": "2026-10-23",
+    "chg_pct": 2.8,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-26",
+    "close": 424.37,
+    "prev_date": "2026-10-23",
+    "chg_pct": 1.4,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-26",
+    "close": 329.17,
+    "prev_date": "2026-10-23",
+    "chg_pct": 2.33,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-26",
+    "close": 247.23,
+    "prev_date": "2026-10-23",
+    "chg_pct": -0.86,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-26",
+    "close": 69.34,
+    "prev_date": "2026-10-23",
+    "chg_pct": -1.7,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Take the Zacks Approach to Beat the Markets: Honda Motor, Accenture, CACI in Focus",
+    "publisher": "Zacks",
+    "when": "2026-10-26 11:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-approach-beat-markets-honda-111300674.html"
+   },
+   {
+    "title": "Wells Fargo Adjusts Price Target on Accenture to $252 From $210",
+    "publisher": "MT Newswires",
+    "when": "2026-10-26 09:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wells-fargo-adjusts-price-target-093315563.html"
+   },
+   {
+    "title": "Accenture (ACN) Sees a More Significant Dip Than Broader Market: Some Facts to Know",
+    "publisher": "Zacks",
+    "when": "2026-10-23 20:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-sees-more-significant-205002419.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Guggenheim Adjusts Price Target on Cognizant Technology Solutions to $80 From $65",
+    "publisher": "MT Newswires",
+    "when": "2026-10-26 12:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/guggenheim-adjusts-price-target-cognizant-121432476.html"
+   },
+   {
+    "title": "Cognizant Lands Five-Year AI Partnership Ahead Of Earnings",
+    "publisher": "Benzinga",
+    "when": "2026-10-26 11:32Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-lands-five-ai-partnership-113214679.html"
+   },
+   {
+    "title": "Wells Fargo Adjusts Price Target on Cognizant Technology Solutions to $77 From $67",
+    "publisher": "MT Newswires",
+    "when": "2026-10-26 09:56Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wells-fargo-adjusts-price-target-095633567.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions to Upgrade Technology at European Bank for Reconstruction and Development",
+    "publisher": "MT Newswires",
+    "when": "2026-10-26 09:01Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-technology-solutions-upgrade-technology-090149433.html"
+   },
+   {
+    "title": "Cognizant and EBRD Partner to Accelerate Digital Transformation Through AI-Led, Outcome-Driven Services",
+    "publisher": "PR Newswire",
+    "when": "2026-10-26 08:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-ebrd-partner-accelerate-digital-080000485.html"
+   },
+   {
+    "title": "Is Cognizant Technology Solutions (CTSH) Worth More Than Its Price?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-24 00:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-technology-solutions-ctsh-worth-001824513.html"
+   },
+   {
+    "title": "Why Is Cognizant Technology Solutions (CTSH) Redrawing Its AI Growth Playbook?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-23 21:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/why-cognizant-technology-solutions-ctsh-211319251.html"
+   },
+   {
+    "title": "Here's What to Expect From Cognizant Technology Solutions' Next Earnings Report",
+    "publisher": "Barchart",
+    "when": "2026-10-23 15:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-expect-cognizant-technology-solutions-151008241.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia, Chipmakers Face Higher Costs? TSMC Reportedly Plans Up To 20% Price Hike For Advanced Chip Packaging",
+    "publisher": "Stocktwits",
+    "when": "2026-10-27 05:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/nvidia-chipmakers-face-higher-costs-050030975.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Banks Reportedly Got Cold Feet on \u2018Project North Star\u2019 Until Hock Tan Stepped In: Broadcom\u2019s $63 Billion Anthropic Financing Back on Track",
+    "publisher": "Benzinga",
+    "when": "2026-10-27 03:27Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/banks-reportedly-got-cold-feet-032746843.html"
+   },
+   {
+    "title": "Broadcom CEO Intervened to Seal $63 Billion Anthropic Debt Deal",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-10-27 01:09Z",
+    "link": "https://finance.yahoo.com/m/3755c4ad-4690-3b42-a6ca-66c05ddb4d51/broadcom-ceo-intervened-to.html"
+   },
+   {
+    "title": "Broadcom Partners With Wall Street Bigwigs To Forge $63B Deal To Power Anthropic\u2019s AI Hardware",
+    "publisher": "Stocktwits",
+    "when": "2026-10-26 22:50Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-partners-wall-street-bigwigs-225016666.html"
+   },
+   {
+    "title": "Banks, Blackstone Form $63 Billion Financing Vehicle for Broadcom AI Tech",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-10-26 21:00Z",
+    "link": "https://finance.yahoo.com/m/6642f8e0-bfbb-3628-b40c-2578b95f3cbb/banks%2C-blackstone-form-%2463.html"
+   },
+   {
+    "title": "Broadcom secures $63 billion from banks to finance AI compute sales to Anthropic",
+    "publisher": "Investing.com",
+    "when": "2026-10-26 20:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-secures-63-billion-banks-205926176.html"
+   },
+   {
+    "title": "Broadcom Arranges $63 Billion Deal to Finance Anthropic\u2019s Chips",
+    "publisher": "Bloomberg",
+    "when": "2026-10-26 20:36Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-arranges-63-billion-deal-203614048.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Wedbush Sees Server CPU Demand as Key Earnings Growth Driver. What That Means for AMD Stock Ahead of November 3.",
+    "publisher": "Barchart",
+    "when": "2026-10-26 19:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wedbush-sees-server-cpu-demand-192241913.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22844.0,
+  "chg_pct": 0.41,
+  "stamp": "27-Oct-2026 10:58:01",
+  "expiry": "23-Nov-2026",
+  "volume": 25592,
+  "nifty_close": {
+   "close": 22753.2,
+   "stamp": "27-Oct-2026 10:58"
+  },
+  "gap_pts": 90.8,
+  "gap_pct": 0.4
+ }
+}
