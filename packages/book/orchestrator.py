@@ -97,6 +97,10 @@ def check_rota(cfg: dict) -> list[str]:
     return probs
 
 
+def is_weekend(d: dt.date) -> bool:
+    return d.weekday() >= 5
+
+
 def groups_for(cfg: dict, d: dt.date) -> list[str]:
     return list(((cfg.get("orchestrator") or {}).get("rota") or {}).get(DAYS[d.weekday()]) or [])
 
@@ -704,6 +708,8 @@ def _selftest() -> None:
     ghost = {**base, "orchestrator": {"rota": {"Mon": ["A", "Z"], "Tue": ["B", "C"]}}}
     assert any("'Z' is not a group" in p for p in check_rota(ghost)); ok += 1
     assert groups_for(base, dt.date(2026, 10, 27)) == ["B", "C"] and groups_for(base, dt.date(2026, 10, 25)) == []; ok += 1
+    assert is_weekend(dt.date(2026, 10, 31)) and is_weekend(dt.date(2026, 11, 1)); ok += 1      # Sat, Sun
+    assert not is_weekend(dt.date(2026, 10, 30)) and not is_weekend(dt.date(2026, 11, 2)); ok += 1  # Fri, Mon
     assert check_rota(load_cfg()) == [], check_rota(load_cfg()); ok += 1     # the live spec
 
     th = {"move_flag_pp": 3.0, "juice_flag_pp": 1.0, "revision_flag_pct": 1.0, "result_soon_days": 7}
@@ -818,6 +824,7 @@ def main(argv=None) -> None:
     ap.add_argument("--mark", help="comma-separated groups whose review is done today")
     ap.add_argument("--date", help="ISO date, default today")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--force", action="store_true", help="run --prices / --day on a weekend anyway")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
@@ -839,11 +846,23 @@ def main(argv=None) -> None:
                 print(f"   {g}: {len(ls)} legs, {n} with an agent, last review {runs.get(g, 'never')}"
                       f"   [{', '.join(x['token'] + ('*' if agent_file(x['token']).exists() else '') for x in ls)}]")
         return
+    # PM, 2026-10-27: "do not run it on weekends, at least the prices part". The
+    # task is Mon-Fri already, but a run missed on Friday fires on the next app
+    # launch, which can be a Saturday. No session, so no prices and no day-end
+    # file (a Saturday file would become the next run's "previous"). --force
+    # overrides; --date replays a weekday's --day on any day.
     if a.prices:
-        print(f"prices: {load_prices()} rows written")
+        if is_weekend(dt.date.today()) and not a.force:
+            print(f"prices: weekend ({DAYS[dt.date.today().weekday()]}), no session: not loaded (--force overrides)")
+        else:
+            print(f"prices: {load_prices()} rows written")
     if a.day:
-        doc = day(d)
-        print(json.dumps(doc, indent=1, default=str) if a.json else render_day(doc))
+        if is_weekend(d) and not a.force:
+            print(f"day-end: {DAYS[d.weekday()]} {d} is a weekend, nothing to watch: no file written "
+                  f"(a missed Friday: --day --date <that Friday>; --force overrides)")
+        else:
+            doc = day(d)
+            print(json.dumps(doc, indent=1, default=str) if a.json else render_day(doc))
     if a.sector:
         groups = groups_for(load_cfg(), d) if a.sector == "today" else [g.strip() for g in a.sector.split(",")]
         if not groups:

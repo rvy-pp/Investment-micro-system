@@ -29,6 +29,13 @@ one does not, because a group missing from the rota would never be reviewed.
 
 ## Every weekday
 
+**Never on a weekend** (PM, 2026-10-27: *"do not run it on weekends, at least
+the prices part"*). The task is Mon–Fri, but a missed Friday run fires on the
+next app launch, which can be a Saturday. `--prices` and `--day` refuse a
+Saturday or Sunday and write nothing. In that case the whole run is that one
+line: no mail, no watches, no targets, no agents, no report. Do not pass
+`--force` unless the PM asks.
+
 1. **Prices.** `python packages/book/orchestrator.py --prices` (~40s). If the
    day-end header then says `NO SESSION TODAY`, it is an NSE holiday or
    Yahoo has not posted the close yet. Wait 20 minutes and run it once more

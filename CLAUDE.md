@@ -1262,7 +1262,14 @@ default base, and moved the Kelly edge with it. Nothing would have raised,
 because a default lean is a valid state. The lean is now the latest entry that
 CARRIES a `juice_pct`, and `{"clear_lean": true}` clears it explicitly. No lean
 had been lost: every leg's last price entry still carried its lean.
-orchestrator selftest 41, analysis 20.
+orchestrator selftest 43, analysis 20.
+
+**Never on a weekend** (PM, same day: *"do not run it on weekends, at least
+the prices part"*). The task is Mon–Fri, but a missed Friday run fires on the
+next app launch, which can be a Saturday. So `--prices` and `--day` refuse a
+Saturday or Sunday and write nothing, because a Saturday day-end file would
+become the next run's "previous". `--force` overrides, and
+`--day --date <Friday>` replays a missed Friday.
 
 ### Pair grading — the forward record of SELECTION, 2026-10-05
 
