@@ -155,7 +155,8 @@ def next_print(conn, ent: str, today: dt.date) -> str | None:
 # PM, 2026-10-27: "Add a daily narrow mail search for rating/TP changes on every
 # watched leg to the orchestrator; a new TP goes to that leg's material file and
 # its agent re-strikes the anchor." Every case anchors on the houses' targets
-# (median of the implied P/Es on IT, mean of the implied EV/EBITDAs on cement),
+# (the median of the houses' implied multiples, P/E on IT and EV/EBITDA on cement:
+# specs/book.yaml case_anchor),
 # so one house re-striking moves the base juice — and until now only the weekly
 # sector day looked, so a Wednesday re-strike sat unseen until the next rota
 # day. The script supplies what the comparison needs: the window, the search

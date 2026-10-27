@@ -316,6 +316,19 @@ case_bands:
 case_valuation:
   CEMENT: ev_ebitda
 
+# case_anchor: which statistic of the houses' implied multiples a sector's
+# base anchors on (PM, 2026-10-27: "make all IT and cement as median",
+# replacing cement's "select mean" of 2026-10-25). The median is the typical
+# house: one dissenting target (Kotak's 8,900 SELL on UltraTech, about 2,100
+# below the next-lowest house) moved the cement mean 3-5%, and under the daily
+# re-strike the mean would move on every house's roll-forward. The brief
+# refuses a build whose base `anchor` disagrees. IT's hand-set anchor_pe values
+# are already medians; they move to house_tps + "anchor": "median" on their
+# first re-strike (stock-case skill, "Re-striking").
+case_anchor:
+  IT: median
+  CEMENT: median
+
 # orchestrator: the day-end watch over every dictated leg and its case agent
 # (PM, 2026-10-26: "an orchestrator agent that monitors all company-agents. It
 # will update all prices on a daily basis, check each sector periodically for

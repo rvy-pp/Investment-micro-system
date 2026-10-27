@@ -390,6 +390,15 @@ def case_valuation(group: str | None, cfg: dict | None = None) -> str:
     return (cfg.get("case_valuation") or {}).get(band_key(group), "pe")
 
 
+def case_anchor(group: str | None, cfg: dict | None = None) -> str | None:
+    """Which statistic of the houses' implied multiples a sector's anchor
+    takes: specs/book.yaml `case_anchor` (PM, 2026-10-27: "make all IT and
+    cement as median"). None for a sector the PM has not ruled on."""
+    import yaml
+    cfg = cfg if cfg is not None else yaml.safe_load(analysis.BOOK_YAML.read_text(encoding="utf-8"))
+    return (cfg.get("case_anchor") or {}).get(band_key(group))
+
+
 def band_text(bd: dict) -> str:
     """The band's two inputs in words, for either shape (IT margin/growth,
     EV sector EBITDA-per-tonne/volume). Both print sites read it: they
@@ -910,6 +919,11 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
             if (build.get("valuation") or "pe") != valuation:
                 probs.append(f"build says valuation {build.get('valuation') or 'pe'!r} but the {band_key(me['group'])} "
                              f"sector runs on {valuation!r} (specs/book.yaml case_valuation)")
+            want = case_anchor(me["group"])
+            got = ((build.get("scenarios") or {}).get("base") or {}).get("anchor")
+            if want and got and got != want:
+                probs.append(f"base anchor is the {got} but the {band_key(me['group'])} sector anchors on the "
+                             f"{want} (specs/book.yaml case_anchor)")
             if valuation == "ev_ebitda" and ev is None and not probs:
                 probs.append("no close in prices for the EV bridge")
             build = internal(build)
@@ -1174,11 +1188,12 @@ quarterly consolidated EBITDA (Rs cr); a forecast quarter is two numbers,
 volume (mt) and EBITDA/t (Rs), and the brief derives the EBITDA. Consensus
 EBITDA per year, the share count and net debt are written into `build.json`
 (no feed carries them), each with a source; re-strike them when a house
-publishes or the company reports. The anchor multiple is the MEAN of the
-houses' implied EV/EBITDA on the headline year (PM: "get latest valuations,
-select mean"): list every post-result TP in `house_tps` and set the base
-`"anchor": "mean"`. The brief computes each (TP x shares + net debt) /
-consensus EBITDA and the mean, and names every TP in `anchor_why`. Never type
+publishes or the company reports. The anchor multiple is the MEDIAN of the
+houses' implied EV/EBITDA on the headline year (PM, 2026-10-27: "make all IT
+and cement as median"; `specs/book.yaml case_anchor`, which the brief
+enforces): list every post-result TP in `house_tps` and set the base
+`"anchor": "median"`. The brief computes each (TP x shares + net debt) /
+consensus EBITDA and the median, and names every TP in `anchor_why`. Never type
 a multiple yourself. The stock-case skill's "EV/EBITDA sectors" section is the
 method."""
 
@@ -1448,6 +1463,13 @@ def _selftest() -> None:
     cfgv = {"case_valuation": {"CEMENT": "ev_ebitda"},
             "case_bands": {"CEMENT": {"per_t_inr": 50, "growth_pp": 1.0}}}
     assert case_valuation("CEMENT", cfgv) == "ev_ebitda" and case_valuation("IT LARGECAP", cfgv) == "pe"; ok += 1
+    # PM 2026-10-27: IT and cement anchor on the median; every IT sub-group reads IT
+    cfga = {"case_anchor": {"IT": "median", "CEMENT": "median"}}
+    assert case_anchor("IT MIDCAP", cfga) == "median" and case_anchor("CEMENT", cfga) == "median"; ok += 1
+    assert case_anchor("STEEL", cfga) is None; ok += 1                         # no ruling: nothing enforced
+    import yaml as _y
+    live = _y.safe_load(analysis.BOOK_YAML.read_text(encoding="utf-8"))
+    assert all(v in ANCHOR_STATS for v in (live.get("case_anchor") or {}).values()); ok += 1
     be = {"entity": "x", "valuation": "ev_ebitda", "shares_cr": 30.0, "net_debt_cr": 20000.0,
           "net_debt_source": "Sep-26 balance sheet", "headline_fy": "FY28",
           "consensus": {"FY27": {"ebitda_cr": 17000.0, "source": "mean of 3 houses"},

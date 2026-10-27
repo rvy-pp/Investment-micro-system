@@ -179,11 +179,13 @@ with EBITDA in place of EPS. These are the differences:
 - **Juice = (M x EBITDA − net debt) / today's market cap − 1**, where M is the
   anchor (or today's EV/EBITDA). Net debt stays at today's figure. An EBITDA
   gap reaches the equity levered by EV / market cap, so it is not the return.
-- **"Get latest valuations, select mean":** list every post-result house TP in
+- **"Get latest valuations" — the MEDIAN since 2026-10-27** (PM: *"make all IT
+  and cement as median"*, replacing cement's "select mean"; `specs/book.yaml
+  case_anchor`, which the brief enforces): list every post-result house TP in
   `house_tps` (house, tp, date, stated basis, source) and set the base
-  `"anchor": "mean"`. The brief computes each house's IMPLIED multiple on the
-  headline year, (TP x shares + net debt) / consensus EBITDA, and their mean
-  (median printed beside it), and writes `anchor_why` naming every TP. Stated
+  `"anchor": "median"`. The brief computes each house's IMPLIED multiple on the
+  headline year, (TP x shares + net debt) / consensus EBITDA, and their median
+  (mean printed beside it; a gap over ~3% means one house sits far out — name it), and writes `anchor_why` naming every TP. Stated
   multiples sit on mixed bases and are recorded, not used. The same `anchor`
   key works for a P/E leg (implied = TP / consensus EPS).
 - **Re-striking (PM, 2026-10-27).** The orchestrator's daily target search
@@ -196,8 +198,8 @@ with EBITDA in place of EPS. These are the differences:
   - **Let the brief compute the anchor; never compute it in your head.** A leg
     whose base carries a hand-set `anchor_pe` (IT today) moves on its first
     re-strike: every held TP goes into `house_tps`, `anchor_pe` comes out, and
-    `"anchor"` takes the statistic the PM chose (`median` for IT, `mean` for
-    cement). The implied P/E is then TP / TODAY's consensus EPS. Expect that
+    `"anchor"` takes the sector's statistic from `specs/book.yaml
+    case_anchor` (`median` for IT and cement since 2026-10-27). The implied P/E is then TP / TODAY's consensus EPS. Expect that
     alone to move the multiple a little, and report the move separately from
     the new house's effect (run the brief once before adding the house, once
     after).

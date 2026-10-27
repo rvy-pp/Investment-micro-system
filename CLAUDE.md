@@ -887,7 +887,8 @@ wins. A blank case `confidence` reads `medium`, flagged as the default.
 `case_brief.brief(pairs=False)` exists because `view()` calls `brief()` for
 the default and `brief()` calls `view()` for its pair context. On 27-Oct the
 edges are TECHM_LTM +2.3, HCLT_WPRO +7.2 and UTCEM_SRCM +14.1 (both legs on
-the default). At half Kelly that asks for about 25x gross on UTCEM_SRCM, the
+the default; +12.9 after the same day's switch to the median anchor, which
+lifted Shree's anchor 5.1% against UltraTech's 2.9%). At half Kelly that asks for about 25x gross on UTCEM_SRCM, the
 usual scale finding. At today's gross budget it is 4.95% against 2.71% held. The leans run to the
 next print, which falls inside the 13-week window; that equivalence is the
 PM's, and the stock-case skill says to flag a lean whose print falls outside
@@ -1159,6 +1160,18 @@ output is unchanged, checked against TCS's brief and agent file. UltraTech
 today, base +19.4%, all multiple. CEMENT band (PM, same day): EBITDA/t ±Rs50, volume
 growth ±1pp; range +12.1% / +26.7%. Q3 is the PM's (Nomura's 40.9mt / Rs1,050/t).
 
+**The anchor is the MEDIAN, for IT and cement, since 2026-10-27** (PM: *"make
+all IT and cement as median"*, replacing "select mean" above). The rule lives in
+`specs/book.yaml case_anchor` (`case_brief.case_anchor()`), and the brief REFUSES
+a build whose base `anchor` disagrees. The reason: the mean was 3–5% off the
+median on six of the nine cases, each time because of one or two houses far out.
+Kotak's SELL FV of 8,900 on UltraTech sits about 2,100 below the next-lowest
+house. Under the daily re-strike, the mean would also move on every house's
+roll-forward. IT's hand-set `anchor_pe` values were already medians, and they
+move to `house_tps` + `"anchor": "median"` on their first re-strike. The brief
+still prints the mean beside the median: a gap over ~3% means a house worth
+reading.
+
 **IT agents also keep a deal LIST** (PM, 2026-10-13: "what major deals were
 active, what were scheduled ... are they delayed, have the older ones gone",
 then "just a list is fine, can be cross checked once quarter is near").
@@ -1254,7 +1267,7 @@ prompt carries the step.
 narrow mail search for rating/TP changes on every watched leg to the
 orchestrator; a new TP goes to that leg's material file and its agent
 re-strikes the anchor."* Every case anchors on the houses' targets (the median
-implied P/E on IT, the mean implied EV/EBITDA on cement). Before this, only the
+implied P/E on IT, and the median implied EV/EBITDA on cement since 27-Oct). Before this, only the
 weekly sector day looked, so a target changed on a Wednesday went unseen until
 the next rota day. The pieces:
 - **The TARGETS block.** `--day` prints, per watched leg, the search terms (one
