@@ -862,6 +862,14 @@
   .rk-t td .m{display:block;font-size:12px;color:var(--faint);margin-top:3px;font-weight:400}
   .rk-t td.dim{color:var(--soft)}
   .rk-t td.thin{color:var(--faint)}
+  /* Kelly sizing's flag tags (2026-10-28, the Kelly pane on the .rk kit) */
+  .rk-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--alt);
+    font-size:11px;font-weight:500;color:var(--soft);vertical-align:1px}
+  .rk-tag.rk-flip{color:var(--down)}
+  .rk .up{color:var(--up)} .rk .down{color:var(--down)} .rk .flat{color:var(--faint)}
+  /* three columns fit a phone only if headers and the "vs held" note wrap;
+     .rk-t's nowrap made the card scroll sideways at 375px */
+  #kelly-t th,#kelly-t td{white-space:normal}
   .rk-key{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12px;color:var(--soft);margin:0 0 12px}
   .rk-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
   .rk-bars{padding:8px 22px}
@@ -3654,39 +3662,58 @@ function kellyBlock(k){
   const flagTip = {short_history: `under ${k.min_sessions} sessions — standalone only, kept out of the joint solve`,
     pre_demerger_history: 'part of the σ window predates a confirmed demerger (VEDL 30-04-2026) — a different company',
     vr_pooled: `under ${(k.horizon_variance || {}).min_sessions || 750} sessions of history — sized on the pooled 13-week variance ratio, not its own`};
-  const rows = k.rows.map(r => {
+  /* Two columns since 2026-10-28 (PM: "Make it more sleek, the table is hard
+     to look at. Just keep the columns as agents edge and kelly suggested
+     size"). Spread vol, gross now, implied edge and the ½K alone / joint
+     columns came OFF the page; the payload still carries every one, and the
+     σ / joint figures sit in each row's hover. The suggested size is the
+     joint Kelly proportions inside today's gross (the old "at today's gross"
+     column), the part of Kelly that survives any leverage limit. Pairs with
+     no edge are one line under the table, not rows of dashes. Styles are the
+     Risk tab's scoped .rk kit. */
+  const edged = k.rows.filter(r => r.edge), none = k.rows.filter(r => !r.edge);
+  const rows = edged.map(r => {
     const L = esc(r.label);
     const chips = (r.flags || []).filter(f => f !== 'flip').map(f =>
-      ` <span class="pill warn" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('')
-      + ` <span class="pill warn kflip" data-k="${L}" style="display:none" title="joint Kelly is NEGATIVE: given the correlated pairs, this one works as a hedge for the others">flip</span>`;
-    return `<tr class="secfirst" title="long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} (Kelly assumes a dollar-neutral pair) · ${r.n_sessions} sessions">
-      <td class="pair">${L}<span class="chips">${chips}</span></td>
-      <td>${r.sigma_ann_pct == null ? '—' : r.sigma_ann_pct.toFixed(1) + '%'}${r.sigma_h_pct == null ? '' : `<span class="sub" title="the σ Kelly sizes on: ${k.horizon_weeks}-week, after the variance ratio">${k.horizon_weeks}w ${r.sigma_h_pct.toFixed(1)}%</span>`}</td>
-      <td>${g(r.gross_now_pct)}</td>
-      <td>${pctf(r.implied_edge_pct, 2)}<span class="sub">joint ${pctf(r.implied_edge_joint_pct, 2)}</span></td>
+      ` <span class="rk-tag" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('')
+      + ` <span class="rk-tag rk-flip kflip" data-k="${L}" style="display:none" title="joint Kelly is NEGATIVE: on these edges Kelly would run the pair the other way round, as a hedge for the others">flip</span>`;
+    const tip = `long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} held`
+      + (r.sigma_ann_pct == null ? '' : ` · spread σ ${r.sigma_ann_pct.toFixed(1)}%/yr, ${k.horizon_weeks}w ${(r.sigma_h_pct ?? 0).toFixed(1)}%`)
+      + ` · ${r.n_sessions} sessions`;
+    return `<tr title="${esc(tip)}">
+      <td><b>${L}</b>${chips}</td>
       <td>${edgeCell(r)}</td>
-      <td data-c="sa" data-k="${L}">—</td>
-      <td data-c="joint" data-k="${L}">—</td>
-      <td class="tot" data-c="budget" data-k="${L}">—</td>
+      <td data-c="budget" data-k="${L}">—</td>
     </tr>`;
   }).join('');
+  const noneLine = none.length ? `<p class="rk-src" style="margin:14px 0 0">No edge yet (a leg has no lean):
+    ${none.map(r => esc(r.label)).join(', ')}.</p>` : '';
   // The "edges not used" callout came OFF 2026-10-06 (PM). bad_edges /
   // unknown_edges / skipped are still in the payload.
-  return `<div class="sechead" style="margin-top:var(--s4)">Kelly sizing</div>
-    <div class="meta-line">${fr} Kelly · ${k.horizon_weeks}-week horizon · σ and correlation over
-      ${dmy(k.window[0])}–${dmy(k.window[1])} (${j.n_common || 0} common sessions, covariance shrink δ
-      ${j.delta == null ? '—' : j.delta.toFixed(2)}) · ${hvLine(k.horizon_variance, k.horizon_weeks)} · gross = both sides, % of NAV ·
-      edge = long lean − short lean from the case agents (Analysis tab)<br><span id="k-sum"></span></div>
-    <div class="panel" style="padding:0"><div class="scroll"><table class="bk" id="kelly-t"><thead><tr>
-      <th class="l">pair</th>
-      <th title="annualised σ of the pair spread (mean long return − mean short return), daily closes; beneath it, the ${k.horizon_weeks}-week σ Kelly actually sizes on">spread vol</th>
-      <th>gross now</th>
-      <th title="the expected pair return over ${k.horizon_weeks}w at which TODAY'S size is exactly ${fr} Kelly — arithmetic on the current size, not a forecast. Joint: accounting for the other pairs' overlap">implied ${k.horizon_weeks}w edge</th>
-      <th title="the case agents' pair juice: long lean − short lean, each to the next print (inside ${k.horizon_weeks}w)">agents' edge</th>
-      <th title="${fr} Kelly gross for this pair on its own, μ/σ² — overcounts where pairs share a leg">${fr}K alone</th>
-      <th title="${fr} Kelly gross solved jointly (Σ⁻¹μ) across every pair with an edge — correlated pairs split one bet">${fr}K joint</th>
-      <th title="the joint Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross — the reallocation Kelly asks for inside today's risk budget; small figure: change vs today">at today's gross</th>
-    </tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  // a DIV, never <section>: the page's global section{display:none} (tab
+  // views) hides a section until its tab is shown — the Risk tab's trap
+  return `<div class="rk" style="margin-top:var(--s4)"><div class="rk-sec" style="margin-bottom:24px">
+    <h3 class="rk-h">Kelly sizing</h3>
+    <p class="rk-sub">The edge is the case agents' view, long lean minus short lean, over ${k.horizon_weeks} weeks.
+      The suggested size is how ${fr} Kelly would split today's gross across the pairs that have one.</p>
+    <div class="rk-card"><table class="rk-t" id="kelly-t"><thead><tr>
+      <th>Pair</th>
+      <th title="the case agents' pair juice: long lean − short lean, each to the next print (inside ${k.horizon_weeks}w)">Agents' edge</th>
+      <th title="the joint ${fr} Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross; small figure: change vs what is held today. Gross = both sides, % of NAV">Kelly suggested size</th>
+    </tr></thead><tbody>${rows || `<tr><td colspan="3" class="dim">No pair has both leans yet.</td></tr>`}</tbody></table></div>
+    ${noneLine}
+    <details class="rk-more" style="margin-top:20px"><summary>How this is sized</summary>
+      <ul class="rk-note">
+        <li><span id="k-sum"></span></li>
+        <li>${fr} Kelly, ${k.horizon_weeks}-week horizon. σ and correlation over ${dmy(k.window[0])}–${dmy(k.window[1])}
+          (${j.n_common || 0} common sessions, covariance shrink δ ${j.delta == null ? '—' : j.delta.toFixed(2)}).</li>
+        <li>${hvLine(k.horizon_variance, k.horizon_weeks)}.</li>
+        <li>The size is solved jointly across the edged pairs, so pairs that share a leg or move together split one bet.
+          A negative size is a flip: on these edges Kelly would run that pair the other way round.</li>
+        <li>Absolute Kelly sizes are many times the book, so the page shows only how Kelly would divide today's gross.
+          Hover a pair for its held dollars and spread σ.</li>
+      </ul></details>
+  </div></div>`;
 }
 
 function kellyRefresh(){
@@ -3701,7 +3728,8 @@ function kellyRefresh(){
     const pct = f == null ? null : 2 * f * 100;
     if (td.dataset.c === 'budget' && pct != null){
       const d = pct - now[l];
-      td.innerHTML = `${g(pct)}<span class="sub ${usdCls(d)}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}pp</span>`;
+      td.innerHTML = `<b class="${pct < 0 ? 'down' : ''}">${g(pct)}</b>`
+        + `<span class="m">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}pp vs held ${g(now[l])}</span>`;
     } else td.textContent = g(pct);
     td.classList.toggle('neg', td.dataset.c === 'joint' && pct != null && pct < 0);
   });
