@@ -144,7 +144,12 @@ line: no mail, no watches, no targets, no agents, no report. Do not pass
 
 5. **The pack.** `python packages/book/orchestrator.py --sector today`. (Run
    no sector step on a weekend.) **If it says no leg has a case agent, the
-   sector day ends there: skip steps 6–11 and do not `--mark`.** Per watched
+   sector day ends there: skip steps 6–11 and do not `--mark`.**
+   Then refresh the σ ranges' multiple history for the day's legs:
+   `python packages/book/multiple_sigma.py --fetch <entity> ...` (screener
+   throttles after ~7 requests; the script retries). A history older than 35
+   days withholds that leg's bear/bull, and a weekly sector day keeps every
+   leg inside that. Per watched
    leg it gives the window (since that
    group's last review, or 7 days), the move, the consensus change, stored
    mail/brief mentions, the agent if one exists, and the search terms. It

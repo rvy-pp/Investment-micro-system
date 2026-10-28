@@ -399,10 +399,20 @@ def case_anchor(group: str | None, cfg: dict | None = None) -> str | None:
     return (cfg.get("case_anchor") or {}).get(band_key(group))
 
 
+def is_sigma_band(bd: dict | None) -> bool:
+    """The σ range (PM, 2026-10-28) rather than a driver band."""
+    return bool(bd) and "multiple_sigma" in bd
+
+
 def band_text(bd: dict) -> str:
-    """The band's two inputs in words, for either shape (IT margin/growth,
-    EV sector EBITDA-per-tonne/volume). Both print sites read it: they
-    assumed IT's keys and raised KeyError on the first cement band."""
+    """The band's inputs in words, for every shape (IT margin/growth, EV
+    sector EBITDA-per-tonne/volume, the σ range). Both print sites read it:
+    they assumed IT's keys and raised KeyError on the first cement band."""
+    if is_sigma_band(bd):
+        ms = bd["multiple_sigma"]
+        how = f"σ of {ms['change_weeks']}-week moves in its own multiple, trailing {ms['window_weeks']} weeks"
+        return f"multiple ×e^±{bd['sigma']:.3f} (±{100 * bd['sigma']:.1f}%, {how})" if bd.get("sigma") \
+            else f"WITHHELD — {bd.get('sigma_why')} ({how})"
     if "per_t_inr" in bd:
         return f"EBITDA/t ±Rs{bd['per_t_inr']}, volume growth ±{bd['growth_pp']}pp"
     return f"margin ±{bd['margin_bps']}bps, growth ±{bd['growth_pp']}pp"
@@ -419,6 +429,8 @@ def band_scenarios(b: dict, band: dict) -> dict:
     Mechanical by design: there is no story here to write, and none is
     invented."""
     base = (b.get("scenarios") or {}).get("base") or {}
+    if is_sigma_band(band):
+        return sigma_scenarios(base, band)
     qs = resolve_quarters(b, base.get("quarters"))
     fc = viewed(qs)            # street quarters follow by the carry ratio, never moved directly
     out = {}
@@ -462,6 +474,29 @@ def band_scenarios(b: dict, band: dict) -> dict:
         # multiples, plausible on the page and wrong by the whole anchor gap.
         if base.get("anchor_pe") is not None:
             out[name].update(anchor_pe=base["anchor_pe"], anchor_why=base.get("anchor_why"))
+    return out
+
+
+def sigma_scenarios(base: dict, band: dict) -> dict:
+    """Bear and bull as the BASE EARNINGS at the anchor multiple x e^-σ and
+    x e^+σ (PM, 2026-10-28: "1 sigma back for bear, 1 sigma up for bull",
+    "trailing 90 weeks", "13 week"). σ is the leg's own (multiple_sigma.py),
+    injected into the band by brief(). The quarters are the base's exactly, so
+    the range is the multiple alone: the earnings view is the PM's, and how
+    far the market re-prices it is what σ measures. With no σ the range is
+    WITHHELD (empty), never filled from the old driver band — a range from
+    another method under the same label is the mixed-basis shape."""
+    sg = band.get("sigma")
+    if not isinstance(sg, (int, float)) or sg <= 0:
+        return {}
+    out = {}
+    for name, s in (("bear", -1), ("bull", 1)):
+        k = math.exp(s * sg)
+        out[name] = {"band": True, "sigma_scale": k, "quarters": base.get("quarters") or {},
+                     "why": f"base earnings at the anchor x e^{'-' if s < 0 else '+'}{sg:.3f} "
+                            f"({band_text(band)}). Mechanical, not a story."}
+        if base.get("anchor_pe") is not None:
+            out[name].update(anchor_pe=base["anchor_pe"] * k, anchor_why=base.get("anchor_why"))
     return out
 
 
@@ -597,7 +632,15 @@ def validate_build(b: dict, band: dict | None = None) -> list[str]:
     probs += _validate_tps(raw)
     if band is not None:
         bk = ("per_t_inr", "growth_pp") if is_ev(b) else ("margin_bps", "growth_pp")
-        if not all(isinstance(band.get(k), (int, float)) and band[k] > 0 for k in bk):
+        ms = band.get("multiple_sigma")
+        if ms is not None:
+            # The σ range: its two settings must be sane; a MISSING σ is not a
+            # build problem (the range is withheld, the base still prices).
+            if not (isinstance(ms, dict) and all(isinstance(ms.get(k), int) and ms[k] > 0
+                                                  for k in ("window_weeks", "change_weeks"))
+                    and ms["change_weeks"] < ms["window_weeks"]):
+                probs.append(f"case band {band.get('key')}: multiple_sigma needs integer window_weeks > change_weeks > 0")
+        elif not all(isinstance(band.get(k), (int, float)) and band[k] > 0 for k in bk):
             probs.append(f"case band {band!r}: {' and '.join(bk)} must be positive numbers")
         hand = [k for k in ("bear", "bull") if k in (b.get("scenarios") or {})]
         if hand:
@@ -606,7 +649,7 @@ def validate_build(b: dict, band: dict | None = None) -> list[str]:
         if "base" not in (b.get("scenarios") or {}):
             probs.append("a banded build needs a base scenario")
         for q, row in resolve_quarters(b, ((b.get("scenarios") or {}).get("base") or {}).get("quarters")).items():
-            if row.get("kind") in ("pm", "draft") and not all(isinstance(row.get(k), (int, float)) for k in dv):
+            if ms is None and row.get("kind") in ("pm", "draft") and not all(isinstance(row.get(k), (int, float)) for k in dv):
                 probs.append(f"{q}: the band moves drivers, so a forecast quarter needs {', '.join(dv)}")
     line = "ebitda_cr" if is_ev(b) else "eps"
     qs = resolve_quarters(b)
@@ -785,14 +828,18 @@ def scenario_juice(b: dict, cons: dict[str, float], pe_today: dict[str, float],
                     eps_fy[fy] = round(v * rel, 2)
         juice = {}
         for fy, e in eps_fy.items():
+            # A σ scenario on a base with no anchor scales TODAY's multiple:
+            # the range is still the multiple moving, from wherever it sits.
+            anc = sc.get("anchor_pe") or (pe_today[fy] * sc["sigma_scale"]
+                                          if sc.get("sigma_scale") and fy in pe_today else None)
             if fy in cons and fy in pe_today and ev is not None:
-                juice[fy] = ev_juice(e, cons[fy], pe_today[fy], sc.get("anchor_pe"), ev)
+                juice[fy] = ev_juice(e, cons[fy], pe_today[fy], anc, ev)
             elif fy in cons and fy in pe_today:
-                mult = (sc["anchor_pe"] / pe_today[fy]) if sc.get("anchor_pe") else 1.0
+                mult = (anc / pe_today[fy]) if anc else 1.0
                 juice[fy] = {"eps": round(e, 2), "cons": round(cons[fy], 2),
                              "eps_gap_pct": round((e / cons[fy] - 1) * 100, 2),
                              "pe_today": round(pe_today[fy], 2),
-                             "pe_target": round(sc["anchor_pe"], 2) if sc.get("anchor_pe") else round(pe_today[fy], 2),
+                             "pe_target": round(anc, 2) if anc else round(pe_today[fy], 2),
                              "juice_pct": round((e / cons[fy] * mult - 1) * 100, 2)}
         out[name] = {"why": sc.get("why"), "anchor_why": sc.get("anchor_why"), "band": bool(sc.get("band")),
                      "quarters": {q: r["eps"] for q, r in sorted(qs.items(), key=lambda x: qlabel_key(x[0]))},
@@ -914,6 +961,15 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
                "log": analysis._entries(conn, ent)}
         if build:
             band = case_band(me["group"])
+            if is_sigma_band(band):
+                # σ is the leg's own (the band is the sector's rule, the size is
+                # not): read from data/analysis/multiples/, withheld with a reason
+                # when missing or stale.
+                import multiple_sigma
+                ms = band["multiple_sigma"]
+                s = multiple_sigma.sigma(ent, valuation, ms["window_weeks"], ms["change_weeks"], today)
+                band = {**band, "sigma": s["sigma"], "sigma_why": s.get("why"),
+                        "sigma_meta": {k: s.get(k) for k in ("first", "last", "n_changes", "fetched", "symbol", "source")}}
             out["band"] = band
             probs = validate_build(build, band)
             if (build.get("valuation") or "pe") != valuation:
@@ -973,11 +1029,17 @@ def price_entry(b: dict) -> dict:
     sc = b.get("scenarios") or {}
     j = {k: sc[k]["juice"][fy]["juice_pct"] for k in ("bear", "base", "bull")
          if k in sc and fy in sc[k]["juice"]}
-    if "bear" not in j or "bull" not in j:
-        raise SystemExit("price entry needs bear and bull scenarios on the headline FY")
     bd = b.get("band")
-    how = (f" Range = base moved by the {bd['key']} band ({band_text(bd)} per forecast quarter, carried)."
-           if bd else "")
+    if "bear" not in j or "bull" not in j:
+        raise SystemExit("price entry needs bear and bull scenarios on the headline FY"
+                         + (f" — the σ range is withheld: {bd.get('sigma_why')}" if is_sigma_band(bd) else ""))
+    if is_sigma_band(bd):
+        sm = bd.get("sigma_meta") or {}
+        how = (f" Range = base earnings at the anchor x e^±σ, σ = {100 * bd['sigma']:.1f}% "
+               f"({band_text(bd)}; {sm.get('symbol')} {sm.get('first')}..{sm.get('last')}, fetched {sm.get('fetched')}).")
+    else:
+        how = (f" Range = base moved by the {bd['key']} band ({band_text(bd)} per forecast quarter, carried)."
+               if bd else "")
     # The multiple is named from the scenario itself: this line said "at today's
     # P/E" unconditionally, which was false the first time an anchor was set
     # (TCS, 2026-10-20 — juice at 14.54x printed as "today's P/E", 15.27x).
@@ -1085,8 +1147,14 @@ def render(b: dict) -> str:
               for h in sorted(an["houses"], key=lambda h: h["implied"])]
     if b.get("scenarios") and b.get("band"):
         bd = b["band"]
-        L.append(f"        bear/bull = base moved by the {bd['key']} band: {band_text(bd)} "
-                 f"per forecast quarter, carried into later years")
+        if is_sigma_band(bd):
+            sm = bd.get("sigma_meta") or {}
+            L.append(f"        bear/bull = base earnings at the anchor {band_text(bd)}"
+                     + (f"; {sm.get('symbol')} {sm.get('first')}..{sm.get('last')}, {sm.get('n_changes')} "
+                        f"changes, fetched {sm.get('fetched')}" if bd.get("sigma") else ""))
+        else:
+            L.append(f"        bear/bull = base moved by the {bd['key']} band: {band_text(bd)} "
+                     f"per forecast quarter, carried into later years")
     if b.get("scenarios"):
         L.append(f"        confidence {b.get('confidence')}{' (default)' if b.get('confidence_default') else ''} · "
                  f"horizon {b.get('horizon')} · headline {b.get('headline_fy')} · "
@@ -1510,6 +1578,46 @@ def _selftest() -> None:
     pe_ev["band"] = bandc                                                         # an EV band prints in its own words
     assert "EBITDA/t ±Rs50, volume growth ±1.0pp" in price_entry(pe_ev)["note"]; ok += 1
     assert band_text({"margin_bps": 50, "growth_pp": 0.5}) == "margin ±50bps, growth ±0.5pp"; ok += 1
+
+    # the σ range (PM, 2026-10-28): bear/bull = base earnings at the anchor
+    # x e^-σ / e^+σ. Acceptance first — the arithmetic on P/E, no anchor and
+    # EV — then the withheld state and the refusals.
+    cfgs = {"case_bands": {"IT": {"multiple_sigma": {"window_weeks": 90, "change_weeks": 13}},
+                           "CEMENT": {"multiple_sigma": {"window_weeks": 90, "change_weeks": 13}}}}
+    sa1 = json.loads(json.dumps(bb)); sa1["scenarios"]["base"].update(anchor_pe=12.6, anchor_why="broker median")
+    sgb = {**case_band("IT LARGECAP", cfgs), "sigma": 0.1}
+    assert is_sigma_band(sgb) and not is_sigma_band(band), (sgb, band); ok += 1
+    assert validate_build(sa1, sgb) == [], validate_build(sa1, sgb); ok += 1
+    s1 = scenario_juice(sa1, {"FY27": 100.0, "FY28": 110.0}, {"FY27": 15.0, "FY28": 14.0}, sgb)
+    assert s1["bear"]["fy_eps"] == s1["base"]["fy_eps"] == s1["bull"]["fy_eps"]; ok += 1   # earnings never move
+    jb1 = s1["base"]["juice"]["FY28"]["juice_pct"]
+    for k, sgn in (("bear", -1), ("bull", 1)):
+        jj = s1[k]["juice"]["FY28"]
+        assert jj["pe_target"] == round(12.6 * math.exp(sgn * 0.1), 2); ok += 1
+        assert abs(jj["juice_pct"] - ((1 + jb1 / 100) * math.exp(sgn * 0.1) - 1) * 100) < 0.02; ok += 1
+    s0 = scenario_juice(bb, {"FY27": 100.0, "FY28": 110.0}, {"FY27": 15.0, "FY28": 14.0}, sgb)
+    assert s0["bull"]["juice"]["FY28"]["pe_target"] == round(14.0 * math.exp(0.1), 2); ok += 1  # no anchor: today's
+    sgc = {**case_band("CEMENT", cfgs), "sigma": 0.1}
+    se = scenario_juice(anc, {"FY27": 17000.0, "FY28": 20000.0}, {"FY27": 320000 / 17000, "FY28": m0}, sgc, evx)
+    eb = se["base"]["fy_eps"]["FY28"]
+    assert se["bull"]["juice"]["FY28"] == ev_juice(eb, 20000.0, m0, mi * math.exp(0.1), evx); ok += 1  # EV: levered by net debt
+    assert "±10.0%" in band_text(sgb) and "13-week" in band_text(sgb); ok += 1
+    # withheld: no σ -> no bear/bull at all (never the old band's), base intact
+    sw = {**sgb, "sigma": None, "sigma_why": "no multiple history"}
+    s2 = scenario_juice(sa1, {"FY27": 100.0, "FY28": 110.0}, {"FY27": 15.0, "FY28": 14.0}, sw)
+    assert set(s2) == {"base"} and s2["base"] == s1["base"]; ok += 1
+    try:
+        price_entry({"entity": "x", "token": "X", "headline_fy": "FY28", "band": sw,
+                     "scenarios": {"base": {"juice": {"FY28": s2["base"]["juice"]["FY28"]}}}}); raise AssertionError
+    except SystemExit as e:
+        assert "withheld: no multiple history" in str(e); ok += 1
+    # refusals: settings that cannot measure a 13-week move, and a hand-drawn bear
+    for ms in ({"window_weeks": 13, "change_weeks": 13}, {"window_weeks": 90}, {"window_weeks": 90.0, "change_weeks": 13}):
+        assert any("multiple_sigma" in p for p in validate_build(sa1, {"key": "IT", "multiple_sigma": ms})), ms; ok += 1
+    hb = json.loads(json.dumps(sa1)); hb["scenarios"]["bear"] = {"why": "story", "growth_pct": {"FY28": 1}}
+    assert any("case band" in p for p in validate_build(hb, sgb)); ok += 1
+    live_b = (live.get("case_bands") or {})                                     # the live spec reads as σ for both sectors
+    assert all(is_sigma_band(live_b.get(k)) for k in ("IT", "CEMENT")); ok += 1
     for mut, why in [(lambda b: b.pop("net_debt_source"), "net_debt_source"),
                      (lambda b: b.pop("net_debt_cr"), "net_debt_cr"),
                      (lambda b: b["consensus"]["FY28"].pop("source"), "needs a source"),

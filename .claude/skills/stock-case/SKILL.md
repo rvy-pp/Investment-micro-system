@@ -43,7 +43,7 @@ all share. TCS was the first.
 | `priced` | automatic for IT/EMS (daily consensus); otherwise a log entry with price, consensus EPS, P/E, relative P/E — each sourced |
 | `qbuild` | every reported quarter of the year has a sourced actual in `build.json` and the visible quarter has a driver-based view |
 | `h2` | later quarters are built and compared with what consensus implies for them, with the reason for any gap |
-| `price` | bear and bull juice on the headline year (the sector band around the base — see below) are logged as `juice_low/high` with a horizon. **`juice_pct` (the lean) is added only when the PM picks it** — then status `done` |
+| `price` | bear and bull juice on the headline year (the sector's σ range around the base — see below) are logged as `juice_low/high` with a horizon. **`juice_pct` (the lean) is added only when the PM picks it** — then status `done` |
 | `rerate` | the 90-day split is read and called: earnings-led, multiple-led with a nameable reason, or noise |
 
 ## Every run
@@ -110,15 +110,31 @@ sector band, ±50bps margin and ±0.5pp growth for IT, carried convention."*
   (guidance, same-quarter precedents, deals, peer prints) and PROPOSES them as a
   `draft` row, one line of anchors each. The PM accepts or edits it, and the row
   becomes `pm`.
-- **Bear and bull are the base moved by the sector band** in
-  `specs/book.yaml case_bands` (IT: ±50bps margin, ±0.5pp QoQ growth on EVERY
-  forecast quarter, so the revenue level compounds). Later years are CARRIED:
-  FY28 scales by the forecast quarters' EPS ratio, because after a print the
-  street re-bases on the new margin level. The brief **refuses** a hand-drawn
-  bear/bull in a sector that has a band.
-- So the range means *how wrong can the two inputs plausibly be*, not a story.
-  Do not write bear/bull narratives. Do not pick FY28 growth rates per
-  scenario: that was where most of the old range came from, unanchored.
+- **Since 2026-10-28, IT and cement use the σ RANGE, not a driver band**
+  (PM: *"How about using standard deviation on the multiples, 1 sigma back for
+  bear, 1 sigma up for bull? This will minimize random broker bias"*, then
+  *"trailing 90 weeks is fine"*, *"lets do 13 week then"*). Bear and bull are
+  the **base earnings** at the anchor multiple × e^−σ and × e^+σ, where σ is
+  the standard deviation of the stock's OWN 13-week log moves in its trailing
+  multiple (P/E; EV/EBITDA for cement) over the last 90 weekly prints.
+  `packages/book/multiple_sigma.py --fetch <entity>` stores the history under
+  `data/analysis/multiples/`; the brief reads it. **Missing or older than 35
+  days, the range is WITHHELD** (the brief prints why, and `--price-entry`
+  refuses): refetch, never fall back to the old band. The earnings never move
+  between bear, base and bull, so the range says *how far the market
+  re-prices your view*, and your two Q3 numbers are the only earnings input.
+- **The band is a range, never a view.** Never write band or σ numbers into a
+  quarter as the PM's view, and never size a sentiment for the PM ("some
+  negativity on Q3"): ask for their two numbers. On 2026-10-27 the band edges
+  written in as the PM's Q3 swung the TCS_INFO edge 5.4pp and were reverted
+  (*"that was a random range"*).
+- The old driver band (2026-10-18 to 10-28): the base moved by ±50bps margin
+  and ±0.5pp QoQ growth on every forecast quarter, later years CARRIED at the
+  forecast quarters' EPS ratio. The code path still works for a sector that
+  wants one. The brief **refuses** a hand-drawn bear/bull in any sector with a
+  band or σ range.
+- Do not write bear/bull narratives. Do not pick FY28 growth rates per
+  scenario: that was where most of the first range came from, unanchored.
 - A sector with no band yet keeps hand-drawn bear/bull until the PM sets one.
   Setting a band is the PM's call, made once per sector, never per name.
 - Rule (b), each company's own last three same-quarter prints, was tried on
@@ -212,10 +228,13 @@ with EBITDA in place of EPS. These are the differences:
     PM.
   - **The pair partner** gets the same treatment only when its own houses
     move; do not re-strike a partner on this leg's news.
-- **Bands:** `case_bands` for an EV sector take `per_t_inr` and `growth_pp`
-  (QoQ volume, compounding). CEMENT is ±Rs50/t and ±1pp (PM, 2026-10-25).
-  A future EV sector without a band has no bear/bull and no price entry until
-  the PM sets one. Never write a hand-drawn case.
+- **Range:** CEMENT uses the σ range since 2026-10-28, measured on the
+  stock's own trailing EV/EBITDA; bear/bull are the base EBITDA at the anchor
+  × e^∓σ, valued through the same net-debt bridge (so the equity range is
+  levered). The old driver band was ±Rs50/t EBITDA/t and ±1pp volume
+  (2026-10-25); that shape (`per_t_inr`, `growth_pp`) still works for an EV
+  sector that wants one. A sector with neither has no bear/bull and no price
+  entry until the PM sets one. Never write a hand-drawn case.
 - `street_q` pins take `ebitda_cr`. Cement's Q4 is the seasonal peak, so an
   even split of H2 understates Q4 and overstates Q3. Pin Q3 from house numbers
   whenever any exist.

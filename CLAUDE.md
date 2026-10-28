@@ -1172,6 +1172,40 @@ move to `house_tps` + `"anchor": "median"` on their first re-strike. The brief
 still prints the mean beside the median: a gap over ~3% means a house worth
 reading.
 
+**Bear/bull is the σ RANGE for IT and cement since 2026-10-28, not the driver
+band.** PM, after the band edges were written in as a Q3 view and swung
+TCS_INFO's Kelly edge 5.4pp (*"that was a random range"*, reverted the same
+day): *"How about using standard deviation on the multiples, 1 sigma back for
+bear, 1 sigma up for bull? This will minimize random broker bias"*, then
+*"trailing 90 weeks is fine"* and *"lets do 13 week then"*. Bear and bull are
+the BASE earnings at the anchor × e^−σ / e^+σ. σ is the sd of the stock's own
+13-week log moves in its trailing multiple (P/E; EV/EBITDA for cement) over 90
+weekly prints, from screener.in, cached in `data/analysis/multiples/` by
+**`packages/book/multiple_sigma.py`** (10-check selftest; `--fetch`). The
+spec is `specs/book.yaml case_bands: {IT|CEMENT: {multiple_sigma:
+{window_weeks: 90, change_weeks: 13}}}`; case_brief injects each leg's σ and
+**withholds** bear/bull (with the reason) when the history is missing or over
+35 days old. It never falls back to the old band. The orchestrator's sector
+day refetches the day's legs.
+- **13-week moves, not the level.** Over these 90 weeks the IT large caps
+  halved their trailing P/E (TCS 29.2x → 13.9x low). The level's σ (TCS
+  21.4%, Infosys 22.0%) measured that trend; the 13-week σ was 11.1% / 12.5%.
+  Where nothing trended the two agree (HCL Tech 13.9% / 13.9%), which is the
+  check. First σs: TCS 11.1, Infosys 12.5, Wipro 10.7, HCL 13.9, TechM 12.9,
+  LTIMindtree 18.0, Persistent 16.0, UltraTech 6.3, Shree 9.7 (%).
+- **The range is the multiple alone.** The earnings never move between bear,
+  base and bull, so the PM's two Q3 numbers stay the only earnings input. IT
+  ranges came out 3–5× wider than the band (Infosys −11.2 / +13.9% against
+  −2.4 / +3.5%); cement's barely moved (UltraTech's 6.3% ≈ the old ±Rs50/t).
+  A lean at a range edge is therefore a much bigger bet than it was.
+- **Trailing history, forward anchor.** No free source has a forward-P/E
+  history, so only the σ (a percentage) is taken from the trailing series.
+  Trailing EPS carries one-offs (TCS's charges); stated, not adjusted.
+  LTIMindtree is **LTM** on screener (LTIM 404s).
+- The driver-band code path stays in case_brief for a sector that wants one;
+  the selftest still covers it. A band is a range, never a view: never write
+  its numbers into a quarter as the PM's.
+
 **IT agents also keep a deal LIST** (PM, 2026-10-13: "what major deals were
 active, what were scheduled ... are they delayed, have the older ones gone",
 then "just a list is fine, can be cross checked once quarter is near").
