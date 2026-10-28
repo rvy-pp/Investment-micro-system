@@ -613,8 +613,20 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
 
     pairs, rets, skipped = [], {}, []
     raw_vr: dict[str, tuple] = {}
+    # Cash names are OUT of Kelly (PM, 2026-10-28: "Keep Dalbha and VAML out.
+    # No Cash names required"): a pair with a leg in specs/book.yaml
+    # analysis_exclude is neither sized nor listed, the same list that keeps
+    # those legs off the Analysis roster (2026-10-27). Named in `excluded`.
+    import yaml
+    bcfg = yaml.safe_load(SPEC.read_text(encoding="utf-8")) or {}
+    cash = {(bcfg.get("ticker_map") or {}).get(t, t) for t in (bcfg.get("analysis_exclude") or {})}
+    excluded = []
     for p in view:
         lab = p["label"]
+        cl = sorted({l.get("entity_id") for l in p["legs"]} & cash)
+        if cl:
+            excluded.append({"label": lab, "why": "cash leg: " + ", ".join(cl)})
+            continue
         if p.get("missing"):
             skipped.append({"label": lab, "why": "dictated leg off the book: "
                             + ", ".join(p["missing"])})
@@ -702,6 +714,7 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
         "bad_edges": bad,
         "unknown_edges": sorted(e for e in edges if e not in known),
         "skipped": skipped,
+        "excluded": excluded,
     })
     return out
 

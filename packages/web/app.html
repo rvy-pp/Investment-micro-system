@@ -3695,13 +3695,12 @@ function kellyBlock(k){
       <td>${r.edge ? edgeCell(r) : `<span class="flat" title="a leg has no lean yet — set it through that stock's agent">no lean</span>`}</td>
       ${size}
     </tr>`;
-  }).join('') + ((k.skipped || []).length
-    ? `<tr class="rk-grp"><td colspan="3">Not sized</td></tr>` + k.skipped.map(s =>
-      `<tr class="rk-none"><td><b>${esc(s.label)}</b></td><td><span class="flat">—</span></td>`
-      + `<td class="dim"><span class="flat">—</span><span class="m">${esc(s.why)}</span></td></tr>`).join('')
-    : '');
+  }).join('');
   // The "edges not used" callout came OFF 2026-10-06 (PM). bad_edges /
-  // unknown_edges are still in the payload; skipped pairs are rows (above).
+  // unknown_edges / skipped / excluded are still in the payload. Off-book
+  // pairs (`skipped`: DALBHARA_ACEM, VAML_NACL) and cash-leg pairs
+  // (`excluded`, kelly.py) are NOT rows — PM, 2026-10-28: "Keep Dalbha and
+  // VAML out. No Cash names required".
   // a DIV, never <section>: the page's global section{display:none} (tab
   // views) hides a section until its tab is shown — the Risk tab's trap
   return `<div class="rk" style="margin-top:var(--s4)"><div class="rk-sec" style="margin-bottom:24px">
