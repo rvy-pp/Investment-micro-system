@@ -1,0 +1,143 @@
+{
+ "date": "2026-10-28",
+ "session": true,
+ "generated_at": "2026-10-28T20:43:47",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 39,
+ "groups": {
+  "during": [
+   "KPIT Technologies",
+   "Vedanta Aluminium",
+   "Vedanta Ltd"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "KPITTECH",
+   "date": "2026-10-28",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the Un-audited financial results of the Company along with the LimitedReview Report for the quarter and half year ended September 30, 2026.",
+   "entity": "kpit",
+   "name": "KPIT Technologies",
+   "sector": "it",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-29",
+     "time": "13:18",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-06",
+     "time": "12:45",
+     "when": "during"
+    },
+    {
+     "date": "2026-01-29",
+     "time": "12:29",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-10",
+     "time": "12:46",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 4
+   },
+   "filed_at": "12:52"
+  },
+  {
+   "symbol": "VAML",
+   "date": "2026-10-28",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "vaml",
+   "name": "Vedanta Aluminium",
+   "sector": "non_ferrous",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-30",
+     "time": "14:25",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 1
+   },
+   "filed_at": "15:18"
+  },
+  {
+   "symbol": "VEDL",
+   "date": "2026-10-28",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the unaudited financial results for the period ended September 30, 2026",
+   "entity": "vedanta",
+   "name": "Vedanta Ltd",
+   "sector": "non_ferrous",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-30",
+     "time": "15:09",
+     "when": "during"
+    },
+    {
+     "date": "2026-04-29",
+     "time": "14:42",
+     "when": "during"
+    },
+    {
+     "date": "2026-01-29",
+     "time": "16:02",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-31",
+     "time": "14:41",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 3,
+    "post": 1
+   },
+   "filed_at": "14:08"
+  }
+ ],
+ "ahead": [
+  {
+   "date": "2026-10-29",
+   "name": "Ambuja Cements",
+   "symbol": "AMBUJACEM"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Coal India",
+   "symbol": "COALINDIA"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Dixon Technologies",
+   "symbol": "DIXON"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Syrma SGS Technology",
+   "symbol": "SYRMA"
+  },
+  {
+   "date": "2026-10-31",
+   "name": "Shyam Metalics and Energy",
+   "symbol": "SHYAMMETL"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "National Aluminium Company",
+   "symbol": "NATIONALUM"
+  }
+ ],
+ "errors": []
+}

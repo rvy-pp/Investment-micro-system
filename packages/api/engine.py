@@ -1656,6 +1656,18 @@ def morning() -> dict:
         if d != today and not (key == "markets" and fri and d >= fri):
             out["warnings"].append(
                 f"{prefix} is from {d}, not {today} — run {maker}")
+    # Results today (PM, 2026-10-28): the first line of the Broker mail
+    # section, "During market: a, b / Post-market: c, d". TODAY'S FILE ONLY —
+    # yesterday's list is yesterday's names, so an old file is not shown at
+    # all, and its absence is a warning (it runs weekends too, unlike markets).
+    rp = mdir / f"results_{today}.json"
+    out["results"] = _read_json(rp) if rp.exists() else None
+    if out["results"] is None:
+        out["warnings"].append(
+            "results-today check has not run — python packages/adapters/results_today.py")
+    elif (out["results"].get("errors") or []) and not out["results"].get("rows"):
+        out["warnings"].append("results-today check failed: "
+                               + "; ".join(out["results"]["errors"]))
     return out
 
 

@@ -397,6 +397,12 @@
             line-height:1.55}
   .plist li::before{content:'▸';position:absolute;left:0;top:1px;
             color:var(--accent);font-size:11px}
+  /* Results today — the first line of the Broker mail section */
+  .rtpanel{padding-top:8px;padding-bottom:8px}
+  .rtline{margin:2px 0}
+  .rtl{font-family:var(--mono);font-size:var(--t-label);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.04em;margin-right:8px}
+  .rtn{cursor:help}
   .src{display:block;font-family:var(--mono);font-size:var(--t-label);
        color:var(--faint)}
   .sechead{font-size:15px;font-weight:600;margin:26px 0 12px;color:var(--ink);
@@ -2962,9 +2968,43 @@ function overnightHtml(m){
   </div>`;
 }
 
+/* Results today (PM, 2026-10-28: "It should be the first line in daily mail
+   report. Like: during market-a,b,c / post-market-c,d,e"). The date is the
+   company's NSE board-meeting notice; the timing is its HABIT, the last four
+   result filings' NSE times (packages/adapters/results_today.py), so the
+   hover shows those times and a tie prints as "timing unclear", never a
+   guess. A name that has already filed today says so. Rendered even when the
+   brief is missing: the two are independent files. */
+function resultsTodayHtml(m){
+  const r = (m || {}).results || null;
+  const row = (label, xs) => `<div class="rtline"><span class="rtl">${label}</span>
+    ${xs.map(x => `<span class="rtn" title="${esc(
+      (x.history || []).length ? 'last prints: ' + x.history.map(h =>
+        h.date.slice(5) + ' ' + h.time).join(' · ') : 'no session print on file')}">${
+      esc(x.name)}${x.filed_at ? ` <span class="neu">(out ${esc(x.filed_at)})</span>` : ''}</span>`)
+      .join(', ')}</div>`;
+  let body;
+  if (!r) body = `<div class="hint">results-today check not run — python
+    packages/adapters/results_today.py</div>`;
+  else if (!(r.rows || []).length) body = (r.errors || []).length
+    ? `<div class="hint" style="color:var(--warn)">NOT CHECKED — ${esc(r.errors.join('; '))}</div>`
+    : `<div class="rtline"><span class="rtl">Results today</span>
+       <span class="neu">none in coverage</span></div>`;
+  else {
+    const by = k => r.rows.filter(x => x.when === k);
+    const sess = r.session === false && (r.rows || []).length;
+    body = sess ? row('Results today (no session)', r.rows) : [
+      ['pre', 'Pre-market'], ['during', 'During market'], ['post', 'Post-market'],
+      ['unclear', 'Timing unclear'], ['unknown', 'Timing unknown']]
+      .filter(([k]) => by(k).length).map(([k, l]) => row(l, by(k))).join('');
+  }
+  return `<div class="panel rtpanel">${body}</div>`;
+}
+
 function mailHtml(m){
   const mail = ((m || {}).brief || {}).mail || null;
   if (!mail) return `<div class="sechead">Broker mail · last 24h</div>
+    ${resultsTodayHtml(m)}
     <div class="panel"><div class="hint">no brief yet — run the
     <b>morning-brief</b> skill (agent-only: the mailbox is behind the M365
     MCP)</div></div>`;
@@ -3031,6 +3071,7 @@ function mailHtml(m){
   return `<div class="sechead">Broker mail · ${esc(mail.window || 'last 24h')}
       <span class="neu" style="font-weight:400;font-size:12px">(${
         mail.n_scanned != null ? mail.n_scanned + ' mails scanned' : '—'})</span></div>
+    ${resultsTodayHtml(m)}
     ${secBlocks || '<div class="panel"><div class="hint">no sector bullets</div></div>'}
     ${(mail.quiet || []).length ? `<div class="hint" style="margin-top:4px">Quiet —
       nothing actionable: ${mail.quiet.map(esc).join(' · ')}</div>` : ''}`;

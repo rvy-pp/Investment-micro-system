@@ -34,6 +34,23 @@ If it prints ERROR lines, carry on — errors ride inside the JSON and the tab
 renders them. Do not re-fetch any of its numbers by hand; the file is the
 record.
 
+Then the results-today check (PM, 2026-10-28), **every day, weekends
+included** (Saturday board meetings happen — APL Apollo printed on two):
+
+```bash
+python packages/adapters/results_today.py
+```
+
+It writes `data/morning/results_YYYY-MM-DD.json`: coverage names with a
+results board meeting TODAY on NSE's event calendar, split by each name's
+habit (the NSE times of its last four result filings). It prints the lines
+the PM reads, e.g. `During market: Ambuja Cements` / `Post-market: Coal
+India`. **Those lines open the chat read in §5, before anything else.** The
+Overview renders the same lines as the first thing under Broker mail. Never
+rewrite the timing from a mail; a broker's "results post market" that
+contradicts the habit goes in that sector's bullets as information, not into
+the file.
+
 ## 2. Sweep ALL mail, last 24 hours
 
 `outlook_email_search` with **no `query`** returns everything in the window —
@@ -211,7 +228,9 @@ python -c "import sys; sys.path.insert(0,'packages/api'); import engine, json; d
 ```
 
 `warnings` should not mention today's brief. Finish by giving the PM the
-brief inline — bulleted, same content as the file — plus anything the sweep
+brief inline. **Its first lines are the results-today lines** exactly as
+`results_today.py` printed them (or `Results today: none in coverage`), then
+the brief, bulleted, same content as the file, plus anything the sweep
 dropped as noise, in one line.
 
 ## What this never does

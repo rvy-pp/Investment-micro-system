@@ -327,6 +327,31 @@ the top on-entity headline from the markets file, and an empty headline list
 after the on-entity filter means NO SIGNAL, not "no move" (macro-fetch's
 Yahoo-search lesson: the endpoint is entity-keyed, not a search engine).
 
+### Results today — the first line of Broker mail (2026-10-28)
+
+PM: *"something in the daily that prompts me the during market and post
+market results for companies in our coverage ... It should be the first line
+in daily mail report. Like: during market-a,b,c / post-market-c,d,e"*.
+`packages/adapters/results_today.py` (selftest 24) writes
+`data/morning/results_<date>.json`; `engine.morning` serves today's file only
+(as `results`, warning when it is missing); app.html's `resultsTodayHtml`
+puts it first under Broker mail; the morning-brief skill runs it every day,
+weekends included, and leads its chat read with the same lines. Also a
+refresh.py step, so a later double-click marks names that have filed.
+- **The date** is NSE's event calendar (`/api/event-calendar`, plain urllib,
+  no cookie), "Financial Results" purposes only, for the Futures-vs-cash
+  coverage roster (grading's symbol map, 39 names).
+- **The timing is a habit, not a notice**: no source publishes it. It is the
+  NSE times of the name's last four result filings ("Outcome of Board
+  Meeting" with financial results or Reg 33 — Syrma writes only the latter).
+  Close is 15:30. Filings on non-sessions (fo_oi dates) are skipped: APL
+  Apollo printed on two Saturdays. **A filing before 06:00 is the previous
+  evening's meeting**, post-market: Amber's 00:40 and 02:26 read as
+  "pre-market" until that was fixed. A tie prints "timing unclear". Today's
+  habit is unclear for Hindalco, HZL, Jindal Stainless, NALCO, NMDC, Shree.
+- Checked on its first day: KPIT, VAML and Vedanta were predicted during
+  market and all three filed during market on 28-Oct.
+
 ## Futures vs cash — an Overview sub-tab (2026-10-25)
 
 PM: *"In the daily tab, create a futures vs cash sub tab that updates daily at

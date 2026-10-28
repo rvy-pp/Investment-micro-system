@@ -27,10 +27,12 @@ mails"*. On a **Saturday or Sunday** the run is:
    The brief's global section takes no bellwether reasons from a markets file.
    The Overview treats Friday's markets file as current over the weekend (see
    `engine.morning`), so no warning fires.
+   `results_today.py` STILL RUNS: it is a calendar read, not a price fetch,
+   and the Overview warns when today's results file is missing.
 3. `python packages/web/export_static.py`, so the weekend brief reaches the
    vault copy. Without it, the OneDrive copy shows Friday's mail all weekend.
-4. Commit only the new dated `data/staging/mail_*` and `data/morning/brief_*`
-   files, and push the branch and `main` as in the weekday run.
+4. Commit only the new dated `data/staging/mail_*`, `data/morning/brief_*`
+   and `data/morning/results_*` files, and push the branch and `main` as in the weekday run.
 5. Report in one short paragraph: mail-only weekend run, how many mails and
    bullets per sector, and whether main was pushed.
 

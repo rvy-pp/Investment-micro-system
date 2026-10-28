@@ -74,6 +74,12 @@ STEPS = [
     # fresher print and re-pulling is the point. The brief_*.json half is
     # agent-only (M365) — see .claude/skills/morning-brief.
     ("morning markets",   ["packages/adapters/morning_markets.py"],           False),
+    # Results today (PM, 2026-10-28): coverage names reporting today, during
+    # market vs post-market, first line of the Overview's Broker mail section.
+    # NSE event calendar + each name's past filing times, ~2s. The
+    # morning-brief skill runs it too (weekends included); here so a
+    # double-click later in the day marks the names that have already filed.
+    ("results today",     ["packages/adapters/results_today.py"],             False),
     # LME cash. Promoted from the manual list 2026-08-21 once it turned out
     # westmetall answers plain urllib with HTTP 200 — the earlier
     # "needs an agent" was inferred from lme.com's 403 without testing the
