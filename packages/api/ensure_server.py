@@ -32,16 +32,27 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import subprocess
 import sys
 import time
 import urllib.request
+from datetime import datetime
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
 HOST, PORT = "127.0.0.1", 8770
 LOG = REPO / "data" / "refresh" / "serve_last.log"
+# One line per tick that ACTED (or failed). Healthy ticks write nothing, or a
+# 5-minute watchdog would add ~100k lines a year saying "fine".
+WATCH_LOG = REPO / "data" / "refresh" / "server_watch.log"
 WAIT_S = 30           # cold import of engine is ~5s; the .vbs allows 25
+# The watchdog runs under pythonw (no console), so every child it starts must
+# not open one either: a netstat window flashing every five minutes otherwise.
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
+TASK = "IMS API server watchdog"
+EVERY_MIN = 5
 
 
 def probe(timeout: float = 5.0) -> dict | None:
@@ -56,8 +67,8 @@ def probe(timeout: float = 5.0) -> dict | None:
 
 def listener_pid() -> int | None:
     """PID holding the port, whether or not it answers HTTP."""
-    out = subprocess.run(["netstat", "-ano", "-p", "TCP"],
-                         capture_output=True, text=True).stdout
+    out = subprocess.run(["netstat", "-ano", "-p", "TCP"], capture_output=True,
+                         text=True, creationflags=NO_WINDOW).stdout
     for line in out.splitlines():
         parts = line.split()
         if (len(parts) >= 5 and parts[1] == f"{HOST}:{PORT}"
@@ -71,12 +82,19 @@ def spawn() -> int:
     LOG.parent.mkdir(parents=True, exist_ok=True)
     serve = REPO / "packages" / "api" / "serve.py"
     cmd = f'cmd /c ""{sys.executable}" -u "{serve}" > "{LOG}" 2>&1"'
-    ps = ("$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create "
-          "-Arguments @{CommandLine=$env:IMS_CMD; CurrentDirectory=$env:IMS_CWD}; "
+    # ShowWindow 0: without it WMI opens the cmd as a NORMAL window, and the
+    # first version left a blank console titled cmd.exe on the PM's desktop
+    # (found 2026-10-28, an hour after it shipped). Closing it kills the server.
+    ps = ("$si = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly "
+          "-Property @{ShowWindow=[uint16]0}; "
+          "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create "
+          "-Arguments @{CommandLine=$env:IMS_CMD; CurrentDirectory=$env:IMS_CWD; "
+          "ProcessStartupInformation=$si}; "
           "Write-Output \"$($r.ReturnValue) $($r.ProcessId)\"")
-    env = {**__import__("os").environ, "IMS_CMD": cmd, "IMS_CWD": str(REPO)}
+    env = {**os.environ, "IMS_CMD": cmd, "IMS_CWD": str(REPO)}
     out = subprocess.run(["powershell", "-NoProfile", "-NonInteractive",
-                          "-Command", ps], capture_output=True, text=True, env=env)
+                          "-Command", ps], capture_output=True, text=True, env=env,
+                         creationflags=NO_WINDOW)
     rc, _, pid = (out.stdout.strip() or "x").partition(" ")
     if rc != "0":
         raise RuntimeError(f"Win32_Process.Create failed: {out.stdout.strip()} "
@@ -85,7 +103,8 @@ def spawn() -> int:
 
 
 def stop(pid: int) -> None:
-    subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True)
+    subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True,
+                   creationflags=NO_WINDOW)
     time.sleep(1)
 
 
@@ -155,15 +174,84 @@ def selftest() -> int:
     return 1 if fails else 0
 
 
+def _ps(script: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["powershell", "-NoProfile", "-NonInteractive",
+                           "-Command", script], capture_output=True, text=True,
+                          creationflags=NO_WINDOW)
+
+
+def install() -> int:
+    """Register the Windows Task Scheduler watchdog (PM, 2026-10-28: "no manual
+    intervention please").
+
+    The refresh step alone left three holes: weekends (mail-only, no
+    refresh.py), a reboot, and a Stop.bat. Task Scheduler runs whether or not
+    the Claude app is open, under the PM's own account, no admin. Every
+    EVERY_MIN minutes and at logon it runs this file under pythonw (no window);
+    a healthy server costs one localhost request and writes nothing.
+
+    NOT a Claude Desktop scheduled task: those fire only while the app is open,
+    and the app closing is the failure being guarded against.
+    """
+    pyw = pathlib.Path(sys.executable).with_name("pythonw.exe")
+    if not pyw.exists():
+        print(f"pythonw.exe not found beside {sys.executable}")
+        return 1
+    me = pathlib.Path(__file__).resolve()
+    common = f"""
+$a = New-ScheduledTaskAction -Execute '{pyw}' -Argument '"{me}"' -WorkingDirectory '{REPO}'
+$rep = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) -RepetitionInterval (New-TimeSpan -Minutes {EVERY_MIN})
+$s = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 3) -Hidden
+$p = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\\$env:USERNAME" -LogonType Interactive -RunLevel Limited
+$d = 'Starts the Investment Micro-System API server (127.0.0.1:{PORT}) if it is down or stale. packages/api/ensure_server.py --install'
+"""
+    with_logon = common + f"""
+$l = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\\$env:USERNAME"
+Register-ScheduledTask -TaskName '{TASK}' -Action $a -Trigger $rep,$l -Settings $s -Principal $p -Description $d -Force | Out-Null
+'ok logon+every{EVERY_MIN}'
+"""
+    r = _ps(with_logon)
+    if "ok" not in r.stdout:
+        # A logon trigger can need admin on a locked-down machine. The
+        # repetition trigger alone still covers a reboot: it resumes on its
+        # time grid once the PM is logged on, at most EVERY_MIN minutes late.
+        r = _ps(common + f"""
+Register-ScheduledTask -TaskName '{TASK}' -Action $a -Trigger $rep -Settings $s -Principal $p -Description $d -Force | Out-Null
+'ok every{EVERY_MIN}'
+""")
+    if "ok" not in r.stdout:
+        print(f"could not register '{TASK}': {r.stderr.strip()[:500]}")
+        return 1
+    print(f"registered '{TASK}' ({r.stdout.strip()[3:]}) -> pythonw {me.name}")
+    return 0
+
+
+def uninstall() -> int:
+    r = _ps(f"Unregister-ScheduledTask -TaskName '{TASK}' -Confirm:$false; 'ok'")
+    print("removed" if "ok" in r.stdout else r.stderr.strip()[:500])
+    return 0 if "ok" in r.stdout else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--install", action="store_true",
+                    help="register the Task Scheduler watchdog")
+    ap.add_argument("--uninstall", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
+    if a.install:
+        return install()
+    if a.uninstall:
+        return uninstall()
     rc, msg = ensure(a.check)
     print(msg)
+    if not a.check and (rc != 0 or "current code" not in msg):
+        WATCH_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with open(WATCH_LOG, "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat(timespec='seconds')}  {msg}\n")
     return rc
 
 

@@ -161,8 +161,21 @@ process tree, never through Popen. **To restart the server by hand, run
 `python packages/api/ensure_server.py`, not a bare `Start-Process`** — a server
 started from a Claude shell dies at the next app restart. It never kills a
 listener that does not answer `/api/version`. Output goes to
-`data/refresh/serve_last.log`. Weekends skip `refresh.py`, so a weekend app
-restart leaves the page down until the launcher or Monday's run.
+`data/refresh/serve_last.log`.
+
+**And a Windows Task Scheduler watchdog runs it every 5 minutes and at logon**
+(PM, same day: *"no manual intervention please"*). Task **`IMS API server
+watchdog`**, registered by `ensure_server.py --install` under the PM's own
+account, no admin, `pythonw` so nothing flashes. It covers what the refresh
+step cannot: weekends (no `refresh.py`), a reboot, an app restart mid-day, and
+an engine edit (a stale server is restarted within 5 minutes, so the "restart
+the server after engine changes" chore is now automatic). It is NOT a Claude
+Desktop task, because those fire only while the app is open. Healthy ticks
+write nothing; every start, restart or failure appends one line to
+`data/refresh/server_watch.log`. **`Stop.bat` now only stops the server for up
+to 5 minutes**; to keep it down, `ensure_server.py --uninstall` first. The
+spawn passes `ShowWindow 0`: without it the WMI-started cmd sat on the desktop
+as a blank console, and closing that window killed the server.
 
 **Weekends are MAIL ONLY (PM, 2026-10-27: *"only run mails"*).** On Saturday
 and Sunday the 08:00 task runs mail-fetch and the morning brief (WITHOUT
