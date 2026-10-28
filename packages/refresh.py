@@ -57,6 +57,13 @@ def _is_locked(stderr: str | None) -> bool:
 
 
 STEPS = [
+    # FIRST, so a Tier 0 halt further down cannot skip it (PM, 2026-10-28). The
+    # server had died with a Claude desktop app restart at 03:25 and nothing
+    # brought it back: the 08:00 run refreshed every number and the page could
+    # not connect. Starts serve.py via WMI, outside this run's process tree, and
+    # restarts it when /api/version says it predates the code on disk. Never
+    # fatal: a dead page is not a reason to withhold the day's scores.
+    ("API server",        ["packages/api/ensure_server.py"],                  False),
     ("preflight",         ["packages/core/preflight.py"],                     True),
     ("equity closes",     ["packages/adapters/yahoo_prices.py", "--load",
                            "--range", "3mo"],                                 False),

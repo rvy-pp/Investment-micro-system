@@ -151,6 +151,19 @@ the Kotak packs arrive 08:00–09:30 IST, so an 08:00 run leans on the
 `outlook_pack.py --save` retry inside the skill and may brief on a thin sweep.
 The launcher still refreshes on every double-click; `launch\Install Daily
 Task.bat` (Windows Task Scheduler) remains written and unrun.
+**`refresh.py`'s FIRST step starts the server if it is down or stale**
+(`packages/api/ensure_server.py`, PM 2026-10-28, selftest 6). On 28-Oct the
+page showed an error all day on healthy data: the server had last been
+restarted from inside a Claude session, so it was a child of the desktop app,
+and the app's 03:25 self-restart took it down. The step spawns `serve.py` through
+WMI (`Win32_Process.Create`, parent WmiPrvSE.exe) so it lives outside the app's
+process tree, never through Popen. **To restart the server by hand, run
+`python packages/api/ensure_server.py`, not a bare `Start-Process`** — a server
+started from a Claude shell dies at the next app restart. It never kills a
+listener that does not answer `/api/version`. Output goes to
+`data/refresh/serve_last.log`. Weekends skip `refresh.py`, so a weekend app
+restart leaves the page down until the launcher or Monday's run.
+
 **Weekends are MAIL ONLY (PM, 2026-10-27: *"only run mails"*).** On Saturday
 and Sunday the 08:00 task runs mail-fetch and the morning brief (WITHOUT
 `morning_markets.py`), re-exports the vault copy, commits the mail and brief

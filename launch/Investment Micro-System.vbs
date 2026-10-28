@@ -58,7 +58,11 @@ If REFRESH_ON_LAUNCH Then
     shell.Run "cmd /c python """ & refreshPy & """", 0, True
 End If
 
-If wasLive Then
+' Re-checked AFTER the refresh: since 2026-10-28 refresh.py's first step starts
+' the server itself (packages\api\ensure_server.py), so a cold launch usually
+' finds it up by now. Starting a second one would fail to bind, harmlessly but
+' pointlessly.
+If wasLive Or IsPortListening() Then
     shell.Run """" & URL & """", 1, False
     WScript.Quit 0
 End If
