@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ims-api",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["packages/api/serve.py"],
+      "port": 8770,
+      "url": "http://127.0.0.1:8770"
+    }
+  ]
+}

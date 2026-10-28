@@ -1,7 +1,7 @@
 {
- "_note": "SWMA e-auction filings, CIL total. Q1FY27 volume-weighted premium = 43.8%, matching UBS's cited 'avg 44% in Q1' — the cross-check that validates the parse. Realisation series = notified_base x (1 + premium).",
+ "_note": "SWMA e-auction filings, CIL total. Q1FY27 volume-weighted premium = 43.8%, matching UBS's cited 'avg 44% in Q1' \u2014 the cross-check that validates the parse. Realisation series = notified_base x (1 + premium).",
  "notified_base_inr_per_t": 1614.0,
- "notified_base_derivation": "Kotak Q1FY27: 'auction realization Rs2,321/t' (digest 28-07-2026) / 1.438 (SWMA Q1 wavg premium) = 1,614. verify: pending — a blended proxy, not a rate card.",
+ "notified_base_derivation": "Kotak Q1FY27: 'auction realization Rs2,321/t' (digest 28-07-2026) / 1.438 (SWMA Q1 wavg premium) = 1,614. verify: pending \u2014 a blended proxy, not a rate card.",
  "months": [
   {
    "month": "2026-02",
