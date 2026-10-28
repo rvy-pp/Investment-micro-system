@@ -870,6 +870,10 @@
   /* three columns fit a phone only if headers and the "vs held" note wrap;
      .rk-t's nowrap made the card scroll sideways at 375px */
   #kelly-t th,#kelly-t td{white-space:normal}
+  #kelly-t tr.rk-grp td{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--faint);padding:22px 0 6px;border-bottom:1px solid var(--hair)}
+  #kelly-t tr.rk-grp:first-child td{padding-top:12px}
+  #kelly-t tr.rk-none td b{font-weight:500;color:var(--soft)}
   .rk-key{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12px;color:var(--soft);margin:0 0 12px}
   .rk-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
   .rk-bars{padding:8px 22px}
@@ -3671,8 +3675,12 @@ function kellyBlock(k){
      column), the part of Kelly that survives any leverage limit. Pairs with
      no edge are one line under the table, not rows of dashes. Styles are the
      Risk tab's scoped .rk kit. */
-  const edged = k.rows.filter(r => r.edge), none = k.rows.filter(r => !r.edge);
-  const rows = edged.map(r => {
+  /* EVERY pair is a row (PM, same day: "Let the full table be there. Where
+     the rest of the pairs?"); a pair with no edge shows "no lean" and what
+     is held, grouped under its sector like Positions. */
+  let sec = null;
+  const rows = k.rows.map(r => {
+    const head = r.sector && r.sector !== sec ? `<tr class="rk-grp"><td colspan="3">${esc((sec = r.sector))}</td></tr>` : '';
     const L = esc(r.label);
     const chips = (r.flags || []).filter(f => f !== 'flip').map(f =>
       ` <span class="rk-tag" title="${esc(flagTip[f] || f)}">${esc(f.replace(/_/g, ' '))}</span>`).join('')
@@ -3680,16 +3688,20 @@ function kellyBlock(k){
     const tip = `long $${(r.long_usd || 0).toLocaleString('en-US')} · short $${(r.short_usd || 0).toLocaleString('en-US')} held`
       + (r.sigma_ann_pct == null ? '' : ` · spread σ ${r.sigma_ann_pct.toFixed(1)}%/yr, ${k.horizon_weeks}w ${(r.sigma_h_pct ?? 0).toFixed(1)}%`)
       + ` · ${r.n_sessions} sessions`;
-    return `<tr title="${esc(tip)}">
+    const size = r.edge ? `<td data-c="budget" data-k="${L}">—</td>`
+      : `<td class="dim"><span class="flat">—</span><span class="m">held ${g(r.gross_now_pct)}</span></td>`;
+    return `${head}<tr title="${esc(tip)}"${r.edge ? '' : ' class="rk-none"'}>
       <td><b>${L}</b>${chips}</td>
-      <td>${edgeCell(r)}</td>
-      <td data-c="budget" data-k="${L}">—</td>
+      <td>${r.edge ? edgeCell(r) : `<span class="flat" title="a leg has no lean yet — set it through that stock's agent">no lean</span>`}</td>
+      ${size}
     </tr>`;
-  }).join('');
-  const noneLine = none.length ? `<p class="rk-src" style="margin:14px 0 0">No edge yet (a leg has no lean):
-    ${none.map(r => esc(r.label)).join(', ')}.</p>` : '';
+  }).join('') + ((k.skipped || []).length
+    ? `<tr class="rk-grp"><td colspan="3">Not sized</td></tr>` + k.skipped.map(s =>
+      `<tr class="rk-none"><td><b>${esc(s.label)}</b></td><td><span class="flat">—</span></td>`
+      + `<td class="dim"><span class="flat">—</span><span class="m">${esc(s.why)}</span></td></tr>`).join('')
+    : '');
   // The "edges not used" callout came OFF 2026-10-06 (PM). bad_edges /
-  // unknown_edges / skipped are still in the payload.
+  // unknown_edges are still in the payload; skipped pairs are rows (above).
   // a DIV, never <section>: the page's global section{display:none} (tab
   // views) hides a section until its tab is shown — the Risk tab's trap
   return `<div class="rk" style="margin-top:var(--s4)"><div class="rk-sec" style="margin-bottom:24px">
@@ -3700,8 +3712,7 @@ function kellyBlock(k){
       <th>Pair</th>
       <th title="the case agents' pair juice: long lean − short lean, each to the next print (inside ${k.horizon_weeks}w)">Agents' edge</th>
       <th title="the joint ${fr} Kelly PROPORTIONS scaled so the edged pairs keep exactly today's combined gross; small figure: change vs what is held today. Gross = both sides, % of NAV">Kelly suggested size</th>
-    </tr></thead><tbody>${rows || `<tr><td colspan="3" class="dim">No pair has both leans yet.</td></tr>`}</tbody></table></div>
-    ${noneLine}
+    </tr></thead><tbody>${rows || `<tr><td colspan="3" class="dim">No pairs on the book.</td></tr>`}</tbody></table></div>
     <details class="rk-more" style="margin-top:20px"><summary>How this is sized</summary>
       <ul class="rk-note">
         <li><span id="k-sum"></span></li>
