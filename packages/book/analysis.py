@@ -303,6 +303,14 @@ def view(conn=None, today: dt.date | None = None, defaults: bool = True) -> dict
             le = pm_lean(log)
             juice = le["data"]["juice_pct"] if le else None
             src = "pm" if juice is not None else None
+            # The price step is DONE while a PM lean is live, whatever the
+            # latest price entry says. Agents and re-strikes log the RANGE only,
+            # with status `partial`, and the last entry used to set the status:
+            # on 2026-10-28 the σ-range re-log showed Wipro (lean -20.6%) and
+            # Infosys (lean -2.67%) as `partial` while both leans still sized
+            # Kelly. The same shape pm_lean() fixed for the number itself.
+            if le and "price" in steps and steps["price"].get("status") != "done":
+                steps["price"] = {**steps["price"], "status": "done", "lean_from": le["as_of"]}
             if juice is None and defaults:
                 juice = default_lean(conn, s["entity"], today)
                 src = "default_base" if juice is not None else None
@@ -424,10 +432,15 @@ def _selftest() -> None:
                          "note": "anchor re-struck", "data": {"juice_low": -4.0, "juice_high": 1.0}}, today)
         lt = next(s for s in view(conn, today)["stocks"] if s["entity"] == "ltimindtree")
         assert lt["juice"] == -1.5 and lt["juice_source"] == "pm" and lt["juice_low"] == -4.0; ok += 1
+        assert lt["steps"]["price"]["status"] == "done"; ok += 1                   # a live lean keeps the step done
         add_entry(conn, {"entity": "ltimindtree", "step": "price", "note": "PM drops the lean",
                          "data": {"clear_lean": True}}, today)
         lt = next(s for s in view(conn, today, defaults=False)["stocks"] if s["entity"] == "ltimindtree")
         assert lt["juice"] is None and lt["juice_source"] is None; ok += 1         # an explicit clear clears
+        add_entry(conn, {"entity": "ltimindtree", "step": "price", "status": "partial", "via": "agent:ltm-agent",
+                         "note": "range only", "data": {"juice_low": -4.0, "juice_high": 1.0}}, today)
+        lt = next(s for s in view(conn, today, defaults=False)["stocks"] if s["entity"] == "ltimindtree")
+        assert lt["steps"]["price"]["status"] == "partial"; ok += 1                # no lean: a range stays partial
 
         # roster is the dictated legs, every one mapped, sides from the dictation
         r = roster()
