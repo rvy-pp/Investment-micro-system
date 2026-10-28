@@ -1,17 +1,132 @@
 {
  "date": "2026-10-28",
  "session": true,
- "generated_at": "2026-10-28T20:43:47",
+ "generated_at": "2026-10-28T21:00:24",
  "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
- "n_coverage": 39,
+ "n_coverage": 93,
  "groups": {
   "during": [
+   "Adani Enterprises",
    "KPIT Technologies",
    "Vedanta Aluminium",
    "Vedanta Ltd"
+  ],
+  "post": [
+   "Force Motors",
+   "JSW Energy"
   ]
  },
  "rows": [
+  {
+   "symbol": "ADANIENT",
+   "date": "2026-10-28",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:ADANIENT",
+   "name": "Adani Enterprises",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-29",
+     "time": "14:36",
+     "when": "during"
+    },
+    {
+     "date": "2026-04-30",
+     "time": "15:34",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-03",
+     "time": "14:41",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-04",
+     "time": "14:43",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 3,
+    "post": 1
+   },
+   "filed_at": "13:37"
+  },
+  {
+   "symbol": "FORCEMOT",
+   "date": "2026-10-28",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:FORCEMOT",
+   "name": "Force Motors",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-29",
+     "time": "17:22",
+     "when": "post"
+    },
+    {
+     "date": "2026-04-29",
+     "time": "18:05",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-04",
+     "time": "20:00",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-07",
+     "time": "19:12",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": "17:03"
+  },
+  {
+   "symbol": "JSWENERGY",
+   "date": "2026-10-28",
+   "purpose": "Financial Results/Fund Raising",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026 and Fund Raising",
+   "entity": "ext:JSWENERGY",
+   "name": "JSW Energy",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-22",
+     "time": "14:40",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-11",
+     "time": "15:49",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-23",
+     "time": "18:37",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-17",
+     "time": "18:09",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "during": 1,
+    "post": 3
+   },
+   "filed_at": "15:17"
+  },
   {
    "symbol": "KPITTECH",
    "date": "2026-10-28",
@@ -39,7 +154,7 @@
     },
     {
      "date": "2025-11-10",
-     "time": "12:46",
+     "time": "12:44",
      "when": "during"
     }
    ],
@@ -119,9 +234,44 @@
    "symbol": "COALINDIA"
   },
   {
+   "date": "2026-10-29",
+   "name": "Computer Age Management Services",
+   "symbol": "CAMS"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Suzlon Energy",
+   "symbol": "SUZLON"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Bharat Electronics",
+   "symbol": "BEL"
+  },
+  {
    "date": "2026-10-30",
    "name": "Dixon Technologies",
    "symbol": "DIXON"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "GAIL (India)",
+   "symbol": "GAIL"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "GE Vernova T&D India",
+   "symbol": "GVT&D"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Indian Oil Corporation",
+   "symbol": "IOC"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Reliance Industries",
+   "symbol": "RELIANCE"
   },
   {
    "date": "2026-10-30",
@@ -130,14 +280,50 @@
   },
   {
    "date": "2026-10-31",
+   "name": "NTPC",
+   "symbol": "NTPC"
+  },
+  {
+   "date": "2026-10-31",
    "name": "Shyam Metalics and Energy",
    "symbol": "SHYAMMETL"
+  },
+  {
+   "date": "2026-11-01",
+   "name": "Power Grid Corporation Of India",
+   "symbol": "POWERGRID"
   },
   {
    "date": "2026-11-02",
    "name": "National Aluminium Company",
    "symbol": "NATIONALUM"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "Petronet LNG",
+   "symbol": "PETRONET"
+  },
+  {
+   "date": "2026-11-03",
+   "name": "Solar Industries India",
+   "symbol": "SOLARINDS"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Cummins India",
+   "symbol": "CUMMINSIND"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "NHPC",
+   "symbol": "NHPC"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Premier Energies",
+   "symbol": "PREMIERENE"
   }
  ],
- "errors": []
+ "errors": [],
+ "n_extended": 54
 }

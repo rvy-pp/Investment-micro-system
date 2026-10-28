@@ -53,7 +53,9 @@ import gzip
 import json
 import pathlib
 import sqlite3
+import re
 import sys
+import urllib.parse
 import urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
@@ -63,6 +65,8 @@ DB = REPO / "data" / "ims.db"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 CAL_URL = "https://www.nseindia.com/api/event-calendar?index=equities&from_date={f}&to_date={t}"
+CAL_SYM_URL = ("https://www.nseindia.com/api/event-calendar?index=equities&symbol={s}"
+               "&from_date={f}&to_date={t}")
 ANN_URL = ("https://www.nseindia.com/api/corporate-announcements?index=equities"
            "&symbol={s}&from_date={f}&to_date={t}")
 
@@ -71,6 +75,18 @@ LATE_NIGHT = dt.time(6, 0)   # before this, a filing is last night's meeting
 HABIT_N = 4          # last N session prints make the habit
 HISTORY_DAYS = 400   # enough for four quarterly prints and a late one
 LOOKAHEAD_DAYS = 7   # the payload carries the week ahead for the hover
+
+# The PM's extended coverage (PM, 2026-10-28: "Add extended list"). READ LIVE
+# from the desk's spreadsheet on every run, never copied into the repo: the
+# remote is PUBLIC, and an edit to the sheet should move this check with no
+# code change. BBG tickers are not NSE symbols (KKC = CUMMINSIND, HNAL = HAL,
+# POWERIND = POWERINDIA), so each row resolves by COMPANY NAME against NSE's
+# own equity list. A row that does not resolve is named in `errors`, never
+# guessed. All 54 resolved exactly on 2026-10-28, and all 54 trade F&O.
+EXTENDED_XLSX = (pathlib.Path.home() / "OneDrive - PinPOINT" / "Microsoft Teams Chat Files"
+                 / "Extended Paper Coverage 1.xlsx")
+EXTENDED_SHEET = "Proposed Coverage"
+EQUITY_L = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
 
 
 def _get(url: str):
@@ -111,7 +127,7 @@ def calendar_rows(raw: list[dict], symbols: set[str]) -> list[dict]:
     return out
 
 
-def result_filings(raw: list[dict]) -> list[dt.datetime]:
+def result_filings(raw: list[dict], meetings: set[dt.date] | None = None) -> list[dt.datetime]:
     """Dissemination times of RESULT filings, earliest per calendar day,
     newest first. The outcome notice is the one carrying the results; a
     later same-day "Financial Result Updates" (press release, investor deck)
@@ -120,15 +136,24 @@ def result_filings(raw: list[dict]) -> list[dt.datetime]:
     Syrma never writes "financial results" in the outcome text, only "under
     Regulation 30 and 33" — Reg 33 IS the results regulation. Matching the
     words alone left it "timing unknown" with four prints on file (caught
-    2026-10-28 on the first live run)."""
+    2026-10-28 on the first live run).
+
+    And the text is often no help at all: JSW Energy files "outcome of the
+    Board Meeting held on 22nd July 2026", Supreme "Q3 Results", UNO Minda
+    "Outcome of Board meeting held on february 05, 2026". So `meetings` — the
+    company's own RESULTS board-meeting dates from NSE's per-symbol calendar —
+    is the main test: an outcome filed on (or just past midnight after) one
+    of those days is the result, whatever it says. That also keeps JSW
+    Energy's 08-Aug outcome out, a meeting the calendar lists as nothing. The
+    text rule stays as the fallback when the calendar fetch fails."""
     best: dict[dt.date, dt.datetime] = {}
     for a in raw or []:
         desc = (a.get("desc") or "").lower()
         text = (a.get("attchmntText") or "").lower()
-        if not ("outcome of board meeting" in desc
-                and ("financial result" in text or "regulation 30 and 33" in text
-                     or "regulations 30 and 33" in text or "regulation 33" in text)):
+        if "outcome of board meeting" not in desc:
             continue
+        worded = ("financial result" in text or "regulation 30 and 33" in text
+                  or "regulations 30 and 33" in text or "regulation 33" in text)
         try:
             t = dt.datetime.strptime(a.get("an_dt") or a.get("sort_date"), "%d-%b-%Y %H:%M:%S")
         except (TypeError, ValueError):
@@ -137,6 +162,8 @@ def result_filings(raw: list[dict]) -> list[dt.datetime]:
             except (TypeError, ValueError):
                 continue
         d = meeting_day(t)
+        if not (worded or (meetings and d in meetings)):
+            continue
         if d not in best or t < best[d]:
             best[d] = t
     return sorted(best.values(), reverse=True)
@@ -201,6 +228,55 @@ def session_test(conn: sqlite3.Connection | None):
     return is_session
 
 
+def norm_name(s: str) -> str:
+    """'Power Grid Corporation Of India Ltd.' == 'Power Grid Corporation of
+    India Limited' == 'FORCE MOTORS LTD'."""
+    s = re.sub(r"[.,()]", " ", (s or "").lower())
+    s = re.sub(r"\blimited\b", "ltd", s)
+    return " ".join(s.split())
+
+
+def extended(companies: list[str], equity_l: list[dict]) -> tuple[list[dict], list[str]]:
+    """Resolve the sheet's company names to NSE symbols. -> (rows, unresolved)."""
+    by = {}
+    for r in equity_l:
+        by.setdefault(norm_name(r.get("NAME OF COMPANY", "")), []).append(r.get("SYMBOL", "").strip())
+    out, miss = [], []
+    for c in companies:
+        hit = by.get(norm_name(c)) or []
+        if len(hit) != 1:
+            miss.append(c if not hit else f"{c} (ambiguous: {', '.join(hit)})")
+            continue
+        out.append({"id": "ext:" + hit[0], "symbol": hit[0], "sector": "extended",
+                    "name": re.sub(r"\s+(Ltd\.?|Limited)$", "", c.strip())})
+    return out, miss
+
+
+def extended_roster(core_symbols: set[str]) -> tuple[list[dict], list[str]]:
+    """The live sheet, resolved. Names already in core coverage are skipped."""
+    if not EXTENDED_XLSX.exists():
+        return [], [f"extended coverage list not found at {EXTENDED_XLSX}"]
+    try:
+        import csv
+        import io
+        import openpyxl
+        wb = openpyxl.load_workbook(EXTENDED_XLSX, read_only=True, data_only=True)
+        rows = list(wb[EXTENDED_SHEET].iter_rows(values_only=True))
+        wb.close()
+        hdr = [str(h or "").strip() for h in rows[0]]
+        ci = hdr.index("Company")
+        companies = [r[ci] for r in rows[1:] if r and r[ci]]
+        req = urllib.request.Request(EQUITY_L, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            eq = list(csv.DictReader(io.StringIO(r.read().decode("utf-8", "replace"))))
+        eq = [{k.strip(): v for k, v in x.items()} for x in eq]
+    except Exception as e:  # noqa: BLE001 — the core 39 must still run
+        return [], [f"extended coverage list unreadable ({e})"]
+    out, miss = extended(companies, eq)
+    errs = [f"extended coverage: no NSE match for {', '.join(miss)}"] if miss else []
+    return [x for x in out if x["symbol"] not in core_symbols], errs
+
+
 def roster(conn: sqlite3.Connection) -> list[dict]:
     """Coverage = grading's sector + NSE-symbol map, the Futures-vs-cash list."""
     sys.path.insert(0, str(REPO / "packages" / "book"))
@@ -218,17 +294,25 @@ def roster(conn: sqlite3.Connection) -> list[dict]:
              "name": names.get(eid) or eid} for eid, sym in cfg["symbol_of"].items()]
 
 
-def build(day: dt.date, ros: list[dict], cal_raw: list[dict], ann_of, is_session) -> dict:
-    """The payload. `ann_of(symbol) -> raw announcements` is injected so the
-    selftest runs offline."""
+def build(day: dt.date, ros: list[dict], cal_raw: list[dict], ann_of, is_session,
+          meet_of=None) -> dict:
+    """The payload. `ann_of(symbol) -> raw announcements` and `meet_of(symbol)
+    -> raw per-symbol calendar` are injected so the selftest runs offline."""
     by_sym = {r["symbol"]: r for r in ros}
     rows = calendar_rows(cal_raw, set(by_sym))
     today = [r for r in rows if r["date"] == day.isoformat()]
     out_rows, errors = [], []
     for r in today:
         meta = by_sym[r["symbol"]]
+        meets = None
+        if meet_of is not None:
+            try:
+                meets = {dt.date.fromisoformat(x["date"])
+                         for x in calendar_rows(meet_of(r["symbol"]), {r["symbol"]})}
+            except Exception as e:  # noqa: BLE001 — falls back to the text rule
+                errors.append(f"{r['symbol']}: meeting history fetch failed ({e}); text rule only")
         try:
-            fil = result_filings(ann_of(r["symbol"]))
+            fil = result_filings(ann_of(r["symbol"]), meets)
         except Exception as e:  # noqa: BLE001 — one name's fetch must not lose the rest
             errors.append(f"{r['symbol']}: announcements fetch failed ({e})")
             fil = []
@@ -259,15 +343,19 @@ def run(day: dt.date) -> dict:
         is_session = session_test(conn)
     finally:
         conn.close()
-    errors = []
+    ext, errors = extended_roster({r["symbol"] for r in ros})
+    ros = ros + ext
     try:
         cal = _get(CAL_URL.format(f=_ddmmyyyy(day), t=_ddmmyyyy(day + dt.timedelta(days=LOOKAHEAD_DAYS))))
     except Exception as e:  # noqa: BLE001
         cal, errors = [], [f"NSE event calendar fetch failed ({e})"]
     frm = _ddmmyyyy(day - dt.timedelta(days=HISTORY_DAYS))
+    q = lambda s: urllib.parse.quote(s, safe="")  # noqa: E731 — GVT&D
     doc = build(day, ros, cal,
-                lambda s: _get(ANN_URL.format(s=s, f=frm, t=_ddmmyyyy(day))), is_session)
+                lambda s: _get(ANN_URL.format(s=q(s), f=frm, t=_ddmmyyyy(day))), is_session,
+                lambda s: _get(CAL_SYM_URL.format(s=q(s), f=frm, t=_ddmmyyyy(day))))
     doc["errors"] = errors + doc["errors"]
+    doc["n_extended"] = len(ext)
     return doc
 
 
@@ -336,6 +424,15 @@ def selftest() -> int:
         {"desc": "Outcome of Board Meeting", "attchmntText": "Outcome of Board Meeting held on "
          "July 29, 2026, under Regulation 30 and 33 read with Part A", "an_dt": "29-Jul-2026 15:29:00"},
     ]
+    jsw = [{"desc": "Outcome of Board Meeting", "attchmntText": d, "an_dt": t} for d, t in (
+        ("outcome of the Board Meeting held on 22nd July 2026", "22-Jul-2026 14:40:01"),
+        ("Outcome of Board Meeting held on August 08, 2026.", "08-Aug-2026 16:21:34"),
+        ("the financial results for the period ended March 31, 2026.", "11-May-2026 16:02:44"),
+        ("the financial results for the period ended March 31, 2026.", "11-May-2026 15:49:16"))]
+    f = result_filings(jsw, {dt.date(2026, 7, 22), dt.date(2026, 5, 11)})
+    ok([t.strftime("%m-%d %H:%M") for t in f] == ["07-22 14:40", "05-11 15:49"],
+       "a generically-worded outcome on a results meeting day counts; a non-results meeting does not")
+    ok(len(result_filings(jsw)) == 1, "without the meeting dates, only the worded filing counts")
     f = result_filings(ann)
     ok(len(f) == 2 and f[0] == dt.datetime(2026, 10, 8, 15, 40, 12),
        "earliest same-day result filing kept; fund raising and intimation dropped")
@@ -370,6 +467,24 @@ def selftest() -> int:
        "today's own filing is shown, never counted toward the habit")
     ok([a["symbol"] for a in doc["ahead"]] == ["INFY"], "the week ahead rides along")
     ok(line(doc) == "Post-market: Infosys, TCS", "the line reads as the PM asked")
+
+    # extended coverage: name resolution, both directions
+    eq = [{"SYMBOL": "CUMMINSIND", "NAME OF COMPANY": "Cummins India Limited"},
+          {"SYMBOL": "FORCEMOT", "NAME OF COMPANY": "FORCE MOTORS LTD"},
+          {"SYMBOL": "POWERGRID", "NAME OF COMPANY": "Power Grid Corporation of India Limited"},
+          {"SYMBOL": "GVT&D", "NAME OF COMPANY": "GE Vernova T&D India Limited"},
+          {"SYMBOL": "ABC", "NAME OF COMPANY": "Twin Co Limited"},
+          {"SYMBOL": "ABCD", "NAME OF COMPANY": "Twin Co Ltd"}]
+    got, miss = extended(["Cummins India Ltd.", "Force Motors Ltd.",
+                          "Power Grid Corporation Of India Ltd.", "GE Vernova T&D India Ltd.",
+                          "Twin Co Ltd.", "Nobody Ltd."], eq)
+    ok([g["symbol"] for g in got] == ["CUMMINSIND", "FORCEMOT", "POWERGRID", "GVT&D"],
+       "BBG-ticker names resolve by company name (Ltd./Limited, case, 'Of')")
+    ok(got[0]["name"] == "Cummins India" and got[0]["sector"] == "extended",
+       "display name drops Ltd.; sector is 'extended'")
+    ok(len(miss) == 2 and "ambiguous" in miss[0] and miss[1] == "Nobody Ltd.",
+       "an ambiguous or unmatched name is reported, never guessed")
+    ok(urllib.parse.quote("GVT&D", safe="") == "GVT%26D", "a '&' symbol is quoted in the query")
 
     def boom(_s):
         raise OSError("403")

@@ -41,7 +41,8 @@ included** (Saturday board meetings happen — APL Apollo printed on two):
 python packages/adapters/results_today.py
 ```
 
-It writes `data/morning/results_YYYY-MM-DD.json`: coverage names with a
+It writes `data/morning/results_YYYY-MM-DD.json`: coverage names (the core
+39 plus the PM's extended list, read live from the desk spreadsheet) with a
 results board meeting TODAY on NSE's event calendar, split by each name's
 habit (the NSE times of its last four result filings). It prints the lines
 the PM reads, e.g. `During market: Ambuja Cements` / `Post-market: Coal

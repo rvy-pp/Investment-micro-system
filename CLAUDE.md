@@ -340,10 +340,23 @@ weekends included, and leads its chat read with the same lines. Also a
 refresh.py step, so a later double-click marks names that have filed.
 - **The date** is NSE's event calendar (`/api/event-calendar`, plain urllib,
   no cookie), "Financial Results" purposes only, for the Futures-vs-cash
-  coverage roster (grading's symbol map, 39 names).
+  coverage roster (grading's symbol map, 39 names) PLUS the PM's extended
+  coverage (54 names, PM same day: "Add extended list"), 93 in all.
+- **The extended list is READ LIVE from the desk spreadsheet**
+  (`OneDrive - PinPOINT\Microsoft Teams Chat Files\Extended Paper Coverage
+  1.xlsx`, sheet "Proposed Coverage"), never copied into the repo, because
+  the remote is public. BBG tickers are not NSE symbols (KKC = CUMMINSIND),
+  so each company NAME resolves against NSE's `EQUITY_L.csv`; an unmatched or
+  ambiguous name is reported, never guessed (all 54 matched, all trade F&O).
+  A missing or unreadable sheet is an error line; the core 39 still run.
+  `GVT&D` must be URL-quoted or NSE reads `symbol=GVT`.
 - **The timing is a habit, not a notice**: no source publishes it. It is the
-  NSE times of the name's last four result filings ("Outcome of Board
-  Meeting" with financial results or Reg 33 — Syrma writes only the latter).
+  NSE times of the name's last four result filings: an "Outcome of Board
+  Meeting" filed on one of the company's RESULTS meeting dates (NSE's
+  per-symbol calendar), whatever its text says. JSW Energy, Supreme and UNO
+  Minda word theirs generically ("outcome of the Board Meeting held on 22nd
+  July"), and a text match missed half their prints. Text (financial results
+  / Reg 33) is the fallback when that calendar fetch fails.
   Close is 15:30. Filings on non-sessions (fo_oi dates) are skipped: APL
   Apollo printed on two Saturdays. **A filing before 06:00 is the previous
   evening's meeting**, post-market: Amber's 00:40 and 02:26 read as
