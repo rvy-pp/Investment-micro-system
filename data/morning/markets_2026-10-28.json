@@ -1,0 +1,201 @@
+{
+ "date": "2026-10-28",
+ "fetched_at": "2026-10-28T08:08:32",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-27",
+    "close": 7722.6,
+    "prev_date": "2026-10-26",
+    "chg_pct": 0.6,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-27",
+    "close": 26477.81,
+    "prev_date": "2026-10-26",
+    "chg_pct": 1.18,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-27",
+    "close": 52377.57,
+    "prev_date": "2026-10-26",
+    "chg_pct": 0.03,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-27",
+    "close": 11482.5,
+    "prev_date": "2026-10-26",
+    "chg_pct": 3.6,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-27",
+    "close": 217.94,
+    "prev_date": "2026-10-26",
+    "chg_pct": 0.9,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-27",
+    "close": 560.26,
+    "prev_date": "2026-10-26",
+    "chg_pct": 5.45,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-27",
+    "close": 436.87,
+    "prev_date": "2026-10-26",
+    "chg_pct": 2.95,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-27",
+    "close": 342.33,
+    "prev_date": "2026-10-26",
+    "chg_pct": 4.0,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-27",
+    "close": 235.16,
+    "prev_date": "2026-10-26",
+    "chg_pct": -4.88,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-27",
+    "close": 66.22,
+    "prev_date": "2026-10-26",
+    "chg_pct": -4.5,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Launches Physical AI Safety Suite For Factories And Warehouses",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-27 22:09Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-launches-physical-ai-220915299.html"
+   },
+   {
+    "title": "Accenture (ACN) vs. CTSH and IBM: Can Valuation Recovery and Dividend Growth Drive the Next Upside?",
+    "publisher": "Insider Monkey",
+    "when": "2026-10-27 20:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-vs-ctsh-ibm-205538319.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Broadens Travelport Partnership to Advance AI Adoption",
+    "publisher": "MT Newswires",
+    "when": "2026-10-27 14:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-broadens-travelport-partnership-advance-141235452.html"
+   },
+   {
+    "title": "Update: Morgan Stanley Adjusts PT on Cognizant Technology Solutions to $70 From $51, Maintains Equalweight Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-27 12:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/morgan-stanley-adjusts-pt-cognizant-121639048.html"
+   },
+   {
+    "title": "Travelport and Cognizant deepen strategic partnership to build intelligent travel retail for the AI era",
+    "publisher": "PR Newswire",
+    "when": "2026-10-27 12:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/travelport-cognizant-deepen-strategic-partnership-120000908.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Anthropic Held More Cash Than Nvidia and Apple Combined Ahead of IPO",
+    "publisher": "BeInCrypto",
+    "when": "2026-10-28 00:39Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/anthropic-held-more-cash-nvidia-003958106.html"
+   },
+   {
+    "title": "Nvidia Stock Is 10% Below Its Record. Does Anthropic's IPO Filing Make It a Buy?",
+    "publisher": "Motley Fool",
+    "when": "2026-10-27 23:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-stock-10-below-record-234602124.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom CEO says capital is \u2018available\u2019 after banks wavered",
+    "publisher": "TheStreet",
+    "when": "2026-10-28 02:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-ceo-says-capital-available-020300353.html"
+   },
+   {
+    "title": "Penguin Solutions, Broadcom, FormFactor, Lattice Semiconductor, and AMD stocks trade up, what you need to know",
+    "publisher": "StockStory",
+    "when": "2026-10-27 22:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/penguin-solutions-broadcom-formfactor-lattice-222247675.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Penguin Solutions, Broadcom, FormFactor, Lattice Semiconductor, and AMD stocks trade up, what you need to know",
+    "publisher": "StockStory",
+    "when": "2026-10-27 22:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/penguin-solutions-broadcom-formfactor-lattice-222247675.html"
+   },
+   {
+    "title": "Nvidia, AMD Get Their Jollies Hooking Up With Meta's Muse",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-10-27 21:08Z",
+    "link": "https://finance.yahoo.com/m/7d167cef-0d25-3286-b089-63b73b0f9470/nvidia%2C-amd-get-their-jollies.html"
+   },
+   {
+    "title": "I'd Own a Small Position in AMD Stock Through 2030, but I Wouldn't Expect It to Triple Again",
+    "publisher": "Motley Fool",
+    "when": "2026-10-27 20:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/id-own-small-position-amd-204302677.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 22609.5,
+  "chg_pct": -0.4,
+  "stamp": "28-Oct-2026 08:08:10",
+  "expiry": "23-Nov-2026",
+  "volume": 2054,
+  "nifty_close": {
+   "close": 22749.75,
+   "stamp": "27-Oct-2026 15:30"
+  },
+  "gap_pts": -140.2,
+  "gap_pct": -0.62
+ }
+}

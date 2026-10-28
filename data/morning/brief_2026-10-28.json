@@ -1,0 +1,348 @@
+{
+ "date": "2026-10-28",
+ "generated_at": "2026-10-28T08:16:47+05:30",
+ "mail": {
+  "window": "24h to 08:04 IST",
+  "n_scanned": 224,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Nuvama sees Vedanta 2QFY27 EBITDA INR90.8bn vs street INR89.1bn, +7% QoQ on zinc; PAT INR57.0bn vs street INR48.3bn; results due 28-Oct.",
+      "source": "Nuvama — Result Estimates for 28th October 2026 : TVSL, HUVR, ADSEZ, HYUNDAI, PIDI, CIFC, HMCL, VEDL, UNITDSPR, INFOE, BANDHAN",
+      "received": "16:10",
+      "detail": {
+       "summary": "Nuvama expects the quarter to be led by higher zinc prices and volumes, with zinc international the swing factor. Copper recovers on price; Zinc India gains are partly offset by lower lead and silver prices.",
+       "points": [
+        "Revenue INR248.6bn vs street INR246.0bn",
+        "EBITDA margin 36.5% vs street 36.2%",
+        "Zinc international EBITDA +104% QoQ",
+        "Zinc India EBITDA +5% QoQ",
+        "Copper EBITDA INR210mn vs INR110mn in Q1"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LME zinc settled at $3,823/t, up over 2%; cash-to-3M backwardation widened above $100/t from ~$35/t last week, signalling prompt tightness supportive of HZL and Vedanta.",
+      "source": "Emkay — Commodity Market Report: Gold steadies at $4,000 before Fed; Zinc tightens as oil retreats",
+      "received": "09:44",
+      "detail": {
+       "summary": "Zinc outperformed base metals on tightening prompt conditions and supply concerns, with falling MCX warehouse stocks adding domestic worry. Emkay flags profit-booking risk as LME nears resistance.",
+       "points": [
+        "MCX Nov zinc closed Rs412/kg, up over 3%",
+        "Peru Aug-26 zinc output 105,625t, down 28.1% YoY",
+        "LME resistance zone $3,840-3,860/t",
+        "Copper backwardation widened to ~$188/t"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "SAIL 2QFY27 adj EBITDA Rs42.2bn missed Kotak by 9% on realisations; EBITDA/t Rs8,178 (-25% QoQ); Kotak holds REDUCE, FV Rs170.",
+      "source": "Kotak — [Kotak] SAIL 2QFY27 First Take: Miss on lower margins, partly offset by higher volumes",
+      "received": "00:09",
+      "detail": {
+       "summary": "Revenue/EBITDA/PAT of Rs320/42.2/17.7bn trailed Kotak's Rs315/46.5/20.9bn as realisations undershot on seasonally weak long products, only partly offset by volumes and operating leverage. Estimates will be reviewed after the 28-Oct 10:30 IST call.",
+       "points": [
+        "Volume 5.16mt, +12% YoY, +27% QoQ, 4.6% above Kotak",
+        "Realisation Rs62,011/t, -5.1% QoQ, 3% below estimate",
+        "Raw material cost +22% QoQ, likely coking coal",
+        "Gross debt Rs205.8bn vs Rs217.3bn QoQ; D/E 0.34x",
+        "EBITDA/t 13% below Kotak's Rs9,419"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM expects SAIL to underperform after EBITDA missed JPMe Rs57bn and consensus Rs44bn on raw material costs; stays Neutral, PT Rs192.",
+      "source": "J.P. Morgan — Steel Authority of India: First Take: Strong YoY EBITDA growth but a miss on both JPMe/Street",
+      "received": "22:18",
+      "detail": {
+       "summary": "Management had guided coking coal consumption cost lower in 2Q, so the cost rise reads negatively. Debt reduction is not enough while capex is under-running guidance, so investor focus shifts to growth, FPO/OFS newsflow and expansion timelines on the 28-Oct call.",
+       "points": [
+        "Adj EBITDA ~Rs42.2bn, +67% YoY, -5% QoQ",
+        "RM/t Rs26K to Rs32.5K QoQ",
+        "1HFY27 capex Rs54bn vs FY27 guidance Rs150bn",
+        "Debt/TTM EBITDA 1.34x vs 1.59x in 1Q",
+        "PT valued at 6x one-year forward EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HRC-Patra spread narrowed 1.1% WoW to Rs14,822/t, still above the 3-month average of Rs12,344/t; HRC fell 0.6% to Rs64,172/t.",
+      "source": "Nuvama — HRC-Patra spread narrows by 1.1% WoW to INR 14,822/ton",
+      "received": "11:38",
+      "detail": {
+       "summary": "Wide spread is negative for HRC-based pipe makers, especially in the low-end HRC segment. HRC has outrun Patra over three months.",
+       "points": [
+        "HRC Rs64,172/t, -0.6% WoW after -0.9% prior week",
+        "3-month: HRC +13%, Patra +7%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Emkay leaderboard: UltraTech 2QFY27 EBITDA/t Rs974 tops Shree's Rs912 (Rs1,106 a year ago), though Shree's volume grew 17.7% against 12.9%.",
+      "source": "Emkay — Cement Corner: Leaderboard, JK Cement, JSW Cement Result",
+      "received": "07:27",
+      "detail": {
+       "summary": "Emkay ranks the cement names by 2QFY27 EBITDA/t. UltraTech improved yoy while Shree fell sharply, closing the gap on the held long/short pair, with Shree out-growing on volume in North and East.",
+       "points": [
+        "UltraTech Rs974 vs Rs914 yoy, Rs1,214 qoq",
+        "Shree Rs912 vs Rs1,106 yoy, Rs1,024 qoq",
+        "Volume growth: Shree 17.7%, UltraTech 12.9%",
+        "Nuvoco Rs869, JK Rs852, Dalmia Rs694, JSW Rs707",
+        "Ambuja reports 29-Oct"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JK Cement 2QFY27 EBITDA Rs5bn beat Emkay by 15% on realization, EBITDA/t Rs852 against Rs983 qoq; Emkay keeps BUY, TP Rs6,000.",
+      "source": "Emkay — JK Cement: Upbeat quarter; reasonable valuations; BUY; Target: Rs6,000",
+      "received": "00:22",
+      "detail": {
+       "summary": "Emkay likes the volume performance in a difficult quarter, with white cement realization and paints/RMC offsetting rising costs. It expects sequential margin recovery despite higher fuel cost and values JKCE at 16x EV/EBITDA.",
+       "points": [
+        "Grey volume +21% yoy on Panna line-2 ramp-up",
+        "Fuel cost Rs1.71/Mcal vs Rs1.53 qoq",
+        "FY27E/28E/29E EBITDA/t Rs960/1,080/1,100",
+        "Net debt/EBITDA 1.95x, peak 2.25-2.35x by FY27-end"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital downgrades Dalmia to Neutral, TP Rs1,750 from Rs2,150, after 2QFY27 EBITDA/t of Rs694 missed by 14%; management flagged Rs1,000 possible in Q3.",
+      "source": "PhillipCapital — Dalmia Bharat (DALBHARA IN) - Management comments disappoints more vs. estimate miss! (+9 more in Outlook)",
+      "received": "11:21",
+      "detail": {
+       "summary": "PhillipCapital says management commentary disappointed more than the numbers: aggressive premiumisation, frequent senior management changes and no firm plan beyond c.67mtpa. It cut the target multiple to 12x FY28 EBITDA from 14x, with no major estimate cuts.",
+       "points": [
+        "EBITDA Rs4.93bn, 16% miss; EBITDA/t -31% yoy",
+        "Opex/tonne +10% yoy, +7% qoq",
+        "Pricing up Rs15/bag vs Q2",
+        "H2 volume growth expected in line with industry"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM: Avalon issues 1.9mn warrants to Zollner at Rs2,193 (Rs4.25bn raise, 2.8% stake) for the JV capex; stays Underweight, PT Rs1,650.",
+      "source": "JPM — Avalon Technologies: Zollner to take 2.8% stake",
+      "received": "21:58",
+      "detail": {
+       "summary": "The board approved warrants convertible within 18 months, 25% paid upfront. JPM expects proceeds to fund capex on the Zollner JV (Zollner 51%, Avalon 49%). It stays Underweight on rich valuation, as the stock bakes in a 37% 10-year revenue CAGR.",
+       "points": [
+        "1.9mn warrants at Rs2,193; Rs4.25bn cash raise",
+        "25% payable at allotment, 75% on conversion",
+        "Zollner holds 2.8% post-conversion",
+        "UW, PT Rs1,650; 47x 2Y forward P/E",
+        "Avalon net debt Rs240mn at Jun 2026"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: Indian phone brands' share hit 7% in the September quarter from 2% a year ago (Counterpoint), but the handset market is shrinking.",
+      "source": "Nomura — India Consumer Durables and EMS: Chinese phone companies lag but Indian phone brands gain share, but in a shrinking market",
+      "received": "09:08",
+      "detail": {
+       "summary": "Chinese brands are losing ground as rising memory chip prices make budget phones hard to sell profitably. Lava and Ai+ account for almost 95% of Indian brands' gains, highest share since December quarter 2018. Consumers are delaying purchases.",
+       "points": [
+        "Indian brands 7% share vs 2% a year earlier",
+        "Highest since December quarter of 2018",
+        "Lava and Ai+ about 95% of Indian-brand contribution",
+        "Memory chip prices squeeze budget phone margins",
+        "Market shrinking as buyers delay purchases"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "IIFL: Anthropic's S-1 shows USD16.3bn 1HCY26 revenue vs USD4.6bn in CY25; read-across for Indian IT stays near-term deflationary, long-term new AI revenue.",
+      "source": "IIFL — The Front Page: Economy; IT; Telecom; LT; MSIL; BJAUT; SBILIFE & 6 more notes...",
+      "received": "07:55",
+      "detail": {
+       "summary": "IIFL says Anthropic is scaling faster than any known enterprise software business, with a first GAAP operating profit in 2QCY26. Debates centre on compute commitments versus run-rate, partner entanglements and governance. For Indian IT, near-term deflation risk persists.",
+       "points": [
+        "Revenue USD41mn CY23, USD4.6bn CY25, USD16.3bn 1HCY26",
+        "2QCY26 first GAAP operating profit, 8% margin",
+        "~USD800bn compute commitments vs ~USD67bn run-rate",
+        "Reported USD1.5-2.0trn IPO valuation discussed",
+        "11,900+ customers spending over USD100k a year"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: a resumed global AI trade on Anthropic's S-1 could be flow-negative for India, which FIIs treat as an AI-agnostic destination.",
+      "source": "CLSA — Anthropic S1 | Balanco: 4Q18 Analogue | ATHERENE: PBT positive | Strong: SONACOMS, TATACONS | PAYTM: Mixed",
+      "received": "09:12",
+      "detail": {
+       "summary": "CLSA reads the filing as AI demand scaling faster than bears expected, with operating losses at only ~4% of revenue. If real, it may reignite the global AI trade, drawing flows from India, where FII flows have already languished since Aug.",
+       "points": [
+        "H1 2026 revenue USD16.3b vs USD4.6b in all 2025",
+        "Operating losses ~4% of revenue",
+        "FII flows recovered Jul-Aug 2026, then turned",
+        "CLSA also floats 4Q18-style second leg lower into December FOMC"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Govt is consulting investors on LTCG and STT as FPI selling persists; FIIs are -$4.75bn in October and -$32.56bn YTD, so a Budget relief is live.",
+      "source": "UBS — INDIA CATALYST - Govt seeks views on LTCG/STT",
+      "received": "09:46",
+      "detail": {
+       "summary": "The government has begun reassessing capital-market levies, consulting investors and tax experts, as outflows weigh on the attractiveness of Indian equities versus global markets. The Budget is flagged as the window to revisit the rules.",
+       "points": [
+        "FIIs cash Oct MTD -$4.75bn, YTD -$32.56bn",
+        "DIIs Oct MTD +$6.43bn, YTD +$74.57bn",
+        "Nifty 22,753 (+0.7%) on Monday",
+        "Nifty OI +3.7%; 22,500 PE and 23,000 CE biggest strikes"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: 124 NSE 500 names show +27% PAT YoY in Q2; large caps outside Nifty 50 beat 1.9x, and Q3 is seen as the peak cost quarter.",
+      "source": "Elara — Earnings till Now - Q2FY27",
+      "received": "15:15",
+      "detail": {
+       "summary": "Q2 held up because companies repriced quickly, credit costs stayed benign and only part of September's crude spike was absorbed. The goalpost moves to Q3, which managements flag as the peak cost quarter for cement, autos and metal users.",
+       "points": [
+        "Sales/PAT +21%/+27% ex-Energy",
+        "Non-Nifty large caps PAT +29% vs Nifty 50 +19%",
+        "IT PAT +10%; cc growth only 2-3% for heavyweights",
+        "Rupee gave IT 8-9pp of revenue growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: MTF book is down 3.1% from its Rs1.51trn peak versus the 9-11% contraction seen in stress phases; VEDL, HINDZINC, SAIL, KAYNES are exposed if it accelerates.",
+      "source": "Kotak — [Kotak] MTF Deleveraging: How Much More Could Be Left? (+3 more in Outlook)",
+      "received": "13:52",
+      "detail": {
+       "summary": "MTF funding has started retreating from record, but history shows contraction alone is not a directional signal for the market. The warning sign is accelerating liquidation combined with sustained market weakness, which makes funded positions uneconomical.",
+       "points": [
+        "Peak Rs151,134cr on 1 Oct; Rs146,439cr on 23 Oct",
+        "Liquidation so far Rs4,695cr",
+        "9-11% zone implies Rs134,500-137,500cr",
+        "Metals: VEDL, HINDCOPPER, HINDZINC, SAIL, LLOYDSME"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak raises FY27E crude to US$100/bbl from US$90 after Dated Brent averaged US$126 in October; FY28 held at US$75, ONGC BUY FV Rs360.",
+      "source": "Kotak — [Kotak] Oil, Gas & Consumable Fuels: Raise FY2027E oil price again; reiterate ONGC as top pick",
+      "received": "21:51",
+      "detail": {
+       "summary": "The West Asia conflict is eight months old with no visibility on normalisation, and renewed attacks on Saudi infrastructure and tankers pushed prices to six-month highs. Upstream policy reforms let producers keep more of the upside.",
+       "points": [
+        "Brent US$104/bbl FY27 YTD, US$126 October",
+        "ONGC FV Rs360 (from Rs355), Oil India SELL FV Rs365",
+        "FY27E EPS +16-17% for both",
+        "New-well gas priced at 12% of Brent"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Polycab: NCLAT restrained MSCI from deleting it at month end, so the forced deletion after its F&O ban is likely deferred.",
+      "source": "Kotak — [Kotak] POLYCAB - NCLAT Update & Impact on Potential MSCI Deletion Probability",
+      "received": "21:29",
+      "detail": {
+       "summary": "Polycab entering NSE's IBC list triggered its F&O removal and would force an MSCI deletion at month end. The NCLAT order is an official judicial directive giving MSCI a clear basis to defer, pending the reserved 15 October hearing outcome.",
+       "points": [
+        "NSE IBC list entry led to F&O exit",
+        "Deletion was due at end of month",
+        "15 October hearing outcome still reserved"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Defence Acquisition Council cleared ~Rs2.1trn of AoNs on 26 October, ~82% domestic; ABC sees BEL then HAL as winners, with orders mostly FY28-30E.",
+      "source": "Aditya Birla Money — Defence & Aerospace | Sector Update: Rs 2.1trn AoN strengthens the domestic defence procurement pipeline (+8 more in Outlook)",
+      "received": "08:18",
+      "detail": {
+       "summary": "AoN is only the first step and contracts typically take 12-18 months, so order translation is a FY28-30E story. Unrated beneficiaries named are L&T, BEML, MDL, GRSE and BDL.",
+       "points": [
+        "Cumulative AoNs since FY19 above ~Rs22trn",
+        "BEL: air defence, counter-drone, radar",
+        "HAL: helicopters",
+        "L&T: tracked artillery; MDL/GRSE: naval"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Anthropic S-1: IIFL notes 1HCY26 revenue USD16.3bn against USD4.6bn for CY25, with a first GAAP operating profit (8% margin) in 2QCY26.",
+    "source": "IIFL — The Front Page: Economy; IT; Telecom; LT; MSIL; BJAUT; SBILIFE & 6 more notes..."
+   },
+   {
+    "text": "JPM trader: Meta's USD97.5B raise, Broadcom's USD63B custom-chip SPV and an on-track S-1 clear financing hurdles; semis/optical better to buy, re-risking tentative.",
+    "source": "JPM — JPM Overnight Brief! 10/28 - expect Fed on hold tomorrow, AI trade strong session ahead of Mag 7 earnings"
+   },
+   {
+    "text": "BofA sees Meta's USD95-100bn raise as ~6% EPS dilution, modelling 2027 capex of USD210bn and free cash flow of -USD32bn.",
+    "source": "BofA — BofA ASIA Daily: CXMT INITIATE @ BUY, PO CNY65 + Global Wave Positive for 9m! + Deep Dive: Funding APAC's AI Revolution #3 + HSBC Q3 NII Weakness + Meta US$95b Views"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
