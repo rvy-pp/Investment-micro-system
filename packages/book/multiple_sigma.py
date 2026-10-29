@@ -94,9 +94,27 @@ def fetch(ent: str, kind: str, today: dt.date | None = None) -> dict:
     q, key = QUERY[kind]
     js = json.loads(_get(f"https://www.screener.in/api/company/{m.group(1)}/chart/?q={q}&days={DAYS}&consolidated=true"))
     pts = {d["metric"]: d["values"] for d in js.get("datasets", [])}.get(key)
+    note = ""
+    if not pts:
+        # Tata Elxsi, 2026-10-29: the combined query ('Price to Earning-Median
+        # PE-EPS') came back with all THREE series EMPTY for company id 3366,
+        # consolidated or not, at 30/365/1095 days, while the bare 'Price to
+        # Earning' query returned the full 248-point daily history, and
+        # Coforge's combined query answered normally. The EPS leg appears to
+        # empty the whole response for this filer. The bare metric is the same
+        # series, so it is taken instead and the source says so. Caught by the
+        # fetch refusing, not by a wrong number.
+        # The bare query answered WITHOUT the consolidated flag (the probe that
+        # found it); with it, still empty. Try the flag first, then without.
+        for tail in ("&consolidated=true", "", "&consolidated=false"):
+            js = json.loads(_get(f"https://www.screener.in/api/company/{m.group(1)}/chart/?q={key.replace(' ', '+')}&days={DAYS}{tail}"))
+            pts = {d["metric"]: d["values"] for d in js.get("datasets", [])}.get(key)
+            if pts:
+                note = f"; bare-metric query{tail or ' (no consolidated flag)'}, the combined one returned no series"
+                break
     if not pts:
         raise SystemExit(f"{ent}: screener returned no {key!r} series")
-    doc = {"entity": ent, "symbol": sym, "kind": kind, "source": f"screener.in chart {key} (consolidated)",
+    doc = {"entity": ent, "symbol": sym, "kind": kind, "source": f"screener.in chart {key} (consolidated){note}",
            "fetched": (today or dt.date.today()).isoformat(), "weekly": weekly(pts)}
     STORE.mkdir(parents=True, exist_ok=True)
     (STORE / f"{ent}.json").write_text(json.dumps(doc), encoding="utf-8")
