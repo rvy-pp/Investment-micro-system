@@ -1,0 +1,286 @@
+{
+ "date": "2026-10-29",
+ "session": true,
+ "generated_at": "2026-10-29T08:18:40",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "during": [
+   "Ambuja Cements",
+   "Suzlon Energy"
+  ],
+  "post": [
+   "Coal India"
+  ],
+  "unclear": [
+   "Computer Age Management Services"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "AMBUJACEM",
+   "date": "2026-10-29",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for Quarter and Half Year ended September 30, 2026",
+   "entity": "ambuja",
+   "name": "Ambuja Cements",
+   "sector": "cement",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-28",
+     "time": "14:16",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-04",
+     "time": "14:06",
+     "when": "during"
+    },
+    {
+     "date": "2026-01-30",
+     "time": "14:30",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-03",
+     "time": "13:16",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 4
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "COALINDIA",
+   "date": "2026-10-29",
+   "purpose": "Financial Results/Dividend",
+   "desc": "Notice of Board meeting for consideration of Unaudited Financial Results for the 2nd quarter and half year ended 30th Sep  2026, and declaration of 2nd Interim Dividend, FY 26-27, if any.",
+   "entity": "coal_india",
+   "name": "Coal India",
+   "sector": "mining",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-27",
+     "time": "17:25",
+     "when": "post"
+    },
+    {
+     "date": "2026-04-27",
+     "time": "20:31",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-12",
+     "time": "18:53",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-29",
+     "time": "13:43",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "post": 3,
+    "during": 1
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "CAMS",
+   "date": "2026-10-29",
+   "purpose": "Financial Results/Dividend",
+   "desc": "To consider and approve the unaudited financial results for the period ended September 30, 2026 and dividend",
+   "entity": "ext:CAMS",
+   "name": "Computer Age Management Services",
+   "sector": "extended",
+   "when": "unclear",
+   "history": [
+    {
+     "date": "2026-08-03",
+     "time": "14:04",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-04",
+     "time": "18:31",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-22",
+     "time": "12:45",
+     "when": "during"
+    },
+    {
+     "date": "2025-10-28",
+     "time": "20:54",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "during": 2,
+    "post": 2
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "SUZLON",
+   "date": "2026-10-29",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:SUZLON",
+   "name": "Suzlon Energy",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-28",
+     "time": "13:48",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-25",
+     "time": "15:09",
+     "when": "during"
+    },
+    {
+     "date": "2026-02-05",
+     "time": "13:25",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-04",
+     "time": "10:52",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "ahead": [
+  {
+   "date": "2026-10-30",
+   "name": "Bharat Electronics",
+   "symbol": "BEL"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Dixon Technologies",
+   "symbol": "DIXON"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "GAIL (India)",
+   "symbol": "GAIL"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "GE Vernova T&D India",
+   "symbol": "GVT&D"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Indian Oil Corporation",
+   "symbol": "IOC"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Reliance Industries",
+   "symbol": "RELIANCE"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Syrma SGS Technology",
+   "symbol": "SYRMA"
+  },
+  {
+   "date": "2026-10-31",
+   "name": "NTPC",
+   "symbol": "NTPC"
+  },
+  {
+   "date": "2026-10-31",
+   "name": "Shyam Metalics and Energy",
+   "symbol": "SHYAMMETL"
+  },
+  {
+   "date": "2026-11-01",
+   "name": "Power Grid Corporation Of India",
+   "symbol": "POWERGRID"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "National Aluminium Company",
+   "symbol": "NATIONALUM"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "Petronet LNG",
+   "symbol": "PETRONET"
+  },
+  {
+   "date": "2026-11-03",
+   "name": "Solar Industries India",
+   "symbol": "SOLARINDS"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Cummins India",
+   "symbol": "CUMMINSIND"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "NHPC",
+   "symbol": "NHPC"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Premier Energies",
+   "symbol": "PREMIERENE"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Bharat Forge",
+   "symbol": "BHARATFORG"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Mphasis",
+   "symbol": "MPHASIS"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "NBCC (India)",
+   "symbol": "NBCC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Oil & Natural Gas Corporation",
+   "symbol": "ONGC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Samvardhana Motherson International",
+   "symbol": "MOTHERSON"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Tube Investments of India",
+   "symbol": "TIINDIA"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "UNO Minda",
+   "symbol": "UNOMINDA"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}
