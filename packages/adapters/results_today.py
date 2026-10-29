@@ -300,9 +300,47 @@ def build(day: dt.date, ros: list[dict], cal_raw: list[dict], ann_of, is_session
     -> raw per-symbol calendar` are injected so the selftest runs offline."""
     by_sym = {r["symbol"]: r for r in ros}
     rows = calendar_rows(cal_raw, set(by_sym))
-    today = [r for r in rows if r["date"] == day.isoformat()]
+    out_rows, errors = _timed(day, [r for r in rows if r["date"] == day.isoformat()],
+                              by_sym, ann_of, is_session, meet_of)
+    # The next session too (PM, 2026-10-29: "add tomorrow's result as well").
+    # Friday's next session is Monday, so it carries any Saturday or Sunday
+    # meeting in between; each such row keeps its own date and the page says it.
+    nxt = next_session(day, is_session)
+    nxt_rows, nxt_err = _timed(nxt, [r for r in rows if day.isoformat() < r["date"] <= nxt.isoformat()],
+                               by_sym, ann_of, is_session, meet_of)
+    errors += nxt_err
+    ahead = [{"date": r["date"], "name": by_sym[r["symbol"]]["name"], "symbol": r["symbol"]}
+             for r in rows if day.isoformat() < r["date"]]
+    ahead.sort(key=lambda x: (x["date"], x["name"]))
+    return {"date": day.isoformat(), "session": bool(is_session(day)) if day.weekday() < 5 else False,
+            "generated_at": dt.datetime.now().isoformat(timespec="seconds"),
+            "source": "NSE event calendar (date) + NSE result-filing times, last "
+                      f"{HABIT_N} session prints (timing)",
+            "n_coverage": len(ros), "groups": _groups(out_rows), "rows": out_rows,
+            "next": {"date": nxt.isoformat(), "groups": _groups(nxt_rows), "rows": nxt_rows},
+            "ahead": ahead, "errors": errors}
+
+
+def next_session(day: dt.date, is_session) -> dt.date:
+    """The first session after `day`. A future date is past fo_oi's range, so
+    this is the next weekday; an exchange holiday is not known in advance."""
+    d = day + dt.timedelta(days=1)
+    while not is_session(d) and d < day + dt.timedelta(days=10):
+        d += dt.timedelta(days=1)
+    return d
+
+
+def _groups(rows: list[dict]) -> dict[str, list[str]]:
+    groups: dict[str, list[str]] = {}
+    for x in rows:
+        groups.setdefault(x["when"], []).append(x["name"])
+    return groups
+
+
+def _timed(day: dt.date, cal_rows: list[dict], by_sym, ann_of, is_session, meet_of):
+    """Each calendar row with its habit, judged on prints before `day`."""
     out_rows, errors = [], []
-    for r in today:
+    for r in cal_rows:
         meta = by_sym[r["symbol"]]
         meets = None
         if meet_of is not None:
@@ -322,18 +360,7 @@ def build(day: dt.date, ros: list[dict], cal_raw: list[dict], ann_of, is_session
                          "when": h["when"], "history": h["history"], "counts": h["counts"],
                          "filed_at": filed[-1].strftime("%H:%M") if filed else None})
     out_rows.sort(key=lambda x: x["name"])
-    groups: dict[str, list[str]] = {}
-    for x in out_rows:
-        groups.setdefault(x["when"], []).append(x["name"])
-    ahead = [{"date": r["date"], "name": by_sym[r["symbol"]]["name"], "symbol": r["symbol"]}
-             for r in rows if day.isoformat() < r["date"]]
-    ahead.sort(key=lambda x: (x["date"], x["name"]))
-    return {"date": day.isoformat(), "session": bool(is_session(day)) if day.weekday() < 5 else False,
-            "generated_at": dt.datetime.now().isoformat(timespec="seconds"),
-            "source": "NSE event calendar (date) + NSE result-filing times, last "
-                      f"{HABIT_N} session prints (timing)",
-            "n_coverage": len(ros), "groups": groups, "rows": out_rows,
-            "ahead": ahead, "errors": errors}
+    return out_rows, errors
 
 
 def run(day: dt.date) -> dict:
@@ -359,15 +386,36 @@ def run(day: dt.date) -> dict:
     return doc
 
 
+LABELS = [("pre", "Pre-market"), ("during", "During market"), ("post", "Post-market"),
+          ("unclear", "Timing unclear"), ("unknown", "Timing unknown")]
+
+
+def _day_label(iso: str, day: str) -> str:
+    """'Tomorrow (Fri 30-Oct)', or 'Mon 02-Nov' when the next session is not
+    the next calendar day."""
+    d = dt.date.fromisoformat(iso)
+    s = d.strftime("%a %d-%b")
+    return f"Tomorrow ({s})" if d == dt.date.fromisoformat(day) + dt.timedelta(days=1) else s
+
+
 def line(doc: dict) -> str:
     g = doc.get("groups") or {}
-    if doc.get("errors") and not doc.get("rows"):
+    if doc.get("errors") and not doc.get("rows") and not (doc.get("next") or {}).get("rows"):
         return "Results today: NOT CHECKED — " + "; ".join(doc["errors"])
-    if not doc.get("rows"):
-        return "Results today: none in coverage"
-    lab = [("pre", "Pre-market"), ("during", "During market"), ("post", "Post-market"),
-           ("unclear", "Timing unclear"), ("unknown", "Timing unknown")]
-    return "\n".join(f"{t}: {', '.join(g[k])}" for k, t in lab if g.get(k))
+    out = ([f"{t}: {', '.join(g[k])}" for k, t in LABELS if g.get(k)]
+           if doc.get("rows") else ["Results today: none in coverage"])
+    nx = doc.get("next")
+    if nx:
+        lab = _day_label(nx["date"], doc["date"])
+        if not nx.get("rows"):
+            out.append(f"{lab}: none in coverage")
+        else:
+            other = {r["name"]: r["date"] for r in nx["rows"] if r["date"] != nx["date"]}
+            nm = lambda n: n + (f" ({dt.date.fromisoformat(other[n]):%a})" if n in other else "")  # noqa: E731
+            out.append(f"{lab}:")
+            out += [f"  {t}: {', '.join(nm(n) for n in nx['groups'][k])}"
+                    for k, t in LABELS if nx["groups"].get(k)]
+    return "\n".join(out)
 
 
 # ---------------------------------------------------------------- selftest
@@ -466,7 +514,20 @@ def selftest() -> int:
     ok(infy["filed_at"] == "13:05" and len(infy["history"]) == 2,
        "today's own filing is shown, never counted toward the habit")
     ok([a["symbol"] for a in doc["ahead"]] == ["INFY"], "the week ahead rides along")
-    ok(line(doc) == "Post-market: Infosys, TCS", "the line reads as the PM asked")
+    ok(doc["next"]["date"] == "2026-10-30" and doc["next"]["groups"] == {"post": ["Infosys"]},
+       "the next session is timed too, on prints before it")
+    ok(line(doc) == "Post-market: Infosys, TCS\nTomorrow (Fri 30-Oct):\n  Post-market: Infosys",
+       "the line reads as the PM asked, tomorrow beneath")
+    ok(next_session(dt.date(2026, 10, 30), wk) == dt.date(2026, 11, 2), "Friday's next session is Monday")
+    sat = [{"symbol": "TCS", "purpose": "Financial Results", "date": "31-Oct-2026"}]
+    d2 = build(dt.date(2026, 10, 30), ros, sat, lambda s: hist.get(s, []), wk)
+    ok(d2["next"]["date"] == "2026-11-02" and [r["date"] for r in d2["next"]["rows"]] == ["2026-10-31"]
+       and "TCS (Sat)" in line(d2) and line(d2).startswith("Results today: none in coverage\nMon 02-Nov:"),
+       "a Saturday meeting before Monday rides with Monday and names its day")
+    ok(line({"date": "2026-10-29", "rows": [], "groups": {}, "errors": [],
+             "next": {"date": "2026-10-30", "rows": [], "groups": {}}})
+       == "Results today: none in coverage\nTomorrow (Fri 30-Oct): none in coverage",
+       "an empty tomorrow says so")
 
     # extended coverage: name resolution, both directions
     eq = [{"SYMBOL": "CUMMINSIND", "NAME OF COMPANY": "Cummins India Limited"},
@@ -489,7 +550,9 @@ def selftest() -> int:
     def boom(_s):
         raise OSError("403")
     doc = build(dt.date(2026, 10, 29), ros, cal2, boom, wk)
-    ok(len(doc["errors"]) == 2 and doc["groups"].get("unknown") == ["Infosys", "TCS"],
+    # 3, not 2: Infosys's 30-Oct meeting is the next session's row, fetched again.
+    ok(len(doc["errors"]) == 3 and doc["groups"].get("unknown") == ["Infosys", "TCS"]
+       and doc["next"]["groups"] == {"unknown": ["Infosys"]},
        "a failed history fetch reads unknown and is named, not dropped")
     ok(line({"rows": [], "groups": {}, "errors": ["calendar 403"]}).startswith("Results today: NOT CHECKED"),
        "a failed calendar is NOT CHECKED, never 'none in coverage'")
@@ -515,7 +578,7 @@ def main() -> int:
     tmp.write_text(json.dumps(doc, indent=1), encoding="utf-8")
     tmp.replace(p)
     print(line(doc))
-    for r in doc["rows"]:
+    for r in doc["rows"] + doc["next"]["rows"]:
         hs = " ".join(f"{h['date'][5:]} {h['time']}" for h in r["history"])
         print(f"  {r['symbol']:<12} {r['when']:<8} {('filed ' + r['filed_at']) if r['filed_at'] else ''} [{hs}]")
     for e in doc["errors"]:

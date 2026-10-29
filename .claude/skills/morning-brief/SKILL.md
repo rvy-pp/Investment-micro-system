@@ -44,9 +44,10 @@ python packages/adapters/results_today.py
 It writes `data/morning/results_YYYY-MM-DD.json`: coverage names (the core
 39 plus the PM's extended list, read live from the desk spreadsheet) with a
 results board meeting TODAY on NSE's event calendar, split by each name's
-habit (the NSE times of its last four result filings). It prints the lines
-the PM reads, e.g. `During market: Ambuja Cements` / `Post-market: Coal
-India`. **Those lines open the chat read in §5, before anything else.** The
+habit (the NSE times of its last four result filings), then the same for the
+next session (`Tomorrow (Fri 30-Oct):`, or Monday on a Friday). It prints
+the lines the PM reads, e.g. `During market: Ambuja Cements` / `Post-market:
+Coal India`. **Those lines open the chat read in §5, before anything else.** The
 Overview renders the same lines as the first thing under Broker mail. Never
 rewrite the timing from a mail; a broker's "results post market" that
 contradicts the habit goes in that sector's bullets as information, not into

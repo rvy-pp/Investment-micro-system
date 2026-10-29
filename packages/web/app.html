@@ -400,6 +400,7 @@
   /* Results today — the first line of the Broker mail section */
   .rtpanel{padding-top:8px;padding-bottom:8px}
   .rtline{margin:2px 0}
+  .rtnext{margin-top:8px;padding-top:6px;border-top:1px solid var(--rule)}
   .rtl{font-family:var(--mono);font-size:var(--t-label);color:var(--faint);
     text-transform:uppercase;letter-spacing:.04em;margin-right:8px}
   .rtn{cursor:help}
@@ -2977,26 +2978,36 @@ function overnightHtml(m){
    brief is missing: the two are independent files. */
 function resultsTodayHtml(m){
   const r = (m || {}).results || null;
-  const row = (label, xs) => `<div class="rtline"><span class="rtl">${label}</span>
+  const row = (label, xs, day) => `<div class="rtline"><span class="rtl">${label}</span>
     ${xs.map(x => `<span class="rtn" title="${esc(
       (x.history || []).length ? 'last prints: ' + x.history.map(h =>
         h.date.slice(5) + ' ' + h.time).join(' · ') : 'no session print on file')}">${
-      esc(x.name)}${x.filed_at ? ` <span class="neu">(out ${esc(x.filed_at)})</span>` : ''}</span>`)
+      esc(x.name)}${x.filed_at ? ` <span class="neu">(out ${esc(x.filed_at)})</span>` : ''}${
+      day && x.date !== day ? ` <span class="neu">(${esc(dow(x.date))})</span>` : ''}</span>`)
       .join(', ')}</div>`;
+  const dow = iso => new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', {weekday: 'short'});
+  const KINDS = [['pre', 'Pre-market'], ['during', 'During market'], ['post', 'Post-market'],
+                 ['unclear', 'Timing unclear'], ['unknown', 'Timing unknown']];
+  const groups = (rows, day) => KINDS.map(([k, l]) => [l, rows.filter(x => x.when === k)])
+    .filter(([, xs]) => xs.length).map(([l, xs]) => row(l, xs, day)).join('');
   let body;
   if (!r) body = `<div class="hint">results-today check not run — python
     packages/adapters/results_today.py</div>`;
-  else if (!(r.rows || []).length) body = (r.errors || []).length
+  else if (!(r.rows || []).length) body = (r.errors || []).length && !((r.next || {}).rows || []).length
     ? `<div class="hint" style="color:var(--warn)">NOT CHECKED — ${esc(r.errors.join('; '))}</div>`
     : `<div class="rtline"><span class="rtl">Results today</span>
        <span class="neu">none in coverage</span></div>`;
-  else {
-    const by = k => r.rows.filter(x => x.when === k);
-    const sess = r.session === false && (r.rows || []).length;
-    body = sess ? row('Results today (no session)', r.rows) : [
-      ['pre', 'Pre-market'], ['during', 'During market'], ['post', 'Post-market'],
-      ['unclear', 'Timing unclear'], ['unknown', 'Timing unknown']]
-      .filter(([k]) => by(k).length).map(([k, l]) => row(l, by(k))).join('');
+  else body = r.session === false ? row('Results today (no session)', r.rows) : groups(r.rows);
+  // The next session beneath (PM, 2026-10-29: "add tomorrow's result as
+  // well"). Friday's is Monday, carrying any weekend meeting, which names its day.
+  const nx = r && r.next;
+  if (nx) {
+    const d = new Date(nx.date + 'T00:00:00'), t = new Date(r.date + 'T00:00:00');
+    const lab = d.toLocaleDateString('en-GB', {weekday: 'short', day: '2-digit', month: 'short'});
+    const head = (d - t === 864e5 ? `Tomorrow · ${lab}` : lab);
+    body += `<div class="rtline rtnext"><span class="rtl">${esc(head)}</span>${
+      (nx.rows || []).length ? '' : '<span class="neu">none in coverage</span>'}</div>`
+      + groups(nx.rows || [], nx.date);
   }
   return `<div class="panel rtpanel">${body}</div>`;
 }

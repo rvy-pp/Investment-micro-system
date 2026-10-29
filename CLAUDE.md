@@ -364,6 +364,12 @@ refresh.py step, so a later double-click marks names that have filed.
   habit is unclear for Hindalco, HZL, Jindal Stainless, NALCO, NMDC, Shree.
 - Checked on its first day: KPIT, VAML and Vedanta were predicted during
   market and all three filed during market on 28-Oct.
+- **The next session rides beneath** (PM, 2026-10-29: *"add tomorrow's
+  result as well"*): `next` in the file, timed the same way on prints before
+  that day, printed after today's lines and rendered under a rule as
+  "Tomorrow · Fri 30 Oct". Friday's next session is Monday, so it also
+  carries any weekend board meeting, labelled with its own day. Holidays are
+  not known ahead, so "next session" is the next weekday.
 
 ## Futures vs cash — an Overview sub-tab (2026-10-25)
 
