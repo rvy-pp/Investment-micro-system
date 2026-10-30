@@ -1138,6 +1138,36 @@ are scoped to `.rk`. Two traps from the page's global CSS:
 
 Both carry a comment at the site.
 
+### The factor check — what a pod would have hedged, measured here (2026-10-30)
+
+PM, after asking how pod PMs run 70-80% gross: *"do the factor check for our
+portfolio"*. `packages/book/factors.py` (13-check selftest, read-only, no
+table, no route yet) holds the latest snapshot constant in dollars (var.py's
+exposure and common-session returns) and regresses its daily P&L over 250
+sessions, and again over 60, on four factors from `flow_series`: Nifty 50,
+Nifty IT − Nifty, Nifty Metal − Nifty, **Midcap 150 − Nifty** (the size leg,
+`nifty_midcap150`, added to `specs/flows.yaml india_series` as evidence only,
+daily from 2019-01; `^CNXSC` and `NIFTY200MOMENTM30.NS` answer one row on
+Yahoo, so smallcap and momentum have no daily history). Beside it: per-leg
+univariate betas that sum by dollars to the book's exactly (tested), sector
+nets on grading's sector map scaled by each leg's beta to its own F&O basket
+excluding itself, and a momentum tilt (dollar-weighted 12-1 return, longs vs
+shorts vs the store universe's median), reported as a tilt and never
+regressed because a factor built from the store's ~45 names would be mostly
+the book's own legs. **Value is not measured** and the payload says so.
+
+**First read, the 2026-10-29 book:** the four factors explain **3.5%** of
+the daily P&L variance (R² 0.035; 3.7% over 60 sessions). Market, IT and
+metal loadings sit inside one standard error. The only loading past |t| 2 is
+**size, negative**: the book is short midcap against Nifty, carried by the
+midcap shorts in non-ferrous and steel against large-cap longs. Sector nets
+are within ±0.6% of NAV beta-adjusted, steel the largest net long and
+non-ferrous the largest net short once the shorts' higher basket betas are
+applied. The momentum tilt is wide: longs sit well above the universe median
+and shorts well below, so a momentum reversal is the one unhedged style bet.
+Book vol at today's gross annualises to **0.75% of NAV**, 0.73% residual.
+Whatever "trouble at 40% gross" is, it is not factor exposure in this book.
+
 ### Analysis — a Book sub-tab, per STOCK, chat-first (2026-10-10)
 
 PM: *"I think we analyze individually. Pairs can change"* and *"start with the

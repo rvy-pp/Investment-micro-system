@@ -109,6 +109,14 @@ india_series:
   nifty_realty: {symbol: "^CNXREALTY", name_pattern: "realty",    kind: level,
                  label: "Nifty Realty", covers: "construction demand for cement/steel",
                  nse_name: "NIFTY REALTY"}
+  # SIZE FACTOR for the Book's factor check (packages/book/factors.py,
+  # 2026-10-30). Midcap 150 minus Nifty 50 is the size leg of the regression
+  # the Risk read uses. Evidence/display only, never a regime input. Yahoo's
+  # daily history for this symbol starts 2019-01 (first trade 1547437500);
+  # ^NSEMDCP50 reaches 2007 but is 50 names, so the broader index is kept.
+  nifty_midcap150: {symbol: "NIFTYMIDCAP150.NS", name_pattern: "MIDCAP 150", kind: level,
+                 label: "Nifty Midcap 150", covers: "size factor (midcap minus Nifty)",
+                 nse_name: "NIFTY MIDCAP 150"}
   nifty_pse:    {symbol: "^CNXPSE",    name_pattern: "PSE|public", kind: level,
                  label: "Nifty PSE", covers: "PSU complex - SAIL, NMDC, Coal India",
                  nse_name: "NIFTY PSE"}
