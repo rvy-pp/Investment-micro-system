@@ -1,0 +1,225 @@
+{
+ "date": "2026-10-30",
+ "fetched_at": "2026-10-30T08:18:52",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-10-29",
+    "close": 7720.39,
+    "prev_date": "2026-10-28",
+    "chg_pct": -0.3,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-10-29",
+    "close": 26184.72,
+    "prev_date": "2026-10-28",
+    "chg_pct": -1.38,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-10-29",
+    "close": 52342.56,
+    "prev_date": "2026-10-28",
+    "chg_pct": -0.25,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-10-29",
+    "close": 11518.2,
+    "prev_date": "2026-10-28",
+    "chg_pct": -1.42,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-10-29",
+    "close": 213.66,
+    "prev_date": "2026-10-28",
+    "chg_pct": -0.8,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-10-29",
+    "close": 566.42,
+    "prev_date": "2026-10-28",
+    "chg_pct": -2.08,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-10-29",
+    "close": 431.81,
+    "prev_date": "2026-10-28",
+    "chg_pct": -1.75,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-10-29",
+    "close": 345.0,
+    "prev_date": "2026-10-28",
+    "chg_pct": -1.94,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-10-29",
+    "close": 247.22,
+    "prev_date": "2026-10-28",
+    "chg_pct": 1.57,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-10-29",
+    "close": 62.52,
+    "prev_date": "2026-10-28",
+    "chg_pct": -5.79,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "What Needs To Be True To Buy Accenture Stock Now?",
+    "publisher": "Trefis",
+    "when": "2026-10-29 21:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/needs-true-buy-accenture-stock-215508441.html"
+   },
+   {
+    "title": "Accenture (ACN) Increases Despite Market Slip: Here's What You Need to Know",
+    "publisher": "Zacks",
+    "when": "2026-10-29 20:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-increases-despite-market-205002098.html"
+   },
+   {
+    "title": "Innodata vs. Accenture: Which AI Stock Has More Growth Potential?",
+    "publisher": "Zacks",
+    "when": "2026-10-29 16:34Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/innodata-vs-accenture-ai-stock-163400857.html"
+   },
+   {
+    "title": "Accenture CEO Buys $3 Million in Company Stock After Shares Double from June Lows",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-10-28 23:45Z",
+    "link": "https://finance.yahoo.com/m/708fe87e-28e1-3786-8497-877b67500366/accenture-ceo-buys-%243-million.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Secures Multiple AI Partnership Wins",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-29 22:09Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-secures-220955496.html"
+   },
+   {
+    "title": "Cognizant Bookings Drop 7% as Growth Slows: Rapid Earnings Reaction",
+    "publisher": "Motley Fool",
+    "when": "2026-10-29 19:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-bookings-drop-7-growth-193016511.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Q3 2026 Earnings Call Transcript",
+    "publisher": "Motley Fool",
+    "when": "2026-10-29 17:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-q3-2026-earnings-174426918.html"
+   },
+   {
+    "title": "What Cognizant Technology Solutions (CTSH) Said on Its Q3 Earnings Call",
+    "publisher": "MarketBeat",
+    "when": "2026-10-29 17:14Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-technology-solutions-ctsh-said-171452012.html"
+   },
+   {
+    "title": "Cognizant Sinks as Bookings Drop 7% and AI Shifts \u201cFrom Capability to Value Realization\u201d",
+    "publisher": "TIKR",
+    "when": "2026-10-29 14:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-sinks-bookings-drop-7-140110848.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Q3 Earnings: Taking a Look at Key Metrics Versus Estimates",
+    "publisher": "Zacks",
+    "when": "2026-10-29 12:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-q3-earnings-taking-123008076.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia's web of AI bets: smart strategy or bubble risk?",
+    "publisher": "AFP",
+    "when": "2026-10-30 01:17Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidias-ai-bets-smart-strategy-011724661.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Prediction: This Will Be Broadcom's Stock Price by the End of 2027",
+    "publisher": "Motley Fool",
+    "when": "2026-10-29 19:18Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/prediction-broadcoms-stock-price-end-191800852.html"
+   },
+   {
+    "title": "Broadcom Stocks Decline 2.73% With Equipment-Value Support in a $63 Billion AI Deal",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-29 18:11Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-decline-2-73-181120822.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD faces high expectations as Jefferies sees limited near-term upside",
+    "publisher": "Proactive",
+    "when": "2026-10-29 19:44Z",
+    "link": "https://finance.yahoo.com/technology/articles/amd-faces-high-expectations-jefferies-194400060.html"
+   },
+   {
+    "title": "AMD Has Ripped 170% This Year: Is It Too Late to Buy?",
+    "publisher": "TIKR",
+    "when": "2026-10-29 18:27Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-ripped-170-too-buy-182733603.html"
+   },
+   {
+    "title": "AMD Stocks Decline With Oracle Rollout Details Still to Come",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-29 18:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-decline-oracle-rollout-180654398.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23002.0,
+  "chg_pct": -0.25,
+  "stamp": "30-Oct-2026 08:18:13",
+  "expiry": "23-Nov-2026",
+  "volume": 2095,
+  "nifty_close": {
+   "close": 22936.75,
+   "stamp": "29-Oct-2026 15:30"
+  },
+  "gap_pts": 65.2,
+  "gap_pct": 0.28
+ }
+}

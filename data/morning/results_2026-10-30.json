@@ -1,0 +1,563 @@
+{
+ "date": "2026-10-30",
+ "session": true,
+ "generated_at": "2026-10-30T08:19:20",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "during": [
+   "Bharat Electronics",
+   "GAIL (India)"
+  ],
+  "post": [
+   "Dixon Technologies",
+   "GE Vernova T&D India",
+   "Indian Oil Corporation",
+   "Reliance Industries",
+   "Syrma SGS Technology"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "BEL",
+   "date": "2026-10-30",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:BEL",
+   "name": "Bharat Electronics",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-27",
+     "time": "16:06",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-19",
+     "time": "15:23",
+     "when": "during"
+    },
+    {
+     "date": "2026-01-28",
+     "time": "14:05",
+     "when": "during"
+    },
+    {
+     "date": "2025-10-31",
+     "time": "13:01",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "post": 1,
+    "during": 3
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "DIXON",
+   "date": "2026-10-30",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results (standalone and consolidated) for the period ended September 30, 2026",
+   "entity": "dixon",
+   "name": "Dixon Technologies",
+   "sector": "ems",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-31",
+     "time": "15:19",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-12",
+     "time": "15:54",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-29",
+     "time": "16:16",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-17",
+     "time": "16:22",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "during": 1,
+    "post": 3
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "GAIL",
+   "date": "2026-10-30",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:GAIL",
+   "name": "GAIL (India)",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-07-31",
+     "time": "14:13",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-21",
+     "time": "18:35",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-31",
+     "time": "14:26",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 2,
+    "post": 1
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "GVT&D",
+   "date": "2026-10-30",
+   "purpose": "Financial Results/Other business matters",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026 and other business matters",
+   "entity": "ext:GVT&D",
+   "name": "GE Vernova T&D India",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-05",
+     "time": "22:11",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-18",
+     "time": "19:19",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-28",
+     "time": "17:44",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-03",
+     "time": "13:57",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "post": 3,
+    "during": 1
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "IOC",
+   "date": "2026-10-30",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:IOC",
+   "name": "Indian Oil Corporation",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-31",
+     "time": "17:43",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-18",
+     "time": "21:43",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-05",
+     "time": "13:30",
+     "when": "during"
+    },
+    {
+     "date": "2025-10-27",
+     "time": "16:11",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 3,
+    "during": 1
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "RELIANCE",
+   "date": "2026-10-30",
+   "purpose": "Financial Results/Fund Raising",
+   "desc": "The meeting of the Board of Directors of the Company is scheduled on October 30, 2026, inter alia, to consider and approve: a) the standalone and consolidated unaudited financial results of the Company for the quarter and half year ended September 30, 2026; andb) raising of funds by way of issuance of listed, secured / unsecured, redeemable non-convertible debentures on private placement basis, in one or more tranches.",
+   "entity": "ext:RELIANCE",
+   "name": "Reliance Industries",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-17",
+     "time": "19:07",
+     "when": "post"
+    },
+    {
+     "date": "2026-04-24",
+     "time": "19:26",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-16",
+     "time": "19:09",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-17",
+     "time": "19:01",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "SYRMA",
+   "date": "2026-10-30",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "syrma_sgs",
+   "name": "Syrma SGS Technology",
+   "sector": "ems",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-29",
+     "time": "15:29",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-11",
+     "time": "18:15",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-29",
+     "time": "17:34",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-10",
+     "time": "18:51",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "during": 1,
+    "post": 3
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-02",
+  "groups": {
+   "post": [
+    "NTPC",
+    "Petronet LNG",
+    "Power Grid Corporation Of India"
+   ],
+   "unclear": [
+    "National Aluminium Company"
+   ],
+   "during": [
+    "Shyam Metalics and Energy"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "NTPC",
+    "date": "2026-10-31",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+    "entity": "ext:NTPC",
+    "name": "NTPC",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-24",
+      "time": "19:43",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-30",
+      "time": "16:33",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-30",
+      "time": "18:51",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 3
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "NATIONALUM",
+    "date": "2026-11-02",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the Unaudited (Standalone & Consolidated) Financial Results for the quarter and half year ended 30.09.2026 and Interim Dividend for FY 2026-27.",
+    "entity": "nalco",
+    "name": "National Aluminium Company",
+    "sector": "non_ferrous",
+    "when": "unclear",
+    "history": [
+     {
+      "date": "2026-07-31",
+      "time": "21:01",
+      "when": "post"
+     },
+     {
+      "date": "2026-04-30",
+      "time": "14:48",
+      "when": "during"
+     },
+     {
+      "date": "2026-01-30",
+      "time": "14:55",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-07",
+      "time": "16:20",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 2,
+     "during": 2
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "PETRONET",
+    "date": "2026-11-02",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026.Pursuant to Regulation 29(2) of SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, this is to inform that the Meeting of the Board of Directors of the Company will be held on Monday, 2nd November 2026, inter-alia, to consider and approve unaudited financial results of the Company for the quarter and half-year ended 30th September 2026.Pursuant to Code for Prevention of Insider Trading in the Securities of Petronet LNG Limited (PLL's Code) as well as Circular issued by the Stock Exchanges dated 2nd April, 2019, it was informed to the Stock Exchanges where the shares of the Company are listed vide letter dated 19th June 2026 that the Trading Window for dealing in securities of PLL would be closed, for all 'Insiders' as per PLL's Code, from 1st October 2026 till 48 hours after the financial results for the quarter and half-year ended 30th September 2026 would become generally available to Public.In view of the above, the Trading Window for trading in PLL's securities which was closed from 1st October 2026 shall remain closed till 4th November 2026 (both days inclusive). All Insiders are advised not to deal with the securities of PLL during this period.",
+    "entity": "ext:PETRONET",
+    "name": "Petronet LNG",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-12",
+      "time": "20:31",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-04",
+      "time": "16:17",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-12",
+      "time": "17:45",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-07",
+      "time": "16:25",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "POWERGRID",
+    "date": "2026-11-01",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the Unaudited Financial Results for the quarter and half year ended 30th September, 2026 and declaration of 01st Interim Dividend, if any, for the FY 2026-27",
+    "entity": "ext:POWERGRID",
+    "name": "Power Grid Corporation Of India",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-05",
+      "time": "22:43",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "19:46",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-30",
+      "time": "21:45",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-03",
+      "time": "18:19",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "SHYAMMETL",
+    "date": "2026-10-31",
+    "purpose": "Financial Results/Other business matters",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and other business matters",
+    "entity": "shyam_metalics",
+    "name": "Shyam Metalics and Energy",
+    "sector": "steel",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-07-20",
+      "time": "12:35",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-11",
+      "time": "13:12",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-07",
+      "time": "12:54",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 3
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-10-31",
+   "name": "NTPC",
+   "symbol": "NTPC"
+  },
+  {
+   "date": "2026-10-31",
+   "name": "Shyam Metalics and Energy",
+   "symbol": "SHYAMMETL"
+  },
+  {
+   "date": "2026-11-01",
+   "name": "Power Grid Corporation Of India",
+   "symbol": "POWERGRID"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "National Aluminium Company",
+   "symbol": "NATIONALUM"
+  },
+  {
+   "date": "2026-11-02",
+   "name": "Petronet LNG",
+   "symbol": "PETRONET"
+  },
+  {
+   "date": "2026-11-03",
+   "name": "Lloyds Metals & Energy",
+   "symbol": "LLOYDSME"
+  },
+  {
+   "date": "2026-11-03",
+   "name": "Solar Industries India",
+   "symbol": "SOLARINDS"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Cummins India",
+   "symbol": "CUMMINSIND"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "NHPC",
+   "symbol": "NHPC"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Premier Energies",
+   "symbol": "PREMIERENE"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Astral",
+   "symbol": "ASTRAL"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Bharat Forge",
+   "symbol": "BHARATFORG"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Mphasis",
+   "symbol": "MPHASIS"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "NBCC (India)",
+   "symbol": "NBCC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Oil & Natural Gas Corporation",
+   "symbol": "ONGC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Samvardhana Motherson International",
+   "symbol": "MOTHERSON"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Tube Investments of India",
+   "symbol": "TIINDIA"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "UNO Minda",
+   "symbol": "UNOMINDA"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Hindalco Industries",
+   "symbol": "HINDALCO"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}
