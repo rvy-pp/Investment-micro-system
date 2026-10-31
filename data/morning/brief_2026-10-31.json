@@ -1,0 +1,405 @@
+{
+ "date": "2026-10-31",
+ "generated_at": "2026-10-31T08:16:14+05:30",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 163,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "NALCO reports 2 Nov: Spark sees 2QFY27 EBITDA Rs23,989mn (-5% vs Bloomberg consensus 25,331) and PAT Rs17,478mn (-4% vs 18,251).",
+      "source": "Avendus Spark — Results 30 Oct - 02 Nov; Last 6M Earnings - Upgrades - NALCO, Navin Fluorine, GAIL; Downgrades - IOCL, Delhivery, IGL",
+      "received": "09:19",
+      "detail": {
+       "summary": "Avendus's results calendar puts NALCO's print on Monday 2 Nov and has Spark estimates sitting below the Bloomberg consensus on both EBITDA and PAT. The same table shows the year-on-year growth Spark implies, and NALCO is listed among the upgrades over the past six months.",
+       "points": [
+        "EBITDA Spark Rs23,989mn vs consensus Rs25,331mn, -5%",
+        "PAT Spark Rs17,478mn vs consensus Rs18,251mn, -4%",
+        "2Q26 base: EBITDA Rs19,259mn, PAT Rs14,332mn",
+        "Implied y-o-y: EBITDA +25%, PAT +22%",
+        "Spark sales estimate blank; consensus sales Rs53,057mn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Vedanta plans Rs80,000 crore revival of India's first aluminium hub at JK Nagar, Bengal, per a press headline Kotak lists.",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "08:51",
+      "detail": {
+       "summary": "The Kotak daily only carries the Statesman headline as a link, with no body text from the broker. The Rs80,000 crore figure is the only detail in the mail, and it gives no timeline, capacity or funding.",
+       "points": [
+        "Rs80,000 crore planned revival outlay, headline only",
+        "Site: JK Nagar, West Bengal",
+        "No timeline or capacity in the mail"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "HRC held at Rs63.5K/t (+10% since end-July), ~5% above import parity incl. safeguard duty; HCC met coal ~US$266/t (+23% since end-July).",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "14:28",
+      "detail": {
+       "summary": "Morgan Stanley sees limited near-term upside to domestic steel prices because HRC already trades at a premium to import parity. The safeguard duty and the seasonally strong demand period should still keep prices and spreads well supported. Met coal supply disruption in China and China's steel balance are the key monitorables.",
+       "points": [
+        "HRC Rs63.5K/t, stable WoW, +10% since end-July",
+        "Secondary rebar Rs50.4K/t, ~1% lower WoW, +15% since end-July",
+        "HRC ~5% premium to import parity, same as last week",
+        "Domestic spreads +2% vs April 2026 peak, +45% vs mid-Dec lows",
+        "China CFR iron ore ~US$91/t, +1% WoW; domestic ore ~49% discount to parity"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "All-India cement prices rose Rs11/bag MoM in October (East +19, Central +13, South +11, West +7, North +3); dealers expect Rs5-10/bag more in early November.",
+      "source": "Elara — Cement - Signs of easing aggression in the B2B segment",
+      "received": "08:35",
+      "detail": {
+       "summary": "Elara's dealer checks show cost inflation is forcing pricing discipline, and non-trade (B2B) discounting is easing. Demand is soft into Diwali, so absorption of the November hikes is uncertain. Stocks sit at 5-10 year lows on EV/tonne, and Elara advises gradually adding weight.",
+       "points": [
+        "Rs11/bag all-India MoM; Rs18/bag over two months, biggest since Oct 2023",
+        "East Rs19, Central Rs13, South Rs11, West Rs7, North Rs3 per bag",
+        "Rs5-10/bag hikes planned for first week of November",
+        "Absorption risk: Diwali labour shortages, weather, Maharashtra water scarcity",
+        "Gujarat flat for the second month; Mumbai +Rs15/bag"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambuja FV cut to Rs345 from Rs370, SELL maintained; FY27-29E EBITDA cut 8-10%, 2Q volumes -1.2% YoY on market share loss.",
+      "source": "Kotak — [Kotak] Ambuja Cements (CMP: Rs355, FV: Rs345, SELL): Market share losses lead to strategy reversal",
+      "received": "09:26",
+      "detail": {
+       "summary": "2Q EBITDA beat on margins, but volumes lagged industry growth of 8-10%, which Kotak reads as share loss. Management says the reset is over and plans ~150 mtpa by May 2028. Kotak wants an execution record while fuel inflation outpaces price hikes.",
+       "points": [
+        "EBITDA Rs12.7bn, -28% YoY; Rs761/t vs Rs918/t QoQ",
+        "Volumes 16.7mn t, -1.2% YoY, -3.5% QoQ",
+        "Kiln fuel Rs1.87/Mcal, +13% QoQ; spot imported fuel near Rs2.8",
+        "FY27/28/29E EBITDA/t Rs838/973/1,100; FV on 9x EV/EBITDA, Dec-28E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley cuts Ambuja PT to Rs410 from Rs475, stays EW; guides 2H volumes up high-single digits, new ~149mnt grinding plan.",
+      "source": "Morgan Stanley — India Materials: ACEM: Capacity push returns; cost control key (+9 more Ambuja notes in Outlook)",
+      "received": "07:12",
+      "detail": {
+       "summary": "MS sees Ambuja's volume recalibration as over, with trade volumes recovering and non-trade still shrinking. Expansion adds clinker and grinding capacity by 2028. Fuel inflation is the swing factor, and MS expects less cost relief than management guides. Re-rating needs delivery.",
+       "points": [
+        "PT Rs475 to Rs410; ACC PT Rs1,215 to Rs1,100, UW",
+        "Trade volumes +9% YoY; non-trade -20% YoY",
+        "~10mnt clinker, ~30mnt grinding by 2028; capex ~Rs145bn",
+        "Fuel cost Rs1.66/kcal in 1Q to Rs1.87 in 2Q",
+        "MS sees ~Rs60/t cost relief by 4Q vs management's ~Rs160/t"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Coal India 2Q EBITDA ex-OBR Rs74bn missed Emkay by 29% and consensus by 24%; PAT Rs65.5bn missed 23-25%, FY27 cut, still ADD (TP Rs475).",
+      "source": "Emkay — Morning Post: Coal India: Sharp 2Q miss; FY27 earnings take a hit; ADD; TP Rs475",
+      "received": "07:22",
+      "detail": {
+       "summary": "Emkay reads the quarter as a quality miss: realizations were weaker than modelled and costs rose faster than volumes helped. The miss is at the operating line, so the FY27 earnings cut follows from the cost base and e-auction premiums, not one-offs. Rating stays ADD.",
+       "points": [
+        "EBITDA ex-OBR Rs74bn, 29% below Emkay, 24% below consensus",
+        "PAT Rs65.5bn, down 26% qoq, 23-25% below estimates",
+        "Cost/t up 12% qoq on higher explosives costs",
+        "E-auction premium averaged 40.6%; FSA price Rs2,192/t, +4.2% yoy",
+        "Blended realization only +1.4% yoy"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak reads the same Coal India print as a volume beat: PAT +57% yoy, dispatches 186mt (+12.2%), wage provision only Rs5bn; SELL, FV Rs360.",
+      "source": "Kotak — [Kotak] Coal India (CMP Rs393, FV Rs360, SELL): Improved volumes and low wage provision",
+      "received": "08:31",
+      "detail": {
+       "summary": "Kotak credits volumes and an insignificant wage provision, but flags the base effect, OBR reversal and other income as props. It expects volume growth to moderate after FY27 and wage settlement to add cost pressure over 12-18 months. The 7x FY28 P/E looks cheap only on headline numbers.",
+       "points": [
+        "Dispatches 186mt (+12.2% yoy); production 151mt (+3.8%)",
+        "Net blended realization Rs1,647/t, +6.4% yoy, +3.3% qoq",
+        "Auction revenue Rs52bn (+50.5%); auction price flat at Rs2,283/t",
+        "Inventory down to 66.6mt from 101mt at end-June",
+        "Wage provision Rs5bn; assumes 9-10% wage rise in FY28 and FY29",
+        "FV cut to Rs360 from Rs370; 7x FY28E P/E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Iron ore: China CFR rose ~1% WoW to ~US$91/t; domestic ore's discount to parity is ~49% against a ~56% five-year average.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker (+5 more in Outlook)",
+      "received": "14:28",
+      "detail": {
+       "summary": "MS sees limited near-term upside to domestic steel prices with HRC at a ~5% premium to import parity. It still expects spreads to stay well supported by the safeguard duty and seasonal demand. Domestic ore's discount to parity has narrowed from its 5Y norm, which matters for NMDC pricing.",
+       "points": [
+        "HRC Rs63.5K/t, stable on the week, +10% since end-July",
+        "Australian HCC ~US$266/t, -1% WoW, +23% since end-July",
+        "Domestic HRC ~5% premium to import parity incl. safeguard duty",
+        "Spreads up ~2% since April 2026 peak, ~45% since mid-Dec lows",
+        "Steel stocks ~+2% YTD vs Sensex -13%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Dixon 2QFY27 adj PAT Rs2.93bn, 13% above Spark's Rs2.58bn on mobile revenue 6% ahead; EBITDA margin 2.7% was in line.",
+      "source": "Avendus Spark — DIXON 2QFY27 Results Snapshot – Solid PAT beat driven by higher-than-expected Mobile sales; Margins broadly in-line",
+      "received": "17:24",
+      "detail": {
+       "summary": "Spark calls the beat volume-led and low quality. Revenue was 6% above its estimate on Mobile, but margins did not expand and Consumer and Home Appliances disappointed. Ex the Aditya Infotech MTM gain, PAT growth is about 11% yoy against 18.6% reported.",
+       "points": [
+        "Revenue Rs217.9bn, +47% yoy, 6.2% above Spark est",
+        "EBITDA Rs5.97bn, 4.6% above est; margin 2.7%, down 107bps yoy",
+        "Adj PAT +18.6% yoy; ex-MTM (Rs570mn gain) ~Rs3.6bn, ~11% yoy",
+        "Net debt Rs730mn vs net cash Rs7.73bn at FY26-end",
+        "Rs11,000 = 38x FY28E; ADD rating"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Syrma 2QFY27 revenue Rs19.9bn, +74% yoy and 17-18% ahead, but EBITDA margin 9.7% sat 40-50bps below JPM and Kotak estimates.",
+      "source": "JPM (Bhavik Mehta) & Kotak — Syrma SGS 2QFY27 First Take (Avendus Spark's snapshot headline calls margins in line)",
+      "received": "18:36",
+      "detail": {
+       "summary": "The houses agree on a big revenue beat and a margin shortfall at the gross level. JPM (Underweight, PT Rs1,300) flags 1H margins of 9.9% against FY27 guidance of 10.5-11%. Kotak says PAT beat by only 3% because gross margin missed by 310bps on a mix tilt to consumer and IT hardware.",
+       "points": [
+        "Revenue Rs19.9bn vs JPMe Rs17.0bn; Kotak est Rs17.8bn",
+        "EBITDA margin 9.7% vs JPMe 10.2%, KIE 10.1%",
+        "PAT Rs1.17bn: +14.3% vs JPMe, +3% vs KIE",
+        "IT & Railways +207% yoy per Kotak (laptop assembly)",
+        "Working capital 63 days vs 71 in 1Q; call 2-Nov 10:30"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: smartphone and TV output may run up to 20% below plan for 2-3 months after festive sales fell ~25% yoy.",
+      "source": "Nomura — India Consumer Durables & EMS: Handset, TV makers set to slash production on festive sales shock (+5 more in Outlook)",
+      "received": "09:11",
+      "detail": {
+       "summary": "Nomura's daily digest relays an Economic Times report that excess unsold stock after a weak festive season is forcing brands and contract manufacturers to cut output. Memory-chip costs have lifted smartphone prices 35-40% and TV prices 20-25%, hitting entry-to-mid demand. This is a volume headwind for EMS assemblers.",
+       "points": [
+        "Production up to 20% below plan, next 2-3 months",
+        "Festive sales volumes ~-25% yoy so far",
+        "Smartphone prices +35-40%, TVs +20-25% on memory costs",
+        "Smartphone and TV units down >10% in first nine months",
+        "Onam-to-Diwali normally ~30% of annual sales"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CTSH cut CY26 organic guidance ~100bps to 2.70% midpoint; Q4 implies 1.95% YoY cc exit versus 3.8%; I-Sec stays cautious on large caps.",
+      "source": "I-Sec (Ruchi Mukhija) — Technology: CTSH Q3CY26: AI tailwind in commentary, yet to show in numbers",
+      "received": "12:01",
+      "detail": {
+       "summary": "AI is a clear industry tailwind in CTSH's commentary but not yet in its numbers. Bookings fell and guidance was cut for the second straight quarter, which I-Sec reads as negative for Indian IT. Financial services is the lone strong vertical. I-Sec stays cautious on IT services, especially large caps.",
+       "points": [
+        "Q3 revenue +4.8% YoY cc; bookings -7% YoY, TTM +4%",
+        "FY guide 4-4.4% cc (was 4-5.5%); organic midpoint 2.70% vs 3.75%",
+        "Cut reasons: healthcare/consumer discretionary, Q4 furloughs, lower third-party resale",
+        "Financial services +12.3% YoY cc; AI-benefiting lines ~40% of business",
+        "New/expansion deals over 60% of TTM bookings; adj margin 16.3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: Sep-quarter results show guidance cuts, shrinking ACVs and rising headcount; large caps above intrinsic value, HOLD on TCS/INFY/HCL/TechM/LTM, U-PF Wipro, Coforge O-PF.",
+      "source": "CLSA India Research — India IT (Key messages from Sep 2026 results)",
+      "received": "09:06",
+      "detail": {
+       "summary": "CLSA sees four messages: weaker demand on AI deflation and soft discretionary spend, lumpy order books with shrinking ACVs, resilient financial services, and rising headcount without a visible demand recovery. With most large caps above intrinsic value and EPS trajectories unchanged, it sees downside risk to valuations.",
+       "points": [
+        "Coforge: high-conviction O-PF",
+        "TCS, INFY, HCL, TechM, LTM: HLD",
+        "Wipro: U-PF",
+        "Headcount up sequentially across most SIs, BPO and ER&D players",
+        "ACVs shrank as AI projects stay small but convert quickly"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Hexaware suspended CY26 revenue guidance under new CEO Jetley; Q3 grew 1.7% cc QoQ against 4% expected; IIFL TP cut to Rs560.",
+      "source": "IIFL Sales (Nishit Paleja) — Hexaware – Guidance suspended and more (+11 more in Outlook)",
+      "received": "11:28",
+      "detail": {
+       "summary": "The CEO change triggered a strategic review, so revenue guidance is suspended while the margin guide narrowed. IIFL stays BUY, citing a valuation discount to midcaps and a turnaround option. CLSA also trimmed its target and EPS on the weak quarter.",
+       "points": [
+        "Q3 revenue +1.7% cc QoQ vs 4% expected",
+        "CY26 Ebit margin guided 13-13.5%",
+        "IIFL EPS cut 2-4%; TP Rs560 from Rs580",
+        "Valuation ~20% discount to comparable midcaps",
+        "CLSA: TP Rs609 from Rs633; CY26-28 EPS -7%/-4%/-5%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "FPIs bought US$0.7bn in 3QCY26 after four selling quarters, but DMFs bought US$14.5bn; both cut top-10 stock weights (131bps/84bps).",
+      "source": "CLSA (Vikash Jain) — India strategy: Investor positioning - September: FPIs turn marginal net buyers, but flight from mega-caps continues",
+      "received": "21:50",
+      "detail": {
+       "summary": "FPI buying was too small to lift their ownership, which slipped to a record-low 15.5% of BSE500 while DMFs hit a record 12.6%. Both groups are rotating from mega-caps into mid and small-caps rather than adding broadly, so the flow is not index-supportive.",
+       "points": [
+        "FPI ownership 15.5% of BSE500, down 10bps QoQ, record low",
+        "DMF ownership 12.6%, up 32bps QoQ, record high",
+        "FPI mid-cap allocation +153bps to record 21.2%",
+        "FPIs added materials, energy, discretionary, IT; cut utilities, industrials, telecom",
+        "DMFs moved into NBFCs (+50bps relative weight); cut discretionary, materials, banks"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "INR's calm is policy-engineered, not flow-driven; RBI's FERR measures raised hedging costs and dislocated the forward market.",
+      "source": "Emkay — Morning Post: FX Strategy: Mounting costs of INR defense amid a false calm",
+      "received": "07:22",
+      "detail": {
+       "summary": "The RBI's FX measures have steadied spot INR, but the stability comes from policy rather than organic flows. The cost shows up in forwards, where policy-led FERR, restricted market access and thin liquidity have distorted pricing.",
+       "points": [
+        "Spot INR steadied by RBI FX measures",
+        "Policy-led FERR raised hedging costs",
+        "Restricted market access disrupted conventional forward pricing",
+        "Thin liquidity compounds the forward-market dislocation"
+       ],
+       "read": "snippet"
+      }
+     },
+     {
+      "text": "Crude and product flows out of the Gulf of Oman fell to 12.5Mb/d versus the early-October peak of 17.2Mb/d.",
+      "source": "UBS Evidence Lab — Daily Data: Crude, product flows out of Gulf of Oman 12.5Mb/d vs. early-October peak of 17.2Mb/d (+9 more in Outlook)",
+      "received": "22:43",
+      "detail": {
+       "summary": "UBS Evidence Lab's maritime monitor now also tracks traffic into and out of the Gulf of Oman, to catch more vessels going dark around the Strait of Hormuz. Flows are shown as 7-day rolling averages, based on AIS data only, so activity may be understated.",
+       "points": [
+        "12.5Mb/d now vs 17.2Mb/d early-October peak",
+        "Series are 7-day rolling averages",
+        "Added Gulf of Oman coverage to catch vessels going dark near Hormuz",
+        "AIS-only data, so vessel activity may be underrepresented"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "RIL consol EBITDA Rs566bn beat Kotak by 7.3% on O2C at Rs252bn (+14.5% vs est); Retail EBITDA Rs61bn missed by 9.5%.",
+      "source": "Kotak — [Kotak] Reliance Industries - 2QFY27 first take - Beat driven by O2C; Retail much weaker",
+      "received": "01:33",
+      "detail": {
+       "summary": "The beat is an O2C story, the strongest quarter ever for that segment, helped by product realisation amid Russia/ME supply disruption and strong polymer and polyester margins. Retail was muted, with the festive season sitting entirely in 3Q. Standalone was weaker than consolidated.",
+       "points": [
+        "Consol O2C EBITDA Rs252bn, +68% YoY, +48% QoQ",
+        "Standalone EBITDA Rs224bn, 6.1% below Kotak estimate",
+        "Retail revenue Rs917bn, 8.8% below estimate; margin 6.42%",
+        "E&P EBITDA Rs49bn, 5.6% ahead; KG-D6 gas at $8.88/mmbtu",
+        "Net debt Rs1.17tn, down Rs58bn QoQ"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Oct-26 wholesale: PVs, CVs & 2Ws seen up low-to-high teens YoY; TVS ~19% domestic 2W, TMPV ~15%, MSIL ~13%; RE 6%, HMCL 4%.",
+      "source": "CLSA — CLSA: India Autos: Preview: Auto Barometer (Festive demand looks strong across board)",
+      "received": "10:18",
+      "detail": {
+       "summary": "CLSA expects broad festive-driven inventory build into Diwali in November. It expects Oct retail to fall YoY on a tough base: last year's GST-cut pent-up demand, Diwali and Dussehra both in October then, and this year's inauspicious period. It calls Sep-Nov YoY the like-for-like read.",
+       "points": [
+        "TVSL domestic 2W ~19% YoY, exports +55%",
+        "TMPV ~15%, MSIL ~13%, HMIL domestic PV ~12%",
+        "M&M UV ~1%, tractors down 16-18% on El Nino",
+        "Sep wholesale exceeded retail ~15-30% in 2Ws, ~5-15% in PVs",
+        "CVs (AL, TMCV) keep double-digit growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "GAIL 2QFY27 standalone PAT Rs46.5bn (+110% YoY) vs CLSA estimate Rs25.7bn, a beat across segments led by gas trading & petchem.",
+      "source": "CLSA — CLSA Trading Advantage: Gail 2QFY27 first cut (Beat across all segments) (+11 more in Outlook)",
+      "received": "15:48",
+      "detail": {
+       "summary": "The first cut shows GAIL well ahead of CLSA's estimate, with every segment beating. Gas trading and petchem drove most of the upside. The mail is a short pointer to the full CLSA report, so there is no segment split or estimate change in the body.",
+       "points": [
+        "Standalone PAT Rs46.5bn, +110% YoY, +8% QoQ",
+        "CLSA estimated PAT Rs25.7bn",
+        "Beat across all segments",
+        "Gas trading and petchem the main drivers"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [],
+  "note": "Saturday mail-only run: no markets fetch (Friday's markets file stands); 163 mails swept, all received Fri 30-Oct"
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "CLSA's meetings with Nvidia's corporate development head: public investors doubt AI ROI, while private equity and credit investors see no bubble.",
+    "source": "CLSA (Suveer Chainani) — OOO / NVDA KTAs / Missing OPEN AI/NVIDIA???"
+   },
+   {
+    "text": "US tech stocks fell Thursday after Alphabet's earnings renewed doubts over the pace of AI infrastructure spending (FT, via CLSA).",
+    "source": "CLSA India Research — India IT (Key messages from Sep 2026 results)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": "CY26 organic growth guide cut ~100bps to a 2.70% midpoint and bookings -7% YoY at the Q3CY26 print (I-Sec CTSH note, 30-Oct)"
+   }
+  ]
+ }
+}
