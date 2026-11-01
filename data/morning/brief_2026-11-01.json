@@ -1,0 +1,181 @@
+{
+ "date": "2026-11-01",
+ "generated_at": "2026-11-01T08:11:41+05:30",
+ "mail": {
+  "window": "24h to 08:08 IST",
+  "n_scanned": 49,
+  "sectors": [
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Kotak upgrades Dixon to BUY on the correction, FV Rs14,900 unchanged; Q2 PAT 4% ahead, EBITDA 3% below, FY28 mobile volume 55-60mn.",
+      "source": "Kotak \u2014 Dixon Technologies (CMP: Rs11,000, FV: Rs14,900, BUY): Execution beat; growth engines broaden",
+      "received": "11:15",
+      "detail": {
+       "summary": "Kotak sees the Q2 beat as execution-led (memory-driven mobile prices, IT hardware, telecom) rather than margin-led, since EBITDA missed on input costs and delayed pass-through in washing machines and refrigerators. It upgrades from ADD after the price fall and sees several growth engines for FY28.",
+       "points": [
+        "FV Rs14,900 retained; rating ADD to BUY",
+        "Q2 revenue Rs218bn, 6.4% above Kotak estimate",
+        "EBITDA margin 2.7% vs Kotak 3.0%; PAT Rs2.93bn, 4% ahead",
+        "FY27-29E EPS cut 1-2%",
+        "FY27 mobile volume 33-34mn ex-Vivo; FY28 55-60mn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara downgrades Dixon to REDUCE, TP cut to Rs11,500 from Rs14,980; FY28-29E EPS down 11% on Vivo JV delay and PLI end.",
+      "source": "Elara \u2014 Consumer Electronics - Dixon Technologies - Price hikes drive sales but volume under pressure - Q2FY27 Update - Reduce - TP: INR 11,500",
+      "received": "20:32",
+      "detail": {
+       "summary": "Elara argues Q2 sales growth is price, not volume: memory-driven hikes of 35-40% flattered revenue while industry mobile volumes fell by a high double digit. With mobile PLI over, lower-margin IT hardware scaling and the Vivo JV delayed, it sees earnings growth slowing sharply and de-rates the multiple.",
+       "points": [
+        "TP Rs11,500 vs Rs14,980; multiple 42x vs 55x Sep-FY28E P/E",
+        "FY27E EPS -1%; FY28E and FY29E EPS -11% each",
+        "Q2 sales Rs217.9bn, +47% YoY, 11% above Elara estimate",
+        "EBITDA margin down 110bp to 2.7%",
+        "EPS CAGR 86% (FY23-26) vs 10% (FY26-29E)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Blue Star RAC grew 42% in Q2 but only ~13% of 18% RM inflation is passed on; Kotak holds REDUCE, FV Rs1,550. Read-across for Amber/PGEL.",
+      "source": "Kotak \u2014 Blue Star (CMP: Rs1,628, FV: Rs1,550, REDUCE): Growth improves; margins a mixed bag (+3 more in Outlook)",
+      "received": "14:39",
+      "detail": {
+       "summary": "Kotak says Blue Star's growth beat was helped by a low base, extended summer and pre-buying before hikes, while the margin beat was low quality. Room AC (RAC) cost pass-through is only partial and S-2 margin guidance looks optimistic, so it keeps REDUCE despite raising estimates.",
+       "points": [
+        "Revenue +21% YoY, ~5.3% beat; EBITDA +10.4%, 44% beat on provision write-back",
+        "S-2 EBIT margin 2.3% vs 6.5% FY27 guidance",
+        "RAC industry FY27 volume/sales growth 20%/25%",
+        "5% price hike effective October; balance via cost savings",
+        "FY28-29E EPS +5-6%; FV Rs1,550 from Rs1,500"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Birla Corp Q2 realisation flat QoQ at Rs4,964/t while cost rose 4% to Rs4,490/t, cutting EBITDA/t 29% to Rs474 on 7% YoY volume.",
+      "source": "Avendus Spark \u2014 Birla Corp 2QFY27 Results Snapshot",
+      "received": "19:29",
+      "detail": {
+       "summary": "Central/east cement showed no QoQ price gain in Q2, with costs rising and utilisation falling. Margin compression came from cost per tonne and lower volumes, not weaker realisation. EBITDA was in line with Spark's estimate at Rs2.3bn. Avendus keeps a BUY at 4.8x FY28E EV/EBITDA.",
+       "points": [
+        "Volume 4.5mt, +7% YoY, -10% QoQ",
+        "Realisation Rs4,964/t, flat QoQ, +2% YoY",
+        "Cost Rs4,490/t, +4% QoQ, +8% YoY",
+        "EBITDA/t Rs474 vs Rs671 in Q1 and Rs705 a year ago",
+        "Utilisation 85% vs 98% in Q1; concall 2 Nov, 14:30 IST"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NTPC coal PLF of 73.5% (up 752bps YoY) and 11% YoY generation growth point to firm thermal demand for Coal India offtake.",
+      "source": "Avendus Spark \u2014 NTPC 2QFY27 Snapshot, 2.4GW added, Coal PLF 73.5%",
+      "received": "16:13",
+      "detail": {
+       "summary": "NTPC's coal PLF rose to 73.5% in 2QFY27 from 66% a year ago, and gross generation grew 11% YoY. Sequentially both softened, with PLF down 318bps and generation down 1% QoQ. Group commercial capacity is up 9% YoY, a supportive backdrop for coal pull from Coal India's largest customer.",
+       "points": [
+        "Coal PLF 73.5% vs 66% in 2QFY26, +752bps YoY",
+        "Coal PLF down 318bps QoQ from 77%",
+        "Gross generation 92,413mn units, +11% YoY, -1% QoQ",
+        "Group commercial capacity 91,506MW, +9% YoY",
+        "2.4GW added in 1HFY27; 204MW more declared in October"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "4.3% FY27 GFD/GDP target seen met despite a ~Rs2.7 tn wider deficit; adverse case slips 20-30 bps.",
+      "source": "Kotak \u2014 Economy: India fiscal: On track despite a few hurdles",
+      "received": "12:08",
+      "detail": {
+       "summary": "1HFY27 accounts are under control: tax collections are steady despite excise and GST cuts, and capex is steady. With crude elevated and no excise-cut reversal, higher fertilizer subsidies widen the deficit. Kotak still expects the 4.3% target to be met, using buffers. Slippage risk sits in fertilizer and energy subsidies.",
+       "points": [
+        "GFD at 42% of FY27BE in 1HFY27",
+        "Deficit could widen ~Rs2.7 tn; buffers: ESF Rs300 bn, RBI surplus +Rs180 bn",
+        "Offsets: divestment upside Rs100-150 bn, Rs1-1.5 tn non-critical cuts",
+        "1HFY27: gross tax +6.1%, indirect tax -5%, excise -22%, GST -5.7%",
+        "Capex +12.7% (54% of BE); railway capex +30%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "IGL posts Rs311mn EBITDA loss vs Kotak Rs4.2bn and consensus Rs3.4bn as spot LNG replaces withdrawn pooled gas.",
+      "source": "Kotak \u2014 Indraprastha Gas 2QFY27 first take: Much weaker with EBITDA loss",
+      "received": "23:30",
+      "detail": {
+       "summary": "Kotak says IGL could not raise prices enough against a sharp jump in gas cost, because cheaper pooled gas was withdrawn once spot LNG became plentiful. Margins turned negative per scm. Kotak stays bearish on CGDs, citing a shrinking CNG price advantage and rising EV share.",
+       "points": [
+        "EBITDA loss Rs311mn vs Rs4.4bn yoy, Rs3bn in 1Q",
+        "Volumes 10.1 mmscmd, +8.1% yoy, 0.5% ahead",
+        "RM cost Rs50.2/scm, +36.9% yoy, +15.8% qoq",
+        "EBITDA margin negative Rs0.3/scm vs Kotak Rs4.8/scm",
+        "CNG price hike Rs10/kg since the crisis began"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NTPC Q2 PAT +40.7% yoy to Rs73.5bn on 11% generation growth; Elara keeps Buy, TP Rs466, estimates unchanged.",
+      "source": "Elara \u2014 Utilities - NTPC - Healthy Q2 driven by strong generation (+7 more in Outlook)",
+      "received": "23:03",
+      "detail": {
+       "summary": "Elara calls Q2 healthy on strong generation, with coal PLF up sharply, and PAT helped by Rs19bn of regulatory income. It keeps Buy on a growing regulated equity base and a renewable pipeline, valuing the stock at 1.2x FY28E P/B.",
+       "points": [
+        "EBITDA +21.0% yoy to Rs156bn, -3.7% qoq",
+        "Coal PLF 73.53% vs 66.01%; generation 92.4BU, +11%",
+        "Regulatory income Rs19bn in Q2FY27",
+        "Under construction 36,899MW; H1 additions 2,398MW",
+        "Buy, TP Rs466, 47% upside vs CMP Rs316"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "IT / AI-tech"
+  ]
+ },
+ "global": {
+  "ai_semis": [],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
