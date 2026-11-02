@@ -1,0 +1,334 @@
+{
+  "date": "2026-11-02",
+  "generated_at": "2026-11-02T08:20:00+05:30",
+  "mail": {
+    "window": "24h to 08:12 IST",
+    "n_scanned": 165,
+    "sectors": [
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "India HRC slipped INR50/t w-w to INR63,650/t while rebar rose INR150/t to INR64,800/t, flipping the flat-long spread to -INR1,150/t; Oct HRC spot margin ~INR39,073/t.",
+            "source": "Nomura - India steel - Steel weekly trends (week ended 30 Oct 2026)",
+            "received": "03:16",
+            "detail": {
+              "summary": "Domestic steel prices stay near four-year highs, but long products are now outpacing flats. Nomura's view is that the price hikes more than absorb raw material inflation in 1HFY27. It stays positive on the sector with Buy on Tata Steel, JSW Steel and Jindal Steel.",
+              "points": [
+                "HRC INR63,650/t, down INR50/t w-w, near four-year high",
+                "Rebar INR64,800/t, up INR150/t w-w",
+                "Flat-long spread -INR1,150/t",
+                "Oct HRC spot margin ~INR39,073/t, up ~INR3,000/t q-q",
+                "China export HRC USD505/t flat; Europe HRC EUR750/t flat"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Imported coking coal flat w-w at USD266/t, 3% below the Sep average; iron ore 62% Fe at USD87/t, the CY26 low; NMDC lumps INR5,400/t.",
+            "source": "Nomura - India steel - Steel weekly trends (week ended 30 Oct 2026)",
+            "received": "03:16",
+            "detail": {
+              "summary": "Input costs are easing at the margin. Coking coal is off after a sharp rally, and seaborne iron ore is at its weakest this year. NMDC domestic ore prices are steady.",
+              "points": [
+                "Coking coal USD266/t, ~3% below Sep'26 average",
+                "China domestic coking coal USD338/t, up over 40% since the mine accident",
+                "Iron ore 62% Fe CFR China USD87/t, CY26 low",
+                "NMDC lumps INR5,400/t (+INR150/t from Sep-26); fines INR4,500/t flat",
+                "LME aluminium ~+1% w-w to USD3,105/t"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "GS adds JSW Steel to the APAC November Conviction List, forecasting FY27/FY28 EBITDA growth of 38%/14% on domestic consumption and capacity expansion.",
+            "source": "Goldman Sachs - [GS Daily] US lower more systematic/top-down // APAC Nov CL-Buy: add Elite, Yokohama Robber, JSW Steel",
+            "received": "06:28",
+            "detail": {
+              "summary": "The conviction list addition rests on earnings growth from domestic demand and new capacity. The daily gives no target price or rating detail for JSW Steel.",
+              "points": [
+                "JSW Steel FY27 EBITDA growth forecast 38%",
+                "FY28 EBITDA growth forecast 14%",
+                "Analyst: Amit Dixit",
+                "Added alongside Elite Material and Yokohama Rubber",
+                "No TP stated in the daily"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Mining",
+        "bullets": [
+          {
+            "text": "Coal India Oct production 67.2mt (+19.1% yoy), offtake 70.3mt (+20.6%); e-auction premium 140% vs 94% in Sep; Emkay ADD, TP Rs475 unchanged.",
+            "source": "Emkay - Coal India: Production recovery gains traction amid robust offtake; ADD; Target: Rs475",
+            "received": "19:01",
+            "detail": {
+              "summary": "Offtake is running well ahead of production, so mine stocks are being drawn down and a 2H production catch-up is needed. Emkay thinks mining conditions support that catch-up. The jump in e-auction premium improves 2HFY27 earnings visibility, so it keeps ADD and the Rs475 TP.",
+              "points": [
+                "Oct production 67.2mt, +19.1% yoy, +25.6% mom",
+                "Offtake 70.3mt, +20.6% yoy; FY27E run-rate 815mt",
+                "FY27 YTD offtake exceeds production by 63mt",
+                "Apr-Oct production ~32mt below seasonality-adjusted target",
+                "E-auction premium 140% in Oct vs 94% in Sep"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "NMDC lumps raised Rs150/t to Rs5,400/t effective Sep-26, fines steady at Rs4,500/t; seaborne iron ore at USD87/t, CY26 low.",
+            "source": "Nomura - India steel - Steel weekly trends (week ended 30 Oct 2026) (+3 more in Outlook)",
+            "received": "03:16",
+            "detail": {
+              "summary": "Nomura's weekly flags NMDC's domestic price hike alongside weak global iron ore, which means domestic and seaborne ore prices are diverging. Coking coal is easing after a sharp rally. It stays positive on India steel and keeps Buy on Tata Steel, JSW Steel and Jindal Steel.",
+              "points": [
+                "NMDC lumps +INR150/t to INR5,400/t from Sep-26",
+                "NMDC fines steady at INR4,500/t",
+                "Iron ore 62% Fe CFR China USD87/t, lowest in CY26",
+                "Coking coal USD266/t, ~3% below Sep average",
+                "India HRC INR63,650/t, down INR50/t w-w"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "PhillipCapital keeps Dixon SELL, TP Rs9,082 (-17% vs Rs11,000), at 40x FY28 EPS Rs227; sees H2 smartphone volumes 26% below H1.",
+            "source": "PhillipCapital - DIXON TECH (DIXON IN)- Mobile biz to keep facing headwinds (PhillipCapital India)",
+            "received": "23:22",
+            "detail": {
+              "summary": "Management's FY27 guide of 33-34mn units ex-Vivo needs H2 volumes only 2-8% below H1, which PhillipCapital thinks is hard because stocking is H1-weighted. It sees camera and display margins and IT hardware allocations capped, and no material Pixel uplift.",
+              "points": [
+                "TP Rs9,082 vs CMP Rs11,000 (-17%); 40x FY28 EPS of Rs227",
+                "FY27 volume est 30mn ex-Vivo plus 5mn Vivo = 35mn; H2 at 12.8mn",
+                "Q2FY27 volume ~9.7mn; H1 17.2mn vs guidance 33-34mn ex-Vivo",
+                "Camera margin modelled 5%, display 10%, vs management 6-7% camera",
+                "Gemtek JV: trials Q4FY27, no material FY27/28 earnings impact"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Emkay keeps Dixon BUY, TP Rs16,400 (-1.8%, 49% upside); FY27E EPS cut ~21% on no PLI, FY28E EPS raised ~7%.",
+            "source": "Emkay - Dixon Technologies: Resilient volumes, rising ASPs drive growth; BUY; Target: Rs16,400",
+            "received": "02:19",
+            "detail": {
+              "summary": "Q2 growth came from a ~35% yoy ASP rise as memory took a bigger share of the phone BOM, with volumes 9.5mn (-7% yoy). Emkay lifts ASPs and trims PLI, so FY27 EPS falls while FY28 rises; it argues wallet-share gains offset memory-cycle volume loss.",
+              "points": [
+                "TP Rs16,400 (Dec-27 DCF) vs Rs16,700 earlier; 44x FY28E PER",
+                "Q2 EBITDAM 2.7%, 26bps below Emkay estimate",
+                "FY27E/28E/29E EBITDAM 2.8%/3.9%/4.9% vs 3.3%/4.3%/4.6% prior",
+                "3QFY27 volume guide 7-7.5mn; FY27 33-34mn ex-Vivo",
+                "Vivo JV production targeted 4QFY27; Motorola exports ramp from Q4"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "PhillipCapital holds PGEL Neutral, TP Rs559; net debt Rs2,911mn vs Rs739mn net cash in Q1, cash cycle 67.7 days.",
+            "source": "PhillipCapital - PG Electroplast (PGEL IN)- Margins and Working Capital to remain under pressure (PhillipCapital India) (+8 more in Outlook)",
+            "received": "01:21",
+            "detail": {
+              "summary": "Q2 revenue and PAT grew sharply, but gross contribution margin fell on material pass-through and a lower-margin electronics mix, and working capital and debt rose. RAC volume recovery is pushed to H2, with PLI income still to be recognised.",
+              "points": [
+                "TP Rs559 (+5% vs CMP Rs530); 35x FY28 EPS ~Rs16",
+                "Q2 revenue Rs9,339mn +43%; EBITDA Rs691mn +55%; margin 7.4%",
+                "Gross contribution margin 17.8% vs 21.6% a year ago",
+                "Q2 RAC volumes flat; FY27 guide 2.1-2.2mn units",
+                "Over Rs700mn FY27 PLI income expected, none in Q2",
+                "Finance cost +56% yoy to Rs261mn; RoCE 12.4% vs 20.8%"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "Near-frontier AI models priced at up to a fifth of frontier pricing, but CLSA sees no full price war yet.",
+            "source": "CLSA - Global Technology: LLM Diaries: Pricing the frontier",
+            "received": "02:34",
+            "detail": {
+              "summary": "CLSA argues the price-war fear is overstated. Near-frontier models are the battleground, while frontier pricing holds and OpenAI's old premium has gone. Anthropic's near-frontier launches raised token consumption but slowed 3Q26 revenue momentum.",
+              "points": [
+                "Near-frontier priced at up to one fifth of frontier",
+                "Price per unit of intelligence down ~99.5% in three years",
+                "90% of that fall from smarter models, 10% from price cuts",
+                "AI labs ~57% of cumulative ARR in 550+ company tracker",
+                "Anthropic near-frontier launches lifted tokens, slowed 3Q26 revenue momentum"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "AI market turmoil is global across themes; GS says earnings misses are punished while beats may go unrewarded, so risk is asymmetric.",
+            "source": "Goldman Sachs - [8:30am today]: US Internet analyst Eric Sheridan to discuss 3Q earnings; Focus shifted from earnings themselves to durability of AI monetization, cloud demand...",
+            "received": "04:54",
+            "detail": {
+              "summary": "GS sales commentary says focus has moved from Mag 7 prints to durability of AI monetisation and cloud demand, with hyperscalers crowded and expectations demanding. The note flags enterprise AI demand beyond coding tools and datacenter financing as the two live debates.",
+              "points": [
+                "Mag 7 feedback 'two steps forward, one step back'",
+                "Software momentum cooling; leadership source unclear",
+                "Debate 1: next enterprise AI demand leg after coding tools",
+                "Debate 2: financing still needed for datacenter build-out",
+                "Sheridan 3Q earnings webinar 8:30am HK on 2 Nov"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Indian IT rose 17.4% in October, top MSCI India sector; Wipro +25.1%, TCS +22.0%, Infosys +19.2%, TechM +17.5%.",
+            "source": "JPM - India Equity Strategy: October 2026 wrap: AI skepticism drives market outperformance",
+            "received": "17:42",
+            "detail": {
+              "summary": "JPM says India outperformed on resilient Q2 earnings and defensiveness during the global sell-off in AI-linked stocks. IT led all sectors in October, with four of the five largest MSCI India gainers being IT names including three on the desk's book.",
+              "points": [
+                "MSCI India +1.2% in October; beat APxJ by 8.1%, EM by 9.3%",
+                "IT +17.4% in October, +4.9% over three months",
+                "Wipro +25.1%, TCS +22.0%, Infosys +19.2%, TechM +17.5% in October",
+                "FIIs sold $2.6bn in October versus $4.1bn in September",
+                "Nifty 50 +1.9% in October, ended at 23,053"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "Only 43% of 534 companies beat in 2QFY27, down from 52%; metals EBITDA +70% YoY, construction materials -1%, IT +11%.",
+            "source": "Avendus Spark Quant-Attentive - 2QFY27 Results Analysis | Market Cap >Rs.1,000 Cr - 534 Companies Reported",
+            "received": "11:36",
+            "detail": {
+              "summary": "Aggregate earnings are the best in 11 quarters, but beats are fading and FY27 consensus PAT has more downgrades than upgrades. Small caps lead growth and have the highest beat and miss rates. Metals is the standout sector, and construction materials is the soft spot.",
+              "points": [
+                "PAT +31%, EBITDA +28%, sales +21% YoY; EBITDA margin 19.8%",
+                "Beat rate 43% vs 52% in 4QFY26, 47% in 1QFY27",
+                "Metals & Mining: EBITDA +70%, PAT +157%, EBITDA margin 24.3% vs 19.6%",
+                "Construction materials: EBITDA -1%, PAT -46%; Ambuja, Dalmia negative contributors",
+                "IT: sales +13%, EBITDA +11%, PAT +9%"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "FIIs bought US$1.4bn of equities in the week to 29-Oct, cutting 2026 outflows to US$30.9bn; Nifty trades 17x forward, 9.1% below 10-year average.",
+            "source": "CLSA - CLSA: India strategy: Weekly wrap",
+            "received": "22:34",
+            "detail": {
+              "summary": "Sentiment recovered into the neutral zone as the Nifty rose 2% on the week with every sector higher. CLSA stays cautious on small caps because of demanding valuations and crowded positioning. Bond yields fell for the first time in 10 weeks.",
+              "points": [
+                "Nifty +2% WoW; all sectors up, healthcare led, oil & gas weakest",
+                "FII debt buying US$0.5bn; 2026-TD debt inflows US$8.1bn",
+                "10-year yield down 5bps to 7.4%; yield-earnings yield gap 1.6ppt",
+                "Bull-Bear Index at 34.7% bullish, from the bearish zone",
+                "Dalmia Bharat among the biggest BSE200 laggards"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "FIIs sold US$2.6bn in October against DII buying of US$6.5bn; retail turned seller at US$1.5bn; IT +17.4%, Materials -4.9% for the month.",
+            "source": "JPM - India Equity Strategy: October 2026 wrap: AI skepticism drives market outperformance (+5 more in Outlook)",
+            "received": "17:42",
+            "detail": {
+              "summary": "India outperformed Asia and EM in October on resilient Q2 earnings and relative defensiveness during the global sell-off in AI-linked stocks. Higher crude, heavy IPO supply, foreign selling and MTF unwinding pressured small and mid caps. Quality beat Value on factor performance.",
+              "points": [
+                "MSCI India USD +1.2%; beat MSCI APxJ by 8.1%, EM by 9.3%",
+                "Large caps +1.1%, ahead of small caps by 7.2% and mid caps by 3.1%",
+                "FII selling US$2.6bn vs US$4.1bn in September; DII US$6.5bn",
+                "Quality L/S +4.9%, Value L/S -1.5%",
+                "RBI hiked 25bps; FY27 GDP forecast raised to 7% from 6.7%"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "Oct wholesales: MSIL PVs +25% yoy, TMPV +23%, HMIL +18%; TVS 2W +29%, HMCL +15.5%, RE +7%; TMCV +27%; tractors down 10-12%.",
+            "source": "Emkay - Auto & Auto Ancillaries: Record Oct-26; TVS/EIM surprises; M&M lags",
+            "received": "23:41",
+            "detail": {
+              "summary": "Oct-26 dispatches were healthy across 2W, PV and CV, with TVSL, Royal Enfield and MSIL as positive surprises and tractors the weak spot. Retail growth moderated on Diwali timing (Nov-26 vs Oct-25) and a high GST-driven base. Emkay favours 2W and CV over PV on pricing flexibility amid commodity pressure.",
+              "points": [
+                "MSIL PV ~276k units, +25% yoy, 14% above estimates",
+                "TVSL ~700k units +29%; HMCL ~734k +15.5%; RE ~133k +7%",
+                "TMCV 47.7k units +27%; MHCV retail +28% yoy",
+                "Escorts/M&M tractors -10%/-12% yoy; M&M domestic PV +2.4%",
+                "Festive-to-festive industry growth: 2W/CV/PV ~26%/54%/29%"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "NTPC 2QFY27 coal PLF hit 73.5% (66% a year ago) on 92.4 BU generation (+11% yoy); FY27 capacity-add guide cut to 6.5 GW.",
+            "source": "Kotak - [Kotak] NTPC (CMP: Rs316, FV: Rs355, ADD): Good quarter; muted growth outlook in the near term",
+            "received": "07:41",
+            "detail": {
+              "summary": "NTPC's standalone earnings improved on higher regulatory earnings and a lower tax rate, with operations helped by stronger power demand. Capacity additions lag because renewable projects face transmission constraints that management expects to ease only by end-FY2028. Kotak keeps ADD with an unchanged FV of Rs355.",
+              "points": [
+                "Coal PLF 73.5% vs 66% in 2QFY26; PAF 86.7%",
+                "Generation 92.4 BU, +11% yoy",
+                "Captive coal output 11.8 MT (+15%); ~20% of standalone coal need",
+                "FY27 capacity addition ~6.5 GW vs 9.6 GW earlier",
+                "Group capex Rs126 bn in 2Q, +7% yoy"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Brigade 2QFY27 pre-sales Rs18.3bn (-10% yoy, +72% qoq); needs 2H launches of 7mn sq ft to reach the Rs90bn FY27 guide (cement demand).",
+            "source": "Kotak - [Kotak] Brigade Enterprises (CMP: Rs527, FV: Rs875, BUY): Banking on a stronger second half (+8 more in Outlook)",
+            "received": "18:15",
+            "detail": {
+              "summary": "Pre-sales recovered sequentially on three new launches but remain below last year. The Rs90bn FY27 guide (+20% yoy) is unchanged, so 2H must deliver a heavier launch schedule. Kotak stays at BUY with an unchanged FV of Rs875 on a 6X EV/EBITDA valuation.",
+              "points": [
+                "1HFY27 pre-sales Rs28.9bn, -8% yoy, 32% of full-year guide",
+                "Realisation Rs13,841/sq ft, +29% yoy",
+                "2Q launches 2.4mn sq ft; Barcelona Hyderabad Rs4.75bn",
+                "13mn sq ft residential launch pipeline over next four quarters",
+                "2H launches planned: 7mn sq ft / Rs76bn"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      }
+    ],
+    "quiet": ["Non-ferrous", "Cement"]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "SOX -7.2% on 30-Oct in an Intel-led chip rout: AMD -10.9%, TSMC ADR -6.0%, Broadcom -5.5%, Nvidia -4.2%; Nasdaq -2.9%.",
+        "source": "markets file (Yahoo closes, 30-Oct)"
+      },
+      {
+        "text": "Broadcom fell 5.5% as its $43bn Anthropic backstop met the Intel-led rout.",
+        "source": "TIKR headline, 31-Oct"
+      },
+      {
+        "text": "Kioxia guided below while Murata beat and raised guidance; BofA downgraded Intel.",
+        "source": "GS Daily and BofA China Daily subject lines, 02-Nov"
+      }
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": "Q3 results (29-Oct) cemented margin gains; BMO raised PT to $68 from $63, Nomura to $76 (30-Oct headlines)"}
+    ]
+  }
+}
