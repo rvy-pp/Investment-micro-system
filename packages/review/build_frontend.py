@@ -172,6 +172,19 @@ def check() -> dict:
             r["problems"].append(f"/api/book_analysis: {ba.get('error') or f'{n} stocks, expected {want}'}")
         r["routes"].append({"route": "/api/book_analysis", "ok": ok,
                             "detail": f"{n} stocks, {ba.get('n_auto', 0)} priced automatically"})
+        # /api/book_model - each stock's Excel model on its Analysis card
+        # (2026-11-02). A model that fails to render, or that has never been
+        # recalculated in Excel (formulas with no saved values), is a problem:
+        # the card would show blanks that read as zeros.
+        for ent in (ba.get("models") or {}):
+            m = engine.book_model(ent)
+            mok = not m.get("error") and not m.get("no_cache")
+            if not mok:
+                r["problems"].append(f"/api/book_model {ent}: "
+                                     f"{m.get('error') or 'never recalculated in Excel; open it and save'}")
+            r["routes"].append({"route": f"/api/book_model?entity={ent}", "ok": mok,
+                                "detail": f"{m.get('file')}: {len(m.get('sheets') or [])} sheets, "
+                                          f"saved {m.get('saved')}"})
 
     # /api/book's `var` block - the Book's Risk sub-tab (2026-10-25). Two
     # things fail it: an error, and pair contributions that do not add up to

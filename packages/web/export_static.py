@@ -142,7 +142,16 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
             put(f"/api/book?date={d}", engine.book_view(d))
         for r in BIX_RANGES:
             put(f"/api/book_index?range={r}", engine.book_index(r))
-        put("/api/book_analysis", engine.book_analysis())
+        ba = engine.book_analysis()
+        put("/api/book_analysis", ba)
+        # Each stock's Excel model, every sheet, as of the export (2026-11-02).
+        # The desk polls for saves and opens Excel; the vault copy can do
+        # neither and app.html says so, but the model itself is readable.
+        for ent in (ba.get("models") or {}):
+            first = engine.book_model(ent)
+            put(f"/api/book_model?entity={ent}", first)
+            for sh in first.get("sheets") or []:
+                put(f"/api/book_model?entity={ent}&sheet={sh}", engine.book_model(ent, sh))
     else:
         msg = {"error": "the Book is excluded from this offline copy "
                         "(exported with --no-book)"}
@@ -456,11 +465,11 @@ def selftest() -> None:
                 "/api/book_index", "/api/book_analysis", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
                 "/api/oi_movers", "/api/results",
-                "/api/concall", "/api/results_board", "/api/fo_basis"}
+                "/api/concall", "/api/results_board", "/api/fo_basis", "/api/book_model"}
     # WRITE routes are POST-only and an offline copy can never serve them; the
     # page says so where the inputs are (Kelly edges, the pair-grading call
     # log). Listed by name so a new GET route cannot hide in here.
-    post_only = {"/api/book_call", "/api/analyst_view"}
+    post_only = {"/api/book_call", "/api/analyst_view", "/api/book_model_open"}
     missing = (app & served) - exported - post_only
     assert not missing, f"app.html fetches {missing} and the export skips it"
     ok += 1

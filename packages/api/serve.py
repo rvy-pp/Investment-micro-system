@@ -184,6 +184,13 @@ class Handler(BaseHTTPRequestHandler):
                 # chat (packages/book/analysis.py --add), "chat first".
                 d = engine.book_analysis()
                 return self._json(d, 500 if d.get("error") else 200)
+            if u.path == "/api/book_model":
+                # A stock's Excel model, rendered from its last save, for the
+                # Analysis card (2026-11-02). `since` = the mtime the page
+                # holds; an unchanged file answers {unchanged: true}.
+                d = engine.book_model(q.get("entity", [""])[0], q.get("sheet", [""])[0] or None,
+                                      q.get("since", [""])[0] or None)
+                return self._json(d, 404 if d.get("error") else 200)
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":
@@ -255,15 +262,22 @@ class Handler(BaseHTTPRequestHandler):
 # tab — appended to results_analyst_views by results_io.save_view, which
 # refuses an empty note, a number without a unit, or a unit that disagrees
 # with the store. Append-only, withdrawals included.
+#
+# A FOURTH (2026-11-02), and it writes nothing: open a stock's Excel model in
+# desktop Excel. It only ever opens a file model_view found under
+# data/analysis/cases/, by entity id, and the server binds 127.0.0.1.
 def _do_POST(self):
     u = urlparse(self.path)
     try:
-        if u.path not in ("/api/book_call", "/api/analyst_view"):
+        if u.path not in ("/api/book_call", "/api/analyst_view", "/api/book_model_open"):
             return self._json({"error": "not found"}, 404)
         n = int(self.headers.get("Content-Length") or 0)
         if n <= 0 or n > 10_000:
             return self._json({"error": "bad body"}, 400)
         body = json.loads(self.rfile.read(n).decode("utf-8"))
+        if u.path == "/api/book_model_open":
+            d = engine.book_model_open(body.get("entity"))
+            return self._json(d, 404 if d.get("error") else 200)
         if u.path == "/api/analyst_view":
             d = engine.results_save_view(body)
             return self._json(d, 400 if d.get("error") else 200)

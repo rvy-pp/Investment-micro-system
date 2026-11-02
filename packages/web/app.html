@@ -198,6 +198,26 @@
   .ana-log{margin-top:var(--s3);padding-top:var(--s2);border-top:1px solid var(--rule);font-size:var(--t-body);color:var(--ink)}
   .ana-log .lh{font-size:var(--t-sm);font-weight:600;color:var(--accent);margin-bottom:var(--s1)}
   .ana-log div.e{padding:4px 0;line-height:1.5}
+  /* The stock's Excel model, inside its Analysis card (PM, 2026-11-02: "the
+     live excel on the analysis tab beside each company"). Rendered from the
+     file's last save, re-rendered when the file's mtime moves. */
+  .mdl-chip{display:inline-block;font-size:var(--t-label);font-weight:600;padding:1px 7px;margin-left:6px;
+            border-radius:var(--r-pill);color:#56d364;background:rgba(86,211,100,.12);vertical-align:1px}
+  .mdl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 0 var(--s2);
+           margin-bottom:var(--s2);border-bottom:1px solid var(--rule);font-size:var(--t-sm);color:var(--soft)}
+  .mdl-bar .live{color:#56d364} .mdl-bar .stale{color:var(--warn)}
+  .mdl-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:var(--s2) 0}
+  .mdl-tabs button{background:var(--alt);color:var(--ink);border:1px solid var(--rule);border-radius:4px;
+                   padding:2px 9px;font-size:var(--t-sm);cursor:pointer}
+  .mdl-tabs button.on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+  .mdl-wrap{max-height:560px;overflow:auto;border:1px solid var(--rule);background:#0d1117}
+  table.mdl{border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#c9d1d9}
+  table.mdl td{font-family:Arial,Helvetica,sans-serif !important;padding:2px 6px;border-right:1px solid #21262d;border-bottom:1px solid #161b22;white-space:nowrap;
+               overflow:hidden;text-overflow:ellipsis;max-width:520px}
+  table.mdl td.n{text-align:right;font-variant-numeric:tabular-nums}
+  table.mdl td.k{position:sticky;left:0;background:#0d1117;z-index:1}
+  table.mdl td[title]{cursor:help}
+  table.mdl tr.flash td{transition:background 1.2s}
   .ana-tag{display:inline-block;font-size:var(--t-label);font-weight:600;color:var(--accent);background:var(--accent-soft);
            padding:0 7px;border-radius:var(--r-pill);margin-right:6px}
 
@@ -4195,12 +4215,14 @@ function analysisPane(d){
           <span class="ana-date">${esc(dmy(e.as_of))}</span>
           <span class="ana-tag">${esc(stepName[e.step] || e.step)}</span>${anaHi(esc(e.note))}</div>`).join('')}</div>`
       : `<div class="ana-log"><span class="ana-date">No entries yet. Views are logged from chat.</span></div>`;
-    return grp + `<details class="ana-row"><summary class="ana-grid">
-        <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span></span>
+    const mdl = (d.models || {})[s.entity];
+    return grp + `<details class="ana-row" data-ent="${esc(s.entity)}"><summary class="ana-grid">
+        <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span>${mdl
+          ? '<span class="mdl-chip" title="has an Excel model: open the card">▦ model</span>' : ''}</span>
         ${steps.map(k => icon((s.steps[k.key] || {}).status)).join('')}
         <span>${anaJuice(s)}</span>
         <span style="font-size:var(--t-sm)">${s.updated ? esc(dmy(s.updated)) : '<span class="ana-open">—</span>'}</span>
-      </summary><div class="ana-card">${card}${log}</div></details>`;
+      </summary><div class="ana-card">${mdl ? mdlBar(s.entity, mdl) : ''}${card}${log}</div></details>`;
   }).join('');
   /* REMOVED 2026-10-10 (PM: "Remove the top description and the whole pair
      table"): the explainer line and the derived-pairs table. The pair
@@ -4212,6 +4234,129 @@ function analysisPane(d){
           `<span title="${esc(k.label)}">${esc({priced:'Priced in', qbuild:'Quarter', h2:'Later qtrs', price:'Price', rerate:'Re-rate'}[k.key] || k.key)}</span>`).join('')}
           <span>Juice</span><span>Updated</span></div>${rows}</div>`;
 }
+/* ---- the stock's Excel model (PM, 2026-11-02) -------------------------------
+   "I want to open and view it at whim, ask you here to edit it and it updates
+   there." The grid is the workbook's LAST SAVE, rendered by
+   packages/book/model_view.py with its own fonts, fills and number formats.
+   While a viewer is open the page asks every MDL_POLL ms whether the file's
+   mtime moved (`since`; an unchanged file costs one stat on the server), so an
+   edit made from chat, or a save in Excel, re-renders here without a reload.
+   "Open in Excel" asks the server to open the real file in desktop Excel. The
+   offline vault copy has neither: it shows the model as exported. */
+const MDL_POLL = 4000;
+const MDL = {};               // entity -> {sheet, data, timer, open}
+const MDL_FONT = { '0000FF': '#79c0ff', '008000': '#56d364', 'FFFFFF': '#ffffff', '595959': '#8b949e',
+                   'FF0000': '#ff7b72', 'FFFF00': '#e3b341' };
+const MDL_FILL = { 'FFFF00': 'rgba(227,179,65,.20)', '1F3864': '#1f3864', 'DDEBF7': '#1b2a3b',
+                   'D9D9D9': '#2d333b' };
+function mdlTime(iso){ const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+function mdlBar(ent, m){
+  const st = MDL[ent] || {};
+  const off = !!window.__IMS_SNAP;
+  return `<div class="mdl-bar" data-mdl-bar="${esc(ent)}">
+      <button class="ghost" data-mdl-act="view" data-ent="${esc(ent)}">${st.open ? 'Hide model' : 'View model'}</button>
+      <button class="ghost" data-mdl-act="excel" data-ent="${esc(ent)}" ${off ? 'disabled title="the offline copy cannot open files; use the desk"' : ''}>Open in Excel</button>
+      <span>▦ <b style="color:var(--ink)">${esc(m.file)}</b> · saved <span data-mdl-saved>${esc(mdlTime(m.saved))}</span></span>
+      <span data-mdl-state class="${m.open ? 'live' : ''}">${m.open ? '● open in Excel' : ''}</span>
+      <span data-mdl-msg></span>
+    </div><div data-mdl-view="${esc(ent)}"></div>`;
+}
+function mdlGrid(d){
+  if (d.error) return `<p class="note" style="color:var(--warn)">${esc(d.error)}</p>`;
+  const tabs = `<div class="mdl-tabs">${(d.sheets || []).map(s =>
+    `<button data-mdl-act="sheet" data-ent="${esc(d.entity)}" data-sheet="${esc(s)}" class="${s === d.sheet ? 'on' : ''}">${esc(s)}</button>`).join('')}</div>`;
+  const warn = d.no_cache
+    ? `<p class="note" style="color:var(--warn)">This file has never been recalculated in Excel, so it holds formulas without values. Open it in Excel and save once.</p>` : '';
+  const ncol = Math.max(0, ...(d.rows || []).map(r => r.length));
+  const cg = `<colgroup>${(d.widths || []).slice(0, ncol).map(w =>
+    `<col style="width:${Math.round(Math.min(w, 80) * 7 + 10)}px">`).join('')}</colgroup>`;
+  const body = (d.rows || []).map(r => `<tr>${Array.from({ length: ncol }, (_, i) => {
+      const c = r[i] || {};
+      const sty = [];
+      if (c.c) sty.push('color:' + (MDL_FONT[c.c] || '#' + c.c));
+      if (c.bg) sty.push('background:' + (MDL_FILL[c.bg] || '#' + c.bg + '40'));
+      if (c.b) sty.push('font-weight:700');
+      if (c.i) sty.push('font-style:italic');
+      const tip = [c.f, c.note].filter(Boolean).join('\n\n');
+      const cls = [c.n ? 'n' : '', i === 0 ? 'k' : ''].filter(Boolean).join(' ');
+      return `<td${cls ? ` class="${cls}"` : ''}${sty.length ? ` style="${sty.join(';')}"` : ''}${tip ? ` title="${esc(tip)}"` : ''}>${esc(c.t || '')}</td>`;
+    }).join('')}</tr>`).join('');
+  return tabs + warn + `<div class="mdl-wrap"><table class="mdl">${cg}<tbody>${body}</tbody></table></div>`
+    + `<p class="note">Values as of the last save. Hover a cell for its formula. Ask in chat to change a cell: the edit goes into the open Excel window if there is one, saves, and this view follows within a few seconds.</p>`;
+}
+function mdlPaint(ent){
+  const st = MDL[ent];
+  const view = document.querySelector(`[data-mdl-view="${CSS.escape(ent)}"]`);
+  const bar = document.querySelector(`[data-mdl-bar="${CSS.escape(ent)}"]`);
+  if (bar){
+    const b = bar.querySelector('[data-mdl-act="view"]');
+    if (b) b.textContent = st && st.open ? 'Hide model' : 'View model';
+    if (st && st.data && !st.data.error){
+      bar.querySelector('[data-mdl-saved]').textContent = mdlTime(st.data.saved);
+      const s = bar.querySelector('[data-mdl-state]');
+      s.textContent = st.data.open ? '● open in Excel' : '';
+      s.className = st.data.open ? 'live' : '';
+    }
+  }
+  if (view) view.innerHTML = st && st.open ? (st.data ? mdlGrid(st.data) : '<p class="note">loading…</p>') : '';
+}
+async function mdlFetch(ent, poll){
+  const st = MDL[ent];
+  if (!st) return;
+  const qs = 'entity=' + encodeURIComponent(ent) + (st.sheet ? '&sheet=' + encodeURIComponent(st.sheet) : '')
+    + (poll && st.data && !window.__IMS_SNAP ? '&since=' + st.data.mtime : '');
+  const asked = st.sheet;
+  try {
+    const d = await (await fetch('/api/book_model?' + qs)).json();
+    // a sheet clicked while this was in flight wins: drop the stale answer
+    if (st.sheet !== asked) return;
+    if (d.unchanged){
+      if (st.data && st.data.open !== d.open){ st.data.open = d.open; mdlPaint(ent); }
+      return;
+    }
+    st.data = d; st.sheet = d.sheet || st.sheet;
+  } catch (e) { if (st.sheet !== asked) return; st.data = { error: String(e) }; }
+  mdlPaint(ent);
+}
+function mdlPollStart(ent){
+  const st = MDL[ent];
+  if (!st || st.timer || window.__IMS_SNAP) return;
+  st.timer = setInterval(() => {
+    const view = document.querySelector(`[data-mdl-view="${CSS.escape(ent)}"]`);
+    if (!st.open || !view || !view.offsetParent){ clearInterval(st.timer); st.timer = null; return; }
+    if (!document.hidden) mdlFetch(ent, true);
+  }, MDL_POLL);
+}
+function wireModels(host){
+  if (host.dataset.mdlWired) return;
+  host.dataset.mdlWired = '1';
+  host.addEventListener('click', async e => {
+    const b = e.target.closest('[data-mdl-act]');
+    if (!b || !host.contains(b)) return;
+    e.preventDefault();
+    const ent = b.dataset.ent;
+    const st = MDL[ent] = MDL[ent] || { sheet: null, data: null, timer: null, open: false };
+    if (b.dataset.mdlAct === 'view'){
+      st.open = !st.open; mdlPaint(ent);
+      if (st.open){ await mdlFetch(ent, false); mdlPollStart(ent); }
+    } else if (b.dataset.mdlAct === 'sheet'){
+      st.sheet = b.dataset.sheet; await mdlFetch(ent, false);
+    } else if (b.dataset.mdlAct === 'excel'){
+      const msg = b.closest('.mdl-bar').querySelector('[data-mdl-msg]');
+      msg.textContent = 'opening…';
+      try {
+        const r = await (await fetch('/api/book_model_open', { method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entity: ent }) })).json();
+        msg.textContent = r.error ? r.error : 'sent to Excel';
+      } catch (err) { msg.textContent = String(err); }
+      setTimeout(() => { msg.textContent = ''; }, 6000);
+      if (!st.open){ st.open = true; mdlPaint(ent); await mdlFetch(ent, false); }
+      mdlPollStart(ent);
+    }
+  });
+}
+
 let ANALYSIS = null;
 async function loadAnalysis(){
   const host = document.getElementById('bk-pane-ana');
@@ -4222,6 +4367,14 @@ async function loadAnalysis(){
     catch (e) { ANALYSIS = { error: String(e) }; }
   }
   host.innerHTML = analysisPane(ANALYSIS);
+  wireModels(host);
+  // a re-render rebuilt the cards: put any open model back (and its card open)
+  for (const ent of Object.keys(MDL)){
+    if (!MDL[ent].open) continue;
+    const det = host.querySelector(`details[data-ent="${CSS.escape(ent)}"]`);
+    if (det) det.open = true;
+    mdlPaint(ent); mdlPollStart(ent);
+  }
 }
 
 async function loadBook(){

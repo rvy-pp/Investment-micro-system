@@ -1353,6 +1353,32 @@ PM's yellow cells**; `--out` refuses an existing file without `--force`.
 - The valuation sheet is for the PM's eye. The juice stays with
   `case_brief.py`; a reader that checks the two agree is the next step.
 
+**The model lives on the Analysis card (same day).** PM: *"the live excel on
+the analysis tab beside each company. I want to open and view it at whim, ask
+you here to edit it and it updates there."* `packages/book/model_view.py`
+(25-check selftest) finds any `data/analysis/cases/<entity>/*_model.xlsx`
+(a file, never a code change), and the stock's row gets a `▦ model` chip.
+The card has View model (the workbook's LAST SAVE, rendered with its own
+formats and colours, sheet tabs, formulas on hover) and Open in Excel
+(`POST /api/book_model_open` -> `os.startfile`, entity ids only, localhost).
+While the viewer is open the page polls `/api/book_model?since=<mtime>`
+every 4s, so any save re-renders it.
+- **Edits from chat go through Excel over COM, never openpyxl:**
+  `python packages/book/model_view.py jsw_steel --set "Segments!L18=7.3"`
+  (`--get` reads). If the PM has the workbook open, the edit goes into that
+  window and saves there. Otherwise a hidden Excel opens, recalculates, saves
+  and closes. openpyxl would drop every cached value, and the PM's next save
+  in Excel would silently overwrite the edit.
+- **A silent bug on day one:** in PowerShell 5.1 a single `Where-Object`
+  match is not an array and has no `.Count`, so a one-cell edit skipped the
+  save. Excel still echoed the new value, then `Close($false)` discarded it.
+  The fix is `@(...)`, and `excel()` now checks the FILE's mtime moved after
+  any set, because Excel's echo is not evidence.
+- The vault copy bakes every sheet of every model; it cannot poll or open
+  Excel, and the button says so. `build_frontend.py` flags a model that
+  fails to render, or that has never been recalculated (formulas with no
+  saved values would show as blanks).
+
 ### The orchestrator — day-end watch over the case agents (2026-10-26)
 
 PM: *"an orchestrator agent that monitors all company-agents. It will update

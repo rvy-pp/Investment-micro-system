@@ -2298,10 +2298,39 @@ def book_analysis() -> dict:
     'what's priced in' read, the append-only log and the selftest."""
     sys.path.insert(0, str(REPO / "packages" / "book"))
     import analysis
+    import model_view
     try:
-        return analysis.view()
+        d = analysis.view()
+        # which stocks have an Excel model beside them (PM, 2026-11-02)
+        d["models"] = model_view.models()
+        return d
     except Exception as e:                      # the tab says why, never blank
         return {"error": f"{type(e).__name__}: {e}"}
+
+
+def book_model(entity: str | None, sheet: str | None = None, since: str | None = None) -> dict:
+    """One stock's Excel model, rendered from its last save, for the Analysis
+    card (PM, 2026-11-02: "the live excel on the analysis tab beside each
+    company"). `since` is the mtime the page already holds: an unchanged file
+    answers {unchanged: true} without re-reading, which is what lets the page
+    poll. Transport shim — packages/book/model_view.py owns the rest."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import model_view
+    try:
+        s = float(since) if since not in (None, "") else None
+    except ValueError:
+        s = None
+    try:
+        return model_view.render(entity or "", sheet or None, s)
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {e}"}
+
+
+def book_model_open(entity: str | None) -> dict:
+    """Open the stock's model in desktop Excel on this machine."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import model_view
+    return model_view.open_in_excel(entity or "")
 
 
 def dt_date(s: str):
