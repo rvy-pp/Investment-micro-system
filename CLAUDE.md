@@ -1318,6 +1318,41 @@ deal to re-confirm. **A straight-line run-rate and revenue bridge was built
 first and removed the same day** — its inputs were mostly assumed tenures and
 start quarters. Do not rebuild it; deals do not feed build.json.
 
+### Steel quarterly model in Excel — `steel_model.py` (2026-11-02)
+
+PM, after reading JPM's JSW model (*"very complex"*): *"construct an excel of
+our own, create a basic model for quarters which can be updated on a regular
+basis ... use it in other steel models as well."* `packages/book/steel_model.py`
+(10-check selftest) builds `data/analysis/cases/<entity>/<Name>_model.xlsx`
+ONCE from `model_config.json` beside it (gitignored), with live formulas;
+`--recalc` drives Excel over COM (no LibreOffice here). After that the
+workbook is the working surface: each sheet opens with a block of typed
+actuals, model rows read `IF(status="A", actual, forecast)`, so a new quarter
+is typing plus flipping its status cell on Inputs. **A rebuild overwrites the
+PM's yellow cells**; `--out` refuses an existing file without `--force`.
+- **Drivers:** India capacity x utilisation -> production -> sales; NSR/t
+  moves 1.0 x the HRC change, same quarter (fit 0.95 over seven changes);
+  cost/t moves with lagged coal and ore in rupees at `steel.yaml`'s
+  intensities, market shares and pass-throughs. Commodities hold SPOT unless
+  overridden. Overseas = EBITDA in own currency x FX, trailing four quarters.
+  D&A scales with effective capacity; finance cost = rate x OPENING gross debt
+  (no circularity). The PM's visible-quarter sales and EBITDA/t go in yellow
+  override rows, and the next quarter rolls from the overridden cost.
+- **The JV is below EBITDA and valued as a stake** (JSW: JFE's price for 50%
+  of JSW JFE Steel, Rs15,750cr). It also comes OUT of today's EV, or the
+  default multiple carries it and the target adds it again (~Rs64/share of
+  upside from nothing; caught on the first build).
+- **The config cross-foots before anything is written**: PBT from its
+  components and PAT = PBT - tax on every actual quarter, so a mistyped deck
+  number refuses rather than becoming a plausible price.
+- **JSW's history:** FY26 quarters are the company's proforma ex-BPSL;
+  Q3FY26 PF is derived from FY26 PF less the other three (EBITDA agrees with
+  reported-less-BPSL to Rs2cr); Q3/Q4FY25 India = India Ops less BPSL's
+  standalone figures, with BPSL as its own line so consolidated still ties.
+  No broker model's numbers are in the file; every actual is from JSW's decks.
+- The valuation sheet is for the PM's eye. The juice stays with
+  `case_brief.py`; a reader that checks the two agree is the next step.
+
 ### The orchestrator — day-end watch over the case agents (2026-10-26)
 
 PM: *"an orchestrator agent that monitors all company-agents. It will update
