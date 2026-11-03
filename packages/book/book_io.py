@@ -594,7 +594,26 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
     # numeric record the same way — positions, FLAT rows, N.A. members, the
     # N.A. aggregate and the total row — so the cross-foot below compares
     # like with like. An ambiguous paste raises here and loads nothing.
-    tail_order = detect_tail_order(positions)
+    # A copied header names the order outright. It used to be read only as a
+    # cross-check AFTER detection, so an ambiguous paste raised even when the
+    # header settled it. That is what refused the 2026-10-23 scrape: on an
+    # expiry-roll day every live contract opened that day, so trading is
+    # nonzero on nearly every row (slot 5 zero on 0/34, slot 7 on 3/34, the
+    # three cash lines) and neither slot is a majority of zeros. Data
+    # detection still leads; the header decides only when the data cannot.
+    said = None
+    if header and "dtd trading pnl" in header and "mtd pnl" in header:
+        said = (TAIL_TRADING_LAST
+                if header.index("dtd trading pnl") > header.index("mtd pnl")
+                else TAIL_TRADING_FIRST)
+    try:
+        tail_order = detect_tail_order(positions)
+    except ValueError as e:
+        if said is None:
+            raise
+        tail_order = said
+        warnings.append(f"numeric-tail order AMBIGUOUS in the data ({e}); "
+                        f"taken from the grid's own header row: {said}")
     if tail_order == TAIL_TRADING_LAST:
         for rec in positions + flat + na_members:
             remap_tail_trading_last(rec)
@@ -610,11 +629,8 @@ def parse_ims_tsv(text: str, date: str, source_file: str = "paste") -> dict:
             "YTD DTD_trading …, seen since 2026-09-29): MTD/YTD/trading "
             "re-keyed from slots 5/6/7 — detected from the data, not assumed")
 
-    # A copied header names the order outright; the data must agree with it.
-    if header and "dtd trading pnl" in header and "mtd pnl" in header:
-        said = (TAIL_TRADING_LAST
-                if header.index("dtd trading pnl") > header.index("mtd pnl")
-                else TAIL_TRADING_FIRST)
+    # When both are present, the data must agree with the header.
+    if said is not None:
         if said != tail_order:
             raise ValueError(f"header says the numeric tail is {said} but the "
                              f"data reads as {tail_order} — do not load")
@@ -1742,6 +1758,19 @@ def _selftest() -> None:
         raise AssertionError("accepted a paste whose column order is ambiguous")
     except ValueError as e:
         assert "ambiguous" in str(e), e
+    # (d) ACCEPTANCE: the same ambiguous rows WITH the grid's header row load,
+    # in the order the header names. The 2026-10-23 roll-day scrape was
+    # refused for want of exactly this (every live contract traded that day).
+    hdr = ("Ticker\tGroup\tTag3\tTag Pair\tQty\tLSF\tMV %\tBeta MV %\tDTD PNL\t"
+           "DTD PNL%\tMTD PNL\tYTD PNL\tDTD Trading PNL\tMTD PNL%\tYTD PNL%\tGMV %")
+    tot5 = [a + b for a, b in zip(a1, a2)]
+    d5 = parse_ims_tsv("\n".join([hdr, amb, "\t".join(
+        ["", "", "", "", "", "", ""] + [repr(x) for x in tot5])]),
+        "2026-09-29", "selftest")
+    assert d5["tail_order"] == TAIL_TRADING_LAST, d5["tail_order"]
+    assert any("AMBIGUOUS" in w for w in d5["warnings"]), d5["warnings"]
+    p5 = {x["ticker"]: x for x in d5["positions"]}
+    assert p5["WPRO=V6 IS Equity"]["pnl_mtd"] == 5.0 and p5["WPRO=V6 IS Equity"]["pnl_dtd_trading"] == 0
 
     # the custody-wrapper alias: same root, so no close/reopen and no
     # re-anchor. 'VAML IN Equity' -> 'VAML IN CFD PPB PTF' on 2026-09-09.
