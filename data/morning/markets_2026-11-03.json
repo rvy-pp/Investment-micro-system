@@ -1,0 +1,200 @@
+{
+ "date": "2026-11-03",
+ "fetched_at": "2026-11-03T08:08:34",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-02",
+    "close": 7541.4,
+    "prev_date": "2026-10-30",
+    "chg_pct": -0.51,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-02",
+    "close": 25164.36,
+    "prev_date": "2026-10-30",
+    "chg_pct": -1.07,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-02",
+    "close": 51983.98,
+    "prev_date": "2026-10-30",
+    "chg_pct": 0.41,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-02",
+    "close": 10328.33,
+    "prev_date": "2026-10-30",
+    "chg_pct": -3.37,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-02",
+    "close": 202.06,
+    "prev_date": "2026-10-30",
+    "chg_pct": -1.26,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-02",
+    "close": 466.84,
+    "prev_date": "2026-10-30",
+    "chg_pct": -7.52,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-02",
+    "close": 398.63,
+    "prev_date": "2026-10-30",
+    "chg_pct": -1.85,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-02",
+    "close": 322.23,
+    "prev_date": "2026-10-30",
+    "chg_pct": -1.18,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-02",
+    "close": 260.94,
+    "prev_date": "2026-10-30",
+    "chg_pct": 1.05,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-02",
+    "close": 65.09,
+    "prev_date": "2026-10-30",
+    "chg_pct": -0.03,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture vs. Microsoft: Which Technology Stock Is a Better Buy for 2027?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-02 22:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-microsoft-technology-stock-225840933.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Looks Fairly Valued After Fresh AI Launch News",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-31 16:14Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-looks-fairly-161406416.html"
+   },
+   {
+    "title": "Intel\u2019s Plunge Today Makes It October\u2019s Worst S&P 500 Stock. Accenture Is the Month\u2019s Big Winner.",
+    "publisher": "Barrons.com",
+    "when": "2026-10-30 16:43Z",
+    "link": "https://finance.yahoo.com/m/6843bed5-7ada-3649-a325-604d3d0e1f1e/intel%E2%80%99s-plunge-today-makes-it.html"
+   },
+   {
+    "title": "Can Accenture Stock Rise 30% From Here?",
+    "publisher": "Trefis",
+    "when": "2026-10-30 12:32Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-rise-30-123240427.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant (CTSH) Stock Jumps As Q3 Results Cement Margin Gains",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-30 17:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-stock-jumps-q3-171037570.html"
+   },
+   {
+    "title": "BMO Raises Price Target on Cognizant Technology Solutions to $68 From $63, Keeps Market Perform Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-30 13:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bmo-raises-price-target-cognizant-131238967.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Corporation Q3 2026 Earnings Call Summary",
+    "publisher": "Moby",
+    "when": "2026-10-30 12:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-corporation-q3-123000625.html"
+   },
+   {
+    "title": "Nomura Adjusts Cognizant Technology Solutions PT to $76 From $75, Maintains Buy Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-30 11:08Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nomura-adjusts-cognizant-technology-solutions-110822007.html"
+   },
+   {
+    "title": "ETFs Are Net Sellers of Cognizant (CTSH) on Oct. 28",
+    "publisher": "GuruFocus.com",
+    "when": "2026-10-30 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/etfs-net-sellers-cognizant-ctsh-110224790.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Nvidia Reports Nov. 17. History Says What Its Stock Usually Does Next.",
+    "publisher": "Motley Fool",
+    "when": "2026-11-02 23:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-reports-nov-17-history-233701956.html"
+   }
+  ],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why AMD Stock Is In Focus Before Q3 Earnings And AI Partnership Updates",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-03 02:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-focus-q3-021510488.html"
+   },
+   {
+    "title": "AMD Reports Tuesday. Here's the Number That Will Show Whether It's Gaining on Nvidia",
+    "publisher": "Motley Fool",
+    "when": "2026-11-02 22:42Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-reports-tuesday-heres-number-224202533.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 23528.5,
+  "chg_pct": 1.24,
+  "stamp": "03-Nov-2026 08:08:36",
+  "expiry": "23-Nov-2026",
+  "volume": 1469,
+  "nifty_close": {
+   "close": 23440.8,
+   "stamp": "02-Nov-2026 15:30"
+  },
+  "gap_pts": 87.7,
+  "gap_pct": 0.37
+ }
+}

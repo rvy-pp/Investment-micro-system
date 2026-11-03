@@ -1,0 +1,289 @@
+{
+ "date": "2026-11-03",
+ "session": true,
+ "generated_at": "2026-11-03T08:08:51",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "post": [
+   "Lloyds Metals & Energy"
+  ],
+  "during": [
+   "Solar Industries India"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "LLOYDSME",
+   "date": "2026-11-03",
+   "purpose": "Financial Results/Fund Raising",
+   "desc": "Notice of Board Meeting to be held on Tuesday, 03rd November, 2026",
+   "entity": "lloyds_metals",
+   "name": "Lloyds Metals & Energy",
+   "sector": "mining",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-10",
+     "time": "18:56",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-05",
+     "time": "20:53",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-03",
+     "time": "20:38",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-12",
+     "time": "18:14",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "SOLARINDS",
+   "date": "2026-11-03",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:SOLARINDS",
+   "name": "Solar Industries India",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-08-13",
+     "time": "14:26",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-15",
+     "time": "14:26",
+     "when": "during"
+    },
+    {
+     "date": "2026-02-03",
+     "time": "15:00",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-10",
+     "time": "14:23",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-04",
+  "groups": {
+   "post": [
+    "Cummins India",
+    "NHPC",
+    "Premier Energies"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "CUMMINSIND",
+    "date": "2026-11-04",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the quarter and half year ending September 30, 2026",
+    "entity": "ext:CUMMINSIND",
+    "name": "Cummins India",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-05",
+      "time": "17:02",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-27",
+      "time": "14:21",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-04",
+      "time": "20:21",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-06",
+      "time": "19:29",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 3,
+     "during": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "NHPC",
+    "date": "2026-11-04",
+    "purpose": "Financial Results",
+    "desc": "To consider the unaudited Financial Results (Standalone and Consolidated) of the Company for the quarter and half year ended on 30th September, 2026.",
+    "entity": "ext:NHPC",
+    "name": "NHPC",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-04",
+      "time": "20:14",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "21:11",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-04",
+      "time": "17:11",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-06",
+      "time": "16:36",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "PREMIERENE",
+    "date": "2026-11-04",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+    "entity": "ext:PREMIERENE",
+    "name": "Premier Energies",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-06",
+      "time": "17:20",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "16:55",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-22",
+      "time": "19:36",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-28",
+      "time": "19:41",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-04",
+   "name": "Cummins India",
+   "symbol": "CUMMINSIND"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "NHPC",
+   "symbol": "NHPC"
+  },
+  {
+   "date": "2026-11-04",
+   "name": "Premier Energies",
+   "symbol": "PREMIERENE"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Astral",
+   "symbol": "ASTRAL"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Bharat Forge",
+   "symbol": "BHARATFORG"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Mphasis",
+   "symbol": "MPHASIS"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "NBCC (India)",
+   "symbol": "NBCC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Oil & Natural Gas Corporation",
+   "symbol": "ONGC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Samvardhana Motherson International",
+   "symbol": "MOTHERSON"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Tube Investments of India",
+   "symbol": "TIINDIA"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "UNO Minda",
+   "symbol": "UNOMINDA"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Hindalco Industries",
+   "symbol": "HINDALCO"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Siemens",
+   "symbol": "SIEMENS"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Voltas",
+   "symbol": "VOLTAS"
+  },
+  {
+   "date": "2026-11-07",
+   "name": "Tata Steel",
+   "symbol": "TATASTEEL"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}
