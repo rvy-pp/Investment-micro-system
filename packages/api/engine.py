@@ -2326,6 +2326,19 @@ def book_model(entity: str | None, sheet: str | None = None, since: str | None =
         return {"error": f"{type(e).__name__}: {e}"}
 
 
+def book_model_file(entity: str | None, b64: bool = False) -> dict:
+    """The model file itself, for the card's Download button (2026-11-03).
+    serve.py streams `bytes`; the vault copy bakes it as base64 (`b64=True`),
+    because the offline page has no server to stream from."""
+    sys.path.insert(0, str(REPO / "packages" / "book"))
+    import model_view
+    d = model_view.file_bytes(entity or "")
+    if b64 and "bytes" in d:
+        import base64
+        d["b64"] = base64.b64encode(d.pop("bytes")).decode("ascii")
+    return d
+
+
 def book_model_open(entity: str | None) -> dict:
     """Open the stock's model in desktop Excel on this machine."""
     sys.path.insert(0, str(REPO / "packages" / "book"))

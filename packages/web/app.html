@@ -4257,6 +4257,7 @@ function mdlBar(ent, m){
   return `<div class="mdl-bar" data-mdl-bar="${esc(ent)}">
       <button class="ghost" data-mdl-act="view" data-ent="${esc(ent)}">${st.open ? 'Hide model' : 'View model'}</button>
       <button class="ghost" data-mdl-act="excel" data-ent="${esc(ent)}" ${off ? 'disabled title="the offline copy cannot open files; use the desk"' : ''}>Open in Excel</button>
+      <button class="ghost" data-mdl-act="download" data-ent="${esc(ent)}" title="the workbook as last saved${off ? ', at the time of this export' : ''}">Download</button>
       <span>▦ <b style="color:var(--ink)">${esc(m.file)}</b> · saved <span data-mdl-saved>${esc(mdlTime(m.saved))}</span></span>
       <span data-mdl-state class="${m.open ? 'live' : ''}">${m.open ? '● open in Excel' : ''}</span>
       <span data-mdl-msg></span>
@@ -4342,6 +4343,32 @@ function wireModels(host){
       if (st.open){ await mdlFetch(ent, false); mdlPollStart(ent); }
     } else if (b.dataset.mdlAct === 'sheet'){
       st.sheet = b.dataset.sheet; await mdlFetch(ent, false);
+    } else if (b.dataset.mdlAct === 'download'){
+      // The file as last saved: an edit still unsaved in Excel is not in it.
+      // The desk streams it; the vault copy baked it as base64 at export.
+      const msg = b.closest('.mdl-bar').querySelector('[data-mdl-msg]');
+      try {
+        const r = await fetch('/api/book_model_file?entity=' + encodeURIComponent(ent));
+        let blob, name;
+        if (window.__IMS_SNAP || !r.ok){
+          const j = await r.json();
+          if (j.error) throw new Error(j.error);
+          const bin = atob(j.b64), u8 = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+          blob = new Blob([u8], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          name = j.file;
+        } else {
+          blob = await r.blob();
+          name = ((r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || ent + '_model.xlsx';
+        }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+        const st0 = (MDL[ent] && MDL[ent].data) || {};
+        msg.textContent = 'downloaded' + (st0.open ? ' (last save; unsaved Excel edits are not in it)' : '');
+      } catch (err) { msg.textContent = String(err.message || err); }
+      setTimeout(() => { msg.textContent = ''; }, 6000);
     } else if (b.dataset.mdlAct === 'excel'){
       const msg = b.closest('.mdl-bar').querySelector('[data-mdl-msg]');
       msg.textContent = 'opening…';

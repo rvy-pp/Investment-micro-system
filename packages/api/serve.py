@@ -191,6 +191,21 @@ class Handler(BaseHTTPRequestHandler):
                 d = engine.book_model(q.get("entity", [""])[0], q.get("sheet", [""])[0] or None,
                                       q.get("since", [""])[0] or None)
                 return self._json(d, 404 if d.get("error") else 200)
+            if u.path == "/api/book_model_file":
+                # The model file as last saved, as a download (2026-11-03).
+                # Entity ids only (model_view.path_for), never a path.
+                d = engine.book_model_file(q.get("entity", [""])[0])
+                if d.get("error"):
+                    return self._json(d, 404)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/vnd.openxmlformats-"
+                                 "officedocument.spreadsheetml.sheet")
+                self.send_header("Content-Disposition", f'attachment; filename="{d["file"]}"')
+                self.send_header("Content-Length", str(len(d["bytes"])))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(d["bytes"])
+                return
             if u.path == "/api/guidance":
                 return self._json(engine.guidance_rows())
             if u.path == "/api/cement_watch":

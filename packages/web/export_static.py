@@ -150,6 +150,8 @@ def collect(include_book: bool = True, verbose: bool = True) -> dict:
         for ent in (ba.get("models") or {}):
             first = engine.book_model(ent)
             put(f"/api/book_model?entity={ent}", first)
+            # the Download button: the file itself, base64 (~95KB a model)
+            put(f"/api/book_model_file?entity={ent}", engine.book_model_file(ent, b64=True))
             for sh in first.get("sheets") or []:
                 put(f"/api/book_model?entity={ent}&sheet={sh}", engine.book_model(ent, sh))
     else:
@@ -465,7 +467,8 @@ def selftest() -> None:
                 "/api/book_index", "/api/book_analysis", "/api/scores", "/api/tape", "/api/sector",
                 "/api/company", "/api/oi_history", "/api/input_history",
                 "/api/oi_movers", "/api/results",
-                "/api/concall", "/api/results_board", "/api/fo_basis", "/api/book_model"}
+                "/api/concall", "/api/results_board", "/api/fo_basis", "/api/book_model",
+                "/api/book_model_file"}
     # WRITE routes are POST-only and an offline copy can never serve them; the
     # page says so where the inputs are (Kelly edges, the pair-grading call
     # log). Listed by name so a new GET route cannot hide in here.

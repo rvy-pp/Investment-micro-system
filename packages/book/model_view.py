@@ -243,6 +243,17 @@ def render(entity: str, sheet: str | None = None, since: float | None = None,
 # --------------------------------------------------------------------------
 # open and edit (Windows, desktop Excel)
 # --------------------------------------------------------------------------
+def file_bytes(entity: str, base: pathlib.Path = CASES) -> dict:
+    """The workbook as it sits on disk, for the card's Download button
+    (PM, 2026-11-03). That is the LAST SAVE: an edit still unsaved in the PM's
+    Excel window is not in it, the same basis the viewer renders."""
+    p = path_for(entity, base)
+    if p is None:
+        return {"error": f"no model for {entity!r}"}
+    m = models(base)[entity]
+    return {"file": p.name, "saved": m["saved"], "open": m["open"], "bytes": p.read_bytes()}
+
+
 def open_in_excel(entity: str) -> dict:
     p = path_for(entity)
     if p is None:
@@ -390,6 +401,10 @@ def selftest() -> int:
         chk("typed value renders", v["rows"][0][1]["t"], "100")
         chk("a never-recalculated file is flagged", (v["formulas"], v["no_cache"]), (1, True))
         chk("unchanged short-circuits", render("acme", since=v["mtime"], base=base).get("unchanged"), True)
+        fb = file_bytes("acme", base)
+        chk("download is the file on disk", (fb["file"], fb["bytes"]),
+            ("Acme_model.xlsx", (base / "acme" / "Acme_model.xlsx").read_bytes()))
+        chk("download refuses a traversal", file_bytes("../acme", base).get("error"), "no model for '../acme'")
     chk("set spec parsed", parse_ops(["Cash flow!D20=-1,500"], "set"),
         [{"sheet": "Cash flow", "cell": "D20", "mode": "set", "value": -1500.0}])
     chk("formula kept as a formula", parse_ops(["Valuation!B15==B13+1"], "set")[0]["value"], "=B13+1")
