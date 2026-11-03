@@ -328,6 +328,9 @@ var:
 case_bands:
   IT: {multiple_sigma: {window_weeks: 90, change_weeks: 13}}
   CEMENT: {multiple_sigma: {window_weeks: 90, change_weeks: 13}}
+  # PM, 2026-11-03, on the JSW Steel agent: "earlier method of valuation
+  # aggregation and so forth" — the cement method carried to steel.
+  STEEL: {multiple_sigma: {window_weeks: 90, change_weeks: 13}}
 
 # case_valuation: the multiple a sector's case agents run on (PM, 2026-10-25:
 # "cement sector agents ... we will use EV/EBITDA instead of P/E. Process is
@@ -335,6 +338,7 @@ case_bands:
 # sectors are P/E. The brief refuses a build whose `valuation` disagrees.
 case_valuation:
   CEMENT: ev_ebitda
+  STEEL: ev_ebitda       # PM, 2026-11-03 (JSW Steel): the cement method; steel houses value on EV/EBITDA
 
 # case_anchor: which statistic of the houses' implied multiples a sector's
 # base anchors on (PM, 2026-10-27: "make all IT and cement as median",
@@ -348,6 +352,7 @@ case_valuation:
 case_anchor:
   IT: median
   CEMENT: median
+  STEEL: median          # PM, 2026-11-03: "earlier method of valuation aggregation"
 
 # orchestrator: the day-end watch over every dictated leg and its case agent
 # (PM, 2026-10-26: "an orchestrator agent that monitors all company-agents. It

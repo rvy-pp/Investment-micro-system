@@ -58,7 +58,7 @@ SYMBOLS = {"tcs": "TCS", "infosys": "INFY", "wipro": "WIPRO", "hcl_tech": "HCLTE
            "tech_mahindra": "TECHM", "ltimindtree": "LTM", "persistent": "PERSISTENT",
            "coforge": "COFORGE", "mphasis": "MPHASIS", "tata_elxsi": "TATAELXSI",
            "kpit": "KPITTECH", "ultratech": "ULTRACEMCO", "shree": "SHREECEM",
-           "ambuja": "AMBUJACEM", "dalmia": "DALBHARAT"}
+           "ambuja": "AMBUJACEM", "dalmia": "DALBHARAT", "jsw_steel": "JSWSTEEL"}
 DAYS = 1095        # three years fetched; the window takes what it needs
 MAX_AGE_DAYS = 35  # a 90-week σ barely moves in a month; older than this is withheld
 
