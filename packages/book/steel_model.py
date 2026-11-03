@@ -58,6 +58,7 @@ import re
 import sqlite3
 import statistics
 import subprocess
+import tempfile
 import sys
 
 from openpyxl import Workbook
@@ -75,7 +76,17 @@ COMMODITIES = {
     "cc": ("coking_coal_spot_aus", "USD/t"),
     "io": ("iron_ore_china_cfr62", "USD/t"),
     "usdinr": ("usdinr", "INR/USD"),
+    # NMDC's notified fines price, ex-royalty (mining_filings; basis break at
+    # 2026-01-09, nothing earlier is loaded). It drives the ore cost line
+    # (PM, 2026-11-03): seaborne x 0.50 got Q1FY27 backwards (NMDC +18%,
+    # seaborne -2%) and could not see an NMDC hike at all.
+    "nmdc": ("nmdc_fines_inr", "Rs/t"),
 }
+# Step series: stored only on the date a circular changes the price, so a
+# quarter's average is TIME-WEIGHTED (the price in force each day), never the
+# mean of the circular dates - three circulars in one month and one in the
+# next would otherwise weight the first month three times.
+STEP = {"nmdc"}
 
 FONT = "Arial"
 BLUE, GREEN, BLACK = "0000FF", "008000", "000000"
@@ -141,6 +152,18 @@ def commodity_history(qs: list[str], db: pathlib.Path = DB) -> dict:
         per = {}
         for lab in qs:
             a, b = quarter_dates(lab)
+            if key in STEP:
+                pts = con.execute("SELECT date, close FROM prices WHERE entity_id=? AND date<=? "
+                                  "ORDER BY date", (sid, b)).fetchall()
+                d, end, daily = dt.date.fromisoformat(a), dt.date.fromisoformat(b), []
+                while d <= end:
+                    live = [c for t, c in pts if t <= d.isoformat()]
+                    if live:
+                        daily.append(live[-1])
+                    d += dt.timedelta(days=1)
+                if daily:                       # days before the first circular carry no price
+                    per[lab] = round(statistics.mean(daily), 2)
+                continue
             v = [r[0] for r in con.execute(
                 "SELECT close FROM prices WHERE entity_id=? AND date BETWEEN ? AND ? "
                 "AND strftime('%w',date) NOT IN ('0','6')", (sid, a, b))]
@@ -148,7 +171,10 @@ def commodity_history(qs: list[str], db: pathlib.Path = DB) -> dict:
                 per[lab] = round(statistics.mean(v), 2)
         last = con.execute("SELECT date, close FROM prices WHERE entity_id=? "
                            "ORDER BY date DESC LIMIT 1", (sid,)).fetchone()
+        if last is None:
+            continue
         out[key] = {"q": per, "spot": last[1], "spot_date": last[0]}
+    con.close()
     return out
 
 
@@ -370,7 +396,7 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
             ("cc_lag_q", "Coking coal lag", None, True),
             ("io_intensity", "Iron ore per tonne of steel", "fx", False),
             ("io_market_pct", "Iron ore bought at market", "pct", False),
-            ("io_pass_through", "Iron ore pass-through (domestic vs seaborne)", "fx", False),
+            ("io_pass_through", "Iron ore pass-through (of the NMDC fines move)", "fx", False),
             ("io_lag_q", "Iron ore lag", None, True),
             ("other_cost_drift", "Other cost drift", "t", True),
             ("util", "Utilisation (default for forecast quarters)", "pct", True),
@@ -435,9 +461,31 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     r_cc_eff = inp.row("Coking coal in rupees, lagged", "Rs/t coal",
                        lambda i, q, r: "=" + lagged(i, used["cc"], "CcLag") + "*" + lagged(i, used["usdinr"], "CcLag"),
                        fmt="t", kind="local")
-    r_io_eff = inp.row("Iron ore in rupees, lagged", "Rs/t ore",
+    r_io_eff = inp.row("Iron ore in rupees, lagged (seaborne: cross-check only)", "Rs/t ore",
                        lambda i, q, r: "=" + lagged(i, used["io"], "IoLag") + "*" + lagged(i, used["usdinr"], "IoLag"),
                        fmt="t", kind="local")
+
+    # Domestic ore, appended AFTER everything above so a workbook already in
+    # use takes these rows without any existing cell moving (2026-11-03).
+    inp.section("Domestic iron ore: NMDC fines, ex-royalty - this drives the ore cost line")
+    hn = hist.get("nmdc") or {"q": {}, "spot": None, "spot_date": None}
+    r_nm_act = inp.row("NMDC fines: actual quarterly average (time-weighted)", "Rs/t",
+                       {q: hn["q"].get(q) for q in qs if q in act}, fmt="t")
+    r_nm_ovr = inp.row("NMDC fines: override (your view)", "Rs/t", lambda i, q, r: None, fmt="t")
+    for i, q in enumerate(qs):
+        if q not in act:
+            ws.cell(r_nm_ovr, FIRST_COL + i).fill = YELLOW
+            ws.cell(r_nm_ovr, FIRST_COL + i).number_format = FMT["t"]
+            ws.cell(r_nm_ovr, FIRST_COL + i).font = Font(name=FONT, color=BLUE)
+    ws.cell(r_nm_act, 3, hn["spot"]).font = Font(name=FONT, color=BLUE)
+    ws.cell(r_nm_act, 3).number_format = FMT["t"]
+    ws.cell(r_nm_act, 3).comment = Comment(f"Latest NMDC circular {hn['spot_date']} (prices table, nmdc_fines_inr)", "steel_model")
+    name(wb, "Spot_nmdc", f"Inputs!$C${r_nm_act}")
+    r_nm_used = inp.row("NMDC fines: used", "Rs/t",
+                        lambda i, q, r: f'=IF({col(i)}$6="A",{col(i)}{r_nm_act},IF({col(i)}{r_nm_ovr}<>"",{col(i)}{r_nm_ovr},Spot_nmdc))',
+                        fmt="t", bold=True, kind="local")
+    r_nm_eff = inp.row("NMDC fines, lagged (the ore cost driver)", "Rs/t ore",
+                       lambda i, q, r: "=" + lagged(i, r_nm_used, "IoLag"), fmt="t", kind="local")
 
     # ---------------------------------------------------------------- Capacity
     cap = Sheet(wb, "Capacity", qs, f"{cfg['company']} - India capacity, utilisation and volume",
@@ -524,11 +572,11 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     seg.row("Cost per tonne (model)", "Rs/t",
             lambda i, q, r: (f"=IF({A(i)},({col(i)}{rR}-{col(i)}{rE})/{col(i)}{rS}*10,"
                              + (f"{prev(i, r_cost_used)}+CcIntensity*(Inputs!{col(i)}{r_cc_eff}-Inputs!{prev(i, r_cc_eff)})"
-                                f"+IoIntensity*IoMarketPct*IoPassThrough*(Inputs!{col(i)}{r_io_eff}-Inputs!{prev(i, r_io_eff)})"
+                                f"+IoIntensity*IoMarketPct*IoPassThrough*(Inputs!{col(i)}{r_nm_eff}-Inputs!{prev(i, r_nm_eff)})"
                                 f"+OtherCostDrift)" if i else "0)")),
             fmt="t",
             comment="Forecast = last quarter's cost (as used) + coal intensity x change in lagged coal (Rs/t) "
-                    "+ ore intensity x market share x pass-through x change in lagged ore (Rs/t) + drift. "
+                    "+ ore intensity x market share x pass-through x change in lagged NMDC fines (Rs/t) + drift. "
                     "Intensities and shares are specs/entities/steel.yaml's.")
     r_ept_model = seg.row("EBITDA per tonne (model)", "Rs/t", lambda i, q, r: f"={col(i)}{r_nsr}-{col(i)}{r_cost}", fmt="t", kind="local")
     r_ept = seg.row("EBITDA per tonne (used)", "Rs/t",
@@ -937,7 +985,8 @@ def readme_lines(cfg, qs, n_act, hist):
          "history, NSR moved 0.95 rupees per rupee of HRC in the same quarter, so 1.0 with no lag is the default; "
          "a one-quarter lag fitted worse. Cost/t moves with coking coal and iron ore in "
          "rupees, lagged a quarter, at specs/entities/steel.yaml's intensities (coal 0.70 t/t; ore 1.70 t/t x 70% "
-         "bought at market x 0.50 pass-through, because Indian ore follows NMDC's domestic price, not seaborne).", ""),
+         "bought at market x 1.0 pass-through of NMDC's notified fines price, time-weighted per quarter; PM 2026-11-03. "
+         "Seaborne 62% stays on Inputs as a cross-check only: it fell 2% in Q1FY27 while NMDC rose 18%).", ""),
         ("Commodities hold SPOT in every forecast quarter unless you type an override: the model forecasts no "
          "price. Overseas segments, the plugs and other income roll the trailing four quarters; the JV share rolls "
          "the trailing two.", ""),
@@ -1014,6 +1063,21 @@ def selftest() -> int:
     chk("footed fixture accepted", crossfoot(fx), [])
     fx["consolidated"]["depreciation"][q[0]] = 2173          # a transposed digit
     chk("transposed digit refused", len(crossfoot(fx)), 1)
+    # step series (NMDC circulars): time-weighted, not the mean of circular dates.
+    # Q2FY27 fixture: 4,850 in force from 1-Jun, 4,700 from 10-Jul, 4,500 from
+    # 8-Aug and again 9-Sep. Days: (9 x 4,850 + 29 x 4,700 + 54 x 4,500) / 92 = 4,597.
+    # The mean of the in-quarter circular dates (4,700 / 4,500 / 4,500) is 4,567.
+    with tempfile.TemporaryDirectory() as td:
+        db = pathlib.Path(td) / "t.db"
+        con = sqlite3.connect(db)
+        con.execute("CREATE TABLE prices (entity_id TEXT, date TEXT, close REAL)")
+        con.executemany("INSERT INTO prices VALUES ('nmdc_fines_inr', ?, ?)",
+                        [("2026-06-01", 4850), ("2026-07-10", 4700), ("2026-08-08", 4500), ("2026-09-09", 4500)])
+        con.commit(); con.close()
+        h = commodity_history(["Q4FY26", "Q2FY27"], db)
+        chk("NMDC quarter is time-weighted", h["nmdc"]["q"]["Q2FY27"], round((9 * 4850 + 29 * 4700 + 54 * 4500) / 92, 2))
+        chk("a quarter before the first circular has no price", "Q4FY26" in h["nmdc"]["q"], False)
+        chk("a series with no rows is skipped, not a crash", "hrc" in h, False)
     cfgp = REPO / "data/analysis/cases/jsw_steel/model_config.json"
     if cfgp.exists():
         chk("JSW config cross-foots", crossfoot(json.loads(cfgp.read_text(encoding="utf-8"))), [])
