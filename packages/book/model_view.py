@@ -284,7 +284,15 @@ try {
     if ($op.mode -eq 'set') {
       if ($op.value -is [string] -and $op.value.StartsWith('=')) { $rng.Formula = $op.value }
       elseif ($op.value -eq $null) { $rng.ClearContents() | Out-Null }
-      else { $rng.Value2 = $op.value }
+      elseif ($op.value -is [string]) { $rng.Value2 = $op.value }
+      # [double], because PowerShell 5.1's ConvertFrom-Json turns 63983.33
+      # into a [decimal] and COM refuses it ("Specified cast is not valid").
+      # Integers and 7.3 had passed, so nothing had caught it (2026-11-03).
+      else { $rng.Value2 = [double]$op.value }
+    }
+    elseif ($op.mode -eq 'note') {
+      if ($rng.Comment -ne $null) { $rng.Comment.Delete() }
+      $rng.AddComment([string]$op.value) | Out-Null
     }
     $out += [pscustomobject]@{ sheet = $op.sheet; cell = $op.cell; before = $before;
                                formula = $rng.Formula; value = $rng.Text }
@@ -292,7 +300,7 @@ try {
   # @() matters: in PowerShell 5.1 a single match is NOT an array, has no
   # .Count, and the save was skipped - the first edit read back "1,000" and
   # was then discarded by Close($false), with nothing raising (2026-11-02).
-  if (@($ops | Where-Object { $_.mode -eq 'set' }).Count -gt 0) {
+  if (@($ops | Where-Object { $_.mode -ne 'get' }).Count -gt 0) {
     $xl.Calculate(); $wb.Save()
     foreach ($o in $out) { $o.value = $wb.Worksheets.Item($o.sheet).Range($o.cell).Text }
   }
@@ -350,7 +358,7 @@ def excel(entity: str, ops: list[dict]) -> dict:
     res = json.loads(r.stdout.strip().splitlines()[-1])
     # The acceptance check for an edit is the FILE, not Excel's echo: Excel
     # happily reports the new value of a workbook it is about to discard.
-    if any(o["mode"] == "set" for o in ops) and p.stat().st_mtime <= before:
+    if any(o["mode"] != "get" for o in ops) and p.stat().st_mtime <= before:
         raise SystemExit("Excel reported the edit but the file was not saved; nothing changed on disk")
     return res
 

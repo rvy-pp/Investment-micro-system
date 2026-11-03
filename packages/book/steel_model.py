@@ -31,8 +31,10 @@ THE SHAPE, and what each part deliberately leaves out:
 - The PM's two numbers for the visible quarter (sales, EBITDA/t) sit in
   yellow override rows. The next quarter rolls from the overridden cost, so a
   view carries forward instead of snapping back to the mechanical path.
-- Commodities are held at SPOT unless overridden: the model forecasts no
-  price.
+- Commodities hold the CURRENT QUARTER'S Kotak metals-pack average to date
+  unless overridden (PM, 2026-11-03), the basis of an actual quarter, so a
+  running quarter converges on its actual. The model forecasts no price.
+  `--refresh-deck <entity>` re-reads the store into an existing workbook.
 - D&A scales with effective India capacity (capex -> commissioning -> D&A);
   finance cost is a rate on opening gross debt, so there is no circularity.
 
@@ -109,6 +111,15 @@ FMT = {
 
 FIRST_COL = 4                       # quarters start in column D
 
+# Texts --refresh-deck finds again in a built workbook, so they live once.
+DECK_TITLE = ("Commodity deck: actual quarters are Kotak metals-pack averages; forecasts hold the CURRENT "
+              "quarter's average to date unless overridden")
+README_DECK = ("Commodities hold the current quarter's Kotak metals-pack weekday average to date in every "
+               "forecast quarter unless you type an override (PM, 2026-11-03; it was the latest single print "
+               "until then), so a running quarter converges on its actual. NMDC holds the price in force. "
+               "The model forecasts no price.")
+README_FWD_HEAD = "Prices held for forecasts"
+
 
 # --------------------------------------------------------------------------
 # quarters
@@ -174,8 +185,41 @@ def commodity_history(qs: list[str], db: pathlib.Path = DB) -> dict:
         if last is None:
             continue
         out[key] = {"q": per, "spot": last[1], "spot_date": last[0]}
+        # What forecasts hold (PM, 2026-11-03: "how about regular HRC price
+        # average? The one we get from kotak?"): the weekday average of the
+        # quarter the latest print sits in, on the same basis as an actual
+        # quarter, so a quarter's forecast converges on its actual as it runs
+        # instead of jumping when the status flips. One day's print had been
+        # the forecast; HRC's 63,600 on 3-Nov sat below the 63,976 average
+        # since 1-Oct. A step series (NMDC) keeps the price in force: a
+        # notified price IS the forward price until the next circular.
+        cur = current_quarter(last[0])
+        if key in STEP:
+            fwd, n = last[1], None
+        else:
+            a, _ = quarter_dates(cur)
+            v = [r[0] for r in con.execute(
+                "SELECT close FROM prices WHERE entity_id=? AND date BETWEEN ? AND ? "
+                "AND strftime('%w',date) NOT IN ('0','6')", (sid, a, last[0]))]
+            fwd, n = (round(statistics.mean(v), 2), len(v)) if v else (last[1], 0)
+        out[key].update(fwd=fwd, fwd_q=cur, fwd_days=n)
     con.close()
     return out
+
+
+def current_quarter(day: str) -> str:
+    """Indian fiscal quarter containing an ISO date."""
+    d = dt.date.fromisoformat(day)
+    q = {1: 4, 2: 4, 3: 4, 4: 1, 5: 1, 6: 1, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 3}[d.month]
+    fy = d.year + (1 if d.month >= 4 else 0)
+    return f"Q{q}FY{fy % 100:02d}"
+
+
+def fwd_note(h: dict, src: str = "Kotak metals pack") -> str:
+    if h.get("fwd_days") is None:
+        return f"Price in force: circular of {h['spot_date']}"
+    return (f"{src} weekday average, {h['fwd_q']} to {h['spot_date']} ({h['fwd_days']} days); "
+            f"latest print {h['spot']:,}")
 
 
 # --------------------------------------------------------------------------
@@ -420,7 +464,7 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     name(wb, "CapexPlan", f"Inputs!$C${cp_first}:$C${inp.r - 1}")
 
     # commodity deck
-    inp.section("Commodity deck: actual quarters are metals-pack averages; forecasts hold SPOT unless overridden")
+    inp.section(DECK_TITLE)
     used = {}
     fxh = cfg.get("fx_history", {})
     deck = [("hrc", "HRC India", "Rs/t", "t"), ("cc", "Coking coal, Australia FOB", "USD/t", "mn"),
@@ -429,10 +473,10 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         deck.append(("eurinr", "EURINR", "INR/EUR", "fx"))
     for key, label, unit, fmt in deck:
         if key in hist:
-            h, spot, sdate, src = hist[key]["q"], hist[key]["spot"], hist[key]["spot_date"], "metals pack"
+            h, spot, note = hist[key]["q"], hist[key]["fwd"], fwd_note(hist[key])
         else:
             h = {q: fxh[key][q] for q in qs if q in fxh[key]}
-            spot, sdate, src = fxh[key]["spot"], cfg["built"], fxh[key]["source"]
+            spot, note = fxh[key]["spot"], f"Spot {cfg['built']} ({fxh[key]['source']})"
         r_act = inp.row(f"{label}: actual quarterly average", unit, {q: h.get(q) for q in qs if q in act}, fmt=fmt)
         r_ovr = inp.row(f"{label}: override (your view)", unit, lambda i, q, r: None, fmt=fmt)
         for i, q in enumerate(qs):
@@ -442,7 +486,7 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                 ws.cell(r_ovr, FIRST_COL + i).font = Font(name=FONT, color=BLUE)
         ws.cell(r_act, 3, spot).font = Font(name=FONT, color=BLUE)
         ws.cell(r_act, 3).number_format = FMT[fmt]
-        ws.cell(r_act, 3).comment = Comment(f"Spot {sdate} ({src})", "steel_model")
+        ws.cell(r_act, 3).comment = Comment(note, "steel_model")
         name(wb, f"Spot_{key}", f"Inputs!$C${r_act}")
         used[key] = inp.row(
             f"{label}: used", unit,
@@ -987,8 +1031,7 @@ def readme_lines(cfg, qs, n_act, hist):
          "rupees, lagged a quarter, at specs/entities/steel.yaml's intensities (coal 0.70 t/t; ore 1.70 t/t x 70% "
          "bought at market x 1.0 pass-through of NMDC's notified fines price, time-weighted per quarter; PM 2026-11-03. "
          "Seaborne 62% stays on Inputs as a cross-check only: it fell 2% in Q1FY27 while NMDC rose 18%).", ""),
-        ("Commodities hold SPOT in every forecast quarter unless you type an override: the model forecasts no "
-         "price. Overseas segments, the plugs and other income roll the trailing four quarters; the JV share rolls "
+        (README_DECK + " Overseas segments, the plugs and other income roll the trailing four quarters; the JV share rolls "
          "the trailing two.", ""),
         ("Volume = capacity x utilisation x sales/production. Dolvi Phase-III (+5mtpa) commissions by Sep'27 and "
          "ramps from Q3FY28; Kadapa (+1mtpa) in FY29. D&A scales with capacity; finance cost is a rate on "
@@ -996,11 +1039,11 @@ def readme_lines(cfg, qs, n_act, hist):
         ("Your two numbers for the visible quarter go in the yellow 'PM view' rows on Segments. The following "
          "quarter rolls from your cost, so a view carries forward; later quarters stay mechanical.", ""),
         ("", ""),
-        ("Spot used for forecasts", "h"),
+        (README_FWD_HEAD, "h"),
     ]
     for k, (sid, unit) in COMMODITIES.items():
         if k in sp:
-            L.append((f"{sid}: {sp[k]['spot']:,} {unit} at {sp[k]['spot_date']}", ""))
+            L.append((f"{sid}: {sp[k]['fwd']:,} {unit}. {fwd_note(sp[k])}", ""))
     L += [("", ""),
           ("Not used", "h"),
           ("No broker model's numbers are in this file. Every actual is from JSW's results decks (Sources sheet).", "")]
@@ -1078,6 +1121,44 @@ def selftest() -> int:
         chk("NMDC quarter is time-weighted", h["nmdc"]["q"]["Q2FY27"], round((9 * 4850 + 29 * 4700 + 54 * 4500) / 92, 2))
         chk("a quarter before the first circular has no price", "Q4FY26" in h["nmdc"]["q"], False)
         chk("a series with no rows is skipped, not a crash", "hrc" in h, False)
+    # forecast basis: the current quarter's weekday average to date, not the last print
+    chk("2-Nov-2026 is Q3FY27", current_quarter("2026-11-02"), "Q3FY27")
+    chk("15-Jan-2027 is Q4FY27", current_quarter("2027-01-15"), "Q4FY27")
+    chk("1-Apr-2026 is Q1FY27", current_quarter("2026-04-01"), "Q1FY27")
+    with tempfile.TemporaryDirectory() as td:
+        db = pathlib.Path(td) / "t.db"
+        con = sqlite3.connect(db)
+        con.execute("CREATE TABLE prices (entity_id TEXT, date TEXT, close REAL)")
+        # Q2: Fri 25-Sep 60,000; Q3: Thu 1-Oct 64,000, Fri 2-Oct 65,000,
+        # Sat 3-Oct 99,999 (forward-filled weekend, must not count), Mon 5-Oct 63,000
+        con.executemany("INSERT INTO prices VALUES ('hrc_india_inr', ?, ?)",
+                        [("2026-09-25", 60000), ("2026-10-01", 64000), ("2026-10-02", 65000),
+                         ("2026-10-03", 99999), ("2026-10-05", 63000)])
+        con.commit(); con.close()
+        h = commodity_history(["Q2FY27", "Q3FY27", "Q4FY27"], db)["hrc"]
+        chk("forecast holds the quarter-to-date weekday average", (h["fwd"], h["fwd_q"], h["fwd_days"]),
+            (64000.0, "Q3FY27", 3))
+        chk("not the last print", h["fwd"] != h["spot"], True)
+        # deck_ops on a tiny built-shaped workbook
+        wbt = Workbook()
+        wi = wbt.active
+        wi.title = "Inputs"
+        for i, (q, s) in enumerate((("Q2FY27", "F"), ("Q3FY27", "F"), ("Q4FY27", "F"))):
+            wi.cell(4, FIRST_COL + i, q)
+            wi.cell(6, FIRST_COL + i, s)
+        wi.cell(10, 1, "Commodity deck: old title")
+        wi.cell(12, 3, 63000)
+        wbt.defined_names["Spot_hrc"] = DefinedName("Spot_hrc", attr_text="Inputs!$C$12")
+        ops, said = deck_ops(wbt, {"hrc": h})
+        cells = {(o["cell"], o["mode"]): o["value"] for o in ops}
+        chk("forecast cell takes the average", cells.get(("C12", "set")), 64000.0)
+        chk("a finished quarter's empty actual is filled", cells.get(("D12", "set")), 60000.0)
+        chk("and the PM is told to flip it", any("flip Q2FY27 to A" in s for s in said), True)
+        chk("the running quarter's actual is left empty", ("E12", "set") in cells, False)
+        chk("the deck title is rewritten", cells.get(("A10", "set")), DECK_TITLE)
+        wi.cell(12, FIRST_COL, 59000)                      # a typed actual
+        ops2, _ = deck_ops(wbt, {"hrc": h})
+        chk("a filled actual is never overwritten", any(o["cell"] == "D12" for o in ops2), False)
     cfgp = REPO / "data/analysis/cases/jsw_steel/model_config.json"
     if cfgp.exists():
         chk("JSW config cross-foots", crossfoot(json.loads(cfgp.read_text(encoding="utf-8"))), [])
@@ -1085,8 +1166,89 @@ def selftest() -> int:
     return 1 if fails else 0
 
 
+def deck_ops(wb, hist: dict) -> tuple[list[dict], list[str]]:
+    """The cell edits that bring a built workbook's deck up to the store, and a
+    line per change. Writes only the forecast-basis cells (column C of each
+    Spot_* row), a FINISHED quarter's empty actual cell, and the two texts that
+    describe the basis. Never an override cell, never a filled actual."""
+    ws = wb["Inputs"]
+    qs, status = [], []
+    c = FIRST_COL
+    while ws.cell(4, c).value:
+        qs.append(ws.cell(4, c).value)
+        status.append(ws.cell(6, c).value)
+        c += 1
+    ops, said = [], []
+
+    def put(sheet, cell, value, mode="set"):
+        ops.append({"sheet": sheet, "cell": cell, "mode": mode, "value": value})
+
+    for key, h in hist.items():
+        nm = f"Spot_{key}"
+        if nm not in wb.defined_names:
+            continue
+        row = int(re.search(r"\$(\d+)$", wb.defined_names[nm].attr_text).group(1))
+        old = ws.cell(row, 3).value
+        if old != h["fwd"]:
+            put("Inputs", f"C{row}", h["fwd"])
+            said.append(f"{nm}: {old} -> {h['fwd']}")
+        put("Inputs", f"C{row}", fwd_note(h), "note")
+        for i, q in enumerate(qs):
+            done = q in h["q"] and quarter_dates(q)[1] < h["spot_date"]
+            if done and ws.cell(row, FIRST_COL + i).value in (None, ""):
+                put("Inputs", f"{get_column_letter(FIRST_COL + i)}{row}", h["q"][q])
+                said.append(f"{nm}: {q} actual average {h['q'][q]:,}"
+                            + ("" if status[i] == "A" else f" (quarter ended: flip {q} to A)"))
+    for r in range(1, ws.max_row + 1):
+        v = ws.cell(r, 1).value
+        if isinstance(v, str) and v.startswith("Commodity deck:") and v != DECK_TITLE:
+            put("Inputs", f"A{r}", DECK_TITLE)
+    if "README" in wb.sheetnames:
+        rd = wb["README"]
+        sids = {COMMODITIES[k][0]: (k, COMMODITIES[k][1]) for k in hist if k in COMMODITIES}
+        for r in range(1, rd.max_row + 1):
+            v = rd.cell(r, 1).value
+            if not isinstance(v, str):
+                continue
+            if v.startswith("Commodities hold"):
+                tail = v[v.find(" Overseas"):] if " Overseas" in v else ""
+                put("README", f"A{r}", README_DECK + tail)
+            elif v == "Spot used for forecasts":
+                put("README", f"A{r}", README_FWD_HEAD)
+            elif ":" in v and v.split(":")[0] in sids:
+                k, unit = sids[v.split(":")[0]]
+                put("README", f"A{r}", f"{v.split(':')[0]}: {hist[k]['fwd']:,} {unit}. {fwd_note(hist[k])}")
+    return ops, said
+
+
+def refresh_deck(entity: str) -> int:
+    """Re-read the store into an existing workbook through Excel (COM), so an
+    open workbook takes the edit in its own window and nothing the PM typed is
+    lost (openpyxl would drop every cached value)."""
+    from openpyxl import load_workbook
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import model_view
+    p = model_view.path_for(entity)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    wb = load_workbook(p)
+    ws = wb["Inputs"]
+    qs, c = [], FIRST_COL
+    while ws.cell(4, c).value:
+        qs.append(ws.cell(4, c).value)
+        c += 1
+    ops, said = deck_ops(wb, commodity_history(qs))
+    res = model_view.excel(entity, ops)
+    print(f"{p.name}: {len(ops)} cells written" + (" (into the open window)" if res.get("attached") else ""))
+    for s in said or ["deck values unchanged; notes refreshed"]:
+        print("  " + s)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--refresh-deck", metavar="ENTITY",
+                    help="write the current quarter's average to date into an existing workbook, via Excel")
     ap.add_argument("--config", type=pathlib.Path)
     ap.add_argument("--out", type=pathlib.Path)
     ap.add_argument("--force", action="store_true", help="overwrite an existing workbook (loses its edits)")
@@ -1095,6 +1257,8 @@ def main() -> int:
     a = ap.parse_args()
     if a.selftest:
         return selftest()
+    if a.refresh_deck:
+        return refresh_deck(a.refresh_deck)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:
