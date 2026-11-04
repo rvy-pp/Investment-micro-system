@@ -431,6 +431,22 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                                                            "source": f"{o['as_of']}: {o['source']}"}, "cr")
     const("Guide_sales", "FY guidance: consolidated sales", C["fy27_sales_guide_mt"], "mt")
     const("Guide_prod", "FY guidance: consolidated production", C["fy27_prod_guide_mt"], "mt")
+    # PM, 2026-11-04, after reading JPM's JSW model: "Update our debt method like
+    # them, dividends and all." JPM holds gross debt flat, lets cash balance the
+    # sheet, and takes dividends (a payout of PAT) and working capital (turnover
+    # days) out of operating cash. Ours had neither, so every rupee of FCF repaid
+    # debt and net debt fell 44,482 -> 31,579 by FY28 against JPM's flat ~55k.
+    const("Payout", "Dividend payout: share of the previous FY's PAT, paid in Q2",
+          C.get("dividend_payout", {"value": 0.15, "unit": "%",
+                                    "source": "JPM JSW model (Financial Tables Annual, payout ratio FY27E-FY29E 0.15). "
+                                              "JSW pays its final dividend after the July AGM, so the year's payout "
+                                              "lands in the next fiscal year's Q2."}),
+          "pct", yellow=True)
+    const("WC_days", "Net working capital, days of revenue",
+          C.get("wc_days", {"value": 58, "unit": "days",
+                            "source": "JPM JSW model, FY26 consolidated: inventories 327,650 + debtors 112,600 - "
+                                      "creditors 146,660 = 293,590 Rs mn on sales 1,854,700 = 57.8 days (FY27E 57.4)."}),
+          None, yellow=True)
 
     inp.section("Driver sensitivities (India)")
     S = cfg["sensitivities"]
@@ -762,7 +778,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     r_capex_a = cf.row("Capex, reported", "Rs cr", {q: B["capex_cr"].get(q) for q in qs},
                        comment="Blank where the decks give no quarterly figure (FY25 was 14,656; 9M FY26 was "
                                "10,018); the residual below then absorbs it.")
-    r_wc_in = cf.row("Working capital, dividends, other: your view", "Rs cr", lambda i, q, r: None,
+    r_wc_in = cf.row("Other cash flows: your view (beyond dividends and working capital)", "Rs cr",
+                     lambda i, q, r: None,
                      fill=lambda i, q: q not in act)
     for i, q in enumerate(qs):
         if q not in act:
@@ -782,19 +799,36 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                              "year, spread over its remaining quarters.")
     r_fcf = cf.row("Free cash flow before working capital", "Rs cr",
                    lambda i, q, r: f"=SUM({col(i)}{r_ce}:{col(i)}{r_capex})", bold=True, kind="local")
+    r_wcm = cf.row("Working capital movement", "Rs cr",
+                   lambda i, q, r: (f"=IF({A(i)},0,-WC_days/365*4*('P&L'!{col(i)}{r_rev}-'P&L'!{prev(i, r_rev)}))"
+                                    if i else "=0"),
+                   comment="Forecast = -(WC_days / 365) x the change in annualised revenue (quarter x 4): JPM's "
+                           "turnover-days method on one net figure. Revenue up ties cash up; revenue down releases "
+                           "it. Actual quarters: inside the residual below.")
+    r_div = cf.row("Dividends paid", "Rs cr",
+                   lambda i, q, r: (f'=IF({A(i)},0,IF(LEFT({col(i)}$4,2)="Q2",-Payout*SUMIFS('
+                                    f"'P&L'!$D${r_pat}:${last}${r_pat},FYrow,"
+                                    f'"FY"&TEXT(VALUE(RIGHT({col(i)}$5,2))-1,"00")),0))'),
+                   comment="Forecast = Payout x the previous fiscal year's PAT, paid in Q2 (JSW declares its final "
+                           "dividend with Q4 results and pays after the July AGM). Actual quarters: inside the "
+                           "residual below.")
     r_wc = cf.row("Working capital, dividends and other", "Rs cr",
                   lambda i, q, r: f"=IF({A(i)},{prev(i, r_nd_a) if i else 'Open_ND'}-{col(i)}{r_nd_a}-{col(i)}{r_fcf},"
-                                  f"N({col(i)}{r_wc_in}))",
+                                  f"{col(i)}{r_wcm}+{col(i)}{r_div}+N({col(i)}{r_wc_in}))",
                   comment="Actual: whatever reconciles reported net debt (it holds the BPSL slump sale in Q4FY26, "
-                          "JFE's second tranche in Q1FY27, dividends and undisclosed capex). Forecast: the yellow "
-                          "row above, negative for an outflow.")
+                          "JFE's second tranche in Q1FY27, dividends and undisclosed capex). Forecast: working "
+                          "capital + dividends + the yellow row, negative for an outflow.")
     cf.section("Net debt")
     r_nd = cf.row("Net debt (end of quarter)", "Rs cr",
                   lambda i, q, r: f"=IF({A(i)},{col(i)}{r_nd_a},"
                                   + (f"{prev(i, r)}" if i else "Open_ND") + f"-{col(i)}{r_fcf}-{col(i)}{r_wc})",
                   bold=True)
     r_cash = cf.row("Cash and equivalents", "Rs cr",
-                    lambda i, q, r: f"=IF({A(i)},{col(i)}{r_cash_a}," + (prev(i, r) if i else "0") + ")")
+                    lambda i, q, r: (f"=IF({A(i)},{col(i)}{r_cash_a},"
+                                     + (f"{prev(i, r_nd)}+{prev(i, r)}-{col(i)}{r_nd})" if i else "0)")),
+                    comment="Forecast = the balancing item, JPM's method: gross debt is held flat at the last "
+                            "reported level, so cash = opening gross debt - net debt. A negative figure means the "
+                            "plan needs new borrowing.")
     r_gross = cf.row("Gross debt", "Rs cr", lambda i, q, r: f"={col(i)}{r_nd}+{col(i)}{r_cash}", kind="local")
     cf.row("Net debt / LTM adjusted EBITDA", "x",
            lambda i, q, r: f"={col(i)}{r_nd}/SUM({col(i - 3)}{r_ce}:{col(i)}{r_ce})" if i >= 3 else None,
@@ -805,7 +839,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                    + (f"Int_rate*'Cash flow'!{prev(i, r_gross)}/4)" if i else "0)"))
         c.font = Font(name=FONT, color=GREEN)
     pl.ws.cell(r_fin, 1).comment = Comment(
-        "Forecast = Int_rate x OPENING gross debt (net debt + cash at the previous quarter end) / 4. "
+        "Forecast = Int_rate x OPENING gross debt / 4. Gross debt is held flat at the last reported level "
+        "(JPM's method), so forecast finance cost is constant. "
         "Opening, so finance cost and net debt do not chase each other round a circular reference.", "steel_model")
 
     # ---------------------------------------------------------------- Annual
