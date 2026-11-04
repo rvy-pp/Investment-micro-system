@@ -105,6 +105,7 @@ FMT = {
     "mn": '#,##0.0;(#,##0.0);"-"',
     "pct": '0.0%;(0.0%);"-"',
     "x": '0.0"x"',
+    "x2": '0.00"x"',
     "fx": "0.00",
     "rs": '#,##0.00;(#,##0.00);"-"',
 }
@@ -430,6 +431,15 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                                                            "source": f"{o['as_of']}: {o['source']}"}, "cr")
     const("Guide_sales", "FY guidance: consolidated sales", C["fy27_sales_guide_mt"], "mt")
     const("Guide_prod", "FY guidance: consolidated production", C["fy27_prod_guide_mt"], "mt")
+    # PM, 2026-11-04: "can we tweak debt so that it maintains the 1.0X multiple,
+    # rather than back-calculating from cashflows?" Rolled from cash flows with
+    # the WC/dividends row at zero, every rupee of FCF repaid debt and JSW's
+    # leverage fell 1.31x -> 0.37x by FY29. Blank this cell to go back to the roll.
+    const("Target_lev", "Target net debt / LTM EBITDA (blank = roll from cash flows)",
+          C.get("target_leverage", {"value": 1.0, "unit": "x",
+                                    "source": "PM 2026-11-04: forecast net debt held at this multiple of LTM "
+                                              "adjusted EBITDA; the WC/dividends/other row becomes the plug"}),
+          "x2", yellow=True)
 
     inp.section("Driver sensitivities (India)")
     S = cfg["sensitivities"]
@@ -788,10 +798,27 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                           "JFE's second tranche in Q1FY27, dividends and undisclosed capex). Forecast: the yellow "
                           "row above, negative for an outflow.")
     cf.section("Net debt")
-    r_nd = cf.row("Net debt (end of quarter)", "Rs cr",
-                  lambda i, q, r: f"=IF({A(i)},{col(i)}{r_nd_a},"
-                                  + (f"{prev(i, r)}" if i else "Open_ND") + f"-{col(i)}{r_fcf}-{col(i)}{r_wc})",
-                  bold=True)
+
+    def _nd(i, q, r):
+        roll = (f"{prev(i, r)}" if i else "Open_ND") + f"-{col(i)}{r_fcf}-N({col(i)}{r_wc_in})"
+        if i < 3:
+            return f"=IF({A(i)},{col(i)}{r_nd_a},{roll})"
+        return (f"=IF({A(i)},{col(i)}{r_nd_a},IF(ISNUMBER(Target_lev),"
+                f"Target_lev*SUM({col(i - 3)}{r_ce}:{col(i)}{r_ce}),{roll}))")
+    # The roll reads the yellow input row directly, never r_wc: r_wc is now the
+    # identity below (it reads THIS row), and Excel flags a circular reference
+    # on the formula graph whichever IF branch is taken.
+    r_nd = cf.row("Net debt (end of quarter)", "Rs cr", _nd, bold=True)
+    for i, q in enumerate(qs):
+        c = cf.ws.cell(r_wc, FIRST_COL + i)
+        opening = prev(i, r_nd) if i else "Open_ND"
+        c.value = (f"=IF({A(i)},{prev(i, r_nd_a) if i else 'Open_ND'}-{col(i)}{r_nd_a}-{col(i)}{r_fcf},"
+                   f"{opening}-{col(i)}{r_nd}-{col(i)}{r_fcf})")
+    cf.ws.cell(r_wc, 1).comment = Comment(
+        "Actual: whatever reconciles reported net debt (BPSL slump sale in Q4FY26, JFE's second tranche in "
+        "Q1FY27, dividends, undisclosed capex). Forecast with a target leverage (Inputs): the PLUG that holds "
+        "net debt at that multiple, negative = cash paid out (dividends, buybacks, M&A, working capital). "
+        "Forecast with the target blank: the yellow row above.", "steel_model")
     r_cash = cf.row("Cash and equivalents", "Rs cr",
                     lambda i, q, r: f"=IF({A(i)},{col(i)}{r_cash_a}," + (prev(i, r) if i else "0") + ")")
     r_gross = cf.row("Gross debt", "Rs cr", lambda i, q, r: f"={col(i)}{r_nd}+{col(i)}{r_cash}", kind="local")
