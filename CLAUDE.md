@@ -1352,6 +1352,20 @@ PM's yellow cells**; `--out` refuses an existing file without `--force`.
   No broker model's numbers are in the file; every actual is from JSW's decks.
 - The valuation sheet is for the PM's eye. The juice stays with
   `case_brief.py`; a reader that checks the two agree is the next step.
+- **Debt is JPM's method (PM, 2026-11-04: "like them, dividends and all").**
+  Gross debt is held flat at the last reported figure and cash is the plug, so
+  interest is constant. Net debt rolls from FCF less working capital
+  (`WC_days` = 58, JPM's FY26 inventories + debtors - creditors on sales,
+  times the change in annualised revenue) and less dividends (`Payout` = 15%
+  of the previous FY's PAT, paid in Q2 after the July AGM). **A 1.0x
+  leverage target was tried and reverted the same day:** it made debt
+  proportional to EBITDA, so HRC at 60k in one quarter RAISED the target
+  Rs11.70.
+- **A house-implied multiple carries the JV** ((TP x shares + net debt) /
+  consensus EBITDA, with the JV inside the TP). The Valuation sheet's
+  "EBITDA that multiple was struck on" row strips it (JSW: 15,750 / 39,877 =
+  0.39x, so 9.85x -> 9.46x core) before the JV is added back once. Adding it
+  on top of 9.85x had overstated the target by Rs76.
 
 **The model lives on the Analysis card (same day).** PM: *"the live excel on
 the analysis tab beside each company. I want to open and view it at whim, ask
@@ -1374,6 +1388,16 @@ every 4s, so any save re-renders it.
   save. Excel still echoed the new value, then `Close($false)` discarded it.
   The fix is `@(...)`, and `excel()` now checks the FILE's mtime moved after
   any set, because Excel's echo is not evidence.
+- **The model's own upside sits beside the juice (PM, 2026-11-04).**
+  `model_view.valuation()` reads the Valuation sheet's "Expected price (Rs)"
+  by LABEL from the last save. `engine.book_analysis` sets it against the same
+  latest close the juice uses. The row shows `▦ +x% ₹TP`, and the card names
+  the multiple and the net-debt date. The orchestrator's live `--day` writes
+  the day's close into each model's `CMP` through Excel
+  (`model_view.set_cmp`), so the workbook's own Upside row agrees, and it
+  prints a MODELS block. A moved model TARGET is flagged: price never moves
+  it, so the workbook changed. A replay (`--date`) only reads. The write
+  saves the PM's open window, unsaved edits included.
 - The vault copy bakes every sheet of every model; it cannot poll or open
   Excel, and the button says so. `build_frontend.py` flags a model that
   fails to render, or that has never been recalculated (formulas with no

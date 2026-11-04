@@ -38,8 +38,10 @@ information, never on price": a flagged move gets a pair-check, and only a
 check that finds information sends the leg's agent back to its case.
 
 Reads the store and the case files; writes only under data/orchestrator/
-(and `prices`, through yahoo_prices, on --prices). Never a lean, an edge or a
-call.
+(and `prices`, through yahoo_prices, on --prices) - and, on a live --day, the
+day's close into each leg's Excel model (its CMP cell, through Excel; PM,
+2026-11-04), so the model's own upside moves with the price like the juice
+does. Never a lean, an edge or a call.
 
     python packages/book/orchestrator.py --rota
     python packages/book/orchestrator.py --prices
@@ -64,6 +66,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "adapters"))
 import analysis  # noqa: E402
 import case_brief as cb  # noqa: E402
+import model_view  # noqa: E402
 
 REPO = analysis.REPO
 OUT = REPO / "data" / "orchestrator"
@@ -309,6 +312,12 @@ def flags(cur: dict, prev: dict | None, th: dict, as_of: str, today: dt.date) ->
             ln = (f"; lean {cur['lean']:+.1f}% is the PM's and stays" if isinstance(cur.get("lean"), (int, float))
                   and not cur.get("lean_default") else "")
             out.append(f"targets RE-STRUCK since {prev.get('_date')}: {', '.join(ch)}{ax}{ln}")
+    mt, pt = (cur.get("model") or {}).get("tp"), ((prev or {}).get("model") or {}).get("tp")
+    if isinstance(mt, (int, float)) and isinstance(pt, (int, float)) and abs(mt / pt - 1) >= 0.005:
+        # The target never moves on the price (CMP enters only today's EV and
+        # the upside), so a moved target means the WORKBOOK changed: an input,
+        # a deck refresh, a typed quarter.
+        out.append(f"model target Rs{pt:,.0f} -> Rs{mt:,.0f} since {prev.get('_date')} (the workbook changed)")
     if prev:
         jb, pb = (cur.get("juice") or {}).get("base"), (prev.get("juice") or {}).get("base")
         if isinstance(jb, (int, float)) and isinstance(pb, (int, float)) and abs(jb - pb) >= th["juice_flag_pp"]:
@@ -525,6 +534,32 @@ def render_targets(legs: list[dict]) -> list[str]:
     return L
 
 
+def model_day(ent: str, rec: dict, live: bool) -> dict | None:
+    """The leg's Excel model, if it has one (PM, 2026-11-04: "Make the
+    orchestrator update the upside for both"). On a live run the day's close
+    goes into the workbook's CMP through Excel (model_view.set_cmp: recalc,
+    save, into the PM's open window when it is open), so the workbook's own
+    Upside row and the Analysis tab agree. A replay (--date) or a failure only
+    READS the last save: a past close must never be written into today's model."""
+    if model_view.path_for(ent) is None:
+        return None
+    close = (rec.get("close_date"), rec.get("close")) if rec.get("close") else None
+    if live and close:
+        try:
+            r = model_view.set_cmp(ent, close[1], close[0])
+            if "error" not in r:
+                v = model_view.valuation(ent, close=close) or {}
+                return {**{k: v.get(k) for k in ("year", "nd_quarter", "multiple")}, **r, "written": True}
+            err = r["error"]
+        except SystemExit as e:                   # model_view.excel raises SystemExit on Excel trouble
+            err = str(e)
+        except Exception as e:                    # noqa: BLE001 - a day-end never dies on a workbook
+            err = f"{type(e).__name__}: {e}"
+        v = model_view.valuation(ent, close=close) or {}
+        return {**v, "written": False, "write_error": err[:300]}
+    return {**(model_view.valuation(ent, close=close) or {}), "written": False}
+
+
 def day(today: dt.date | None = None, write: bool = True) -> dict:
     import grading
     import sector_rel
@@ -556,6 +591,7 @@ def day(today: dt.date | None = None, write: bool = True) -> dict:
         recs = []
         for g in legs:
             r = leg_day(conn, g, as_of, split, today)
+            r["model"] = model_day(g["entity"], r, live=write and today == dt.date.today())
             r["flags"] = flags(r, (prev or {}).get(g["entity"]), th, as_of, today)
             r["tp_check"] = {"since": since, "terms": search_terms(g, gcfg),
                              "sector_day": g["group"] in today_groups}
@@ -595,9 +631,32 @@ def render_day(doc: dict) -> str:
         L.append("* lean = the base, by default (PM 2026-10-27), until the PM picks one")
     fl = [(r["token"], x) for r in doc["legs"] for x in r["flags"]]
     L += ["", f"FLAGS ({len(fl)})"] + [f"  {t:8} {x}" for t, x in fl] + ([] if fl else ["  none"])
+    L += render_models(doc["legs"])
     L += render_targets(doc["legs"])
     L += render_watches(doc.get("watches") or [])
     return "\n".join(L)
+
+
+def render_models(legs: list[dict]) -> list[str]:
+    ms = [r for r in legs if r.get("model")]
+    if not ms:
+        return []
+    L = ["", "MODELS (the Excel model's own target; the day's close written into its CMP)"]
+    for r in ms:
+        m, j = r["model"], r.get("juice") or {}
+        if m.get("error") or m.get("tp") is None:
+            L.append(f"  {r['token']:8} no number: {m.get('error') or m.get('write_error')}")
+            continue
+        base = j.get("base")
+        tail = f" | agent base {base:+.1f}%" if isinstance(base, (int, float)) else ""
+        L.append(f"  {r['token']:8} model Rs{m['tp']:,.0f} ({m.get('year')} EBITDA x {m.get('multiple') or 0:.2f}, "
+                 f"net debt {m.get('nd_quarter')}): upside {m.get('upside_pct') or 0:+.1f}% on "
+                 f"Rs{m.get('close') or 0:,.2f} ({m.get('close_date')}){tail}")
+        if not m.get("written"):
+            L.append("           " + ("NOT written: " + m["write_error"] if m.get("write_error") else "read only (a replay)"))
+        elif m.get("attached"):
+            L.append("           written into the workbook open in Excel, and saved")
+    return L
 
 
 # --------------------------------------------------------------- the sector
@@ -714,6 +773,13 @@ def _selftest() -> None:
     assert check_rota(load_cfg()) == [], check_rota(load_cfg()); ok += 1     # the live spec
 
     th = {"move_flag_pp": 3.0, "juice_flag_pp": 1.0, "revision_flag_pct": 1.0, "result_soon_days": 7}
+    # a moved model target flags (the workbook changed); a price move alone cannot move it
+    mc = {"pairs": ["X"], "close_date": "2026-11-04", "model": {"tp": 1512.0, "upside_pct": 13.0}}
+    mp = {"_date": "2026-11-03", "model": {"tp": 1458.24, "upside_pct": 9.4}}
+    assert any("model target Rs1,458 -> Rs1,512" in x for x in flags(mc, mp, th, "2026-11-04", dt.date(2026, 11, 4))); ok += 1
+    mq = {**mc, "model": {"tp": 1460.0, "upside_pct": 10.2}}                # 0.1%: rounding, a recalc
+    assert not any("model target" in x for x in flags(mq, mp, th, "2026-11-04", dt.date(2026, 11, 4))); ok += 1
+    assert model_day("no_such_entity", {"close": 100.0, "close_date": "2026-11-04"}, live=True) is None; ok += 1
     t = dt.date(2026, 10, 26)
     quiet = {"pairs": ["X_Y"], "move": {"stock_pct": 2.0, "sector_pct": 1.5, "rel_pct": 0.5},
              "close_date": "2026-10-26", "juice": {"base": -6.0}, "consensus": {"fy": "FY28", "eps": 100.0}}

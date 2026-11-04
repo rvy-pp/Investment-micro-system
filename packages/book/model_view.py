@@ -241,6 +241,105 @@ def render(entity: str, sheet: str | None = None, since: float | None = None,
 
 
 # --------------------------------------------------------------------------
+# the model's own target (PM, 2026-11-04: "add a number to the analysis tab
+# that shows the expected upside via the model as well")
+# --------------------------------------------------------------------------
+# Read by LABEL in the Valuation sheet's column A, never by address: rows move
+# every time a line is added (the JV rows moved everything by three on 4-Nov).
+VAL_LABELS = {"tp": "Expected price (Rs)", "year": "Valuation year",
+              "nd_quarter": "Net debt as of (quarter)", "multiple": "Core multiple, ex JV (x)",
+              "multiple_typed": "Target EV/EBITDA multiple"}
+
+
+def _val_rows(ws) -> dict:
+    want = {v: k for k, v in VAL_LABELS.items()}
+    out = {}
+    for r in range(1, min(ws.max_row, 80) + 1):
+        lab = ws.cell(r, 1).value
+        if isinstance(lab, str) and lab.strip() in want:
+            out.setdefault(want[lab.strip()], r)
+    return out
+
+
+def _name_cell(wb, name: str) -> tuple[str, str] | None:
+    """A workbook-level defined name -> (sheet, A1 cell without $), or None."""
+    dn = wb.defined_names.get(name)
+    if dn is None:
+        return None
+    for sheet, ref in dn.destinations:
+        return sheet, ref.replace("$", "")
+    return None
+
+
+def valuation(entity: str, close: tuple[str, float] | None = None, base: pathlib.Path = CASES) -> dict | None:
+    """The workbook's expected price as of its LAST SAVE, and the upside on
+    `close` (date, price) - the same latest close the Analysis tab's juice is
+    marked at, so the two upsides are on one price. None when there is no
+    model. A workbook never recalculated has no cached values: that is an
+    error, never a zero."""
+    p = path_for(entity, base)
+    if p is None:
+        return None
+    vals, forms = _load(p)
+    if "Valuation" not in vals.sheetnames:
+        return {"error": "the workbook has no Valuation sheet"}
+    ws = vals["Valuation"]
+    rows = _val_rows(ws)
+    if "tp" not in rows:
+        return {"error": "no 'Expected price (Rs)' row on the Valuation sheet"}
+    out = {k: ws.cell(r, 2).value for k, r in rows.items()}
+    if not isinstance(out.get("tp"), (int, float)):
+        return {"error": "the expected price has no saved value: recalculate the workbook in Excel"}
+    nc = _name_cell(forms, "CMP")
+    nd = _name_cell(forms, "CMP_date")
+    out["model_cmp"] = vals[nc[0]][nc[1]].value if nc else None
+    out["model_cmp_date"] = str(vals[nd[0]][nd[1]].value) if nd else None
+    out["saved"] = models(base)[entity]["saved"]
+    out["tp_cell"] = f"Valuation!B{rows['tp']}"
+    if close and close[1]:
+        out["close_date"], out["close"] = close[0], close[1]
+        out["upside_pct"] = round((out["tp"] / close[1] - 1) * 100, 2)
+    return out
+
+
+def set_cmp(entity: str, price: float, date: str, base: pathlib.Path = CASES) -> dict:
+    """Write the day's close into the model's CMP and CMP_date (and the source
+    note beside CMP) through Excel, recalculate, save, and return the model's
+    new expected price. Through Excel because openpyxl would drop every cached
+    value; into the PM's open window when the workbook is open."""
+    p = path_for(entity, base)
+    if p is None:
+        return {"error": f"no model for {entity!r}"}
+    _, forms = _load(p)
+    nc, nd = _name_cell(forms, "CMP"), _name_cell(forms, "CMP_date")
+    rows = _val_rows(forms["Valuation"]) if "Valuation" in forms.sheetnames else {}
+    if not nc or not nd or "tp" not in rows:
+        return {"error": "the workbook has no CMP / CMP_date names or no expected-price row"}
+    from openpyxl.utils.cell import column_index_from_string, coordinate_from_string, get_column_letter
+    letter, row = coordinate_from_string(nc[1])
+    src_cell = f"{get_column_letter(column_index_from_string(letter) + 1)}{row}"   # the source note, one column right
+    ops = [{"sheet": nc[0], "cell": nc[1], "mode": "set", "value": float(price)},
+           # The leading apostrophe keeps the date TEXT: Excel otherwise turns
+           # "2026-11-04" into a date serial (46330), unlike every other build.
+           {"sheet": nd[0], "cell": nd[1], "mode": "set", "value": "'" + date},
+           {"sheet": nc[0], "cell": src_cell, "mode": "set",
+            "value": f"prices table, {entity} close {date} (Yahoo); set by the orchestrator"},
+           {"sheet": "Valuation", "cell": f"B{rows['tp']}", "mode": "get", "value": None}]
+    # `base` reaches excel() too. The first test run passed a scratch copy's
+    # folder to everything EXCEPT this call, so excel() resolved the REAL model,
+    # found it open and wrote the test close into the PM's window (2026-11-04).
+    res = excel(entity, ops, base)
+    cells = res["cells"] if isinstance(res["cells"], list) else [res["cells"]]
+    tp_txt = cells[-1]["value"]
+    try:
+        tp = float(str(tp_txt).replace(",", ""))
+    except ValueError:
+        return {"error": f"expected price reads {tp_txt!r} after the update", "attached": res["attached"]}
+    return {"tp": tp, "attached": res["attached"],
+            "upside_pct": round((tp / float(price) - 1) * 100, 2), "close": float(price), "close_date": date}
+
+
+# --------------------------------------------------------------------------
 # open and edit (Windows, desktop Excel)
 # --------------------------------------------------------------------------
 def file_bytes(entity: str, base: pathlib.Path = CASES) -> dict:
@@ -336,8 +435,8 @@ def parse_ops(specs: list[str], mode: str) -> list[dict]:
     return ops
 
 
-def excel(entity: str, ops: list[dict]) -> dict:
-    p = path_for(entity)
+def excel(entity: str, ops: list[dict], base: pathlib.Path = CASES) -> dict:
+    p = path_for(entity, base)
     if p is None:
         raise SystemExit(f"no model for {entity!r}")
     before = p.stat().st_mtime
@@ -413,6 +512,32 @@ def selftest() -> int:
         chk("download is the file on disk", (fb["file"], fb["bytes"]),
             ("Acme_model.xlsx", (base / "acme" / "Acme_model.xlsx").read_bytes()))
         chk("download refuses a traversal", file_bytes("../acme", base).get("error"), "no model for '../acme'")
+        chk("no Valuation sheet is an error, not a number", valuation("acme", base=base).get("error"),
+            "the workbook has no Valuation sheet")
+        chk("no model, no valuation", valuation("nope", base=base), None)
+        # a model with a Valuation sheet: labels read by NAME, rows anywhere
+        from openpyxl.workbook.defined_name import DefinedName
+        (base / "beta").mkdir()
+        wb2 = Workbook()
+        inp = wb2.active
+        inp.title = "Inputs"
+        inp["C12"], inp["C13"] = 1320.0, "2026-11-03"
+        for nm, ref in (("CMP", "Inputs!$C$12"), ("CMP_date", "Inputs!$C$13")):
+            wb2.defined_names[nm] = DefinedName(nm, attr_text=ref)
+        va = wb2.create_sheet("Valuation")
+        for r, (lab, v) in enumerate((("Valuation year", "FY28"), ("Net debt as of (quarter)", "Q4FY27"),
+                                      ("Target EV/EBITDA multiple", 9.85), ("Core multiple, ex JV (x)", 9.455),
+                                      ("Expected price (Rs)", 1458.24)), start=7):
+            va.cell(r, 1, lab), va.cell(r, 2, v)
+        wb2.save(base / "beta" / "Beta_model.xlsx")
+        vv = valuation("beta", close=("2026-11-04", 1336.0), base=base)
+        chk("expected price read by its label", (vv["tp"], vv["tp_cell"], vv["year"], vv["nd_quarter"]),
+            (1458.24, "Valuation!B11", "FY28", "Q4FY27"))
+        chk("upside on the close given, not the model's own CMP", (vv["upside_pct"], vv["model_cmp"]), (9.15, 1320.0))
+        va["B11"] = None
+        wb2.save(base / "beta" / "Beta_model.xlsx")
+        chk("an unsaved expected price is an error, never zero",
+            "recalculate" in valuation("beta", base=base).get("error", ""), True)
     chk("set spec parsed", parse_ops(["Cash flow!D20=-1,500"], "set"),
         [{"sheet": "Cash flow", "cell": "D20", "mode": "set", "value": -1500.0}])
     chk("formula kept as a formula", parse_ops(["Valuation!B15==B13+1"], "set")[0]["value"], "=B13+1")

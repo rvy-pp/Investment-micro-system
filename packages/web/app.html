@@ -201,6 +201,9 @@
   /* The stock's Excel model, inside its Analysis card (PM, 2026-11-02: "the
      live excel on the analysis tab beside each company"). Rendered from the
      file's last save, re-rendered when the file's mtime moves. */
+  .mdl-up{font-size:var(--t-sm);color:var(--soft);margin-top:2px;white-space:nowrap}
+  .mdl-up span{color:var(--soft)}
+  .mdl-upl{font-size:var(--t-sm);color:var(--soft);margin:2px 0 8px}
   .mdl-chip{display:inline-block;font-size:var(--t-label);font-weight:600;padding:1px 7px;margin-left:6px;
             border-radius:var(--r-pill);color:#56d364;background:rgba(86,211,100,.12);vertical-align:1px}
   .mdl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 0 var(--s2);
@@ -4178,6 +4181,25 @@ function anaJuice(s){
    so a line of prose reads at a glance. Runs on ESCAPED text, and only wraps
    matches in <b>, so it cannot inject markup. Bare integers (day-of-month in
    "29 Jun") are deliberately left plain. */
+/* The model's own upside (PM, 2026-11-04: "add a number to the analysis tab
+   that shows the expected upside via the model as well"). The workbook's
+   expected price at its LAST SAVE, against the same latest close the juice is
+   marked at, so the two numbers sit on one price. The orchestrator writes the
+   day's close into the workbook at day-end, so its own Upside row agrees. */
+function anaModelUp(v, long){
+  if (!v) return '';
+  if (v.error) return `<div class="mdl-up" style="color:var(--warn)" title="${esc(v.error)}">▦ model: no number</div>`;
+  if (v.upside_pct == null) return '';
+  const tp = Number(v.tp).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const tip = `Model target ₹${tp}: ${v.year || ''} EBITDA × ${v.multiple != null ? Number(v.multiple).toFixed(2) + 'x' : '?'}, `
+    + `net debt at ${v.nd_quarter || '?'}. Upside on the close of ₹${Number(v.close).toLocaleString('en-IN')} (${dmy(v.close_date)}). `
+    + `Workbook as last saved ${mdlTime(v.saved)}.`;
+  if (!long) return `<div class="mdl-up" title="${esc(tip)}">▦ <b class="${v.upside_pct >= 0 ? 'pos' : 'neg'}">${anaPct(v.upside_pct)}</b> <span>₹${tp}</span></div>`;
+  return `<div class="mdl-upl">Model target <b>₹${tp}</b> · ${esc(v.year || '')} EBITDA × <b>${v.multiple != null ? Number(v.multiple).toFixed(2) + 'x' : '?'}</b>`
+    + (v.multiple_typed != null && v.multiple != null && Math.abs(v.multiple_typed - v.multiple) > 0.005 ? ` (${Number(v.multiple_typed).toFixed(2)}x less the JV)` : '')
+    + `, net debt at ${esc(v.nd_quarter || '?')} · upside <b class="${v.upside_pct >= 0 ? 'pos' : 'neg'}">${anaPct(v.upside_pct)}</b>`
+    + ` on the close of ₹${Number(v.close).toLocaleString('en-IN')} <span class="ana-date">(${esc(dmy(v.close_date))})</span></div>`;
+}
 function anaHi(escaped){
   return escaped.replace(
     /((?:Rs|₹)\s?[\d,]+(?:\.\d+)?(?:\s?cr)?|[+\-−]?\d+(?:\.\d+)?\s?(?:%|x\b|×|pp\b|bp\b)|\b\d+\.\d+\b)/g,
@@ -4220,7 +4242,7 @@ function analysisPane(d){
         <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span>${mdl
           ? '<span class="mdl-chip" title="has an Excel model: open the card">▦ model</span>' : ''}</span>
         ${steps.map(k => icon((s.steps[k.key] || {}).status)).join('')}
-        <span>${anaJuice(s)}</span>
+        <span>${anaJuice(s)}${mdl ? anaModelUp(mdl.valuation, false) : ''}</span>
         <span style="font-size:var(--t-sm)">${s.updated ? esc(dmy(s.updated)) : '<span class="ana-open">—</span>'}</span>
       </summary><div class="ana-card">${mdl ? mdlBar(s.entity, mdl) : ''}${card}${log}</div></details>`;
   }).join('');
@@ -4261,7 +4283,7 @@ function mdlBar(ent, m){
       <span>▦ <b style="color:var(--ink)">${esc(m.file)}</b> · saved <span data-mdl-saved>${esc(mdlTime(m.saved))}</span></span>
       <span data-mdl-state class="${m.open ? 'live' : ''}">${m.open ? '● open in Excel' : ''}</span>
       <span data-mdl-msg></span>
-    </div><div data-mdl-view="${esc(ent)}"></div>`;
+    </div>${anaModelUp(m.valuation, true)}<div data-mdl-view="${esc(ent)}"></div>`;
 }
 function mdlGrid(d){
   if (d.error) return `<p class="note" style="color:var(--warn)">${esc(d.error)}</p>`;

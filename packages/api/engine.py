@@ -2303,6 +2303,18 @@ def book_analysis() -> dict:
         d = analysis.view()
         # which stocks have an Excel model beside them (PM, 2026-11-02)
         d["models"] = model_view.models()
+        # ... and the model's own target and upside, on the same latest close
+        # the juice is marked at (PM, 2026-11-04). The workbook's last SAVE.
+        if d["models"]:
+            conn = analysis.connect()
+            try:
+                for ent, m in d["models"].items():
+                    try:
+                        m["valuation"] = model_view.valuation(ent, close=analysis._close(conn, ent))
+                    except Exception as e:          # one bad workbook never blanks the tab
+                        m["valuation"] = {"error": f"{type(e).__name__}: {e}"}
+            finally:
+                conn.close()
         return d
     except Exception as e:                      # the tab says why, never blank
         return {"error": f"{type(e).__name__}: {e}"}

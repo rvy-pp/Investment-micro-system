@@ -44,7 +44,13 @@ line: no mail, no watches, no targets, no agents, no report. Do not pass
    watched leg's 1-day stock / sector / own split, each case's bear / base / bull juice
    on its headline year at today's price, the PM's lean where one is set, and
    the FLAGS. It writes `data/orchestrator/day_<date>.json`, which is what
-   tomorrow's juice and revision flags compare against.
+   tomorrow's juice and revision flags compare against. For a leg with an
+   Excel model (`data/analysis/cases/<entity>/*_model.xlsx`), it also writes
+   the day's close into the workbook's CMP through Excel. That saves the PM's
+   open window if the file is open. The MODELS block gives the model target
+   and its upside beside the agent's base juice (PM, 2026-11-04: "update the
+   upside for both"). Report both. A "model target moved" flag means the
+   workbook itself changed, so say what changed if the PM did not.
 3. **Own-move flags → pair-check, never a re-mark.** For each pair a flag
    names, run `python packages/book/move_check.py <PAIR>` and read the result
    per the pair-check skill. Off a sector day, do blind spot 7 (one
