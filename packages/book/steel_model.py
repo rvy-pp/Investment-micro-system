@@ -919,17 +919,34 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         ("P/E today, on the valuation year", "=CMP/B9", "x", "f", ""),
         ("Target EV/EBITDA multiple", "=B13", "x", "key",
          "Defaults to TODAY's multiple, so the price below moves only on the model's EBITDA and cash. Replace with the "
-         "median house-implied multiple after the target sweep (the agent drill), or your own."),
-        ("Target EV (Rs cr)", "=B15*B7", "cr", "f", ""),
+         "median house-implied multiple after the target sweep (the agent drill), or your own. A house multiple "
+         "has the JV inside it: put the EBITDA it was struck on in the next row."),
+        # PM, 2026-11-04: "Let me put 9.85x as is. Let the TP calculation show the
+        # correction of the JV." A house-implied multiple is (TP x shares + net
+        # debt) / consensus EBITDA, with the JV INSIDE it. Applied to core EBITDA
+        # with the JV added again below, it counted the JV twice: JSW's 9.85x
+        # carries 15,750/39,877 = 0.39x of JV, Rs18,500cr at the model's FY28
+        # EBITDA, so the target read Rs1,776 against a correct ~Rs1,700.
+        ("EBITDA that multiple was struck on (Rs cr)", None, "cr", "key",
+         "Only for a HOUSE multiple: each house's implied multiple is (TP x shares + net debt) / consensus EBITDA, "
+         "with the JV inside it. Type the consensus EBITDA it was set on and the JV comes out in the next row. "
+         "Blank = the multiple is already ex JV (the default, today's core multiple)."),
+        ("Less: JV carried inside that multiple (x)", "=IF(ISNUMBER(B16),-JV_stake/B16,0)", "x2", "f",
+         "The JV stake as a multiple of the EBITDA above. It comes out here because the JV is added back at its "
+         "own value below; left in, it would grow with the model's EBITDA."),
+        ("Core multiple, ex JV (x)", "=B15+B17", "x2", "f", ""),
+        ("Target core EV (Rs cr)", "=B18*B7", "cr", "f", ""),
         ("Less: net debt at the date above (Rs cr)", f"=-INDEX({nd_row},MATCH(B5,Qrow,0))", "cr", "f", ""),
-        ("Plus: JV stake (Rs cr)", "=JV_stake", "cr", "f", "JFE's price for 50% of JSW JFE Steel; the JV sits below EBITDA, so this is not double counted."),
+        ("Plus: JV stake (Rs cr)", "=JV_stake", "cr", "f",
+         "JFE's price for 50% of JSW JFE Steel. Added once: the JV sits below EBITDA and is out of the core "
+         "multiple above."),
         ("Plus: CWIP for capacity not yet earning (Rs cr)", 0, "cr", "key",
          "Capex already spent on projects that produce after the valuation year (Utkal, JVML Phase-II). Zero by "
          "default: the decks give no per-project spend to date."),
-        ("Equity value (Rs cr)", "=SUM(B16:B19)", "cr", "f", ""),
-        ("Expected price (Rs)", "=B20*10/Shares_mn", "rs", "f", ""),
-        ("Upside vs CMP", "=B21/CMP-1", "pct", "f", ""),
-        ("Implied P/E at the expected price", "=B21/B9", "x", "f", ""),
+        ("Equity value (Rs cr)", "=SUM(B19:B22)", "cr", "f", ""),
+        ("Expected price (Rs)", "=B23*10/Shares_mn", "rs", "f", ""),
+        ("Upside vs CMP", "=B24/CMP-1", "pct", "f", ""),
+        ("Implied P/E at the expected price", "=B24/B9", "x", "f", ""),
     ]
     for k, (lab, v, fmt, kind, note) in enumerate(vrows):
         r = 4 + k
@@ -960,7 +977,7 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         c.number_format = '+#,##0;-#,##0;"base"'
         for j in range(3):
             L = get_column_letter(2 + j)
-            f = (f"=(($B$15+{L}${sr + 1})*($B$7+$A{r}*{india_sales_val}/10)+$B$17+$B$18+$B$19)*10/Shares_mn")
+            f = (f"=(($B$18+{L}${sr + 1})*($B$7+$A{r}*{india_sales_val}/10)+$B$20+$B$21+$B$22)*10/Shares_mn")
             cc = va.cell(r, 2 + j, f)
             cc.font = Font(name=FONT, color=GREEN)
             cc.number_format = FMT["rs"]
