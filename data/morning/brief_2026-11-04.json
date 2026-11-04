@@ -1,0 +1,355 @@
+{
+ "date": "2026-11-04",
+ "generated_at": "2026-11-04T08:16:32",
+ "mail": {
+  "window": "24h to 08:05 IST",
+  "n_scanned": 226,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "NALCO Q2 EBITDA Rs24.1bn mixed: ICICI upgrades to BUY (TP 400), Emkay to ADD (360), Avendus to REDUCE (340); Kotak BUY 390, Nomura Neutral 320.",
+      "source": "Kotak/ICICI/Avendus/Emkay/Nomura - NALCO Q2FY27 result notes (+2 more in Outlook)",
+      "received": "07:47",
+      "detail": {
+       "summary": "Brokers agree on the cost squeeze (caustic, CP coke, HFO) but split on what is priced in. Emkay and Nomura called it a miss; Kotak saw a beat on volumes and cut FV to Rs390 from Rs420. Avendus upgrades only because the price fell, still seeing LME and alumina recovery priced in.",
+       "points": [
+        "EBITDA Rs24.1bn, +25% YoY, -11% QoQ",
+        "Emkay miss 5.2% vs us; Nomura miss 10%",
+        "Kotak FV Rs390 from Rs420, 5.5x EV/EBITDA",
+        "Avendus: LME ~$2,800/t priced in, FCF yield 8%",
+        "Nomura: FY28/29 EBITDA 6-13% below consensus"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NALCO guides 2H alumina at $370-380/t and Rs500-1,000/t cost cuts, but 5th refinery slips to Dec/Jan; Nomura models only 0.5mt FY28.",
+      "source": "Emkay - Nalco 2Q key takeaways",
+      "received": "11:28",
+      "detail": {
+       "summary": "Management leans on higher alumina realisation, efficiency gains and the new refinery for 2H, while input costs rise at EBIT level. Capex above guidance and a Rs120bn cash balance are retained.",
+       "points": [
+        "Cost up $75-100/t at EBIT on caustic, CP coke, HFO",
+        "2H margin benefit Rs3.0-3.5bn from refinery, efficiencies",
+        "FY28 refinery output 0.75-0.8mt vs 1mt rated",
+        "FY27 capex to exceed Rs18bn; cash ~Rs120bn",
+        "Smelter commissioning 1QFY32; Pottangi mining pending local resistance"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Ambit lifts Shyam Metalics TP to Rs1,220 from Rs1,050 (BUY) after 2QFY27 EBITDA of Rs8.2bn beat consensus by 7%.",
+      "source": "Ambit - Ambit Metals: Shyam Metalics (BUY) - Margin beat; expansion optionality improves",
+      "received": "08:19",
+      "detail": {
+       "summary": "The beat came from metallics and steel margins, offsetting softer specialty alloys and foil. A 9MTPA Maharashtra steel MoU and the Phutamura coal block add optionality, but heavy pending capex turns Shyam from net cash to net debt.",
+       "points": [
+        "TP Rs1,220 = 10.4x FY28 EV/EBITDA, 18x FY28 EPS",
+        "EBITDA +53% YoY; metallics +97%, steel +40%",
+        "FY27/28/29 EBITDA raised 7%/5%/4%; PAT 38-42% on SLM depreciation",
+        "~Rs89bn capex pending; net debt/EBITDA peaks 0.65x in FY28",
+        "9MTPA complex: no meaningful outlay before FY29-30"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "2QFY27 EBITDA/t: UltraTech Rs974 leads, Shree Rs912 (from Rs1,106 yoy), Ambuja Rs761 (from Rs1,002), Dalmia Rs694 (from Rs1,013).",
+      "source": "Emkay - Cement Corner: Leaderboard",
+      "received": "09:15",
+      "detail": {
+       "summary": "Emkay's 2QFY27 cement leaderboard ranks 11 companies on EBITDA/t and volume growth. UltraTech tops on per-tonne earnings with pan-India reach, while Ambuja and ACC combine weaker margins with flat-to-falling volumes.",
+       "points": [
+        "UltraTech Rs974/t vs Rs914 yoy; volume +12.9%",
+        "Shree Rs912/t vs Rs1,106 yoy; volume +17.7%",
+        "Ambuja Rs761/t vs Rs1,002 yoy; volume -0.9%",
+        "Dalmia Rs694/t vs Rs1,013 yoy; volume +3.3%",
+        "JK Cement Rs852/t; Nuvoco Rs869/t; ACC Rs386/t, volume -13.4%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NMDC October iron ore output rose 18% but sales fell 12%, a production-ahead-of-despatch gap; BSE filing linked for the tonnes.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "09:10",
+      "detail": {
+       "summary": "Kotak's daily headline list carries NMDC's October volume filing only as a link to the BSE PDF, with no tonnage in the body. Output outrunning sales implies stock build at the mine.",
+       "points": [
+        "Output +18% (October)",
+        "Sales -12% (October)",
+        "Tonnes only in linked BSE filing",
+        "Also: LME aluminium up on falling inventories"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Thermal coal firm: Newcastle $150/t (+15% in 3 months), Richards Bay $128 (+20%), Indonesian 6,322 $126 (-1% w/w).",
+      "source": "Avendus Spark - Weekly Update on Commodity Prices - week ended 02nd November, 2026",
+      "received": "01:18",
+      "detail": {
+       "summary": "Weekly commodity tracker shows seaborne non-coking coal well above last quarter's averages, with the week itself flat to slightly lower. Brent fell 8% w/w but remains up 18% over three months.",
+       "points": [
+        "Newcastle $150, flat w/w, +15% 3m",
+        "Richards Bay $128, flat w/w, +20% 3m",
+        "Indonesian 6,322 $126, -1% w/w, -5% 3m",
+        "Brent $106, -8% w/w, +18% 3m"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Syrma raised FY27 revenue guide to 40-45% but cut EBITDA margin guide to 10-10.5% from 10.5-11% after 9.9% 1H margin.",
+      "source": "JPM - India Daily: 2Q Results: ITC, Marico, Escorts Kubota, Syrma, Container Corp...",
+      "received": "09:08",
+      "detail": {
+       "summary": "JPM reads the call as growth up, profitability down: strong 2Q lifted the topline guide, while 1H margins and continued supply-side constraints forced the margin cut. Revenue estimates rise 4% over FY27-29E but EPS only 1-2% on higher finance cost and tax rate.",
+       "points": [
+        "FY27 revenue guide: 45% (INR70bn) per JPM, from >35%",
+        "CLSA quotes the guide as 40-45%",
+        "FY27 EBITDA margin guide 10-10.5% vs 10.5-11%",
+        "1H margin 9.9%",
+        "JPM EPS +1-2%, revenue +4% (FY27-29E)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA keeps Syrma at Hold, TP Rs1,290 to Rs1,405 on 38x FY28 PE; JPM stays Underweight after the stock's 106% YTD run.",
+      "source": "CLSA - CLSA Today: Escorts | ITC | MARICO U/G | FUSION | SYRMA | LICH | PLNG | LODHA",
+      "received": "08:49",
+      "detail": {
+       "summary": "CLSA sees 2Q ahead of estimates on topline with Ebitda ahead but margin soft, and calls the FY27 guide conservative against 71% 1H growth. At 38x FY28 PE it sees valuation as fair. JPM reaches the opposite stance on the same print because the stock is already up 106% YTD against Nifty down 10%.",
+       "points": [
+        "2Q revenue +74% YoY, beat CLSA estimate",
+        "2Q margin 9.7% (CLSA)",
+        "Implied 2H growth 25% on 40-45% guide",
+        "CLSA FY27-29 revenue/PAT CAGR 40%/42%",
+        "JPM: Underweight, risk-reward unfavourable"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Syrma guides FY28 revenue to $1bn with PCB ramp ~3% of it, implying ~33% underlying EMS growth; CLSA sees PCB full ramp by FY30. (+2 more in Outlook)",
+      "source": "JPM - India Daily: 2Q Results: ITC, Marico, Escorts Kubota, Syrma, Container Corp...",
+      "received": "09:08",
+      "detail": {
+       "summary": "The FY28 guide gives the first dated target for the PCB backward-integration story. CLSA says the PCB facility is on track to contribute revenue in FY28 with full ramp likely FY30, which also lifts margins. ICICI Securities also published a Syrma note calling PCB integration the margin driver.",
+       "points": [
+        "FY28 revenue guide $1bn",
+        "PCB ~3% of FY28 revenue",
+        "Underlying EMS growth ~33% implied",
+        "PCB full ramp likely FY30 (CLSA)",
+        "ICICI Securities and Nuvama also covered Syrma"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "JPM: Nifty IT +15% vs Nifty +5% since results began, but Infosys/Cognizant/HCLT cut organic guidance; JPM sees limited upside, top OWs Coforge, TechM, Persistent, Mphasis.",
+      "source": "JPM - India IT Services: AI fog hasn't fully lifted, even as better-than-feared prints bring some unexpected cheer",
+      "received": "15:53",
+      "detail": {
+       "summary": "The rally reflects beats on low expectations and an AI-skepticism macro trade, not a cyclical recovery. AI deflation keeps demand soft through FY27/28, with a growth inflection only from FY29 when AI revenues near 20% of portfolio.",
+       "points": [
+        "9 of 15 firms beat revenue; margin beats fewer",
+        "Infosys FY27 CC guide cut to 1-2% from 1.5-3%",
+        "HCLT org guide 1.63-3.13% from 1-4%",
+        "Wipro 3Q CC guide -1.5% to +0.5%",
+        "Industry growth sub-2% FY27/28, ~4% FY29"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Fractal Analytics 2QF27 first cut: revenue Rs9.57bn beat MS by 0.9%, EBITDA margin 16.2% vs 16.5%; MS Equal-weight, TP Rs871.",
+      "source": "Morgan Stanley - PULSE: Fractal Analytics Limited: 2QF27 First Cut: Beat on Revenues",
+      "received": "07:08",
+      "detail": {
+       "summary": "Revenue beat came from both segments, with Fractal Alpha far ahead, while margins slightly missed MS. Thesis unchanged, consensus EPS direction largely unchanged. Call on Nov 4 at 8:00 IST.",
+       "points": [
+        "Revenue +19.8% YoY, US$100.1mn vs MS US$99.6mn",
+        "Fractal Alpha +28.5% QoQ, +40% YoY",
+        "EBIT margin 10.8% vs MS 11.1%",
+        "NRR 115% vs 117% in 1Q",
+        "Net income Rs812mn vs MS Rs780mn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS expert call on BPM industry, Thu 12 Nov 6:30PM IST, with ex-Accenture VP Ramakrishnan Iyappan; relevant to Indian IT AI-deflation debate.",
+      "source": "Morgan Stanley - NEW EVENT: Morgan Stanley Invite: India Tech Services: Expert Discussion on BPM Industry | November 12, Thursday, 9PM HKT",
+      "received": "10:43",
+      "detail": {
+       "summary": "Moderated by Gaurav Rateria, the call features a 27-year technology and transformation leader who led Global Delivery and BPM at Accenture. Registration is via webcast link; replay available an hour after.",
+       "points": [
+        "12 Nov, 06:30PM IST / 09:00PM HKT",
+        "Speaker: ex-Accenture VP, BPM, AI, automation",
+        "Moderator: Gaurav Rateria, MS",
+        "Replay one hour after broadcast"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Brent flat at $104 after a $101-107 swing on conflicting US-Iran MOU headlines; JPM sees a Dem sweep mildly USD-bearish and equity dips buyable.",
+      "source": "JPM - JPM Overnight Brief! 11/3 - election day unfolded, Blue Sweep unlikely transforms AI policy",
+      "received": "06:29",
+      "detail": {
+       "summary": "Midterm-day tape was light and tech-led, with an unwind of the long-Dem/short-Rep basket. JPM argues a Dem sweep would not materially interrupt AI capex but would knee-jerk the USD lower, and treats any equity dip as a buying opportunity.",
+       "points": [
+        "Brent $104.35, range $101-107 intraday",
+        "Over 19 cycles since 1950, 3m/6m post-midterm return +7%/+13%",
+        "Dem strength historically triggers 1-2% USD decline",
+        "US 10-year yield 4.91%, VIX 20.7",
+        "Treasury expected to hold auction sizes through August 2027"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA sees India spending growth slowing to 5.9% YoY in 2HFY27 from 10.7% in 1H, GDP nearing 6%, despite strong GST.",
+      "source": "CLSA - India Economics : Expect weak spending growth in 2H",
+      "received": "08:52",
+      "detail": {
+       "summary": "GST over-achievement of about Rs1.5tn only partly offsets weaker PIT and excise receipts, leaving a Rs900bn shortfall in the centre's receipts. Holding the deficit at 4.5% of GDP forces spending to slow, adding to El-Nino, inflation and base-effect drag.",
+       "points": [
+        "Oct GST: domestic up c.10%, imports up 42%",
+        "Centre receipts shortfall about Rs900bn in FY27",
+        "Fiscal deficit assumed 4.5% of GDP vs 4.3% BE",
+        "Revex and capex growth both decelerate in 2H"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Oil fell 7% on US-Iran peace hopes, sending gold to $3,970 and silver up 3.3%; MCX zinc backwardation widened to Rs12/kg. (+4 more in Outlook)",
+      "source": "Emkay - Commodity Market Report: US-Iran peace hopes sink oil 7%, lift bullion ahead of US Midterms",
+      "received": "10:44",
+      "detail": {
+       "summary": "Bullion rallied on bargain buying as lower crude eased inflation anxiety, with midterm results set to drive volatility. Base metals closed mostly higher on tight copper and zinc, but Emkay stays cautious-to-negative as a stronger dollar and weak Asian cues cap recovery.",
+       "points": [
+        "Comex gold +1.80% to $3,969.6/oz, best in two months",
+        "Comex silver +3.30% to $50.888/oz",
+        "MCX zinc near/next backwardation about Rs12/kg vs Rs4/kg",
+        "Crude below $105/bbl; dollar index 101.8"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Power Grid cut FY27 capitalisation guidance floor to Rs250bn from Rs300bn; brokers split, Kotak REDUCE FV270 versus Elara BUY TP360.",
+      "source": "IIFL - Power Grid (PWGR, Buy; TP:Rs330/sh) result review: RoW delays push out capitalisation",
+      "received": "06:23",
+      "detail": {
+       "summary": "Adjusted PAT beat on lower other expenses, but state-level right-of-way delays push commissioning out. Capex guidance was raised even as capitalisation was cut, so earnings conversion slips while the Rs2.2trn work in hand keeps long-run visibility intact.",
+       "points": [
+        "Adj consol PAT Rs38.6bn, +11% yoy, 16% above IIFLe",
+        "FY27 capex guide Rs370-400bn vs Rs370bn",
+        "Work in hand Rs2.2trn, over four years of capex",
+        "TBCB bid pipeline Rs672bn vs c.Rs1.2trn in 1Q",
+        "TP Rs330 (from Rs340), 2.6x Sep'28E P/BV"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BEL beat BofA by 15% but the Rs300bn QRSAM order slipped; BofA UNDERPERFORM PO347 against Emkay BUY TP500, Kotak ADD FV420.",
+      "source": "BofA - BHE IN: Bharat Electronics: 2QFY27: Strong beat but positives seem more than priced in - UNDERPERFORM - India",
+      "received": "22:52",
+      "detail": {
+       "summary": "BofA argues the stock at 31x P/E already discounts the healthy execution and order pipeline. It sees margin upside capped by private-sector entry and no price escalation on the delayed QRSAM order, and flags fiscal pressure on government cash balances.",
+       "points": [
+        "Earnings +20% yoy; revenue +26%; EBITDA margin -144bps",
+        "FY27 guide kept: Rs250bn inflows ex-QRSAM, 28% margin",
+        "Order book Rs687bn; H1FY27 inflows Rs73bn",
+        "31x P/E, above +1SD",
+        "FY28-29 margins 70-110bps below consensus"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Petronet 2Q EBITDA 10% above consensus on Rs6.6bn trading gains; Kotak SELL FV265, Dahej share ~54-56%, versus Elara BUY TP400.",
+      "source": "Kotak - [Kotak] Petronet LNG (CMP: Rs303, FV: Rs265, SELL): 2Q miss; Dahej market share further declines (+6 more in Outlook)",
+      "received": "22:47",
+      "detail": {
+       "summary": "Kotak says the beat was low quality: trading and efficiency gains plus shipping savings flattered EBITDA while volumes were muted. India's LNG imports are growing far faster than Dahej's, so the terminal appears to be losing its terminal-of-choice status.",
+       "points": [
+        "EBITDA Rs16.6bn, +49% yoy, 10.8% below KIE",
+        "Trading/efficiency gains Rs6.6bn; charter savings Rs2.7bn",
+        "Dahej volume +2.4% yoy vs India LNG imports +24%",
+        "FY27 EBITDA estimate raised ~11%; SELL, DCF FV Rs265"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX +2.63% overnight; Nvidia +2.29%, AMD +3.65%, Broadcom +3.07%.",
+    "source": "Yahoo closes"
+   },
+   {
+    "text": "AMD 4Q26 revenue guide US$17bn vs CLSA US$16bn, 55% margin vs 52%; CLSA 22% above consensus on 2027, Outperform, TP US$710.",
+    "source": "CLSA - AMD (AMD US): 4Q2026 guide, a new start"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

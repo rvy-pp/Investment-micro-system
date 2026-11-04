@@ -1,0 +1,487 @@
+{
+ "date": "2026-11-04",
+ "session": true,
+ "generated_at": "2026-11-04T08:09:03",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "post": [
+   "Cummins India",
+   "NHPC",
+   "Premier Energies"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "CUMMINSIND",
+   "date": "2026-11-04",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the quarter and half year ending September 30, 2026",
+   "entity": "ext:CUMMINSIND",
+   "name": "Cummins India",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-05",
+     "time": "17:02",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-27",
+     "time": "14:21",
+     "when": "during"
+    },
+    {
+     "date": "2026-02-04",
+     "time": "20:21",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-06",
+     "time": "19:29",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 3,
+    "during": 1
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "NHPC",
+   "date": "2026-11-04",
+   "purpose": "Financial Results",
+   "desc": "To consider the unaudited Financial Results (Standalone and Consolidated) of the Company for the quarter and half year ended on 30th September, 2026.",
+   "entity": "ext:NHPC",
+   "name": "NHPC",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-04",
+     "time": "20:14",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-15",
+     "time": "21:11",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-04",
+     "time": "17:11",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-06",
+     "time": "16:36",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "PREMIERENE",
+   "date": "2026-11-04",
+   "purpose": "Financial Results/Dividend",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+   "entity": "ext:PREMIERENE",
+   "name": "Premier Energies",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-06",
+     "time": "17:20",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-15",
+     "time": "16:55",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-22",
+     "time": "19:36",
+     "when": "post"
+    },
+    {
+     "date": "2025-10-28",
+     "time": "19:41",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-05",
+  "groups": {
+   "post": [
+    "Astral",
+    "Mphasis",
+    "Oil & Natural Gas Corporation"
+   ],
+   "during": [
+    "Bharat Forge",
+    "NBCC (India)",
+    "Samvardhana Motherson International",
+    "Tube Investments of India",
+    "UNO Minda"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "ASTRAL",
+    "date": "2026-11-05",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the Unaudited Financial Results for the period ended September 30, 2026 and dividend, if any",
+    "entity": "ext:ASTRAL",
+    "name": "Astral",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-12",
+      "time": "16:04",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-18",
+      "time": "16:17",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-05",
+      "time": "16:07",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 3
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "BHARATFORG",
+    "date": "2026-11-05",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "ext:BHARATFORG",
+    "name": "Bharat Forge",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-10",
+      "time": "13:58",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-07",
+      "time": "12:57",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-12",
+      "time": "13:22",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-11",
+      "time": "12:36",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "MPHASIS",
+    "date": "2026-11-05",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "mphasis",
+    "name": "Mphasis",
+    "sector": "it",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-23",
+      "time": "23:47",
+      "when": "post"
+     },
+     {
+      "date": "2026-04-29",
+      "time": "23:38",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-22",
+      "time": "15:50",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-30",
+      "time": "00:01",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "NBCC",
+    "date": "2026-11-05",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+    "entity": "ext:NBCC",
+    "name": "NBCC (India)",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-11",
+      "time": "15:15",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-25",
+      "time": "13:35",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-13",
+      "time": "15:50",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-13",
+      "time": "14:18",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 3,
+     "post": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "ONGC",
+    "date": "2026-11-05",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+    "entity": "ext:ONGC",
+    "name": "Oil & Natural Gas Corporation",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-04",
+      "time": "20:03",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-26",
+      "time": "20:58",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-12",
+      "time": "21:27",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-10",
+      "time": "22:18",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "MOTHERSON",
+    "date": "2026-11-05",
+    "purpose": "Financial Results",
+    "desc": "Samvardhana Motherson International Limited has informed the Stock Exchange regarding intimation of Board meeting scheduled to be held on 5th November 2026, inter-alia, to consider and approve the unaudited standalone and consolidated financial results of the Company for the second quarter and half year ended September 30, 2026.",
+    "entity": "ext:MOTHERSON",
+    "name": "Samvardhana Motherson International",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-06",
+      "time": "11:41",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-20",
+      "time": "14:29",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-10",
+      "time": "13:56",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-13",
+      "time": "14:56",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "TIINDIA",
+    "date": "2026-11-05",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "ext:TIINDIA",
+    "name": "Tube Investments of India",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-14",
+      "time": "14:21",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-13",
+      "time": "14:15",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-04",
+      "time": "13:59",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 3
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "UNOMINDA",
+    "date": "2026-11-05",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026.",
+    "entity": "ext:UNOMINDA",
+    "name": "UNO Minda",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-04",
+      "time": "11:14",
+      "when": "during"
+     },
+     {
+      "date": "2026-02-05",
+      "time": "12:27",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-07",
+      "time": "13:27",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 3
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-05",
+   "name": "Astral",
+   "symbol": "ASTRAL"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Bharat Forge",
+   "symbol": "BHARATFORG"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Mphasis",
+   "symbol": "MPHASIS"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "NBCC (India)",
+   "symbol": "NBCC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Oil & Natural Gas Corporation",
+   "symbol": "ONGC"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Samvardhana Motherson International",
+   "symbol": "MOTHERSON"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Tube Investments of India",
+   "symbol": "TIINDIA"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "UNO Minda",
+   "symbol": "UNOMINDA"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Hindalco Industries",
+   "symbol": "HINDALCO"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Siemens",
+   "symbol": "SIEMENS"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Voltas",
+   "symbol": "VOLTAS"
+  },
+  {
+   "date": "2026-11-07",
+   "name": "Tata Steel",
+   "symbol": "TATASTEEL"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Tata Power Company",
+   "symbol": "TATAPOWER"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}
