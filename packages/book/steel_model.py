@@ -327,6 +327,12 @@ class Sheet:
         return r
 
 
+def cnote(cfg: dict, key: str, default: str) -> str:
+    """A company-specific comment: the config's `notes` entry, else the default (JSW's text,
+    so a JSW rebuild reads as it always has)."""
+    return cfg.get("notes", {}).get(key, default)
+
+
 def col(i: int) -> str:
     return get_column_letter(FIRST_COL + i)
 
@@ -454,6 +460,7 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
             ("hrc_pass_through", "NSR pass-through of the HRC move", "fx", True),
             ("hrc_lag_q", "HRC lag", None, True),
             ("cc_intensity", "Coking coal per tonne of steel", "fx", False),
+            ("cc_market_pct", "Coking coal bought at seaborne prices", "pct", False),
             ("cc_lag_q", "Coking coal lag", None, True),
             ("io_intensity", "Iron ore per tonne of steel", "fx", False),
             ("io_market_pct", "Iron ore bought at market", "pct", False),
@@ -463,8 +470,15 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
             ("util", "Utilisation (default for forecast quarters)", "pct", True),
             ("sales_to_prod", "Sales / production (default)", "fx", True),
             ("ramp_step", "New capacity ramp per quarter", "pct", False)):
-        const(key.replace("_q", "").title().replace("_", ""), label, S[key], fmt, yellow=y)
-    # the names above: HrcPassThrough, HrcLag, CcIntensity, CcLag, IoIntensity,
+        # cc_market_pct (2026-11-04, Tata Steel): the share of coking coal bought at
+        # the seaborne benchmark. JSW imports all of it (1.0, the default, so a JSW
+        # config without the key builds exactly as before); Tata imports ~78% and
+        # the captive West Bokaro / Jharia balance is cost-based, so a seaborne move
+        # reaches 0.70 x 0.78 of a tonne, not 0.70.
+        entry = S.get(key) if key != "cc_market_pct" else S.get(key, {
+            "value": 1.0, "unit": "%", "source": "default: all coking coal imported at the seaborne benchmark"})
+        const(key.replace("_q", "").title().replace("_", ""), label, entry, fmt, yellow=y)
+    # the names above: HrcPassThrough, HrcLag, CcIntensity, CcMarketPct, CcLag, IoIntensity,
     # IoMarketPct, IoPassThrough, IoLag, OtherCostDrift, Util, SalesToProd, RampStep
 
     inp.section("Capex plan (Rs crore per fiscal year)")
@@ -486,8 +500,12 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     fxh = cfg.get("fx_history", {})
     deck = [("hrc", "HRC India", "Rs/t", "t"), ("cc", "Coking coal, Australia FOB", "USD/t", "mn"),
             ("io", "Iron ore 62% CFR China", "USD/t", "mn"), ("usdinr", "USDINR", "INR/USD", "fx")]
-    if "eurinr" in fxh:
-        deck.append(("eurinr", "EURINR", "INR/EUR", "fx"))
+    # every overseas currency the segments price in (EUR for JSW's Italy; EUR and
+    # GBP for Tata's Netherlands and UK), from the config's fx_history
+    for key in fxh:
+        if key != "usdinr":
+            ccy = key[:3].upper()
+            deck.append((key, f"{ccy}INR", f"INR/{ccy}", "fx"))
     for key, label, unit, fmt in deck:
         if key in hist:
             h, spot, note = hist[key]["q"], hist[key]["fwd"], fwd_note(hist[key])
@@ -496,11 +514,22 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
             spot, note = fxh[key]["spot"], f"Spot {cfg['built']} ({fxh[key]['source']})"
         r_act = inp.row(f"{label}: actual quarterly average", unit, {q: h.get(q) for q in qs if q in act}, fmt=fmt)
         r_ovr = inp.row(f"{label}: override (your view)", unit, lambda i, q, r: None, fmt=fmt)
+        asof = hist[key]["spot_date"] if key in hist else fxh[key].get("spot_date", cfg["built"])
         for i, q in enumerate(qs):
             if q not in act:
                 ws.cell(r_ovr, FIRST_COL + i).fill = YELLOW
                 ws.cell(r_ovr, FIRST_COL + i).number_format = FMT[fmt]
                 ws.cell(r_ovr, FIRST_COL + i).font = Font(name=FONT, color=BLUE)
+                # A quarter that has ENDED but not been reported (Tata on 4-Nov:
+                # Q2FY27 prints 7-Nov) has a known average. Holding the running
+                # quarter's average there instead would price Q2 off Q3's tape.
+                # Prefilled as an override, so flipping the status to A later
+                # swaps in the typed actual and nothing else changes.
+                if q in h and quarter_dates(q)[1] < asof:
+                    ws.cell(r_ovr, FIRST_COL + i).value = h[q]
+                    ws.cell(r_ovr, FIRST_COL + i).comment = Comment(
+                        f"{q} has ended and is unreported: its own average, prefilled at build. "
+                        "Clear it to fall back to the forward basis.", "steel_model")
         ws.cell(r_act, 3, spot).font = Font(name=FONT, color=BLUE)
         ws.cell(r_act, 3).number_format = FMT[fmt]
         ws.cell(r_act, 3).comment = Comment(note, "steel_model")
@@ -538,6 +567,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
             ws.cell(r_nm_ovr, FIRST_COL + i).fill = YELLOW
             ws.cell(r_nm_ovr, FIRST_COL + i).number_format = FMT["t"]
             ws.cell(r_nm_ovr, FIRST_COL + i).font = Font(name=FONT, color=BLUE)
+            if q in hn["q"] and quarter_dates(q)[1] < cfg["built"]:     # a step series: its last circular date is not "today"
+                ws.cell(r_nm_ovr, FIRST_COL + i).value = hn["q"][q]       # ended, unreported (see the deck)
     ws.cell(r_nm_act, 3, hn["spot"]).font = Font(name=FONT, color=BLUE)
     ws.cell(r_nm_act, 3).number_format = FMT["t"]
     ws.cell(r_nm_act, 3).comment = Comment(f"Latest NMDC circular {hn['spot_date']} (prices table, nmdc_fines_inr)", "steel_model")
@@ -580,8 +611,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                      lambda i, q, r: (f"=IFERROR(Segments!{col(i)}{{PROD_ACT}}*4/{col(i)}{r_capeff},0)"
                                       if q in act else "=Util"),
                      fmt="pct", fill=lambda i, q: q not in act,
-                     comment="Actual quarters: India production x4 / capacity (memo; FY25 capacity was "
-                             "lower and BF-3 was down Jul-Nov 2025). Forecast: type over the yellow cells.")
+                     comment=cnote(cfg, "util", "Actual quarters: India production x4 / capacity (memo; FY25 capacity was "
+                             "lower and BF-3 was down Jul-Nov 2025). Forecast: type over the yellow cells."))
     r_prod = cap.row("Production (model)", "mt", lambda i, q, r: f"={col(i)}{r_capeff}/4*{col(i)}{r_util}",
                      fmt="mt", kind="local")
     r_ratio = cap.row("Sales / production", "x",
@@ -632,11 +663,11 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     r_cost_used = r_cost + 3                      # declared below; rows are fixed
     seg.row("Cost per tonne (model)", "Rs/t",
             lambda i, q, r: (f"=IF({A(i)},({col(i)}{rR}-{col(i)}{rE})/{col(i)}{rS}*10,"
-                             + (f"{prev(i, r_cost_used)}+CcIntensity*(Inputs!{col(i)}{r_cc_eff}-Inputs!{prev(i, r_cc_eff)})"
+                             + (f"{prev(i, r_cost_used)}+CcIntensity*CcMarketPct*(Inputs!{col(i)}{r_cc_eff}-Inputs!{prev(i, r_cc_eff)})"
                                 f"+IoIntensity*IoMarketPct*IoPassThrough*(Inputs!{col(i)}{r_nm_eff}-Inputs!{prev(i, r_nm_eff)})"
                                 f"+OtherCostDrift)" if i else "0)")),
             fmt="t",
-            comment="Forecast = last quarter's cost (as used) + coal intensity x change in lagged coal (Rs/t) "
+            comment="Forecast = last quarter's cost (as used) + coal intensity x share bought at market x change in lagged coal (Rs/t) "
                     "+ ore intensity x market share x pass-through x change in lagged NMDC fines (Rs/t) + drift. "
                     "Intensities and shares are specs/entities/steel.yaml's.")
     r_ept_model = seg.row("EBITDA per tonne (model)", "Rs/t", lambda i, q, r: f"={col(i)}{r_nsr}-{col(i)}{r_cost}", fmt="t", kind="local")
@@ -701,9 +732,10 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                          lambda i, q, r: "=" + "+".join(f"{col(i)}{x}" for x in parts_r + [r_plug_r]), bold=True, kind="local")
     r_cons_e = seg.row("Consolidated adjusted EBITDA", "Rs cr",
                        lambda i, q, r: "=" + "+".join(f"{col(i)}{x}" for x in parts_e + [r_plug_e]), bold=True, kind="local")
-    us = next((s for s in cfg["fx_segments"] if "_sales_row" in s), None)
+    # every overseas segment that reports tonnes (JSW: the US only; Tata: NL and UK)
+    os_sales = [s["_sales_row"] for s in cfg["fx_segments"] if "_sales_row" in s]
     r_cons_sales = seg.row("Consolidated sales (India + overseas steel)", "mt",
-                           lambda i, q, r: f"={col(i)}{r_sales_u}" + (f"+{col(i)}{us['_sales_row']}" if us else ""),
+                           lambda i, q, r: f"={col(i)}{r_sales_u}" + "".join(f"+{col(i)}{x}" for x in os_sales),
                            fmt="mt", kind="local")
     seg.row("India share of EBITDA", "%", lambda i, q, r: f"=IFERROR({col(i)}{r_iebitda}/{col(i)}{r_cons_e},0)", fmt="pct", kind="local")
     r_street = seg.row("Street consensus EBITDA (type in)", "Rs cr", lambda i, q, r: None)
@@ -748,8 +780,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                   comment="Forecast D&A scales with effective India capacity, so a project adds depreciation "
                           "in the quarter it starts producing (capex -> commissioning -> D&A).")
     r_jv = pl.row("Share of JV profit", "Rs cr", lambda i, q, r: rolled(i, pa["jv_share"], r, 2),
-                  comment="Forecast = trailing two quarters: FY26 proforma lines carry BPSL's pre-JV profit, "
-                          "so a longer window would read the wrong business.")
+                  comment=cnote(cfg, "jv_share", "Forecast = trailing two quarters: FY26 proforma lines carry BPSL's pre-JV profit, "
+                          "so a longer window would read the wrong business."))
     r_exc = pl.row("Exceptional items", "Rs cr", lambda i, q, r: f"=IF({A(i)},{col(i)}{pa['exceptional']},0)")
     r_pbt = pl.row("Profit before tax", "Rs cr",
                    lambda i, q, r: f"={col(i)}{r_rep}+{col(i)}{r_oi}-{col(i)}{r_fin}-{col(i)}{r_da}+{col(i)}{r_jv}+{col(i)}{r_exc}",
@@ -776,8 +808,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                             f"{cfg['opening_net_debt']['as_of']} ({cfg['opening_net_debt']['source']}).")
     r_cash_a = cf.row("Cash and equivalents, reported", "Rs cr", {q: B["cash_cr"].get(q) for q in qs})
     r_capex_a = cf.row("Capex, reported", "Rs cr", {q: B["capex_cr"].get(q) for q in qs},
-                       comment="Blank where the decks give no quarterly figure (FY25 was 14,656; 9M FY26 was "
-                               "10,018); the residual below then absorbs it.")
+                       comment=cnote(cfg, "capex_actual", "Blank where the decks give no quarterly figure (FY25 was 14,656; 9M FY26 was "
+                               "10,018); the residual below then absorbs it."))
     r_wc_in = cf.row("Other cash flows: your view (beyond dividends and working capital)", "Rs cr",
                      lambda i, q, r: None,
                      fill=lambda i, q: q not in act)
@@ -809,15 +841,15 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                    lambda i, q, r: (f'=IF({A(i)},0,IF(LEFT({col(i)}$4,2)="Q2",-Payout*SUMIFS('
                                     f"'P&L'!$D${r_pat}:${last}${r_pat},FYrow,"
                                     f'"FY"&TEXT(VALUE(RIGHT({col(i)}$5,2))-1,"00")),0))'),
-                   comment="Forecast = Payout x the previous fiscal year's PAT, paid in Q2 (JSW declares its final "
+                   comment=cnote(cfg, "dividend", "Forecast = Payout x the previous fiscal year's PAT, paid in Q2 (JSW declares its final "
                            "dividend with Q4 results and pays after the July AGM). Actual quarters: inside the "
-                           "residual below.")
+                           "residual below."))
     r_wc = cf.row("Working capital, dividends and other", "Rs cr",
                   lambda i, q, r: f"=IF({A(i)},{prev(i, r_nd_a) if i else 'Open_ND'}-{col(i)}{r_nd_a}-{col(i)}{r_fcf},"
                                   f"{col(i)}{r_wcm}+{col(i)}{r_div}+N({col(i)}{r_wc_in}))",
-                  comment="Actual: whatever reconciles reported net debt (it holds the BPSL slump sale in Q4FY26, "
+                  comment=cnote(cfg, "residual", "Actual: whatever reconciles reported net debt (it holds the BPSL slump sale in Q4FY26, "
                           "JFE's second tranche in Q1FY27, dividends and undisclosed capex). Forecast: working "
-                          "capital + dividends + the yellow row, negative for an outflow.")
+                          "capital + dividends + the yellow row, negative for an outflow."))
     cf.section("Net debt")
     r_nd = cf.row("Net debt (end of quarter)", "Rs cr",
                   lambda i, q, r: f"=IF({A(i)},{col(i)}{r_nd_a},"
@@ -922,8 +954,8 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         ("Market cap at CMP (Rs cr)", "=CMP*Shares_mn/10", "cr", "f", ""),
         ("Net debt, latest actual (Rs cr)", f'=INDEX({nd_row},COUNTIF(Status,"A"))', "cr", "f", ""),
         ("Core EV today: market cap + net debt - JV stake (Rs cr)", "=B10+B11-JV_stake", "cr", "f",
-         "The JV is outside EBITDA, so it comes out of EV too; otherwise today's multiple carries it and the "
-         "target adds it again (about Rs64/share of upside from nothing)."),
+         cnote(cfg, "jv_ev", "The JV is outside EBITDA, so it comes out of EV too; otherwise today's multiple carries it and the "
+         "target adds it again (about Rs64/share of upside from nothing).")),
         ("EV / EBITDA today, on the valuation year", "=B12/B7", "x", "f", ""),
         ("P/E today, on the valuation year", "=CMP/B9", "x", "f", ""),
         ("Target EV/EBITDA multiple", "=B13", "x", "key",
@@ -947,11 +979,11 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         ("Target core EV (Rs cr)", "=B18*B7", "cr", "f", ""),
         ("Less: net debt at the date above (Rs cr)", f"=-INDEX({nd_row},MATCH(B5,Qrow,0))", "cr", "f", ""),
         ("Plus: JV stake (Rs cr)", "=JV_stake", "cr", "f",
-         "JFE's price for 50% of JSW JFE Steel. Added once: the JV sits below EBITDA and is out of the core "
-         "multiple above."),
+         cnote(cfg, "jv_stake", "JFE's price for 50% of JSW JFE Steel. Added once: the JV sits below EBITDA and is out of the core "
+         "multiple above.")),
         ("Plus: CWIP for capacity not yet earning (Rs cr)", 0, "cr", "key",
-         "Capex already spent on projects that produce after the valuation year (Utkal, JVML Phase-II). Zero by "
-         "default: the decks give no per-project spend to date."),
+         cnote(cfg, "cwip", "Capex already spent on projects that produce after the valuation year (Utkal, JVML Phase-II). Zero by "
+         "default: the decks give no per-project spend to date.")),
         ("Equity value (Rs cr)", "=SUM(B19:B22)", "cr", "f", ""),
         ("Expected price (Rs)", "=B23*10/Shares_mn", "rs", "f", ""),
         ("Upside vs CMP", "=B24/CMP-1", "pct", "f", ""),
@@ -1068,6 +1100,8 @@ def readme_lines(cfg, qs, n_act, hist):
          "the config if the horizon is getting short (that is a rebuild, so carry your yellow cells across).", ""),
         ("", ""),
         ("What the history is", "h"),
+    ]
+    L += [(t, "") for t in cfg.get("readme_history") or [t for t, _ in [
         ("BPSL's steel business was deconsolidated on 27-Mar-2026 into JSW JFE Steel (50:50 with JFE). FY26 quarters "
          "use the company's own proforma ex-BPSL figures. Q3FY26 proforma is derived (FY26 PF less the other three "
          "quarters); its EBITDA agrees with reported-less-BPSL to Rs2cr. Q3FY25 and Q4FY25 are reported figures: the "
@@ -1076,19 +1110,22 @@ def readme_lines(cfg, qs, n_act, hist):
          "quarters include BPSL.", ""),
         ("The JV is equity-accounted (share of profit below EBITDA) and valued as a stake at JFE's purchase price; "
          "it is never inside EBITDA.", ""),
+    ]]]
+    L += [
+
         ("", ""),
         ("Forecast mechanics", "h"),
-        ("NSR/t moves with HRC (pass-through and lag on Inputs). Over the seven quarterly changes in the "
+        (cnote(cfg, "readme_mechanics", "NSR/t moves with HRC (pass-through and lag on Inputs). Over the seven quarterly changes in the "
          "history, NSR moved 0.95 rupees per rupee of HRC in the same quarter, so 1.0 with no lag is the default; "
          "a one-quarter lag fitted worse. Cost/t moves with coking coal and iron ore in "
          "rupees, lagged a quarter, at specs/entities/steel.yaml's intensities (coal 0.70 t/t; ore 1.70 t/t x 70% "
          "bought at market x 1.0 pass-through of NMDC's notified fines price, time-weighted per quarter; PM 2026-11-03. "
-         "Seaborne 62% stays on Inputs as a cross-check only: it fell 2% in Q1FY27 while NMDC rose 18%).", ""),
+         "Seaborne 62% stays on Inputs as a cross-check only: it fell 2% in Q1FY27 while NMDC rose 18%)."), ""),
         (README_DECK + " Overseas segments, the plugs and other income roll the trailing four quarters; the JV share rolls "
          "the trailing two.", ""),
-        ("Volume = capacity x utilisation x sales/production. Dolvi Phase-III (+5mtpa) commissions by Sep'27 and "
+        (cnote(cfg, "readme_volume", "Volume = capacity x utilisation x sales/production. Dolvi Phase-III (+5mtpa) commissions by Sep'27 and "
          "ramps from Q3FY28; Kadapa (+1mtpa) in FY29. D&A scales with capacity; finance cost is a rate on "
-         "opening gross debt (no circularity). Capex follows the fiscal-year plan on Inputs.", ""),
+         "opening gross debt (no circularity). Capex follows the fiscal-year plan on Inputs."), ""),
         ("Your two numbers for the visible quarter go in the yellow 'PM view' rows on Segments. The following "
          "quarter rolls from your cost, so a view carries forward; later quarters stay mechanical.", ""),
         ("", ""),
@@ -1099,7 +1136,7 @@ def readme_lines(cfg, qs, n_act, hist):
             L.append((f"{sid}: {sp[k]['fwd']:,} {unit}. {fwd_note(sp[k])}", ""))
     L += [("", ""),
           ("Not used", "h"),
-          ("No broker model's numbers are in this file. Every actual is from JSW's results decks (Sources sheet).", "")]
+          (cnote(cfg, "readme_not_used", "No broker model's numbers are in this file. Every actual is from JSW's results decks (Sources sheet)."), "")]
     return L
 
 
@@ -1215,6 +1252,29 @@ def selftest() -> int:
     cfgp = REPO / "data/analysis/cases/jsw_steel/model_config.json"
     if cfgp.exists():
         chk("JSW config cross-foots", crossfoot(json.loads(cfgp.read_text(encoding="utf-8"))), [])
+    # An ENDED but unreported quarter takes its own average as a prefilled
+    # override (Tata on 4-Nov: Q2FY27 prints 7-Nov); the running quarter does
+    # not (acceptance and rejection). Q2's override cell must carry Q2's HRC
+    # average, and Q3's must stay empty so it reads the forward basis.
+    cfgt = REPO / "data/analysis/cases/tata_steel/model_config.json"
+    if cfgt.exists():
+        from openpyxl import load_workbook
+        ct = json.loads(cfgt.read_text(encoding="utf-8"))
+        chk("Tata config cross-foots", crossfoot(ct), [])
+        qt = quarters(ct["first_quarter"], ct["last_quarter"])
+        ht = commodity_history(qt)                     # the other deck series from the store; HRC is the fixture
+        ht["hrc"] = {"q": {"Q2FY27": 59800.0, "Q3FY27": 63984.0}, "spot": 63600.0, "spot_date": "2026-11-04",
+                     "fwd": 63984.0, "fwd_q": "Q3FY27", "fwd_days": 24}
+        with tempfile.TemporaryDirectory() as td:
+            out = pathlib.Path(td) / "t.xlsx"
+            build(ct, out, ht)
+            wi = load_workbook(out)["Inputs"]
+            r = next(r for r in range(1, wi.max_row + 1) if wi.cell(r, 1).value == "HRC India: override (your view)")
+            c2, c3 = FIRST_COL + qt.index("Q2FY27"), FIRST_COL + qt.index("Q3FY27")
+            chk("an ended, unreported quarter holds its own average", wi.cell(r, c2).value, 59800.0)
+            chk("the running quarter is left to the forward basis", wi.cell(r, c3).value, None)
+            r = next(r for r in range(1, wi.max_row + 1) if wi.cell(r, 1).value == "GBPINR: override (your view)")
+            chk("a second overseas currency gets its own deck rows", wi.cell(r, c2).value, ct["fx_history"]["gbpinr"]["Q2FY27"])
     print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
     return 1 if fails else 0
 

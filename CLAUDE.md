@@ -1367,6 +1367,26 @@ PM's yellow cells**; `--out` refuses an existing file without `--force`.
   0.39x, so 9.85x -> 9.46x core) before the JV is added back once. Adding it
   on top of 9.85x had overstated the target by Rs76.
 
+**Tata Steel is the second model (2026-11-04), and it generalised the builder.**
+JSW's text and structure were config-driven where they had been hardcoded, and
+a JSW rebuild is cell-for-cell identical (checked after recalc). The changes:
+- **`cc_market_pct`** (default 1.0): Tata buys ~78% of its coking coal at
+  seaborne prices, and the captive West Bokaro and Jharia supply is cost-based.
+- **Any number of overseas currencies** from `fx_history` (the Netherlands in
+  EUR, the UK in GBP), and consolidated sales sums every overseas segment.
+- **Company-specific comments and README text** come from the config's
+  `notes` / `readme_history`.
+- **A quarter that has ended but not printed** (Tata's Q2FY27 on 4-Nov) holds
+  its own commodity averages as prefilled overrides, not the running
+  quarter's. Selftest covers acceptance and rejection.
+
+Two Tata facts to keep in mind:
+- **Headline vs filed EBITDA.** Tata's headline EBITDA runs Rs50–210cr a
+  quarter above the EBITDA rebuilt from the filed P&L, in all eight quarters,
+  unexplained. P&L uses the rebuilt figure so PBT and PAT foot.
+- **Q2/Q3FY25 Netherlands figures were printed in GBP.** They are converted
+  at the quarter's average cross, flagged.
+
 **The model lives on the Analysis card (same day).** PM: *"the live excel on
 the analysis tab beside each company. I want to open and view it at whim, ask
 you here to edit it and it updates there."* `packages/book/model_view.py`
