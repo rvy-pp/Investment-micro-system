@@ -108,6 +108,9 @@ FMT = {
     "x2": '0.00"x"',
     "fx": "0.00",
     "rs": '#,##0.00;(#,##0.00);"-"',
+    "date": "dd-mmm-yyyy",
+    "m": "0.0",
+    "w": '0.000;(0.000);"-"',
 }
 
 FIRST_COL = 4                       # quarters start in column D
@@ -349,6 +352,148 @@ def prev(i, row, sheet=None):
 
 def trailing(i, row, n=4):
     return f"=AVERAGE({col(i - n)}{row}:{col(i - 1)}{row})"
+
+
+# --------------------------------------------------------------------------
+# the rolling 12-month-forward block (PM, 2026-11-05: "Make a second block")
+# --------------------------------------------------------------------------
+# The block above values at a FIXED fiscal year-end (B4 valuation year, B5 the
+# net-debt quarter one year earlier), so its horizon shrinks every month and
+# jumps a year when B4/B5 are retyped. This one always values 12 months after
+# the price date: EBITDA = each quarter's adjusted EBITDA x the share of its
+# DAYS inside [valuation date, +12 months), net debt interpolated straight-line
+# between the quarter-ends either side of the valuation date. Every quarter's
+# cash is in exactly one place: before the date it has moved net debt, after
+# it it is EBITDA - the rule the fixed block keeps by pairing FY28 with
+# Q4FY27. The fixed block is untouched and stays the one model_view reads.
+ROLL_TITLE = "Rolling 12-month-forward target: the date moves with the price date"
+ROLL_TP = "Expected price, rolling 12 months forward (Rs)"
+# Rows of the fixed block this block links to. add_rolling() checks the labels
+# before writing into a live workbook, so a moved row refuses rather than
+# linking to the wrong number.
+ROLL_LINKS = {"A5": "Net debt as of (quarter)", "A12": "Core EV today: market cap + net debt - JV stake (Rs cr)",
+              "A18": "Core multiple, ex JV (x)", "A22": "Plus: CWIP for capacity not yet earning (Rs cr)"}
+HELP_COL = 7                       # the quarter table sits in G..N beside the block
+
+
+def rolling_cells(top: int, n: int, adj: str, nd: str, div: str) -> list[dict]:
+    """Every cell of the block, as {cell, value, fmt, color, bold, italic, size,
+    fill, wrap}. One list for both writers: the builder (openpyxl) and
+    add_rolling() (Excel over COM into a live workbook). `adj`, `nd`, `div`
+    are the one-row ranges of adjusted EBITDA (P&L), net debt and dividends
+    paid (Cash flow); `n` is the number of quarters in them."""
+    cells = []
+    h0, h1 = top + 2, top + 1 + n                       # quarter table rows
+    G, H, I, J, K, L, M, N = (get_column_letter(HELP_COL + k) for k in range(8))
+    Ir, Kr, Gr = f"${I}${h0}:${I}${h1}", f"${K}${h0}:${K}${h1}", f"${G}${h0}:${G}${h1}"
+
+    def put(ref, value, fmt=None, color=None, inp=False, **kw):
+        if color is None:
+            if isinstance(value, str) and value.startswith("="):
+                color = GREEN if re.search(r"!|Qrow|CMP|Shares_mn|JV_stake", value) else BLACK
+            elif inp:
+                color = BLUE
+        cells.append({"cell": ref, "value": value, "fmt": fmt, "color": color, **kw})
+
+    put(f"A{top}", ROLL_TITLE, bold=True)
+    rows = [   # key, label, formula (B), fmt, yellow input?, note (E)
+        ("p", "Price date", "=IF(ISNUMBER(CMP_date),CMP_date,DATE(VALUE(LEFT(CMP_date,4)),"
+         "VALUE(MID(CMP_date,6,2)),VALUE(MID(CMP_date,9,2))))", "date", False,
+         "CMP_date on Inputs, which the orchestrator's day-end run rewrites with each close."),
+        ("ov", "Valuation date override (blank = 12 months after the price date)", None, "date", True,
+         "Type a date to value at a fixed point instead (e.g. 31-Mar-2028). Blank rolls with the price date."),
+        ("d", "Valuation date used", "=IF(ISNUMBER({ov}),{ov},EDATE({p},12))", "date", False,
+         "Moves with every price update, so the target never ages and never jumps a year when the fixed "
+         "block's valuation year is retyped."),
+        ("hz", "Horizon from the price date (months)", "=ROUND(({d}-{p})/365.25*12,1)", "m", False, ""),
+        ("we", "EBITDA window: 12 months from the valuation date, ending", "=EDATE({d},12)-1", "date", False, ""),
+        ("cov", "Months of that window inside the model",
+         "=ROUND((MIN({we}+1,MAX(" + Ir + ")+1)-{d})/({we}+1-{d})*12,1)", "m", False,
+         "Must read 12. Less means the window runs past the model's last quarter: extend last_quarter in "
+         "the config (a rebuild, so carry your yellow cells across)."),
+        ("e", "Adjusted EBITDA in that window (Rs cr)",
+         f"=SUMPRODUCT(${J}${h0}:${J}${h1},${N}${h0}:${N}${h1})", "cr", False,
+         f"Each quarter's adjusted EBITDA x the share of its days inside the window (column {N}). "
+         "The two quarters the window cuts through are split by days."),
+        ("nd", "Net debt at the valuation date (Rs cr)",
+         "=IF(INDEX(IR,MATCH({d},IR,1))={d},INDEX(KR,MATCH({d},IR,1)),"
+         "INDEX(KR,MATCH({d},IR,1))+(INDEX(KR,MATCH({d},IR,1)+1)-INDEX(KR,MATCH({d},IR,1)))"
+         "*({d}-INDEX(IR,MATCH({d},IR,1)))/(INDEX(IR,MATCH({d},IR,1)+1)-INDEX(IR,MATCH({d},IR,1))))",
+         "cr", False, "Straight line between the quarter-end net debt either side of the date. Each quarter's "
+         "cash sits in one place only: before the date it has already moved net debt, after it it is the "
+         "EBITDA above."),
+        ("ntm", "Adjusted EBITDA, 12 months from the price date (Rs cr)",
+         f"=SUMPRODUCT(${J}${h0}:${J}${h1},${M}${h0}:${M}${h1})", "cr", False, f"Weights in column {M}."),
+        ("mt", "Core EV / EBITDA today, on the next 12 months", "=B12/{ntm}", "x2", False,
+         "Today's core EV (the block above) on the same rolling basis, to set beside the target multiple."),
+        ("m", "Target core multiple, ex JV (x)", "=B18", "x2", True,
+         "Linked to the core multiple above. A house multiple is a 12-month-forward multiple at the house's "
+         "own target date, struck on one fiscal year's consensus; applied here it assumes that forward "
+         "multiple still holds at the later date. Type over the link to re-strike it on this window."),
+        ("ev", "Target core EV (Rs cr)", "={m}*{e}", "cr", False, ""),
+        ("lnd", "Less: net debt at the valuation date (Rs cr)", "=-{nd}", "cr", False, ""),
+        ("jv", "Plus: JV stake (Rs cr)", "=JV_stake", "cr", False, ""),
+        ("cw", "Plus: CWIP (Rs cr)", "=B22", "cr", False, "Linked to the CWIP line above."),
+        ("eq", "Equity value (Rs cr)", "=SUM({ev}:{cw})", "cr", False, ""),
+        ("tp", ROLL_TP, "={eq}*10/Shares_mn", "rs", False, ""),
+        ("up", "Upside vs CMP, rolling", "={tp}/CMP-1", "pct", False, ""),
+        ("dv", "Dividends paid before the valuation date (Rs/share)",
+         "=-SUMPRODUCT(" + f"${L}${h0}:${L}${h1}" + ",--(IR>{p}),--(IR<={d}))*10/Shares_mn", "rs", False,
+         "Forecast dividends in quarters ending after the price date and on or before the valuation date. "
+         "The price above is ex those dividends; the holder has them."),
+        ("tr", "Total return to the valuation date, incl. those dividends", "=({tp}+{dv})/CMP-1", "pct", False, ""),
+        ("fd", "For comparison, the fixed block's price is for", "=INDEX(IR,MATCH(B5,GR,0))", "date", False,
+         "The end of the quarter in 'Net debt as of' above."),
+        ("fh", "Fixed block's horizon from the price date (months)", "=ROUND(({fd}-{p})/365.25*12,1)", "m",
+         False, ""),
+    ]
+    at = {k: f"B{top + 1 + i}" for i, (k, *_) in enumerate(rows)}
+    for i, (k, lab, f, fmt, inp, note) in enumerate(rows):
+        r = top + 1 + i
+        bold = k in ("tp", "up")
+        put(f"A{r}", lab, bold=bold)
+        v = None
+        if f:
+            v = f
+            for key, ref in at.items():
+                v = v.replace("{" + key + "}", ref)
+            v = v.replace("IR", Ir).replace("KR", Kr).replace("GR", Gr)
+        put(f"B{r}", v, fmt, bold=bold, fill="FFFF00" if inp else None, inp=inp)
+        if note:
+            put(f"E{r}", note, italic=True, size=8, color="595959")
+    # the quarter table, one row per quarter of the model
+    put(f"{G}{top}", "Quarters behind the rolling block", bold=True)
+    for k, h in enumerate(("Quarter", "Starts", "Ends", "Adj EBITDA", "Net debt at end", "Dividends paid",
+                           "Weight: 12m from price date", "Weight: 12m from valuation date")):
+        put(f"{get_column_letter(HELP_COL + k)}{top + 1}", h, bold=True, size=8, wrap=True)
+    for k in range(1, n + 1):
+        r = h0 + k - 1
+        q = f"{G}{r}"
+        put(q, f"=INDEX(Qrow,{k})")
+        put(f"{H}{r}", f"=DATE(1999+VALUE(RIGHT({q},2)),3*VALUE(MID({q},2,1))+1,1)", "date")
+        put(f"{I}{r}", f"=DATE(1999+VALUE(RIGHT({q},2)),3*VALUE(MID({q},2,1))+4,1)-1", "date")
+        put(f"{J}{r}", f"=INDEX({adj},{k})", "cr")
+        put(f"{K}{r}", f"=INDEX({nd},{k})", "cr")
+        put(f"{L}{r}", f"=INDEX({div},{k})", "cr")
+        put(f"{M}{r}", f"=MAX(0,MIN({I}{r}+1,EDATE({at['p']},12))-MAX({H}{r},{at['p']}))/({I}{r}+1-{H}{r})", "w")
+        put(f"{N}{r}", f"=MAX(0,MIN({I}{r}+1,{at['we']}+1)-MAX({H}{r},{at['d']}))/({I}{r}+1-{H}{r})", "w")
+    return cells
+
+
+def window_weights(qs: list[str], start: str) -> dict:
+    """Python oracle for the block's day weights: each quarter's share of its
+    days inside [start, start + 12 months). The selftest and the live check
+    compare the sheet against this."""
+    d0 = dt.date.fromisoformat(start)
+    d1 = d0.replace(year=d0.year + 1)
+    out = {}
+    for q in qs:
+        a, b = (dt.date.fromisoformat(x) for x in quarter_dates(q))
+        b1 = b + dt.timedelta(days=1)
+        w = max(0, (min(b1, d1) - max(a, d0)).days) / (b1 - a).days
+        if w:
+            out[q] = w
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -1036,6 +1181,19 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         c.number_format = FMT["pct"]
     va.cell(stb, 3, "Model").font = Font(name=FONT, bold=True)
     va.cell(stb, 4, "Model vs street").font = Font(name=FONT, bold=True)
+    for c in rolling_cells(stb + 5, len(qs), rowsum("P&L", r_adj), nd_row, rowsum("Cash flow", r_div)):
+        x = va[c["cell"]]
+        x.value = c["value"]
+        x.font = Font(name=FONT, color=c.get("color") or BLACK, bold=c.get("bold", False),
+                      italic=c.get("italic", False), size=c.get("size") or 10)
+        if c.get("fmt"):
+            x.number_format = FMT[c["fmt"]]
+        if c.get("fill"):
+            x.fill = PatternFill("solid", fgColor=c["fill"])
+        if c.get("wrap"):
+            x.alignment = Alignment(wrap_text=True, vertical="top")
+    for k in range(8):
+        va.column_dimensions[get_column_letter(HELP_COL + k)].width = 12
 
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
@@ -1275,6 +1433,31 @@ def selftest() -> int:
             chk("the running quarter is left to the forward basis", wi.cell(r, c3).value, None)
             r = next(r for r in range(1, wi.max_row + 1) if wi.cell(r, 1).value == "GBPINR: override (your view)")
             chk("a second overseas currency gets its own deck rows", wi.cell(r, c2).value, ct["fx_history"]["gbpinr"]["Q2FY27"])
+            va = load_workbook(out)["Valuation"]
+            tr = next((r for r in range(1, va.max_row + 1) if va.cell(r, 1).value == ROLL_TITLE), None)
+            chk("the builder writes the rolling block", tr is not None, True)
+            if tr:
+                chk("its quarter table covers every quarter", va.cell(tr + 1 + len(qt), HELP_COL).value,
+                    f"=INDEX(Qrow,{len(qt)})")
+    # the rolling block's day weights: 4-Nov-2027 to 3-Nov-2028 cuts Q3FY28
+    # (58 of its 92 days left) and Q3FY29 (34 of 92), and the weighted days
+    # add back to the window exactly (366: 2028 is a leap year)
+    w = window_weights(qs, "2027-11-04")
+    chk("window cuts the first quarter by days", round(w["Q3FY28"] * 92), 58)
+    chk("and the last", round(w["Q3FY29"] * 92), 34)
+    chk("three whole quarters between", [w[q] for q in ("Q4FY28", "Q1FY29", "Q2FY29")], [1.0, 1.0, 1.0])
+    days = sum(v * ((dt.date.fromisoformat(quarter_dates(q)[1]) - dt.date.fromisoformat(quarter_dates(q)[0])).days + 1)
+               for q, v in w.items())
+    chk("weighted days add back to the window", round(days, 6), 366)
+    rc = rolling_cells(41, 18, "'P&L'!$D$23:$U$23", "'Cash flow'!$D$27:$U$27", "'Cash flow'!$D$20:$U$20")
+    labels = {c["value"] for c in rc if c["cell"].startswith("A")}
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import model_view
+    chk("no rolling label shadows a label model_view reads", labels & set(model_view.VAL_LABELS.values()), set())
+    byc = {c["cell"]: c for c in rc}
+    chk("the override cell is a yellow blank", (byc["B43"]["value"], byc["B43"]["fill"]), (None, "FFFF00"))
+    chk("the target multiple links the fixed block's core multiple", byc["B52"]["value"], "=B18")
+    chk("the quarter table's last row reads the 18th quarter", byc["G60"]["value"], "=INDEX(Qrow,18)")
     print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
     return 1 if fails else 0
 
@@ -1358,10 +1541,83 @@ def refresh_deck(entity: str) -> int:
     return 0
 
 
+def _bgr(hexrgb: str | None) -> int | None:
+    if not hexrgb:
+        return None
+    r, g, b = (int(hexrgb[k:k + 2], 16) for k in (0, 2, 4))
+    return r + g * 256 + b * 65536
+
+
+def add_rolling(entity: str, force: bool = False) -> int:
+    """Write the rolling block into an EXISTING workbook through Excel, so the
+    PM's yellow cells survive (a rebuild would overwrite them) and an open
+    window takes the edit in place. It reads the ranges it needs off the
+    workbook's own formulas and refuses when the fixed block's rows have moved."""
+    from openpyxl import load_workbook
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import model_view
+    p = model_view.path_for(entity)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    wb = load_workbook(p)
+    va = wb["Valuation"]
+    for ref, lab in ROLL_LINKS.items():
+        if (va[ref].value or "").strip() != lab:
+            raise SystemExit(f"Valuation!{ref} reads {va[ref].value!r}, not {lab!r}: the fixed block has moved; "
+                             "refusing to link the rolling block to the wrong rows")
+    stb = next((r for r in range(1, va.max_row + 1)
+                if str(va.cell(r, 1).value or "").startswith("Street check")), None)
+    if stb is None:
+        raise SystemExit("no 'Street check' row on the Valuation sheet")
+    top = stb + 5
+    m7 = re.search(r"SUMIFS\((.+?),FYrow", str(va["B7"].value))
+    m11 = re.search(r"INDEX\((.+?),COUNTIF", str(va["B11"].value))
+    if not (m7 and m11):
+        raise SystemExit("cannot read the EBITDA / net-debt ranges off Valuation!B7 and B11")
+    adj, nd = m7.group(1), m11.group(1)
+    cf = wb["Cash flow"]
+    rdiv = next((r for r in range(1, cf.max_row + 1) if cf.cell(r, 1).value == "Dividends paid"), None)
+    if rdiv is None:
+        raise SystemExit("no 'Dividends paid' row on the Cash flow sheet")
+    first, last = re.search(r"\$([A-Z]+)\$\d+:\$([A-Z]+)\$\d+", nd).groups()
+    div = f"'Cash flow'!${first}${rdiv}:${last}${rdiv}"
+    inp, n = wb["Inputs"], 0
+    while inp.cell(4, FIRST_COL + n).value:
+        n += 1
+    cells = rolling_cells(top, n, adj, nd, div)
+    if va.cell(top, 1).value == ROLL_TITLE and not force:
+        raise SystemExit(f"the rolling block is already at row {top}; --force rewrites it (its override cell too)")
+    if va.cell(top, 1).value != ROLL_TITLE:
+        busy = [c["cell"] for c in cells if va[c["cell"]].value not in (None, "")]
+        if busy:
+            raise SystemExit(f"cells the block needs are not empty: {busy[:8]}")
+    ops = [{"sheet": "Valuation", "cell": c["cell"], "mode": "set", "value": c["value"], "font": FONT,
+            "numfmt": FMT[c["fmt"]] if c.get("fmt") else None, "fcolor": _bgr(c.get("color") or BLACK),
+            "bold": bool(c.get("bold")), "italic": bool(c.get("italic")), "size": c.get("size") or 10,
+            "fill": _bgr(c.get("fill")), "wrap": bool(c.get("wrap"))} for c in cells]
+    ops += [{"sheet": "Valuation", "cell": f"{get_column_letter(HELP_COL + k)}1", "mode": "width", "value": 12}
+            for k in range(8)]
+    rows = {c["value"]: c["cell"] for c in cells if c["cell"].startswith("A")}
+    want = ["Valuation date used", "Horizon from the price date (months)", "Months of that window inside the model",
+            "Adjusted EBITDA in that window (Rs cr)", "Net debt at the valuation date (Rs cr)",
+            "Target core multiple, ex JV (x)", ROLL_TP, "Upside vs CMP, rolling",
+            "Dividends paid before the valuation date (Rs/share)",
+            "Total return to the valuation date, incl. those dividends"]
+    ops += [{"sheet": "Valuation", "cell": "B" + rows[w][1:], "mode": "get", "value": None} for w in want]
+    res = model_view.excel(entity, ops)
+    out = res["cells"] if isinstance(res["cells"], list) else [res["cells"]]
+    print(f"{p.name}: rolling block written at Valuation!A{top}" + (" (into the open window)" if res.get("attached") else ""))
+    for w, o in zip(want, out[-len(want):]):
+        print(f"  {w}: {o['value']}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--refresh-deck", metavar="ENTITY",
                     help="write the current quarter's average to date into an existing workbook, via Excel")
+    ap.add_argument("--add-rolling", metavar="ENTITY",
+                    help="write the rolling 12-month-forward target block into an existing workbook, via Excel")
     ap.add_argument("--config", type=pathlib.Path)
     ap.add_argument("--out", type=pathlib.Path)
     ap.add_argument("--force", action="store_true", help="overwrite an existing workbook (loses its edits)")
@@ -1372,6 +1628,8 @@ def main() -> int:
         return selftest()
     if a.refresh_deck:
         return refresh_deck(a.refresh_deck)
+    if a.add_rolling:
+        return add_rolling(a.add_rolling, a.force)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:

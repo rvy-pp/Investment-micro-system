@@ -1361,6 +1361,23 @@ PM's yellow cells**; `--out` refuses an existing file without `--force`.
   leverage target was tried and reverted the same day:** it made debt
   proportional to EBITDA, so HRC at 60k in one quarter RAISED the target
   Rs11.70.
+- **Two targets on the Valuation sheet (PM, 2026-11-05: "Make a second
+  block").** The FIXED block values at a fiscal year-end: B4 valuation year
+  (FY28) with B5 net debt one year earlier (Q4FY27), so FY27's cash is in net
+  debt and FY28 is in EBITDA. Its horizon shrinks every month and jumps a year
+  when B4/B5 are retyped, which is manual. The ROLLING block (row ~40, quarter
+  table in G..N) always values 12 months after `CMP_date`. It takes each
+  quarter's EBITDA times the share of its DAYS inside the window, uses net debt
+  interpolated between the quarter-ends on either side, and links the fixed
+  block's core multiple. It also shows dividends paid before that date and
+  the total return including them. Every quarter's cash still lands in one
+  place. `model_view.valuation` and the Analysis card read the FIXED block
+  only. `steel_model.py --add-rolling <entity>` writes the block into a live
+  workbook through Excel and keeps the yellow cells. It refuses if the fixed
+  block's rows have moved. The builder writes it on a rebuild. On the first
+  day JSW read Rs1,776 rolling against Rs1,458 fixed. Most of that gap was the
+  PM's 61k HRC override ending at Q3FY28, so the Nov-27 to Nov-28 window runs
+  on spot of ~64k. It was not the date arithmetic: Tata read 280 against 279.
 - **A house-implied multiple carries the JV** ((TP x shares + net debt) /
   consensus EBITDA, with the JV inside the TP). The Valuation sheet's
   "EBITDA that multiple was struck on" row strips it (JSW: 15,750 / 39,877 =

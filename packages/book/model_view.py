@@ -393,6 +393,19 @@ try {
       if ($rng.Comment -ne $null) { $rng.Comment.Delete() }
       $rng.AddComment([string]$op.value) | Out-Null
     }
+    elseif ($op.mode -eq 'width') { $rng.EntireColumn.ColumnWidth = [double]$op.value }
+    # optional formatting on a set (steel_model --add-rolling writes a whole
+    # formatted block into a live workbook this way); colours are Excel BGR ints
+    if ($op.mode -eq 'set') {
+      if ($op.font) { $rng.Font.Name = [string]$op.font }
+      if ($op.numfmt) { $rng.NumberFormat = [string]$op.numfmt }
+      if ($op.fcolor -ne $null) { $rng.Font.Color = [int]$op.fcolor }
+      if ($op.bold -ne $null) { $rng.Font.Bold = [bool]$op.bold }
+      if ($op.italic -ne $null) { $rng.Font.Italic = [bool]$op.italic }
+      if ($op.size -ne $null) { $rng.Font.Size = [double]$op.size }
+      if ($op.fill -ne $null) { $rng.Interior.Color = [int]$op.fill }
+      if ($op.wrap) { $rng.WrapText = $true }
+    }
     $out += [pscustomobject]@{ sheet = $op.sheet; cell = $op.cell; before = $before;
                                formula = $rng.Formula; value = $rng.Text }
   }
