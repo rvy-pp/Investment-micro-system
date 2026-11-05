@@ -83,7 +83,34 @@ COMMODITIES = {
     # (PM, 2026-11-03): seaborne x 0.50 got Q1FY27 backwards (NMDC +18%,
     # seaborne -2%) and could not see an NMDC hike at all.
     "nmdc": ("nmdc_fines_inr", "Rs/t"),
+    # North European HRC (Kotak metals pack col 34, "Germany HRC US$/t"): the
+    # price an overseas segment built as volume x price reads (Tata's
+    # Netherlands, PM 2026-11-05). Deck rows appear only for a config whose
+    # `driven` block names it, so a JSW build is untouched.
+    "hrc_de": ("hrc_germany", "USD/t"),
 }
+# The India deck every model carries; a driven overseas segment adds its own
+# series (DRIVER_SERIES) behind it. Anything else a config names is refused.
+BASE_DECK = ("hrc", "cc", "io", "usdinr", "nmdc")
+DRIVER_SERIES = {"hrc_de": ("HRC Germany, North Europe", "USD/t", "mn"),
+                 "cc": None, "io": None}          # cc/io are already on the base deck
+
+
+def deck_keys(cfg: dict) -> list[str]:
+    """Commodity keys this config's workbook shows: the base deck, then every
+    series a driven overseas segment reads. Refuses a key with no series."""
+    out = list(BASE_DECK)
+    for s in cfg.get("fx_segments", []):
+        D = s.get("driven")
+        if not D:
+            continue
+        for k in [D["price"]["key"]] + [c["key"] for c in D["costs"]]:
+            if k not in DRIVER_SERIES:
+                raise SystemExit(f"{s['name']}: driven series '{k}' is not one steel_model knows "
+                                 f"({', '.join(DRIVER_SERIES)})")
+            if k not in out:
+                out.append(k)
+    return out
 # Step series: stored only on the date a circular changes the price, so a
 # quarter's average is TIME-WEIGHTED (the price in force each day), never the
 # mean of the circular dates - three circulars in one month and one in the
@@ -499,6 +526,96 @@ def window_weights(qs: list[str], start: str) -> dict:
 # --------------------------------------------------------------------------
 # build
 # --------------------------------------------------------------------------
+def driven_segment(seg: "Sheet", s: dict, a_rows: dict, A) -> tuple[int, int]:
+    """An overseas segment as VOLUME x PRICE (PM, 2026-11-05, Tata's Netherlands).
+
+    NSR/t and cost/t each move from a BASE: the average of the last four
+    reported quarters, with the drivers' average over the SAME four quarters.
+    A forecast NSR = base NSR + pass-through x (lagged HRC - base HRC), and
+    cost/t = base cost + sum(intensity x market share x (lagged price - base
+    price)). The last quarter alone is NOT the base because NL's Q1FY27 carries
+    a plant outage (EBITDA EUR4mn on 1.40mt): rolling from it would hold the
+    outage's cost per tonne in every forecast quarter. A PM view (EBITDA/t) for
+    a quarter re-bases the next one, as India's does. Returns the revenue and
+    EBITDA rows in the segment's own currency."""
+    K, ccy, D, dr = s["key"].upper(), s["ccy"], s["driven"], s["_drv"]
+    for need in ("sales_mt", "revenue_mn", "ebitda_mn"):
+        if need not in a_rows:
+            raise SystemExit(f"{s['name']}: a driven segment needs {need} actuals")
+    ws, qs = seg.ws, seg.qs
+    seg.section(f"{s['name']}: the PM's view for the visible quarter (yellow, optional)")
+    r_pms = seg.row("PM view: sales", "mt", lambda i, q, r: None, fmt="mt")
+    r_pme = seg.row("PM view: EBITDA per tonne", f"{ccy}/t", lambda i, q, r: None, fmt="t")
+    known = s.get("known_sales", {})
+    for r, fmt in ((r_pms, "mt"), (r_pme, "t")):
+        for i, q in enumerate(qs):
+            if q in s["sales_mt"]:
+                continue
+            c = ws.cell(r, FIRST_COL + i)
+            c.fill, c.number_format, c.font = YELLOW, FMT[fmt], Font(name=FONT, color=BLUE)
+            # A quarter that has ended with deliveries published but no result
+            # (NL Q2FY27: the company's production update): the published
+            # volume, prefilled, as the deck does for an ended quarter's prices.
+            if r == r_pms and q in known:
+                c.value = known[q]["value"]
+                c.comment = Comment(f"{known[q]['source']}. Clear it to fall back to the trailing four.", "steel_model")
+    seg.section(f"{s['name']}: model (volume x price; bases are the last four reported quarters)")
+    r0 = seg.r
+    rb = r0 + 10                                    # 8 model rows, then a section (2 rows)
+    rbN, rbC, rbP = rb, rb + 1, rb + 2
+    rbK = {k: rb + 3 + j for j, (k, _) in enumerate(dr["costs"])}
+    aS, aR, aE = a_rows["sales_mt"], a_rows["revenue_mn"], a_rows["ebitda_mn"]
+    pe = dr["price"]
+    r_sales = seg.row("Sales", "mt",
+                      lambda i, q, r: (f'=IF({A(i)},{col(i)}{aS},IF({col(i)}{r_pms}<>"",{col(i)}{r_pms},'
+                                       + (trailing(i, r)[1:] if i >= 4 else "0") + "))"),
+                      fmt="mt", bold=True,
+                      comment="Forecast: your view (yellow, above) if typed, else the trailing four quarters.")
+    s["_sales_row"] = r_sales
+    r_nsr = seg.row("Net sales realisation (NSR)", f"{ccy}/t",
+                    lambda i, q, r: (f"=IF({A(i)},{col(i)}{aR}/{col(i)}{aS},"
+                                     + (f"{prev(i, rbN)}+{K}_PricePT*(Inputs!{col(i)}{pe}-{prev(i, rbP)}))" if i else "0)")),
+                    fmt="t",
+                    comment=f"Forecast = base NSR + pass-through x (lagged {D['price']['label']} in {ccy} - its base).")
+
+    def cost_terms(i):
+        return "+".join(f"{K}_{k}_Int*{K}_{k}_Mkt*(Inputs!{col(i)}{er}-{prev(i, rbK[k])})" for k, er in dr["costs"])
+    r_cost = seg.row("Cost per tonne (model)", f"{ccy}/t",
+                     lambda i, q, r: (f"=IF({A(i)},({col(i)}{aR}-{col(i)}{aE})/{col(i)}{aS},"
+                                      + (f"{prev(i, rbC)}+{cost_terms(i)})" if i else "0)")),
+                     fmt="t",
+                     comment="Forecast = base cost + sum over the cost drivers of intensity x share bought at market "
+                             f"x (lagged price in {ccy} - its base).")
+    r_eptm = seg.row("EBITDA per tonne (model)", f"{ccy}/t", lambda i, q, r: f"={col(i)}{r_nsr}-{col(i)}{r_cost}",
+                     fmt="t", kind="local")
+    r_ept = seg.row("EBITDA per tonne (used)", f"{ccy}/t",
+                    lambda i, q, r: f'=IF({A(i)},{col(i)}{r_eptm},IF({col(i)}{r_pme}<>"",{col(i)}{r_pme},{col(i)}{r_eptm}))',
+                    fmt="t", bold=True)
+    r_costu = seg.row("Cost per tonne (used)", f"{ccy}/t", lambda i, q, r: f"={col(i)}{r_nsr}-{col(i)}{r_ept}",
+                      fmt="t", kind="local")
+    r_rv = seg.row(f"Revenue ({ccy} mn) = sales x NSR", f"{ccy} mn",
+                   lambda i, q, r: f"=IF({A(i)},{col(i)}{aR},{col(i)}{r_sales}*{col(i)}{r_nsr})", fmt="mn")
+    r_ev = seg.row(f"EBITDA ({ccy} mn) = sales x EBITDA/t", f"{ccy} mn",
+                   lambda i, q, r: f"=IF({A(i)},{col(i)}{aE},{col(i)}{r_sales}*{col(i)}{r_ept})", fmt="mn", bold=True)
+    seg.section(f"{s['name']}: bases (average of the last four reported quarters; a PM view re-bases)")
+    assert seg.r == rb, (seg.r, rb)
+
+    def avg4(i, row, sheet=""):
+        return f"AVERAGE({sheet}{col(max(0, i - 3))}{row}:{sheet}{col(i)}{row})"
+
+    def base(label, own, used_cell):
+        return seg.row(label, f"{ccy}/t",
+                       lambda i, q, r: (f'=IF({A(i)},{own(i)},IF({col(i)}{r_pme}<>"",{used_cell(i)},'
+                                        + (prev(i, r) if i else "0") + "))"),
+                       fmt="t", kind="local")
+    base("Base NSR", lambda i: avg4(i, r_nsr), lambda i: f"{col(i)}{r_nsr}")
+    base("Base cost per tonne", lambda i: avg4(i, r_cost), lambda i: f"{col(i)}{r_costu}")
+    base(f"Base {D['price']['label']}", lambda i: avg4(i, pe, "Inputs!"), lambda i: f"Inputs!{col(i)}{pe}")
+    for c_, (k, er) in zip(D["costs"], dr["costs"]):
+        base(f"Base {c_['label']}", lambda i, er=er: avg4(i, er, "Inputs!"), lambda i, er=er: f"Inputs!{col(i)}{er}")
+    return r_rv, r_ev
+
+
 def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
     errs = crossfoot(cfg)
     if errs:
@@ -651,6 +768,9 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
         if key != "usdinr":
             ccy = key[:3].upper()
             deck.append((key, f"{ccy}INR", f"INR/{ccy}", "fx"))
+    # series a driven overseas segment reads (Tata NL: German HRC), after the FX rows
+    for key in deck_keys(cfg)[len(BASE_DECK):]:
+        deck.append((key, *DRIVER_SERIES[key]))
     for key, label, unit, fmt in deck:
         if key in hist:
             h, spot, note = hist[key]["q"], hist[key]["fwd"], fwd_note(hist[key])
@@ -723,6 +843,37 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                         fmt="t", bold=True, kind="local")
     r_nm_eff = inp.row("NMDC fines, lagged (the ore cost driver)", "Rs/t ore",
                        lambda i, q, r: "=" + lagged(i, r_nm_used, "IoLag"), fmt="t", kind="local")
+
+    # Overseas segments built as VOLUME x PRICE (PM, 2026-11-05, Tata's
+    # Netherlands: "can we start with volume*price instead of direct forecast of
+    # revenue? Add rows for EU's iron ore, HRC etc"). Each named price is turned
+    # into the segment's own currency at the quarter's cross (USD per EUR =
+    # EURINR / USDINR) and lagged; the Segments sheet moves NSR and cost per
+    # tonne off these rows. A config with no `driven` block writes nothing here.
+    for s in cfg["fx_segments"]:
+        D = s.get("driven")
+        if not D:
+            continue
+        K, ccy = s["key"].upper(), s["ccy"]
+        inp.section(f"{s['name']}: drivers in {ccy} per tonne (volume x price sets its revenue and EBITDA)")
+        const(f"{K}_PricePT", f"{D['price']['label']}: NSR pass-through of its move", D["price"]["pass_through"],
+              "fx", yellow=True)
+        const(f"{K}_PriceLag", f"{D['price']['label']}: lag", D["price"]["lag_q"], None, yellow=True)
+        for c_ in D["costs"]:
+            ck = c_["key"]
+            const(f"{K}_{ck}_Int", f"{c_['label']} per tonne of steel sold", c_["intensity"], "fx")
+            const(f"{K}_{ck}_Mkt", f"{c_['label']} bought at market prices", c_["market_pct"], "pct")
+            const(f"{K}_{ck}_Lag", f"{c_['label']}: lag", c_["lag_q"], None, yellow=True)
+        r_x = inp.row(f"USD per {ccy} (= {ccy}INR / USDINR)", f"USD/{ccy}",
+                      lambda i, q, r, f=used[s["fx"]]: f"={col(i)}{f}/{col(i)}{used['usdinr']}",
+                      fmt="w", kind="local")
+
+        def eff(key, lag, label, rx=r_x, ccy=ccy):
+            return inp.row(f"{label} in {ccy}, lagged", f"{ccy}/t",
+                           lambda i, q, r: "=" + lagged(i, used[key], lag) + "/" + lagged(i, rx, lag),
+                           fmt="t", kind="local")
+        s["_drv"] = {"price": eff(D["price"]["key"], f"{K}_PriceLag", D["price"]["label"]),
+                     "costs": [(c_["key"], eff(c_["key"], f"{K}_{c_['key']}_Lag", c_["label"])) for c_ in D["costs"]]}
 
     # ---------------------------------------------------------------- Capacity
     cap = Sheet(wb, "Capacity", qs, f"{cfg['company']} - India capacity, utilisation and volume",
@@ -845,6 +996,13 @@ def build(cfg: dict, out: pathlib.Path, hist: dict) -> dict:
                                     ("ebitda_mn", "EBITDA", s["ccy"] + " mn", "mn")):
             if key in s:
                 a_rows[key] = seg.row(lab, unit, {q: s[key].get(q) for q in qs}, fmt=fmt)
+        if s.get("driven"):
+            r_rv, r_ev = driven_segment(seg, s, a_rows, A)
+            fxrow = used[s["fx"]]
+            fx_rev_rows.append(seg.row("Revenue", "Rs cr", lambda i, q, r, a=r_rv: f"={col(i)}{a}*Inputs!{col(i)}{fxrow}/10"))
+            fx_e_rows.append(seg.row("EBITDA", "Rs cr", lambda i, q, r, a=r_ev: f"={col(i)}{a}*Inputs!{col(i)}{fxrow}/10",
+                                     bold=True))
+            continue
         seg.section(f"{s['name']}: model (forecasts roll the trailing four quarters)")
         if "sales_mt" in a_rows:
             s["_sales_row"] = seg.row("Sales", "mt", lambda i, q, r, a=a_rows["sales_mt"]: rolled(i, a, r),
@@ -1289,8 +1447,23 @@ def readme_lines(cfg, qs, n_act, hist):
         ("", ""),
         (README_FWD_HEAD, "h"),
     ]
+    at = L.index((README_FWD_HEAD, "h")) - 1        # before the blank line that opens the price list
+    for s in cfg.get("fx_segments", []):
+        D = s.get("driven")
+        if not D:
+            continue
+        costs = "; ".join(f"{c['label']} {c['intensity']['value']} t/t x {c['market_pct']['value']:.0%} at market, "
+                          f"lag {c['lag_q']['value']}" for c in D["costs"])
+        L.insert(at, (f"{s['name']} is volume x price, in {s['ccy']}: revenue = sales x NSR, EBITDA = sales x "
+                      f"(NSR - cost per tonne). NSR moves {D['price']['pass_through']['value']} x the change in "
+                      f"{D['price']['label']} (lag {D['price']['lag_q']['value']}); cost per tonne moves with {costs}. "
+                      f"Every price is converted at the quarter's USD per {s['ccy']}. Both move from a base: the "
+                      "average of the last four reported quarters, against the drivers' average over the same "
+                      "quarters. Sales are your yellow view, else the trailing four. Sources for each constant are "
+                      "beside it on Inputs.", ""))
+        at += 1
     for k, (sid, unit) in COMMODITIES.items():
-        if k in sp:
+        if k in sp and k in deck_keys(cfg):
             L.append((f"{sid}: {sp[k]['fwd']:,} {unit}. {fwd_note(sp[k])}", ""))
     L += [("", ""),
           ("Not used", "h"),
@@ -1433,12 +1606,43 @@ def selftest() -> int:
             chk("the running quarter is left to the forward basis", wi.cell(r, c3).value, None)
             r = next(r for r in range(1, wi.max_row + 1) if wi.cell(r, 1).value == "GBPINR: override (your view)")
             chk("a second overseas currency gets its own deck rows", wi.cell(r, c2).value, ct["fx_history"]["gbpinr"]["Q2FY27"])
+            # a driven overseas segment (NL, volume x price): its price series gets
+            # deck rows, revenue is sales x NSR on a forecast quarter, the ended
+            # quarter's published deliveries are prefilled and the next is not
+            if any(s.get("driven") for s in ct["fx_segments"]):
+                labs = {wi.cell(r, 1).value for r in range(1, wi.max_row + 1)}
+                chk("the driven price series has deck rows", "HRC Germany, North Europe: used" in labs, True)
+                ws_ = load_workbook(out)["Segments"]
+                rows = {ws_.cell(r, 1).value: r for r in range(1, ws_.max_row + 1)}
+                # first draft of this check looked "Sales" up by label and got the
+                # UK's row (two segments carry one); the NL rows sit 6 and 5 above
+                rr = rows["Revenue (EUR mn) = sales x NSR"]
+                rs, rn = rr - 6, rr - 5
+                chk("the rows above revenue are sales and NSR", (ws_.cell(rs, 1).value, ws_.cell(rn, 1).value),
+                    ("Sales", "Net sales realisation (NSR)"))
+                c4 = FIRST_COL + qt.index("Q4FY27")
+                L4 = col(c4 - FIRST_COL)
+                chk("a forecast quarter's revenue is sales x NSR", ws_.cell(rr, c4).value.split(",")[-1],
+                    f"{L4}{rs}*{L4}{rn})")
+                rp = next(r for r in range(rs - 1, 0, -1) if ws_.cell(r, 1).value == "PM view: sales")
+                known = next(s for s in ct["fx_segments"] if s.get("driven"))["known_sales"]
+                chk("an ended quarter's published deliveries are prefilled", ws_.cell(rp, c2).value,
+                    known.get("Q2FY27", {}).get("value"))
+                chk("the running quarter is not", ws_.cell(rp, c3).value, None)
             va = load_workbook(out)["Valuation"]
             tr = next((r for r in range(1, va.max_row + 1) if va.cell(r, 1).value == ROLL_TITLE), None)
             chk("the builder writes the rolling block", tr is not None, True)
             if tr:
                 chk("its quarter table covers every quarter", va.cell(tr + 1 + len(qt), HELP_COL).value,
                     f"=INDEX(Qrow,{len(qt)})")
+    bad = {"fx_segments": [{"name": "X", "driven": {"price": {"key": "lme_zinc"}, "costs": []}}]}
+    try:
+        deck_keys(bad)
+        chk("a driven series steel_model does not know is refused", "accepted", "refused")
+    except SystemExit:
+        chk("a driven series steel_model does not know is refused", "refused", "refused")
+    chk("a config with no driven segment keeps the base deck", deck_keys({"fx_segments": [{"name": "US"}]}),
+        list(BASE_DECK))
     # the rolling block's day weights: 4-Nov-2027 to 3-Nov-2028 cuts Q3FY28
     # (58 of its 92 days left) and Q3FY29 (34 of 92), and the weighted days
     # add back to the window exactly (366: 2028 is a leap year)

@@ -1397,6 +1397,31 @@ a JSW rebuild is cell-for-cell identical (checked after recalc). The changes:
   its own commodity averages as prefilled overrides, not the running
   quarter's. Selftest covers acceptance and rejection.
 
+**Tata's Netherlands is volume x price since 2026-11-05** (PM: *"In the EU
+segment, can we start with volume*price instead of direct forecast of revenue?
+Add rows for EU's iron ore, HRC etc"*). A config's overseas segment with a
+`driven` block gets deck rows for its price series, its own drivers in local
+currency on Inputs, and Segments rows NSR/t, cost/t, EBITDA/t, sales x NSR.
+No `driven` block builds exactly as before (JSW is cell-identical).
+- **Price:** German HRC (`hrc_germany`, metals pack, USD) in EUR at EURINR /
+  USDINR, lagged one quarter. Pass-through is 1.2: the fit over seven changes
+  gave 1.23, r 0.80. Same-quarter r was −0.02.
+- **Cost:** iron ore (62% CFR China as a PROXY for the move; label says so)
+  1.48 t/t, and coking coal 0.84 t/t. Both are worldsteel BF-BOF norms × NL
+  production/deliveries, not Tata disclosures, and both lag one quarter.
+  Tata's own NL ore-cost statements match the lagged benchmark within $1–3/t.
+  Its coal statements are smoother than the benchmark.
+- **Bases, not the last quarter:** NSR and cost move from the average of the
+  last four reported quarters, against the drivers' average over the same
+  quarters. NL's Q1FY27 (EUR4mn on 1.40mt, the DSP outage) would otherwise
+  sit inside every forecast cost per tonne.
+- Q2FY27's published deliveries (1.30mt) are prefilled as an ended quarter.
+  UK still rolls its trailing four: it has no steelmaking, so its cost is
+  bought substrate, a different structure.
+- **The effect is large.** NL goes from ~EUR40mn a quarter to EUR170–230mn,
+  because German HRC sits ~23% above its four-quarter base in EUR. FY28 EBITDA
+  moves from 44,669 to 52,660 on the PM's 61k India HRC.
+
 Two Tata facts to keep in mind:
 - **Headline vs filed EBITDA.** Tata's headline EBITDA runs Rs50–210cr a
   quarter above the EBITDA rebuilt from the filed P&L, in all eight quarters,
