@@ -1,0 +1,373 @@
+{
+ "date": "2026-11-05",
+ "generated_at": "2026-11-05T08:15:44",
+ "mail": {
+  "window": "24h to 08:02 IST",
+  "n_scanned": 243,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Nomura holds NALCO Neutral, TP INR320: 2QFY27 EBITDA INR24.1bn missed 10% on cost; FY27 EBITDA cut 5% to INR99bn, FY28/29 6-13% below consensus.",
+      "source": "Nomura - National Aluminium Company (NACL IN) (Neutral) - Earnings disappoint amid cost pressures",
+      "received": "10:16",
+      "detail": {
+       "summary": "Nomura sees cost pressure (CP coke, caustic, fluoride) persisting into 3Q with only partial 2H relief, and the fifth alumina stream slipping to Dec-26/Jan-27. With no primary metal volume growth until FY30-31, it argues for mid-cycle multiples, not today's premium.",
+       "points": [
+        "2Q EBITDA INR24.1bn, -11% q-q, 4% below consensus",
+        "Aluminium CoP USD1,237/t, +2% q-q; EBITDA/t USD1,796, -19%",
+        "Alumina volumes 340kt, -14% y-y, 19% below Nomura",
+        "TP on 4.7x EV/EBITDA vs 5.2x one-year forward now",
+        "Refinery start late Dec-26/early Jan-27; Nomura models 0.5MT FY28 vs 0.7-0.8MT guide"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: alumina +3.1% w/w, +7.6% m/m to $397/t on tight ex-China spot; raises NALCO FY28-29E alumina deck to $350/t from $325 but cuts FY27E.",
+      "source": "Emkay - Emkay Metals Weekly – Alumina prices recover amid tightening spot availability (+4 more in Outlook)",
+      "received": "12:46",
+      "detail": {
+       "summary": "Refinery disruptions and Indonesian and Middle East smelter buying have drained cheap cargoes, but Emkay expects ample Chinese supply and high inventories to cap the rally. Aluminium eased to $3,090/t; non-ferrous earnings are broadly in line with its base case.",
+       "points": [
+        "Alumina $397/t, +3.1% w/w, +7.6% over one month",
+        "Aluminium eased to $3,090/t",
+        "NALCO 2Q EBITDA missed 5.2% vs Emkay, 4.2% vs consensus",
+        "NALCO FY27E lowered on cost inflation; FY28-29E raised",
+        "Chinese supply and inventories seen limiting upside"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "I-Sec upgrades NALCO to BUY from ADD, TP Rs400 (26% upside), on price tailwinds and refinery commissioning; Nomura stays Neutral at Rs320.",
+      "source": "ICICI Securities - Morning Note 4th November'26",
+      "received": "09:33"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "ICICI Sec upgrades Lloyds Metals to ADD from Hold, SoTP TP INR1,963, despite Q2 EBITDA INR18bn (-35% QoQ) missing on iron ore volumes.",
+      "source": "ICICI Securities - Lloyds Metals and Energy (ADD): Iron ore cash cow; Thriveni and copper potentially the next big thing",
+      "received": "07:52",
+      "detail": {
+       "summary": "Q2FY27 EBITDA missed on lower iron ore volumes and realisations from monsoon disruption; the house expects H2 to recover. The upgrade rests on Thriveni mining growth and Chemaf copper-cobalt from FY28, with capex and execution flagged as the monitorables.",
+       "points": [
+        "Iron ore sales 2.12mnt (-61% QoQ), EBITDA/t INR2,082",
+        "Pellets 2.05mnt, EBITDA/t INR4,604; DRI 160.6kt, +81% YoY",
+        "FY27 guide: iron ore 26mnt, pellets 7.75-8mnt",
+        "Capex INR130bn FY27, INR100bn FY28; net debt INR199.2bn",
+        "Chemaf ~74kt copper, 20kt cobalt at full capacity, production from FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura keeps Lloyds Metals Neutral, TP INR2,000 (from 1,950) on roll-forward; pushes steel plant to FY31 and cuts FY27 EBITDA 7%.",
+      "source": "Nomura - Lloyds Metals and Energy (LLOYDSME IN) (Neutral) - Upbeat quarter on steady operating performance",
+      "received": "23:18",
+      "detail": {
+       "summary": "Q2 EBITDA beat Nomura by 11% but sat 4% below Bloomberg consensus. Steel plant delay lowers FY29 standalone EBITDA, offset by faster Chemaf copper ramp; stock trades above the target-multiple the TP is built on.",
+       "points": [
+        "Q2 EBITDA INR18bn, -35% QoQ; 11% above Nomura, 4% below consensus",
+        "3MT steel plant moved to FY31 from FY29; FY29 standalone EBITDA -17%",
+        "Copper volumes 37kt FY28F, 44kt FY29F vs 15kt, 20kt earlier",
+        "Target 8.5x EV/EBITDA vs 9.7x one-year-forward current",
+        "Closing price INR1,800"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "JK Lakshmi Q2 EBITDA/t Rs517 (-28% qoq) beat PhillipCapital by 7% but missed street 6%; FY30 capacity target quietly cut to 25mt from 30mt.",
+      "source": "PhillipCapital - First Cut - JK Lakshmi Cement Ltd (JKLC IN) - Q2FY27 - Marginally ahead of our estimates but a marginal miss to street",
+      "received": "22:28",
+      "detail": {
+       "summary": "Phillip calls the quarter in-line to its estimates but at the weak end of the industry. It reads the capacity cut as execution delay and a sentiment negative, though it now sees 25mt as realistic, with Northeast the focus.",
+       "points": [
+        "EBITDA Rs1.54bn: +6% vs Phillip, -7% vs consensus",
+        "Volume +5% yoy, -17% qoq; realisation +1% yoy",
+        "Opex/t +5% yoy, +7% qoq; EBITDA/t -29% yoy",
+        "Trade share below 60%, seen as a positive",
+        "Northeast site Bhoomi Pujan done 30-Oct"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus: Oct cement hikes of Rs10-20/bag held through the month but began reversing by month end in all regions except West; fresh Rs10-20 hikes proposed.",
+      "source": "Avendus Spark - Cement Checks/F&O Insights | Q2F27 Review- ITC ( BUY); KECI ( ADD); NALCO ( REDUCE) Sales Note",
+      "received": "09:02",
+      "detail": {
+       "summary": "Channel checks show early-October hikes were implemented in both trade and non-trade segments and stuck for the month. Rain in the South, weak East demand and GRAP in the North are cited for the slippage; stickiness of new hikes is seen only after the festival season.",
+       "points": [
+        "Oct hikes: Rs10-15/bag North/West/Central, Rs20 East/South",
+        "Reversal started late Oct except West",
+        "Fresh hikes: Rs10-15 North/Central, Rs20 East/South",
+        "West largely indecisive so far"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama: Oct cement prices up Rs15-20/bag pan-India, Hyderabad Rs20-25 more expected in Nov; petcoke up ~$25/t to ~$190/t; neutral, JK Cement top pick.",
+      "source": "Nuvama - Nuvama Daily: Actionables:Solar Ind,Minda Corp,ASK, KEC |Cement Update| Earning Tracker (+1 more in Outlook)",
+      "received": "09:00",
+      "detail": {
+       "summary": "Nuvama sees decent pre-festive Oct demand that should moderate through the festive season. Higher crude has lifted petcoke sharply, raising cost concerns, and price-hike sustainability and demand remain the monitorables.",
+       "points": [
+        "Oct prices +Rs15-20/bag pan-India",
+        "Hyderabad further +Rs20-25/bag expected Nov",
+        "Petcoke ~$190/t, up ~$25/t MoM",
+        "Neutral on sector; JK Cement (BUY) top pick"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Coal India Oct-26 production +19.1% yoy / +25.6% mom to 67.2mt on robust offtake, per Emkay.",
+      "source": "Emkay - Emkay Metals Weekly – Alumina prices recover amid tightening spot availability",
+      "received": "12:46"
+     },
+     {
+      "text": "Coal India plans a US$1bn IPO of Mahanadi Coalfields, per Elara's morning note.",
+      "source": "Elara - Elara Stinger: India to touch INR 3tn defence production...",
+      "received": "10:35"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Avalon reports Q2FY27 on 12-Nov; earnings call 13-Nov at 15:30.",
+      "source": "EY IR - Avalon Technologies Ltd to announce Q2 FY27 results on 12th November 2026 | Q2 FY27 Earnings Call on 13th November 2026 at 3.30 PM",
+      "received": "12:11",
+      "detail": {
+       "summary": "Investor-relations notice fixing the Avalon results date and the call timing, with a Diamond Pass registration link for the call. The print falls on 12-Nov and management commentary follows the next afternoon.",
+       "points": [
+        "Results: 12-Nov-2026",
+        "Earnings call: 13-Nov-2026, 15:30",
+        "Diamond Pass registration link provided"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Apple posted record India revenue in the September quarter; iPhone 18 Pro initial sales ~20% above iPhone 17 Pro, though Apple's unit share slipped 1pp to 8%.",
+      "source": "Nomura - India Consumer Durables and EMS: Eureka Forbes (EFL IN), Buy 2QFY27 ...",
+      "received": "09:16",
+      "detail": {
+       "summary": "Nomura's daily relays news that Apple set an all-time India revenue record, with early iPhone 18 Pro sales per Counterpoint ahead of the prior generation. Apple is adjusting pricing for rising memory and component costs, and trails Samsung on India unit share.",
+       "points": [
+        "iPhone 18 Pro initial sales ~20% above 17 Pro (Counterpoint)",
+        "Apple India unit share 8%, down 1pp y/y; Samsung 17%",
+        "Tamil Nadu: $20bn of FY26 electronics exports, ~4 in 10 dollars",
+        "Amazon festive: premium Android above Rs30,000 grew 50%; costlier memory chips raised prices"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "JPM ranks TechM > TCS > LTM > Infosys > HCLT > Wipro, seeing AI-deflation growth inflection in CY28 and industry MSD growth by CY30.",
+      "source": "JPM - India IT Services: Looking through the AI Fog 3: Putting a clock on the AI cycle, inflexion appears ~1.5 years away",
+      "received": "15:58",
+      "detail": {
+       "summary": "JPM places the industry in an AI deflation phase, with ~4% annual deflation keeping CY26/27 growth muted. Pressure concentrates in contracts up for renewal, and BPS and AMS are most exposed while consulting is least.",
+       "points": [
+        "Nifty IT -15% YTD, +15% in last month",
+        "~4% annual deflation; 17-25% cumulative by CY30",
+        "BPS/AMS 5-7% yearly deflation; consulting 0-1%",
+        "TechM/LTM through deflation fastest, HSD growth",
+        "INFY/TCS MSD by FY30; HCL, Wipro slowest"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley raises Fractal PT 6.8% to Rs930 from Rs871 (Equal-weight), implying ~31x Sep-28 P/E; USD revenue estimates up 1-2%.",
+      "source": "Morgan Stanley - Fractal Analytics Limited: Improving growth trends, reaffirmed margin outlook; raising PT",
+      "received": "07:17",
+      "detail": {
+       "summary": "MS sees 2QF27 revenue 1% above its estimate with TMT bottoming and HLS/BFSI strong, while EBIT margin fell marginally short. Medium-term 20% adj EBITDA margin target reaffirmed; EPS estimates rise under 2% for F28 and F29.",
+       "points": [
+        "Revenue beat vs MSe by 1%",
+        "Products 4% of revenue, RPO Rs2bn, 8 new clients",
+        "Alpha segment break-even seen by F27-end",
+        "EPS CAGR 21% over F27-29",
+        "CPGR volatile on delayed decisions"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL keeps Hexaware BUY, TP Rs560 (18x 2YF P/E), after meeting new CEO Jetley; stock trades at 20% discount to similar-sized peers.",
+      "source": "IIFL - Hexaware [HEXT IN, BUY] : Meeting with CEO - First impressions of a turnaround!",
+      "received": "09:13",
+      "detail": {
+       "summary": "IIFL sees execution by new management driving a re-rating. The CEO expects AI to separate winners from losers and sees headroom in cross-selling to single-service F-50 accounts, with GTM and capability choices due within 90 days.",
+       "points": [
+        "TP Rs560, 12% upside",
+        "Scale ~USD1.6bn, a Goldilocks position",
+        "Ambition: sustainable profitable double-digit growth",
+        "Efficiencies in G&A and S&M fund capability build",
+        "Key risk: client concentration"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Blue-wave midterms sent Brent -8.3% to $95.04 and US 10Y to 4.88%; Semis -3.1%, Memory -7.3% on lower data-centre capex.",
+      "source": "JPM - JPM Overnight Brief! 11/5 -midterms bring a global risk-on tone, rotated to Mag7 / Software - broader Rally",
+      "received": "06:48",
+      "detail": {
+       "summary": "Democratic sweep plus governor wins in Texas, Georgia, Nevada and New Mexico, and local data-centre curbs, drove a rotation out of AI infrastructure into large-cap quality, consumer and housing. Oil fell on hopes the Iran war de-escalates.",
+       "points": [
+        "SPX +1.6%, NDX +0.9%, VIX 16.74",
+        "Brent -8.3% to $95.04; WTI $88.54",
+        "10Y -8bp to 4.88%, gold $4,063",
+        "DC Infra + Power -4.1%; Memory -7.3%",
+        "Pure momentum -3%, high short interest +3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM India strategy: oil relief and FII flows favour India; Brent -10.9% since 30 Oct, FII underweight neutralisation worth ~US$115bn; stays underweight IT.",
+      "source": "JPM - India Equity Strategy: Oil decline helps the world's largest liquid AI hedge",
+      "received": "16:31",
+      "detail": {
+       "summary": "JPM argues falling crude and a global rotation out of AI trades helped India's earlier April-July rebound and can again. Earnings revision breadth has turned positive and 2QFY27 earnings track 20%+ YoY. Peace-talk failure is the oil risk.",
+       "points": [
+        "Brent -10.9% from 30 Oct to 3 Nov",
+        "FII underweight closed = ~US$115bn inflows",
+        "2QFY27 beats/misses 71%/16%; earnings 20%+ YoY",
+        "OW Financials, Discretionary, Industrials, Health Care, Materials; UW IT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA sees 2QFY27 real GVA growth ~7.7% vs RBI 7.2%, but expects GDP to slow to c.6% in 2HFY27.",
+      "source": "CLSA - India Economics : EconTracker: September 2026",
+      "received": "14:09",
+      "detail": {
+       "summary": "CLSA's activity tracker shows Sep-26 GVA growth rebounding on services, with investment strong and consumption weak. October data point to moderation, and inflation, El-Nino, base effects and weak fiscal spending are expected to drag 2HFY27.",
+       "points": [
+        "EAT-GVA 7.8% Sep-26 vs 7.1% Aug",
+        "Investment +10.6% in 2QFY27, 16-quarter high",
+        "Consumption +6.1% in 2QFY27, six-quarter low",
+        "Oct vehicle registrations fell at fastest pace post-Covid"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak: Cummins India 2QFY27 EBITDA -27% yoy vs -3% expected; gross margin 32% (-440bps yoy), share loss to KOEL; BUY, FV Rs5,300 under review.",
+      "source": "Kotak - Cummins India results: Sharp miss in growth and profitability (+3 more in Outlook)",
+      "received": "23:28",
+      "detail": {
+       "summary": "Revenue grew only 4% yoy and fell 4% qoq, while gross margin slid to ~32%, levels last seen when pig iron was 20% cheaper. Kotak reads customer rejection of Cummins' pricing premium and share gains by KOEL; it will revisit rating after the 16 Nov concall.",
+       "points": [
+        "EBITDA -27% yoy vs Kotak -3%",
+        "Gross margin ~32%, -440bps yoy, -140bps qoq",
+        "Consol PAT -18% 2Q; 1H EPS ~Rs40 vs FY27E Rs91",
+        "KOEL gross margin lead ~180bps for second quarter",
+        "Concall 16 Nov, 10am IST"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: PI Industries 2QFY27 EBITDA -57% yoy, 42% below estimate, margin 13.7%; 1H EPS Rs24.2 vs FY27E Rs72.4 puts estimates at risk; SELL.",
+      "source": "Kotak - PI Industries (CMP Rs2,187, SELL) 2QFY27 first take: From bad to worse",
+      "received": "22:14",
+      "detail": {
+       "summary": "Gross margin collapse drove the miss, amplified by fixed-cost growth against falling revenue; the decline is entirely in agrochemicals. Kotak flags material downgrade risk to FY27E EPS and will revisit after the 5 Nov noon IST concall.",
+       "points": [
+        "Revenue -9.1% yoy, 6.4% below estimate",
+        "Gross margin 49.5%, -779bps yoy, -727bps qoq",
+        "Net income -70% yoy, 54% below estimate",
+        "Tax rate 34.2%, +1,207bps yoy",
+        "Concall 5 Nov, 12:00 IST"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: Solar Industries PAT 13% above estimate on 69% revenue growth; FY27 EBITDA margin guide raised to 28%+; FV raised to Rs12,300, SELL kept at ~55x FY28E P/E.",
+      "source": "Kotak - Solar Industries (CMP: Rs19,393, FV: Rs12,300, SELL): Explosives' execution lifts earnings and guidance",
+      "received": "19:10",
+      "detail": {
+       "summary": "Explosives execution beat, both domestic and international, with defence in line with the Rs45bn guide. Kotak lifts EPS 4-6% and rolls forward to Dec-2028E but sees limited upside at rich valuations; the Rs30bn Pinaka order is the next trigger.",
+       "points": [
+        "Revenue +69% yoy, 15% above estimate",
+        "EBITDA margin 28.6% vs 27.9% est; EBITDA beat 18%",
+        "PAT Rs6.17bn; order book Rs202bn, -5% qoq",
+        "FY27 revenue to exceed Rs140bn guide",
+        "EPS +4-6% FY27-29"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX fell 3.13% with Nvidia -3.17%, TSMC -2.24% and Broadcom -2.00% as the S&P rose 1.58%; AMD gained 1.01%.",
+    "source": "JPM - JPM Overnight Brief! 11/5 -midterms bring a global risk-on tone, rotated to Mag7 / Software - broader Rally"
+   },
+   {
+    "text": "Broadcom slipped 1.49% on 4 Nov as a $63 billion AI financing was flagged as carrying residual-value risk.",
+    "source": "GuruFocus.com"
+   },
+   {
+    "text": "Global semiconductor sales hit US$517.7bn in 3Q26, up 24.1% QoQ, per SIA and WSTS.",
+    "source": "BOCI - BOCI TMT Daily (5 Nov)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

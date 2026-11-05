@@ -1,0 +1,230 @@
+{
+ "date": "2026-11-05",
+ "fetched_at": "2026-11-05T08:14:40",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-04",
+    "close": 7688.62,
+    "prev_date": "2026-11-03",
+    "chg_pct": 1.58,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-04",
+    "close": 25736.51,
+    "prev_date": "2026-11-03",
+    "chg_pct": 1.44,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-04",
+    "close": 53356.12,
+    "prev_date": "2026-11-03",
+    "chg_pct": 3.03,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-04",
+    "close": 10268.65,
+    "prev_date": "2026-11-03",
+    "chg_pct": -3.13,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-04",
+    "close": 200.13,
+    "prev_date": "2026-11-03",
+    "chg_pct": -3.17,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-04",
+    "close": 488.78,
+    "prev_date": "2026-11-03",
+    "chg_pct": 1.01,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-04",
+    "close": 395.75,
+    "prev_date": "2026-11-03",
+    "chg_pct": -2.24,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-04",
+    "close": 325.48,
+    "prev_date": "2026-11-03",
+    "chg_pct": -2.0,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-04",
+    "close": 264.27,
+    "prev_date": "2026-11-03",
+    "chg_pct": 3.81,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-04",
+    "close": 65.78,
+    "prev_date": "2026-11-03",
+    "chg_pct": 3.05,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture vs. Oracle: Which Technology Stock Is a Better Buy in 2027?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-04 17:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-oracle-technology-stock-172002311.html"
+   },
+   {
+    "title": "Does Earnings Beat Change The Bull Case For Accenture Stock (ACN)?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-04 15:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/does-earnings-beat-change-bull-150940387.html"
+   },
+   {
+    "title": "AI Automation Market Growth 2027: Microsoft, AWS, Accenture, ServiceNow and Salesforce Race to Scale Agentic Automation",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-04 14:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-automation-market-growth-2027-140000612.html"
+   },
+   {
+    "title": "Accenture accused of publishing research full of AI hallucinations",
+    "publisher": "The Telegraph",
+    "when": "2026-11-04 12:22Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-accused-publishing-research-full-122237861.html"
+   },
+   {
+    "title": "Analysts Lifted Accenture\u2019s Price Targets After a 31% Rally. Did Their Earnings Estimates Move Too?",
+    "publisher": "TIKR",
+    "when": "2026-11-04 12:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/analysts-lifted-accenture-price-targets-120733511.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant to Present at the BMO Technology and Innovation Leaders Conference",
+    "publisher": "PR Newswire",
+    "when": "2026-11-04 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-bmo-technology-innovation-130000580.html"
+   },
+   {
+    "title": "Are Wall Street Analysts Predicting Cognizant Stock Will Climb or Sink?",
+    "publisher": "Barchart",
+    "when": "2026-11-04 09:49Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wall-street-analysts-predicting-cognizant-094926226.html"
+   },
+   {
+    "title": "Don't Overlook Cognizant (CTSH) International Revenue Trends While Assessing the Stock",
+    "publisher": "Zacks",
+    "when": "2026-11-03 13:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dont-overlook-cognizant-ctsh-international-131502380.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Stock Jumps As Q3 Results Cement Margin Gains",
+    "publisher": "Simply Wall St.",
+    "when": "2026-10-30 17:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-stock-jumps-q3-171037570.html"
+   },
+   {
+    "title": "BMO Raises Price Target on Cognizant Technology Solutions to $68 From $63, Keeps Market Perform Rating",
+    "publisher": "MT Newswires",
+    "when": "2026-10-30 13:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bmo-raises-price-target-cognizant-131238967.html"
+   }
+  ],
+  "NVDA": [],
+  "AVGO": [
+   {
+    "title": "Is Broadcom Stock a Buy After Marvell's $115 Billion Deal?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-05 01:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-buy-marvells-115-014301389.html"
+   },
+   {
+    "title": "Broadcom Inc. (AVGO) Stock Slides as Market Rises: Facts to Know Before You Trade",
+    "publisher": "Zacks",
+    "when": "2026-11-04 21:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-inc-avgo-stock-slides-214502619.html"
+   },
+   {
+    "title": "Is Broadcom Stock a Buy Now?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-04 18:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-buy-now-182000414.html"
+   },
+   {
+    "title": "Broadcom Stocks Decline 1.49% as $63 Billion AI Financing Carries Residual-Value Risk",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-04 18:18Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-decline-1-49-181830621.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "The Deal With Meta & OpenAI Just Cost AMD $1.1 Billion",
+    "publisher": "International Business Times",
+    "when": "2026-11-05 00:14Z",
+    "link": "https://finance.yahoo.com/technology/articles/deal-meta-openai-just-cost-001401130.html"
+   },
+   {
+    "title": "AMD (AMD) Q3 Results Fuel AI Optimism But Valuation Caps Gains",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-04 23:21Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-amd-q3-results-fuel-232151959.html"
+   },
+   {
+    "title": "Here's What a $1,000 Investment in AMD Could Be Worth by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-11-04 21:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-1-000-investment-amd-212000339.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 24283.5,
+  "chg_pct": -0.37,
+  "stamp": "05-Nov-2026 08:14:39",
+  "expiry": "23-Nov-2026",
+  "volume": 3186,
+  "nifty_close": {
+   "close": 23960.600000000002,
+   "stamp": "04-Nov-2026 15:30"
+  },
+  "gap_pts": 322.9,
+  "gap_pct": 1.35
+ }
+}
