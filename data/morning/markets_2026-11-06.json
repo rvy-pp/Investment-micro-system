@@ -1,0 +1,200 @@
+{
+ "date": "2026-11-06",
+ "fetched_at": "2026-11-06T08:09:01",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-05",
+    "close": 7353.73,
+    "prev_date": "2026-11-04",
+    "chg_pct": -4.36,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-05",
+    "close": 24315.0,
+    "prev_date": "2026-11-04",
+    "chg_pct": -5.52,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-05",
+    "close": 51523.06,
+    "prev_date": "2026-11-04",
+    "chg_pct": -3.44,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-05",
+    "close": 9011.14,
+    "prev_date": "2026-11-04",
+    "chg_pct": -12.25,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-05",
+    "close": 181.6,
+    "prev_date": "2026-11-04",
+    "chg_pct": -9.26,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-05",
+    "close": 404.4,
+    "prev_date": "2026-11-04",
+    "chg_pct": -17.26,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-05",
+    "close": 353.1,
+    "prev_date": "2026-11-04",
+    "chg_pct": -10.78,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-05",
+    "close": 291.53,
+    "prev_date": "2026-11-04",
+    "chg_pct": -10.43,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-05",
+    "close": 265.16,
+    "prev_date": "2026-11-04",
+    "chg_pct": 0.34,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-05",
+    "close": 66.54,
+    "prev_date": "2026-11-04",
+    "chg_pct": 1.16,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Mondelez and Accenture partner to incorporate AI into order-to-cash",
+    "publisher": "TipRanks",
+    "when": "2026-11-05 21:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/mondelez-accenture-partner-incorporate-ai-214409414.html"
+   },
+   {
+    "title": "Accenture (ACN) Expands Its AI Work With A Major Consumer Goods Customer",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-05 18:10Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-expands-ai-major-181048770.html"
+   },
+   {
+    "title": "Digital Transformation in BFSI - Global Strategic Business Report: Secure Your Share of US$220.2 Billion by 2030 as Accenture, AWS, IBM, Microsoft, and Oracle Accelerate AI-Led Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-05 15:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/digital-transformation-bfsi-global-strategic-155100143.html"
+   },
+   {
+    "title": "Digital Transformation in BPO - Global Strategic Business Report: Capitalize on a US$263.9 Billion Market by 2030 as Accenture, Capgemini, Cognizant, Genpact and IBM Accelerate AI-Led Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-05 15:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-bpo-global-strategic-154900777.html"
+   },
+   {
+    "title": "Mondel\u0113z International and Accenture Transform Order-to-Cash With AI",
+    "publisher": "Business Wire",
+    "when": "2026-11-05 11:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/mondel-z-international-accenture-transform-115900761.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Digital Transformation in BPO - Global Strategic Business Report: Capitalize on a US$263.9 Billion Market by 2030 as Accenture, Capgemini, Cognizant, Genpact and IBM Accelerate AI-Led Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-05 15:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-bpo-global-strategic-154900777.html"
+   },
+   {
+    "title": "Cognizant to Present at the BMO Technology and Innovation Leaders Conference",
+    "publisher": "PR Newswire",
+    "when": "2026-11-04 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-bmo-technology-innovation-130000580.html"
+   },
+   {
+    "title": "Are Wall Street Analysts Predicting Cognizant Stock Will Climb or Sink?",
+    "publisher": "Barchart",
+    "when": "2026-11-04 09:49Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wall-street-analysts-predicting-cognizant-094926226.html"
+   },
+   {
+    "title": "Don't Overlook Cognizant (CTSH) International Revenue Trends While Assessing the Stock",
+    "publisher": "Zacks",
+    "when": "2026-11-03 13:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dont-overlook-cognizant-ctsh-international-131502380.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Fall, Techs Bounce After Nasdaq Dives 5.5%; Nvidia, Sandisk, CoreWeave, SpaceX Plunge",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-06 02:28Z",
+    "link": "https://finance.yahoo.com/m/0cd2227b-7753-3d54-a8c5-286efe82ac39/dow-jones-futures-fall%2C-techs.html"
+   },
+   {
+    "title": "Should You Buy Nvidia Stock Before Nov. 17?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-06 02:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/buy-nvidia-stock-nov-17-022000137.html"
+   }
+  ],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Cathie Wood Just Sold AMD Stock and Bought This AI Chip Stock Instead",
+    "publisher": "Motley Fool",
+    "when": "2026-11-05 23:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cathie-wood-just-sold-amd-232000828.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 24449.5,
+  "chg_pct": -0.12,
+  "stamp": "06-Nov-2026 08:08:58",
+  "expiry": "23-Nov-2026",
+  "volume": 2623,
+  "nifty_close": {
+   "close": 24536.600000000002,
+   "stamp": "05-Nov-2026 15:30"
+  },
+  "gap_pts": -87.1,
+  "gap_pct": -0.35
+ }
+}

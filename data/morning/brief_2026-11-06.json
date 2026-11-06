@@ -1,0 +1,411 @@
+{
+ "date": "2026-11-06",
+ "generated_at": "2026-11-06T08:14:39",
+ "mail": {
+  "window": "24h to 08:06 IST",
+  "n_scanned": 318,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Novelis 2Q adj. EBITDA/t $532 in line (Avendus); net debt $8.5bn vs $7.9bn in Jun; tariff drag $85/t vs $76/t; Emkay & JPM also in line, CLSA slight miss.",
+      "source": "Avendus Spark - Novelis 2QFY27 Snapshot: Adj. EBITDA/tn of $532, in line (+4 more Novelis notes in Outlook)",
+      "received": "20:50",
+      "detail": {
+       "summary": "Avendus calls Novelis in line: better core margins were offset by a higher tariff impact. Reported EBITDA of $508mn includes $39mn Oswego insurance and a $20mn Korea strike hit. Avendus values Novelis at 6x EV/EBITDA and keeps SELL on Hindalco.",
+       "points": [
+        "Adj. EBITDA $489mn vs $498mn in Q1; $/t 532 vs 525 est",
+        "Net debt $8,520mn vs $7,865mn est; 1H FCF -$2bn",
+        "Insurance received ~$0.5bn; $0.9bn expected by end-FY27 of $1.3bn",
+        "Bay Minette shipments from Q1FY28; start-up cost ~$0.2bn in FY28",
+        "Targets net leverage ~4x by Mar-27 vs 4.7x now"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama expects Hindalco 2Q EBITDA Rs124.8bn vs Bloomberg consensus Rs115.2bn; India aluminium EBITDA seen -9.6% QoQ, results due 6 Nov ~14:00.",
+      "source": "Nuvama - Result Estimates for 6th November 2026 : HNDL, SIEM, VOLT, JUBI, DATAPATTNS",
+      "received": "16:43",
+      "detail": {
+       "summary": "Nuvama sits well above the street on Hindalco profit, with Novelis flat and India aluminium weaker on lower realisation and higher hot-metal cost. Futures show short covering with legacy shorts still present.",
+       "points": [
+        "PAT Rs79.3bn vs consensus Rs60.6bn; revenue Rs827bn vs Rs838bn",
+        "Aluminium EBITDA/t $1,916, down $361/t QoQ; price $3,166/t, down $248",
+        "Copper EBITDA +5.9% QoQ to Rs9.72bn on sulphuric acid",
+        "Novelis EBITDA ~$516mn; 5-day px +5.9%, rollover 95%",
+        "Highest OI: 950CE 3,888 lots, 900PE 1,929 lots"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "ArcelorMittal Q3CY26 EBITDA US$2,023mn, 2.6% above consensus; EBITDA/t steady at US$155; Europe prices to catch up with costs by Q1CY27.",
+      "source": "Aditya Birla Money - ArcelorMittal | Strong Q3CY26; Europe recovery uneven so far",
+      "received": "23:57",
+      "detail": {
+       "summary": "The note reads the sequential dip in European margins as a lag between rising energy and carbon costs and realised prices, not a reversal of the TRQ-led recovery. Americas gave the sharpest margin gains and AMNS India is compounding steadily. It stays positive on MT.",
+       "points": [
+        "EBITDA US$2,023mn: -2.0% QoQ, +34.2% YoY",
+        "Consensus US$1,972mn; beat 2.6%",
+        "Group EBITDA/t steady at US$155",
+        "Over 25% of European flat volumes on annual contracts yet to reprice",
+        "Management expects price-cost alignment by Q1CY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JSW JFE Steel hit a monthly long-product record of 91,265t; India's coking coal import dependence on Australia fell to 54%.",
+      "source": "Kotak - Basic materials - daily news and prices (+ metals pack attached)",
+      "received": "08:58",
+      "detail": {
+       "summary": "Headline links only in the body; the metals pack is attached. The items are JSW JFE Steel's long-product record, Australia's share of India's coking coal imports, and Lloyds Metals' H1 iron ore output.",
+       "points": [
+        "JSW JFE Steel long products: 91,265t in a month, a record",
+        "India coking coal import share from Australia: 54%",
+        "Lloyds Metals H1 iron ore production +35% YoY; pellets 3.81mnt"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "JK Lakshmi 2Q EBITDA/t Rs517 (-30% yoy) on fuel surge; mgmt guides fuel +10% in each of next two quarters to Rs2.2/kcal.",
+      "source": "IIFL - JK Lakshmi 2QFY27 update - Weak 2Q, defers expansion; trades attractively - Maintain BUY",
+      "received": "21:28",
+      "detail": {
+       "summary": "IIFL calls the quarter a miss: fuel prices surged while cement prices were flat sequentially, and volumes lagged the industry. Management has deferred the 30m MT target to protect the balance sheet, and IIFL trims FY27 EBITDA but holds FY28-29 on the assumption that costs pass through or fuel eases.",
+       "points": [
+        "EBITDA Rs1.5bn, -26% yoy, -40% qoq, 4% below IIFL",
+        "Volume 3.0m MT, +5% yoy; utilisation 67%",
+        "Price hikes so far ~Rs10/bag; more expected after Diwali",
+        "Fair value Rs620 (was Rs650), 32% upside; FY27 EBITDA cut 5%",
+        "Net debt/EBITDA 2.3x vs 3.5x ceiling; Kutch/Nagaur expansion postponed"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ramco 2Q EBITDA/t Rs660, 20% above Phillip's estimate, as opex/t came in 5% lower; power & fuel Rs1,384/t, +36% yoy.",
+      "source": "PhillipCapital - First Cut: The Ramco Cements Ltd (TRCL IN): Strong results largely led by better than expected cost",
+      "received": "19:35",
+      "detail": {
+       "summary": "Phillip calls Ramco a strong beat driven by cost, not price: realisations missed. It sees the quarter as best among comparable peers but not a re-rating event, as EBITDA/t has sat at Rs630-690 for four quarters. Stays Neutral and may trim FY27 estimates.",
+       "points": [
+        "EBITDA Rs3.26bn, +25% vs Phillip, +15% vs consensus",
+        "Volume 4.94m t, +9% yoy; realisation Rs4,983/t, +1% yoy",
+        "Power & fuel Rs1,384/t vs Rs1,017 a year ago",
+        "EBITDA/t -23% yoy, -1% qoq; Rs1,000/t not seen in 19 quarters",
+        "Neutral, PO Rs1,020"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: crude and cement stocks correlate ~-0.35 monthly; cement beat Nifty by 2.7-12.5pp in the 2022 and 2023 crude-decline episodes.",
+      "source": "Elara - Cement Stocks Historically Outperform During Crude Oil Deflation (+7 more in Outlook)",
+      "received": "09:51",
+      "detail": {
+       "summary": "Elara argues crude is a lead indicator for cement stocks because energy-cost moves reach EBITDA/t and estimates with a lag, though crude is not a direct proxy for cement fuel. Petcoke and coal also show a correlation with crude. It frames cement as a play on crude normalisation.",
+       "points": [
+        "Monthly crude vs cement market-cap correlation ~-0.35",
+        "Jun-Sep 2022: crude -22.6%, cement +22%, Nifty +19%",
+        "Sep-Dec 2023: crude -16.2%, cement +13%, Nifty +1%",
+        "Mar-Jun 2026: crude -16.8%, cement -1.3%, Nifty -8.4%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Nomura keeps Lloyds Metals Neutral, TP INR2,000 (from 1,950) on roll-forward; steel plant pushed to FY31F, FY29F EBITDA cut ~17% at standalone level.",
+      "source": "Nomura - Lloyds Metals and Energy (LLOYDSME IN) (Neutral) - Upbeat quarter on steady operating performance",
+      "received": "10:39",
+      "detail": {
+       "summary": "2QFY27 EBITDA of INR18bn beat Nomura by 11% but missed Bloomberg consensus by 4%, on stronger pellet volumes and realizations. Delayed steel plant (only power plant construction started) is offset by faster CHEMAF copper ramp-up; the stock trades at 9.7x one-year-forward EV/EBITDA.",
+       "points": [
+        "TP INR2,000 vs INR1,950; target EV/EBITDA 8.5x vs 8.3x",
+        "2Q EBITDA INR18bn, -35% q-q; 11% above Nomura, 4% below consensus",
+        "Iron ore and pellet realizations 15% and 10% above tracked benchmarks",
+        "Copper volumes 37kt FY28F, 44kt FY29F vs 15kt, 20kt earlier",
+        "FY27F EBITDA cut 7%; FY28F +4%; FY29F -4%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Lloyds Metals H1 iron ore output +35% y-o-y, pellets 3.81mnt; India's coking coal import reliance on Australia falls to 54%.",
+      "source": "Kotak - Basic materials - daily news and prices",
+      "received": "08:58",
+      "detail": {
+       "summary": "Daily headline list only; the mail carries links without commentary. Mining-relevant items are Lloyds' H1 volume print, Australia's share of India's coking coal imports, and softer South African thermal coal portside prices. Price data sits in the attached metals pack.",
+       "points": [
+        "Lloyds H1 iron ore production +35% y-o-y",
+        "Lloyds pellet output 3.81mnt in H1",
+        "Coking coal import dependence on Australia at 54%",
+        "South African thermal coal portside prices decline at Indian ports"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cabinet approves support scheme for critical mineral processing (headline only; scheme size not in the preview).",
+      "source": "Kotak - Infra Daily Wrap: Cabinet approves support scheme for critical mineral processing; Power Grid raises FY2027 capex to up to Rs400 bn; Indigo in talks with Embraer to buy 100 jets;",
+      "received": "09:20"
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "LG India 2QFY27: revenue +19.5% YoY, 2.6% beat; EBITDA ~3% and PAT ~6% below Kotak on Home Entertainment margin; FY27 guide reiterated.",
+      "source": "Kotak - [Kotak] LG Electronics India (Rs1,810; REDUCE) 2QFY27 first cut - topline beat, with a small margin miss; announces entry into Vehicle Solutions Business",
+      "received": "12:34",
+      "detail": {
+       "summary": "Kotak (REDUCE) calls the quarter a topline beat with a small margin miss: HE margin missed by 250bps on panel costs, currency and festive go-to-market spend, while Home Appliances margin expanded. Management kept mid-teen growth and early double-digit EBITDA margin for FY27. Nothing in the mail addresses Dixon, Amber or PGEL.",
+       "points": [
+        "Revenue Rs73.8bn, +19.5% YoY; HA +21%, HE +17.2%",
+        "EBITDA Rs7bn, +28% YoY vs Kotak Rs7.2bn",
+        "HA margin 8.7% (+50bps); HE 12.9% vs Kotak 15.4%",
+        "Recurring PAT Rs4.9bn, +26% YoY, ~6% miss",
+        "Sri City compressor plant to start in 3QFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LG India enters automotive Vehicle Solutions (infotainment, telematics, ADAS) at Sri City, funded from Rs42.8bn cash; Kotak sees it EPS accretive, awaits capex numbers.",
+      "source": "Kotak - [Kotak] LG Electronics India (Rs1,810; REDUCE) 2QFY27 first cut - topline beat, with a small margin miss; announces entry into Vehicle Solutions Business",
+      "received": "12:34",
+      "detail": {
+       "summary": "Kotak views the new business as positive given LG's global auto-OEM relationships and its 23% global telematics share. Manufacturing is phased at the new Sri City plant. Kotak is waiting for management commentary on capex and revenue milestones. The mail draws no read-across to Indian EMS names.",
+       "points": [
+        "VS is ~12.5% of LG global topline",
+        "Competitors named: Harman, Uno Minda, Panasonic, Visteon, Bosch, Varroc",
+        "Cash Rs42.8bn at Sep-26; investment from internal accruals",
+        "Mini-LED TVs also added to portfolio"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities keeps LG India BUY, lifts DCF target to Rs2,100 from Rs1,815 (59x FY28E EPS); models FY26-28E PAT CAGR 19.7%. (+4 more in Outlook)",
+      "source": "ICICI Securities - LG Electronics India (BUY): Strong growth momentum sustains; new growth engines strengthen outlook",
+      "received": "07:58",
+      "detail": {
+       "summary": "ICICI argues premiumisation plus the Essential Series, exports/B2B and Sri City capacity should let LG outgrow the industry. It treats Vehicle Solutions as diversification beyond consumer electronics. Opposite stance to Kotak's REDUCE at Rs1,810. No Dixon, Amber or PGEL read-across stated.",
+       "points": [
+        "TP Rs2,100 vs Rs1,815 earlier; BUY maintained",
+        "Revenue CAGR FY26-28E 14.4%, PAT 19.7%",
+        "EBITDA margin +63bps YoY; gross margin -52bps",
+        "FY27 guide: mid-teen revenue growth, early double-digit EBITDA margin"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Mphasis 2QFY27: CC revenue +3.3% QoQ beat consensus by 160bps; FY27 growth guide floor raised to low double digits; EBIT margin 14.8%, 40bps light.",
+      "source": "JPM - Hi Rajvaibhav, Mphasis: First Take: Revenues beat, margins miss; FY27 rev guide revised upwards",
+      "received": "07:04",
+      "detail": {
+       "summary": "JPM (OW, PT Rs2,650 Jun-27, price Rs2,510) calls it a revenue beat with a margin miss. PAT/EPS beat came from other income and a lower tax rate, not operations. It expects a positive stock reaction on the guide raise; earnings changes depend on the 6 Nov 08:30 IST call.",
+       "points": [
+        "CC revenue +3.3% QoQ, +9.7% YoY; USD revenue $486mn",
+        "EPS Rs29.3 vs JPMe 27.6, cons 28.0; EBIT 4.9% below JPMe",
+        "TCV $466mn (+1% QoQ), 5 large deals; AI-led wins 66% vs 63%",
+        "FY27 guide: low double digits (was HSD-to-low double digit); EBIT 14.75-15.75% kept",
+        "Logistics & transportation vertical declined QoQ"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM: IT services AI inflection ~1.5 years away; CY26/27 muted on ~4% annual deflation. Order of preference TechM > TCS > LTM > Infosys > HCLT > Wipro.",
+      "source": "JPM - India Daily: Equity Strategy: Oil decline helps the world's largest liquid AI hedge | IT Services: AI inflection 1.5yrs away",
+      "received": "08:53",
+      "detail": {
+       "summary": "JPM's bottom-up work on the top 10 IT firms puts the industry in an AI deflation-then-digestion phase, with inflection in CY28 and mid-single-digit growth only by CY30. BPS and AMS are most exposed; consulting least. Mid-sized TechM and LTM clear deflation fastest.",
+       "points": [
+        "Nifty IT -15% YTD in USD; +15% over the last month",
+        "CY26/27 industry growth muted; inflection CY28; MSD by CY30",
+        "BPS/AMS deflation 5-7% a year; consulting 0-1%",
+        "TechM/LTM to HSD growth within a couple of years",
+        "INFY/TCS MSD by FY30; HCL and Wipro recovery slowest",
+        "JPM strategy stays underweight IT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FPI IT inflows Rs135.1bn in Oct, best monthly in over 4 years; IT relative weight -0.47%, highest since Jun-25, while total FPI selling was Rs348.4bn. (+4 more in Outlook)",
+      "source": "PhillipCapital - Strategy: FPI Tracker - Selling continued across sectors; IT inflows at multi-year high",
+      "received": "16:22",
+      "detail": {
+       "summary": "PhillipCapital's October FPI tracker shows overall selling continuing while IT and Telecom drew the most money. IT inflows came in three of the last four months, and relative positioning moved towards IT. Early November flows turned positive for the market overall.",
+       "points": [
+        "IT Oct inflow Rs135.1bn; 3 of last 4 months net inflows, Rs199.8bn cumulative",
+        "IT +12bps relative shift in Oct; weight -0.47% vs Nifty 500",
+        "Total FPI Oct outflow Rs348.4bn vs Rs358.6bn Sep",
+        "Nov MTD (4 sessions) FPI inflow Rs226.9bn",
+        "Largest outflows: FMCG Rs97.3bn, Financials Rs95.2bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "S&P fell 4.4% on 60% above-average volume, worst since April '25; Nasdaq 100 -6.4%; JPM sees vol-targeters selling ~$50bn and crowding stress rising.",
+      "source": "JPM - JPM Overnight Brief! 11/6 - worst day since the April '25, Crowding remains a pain point. Dec hike probability declined",
+      "received": "05:29",
+      "detail": {
+       "summary": "The post-midterm Democratic sweep is read as slowing AI data-centre build-out, tipping an already crowded AI trade. JPM sales flags no dip-buying in AI, rising fund-stress questions, and CTAs turning net short US equities. Treasuries rallied as a safe haven.",
+       "points": [
+        "S&P -4.4%, QQQ -6.5%, memory -17%, neoclouds -14%; 85% of S&P red",
+        "Levered ETFs sold >$60bn into close; vol-targeters ~$50bn more to sell",
+        "Pure US momentum almost -9% on the week (-2.8z)",
+        "Dec Fed hike odds fell from ~80% to just under 70%",
+        "Brent +4.1% to $98.54; JPM house view Brent $78 FY26, $64 avg 2027"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley India focus list adds HDFC Bank, Tata Consumer, Hyundai, Godrej Properties; drops L&T, Varun Beverages, Maruti, Prestige. OW Financials, Discretionary, Industrials.",
+      "source": "Morgan Stanley - IDEA: India Equity Strategy: Focus List Changes: Adding HDFC Bank, Tata Consumer, Hyundai, Godrej Properties",
+      "received": "15:31",
+      "detail": {
+       "summary": "Strategy rotates into earnings-rebound and balance-sheet-defensive names. HDFC Bank is seen narrowing its growth gap with CET-1 at 17.1%; Hyundai is entering a product cycle; Godrej Properties is valued on cash flows rather than pre-sales.",
+       "points": [
+        "Hyundai: 30% FY28 EBITDA growth, 22x FY28 vs Maruti 5-yr median 26x",
+        "Tata Consumer: 22% F26-29 EPS CAGR vs ~14% for F&B peers",
+        "Godrej Properties: 10x FY28e P/E vs 23x for top-five developers; 40% EPS CAGR FY26-29e",
+        "HDFC Bank CET-1 17.1% at 2QF27; NII growth seen reaching mid-teens"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM India sales: Brent down ~20% in 3 sessions, FIIs bought $1.5bn in 3 days; neutralising underweight could unlock ~$115bn inflows.",
+      "source": "JPM - JPM India: Trick or Trade: India might be getting its Diwali moment | India stock beneficiaries of falling crude oil prices",
+      "received": "09:22",
+      "detail": {
+       "summary": "Sales commentary, not research. Oil relief plus AI-trade unwinding is argued to revive the India trade, with the Apr-Jul playbook favouring domestic cyclicals. It lists cement (UltraTech, Shree, Ambuja, Dalmia), autos and paints as crude beneficiaries.",
+       "points": [
+        "Apr-Jul oil relief: Real Estate +40%, Discretionary +22%, Industrials +19%",
+        "Global oil balance 1.1mbd surplus in Sep, 1.4mbd in Oct",
+        "MSCI India 2QFY27 earnings tracking 20%+ y/y; beats 71%, misses 16%",
+        "FY26/27 consensus EPS up 0.5%/0.6% in a month",
+        "Risks: El Nino (rain 15% below LPA), AI hit to IT, higher global yields"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Avendus upgrades Exide to ADD from REDUCE, TP Rs380, on the price correction; keeps Uno Minda at ADD, TP Rs1,415.",
+      "source": "Avendus Spark - 2QFY27 Outlook reviews: Uno Minda (Rating: ADD, TP: Rs. 1,415); Exide Industries (Rating: Revise to ADD, TP: Rs. 380)",
+      "received": "06:47",
+      "detail": {
+       "summary": "The Exide upgrade is price-driven: lead acid benefits from aftermarket growth and recent price hikes lifted FY27/28 margin estimates, while Li-ion ramp-up and long-term margin visibility remain challenges. Uno Minda is kept on ADD on outgrowth of industry, EV pipeline and capacity ramp-up.",
+       "points": [
+        "Exide TP Rs380: 13x Sep28E lead acid Rs275, Li-ion Rs65, HDFC Life Rs40",
+        "Exide 2Q standalone revenue +20% YoY; gross margin +110bps QoQ",
+        "Exide Li-ion plant ~25% utilisation by end-FY27; 2W OEMs from 4QFY27",
+        "Uno Minda TP Rs1,415 = 40x Sep28E EPS; FY27-29E capex ~Rs55bn",
+        "Apollo Tyres kept REDUCE, TP Rs380; RM basket +25% YoY in 1HFY27"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA reiterates NHPC outperform with Rs117 TP after 2Q PAT +74% YoY; sees 2H stronger on Teesta V, Subansiri Lower 250MW, Parbati II final tariff.",
+      "source": "CLSA - NHPC (Buy) - What a result: PAT +74%",
+      "received": "08:59",
+      "detail": {
+       "summary": "Recurring PAT growth came from the Parbati 2 turnaround, Teesta V restart and Subansiri Lower, despite under-recovery from a conservative accounting policy that CLSA expects to be recouped when tariff orders land in 2H. It calls this a step-change in earnings.",
+       "points": [
+        "2Q recurring PAT +74% YoY; TP Rs117, rating unchanged",
+        "Forecasts REE (ex-minority) growth 90% over FY26-30CL vs 31% in past five years",
+        "EPS seen 100% higher and ROE +810bps over FY26-29CL",
+        "P2 and Subansiri Lower under-recovery may reverse if tariff order lands in 2H"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ONGC 2Q standalone EBITDA Rs263bn (+49% YoY) in line; crude sales volume -8.4% YoY, 2.1% below Kotak; interim dividend Rs8/sh; Kotak stays BUY.",
+      "source": "Kotak - FW: [Kotak] ONGC 2QFY27 first take: In-line results; crude volumes weaker (+33 more in Outlook)",
+      "received": "21:36",
+      "detail": {
+       "summary": "Kotak calls the quarter in line: EBITDA 0.7% below Kotak, PAT in line on a lower tax rate despite a Rs22.4bn impairment. Production decline is blamed on KG-98/2 reservoir behaviour and monsoon delays. Estimates are to be reviewed after the 6 Nov analyst call.",
+       "points": [
+        "PAT Rs155bn (+57% YoY); 1H PAT Rs325.2bn, record",
+        "Crude realisation US$92.3/bbl (+37% YoY); gas US$7.75/mmbtu",
+        "Interim dividend Rs8/sh, 31% of 1H EPS of Rs25.9",
+        "New awards: ~Rs118bn offshore projects plus PRP-X over Rs43bn",
+        "Mahanadi deepwater first exploratory well proved gas-bearing"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "SOX -12% led by memory -17%, neoclouds -14%, CPUs -13%; JPM attributes it to a Democratic sweep clouding data-center buildout; Nvidia -9%, now down on the year.",
+    "source": "JPM - APAC THEMATICS - AI Unwind: Mcap decline = 10% of GDP"
+   },
+   {
+    "text": "Micron -18% after suspending a $4.5bn Taiwan memory plant; Sandisk -22%, worst in the S&P; US lost $3.2tr of market cap, retail selling heaviest since Liberation Day.",
+    "source": "JPM - APAC THEMATICS - AI Unwind: Mcap decline = 10% of GDP"
+   },
+   {
+    "text": "Semis forward P/E now 13.4x, just 5% above Covid lows; JPM sees the crowded-long unwind in later stages (-24% vs -26% in 2022).",
+    "source": "JPM - APAC THEMATICS - AI Unwind: Mcap decline = 10% of GDP"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

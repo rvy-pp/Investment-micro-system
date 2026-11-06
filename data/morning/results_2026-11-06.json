@@ -1,0 +1,238 @@
+{
+ "date": "2026-11-06",
+ "session": true,
+ "generated_at": "2026-11-06T08:09:17",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "unclear": [
+   "Hindalco Industries",
+   "Siemens"
+  ],
+  "post": [
+   "Voltas"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "HINDALCO",
+   "date": "2026-11-06",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the Unaudited Standalone and Consolidated financial results of the Company for the quarter ending September 30, 2026",
+   "entity": "hindalco",
+   "name": "Hindalco Industries",
+   "sector": "non_ferrous",
+   "when": "unclear",
+   "history": [
+    {
+     "date": "2026-08-07",
+     "time": "14:40",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-22",
+     "time": "17:22",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-12",
+     "time": "17:06",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-07",
+     "time": "13:42",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 2,
+    "post": 2
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "SIEMENS",
+   "date": "2026-11-06",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:SIEMENS",
+   "name": "Siemens",
+   "sector": "extended",
+   "when": "unclear",
+   "history": [
+    {
+     "date": "2026-08-11",
+     "time": "14:22",
+     "when": "during"
+    },
+    {
+     "date": "2026-05-26",
+     "time": "17:18",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-06",
+     "time": "13:58",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-14",
+     "time": "16:06",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "during": 2,
+    "post": 2
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "VOLTAS",
+   "date": "2026-11-06",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "ext:VOLTAS",
+   "name": "Voltas",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-14",
+     "time": "17:19",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-14",
+     "time": "17:42",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-29",
+     "time": "17:07",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-13",
+     "time": "15:39",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-09",
+  "groups": {
+   "post": [
+    "Tata Steel"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "TATASTEEL",
+    "date": "2026-11-07",
+    "purpose": "Financial Results/Other business matters",
+    "desc": "TATASTEEL : 07-Nov-2026 :  The Company has informed the Exchange that a Board meeting to be held on October 27, 2026 has been re-scheduled. Further, the Company has informed the Exchange that the meeting of the Board of Directors of the Company will be held on November 07, 2026, to consider and approve the financial results for the period ended September 30, 2026, and other business matters.",
+    "entity": "tata_steel",
+    "name": "Tata Steel",
+    "sector": "steel",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-30",
+      "time": "18:49",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "17:44",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-06",
+      "time": "16:36",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-12",
+      "time": "18:01",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-07",
+   "name": "Tata Steel",
+   "symbol": "TATASTEEL"
+  },
+  {
+   "date": "2026-11-10",
+   "name": "Cochin Shipyard",
+   "symbol": "COCHINSHIP"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Hindustan Copper",
+   "symbol": "HINDCOPPER"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Tata Power Company",
+   "symbol": "TATAPOWER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Avalon Technologies",
+   "symbol": "AVALON"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Bharat Dynamics",
+   "symbol": "BDL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hindustan Aeronautics",
+   "symbol": "HAL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hitachi Energy India",
+   "symbol": "POWERINDIA"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "NMDC",
+   "symbol": "NMDC"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Oil India",
+   "symbol": "OIL"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "ABB India",
+   "symbol": "ABB"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Rail Vikas Nigam",
+   "symbol": "RVNL"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}
