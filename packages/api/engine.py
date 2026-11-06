@@ -1166,6 +1166,46 @@ def _price_linked_ids() -> set:
     return linked
 
 
+# WATCH-ONLY series on the what-moved table (PM, 2026-11-06: "add the kotak
+# series for the European HRC (german and all) in the front-end daily").
+# Both are metals-pack columns (34 Germany, 33 UK — the pack's only European
+# coil prints) that NO spec price_links, so they drive no bridge and no score.
+# They are shown, and chartable, but every row carries `watch: true` and the
+# page labels it "watch · not modelled" — the table's old rule was "a parked
+# column beside the modelled ones reads as though it drives something", and
+# the label is what keeps that rule true while honouring the instruction.
+# hrc_germany IS the Netherlands price driver in Tata Steel's Excel model,
+# which is why it earns a place; that model is outside the scoring path.
+WATCH_INPUTS = {
+    "hrc_germany": "Germany HRC, US$/t, Kotak metals pack, a monthly print "
+                   "carried daily. Drives the NL price in Tata Steel's Excel "
+                   "model; no score",
+    "hrc_uk": "UK HRC, US$/t, Kotak metals pack, a monthly print carried "
+              "daily. Watch only; no score",
+}
+
+# What-moved GROUPS, in display order (PM, same day: "group the commodity
+# series by commodity type: Steel ones together with Steel header, iron
+# different, fuel different"). An id missing from here lands in "Other",
+# never off the page — a new price_link must show up even if nobody
+# remembers this map.
+MOVER_GROUPS = [
+    ("Steel", ["hrc_india_inr", "rebar_india_primary_inr",
+               "hrc_germany", "hrc_uk"]),
+    ("Iron ore", ["iron_ore_china_cfr62", "nmdc_fines_inr",
+                  "nmdc_lumps_inr", "nmdc_sales_ttm_mt"]),
+    ("Fuel & coal", ["coking_coal_spot_aus", "thermal_coal_seaborne",
+                     "thermal_coal_indonesia_6322", "cp_coke", "brent",
+                     "coal_eauction_realisation_inr",
+                     "coal_fsa_realisation_inr", "coalindia_offtake_ttm_mt"]),
+    ("Aluminium & alumina", ["lme_aluminium", "alumina_index",
+                             "al_scrap_midwest", "can_sheet_spread"]),
+    ("Zinc, copper & silver", ["lme_zinc", "lme_copper", "silver"]),
+    ("Cement", ["cement_price_india_inr", "cement_price_north_inr",
+                "cement_price_east_inr", "cement_price_south_inr"]),
+]
+
+
 def input_history(entity_id: str) -> dict:
     """Price series for ONE modelled input — the Overview's what-moved rows
     expand into this chart on click, the OI-row grammar (2026-09-08, PM).
@@ -1184,7 +1224,7 @@ def input_history(entity_id: str) -> dict:
     alumina_index) and a shock whose endpoints have different sources is
     worth checking before trusting — the chart captions the mix.
     """
-    if entity_id not in _price_linked_ids():
+    if entity_id not in _price_linked_ids() and entity_id not in WATCH_INPUTS:
         return {"error": f"'{entity_id}' is not a modelled input "
                          "(nothing price_links it)"}
     conn = connect()
@@ -1338,13 +1378,18 @@ def overview() -> dict:
     # Only series a spec price_links. A "today's movers" list padded with the 27
     # parked steel series would read as though they drive something.
     linked = _price_linked_ids()
+    group_of = {e: g for g, ids in MOVER_GROUPS for e in ids}
 
     movers = []
-    for eid in sorted(linked):
+    for eid in sorted(linked | set(WATCH_INPUTS)):
+        # The European HRC columns are MONTHLY prints the pack forward-fills
+        # daily (Germany: 1st of each month, last change 2026-09-01), so 30
+        # rows is less than one print and always read "flat 30d+". The watch
+        # rows look back ~a year; the modelled rows keep 30, unchanged.
         hist = conn.execute(
             "SELECT date, close, source FROM prices WHERE entity_id=? "
-            "AND close IS NOT NULL ORDER BY date DESC LIMIT 30",
-            (eid,)).fetchall()
+            "AND close IS NOT NULL ORDER BY date DESC LIMIT ?",
+            (eid, 400 if eid in WATCH_INPUTS else 30)).fetchall()
         if not hist:
             movers.append({"id": eid, "last": None, "date": None,
                            "source": None, "chg_pct": None, "moved_on": None})
@@ -1359,8 +1404,17 @@ def overview() -> dict:
         movers.append({"id": eid, "last": last["close"], "date": last["date"],
                        "source": last["source"] or "legacy", "chg_pct": chg,
                        "moved_on": moved_on})
-    movers.sort(key=lambda r: -abs(r["chg_pct"] or 0))
+    for m in movers:
+        m["group"] = group_of.get(m["id"], "Other")
+        m["watch"] = m["id"] in WATCH_INPUTS and m["id"] not in linked
+        if m["watch"]:
+            m["note"] = WATCH_INPUTS[m["id"]]
+    # Group in MOVER_GROUPS order, "Other" last; biggest move first inside.
+    gidx = {g: i for i, (g, _ids) in enumerate(MOVER_GROUPS)}
+    movers.sort(key=lambda r: (gidx.get(r["group"], len(MOVER_GROUPS)),
+                               -abs(r["chg_pct"] or 0)))
     out["movers"] = movers
+    out["mover_groups"] = [g for g, _ in MOVER_GROUPS] + ["Other"]
 
     # ---- positioning ----------------------------------------------------
     oi = conn.execute(

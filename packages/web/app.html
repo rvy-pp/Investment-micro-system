@@ -696,6 +696,9 @@
        color:var(--accent)}
   tr.oich>td{padding:12px 14px 14px;background:var(--sunken)}
   tr.oich .legend{margin-top:2px}
+  /* What-moved group header (PM, 2026-11-06: Steel / Iron ore / Fuel ...). */
+  tr.mvgrp>td{font-weight:600;color:var(--ink);padding-top:14px;
+       border-bottom:1px solid var(--rule);letter-spacing:.02em}
 
   /* A mail bullet whose MAIL already appeared in an earlier brief renders
      greyed with a tag — marked, never dropped (PM, 2026-09-08). The mark is
@@ -3196,10 +3199,18 @@ async function loadOverview(){
 
   /* Each row expands into a 2y price chart on click — the OI-row grammar
      (PM, 2026-09-08). Unpriced rows have nothing to chart and stay inert. */
+  /* Grouped by commodity type (PM, 2026-11-06): the server sends `group` and
+     the order; a header row opens each group. Watch rows (the Kotak European
+     HRC columns) are tagged, because nothing price_links them. */
+  let mvGroup = null;
   const moverRows = (d.movers || []).map(m =>
+    (m.group !== mvGroup ? (mvGroup = m.group,
+      `<tr class="mvgrp"><td colspan="6">${esc(m.group || 'Other')}</td></tr>`) : '') +
     `<tr${m.last == null ? '' : ` class="mvrow" data-id="${esc(m.id)}"
-        aria-expanded="false" title="price vs time chart"`}>
-      <td class="k">${esc(m.id)}${m.last == null ? ''
+        aria-expanded="false" title="${esc(m.note || 'price vs time chart')}"`}>
+      <td class="k">${esc(m.id)}${m.watch
+        ? ' <span class="pill" style="font-size:10px" title="' + esc(m.note || '')
+          + '">watch · not modelled</span>' : ''}${m.last == null ? ''
         : ' <span class="oicaret" aria-hidden="true">▸</span>'}</td>
       <td class="n">${fmtNum(m.last)}</td>
       ${m.chg_pct == null
@@ -3231,11 +3242,13 @@ async function loadOverview(){
     /* What-moved BELOW the mail, per the PM 2026-08-31: read the morning's
        words first, then the tape that should corroborate them. */
     + `<div class="sechead">What moved · modelled inputs only</div>
-       <div class="panel"><p class="note" style="margin-top:0">Only series a spec
-         <code>price_link</code>s — the parked columns drive nothing, so they are
-         not here. Change is against the last close that actually <b>differed</b>.</p>
+       <div class="panel"><p class="note" style="margin-top:0">Series a spec
+         <code>price_link</code>s, grouped by commodity, plus the Kotak pack's
+         European HRC (Germany, UK) tagged <i>watch · not modelled</i>: shown,
+         but they drive no score. Change is against the last close that
+         actually <b>differed</b>.</p>
        <p class="note">Click a series for its price-vs-time chart (last two
-         years), same as the OI rows.</p>
+         years); hover the chart to read the price on any date.</p>
        <div class="scroll"><table><thead><tr><th>series</th><th class="n">last</th>
          <th class="n">last real move</th><th>as of</th><th>source</th><th>state</th>
        </tr></thead><tbody>${moverRows}</tbody></table></div></div>`
@@ -3386,6 +3399,81 @@ async function toggleMvRow(tr){
   const w = Math.max(520, Math.min(1100,
     (panel ? panel.clientWidth : 940) - 32));
   td.innerHTML = inputChart(eid, d, w);
+  wireInputChart(td, d, w);
+}
+
+/* Hover readout on the expanded chart (PM, 2026-11-06: "hover over the
+   expanded graphs and see the prices"). The war chart's grammar: a hairline
+   snaps to the nearest dated row, a marker sits on the line, and the tip
+   prints the date, the close, the change since the first visible row and the
+   row's source. Geometry is re-derived from the svg's own data-* attributes,
+   so it cannot drift from what inputChart drew. Arrow keys walk the rows. */
+function wireInputChart(td, d, w){
+  const svg = td.querySelector('svg.mvch');
+  if (!svg) return;
+  const rows = d.rows.filter(r => r.close != null);
+  const g = svg.dataset, ML = +g.ml, MR = +g.mr, x0 = +g.x0, x1 = +g.x1;
+  const lo = +g.lo, hi = +g.hi, MT = +g.mt, h = +g.h, MB = +g.mb;
+  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0)) * (w - ML - MR);
+  const Y = v => MT + (1 - (v - lo) / ((hi - lo) || 1)) * (h - MT - MB);
+  const xh = svg.querySelector('.xhair'), dot = svg.querySelector('.mvdot');
+  const tip = td.querySelector('.viztip');
+  const base = rows[0].close;
+  let idx = -1;
+  const hide = () => { xh.style.display = 'none'; dot.style.display = 'none';
+                       tip.classList.remove('on'); idx = -1; };
+  const draw = i => {
+    if (i < 0 || i >= rows.length) return hide();
+    idx = i;
+    const r = rows[i], x = X(Date.parse(r.date)), y = Y(r.close);
+    xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.style.display = '';
+    dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.style.display = '';
+    tip.textContent = '';
+    const add = (cls, txt) => { const e = document.createElement('div');
+      e.className = cls; e.textContent = txt; tip.appendChild(e); return e; };
+    add('d', r.date);
+    const row = add('r', '');
+    const key = document.createElement('i'); key.style.borderTopColor = 'var(--accent)';
+    const b = document.createElement('b'); b.textContent = fmtMvVal(r.close);
+    const em = document.createElement('em'); em.textContent = svg.dataset.eid;
+    row.append(key, b, em);
+    const ch = base ? (r.close / base - 1) * 100 : null;
+    const ex = add('r', '');
+    const em2 = document.createElement('em');
+    em2.textContent = (ch == null ? '' : (ch >= 0 ? '+' : '') + ch.toFixed(2) +
+      '% vs ' + rows[0].date + ' · ') + r.source;
+    ex.appendChild(em2);
+    tip.classList.add('on');
+    const tw = tip.offsetWidth || 170;
+    tip.style.left = Math.max(4, (x + 14 + tw > w) ? x - tw - 14 : x + 14) + 'px';
+    tip.style.top = (MT + 10) + 'px';
+  };
+  const nearest = clientX => {
+    const rc = svg.getBoundingClientRect();
+    if (!rc.width) return -1;
+    const frac = ((clientX - rc.left) * (w / rc.width) - ML) / (w - ML - MR);
+    if (frac < -0.03 || frac > 1.03) return -1;
+    const ms = x0 + Math.min(1, Math.max(0, frac)) * (x1 - x0);
+    let best = -1, bd = Infinity;
+    for (let i = 0; i < rows.length; i++){
+      const dd = Math.abs(Date.parse(rows[i].date) - ms);
+      if (dd < bd){ bd = dd; best = i; }
+    }
+    return best;
+  };
+  svg.addEventListener('pointermove', ev => draw(nearest(ev.clientX)));
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('focus', () => draw(idx < 0 ? rows.length - 1 : idx));
+  svg.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowLeft'){
+      draw(Math.max(0, (idx < 0 ? rows.length - 1 : idx) - 1)); ev.preventDefault();
+    } else if (ev.key === 'ArrowRight'){
+      draw(Math.min(rows.length - 1, (idx < 0 ? 0 : idx) + 1)); ev.preventDefault();
+    } else if (ev.key === 'Escape') hide();
+  });
+  // A click inside the chart must not bubble to the overview's row toggle.
+  svg.addEventListener('click', ev => ev.stopPropagation());
 }
 
 /* Values span cement's Rs thousands to alumina's dollars; pick the decimals
@@ -3439,13 +3527,18 @@ function inputChart(eid, d, w){
   for (const r of rows) if (!srcs.includes(r.source)) srcs.push(r.source);
 
   return `<div class="chartwrap">
-    <svg width="${w}" height="${h}" role="img"
-         aria-label="price history for ${esc(eid)}">
+    <svg class="mvch" width="${w}" height="${h}" role="img" tabindex="0"
+         aria-label="price history for ${esc(eid)}; hover or arrow keys for prices"
+         data-eid="${esc(eid)}" data-ml="${ML}" data-mr="${MR}" data-mt="${MT}"
+         data-mb="${MB}" data-h="${h}" data-x0="${x0}" data-x1="${x1}"
+         data-lo="${lo}" data-hi="${hi}">
       ${grid}${yax}${xax}
+      <line class="xhair" x1="0" x2="0" y1="${MT}" y2="${h - MB}" style="display:none"/>
       <polyline points="${pts}" fill="none" style="stroke:var(--accent)"
         stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="${dotX}" cy="${dotY}" r="3" style="fill:var(--accent)"/>
-    </svg></div>
+      <circle class="mvdot" r="4" style="fill:var(--accent);stroke:var(--sunken);stroke-width:2;display:none;pointer-events:none"/>
+    </svg><div class="viztip" role="status"></div></div>
     <div class="hint">${esc(eid)} · last ${fmtMvVal(lastR.close)}
       (${esc(lastR.date)}) · 2y range ${fmtMvVal(lo0)}–${fmtMvVal(hi0)} ·
       ${rows.length} rows shown of ${d.n_ever} since ${esc(d.first_ever)} ·
