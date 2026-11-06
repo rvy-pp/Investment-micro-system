@@ -1,7 +1,7 @@
 {
  "date": "2026-10-29",
  "session": true,
- "generated_at": "2026-10-29T08:18:40",
+ "generated_at": "2026-10-29T21:17:36",
  "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
  "n_coverage": 93,
  "groups": {
@@ -51,7 +51,7 @@
    "counts": {
     "during": 4
    },
-   "filed_at": null
+   "filed_at": "14:24"
   },
   {
    "symbol": "COALINDIA",
@@ -88,7 +88,7 @@
     "post": 3,
     "during": 1
    },
-   "filed_at": null
+   "filed_at": "18:14"
   },
   {
    "symbol": "CAMS",
@@ -125,7 +125,7 @@
     "during": 2,
     "post": 2
    },
-   "filed_at": null
+   "filed_at": "17:21"
   },
   {
    "symbol": "SUZLON",
@@ -161,9 +161,280 @@
    "counts": {
     "during": 4
    },
-   "filed_at": null
+   "filed_at": "15:51"
   }
  ],
+ "next": {
+  "date": "2026-10-30",
+  "groups": {
+   "during": [
+    "Bharat Electronics",
+    "GAIL (India)"
+   ],
+   "post": [
+    "Dixon Technologies",
+    "GE Vernova T&D India",
+    "Indian Oil Corporation",
+    "Reliance Industries",
+    "Syrma SGS Technology"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "BEL",
+    "date": "2026-10-30",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "ext:BEL",
+    "name": "Bharat Electronics",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-07-27",
+      "time": "16:06",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-19",
+      "time": "15:23",
+      "when": "during"
+     },
+     {
+      "date": "2026-01-28",
+      "time": "14:05",
+      "when": "during"
+     },
+     {
+      "date": "2025-10-31",
+      "time": "13:01",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "post": 1,
+     "during": 3
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "DIXON",
+    "date": "2026-10-30",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results (standalone and consolidated) for the period ended September 30, 2026",
+    "entity": "dixon",
+    "name": "Dixon Technologies",
+    "sector": "ems",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-31",
+      "time": "15:19",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-12",
+      "time": "15:54",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-29",
+      "time": "16:16",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-17",
+      "time": "16:22",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "during": 1,
+     "post": 3
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "GAIL",
+    "date": "2026-10-30",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "ext:GAIL",
+    "name": "GAIL (India)",
+    "sector": "extended",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-07-31",
+      "time": "14:13",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-21",
+      "time": "18:35",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-31",
+      "time": "14:26",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 2,
+     "post": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "GVT&D",
+    "date": "2026-10-30",
+    "purpose": "Financial Results/Other business matters",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and other business matters",
+    "entity": "ext:GVT&D",
+    "name": "GE Vernova T&D India",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-05",
+      "time": "22:11",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-18",
+      "time": "19:19",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-28",
+      "time": "17:44",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-03",
+      "time": "13:57",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "post": 3,
+     "during": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "IOC",
+    "date": "2026-10-30",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "ext:IOC",
+    "name": "Indian Oil Corporation",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-31",
+      "time": "17:43",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-18",
+      "time": "21:43",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-05",
+      "time": "13:30",
+      "when": "during"
+     },
+     {
+      "date": "2025-10-27",
+      "time": "16:11",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 3,
+     "during": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "RELIANCE",
+    "date": "2026-10-30",
+    "purpose": "Financial Results/Fund Raising",
+    "desc": "The meeting of the Board of Directors of the Company is scheduled on October 30, 2026, inter alia, to consider and approve: a) the standalone and consolidated unaudited financial results of the Company for the quarter and half year ended September 30, 2026; andb) raising of funds by way of issuance of listed, secured / unsecured, redeemable non-convertible debentures on private placement basis, in one or more tranches.",
+    "entity": "ext:RELIANCE",
+    "name": "Reliance Industries",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-17",
+      "time": "19:07",
+      "when": "post"
+     },
+     {
+      "date": "2026-04-24",
+      "time": "19:26",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-16",
+      "time": "19:09",
+      "when": "post"
+     },
+     {
+      "date": "2025-10-17",
+      "time": "19:01",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "SYRMA",
+    "date": "2026-10-30",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "syrma_sgs",
+    "name": "Syrma SGS Technology",
+    "sector": "ems",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-29",
+      "time": "15:29",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-11",
+      "time": "18:15",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-29",
+      "time": "17:34",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-10",
+      "time": "18:51",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "during": 1,
+     "post": 3
+    },
+    "filed_at": null
+   }
+  ]
+ },
  "ahead": [
   {
    "date": "2026-10-30",
@@ -227,6 +498,11 @@
   },
   {
    "date": "2026-11-03",
+   "name": "Lloyds Metals & Energy",
+   "symbol": "LLOYDSME"
+  },
+  {
+   "date": "2026-11-03",
    "name": "Solar Industries India",
    "symbol": "SOLARINDS"
   },
@@ -244,6 +520,11 @@
    "date": "2026-11-04",
    "name": "Premier Energies",
    "symbol": "PREMIERENE"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Astral",
+   "symbol": "ASTRAL"
   },
   {
    "date": "2026-11-05",

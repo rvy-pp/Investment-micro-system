@@ -576,7 +576,7 @@
           "growth": 0.4428
         }
       ],
-      "trailing_eps": 19.5
+      "trailing_eps": 19.44
     },
     "tata_elxsi": {
       "symbol": "TATAELXSI.NS",
@@ -648,7 +648,7 @@
           "growth": 0.043
         }
       ],
-      "trailing_eps": 408.34
+      "trailing_eps": 398.08
     },
     "ltts": {
       "symbol": "LTTS.NS",
@@ -684,7 +684,7 @@
           "growth": 0.1377
         }
       ],
-      "trailing_eps": 127.49
+      "trailing_eps": 129.13
     }
   }
 }

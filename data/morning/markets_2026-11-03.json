@@ -1,6 +1,6 @@
 {
  "date": "2026-11-03",
- "fetched_at": "2026-11-03T08:08:34",
+ "fetched_at": "2026-11-03T12:52:07",
  "quotes": {
   "us": [
    {
@@ -16,7 +16,7 @@
     "symbol": "^IXIC",
     "label": "Nasdaq",
     "date": "2026-11-02",
-    "close": 25164.36,
+    "close": 25164.31,
     "prev_date": "2026-10-30",
     "chg_pct": -1.07,
     "weekdays_skipped": 0
@@ -160,15 +160,27 @@
   ],
   "NVDA": [
    {
-    "title": "Nvidia Reports Nov. 17. History Says What Its Stock Usually Does Next.",
-    "publisher": "Motley Fool",
-    "when": "2026-11-02 23:37Z",
-    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-reports-nov-17-history-233701956.html"
+    "title": "PATEO Advances In-Vehicle AI with NVIDIA Nemotron and ByteDance Doubao on its AI Box built on NVIDIA DRIVE AGX Thor",
+    "publisher": "PR Newswire",
+    "when": "2026-11-03 05:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/pateo-advances-vehicle-ai-nvidia-050000937.html"
+   },
+   {
+    "title": "PATEO Advances In-Vehicle AI with NVIDIA Nemotron and ByteDance Doubao on its AI Box built on NVIDIA DRIVE AGX Thor",
+    "publisher": "PR Newswire",
+    "when": "2026-11-03 05:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/pateo-advances-vehicle-ai-nvidia-050000070.html"
    }
   ],
   "AVGO": [],
   "TSM": [],
   "AMD": [
+   {
+    "title": "Intel\u2019s Outlook Spooked Chip Investors \u2013 Can AMD Reassure Wall Street?",
+    "publisher": "Stocktwits",
+    "when": "2026-11-03 06:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/intel-outlook-spooked-chip-investors-064544780.html"
+   },
    {
     "title": "Why AMD Stock Is In Focus Before Q3 Earnings And AI Partnership Updates",
     "publisher": "Simply Wall St.",
@@ -185,16 +197,16 @@
  },
  "errors": [],
  "gift_nifty": {
-  "last": 23528.5,
-  "chg_pct": 1.24,
-  "stamp": "03-Nov-2026 08:08:36",
+  "last": 23704.0,
+  "chg_pct": 2.0,
+  "stamp": "03-Nov-2026 12:52:11",
   "expiry": "23-Nov-2026",
-  "volume": 1469,
+  "volume": 45160,
   "nifty_close": {
    "close": 23440.8,
-   "stamp": "02-Nov-2026 15:30"
+   "stamp": "03-Nov-2026 12:52"
   },
-  "gap_pts": 87.7,
-  "gap_pct": 0.37
+  "gap_pts": 263.2,
+  "gap_pct": 1.12
  }
 }

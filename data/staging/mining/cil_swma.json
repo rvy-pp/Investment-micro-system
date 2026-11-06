@@ -58,6 +58,13 @@
    "alloc_lt": 93.64,
    "doc": "SWMA_E-auction_Data.pdf",
    "how": "mining_filings.py --fetch 2026-10-02; corrected 2026-10-23 (was 89.9% / 187.28 LT: the NEC '--' cell dropped a column and the CIL total was weighted in as a subsidiary; filing's CIL column reads 94% / 93.64)"
+  },
+  {
+   "month": "2026-10",
+   "premium_pct": 140.0,
+   "alloc_lt": 118.0,
+   "doc": "auctionoct.pdf",
+   "how": "mining_filings.py --fetch 2026-11-03"
   }
  ]
 }
