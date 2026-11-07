@@ -1,0 +1,124 @@
+{
+ "date": "2026-11-07",
+ "session": false,
+ "generated_at": "2026-11-07T08:07:13",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "post": [
+   "Tata Steel"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "TATASTEEL",
+   "date": "2026-11-07",
+   "purpose": "Financial Results/Other business matters",
+   "desc": "TATASTEEL : 07-Nov-2026 :  The Company has informed the Exchange that a Board meeting to be held on October 27, 2026 has been re-scheduled. Further, the Company has informed the Exchange that the meeting of the Board of Directors of the Company will be held on November 07, 2026, to consider and approve the financial results for the period ended September 30, 2026, and other business matters.",
+   "entity": "tata_steel",
+   "name": "Tata Steel",
+   "sector": "steel",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-07-30",
+     "time": "18:49",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-15",
+     "time": "17:44",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-06",
+     "time": "16:36",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-12",
+     "time": "18:01",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-09",
+  "groups": {},
+  "rows": []
+ },
+ "ahead": [
+  {
+   "date": "2026-11-10",
+   "name": "Cochin Shipyard",
+   "symbol": "COCHINSHIP"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Hindustan Copper",
+   "symbol": "HINDCOPPER"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Tata Power Company",
+   "symbol": "TATAPOWER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Avalon Technologies",
+   "symbol": "AVALON"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Bharat Dynamics",
+   "symbol": "BDL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hindustan Aeronautics",
+   "symbol": "HAL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hitachi Energy India",
+   "symbol": "POWERINDIA"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "NMDC",
+   "symbol": "NMDC"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Oil India",
+   "symbol": "OIL"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "ABB India",
+   "symbol": "ABB"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Inox Wind",
+   "symbol": "INOXWIND"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Rail Vikas Nigam",
+   "symbol": "RVNL"
+  },
+  {
+   "date": "2026-11-14",
+   "name": "Ashok Leyland",
+   "symbol": "ASHOKLEY"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}

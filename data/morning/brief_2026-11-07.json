@@ -1,0 +1,345 @@
+{
+ "date": "2026-11-07",
+ "generated_at": "2026-11-07T08:17:34",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 177,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Elara keeps Hindalco Buy but cuts SOTP target to Rs1,227 from Rs1,270 (28% upside); copper EBITDA hit record Rs16.7bn, normalising at Rs12-13bn a quarter.",
+      "source": "Elara — Metals & Mining - Hindalco Industries - Copper business – Guidance raised - Q2FY27 Update - Buy - TP: INR 1,227",
+      "received": "00:47",
+      "detail": {
+       "summary": "Q2 consolidated EBITDA of about Rs128bn beat on $39mn Oswego insurance proceeds and strong copper. Target cut reflects lower LME aluminium and a roll to Sep-2028. Management says Novelis leverage has peaked and free cash flow turns positive by FY27-end.",
+       "points": [
+        "Copper EBITDA Rs16.7bn, +164% YoY vs ~Rs9.0bn guidance",
+        "~Rs3.5bn of copper EBITDA non-recurring",
+        "Novelis net leverage 4.7x vs 3.4x a year ago",
+        "EBITDA estimates cut ~2% FY27E, ~3% FY28-29E",
+        "SOTP: Novelis 5.5x, other businesses 6.0x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay holds Hindalco ADD, target Rs1,150 (20% upside); adjusted EBITDA Rs128.1bn beat consensus by 11.2%, FY27E EBITDA raised 5.9%.",
+      "source": "Emkay — Hindalco: Strong India performance drives EBITDA beat; ADD; Target: Rs1,150",
+      "received": "00:20",
+      "detail": {
+       "summary": "Beat came from India upstream aluminium and copper, with higher export premiums and VAP pricing offsetting lower LME. Management flags about 5% sequential input-cost inflation in Q3 from coal and CP coke, partly hedged. Novelis recovery is expected to continue with Bay Minette commissioning in Q4.",
+       "points": [
+        "Upstream Al EBITDA Rs70.1bn, 18.2% above Emkay",
+        "India Al EBITDA/t $2,125 vs $2,331 in Q1",
+        "Copper EBITDA Rs16.7bn, +82.2% QoQ; Q3 run-rate ~Rs12bn",
+        "Novelis adj EBITDA $508mn, in line",
+        "Consol net debt Rs804bn, 1.8x EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit stays SELL on Hindalco: Novelis ex-insurance EBITDA $469mn, net debt $8.5bn, and Bay Minette adds little EBITDA in FY28 (+8 more in Outlook).",
+      "source": "Ambit — Ambit Metals: Hindalco (SELL) - Novelis -Balance-sheet repair takes Longer",
+      "received": "08:55",
+      "detail": {
+       "summary": "Novelis' Q2 was flattered by insurance, with strike and tariff drags underneath. Q3 stays seasonally weak, and Bay Minette will ship mostly beverage cans in FY28, so earnings recovery is a FY29 story. Working-capital absorption keeps the balance sheet stretched.",
+       "points": [
+        "Ex-insurance EBITDA $469mn ($510/t); $547mn adding back $78mn tariff",
+        "Net debt $8.5bn vs $6.7bn at Mar-26",
+        "$1bn working capital used in 1HFY27; $300mn release guided in 2H",
+        "FY27/28/29 EBITDA kept at $1.9bn/$2.0bn/$2.3bn",
+        "Bay Minette 50-60% utilisation by FY28-end"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Tata Steel Q2 today post-market: Nuvama sees consol EBITDA INR104bn vs street INR100bn, standalone EBITDA/t down INR1,600 QoQ to INR16,594.",
+      "source": "Nuvama — Result Estimates for 7th November 2026 : DIVI, TATA (+1 more in Outlook)",
+      "received": "16:11",
+      "detail": {
+       "summary": "Nuvama expects consol EBITDA to beat Bloomberg consensus on a recovery in Europe, even as India margins slip on lower realisations and costlier coking coal. Volumes rebound sharply QoQ; PAT is in line with the street.",
+       "points": [
+        "Consol EBITDA INR104.0bn vs street INR100.1bn, +11% QoQ",
+        "Standalone EBITDA/t INR16,594, down INR1,600 QoQ; realisation -INR600/t",
+        "Volume 5.97mt, +15% QoQ; coking coal +USD10/t",
+        "Europe EBITDA/t USD7 vs -USD17 in Q1; Netherlands USD60, UK -USD176",
+        "PAT INR31.48bn vs street INR31.45bn; revenue INR593bn vs INR642bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Steel positioning into print: shorts still in place after covering, stock up 10.7% in 5 days; heavy call OI at 190, puts at 170.",
+      "source": "Nuvama — Result Estimates for 7th November 2026 : DIVI, TATA",
+      "received": "16:11",
+      "detail": {
+       "summary": "Derivatives data show a stock that has rallied into results while legacy short positions remain. Option OI marks 170-190 as the expected range around a INR186 price.",
+       "points": [
+        "Px INR186; +10.72% over 5 days, +11.83% over 10 days",
+        "OI +2.99% over 5 days, +0.85% over 10 days",
+        "Short covering recently, legacy shorts still in place",
+        "Highest call OI 190CE (4,590 lots); put OI 170PE (3,487 lots)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS: domestic HRC at Rs63.5K/t sits ~7% above import parity, limiting near-term upside, but safeguard duty keeps spreads supported; Industry View In-Line.",
+      "source": "Morgan Stanley — PULSE: India Materials: India Steel Tracker",
+      "received": "13:02",
+      "detail": {
+       "summary": "Steel prices are stable and already at a premium to import parity, so MS sees little further price upside near term. The safeguard duty and seasonally strong demand support spreads, and MS expects steel stocks to keep outperforming over the next few months.",
+       "points": [
+        "HRC Rs63.5K/t flat WoW, +10% since end-July; premium to parity ~7% vs ~5%",
+        "Australian HCC ~US$263/t, -1% WoW, +22% since end-July",
+        "China CFR iron ore ~US$94/t, +3% WoW",
+        "Steel stocks +10% YTD (MCAP-weighted) vs Sensex -6%",
+        "Spreads +46% since mid-December lows"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Ramco 2QFY27 EBITDA beat on realisations; Kotak holds SELL, FV Rs740 (from Rs730) on rollover, FY28-29E EBITDA cut 2-3% on south competition.",
+      "source": "Kotak — [Kotak] The Ramco Cements (CMP: Rs812, FV: Rs740, SELL): Margin-led beat",
+      "received": "09:13",
+      "detail": {
+       "summary": "Ramco's beat came from better south trade prices, while costs rose on operating deleverage and energy. Kotak expects cost inflation to outrun price hikes near term and sees greater competition in the south. It stays SELL on regional concentration and a 14X FY27E EV/EBITDA multiple.",
+       "points": [
+        "EBITDA Rs660/t, flat qoq, -23% yoy; peers fell ~Rs180/t qoq",
+        "Volumes 4.9mt, +8.7% yoy; realisation Rs4,981/t, +1.1% qoq",
+        "Fuel Rs1.99/Mcal, +8% qoq; TN mineral tax Rs77/t hit in 1H",
+        "EBITDA/t Rs757/931/1,000 for FY27/28/29E; FV on 8X EV/EBITDA",
+        "Capacity +0.7mtpa; ~31mtpa target by Mar 2027, capex Rs8bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "ECMS sixth tranche approves 12 projects, Rs75bn outlay; cumulative approvals Rs770bn exceed the Rs593bn target; bare PCB and camera/display incentives are the upside.",
+      "source": "JPMorgan — Hi Rajvaibhav, India EMS: ECMS: Sixth tranche announced",
+      "received": "23:06",
+      "detail": {
+       "summary": "Government approved a sixth batch of 12 ECMS projects covering multi-layer PCB, relays, heat sinks, copper foil and materials. Most approved projects sit in JPM's coverage universe. Focus now shifts to turnover-linked incentives for bare PCB and camera/display modules, not fully in JPM or Street estimates.",
+       "points": [
+        "12 projects, Rs75bn investment outlay",
+        "Production worth Rs390bn, 7,127 direct jobs",
+        "Cumulative approvals Rs770bn vs Rs593bn scheme target",
+        "Fifth batch was 31 projects, Rs68bn, mid-Aug-26",
+        "Incentive details for bare PCB, camera, display could lift earnings"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Centre may prioritise ECMS approvals for chip-supply-chain parts: micro-tools, CNC machines, PCB drills, automation equipment; a plan per officials, not notified policy.",
+      "source": "Nomura — India Consumer Durables and EMS: Centre planning to use component scheme to feed chip ecosystem",
+      "received": "09:32",
+      "detail": {
+       "summary": "ET reports the government may prioritise ECMS investment approvals for companies making parts linked to India's semiconductor supply chain, so local suppliers can integrate with domestic chip packaging and cut import dependence. Nomura flags this is officials' plan, not a notified change.",
+       "points": [
+        "Focus: micro-tools, CNC machines, PCB drills, industrial automation",
+        "Sixth ECMS tranche due Friday (since announced)",
+        "Aim: link local suppliers to chip packaging units",
+        "Described by officials; not notified policy"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Mphasis raised FY27 growth guide to low double digits CC; targets lifted to Rs2,800 (Emkay, ADD), Rs2,900 (BofA Buy, MS OW).",
+      "source": "Emkay — Mphasis: Strong quarter; FY27 guidance narrowed upward; ADD; Target: Rs2,800 + others",
+      "received": "23:14",
+      "detail": {
+       "summary": "Guidance moved from high single digit-to-low double digit to low double digit CC, backed by deal wins and backlog conversion. Houses lifted target multiples (Emkay 22x, BofA 23x FY28E) and nudged EPS up 1-4%. Emkay CMP was Rs2,529.",
+       "points": [
+        "Emkay TP Rs2,800 from Rs2,500, ADD, 22x Sep-28E EPS",
+        "BofA PO Rs2,900 from Rs2,550, Buy, 23x FY28E EPS",
+        "MS PT Rs2,900 from Rs2,730, OW",
+        "EPS up 1-4% Emkay, 2-3% BofA, 1-4% MS"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Mphasis 2Q: revenue +3.3% CC, EBITM flat at 14.8%, TCV $466mn (66% AI-led); small-deal wins +26% YoY shorten conversion.",
+      "source": "BofA — MPHL IN: Mphasis: Short-cycle acceleration strengthens growth visibility; reiterate Buy + Emkay",
+      "received": "11:18",
+      "detail": {
+       "summary": "Growth and deal intake were in line to strong, with short-cycle deals and a pipeline up 23% YoY lifting H2 visibility. Margins stayed inside the 14.75-15.75% guide as Tria and talent investments continue.",
+       "points": [
+        "Revenue +3.3% QoQ CC; EBITM 14.8%",
+        "TCV $466mn; Emkay: 66% AI-led, five large deals",
+        "Small deal wins +26% YoY; their pipeline +35%",
+        "TMT +9.9% QoQ CC, BFS +4.4%; Logistics -11.9%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cash is the soft spot: Mphasis OCF was negative Rs548mn in 2Q; MS sees FY27 conversion short of ~80% guide, margin at lower end.",
+      "source": "Emkay — Mphasis: Strong quarter; FY27 guidance narrowed upward; ADD; Target: Rs2,800 + MS",
+      "received": "23:14",
+      "detail": {
+       "summary": "Emkay flags weak cash conversion and a higher tax rate in its estimates. Morgan Stanley expects FY27 EBIT margin of 14.8%, toward the low end of the band, with margin and cash normalising in FY28.",
+       "points": [
+        "2Q OCF -Rs548mn (Emkay)",
+        "FY27 OCF target ~80% of net income; MS expects shortfall",
+        "MS FY27 EBIT margin 14.8%, FY28 15.1%",
+        "MS: FX hedge loss to ease over coming quarters"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Record US$4.1bn FII equity inflow lifted Nifty 8.6% WoW while DIIs turned net sellers; Bull-Bear Index jumped to 82.9% from 42.2%.",
+      "source": "CLSA — India strategy: Weekly wrap",
+      "received": "21:05",
+      "detail": {
+       "summary": "Nifty gained 8.6% in the week to 5 Nov, its best since Jan 2021, as S&P 500 fell c.3% after the US midterms. FIIs bought a record US$4.1bn while DIIs sold. Sentiment moved from neutral to firmly bullish.",
+       "points": [
+        "FII buying US$4.1bn; CY26-TD still US$26.8bn outflow",
+        "DIIs sold US$1.9bn in November to date",
+        "INR +1.1% to 93.8/USD, six-month high",
+        "10-yr yield -23bps to 7.2%; Nifty fwd PE 18.3x",
+        "Realty best sector, IT laggard"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India-dedicated fund outflows slowed to US$90mn, a four-month low, as India funds beat GEM funds by the widest four-week margin since May 2009.",
+      "source": "Elara — Global Liquidity Tracker: India funds outperform EMs by widest margin since 2009",
+      "received": "14:28",
+      "detail": {
+       "summary": "Elara sees moderating outflows and a sharp reversal in India's relative NAV line, from levels last seen in Sep 2014 and Apr 2021, reducing the incentive to reallocate away from India. Data excludes the final two sessions of panic AI-theme selling.",
+       "points": [
+        "US$90mn India fund outflow; long-only -US$161mn, ETFs +US$71mn",
+        "Global equity inflows US$89bn, highest since Jun 2026",
+        "GEM inflows three-month high US$3.6bn",
+        "Global Industrial funds -US$1bn, third month of redemptions"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS tracker shows crude and product flows out of the Gulf of Oman steady, with LNG flows at 12% of pre-conflict levels.",
+      "source": "UBS Evidence Lab — Crude, product flows out of Gulf of Oman steady (+9 more in Outlook)",
+      "received": "23:43"
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "JPM upgrades Thermax to Overweight after ~50% fall from June peak; PT cut to Rs3,491 from Rs4,139 as 2Q EBITDA missed by 28%.",
+      "source": "JPMorgan — Thermax Ltd: Upgrade to OW: Weak current performance priced-in; recovery ahead",
+      "received": "21:38",
+      "detail": {
+       "summary": "JPM argues the de-rating already prices in weak 1HFY27, commodity inflation and legacy project drag. Margins recovered from 3.0% in 1Q to 7% in 2Q, and management expects a sharp 2H revenue step-up that should improve fixed-cost absorption.",
+       "points": [
+        "Rs2,746 price vs Mar-28 PT Rs3,491 (prior Rs4,139)",
+        "2Q EBITDA Rs1.94bn, missed JPMe by 28%; PAT missed 35%",
+        "Backlog Rs142.5bn, +16% y/y; 2Q inflows -8% y/y",
+        "2H revenue guided Rs70bn+ vs Rs50.6bn in 1H",
+        "Industrial Products PBIT margin 6.0% vs 9.8% a year ago"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA upgrades Motherson (SAMIL) to Buy, PO Rs195 from Rs170, on 27% y/y revenue growth and 2-6% EPS upgrades; sees >20% EPS CAGR.",
+      "source": "BofA — MOTHERSO IN: SAMIL (Motherson International): Steady execution & recurring upgrades. Upgrade to Buy",
+      "received": "15:49",
+      "detail": {
+       "summary": "BofA says Q2 was another quarter of strong growth with resilient margins, and calls the day's sell-off excessive. It lifts the EV/EBITDA multiple on core businesses to 8.5x from 7.5x, citing consistent revenue delivery and positive EPS revisions each quarter.",
+       "points": [
+        "Q2 consol EBITDA Rs33.6B, +29% y/y; margin 8.8%",
+        "Revenue +27% y/y; two acquisitions add 10-11% to growth",
+        "PO Rs195 vs Rs170; price Rs158.60; F28 EPS up 5%",
+        "Stock at 20x F28 PE; >20% EPS CAGR",
+        "Consumer electronics plant commissions Q4, ramps from F28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BEML Q2 sales +42% y/y, 18% above Elara's estimate; FY27 revenue growth guidance raised to 35% from 25-30%; Buy, TP Rs3,040.",
+      "source": "Elara — Capital Goods - BEML - Strong all-round performance; guidance raised - Q2FY27 Update - Buy - TP: INR 3,040 (+10 more in Outlook)",
+      "received": "22:59",
+      "detail": {
+       "summary": "Elara sees broad execution strength led by rail & metro, with order inflows more than doubling on a large high-speed rail trainset order. Management guides H2 inflows of INR 120-130bn. TP rolls forward a quarter on unchanged 37x multiple; EPS estimates retained.",
+       "points": [
+        "Revenue INR 11.9bn, +42% y/y; adj EBITDA +63%, margin up 130bps",
+        "Inflows INR 62.3bn, +130% y/y; orderbook INR 214bn",
+        "FY27 growth guidance 35% vs 25-30% earlier",
+        "TP Rs3,040 from Rs2,830; CMP Rs1,953, 56% upside",
+        "Net working capital days 119 vs 267 a year ago"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Nasdaq posted its steepest one-day fall since April 2025 on doubts over AI capex and data-centre durability; FIIs still bought $1.6bn of India.",
+    "source": "Ambit Sales — Tactical trades; 2Q Review: Banks & IT"
+   },
+   {
+    "text": "Ambit: slower US data-centre build could weaken the AI-disruption relative trade that supports Indian IT; GE Vernova and Siemens Energy fell 8-10%.",
+    "source": "Ambit Sales — Tactical trades; 2Q Review: Banks & IT"
+   },
+   {
+    "text": "Ambit stays cautious on IT: 5 of 10 missed revenue consensus; prefers CTSH, TECHM, Infosys; trims HCLT/TCS; PSYS and Coforge top sells.",
+    "source": "Ambit Sales — Tactical trades; 2Q Review: Banks & IT"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
