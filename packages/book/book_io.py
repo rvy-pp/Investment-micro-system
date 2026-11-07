@@ -269,6 +269,89 @@ def display_name(root: str) -> str:
                   "", root, flags=re.I).strip() or root
 
 
+# ---- the dictation vs the book: which way is each pair ACTUALLY held -------
+# PM, 2026-11-07: "the book tab does not update properly with the change in
+# position direction." specs/book.yaml `pairs` fixes each leg's side at the
+# day it was dictated, and every consumer (Positions, Analysis, Kelly) read
+# the side from THERE. After MPHL (05-11), KPITT, JSTL and TATA (06-11)
+# flipped, the page still drew JSTL_TATA as long JSTL / short TATA: the pair
+# % came out with the wrong sign, the Analysis tab called MPHL long, and the
+# Kelly edge was long lean − short lean the wrong way round. engine.book_view
+# even computed a per-leg `side_mismatch` and nothing rendered it. Nothing
+# raised: every number was plausible. So the HELD side (the latest snapshot)
+# now decides, and the dictation only decides which legs belong together:
+#   as_dictated  every leg on the book sits where the dictation says
+#   reversed     every leg is the other way round, with a long AND a short
+#                present (the HZ_VEDL case of 21-09) — drawn as held
+#   broken       anything else, e.g. both legs long. Not a pair any more:
+#                the % and the Kelly edge are WITHHELD, never guessed into a
+#                new pairing (the "ask the PM" rule) — re-dictate the spec.
+#   off          no leg on the book; the dictation stands as written.
+def held_sides(conn: sqlite3.Connection | None = None,
+               as_of: str | None = None) -> dict[str, str]:
+    """{ticker token: 'L'|'S'} on the latest snapshot on or before `as_of`.
+    Option roots are hedges, not legs (is_option_root), and are skipped."""
+    own = conn is None
+    conn = conn or connect()
+    try:
+        d = conn.execute("SELECT MAX(snap_date) FROM book_positions WHERE snap_date<=?",
+                         (as_of or "9999-12-31",)).fetchone()[0]
+        out: dict[str, str] = {}
+        if not d:
+            return out
+        for r in conn.execute("SELECT root, side FROM book_positions WHERE snap_date=?", (d,)):
+            if is_option_root(r[0]):
+                continue
+            tok = (str(r[0]).split() or [""])[0]
+            out[tok] = r[1]
+        return out
+    finally:
+        if own:
+            conn.close()
+
+
+def reconcile_pair(name: str, longs: list, shorts: list, sides: dict) -> dict:
+    """One dictated pair against the held sides. Returns {long, short,
+    direction, display, dictated_long, dictated_short, note}; `long`/`short`
+    are the tokens as HELD (absent tokens keep their dictated side)."""
+    longs, shorts = [str(t) for t in longs or []], [str(t) for t in shorts or []]
+    dic = [(t, "L") for t in longs] + [(t, "S") for t in shorts]
+    present = [(t, d) for t, d in dic if t in sides]
+    out = {"dictated_long": longs, "dictated_short": shorts,
+           "long": list(longs), "short": list(shorts),
+           "direction": "off", "display": name, "note": None}
+    if not present:
+        return out
+    match = [sides[t] == d for t, d in present]
+    held_L = [t for t, _ in present if sides[t] == "L"]
+    held_S = [t for t, _ in present if sides[t] == "S"]
+    if all(match):
+        out["direction"] = "as_dictated"
+        return out
+    absent_L = [t for t in longs if t not in sides]
+    absent_S = [t for t in shorts if t not in sides]
+    if not any(match) and held_L and held_S:
+        out.update(direction="reversed", long=held_L + absent_S, short=held_S + absent_L)
+        parts = name.split("_")
+        out["display"] = (f"{parts[1]}_{parts[0]}" if len(parts) == 2
+                          else "+".join(held_L) + "_" + "+".join(held_S))
+        out["note"] = (f"dictated {name} (long {'+'.join(longs)} / short "
+                       f"{'+'.join(shorts)}); the book holds the reverse")
+        return out
+    out.update(direction="broken", long=held_L + absent_L, short=held_S + absent_S)
+    flipped = [t for (t, d), m in zip(present, match) if not m]
+    if not held_S:
+        what = f"every leg is long ({', '.join(held_L)})"
+    elif not held_L:
+        what = f"every leg is short ({', '.join(held_S)})"
+    else:
+        what = f"{', '.join(flipped)} flipped and the rest did not"
+    out["note"] = (f"dictated {name} (long {'+'.join(longs)} / short "
+                   f"{'+'.join(shorts)}), but {what}: not a pair as held. "
+                   f"Re-dictate it in specs/book.yaml")
+    return out
+
+
 def _migrate(conn: sqlite3.Connection) -> None:
     """v1 tables (2026-09-05, pre-IMS-format) had avg_price/last_price/mv.
     Empty ones are dropped and recreated; a populated one refuses — data
@@ -1616,6 +1699,27 @@ def _selftest() -> None:
         got = normalise_ticker(raw)
         assert got == want, f"{raw}: {got} != {want}"
     assert display_name("TATA IS Equity") == "TATA"
+
+    # dictation vs held side (reconcile_pair, PM 2026-11-07) — acceptance
+    # beside each rejection, per the GLOB lesson ----------------------------
+    rc = reconcile_pair("JSTL_TATA", ["JSTL"], ["TATA"], {"JSTL": "L", "TATA": "S"})
+    assert rc["direction"] == "as_dictated" and rc["long"] == ["JSTL"], rc
+    rc = reconcile_pair("JSTL_TATA", ["JSTL"], ["TATA"], {"JSTL": "S", "TATA": "L"})
+    assert (rc["direction"], rc["long"], rc["short"], rc["display"]) == \
+        ("reversed", ["TATA"], ["JSTL"], "TATA_JSTL"), rc
+    rc = reconcile_pair("JINDA_TATA", ["JINDA"], ["TATA"], {"JINDA": "L", "TATA": "L"})
+    assert rc["direction"] == "broken" and rc["short"] == [] \
+        and "every leg is long" in rc["note"], rc
+    rc = reconcile_pair("MPHL_PSYS", ["MPHL"], ["PSYS"], {"MPHL": "S", "PSYS": "S"})
+    assert rc["direction"] == "broken" and rc["long"] == [], rc
+    # one leg present and flipped: a lone leg cannot establish a reversal
+    rc = reconcile_pair("VAML_NACL", ["VAML"], ["NACL"], {"NACL": "L"})
+    assert rc["direction"] == "broken", rc
+    # one leg present, as dictated: the absent leg keeps its dictated side
+    rc = reconcile_pair("VAML_NACL", ["VAML"], ["NACL"], {"NACL": "S"})
+    assert rc["direction"] == "as_dictated" and rc["long"] == ["VAML"], rc
+    rc = reconcile_pair("X_Y", ["X"], ["Y"], {})
+    assert rc["direction"] == "off" and rc["long"] == ["X"], rc
 
     # TSV parse: 2 positions + sector row + N.A. + total, cross-foot true ----
     def row(t, cost, cap, pair, q, ls, nums):

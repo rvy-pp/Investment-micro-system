@@ -463,7 +463,8 @@ def compute(pairs: list[dict], rets: dict[str, dict], edges: dict,
         lab, r = p["label"], rets.get(p["label"]) or {}
         xs = list(r.values())
         n = len(xs)
-        row = {"label": lab, "n_sessions": n, "f_now": p["f_now"],
+        row = {"label": lab, "display": p.get("display") or lab,
+               "n_sessions": n, "f_now": p["f_now"],
                "flags": list(p.get("flags") or [])}
         if n >= 3:
             m = sum(xs) / n
@@ -631,6 +632,12 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
             skipped.append({"label": lab, "why": "dictated leg off the book: "
                             + ", ".join(p["missing"])})
             continue
+        # every leg on one side of the book (book_io.reconcile_pair): there
+        # is no spread to size, and a guessed re-pairing is the PM's call
+        if p.get("direction") == "broken":
+            skipped.append({"label": lab, "why": p.get("direction_note")
+                            or "legs no longer long vs short: re-dictate"})
+            continue
         L = [l["entity_id"] for l in p["legs"] if l["side"] == "L"]
         S = [l["entity_id"] for l in p["legs"] if l["side"] == "S"]
         if not L or not S or None in L + S or any(not bars.get(e) for e in L + S):
@@ -653,6 +660,7 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
                 if r and min(r) < d:
                     flags.append("pre_demerger_history")
         pairs.append({"label": lab, "sector": p.get("sector"),
+                      "display": p.get("display") or lab,
                       "f_now": (lg + sg) / 2 / nav if nav else 0.0,
                       "long_usd": round(lg), "short_usd": round(sg),
                       "dropped": dropped, "flags": sorted(set(flags))})

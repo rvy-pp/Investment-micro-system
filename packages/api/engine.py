@@ -1933,9 +1933,9 @@ def book_view(date: str | None = None) -> dict:
     review verdicts are clipped to the same date. Kelly is a today-only sizing
     tool with editable inputs, so it is withheld on a replay rather than shown
     with today's edges against a past book. The pair LIST is still today's
-    dictation in specs/book.yaml, so a pair that was restructured since (TCS
-    vs HCLT before 2026-09-23) shows its old legs under the current names,
-    flagged by the existing side-mismatch and unassigned callouts.
+    dictation in specs/book.yaml, but each leg's SIDE is the replayed
+    snapshot's (book_io.reconcile_pair), so a pair held the other way round
+    on that date reads `reversed` and a split one `broken`, never as dictated.
     """
     sys.path.insert(0, str(REPO / "packages" / "book"))
     import book_io
@@ -2126,11 +2126,17 @@ def book_view(date: str | None = None) -> dict:
 
     if spec_pairs and tokens:
         view = []
+        # The HELD side decides, not the dictated one (PM 2026-11-07; the
+        # rule and the reason are at book_io.reconcile_pair). `label` stays
+        # the dictated name because reviews, carry, Kelly edges, grading and
+        # watches all key on it; `display` is what the row prints.
+        held = {k: t["book_side"] for k, t in tokens.items()}
         for sector, plist in spec_pairs.items():
             for sp in plist or []:
+                rc = book_io.reconcile_pair(str(sp.get("name")), sp.get("long") or [],
+                                            sp.get("short") or [], held)
                 view.append({"sector": sector, "label": str(sp.get("name")),
-                             "L": [str(x) for x in (sp.get("long") or [])],
-                             "S": [str(x) for x in (sp.get("short") or [])]})
+                             "L": rc["long"], "S": rc["short"], "rc": rc})
         for v in view:
             v["_lg"] = sum(tokens[t]["gross_usd"] for t in v["L"] if t in tokens)
             v["_sg"] = sum(tokens[t]["gross_usd"] for t in v["S"] if t in tokens)
@@ -2171,7 +2177,9 @@ def book_view(date: str | None = None) -> dict:
             lr = [t["ret_pct"] for t in L]
             sr = [t["ret_pct"] for t in S]
             ret = None
-            if all(r is not None for r in lr + sr) and (lr or sr):
+            broken = v["rc"]["direction"] == "broken"
+            # a "pair" with every leg on one side has no spread: withheld
+            if not broken and all(r is not None for r in lr + sr) and (lr or sr):
                 lm = sum(lr) / len(lr) if lr else 0.0
                 sm = sum(sr) / len(sr) if sr else 0.0
                 ret = round(lm - sm, 2)
@@ -2198,6 +2206,9 @@ def book_view(date: str | None = None) -> dict:
                 "gap_risk": any(t["gap"] for t in L + S),
                 "missing": missing, "legs": legs,
                 "review": last_review.get(v["label"]),
+                "direction": v["rc"]["direction"],
+                "display": v["rc"]["display"],
+                "direction_note": v["rc"]["note"],
             })
         rep["view"] = out
         rep["sectors_order"] = list(spec_pairs.keys())

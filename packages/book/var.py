@@ -498,7 +498,7 @@ def build(conn: sqlite3.Connection | None = None, as_of: str | None = None,
             if not members:
                 continue
             ctb = sum(vec[i] / x[i] * comp[i] for i in range(len(eids)) if x[i])
-            pairs.append({"label": p.get("label"), "sector": p.get("sector"),
+            pairs.append({"label": p.get("display") or p.get("label"), "sector": p.get("sector"),
                           "gross_usd": round(sum(abs(v) for v in vec), 0),
                           "contrib": round(ctb, 0),
                           "standalone": round(standalone(vec), 0),

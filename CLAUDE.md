@@ -712,6 +712,21 @@ the option hedges, which are kept out of pair lines by design). `anchor_log`,
 `ytd_basis` and `unassigned` stay in the payload. Reviews key on the
 dictated name.
 
+**The dictation decides which legs belong together; the BOOK decides which
+way they are held** (PM, 2026-11-07: *"the book tab does not update properly
+with the change in position direction"*). After MPHL (05-11), KPITT, JSTL and
+TATA (06-11) flipped, every consumer still read sides from the yaml: JSTL_TATA
+drew as long JSTL with its % the wrong sign, Analysis called MPHL long, and the
+Kelly edge was long lean − short lean backwards. `book_io.reconcile_pair`
+(selftested) sets each pair `as_dictated` / `reversed` (every leg the other way,
+a long AND a short present: drawn as held, e.g. TATA_JSTL) / `broken` (e.g.
+both legs long: % and Kelly edge WITHHELD, "not a pair" chip, never re-paired
+by guess) / `off`. `book_view`, `analysis.roster`/`dictated_pairs` (so Kelly and
+the case agents) and the Risk tab all use it; `label` stays the dictated key,
+`display` is what prints. Analysis marks a flipped leg `flipped`. A broken pair
+is the cue to ask the PM to re-dictate `specs/book.yaml pairs`. Grading is
+untouched: its unit is the dictated direction, so a reversal ends the episode.
+
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
 joins each leg to its model composite — SEEDED from IMS-Spec's PM-confirmed
 table, so it is sourced, not guessed; unrecognized tickers are flagged,

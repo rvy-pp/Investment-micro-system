@@ -81,33 +81,62 @@ def connect(path: pathlib.Path | str = DB) -> sqlite3.Connection:
 
 
 # --------------------------------------------------------------- roster
-def roster(cfg: dict | None = None) -> list[dict]:
+def _held(sides: dict | None) -> dict:
+    """{token: 'L'|'S'} as HELD on the latest snapshot (book_io.held_sides).
+    An unreadable store falls back to the dictation ({}), never to a guess."""
+    if sides is not None:
+        return sides
+    try:
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+        import book_io
+        return book_io.held_sides()
+    except Exception:                                    # noqa: BLE001
+        return {}
+
+
+def _reconciled(cfg: dict, sides: dict) -> list[tuple[str, dict, dict]]:
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import book_io
+    return [(g, p, book_io.reconcile_pair(p["name"], p.get("long") or [],
+                                          p.get("short") or [], sides))
+            for g, ps in (cfg.get("pairs") or {}).items() for p in ps]
+
+
+def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
     """The dictated legs, in dictation order, one row per stock.
 
-    Side and group come from specs/book.yaml `pairs` — the PM's own list — so
-    the Analysis tab and the Positions tab cannot disagree about who is long.
-    A token on both sides (none today) is reported, never silently resolved.
+    The LIST and the group come from specs/book.yaml `pairs`; the SIDE is the
+    one HELD on the latest snapshot (PM 2026-11-07: MPHL went short on 05-11
+    and the tab still called it long — book_io.reconcile_pair has the rule).
+    A leg off the book keeps its dictated side. `dictated_side` is set only
+    where the two disagree, so the tab can say so. A token dictated on both
+    sides and off the book (none today) is reported as "both", never resolved.
     """
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    sides = _held(sides)
     tmap, names = cfg.get("ticker_map") or {}, cfg.get("names") or {}
     # PM, 2026-10-27: cash names off the Analysis roster (Syrma kept). The
     # tokens live in specs/book.yaml analysis_exclude with the reason.
     skip = set(cfg.get("analysis_exclude") or {})
+    word = {"L": "long", "S": "short"}
     out: dict[str, dict] = {}
-    for group, pairs in (cfg.get("pairs") or {}).items():
-        for p in pairs:
-            for side in ("long", "short"):
-                for tok in p.get(side) or []:
-                    ent = tmap.get(tok)
-                    if not ent or tok in skip:
-                        continue
-                    if ent in out:
-                        if out[ent]["side"] != side:
-                            out[ent]["side"] = "both"
-                        out[ent]["pairs"].append(p["name"])
-                        continue
-                    out[ent] = {"entity": ent, "token": tok, "name": names.get(tok, tok),
-                                "side": side, "group": group, "pairs": [p["name"]]}
+    for group, p, rc in _reconciled(cfg, sides):
+        for dside, held in (("long", rc["long"]), ("short", rc["short"])):
+            for tok in held:
+                ent = tmap.get(tok)
+                if not ent or tok in skip:
+                    continue
+                dic = "long" if tok in rc["dictated_long"] else "short"
+                if ent in out:
+                    if out[ent]["side"] != dside:
+                        out[ent]["side"] = "both"
+                    out[ent]["pairs"].append(p["name"])
+                    continue
+                row = {"entity": ent, "token": tok, "name": names.get(tok, tok),
+                       "side": dside, "group": group, "pairs": [p["name"]]}
+                if tok in sides and word[sides[tok]] != dic:
+                    row["dictated_side"] = dic
+                out[ent] = row
     return list(out.values())
 
 
@@ -127,13 +156,19 @@ def expected_legs(cfg: dict | None = None) -> int:
                 for side in ("long", "short") for t in p.get(side) or [] if t not in skip})
 
 
-def dictated_pairs(cfg: dict | None = None) -> list[dict]:
+def dictated_pairs(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
+    """The dictated pairs with each side AS HELD (book_io.reconcile_pair).
+    `direction` is as_dictated / reversed / broken / off; a broken pair gets
+    no pair juice, so it never reaches the Kelly edge."""
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    sides = _held(sides)
     tmap = cfg.get("ticker_map") or {}
     return [{"name": p["name"], "group": g,
-             "long": [tmap.get(t) for t in p.get("long") or []],
-             "short": [tmap.get(t) for t in p.get("short") or []]}
-            for g, ps in (cfg.get("pairs") or {}).items() for p in ps]
+             "long": [tmap.get(t) for t in rc["long"]],
+             "short": [tmap.get(t) for t in rc["short"]],
+             "direction": rc["direction"], "display": rc["display"],
+             "direction_note": rc["note"]}
+            for g, p, rc in _reconciled(cfg, sides)]
 
 
 # --------------------------------------------------------------- priced in
@@ -328,6 +363,8 @@ def view(conn=None, today: dt.date | None = None, defaults: bool = True) -> dict
             S = [by_ent.get(e, {}).get("juice") for e in p["short"]]
             lj = st.mean(L) if L and all(v is not None for v in L) else None
             sj = st.mean(S) if S and all(v is not None for v in S) else None
+            if p["direction"] == "broken":       # one-sided as held: no spread
+                lj = sj = None
             pairs.append({**p, "long_names": [by_ent[e]["name"] for e in p["long"] if e in by_ent],
                           "short_names": [by_ent[e]["name"] for e in p["short"] if e in by_ent],
                           "long_juice": lj, "short_juice": sj,
@@ -448,6 +485,16 @@ def _selftest() -> None:
         assert all(x["side"] != "both" for x in r), [x["entity"] for x in r if x["side"] == "both"]
         assert next(x for x in r if x["entity"] == "tech_mahindra")["side"] == "long"
         assert next(x for x in r if x["entity"] == "ltimindtree")["side"] == "short"; ok += 1
+        # the HELD side wins (PM 2026-11-07): a fixture book with TECHM and
+        # LTM flipped reads them that way, says so, and reverses the pair;
+        # TCS long beside an INFO that went long breaks TCS_INFO
+        fx = {"TECHM": "S", "LTM": "L", "TCS": "L", "INFO": "L"}
+        rf = {x["entity"]: x for x in roster(sides=fx)}
+        assert rf["tech_mahindra"]["side"] == "short" and rf["tech_mahindra"]["dictated_side"] == "long"
+        assert rf["tcs"]["side"] == "long" and "dictated_side" not in rf["tcs"]
+        dp = {p["name"]: p for p in dictated_pairs(sides=fx)}
+        assert dp["TECHM_LTM"]["direction"] == "reversed" and dp["TECHM_LTM"]["long"] == ["ltimindtree"]
+        assert dp["TCS_INFO"]["direction"] == "broken" and dp["TCS_INFO"]["short"] == []; ok += 1
         # cash names off (PM 2026-10-27), Syrma kept; the count follows the exclusion
         fx = {"ticker_map": {"A": "a", "B": "b", "C": "c"},
               "pairs": {"G": [{"name": "A_B", "long": ["A"], "short": ["B"]},

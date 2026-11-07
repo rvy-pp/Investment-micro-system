@@ -3640,8 +3640,14 @@ function bookSections(view, order, nav, bookPnl, bk){
         `${l.composite != null ? `  model ${l.composite.toFixed(2)}` : ''}` +
         `  ytd ${usd(l.pnl_ytd)}  mtd ${usd(l.pnl_mtd)}  since ${usd(l.pnl_total)}` +
         `  (${l.ticker_now})`).join('\n') +
-        (p.missing && p.missing.length ? `\n⚠ leg not on the book today: ${p.missing.join(', ')}` : '');
+        (p.missing && p.missing.length ? `\n⚠ leg not on the book today: ${p.missing.join(', ')}` : '') +
+        (p.direction_note ? `\n⚠ ${p.direction_note}` : '');
+      /* sides are the HELD ones (book_io.reconcile_pair, PM 2026-11-07): a
+         pair held the other way round prints reversed under its new name; a
+         pair whose legs now sit on one side is not a pair, % withheld */
       const chips =
+        (p.direction === 'reversed' ? ` <span class="pill" title="${esc(p.direction_note || '')}">reversed</span>` : '') +
+        (p.direction === 'broken' ? ` <span class="pill warn" title="${esc(p.direction_note || '')}">not a pair</span>` : '') +
         (p.missing && p.missing.length ? ` <span class="pill warn" title="a dictated leg is not on the book today: ${esc(p.missing.join(', '))}">leg off</span>` : '') +
         (p.gap_risk ? ` <span class="pill warn" title="a roll happened across a snapshot gap — the frozen P&L may miss the old contract's last days">gap</span>` : '') +
         (p.review ? ` <span class="chip ${p.review.verdict === 'exit' ? 'c-down' :
@@ -3666,7 +3672,7 @@ function bookSections(view, order, nav, bookPnl, bk){
       })();
       return `<tr title="${esc(legTip)}" class="${i === 0 ? 'secfirst' : ''}">
         ${sec}
-        <td class="pair">${esc(p.label || p.pair)}<span class="chips">${chips}</span></td>
+        <td class="pair">${esc(p.display || p.label || p.pair)}<span class="chips">${chips}</span></td>
         <td class="tot ${usdCls(p.ret_pct)}">${pctf(p.ret_pct)}<span class="sub">${usd(total)}</span>${meter}</td>
         <td>${p.gross_pct == null ? '—' : (p.gross_pct * 100).toFixed(1) + '%'}</td>
         <td class="${usdCls(p.pnl_ytd)}">${usd(p.pnl_ytd)}</td>
@@ -3859,7 +3865,7 @@ function kellyBlock(k){
     const size = r.edge ? `<td data-c="budget" data-k="${L}">—</td>`
       : `<td class="dim"><span class="flat">—</span><span class="m">held ${g(r.gross_now_pct)}</span></td>`;
     return `${head}<tr title="${esc(tip)}"${r.edge ? '' : ' class="rk-none"'}>
-      <td><b>${L}</b>${chips}</td>
+      <td><b>${esc(r.display || r.label)}</b>${chips}</td>
       <td>${r.edge ? edgeCell(r) : `<span class="flat" title="a leg has no lean yet — set it through that stock's agent">no lean</span>`}</td>
       ${size}
     </tr>`;
@@ -4332,7 +4338,8 @@ function analysisPane(d){
       : `<div class="ana-log"><span class="ana-date">No entries yet. Views are logged from chat.</span></div>`;
     const mdl = (d.models || {})[s.entity];
     return grp + `<details class="ana-row" data-ent="${esc(s.entity)}"><summary class="ana-grid">
-        <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span>${mdl
+        <span><span class="ana-name">${esc(s.name)}</span><span class="ana-side ${esc(s.side)}">${esc(s.side)}</span>${s.dictated_side
+          ? `<span class="pill warn" title="dictated ${esc(s.dictated_side)} in specs/book.yaml; the book holds it ${esc(s.side)}">flipped</span>` : ''}${mdl
           ? '<span class="mdl-chip" title="has an Excel model: open the card">▦ model</span>' : ''}</span>
         ${steps.map(k => icon((s.steps[k.key] || {}).status)).join('')}
         <span>${anaJuice(s)}${mdl ? anaModelUp(mdl.valuation, false) : ''}</span>
