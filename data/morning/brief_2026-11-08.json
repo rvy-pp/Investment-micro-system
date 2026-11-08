@@ -1,0 +1,374 @@
+{
+ "date": "2026-11-08",
+ "generated_at": "2026-11-08T08:15:14",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 43,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Kotak keeps BUY, FV Rs1,200; Hindalco 3QFY27 aluminium margins to fall on MJP down >US$100/t and CoP up another ~5% QoQ.",
+      "source": "Kotak — [Kotak] Hindalco Industries (CMP: Rs958, FV: Rs1,200, BUY): Strong quarter",
+      "received": "20:49",
+      "detail": {
+       "summary": "Kotak sees a broad 2QFY27 beat, with copper at a record, but warns aluminium margins fall in 3QFY27 on weaker premia and higher costs. It holds FV on a 6.5x multiple, with a near-term copper upgrade offset by aluminium costs and lower LME in FY29.",
+       "points": [
+        "EBITDA revised +3% / +0.9% / -6.3% for FY27/28/29E",
+        "Copper EBITDA Rs16.7bn, +82% QoQ; ~Rs4bn one-offs",
+        "Copper run rate ~Rs12bn/qtr in 2HFY27 on sulphuric acid",
+        "Aluminium CoP +5% QoQ in 2Q on coal and CP coke",
+        "Hedged 29% at US$3,000/t for 2HFY27; 26% at US$3,168 for FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities keeps BUY, TP Rs1,200 (6.5x FY28E); Novelis targets US$350-400mn savings by FY28-exit, with Bay Minette shipments from Q1FY28.",
+      "source": "ICICI Securities — Hindalco Industries (BUY): Strong copper profitability drives EBITDA beat; outlook remains positive",
+      "received": "18:48",
+      "detail": {
+       "summary": "ICICI sees copper as the key earnings driver and Novelis recovering, with Q3 a mixed bag as upstream aluminium realisation dips on energy costs. It argues medium-term LME near US$3,000 keeps EBITDA/t ahead of earlier cycles, and net debt should peak in FY27.",
+       "points": [
+        "Consol. EBITDA INR128.3bn, +43% YoY, -8.2% QoQ",
+        "Net debt INR804bn vs INR775bn in Q1; 1.8x EBITDA",
+        "Aluminium EBITDA/te US$2,125, +40% YoY; Q3-to-date LME ~US$3,071/t",
+        "India FY26-29 capex ~INR520bn; Novelis structural savings >US$240mn run-rate",
+        "Bay Minette first hot-mill coil targeted Q4FY27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Elara stays BUY, TP Rs235 unchanged; Q3 India realisation guided +Rs3,500-3,600/t QoQ, FY27E EBITDA raised ~9%.",
+      "source": "Elara — Ferrous Metals - Tata Steel - India operations: Guided to lift NSR by INR 3.6K - Q2FY27 Update - Buy - TP: INR 235 - Upside: 26% (Author: Ravi Sodah)",
+      "received": "20:19",
+      "detail": {
+       "summary": "Elara argues H2 beats H1 on higher India realisation, volume and Netherlands DSP restart, outweighing a ~USD15/t coking coal rise. UK is the weak spot but is guided to break-even by Q4. TP is unchanged only because valuation rolls forward to September 2028E.",
+       "points": [
+        "Q3 India realisation +INR3,500-3,600/t QoQ",
+        "FY27E EBITDA +9%, FY28E +2%, FY29E unchanged",
+        "Netherlands EBITDA ~INR7,900mn vs ~INR390mn in Q1",
+        "UK EBITDA/t loss INR19,027 vs INR7,071 in Q1",
+        "Valuation 6.5x India, 4.0x Europe EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA keeps Outperform, TP Rs225: UK loss widened to -US$198/t from -US$74/t, net debt Rs915bn vs Rs842bn; UK breakeven guided 4QFY27.",
+      "source": "CLSA — Tata Steel (TATA IB): Strong 2H outlook",
+      "received": "20:34",
+      "detail": {
+       "summary": "CLSA calls 2Q ahead of estimates on India and Netherlands, with the UK still a drag on volume and profitability. It expects earnings momentum to strengthen in 2H on India volume and price, partly offset by higher coal costs. Near-term steel price outlook underpins the rating.",
+       "points": [
+        "Consol EBITDA Rs105.3bn, +14% QoQ, above estimate and consensus",
+        "India EBITDA/t Rs17,249, down Rs950/t QoQ",
+        "India 3Q realisation c.+Rs3,500/t vs c.US$15/t higher coal",
+        "UK 3Q realisation guided +GBP28-30/t",
+        "Iron ore sales target 8-10mt FY27, 14-15mt FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ABM stays on the sidelines: UK losses erode India's gains despite 2Q consol EBITDA Rs106.7bn, 6.6% above Rs100.1bn consensus.",
+      "source": "Aditya Birla Capital — Tata Steel | Q2FY27 Result Update: UK erodes what India earns; stay on the sidelines (+2 more in Outlook)",
+      "received": "21:55"
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Ramco Q2FY27 EBITDA 12% above ICICI Sec estimate despite falling 17% YoY; HOLD kept, TP cut to INR 854 from 942 on 12x FY28E.",
+      "source": "ICICI Securities — Ramco Cements (HOLD): Soft quarter; recovery priced in",
+      "received": "19:01",
+      "detail": {
+       "summary": "ICICI Securities sees Ramco's Q2 beat as revenue-led and the industry price hikes as a cost pass-through that its FY28 estimates already include. It cuts the target multiple to 12x from 13x because of drought-hit demand, overcapacity, volatile fuel costs and Ramco's high leverage and low RoE.",
+       "points": [
+        "EBITDA down 17% YoY in Q2, down 20% in H1FY27",
+        "Cement volume 4.7mt, up 7.7% YoY on a flat base",
+        "Realisation up 0.8% QoQ against a 1.5% fall expected",
+        "TP INR 854 vs INR 942; 12x FY28E EV/EBITDA vs 13x",
+        "Net debt/EBITDA 2.3x FY27E; RoE 3% FY27, 7% FY28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ramco EBITDA/t INR 653 (down 23% YoY) against ICICI Sec's FY27E 744 and FY28E 837; the model needs the price hikes to stick.",
+      "source": "ICICI Securities — Ramco Cements (HOLD): Soft quarter; recovery priced in",
+      "received": "19:01",
+      "detail": {
+       "summary": "The note's FY27-28 recovery in margin per tonne depends on the industry's attempt to raise prices to offset higher fuel costs. Variable cost per tonne rose in line with the estimate, so the gap between H1 and the forecasts is the amount the hikes must cover.",
+       "points": [
+        "Q2 EBITDA/t INR 653, down 23% YoY and 2% QoQ",
+        "H1FY27 EBITDA/t INR 659",
+        "FY27E EBITDA/t INR 744; FY28E INR 837",
+        "Variable cost/t up 3% QoQ, in line with estimate",
+        "Other expenses up 16% YoY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Cabinet approved INR 28bn capex for critical-mineral processing; I-Sec says success hinges on securing ore and intermediate supplies.",
+      "source": "ICICI Securities — [Strategy - Policy Watch]: Positive steps towards 'grid-scale energy storage' and 'critical mineral processing'",
+      "received": "17:01",
+      "detail": {
+       "summary": "The Union Cabinet approved INR 28bn capex to promote critical-mineral processing, alongside an INR 145bn viability-gap scheme for grid storage. I-Sec calls both welcome steps toward energy and mineral self-reliance after the West Asia energy shock. It warns that success depends on timely execution and on securing ore and intermediate supplies. No company is named.",
+       "points": [
+        "INR 28bn capex to support critical-mineral processing",
+        "INR 145bn VGF for 92GWh grid-scale storage",
+        "Risk: timely execution and ore/intermediate supply security",
+        "No miner or metal company named as beneficiary",
+        "Backdrop: West Asia conflict, energy-security push"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "LG India Q2 revenue +19.5% YoY to Rs73.8bn, EBITDA margin 9.5%; FY27 guidance reaffirmed, H2 seen stronger than H1 with strong Q4 room-AC season.",
+      "source": "Elara — Consumer Electronics - LG Electronics India - Healthy Q2; foray into vehicle solutions - Q2FY27 Update - Accumulate - TP: INR 2,000 - Upside: 14%",
+      "received": "22:23",
+      "detail": {
+       "summary": "Elara stays positive on LG India after a festive-led Q2 and keeps estimates unchanged. It raises TP to INR 2,000 by rolling forward a quarter at an unchanged 45x. Management expects H2FY27 to beat H1 on festive and wedding demand plus a strong Q4 AC season.",
+       "points": [
+        "Revenue +19.5% YoY, INR 73.8bn; EBITDA +28% to INR 7bn",
+        "Home appliances +21% YoY, 65% of sales; RAC Q2 beat Q1",
+        "Home entertainment +17% YoY; 55-inch+ TVs over half of TV revenue",
+        "TP INR 2,000 from INR 1,925; 45x Sep-2028E P/E; CMP INR 1,754",
+        "Vehicle solutions not in estimates; B2B 10-12% of revenue, target 15%+"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak keeps LG India at REDUCE, FV raised to Rs1,815 from Rs1,750; Q2 EBITDA margin 9.5% missed KIE's 10% on panel costs.",
+      "source": "Kotak — [Kotak] LG Electronics (CMP: Rs1,754, FV: Rs1,815, REDUCE): Expanding growth horizons",
+      "received": "11:19",
+      "detail": {
+       "summary": "Kotak beat on revenue but missed on margin, with the shortfall in home entertainment where panel costs are elevated. Management aims to beat FY27 guidance of mid-teen growth and early double-digit margin. Estimates are largely unchanged, with revenue up and margins trimmed.",
+       "points": [
+        "Revenue Rs73.8bn, ~2.6% beat; HA Rs47.7bn, ~6.5% beat",
+        "HE margin 12.9% vs KIE 15.4%; HE revenue ~3.8% miss",
+        "EBITDA ~2.7% miss; gross margin 28.9% vs KIE 29.1%",
+        "Revenue estimates +3-4%, EBITDA margins cut 25-35bps",
+        "FV on 37x Dec-2028E EPS; channel inventory lean entering festive season"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LG India's Sri City compressor/RAC production starts in 3Q/4QFY27, adding in-house AC capacity; vehicle solutions entry not yet in Kotak's estimates (+1 more in Outlook).",
+      "source": "Kotak — [Kotak] LG Electronics (CMP: Rs1,754, FV: Rs1,815, REDUCE): Expanding growth horizons",
+      "received": "11:19",
+      "detail": {
+       "summary": "Kotak sees LG India widening its growth base through vehicle solutions, new products and unspecified new segments, while localising compressors and RACs at Sri City. It awaits clarity on capex and ramp-up for vehicle solutions before including it. Exports are expected to grow significantly in FY27.",
+       "points": [
+        "Sri City compressor/RAC production on track for 3Q/4QFY27",
+        "Exports now reach 68 countries; significant FY27 growth expected",
+        "Premium mix: fully automatic washers over 60% of washer revenue",
+        "SBS/French door refrigerators growing over 50% YoY",
+        "New products: chest freezers and built-in kitchen"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak keeps REDUCE, FV Rs2,430 (from Rs2,240); Q2 OCF negative Rs548mn, normalised DSO 105 days, net-new TCV US$466mn down 11.7% YoY.",
+      "source": "Kotak — [Kotak] Mphasis (CMP: Rs2,520, FV: Rs2,430, REDUCE): Growth accelerates; cash conversion requires work",
+      "received": "21:25",
+      "detail": {
+       "summary": "Kotak accepts the Q2 revenue acceleration but doubts it lasts beyond FY27. Net-new TCV is flat QoQ and down YoY, margin sits near the bottom of the guided range, and cash conversion is weak. The FV rise is a roll-over, not a change in view.",
+       "points": [
+        "FV Rs2,430 from Rs2,240 at 18x Sep-2028E EPS",
+        "FY27-29 revenue and EPS raised 2-3%",
+        "TTM TCV US$1.76bn, down 13.2% YoY",
+        "DSO 113 days reported, 105 normalised; US$39.5mn remittances landed in October",
+        "Top-10 clients 57% of revenue vs 53% in 2QFY25"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Securities keeps BUY, TP Rs3,030 on 22x (from 20.5x); FY27/28 EPS raised only 0.6%/0.2%, H1 normalised OCF/PAT 51%.",
+      "source": "ICICI Securities — Mphasis (BUY): Improving growth outlook",
+      "received": "18:41",
+      "detail": {
+       "summary": "ICICI Securities sees the guidance raise as credible, resting on a record pipeline, better TCV-to-revenue conversion and shorter-cycle deals. The target moves up almost entirely on a higher multiple, not on earnings. It flags weak cash conversion but expects DSO to improve in H2.",
+       "points": [
+        "TP Rs3,030 at 22x (earlier 20.5x) on Q3FY28-Q2FY29 EPS Rs138",
+        "Revenue growth estimates raised 1%/3% for FY27/28",
+        "Low end of guidance needs 2.6% CQGR over next two quarters",
+        "EBIT margin 14.8% vs consensus 15.2%",
+        "OCF/PAT target 80% for FY27 vs 51% normalised in H1"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL keeps BUY, TP Rs3,000 (from Rs2,800) at 21x 2YF P/E; Q2 EBIT margin 14.8% vs IIFLe 15.0%, EPS raised up to 2%.",
+      "source": "IIFL — Mphasis [MPHL IN, BUY]: Strong 2Q; FY27 guidance raised (+1 more in Outlook)",
+      "received": "18:15",
+      "detail": {
+       "summary": "IIFL calls Q2 the strongest sequential cc growth in three years and treats the DSO and negative OCF as temporary. It argues the stock trades at a discount to similar-sized mid-cap IT peers. The risk it names is client concentration.",
+       "points": [
+        "TP Rs3,000 (from Rs2,800), 19% upside, at 21x 2YF P/E",
+        "Deal wins US$466mn, down 13% TTM YoY, with five large deals",
+        "Pipeline up 23% YoY, 71% AI-led",
+        "Revenue/EPS CAGR 11%/15% cc over FY27ii-29ii",
+        "About 16% discount to similar-sized mid-cap IT peers"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Metals & Mining 2Q EBITDA grew 62% y-o-y on 32% sales growth, while Construction Materials EBITDA fell 3% and IT grew 12%.",
+      "source": "Avendus Spark — Quant-Attentive: 2QFY27 Results Analysis | Market Cap >Rs.1,000 Cr - 1144 Companies Reported",
+      "received": "20:16",
+      "detail": {
+       "summary": "Best quarter in 11 quarters across 1,144 companies, led by small caps, but beats are slowing and consensus is flat. Metals had the sharpest margin expansion, cement margins compressed, and IT grew in single to low-double digits with margins slightly lower.",
+       "points": [
+        "Universe PAT +29%, EBITDA +25%, sales +21% y-o-y",
+        "Metals & Mining EBITDA margin 20.7% vs 16.9% a year ago",
+        "Cement EBITDA margin 14.4% vs 16.8%; Ambuja PAT -88%",
+        "JSW Steel PAT +192%, Vedanta +151% among large caps",
+        "IT sales +14%, EBITDA +12%, PAT +10%; margin 21.5% vs 21.9%",
+        "Beat rate 41% vs 50% in 4QFY26; FY27 PAT upgrades ~50%, downgrades ~49%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cabinet approved INR145bn viability-gap funding for 92GWh of grid-scale storage plus INR28bn capex for critical-mineral processing, announced in the past week.",
+      "source": "ICICI Securities — [Strategy - Policy Watch]: Positive steps towards 'grid-scale energy storage' and 'critical mineral processing'",
+      "received": "17:01",
+      "detail": {
+       "summary": "Both measures respond to the West Asia energy crisis and aim at self-reliance in energy and critical minerals. ICICI says success depends on timely execution and on securing supplies of critical mineral ores and intermediates. The email body names no listed beneficiaries.",
+       "points": [
+        "INR145bn VGF scheme for 92GWh grid-scale storage",
+        "INR28bn capex to promote critical mineral processing",
+        "Oil products 40%, natural gas 9% of final energy consumption",
+        "Total final consumption 25,480 petajoules in FY25",
+        "Coal and electricity make up the remaining ~51%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nifty rallied 8.5% last week, retracing the whole August decline in one candle; PhillipCapital targets 26,200 and expects mid/small caps to lag 1-2 months.",
+      "source": "PhillipCapital — DETAILED ANALYSIS of BREAKOUT AND BREAKDOWN STOCKS (In F&O segment) THIS WEEK - week ending 7th NOV 2026 (+3 more in Outlook)",
+      "received": "12:30",
+      "detail": {
+       "summary": "Technical view calls the weekly reversal the start of a fresh uptrend, after Nifty fell for 8-9 weeks from 3 August. Stock-level breakout and breakdown lists sit in the attached Excel, which was not read, so no PM-universe names are confirmed.",
+       "points": [
+        "Nifty +8.5% for the week; Midcap 50 +5.7%",
+        "Smallcap index +2.77% for the week",
+        "Support 21,900 held; next major target 26,200",
+        "Mid/small cap underperformance seen persisting 1-2 months",
+        "Stock list in attached xlsx, not read"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Elara keeps ONGC BUY at INR 320 (38% upside); Q2 standalone PAT rose 57% YoY to INR 155bn while crude output fell 5.3%.",
+      "source": "Elara — Oil & Gas - ONGC - Price-led strength, richer gas mix, deep value - Q2FY27 Update - Buy - TP: INR 320 - Upside: 38%",
+      "received": "22:39",
+      "detail": {
+       "summary": "Elara reads the quarter as a price-led beat with a richer gas mix building underneath. It treats the production shortfall as execution-related, not structural. At 5.2x FY28E P/E and 0.65x P/B, valuation carries the call. Crude falling below USD 70/bbl is the main risk.",
+       "points": [
+        "EBITDA +50% YoY to INR 249bn",
+        "H1 standalone PAT +82% YoY to INR 325bn",
+        "Record INR 8/share interim dividend, ~3.5% yield",
+        "New-well gas 34% of nomination gas revenue vs 21% in FY26",
+        "FY27 guidance ~39MMTOE kept; FY28 ~40MMTOE"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay cuts Siemens TP 6.5% to Rs4,300 from Rs4,600, keeps BUY; Q2 revenue +17% YoY to Rs57.3bn, orders +38%.",
+      "source": "Emkay — Siemens: Beat on all fronts; maintain Buy; Target: Rs4,300",
+      "received": "21:07",
+      "detail": {
+       "summary": "Emkay calls the operating beat real but trims forward estimates for near-term margin pressure from raw-material inflation and FX. It still sees Siemens benefiting from capex in data centres, railways, industrial and power T&D. The lower target reflects the estimate cuts, not a thesis change.",
+       "points": [
+        "EBITDA margin 10.9%, down 150bps YoY; gross margin 27.3%, down 260bps",
+        "PAT Rs5.0bn, +5% YoY, vs Emkay's Rs4.7bn estimate",
+        "Order backlog Rs470bn, 2.5x TTM revenue",
+        "FY27/28/29 estimates cut 1%/5%/3%",
+        "TP at 60x 1HFY29E EPS; upside 21% from Rs3,555"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak cuts Thermax FV to Rs3,600 from Rs4,000, keeps BUY; Q2 margin missed by ~220bps and FY27 EPS cut 11%.",
+      "source": "Kotak — [Kotak] Thermax (CMP: Rs2,746, FV: Rs3,600, BUY): Test of margin recovery shifts to 2H (+5 more in Outlook)",
+      "received": "11:13",
+      "detail": {
+       "summary": "Kotak attributes most of the margin miss to transient items and leans on management's 2H revenue recovery to restore margins. The fair value falls because Kotak lowers the multiple on non-green-solutions businesses, reflecting the execution and margin miss in the base business. Data-centre orders have slipped into 2H.",
+       "points": [
+        "Revenue +11% YoY, in line; margin before PSI incentive 6.3%",
+        "Miss split: 40bps chemicals RM, 75bps export deferral, 55bps green solutions provisions",
+        "2H revenue guided >1.4x 1H and up >15% YoY",
+        "Order inflow ~1.2x revenue; 1.3x adjusted for October deferrals",
+        "Multiple cut to 33x from 36x; FY28-29 EPS cut 1-4%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
