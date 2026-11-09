@@ -1,0 +1,237 @@
+{
+ "date": "2026-11-09",
+ "fetched_at": "2026-11-09T08:17:25",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-06",
+    "close": 7376.86,
+    "prev_date": "2026-11-05",
+    "chg_pct": 0.31,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-06",
+    "close": 24579.43,
+    "prev_date": "2026-11-05",
+    "chg_pct": 1.09,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-06",
+    "close": 51285.73,
+    "prev_date": "2026-11-05",
+    "chg_pct": -0.46,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-06",
+    "close": 9390.25,
+    "prev_date": "2026-11-05",
+    "chg_pct": 4.21,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-06",
+    "close": 186.64,
+    "prev_date": "2026-11-05",
+    "chg_pct": 2.78,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-06",
+    "close": 449.04,
+    "prev_date": "2026-11-05",
+    "chg_pct": 11.04,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-06",
+    "close": 375.44,
+    "prev_date": "2026-11-05",
+    "chg_pct": 6.33,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-06",
+    "close": 293.69,
+    "prev_date": "2026-11-05",
+    "chg_pct": 0.74,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-06",
+    "close": 260.5,
+    "prev_date": "2026-11-05",
+    "chg_pct": -1.76,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-06",
+    "close": 64.72,
+    "prev_date": "2026-11-05",
+    "chg_pct": -2.74,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "What Just Happened To Accenture Stock?",
+    "publisher": "Trefis",
+    "when": "2026-11-06 23:41Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/just-happened-accenture-stock-234141980.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock Sinks As Market Gains: What You Should Know",
+    "publisher": "Zacks",
+    "when": "2026-11-06 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-sinks-market-215001724.html"
+   },
+   {
+    "title": "Accenture Is Up 33% in a Month but Still Down 2% This Year. Is the Stock Cheap?",
+    "publisher": "TIKR",
+    "when": "2026-11-06 12:21Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-33-month-still-down-122100271.html"
+   },
+   {
+    "title": "Mondelez and Accenture partner to incorporate AI into order-to-cash",
+    "publisher": "TipRanks",
+    "when": "2026-11-05 21:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/mondelez-accenture-partner-incorporate-ai-214409414.html"
+   },
+   {
+    "title": "Accenture (ACN) Expands Its AI Work With A Major Consumer Goods Customer",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-05 18:10Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-expands-ai-major-181048770.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Completes Acquisition of AI-Native Digital Engineering Firm Wizeline",
+    "publisher": "MT Newswires",
+    "when": "2026-11-06 23:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-completes-acquisition-ai-native-231453957.html"
+   },
+   {
+    "title": "Cognizant Completes Acquisition of Wizeline",
+    "publisher": "PR Newswire",
+    "when": "2026-11-06 22:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-completes-acquisition-wizeline-220000323.html"
+   },
+   {
+    "title": "Digital Transformation in BPO - Global Strategic Business Report: Capitalize on a US$263.9 Billion Market by 2030 as Accenture, Capgemini, Cognizant, Genpact and IBM Accelerate AI-Led Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-05 15:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-bpo-global-strategic-154900777.html"
+   },
+   {
+    "title": "Cognizant to Present at the BMO Technology and Innovation Leaders Conference",
+    "publisher": "PR Newswire",
+    "when": "2026-11-04 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-bmo-technology-innovation-130000580.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Rise As Nvidia Probes CEO Jensen Huang Spying Case",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-09 02:35Z",
+    "link": "https://finance.yahoo.com/m/283e1bd9-349e-390b-a32b-b4ed9a9034f3/dow-jones-futures-rise-as.html"
+   },
+   {
+    "title": "Nvidia Board Launches Probe In CEO Jensen Huang Spying Case",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-09 02:28Z",
+    "link": "https://finance.yahoo.com/m/7d4c4e40-eb01-324f-b03d-99c6800c4248/nvidia-board-launches-probe.html"
+   },
+   {
+    "title": "South Korea says Nvidia issues won't affect contracted GPU supplies",
+    "publisher": "Reuters",
+    "when": "2026-11-09 02:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/south-korea-says-nvidia-issues-022650481.html"
+   },
+   {
+    "title": "Nvidia Faces Governance Overhang: Jensen Huang\u2019s Affair Admission Sparks Board Probe, Analysts Warn Of Leadership Risks",
+    "publisher": "Stocktwits",
+    "when": "2026-11-09 02:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-faces-governance-overhang-jensen-020907411.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Stock Has Lost Nearly 40% From Its Record. I'd Buy It Now.",
+    "publisher": "Motley Fool",
+    "when": "2026-11-08 15:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-lost-nearly-40-154302022.html"
+   },
+   {
+    "title": "Broadcom Just Dropped 15% in a Week. Is It Time to Sell, or Load Up?",
+    "publisher": "TIKR",
+    "when": "2026-11-08 09:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-just-dropped-15-week-090703801.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD or Nvidia: Which AI Chip Stock Would I Buy With $1,000 Today?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-08 23:05Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/amd-nvidia-ai-chip-stock-230500464.html"
+   },
+   {
+    "title": "AMD Stock Dropped 11% Last Week. Is Intel\u2019s PC Warning Really That Bad?",
+    "publisher": "TIKR",
+    "when": "2026-11-08 18:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-dropped-11-last-185539006.html"
+   },
+   {
+    "title": "Lisa Su Expects 80% Revenue Growth in 2027. AMD Stock Is Still a Strong Buy, But It Demands Flawless Execution.",
+    "publisher": "Barchart",
+    "when": "2026-11-08 14:26Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/lisa-su-expects-80-revenue-142611269.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25035.5,
+  "chg_pct": 0.18,
+  "stamp": "09-Nov-2026 08:17:26",
+  "expiry": "23-Nov-2026",
+  "volume": 2497,
+  "nifty_close": {
+   "close": 25030.350000000002,
+   "stamp": "06-Nov-2026 15:30"
+  },
+  "gap_pts": 5.1,
+  "gap_pct": 0.02
+ }
+}

@@ -1,0 +1,129 @@
+{
+ "date": "2026-11-09",
+ "session": true,
+ "generated_at": "2026-11-09T08:17:38",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {},
+ "rows": [],
+ "next": {
+  "date": "2026-11-10",
+  "groups": {
+   "post": [
+    "Cochin Shipyard"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "COCHINSHIP",
+    "date": "2026-11-10",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+    "entity": "ext:COCHINSHIP",
+    "name": "Cochin Shipyard",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-14",
+      "time": "17:52",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "19:24",
+      "when": "post"
+     },
+     {
+      "date": "2026-01-28",
+      "time": "20:04",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-12",
+      "time": "20:09",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-10",
+   "name": "Cochin Shipyard",
+   "symbol": "COCHINSHIP"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Hindustan Copper",
+   "symbol": "HINDCOPPER"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Tata Power Company",
+   "symbol": "TATAPOWER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Amber Enterprises",
+   "symbol": "AMBER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Avalon Technologies",
+   "symbol": "AVALON"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Bharat Dynamics",
+   "symbol": "BDL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hindustan Aeronautics",
+   "symbol": "HAL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hitachi Energy India",
+   "symbol": "POWERINDIA"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "NMDC",
+   "symbol": "NMDC"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Oil India",
+   "symbol": "OIL"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "ABB India",
+   "symbol": "ABB"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Inox Wind",
+   "symbol": "INOXWIND"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Rail Vikas Nigam",
+   "symbol": "RVNL"
+  },
+  {
+   "date": "2026-11-14",
+   "name": "Ashok Leyland",
+   "symbol": "ASHOKLEY"
+  }
+ ],
+ "errors": [],
+ "n_extended": 54
+}

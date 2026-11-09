@@ -1,0 +1,375 @@
+{
+  "date": "2026-11-09",
+  "generated_at": "2026-11-09T08:16:00+05:30",
+  "mail": {
+    "window": "24h to 08:08 IST",
+    "n_scanned": 88,
+    "sectors": [
+      {
+        "sector": "Non-ferrous",
+        "bullets": [
+          {
+            "text": "TP raised to Rs1,200 from Rs1,140 (Overweight): F27 EBITDA estimate up ~12%, but 3Q aluminium cost seen rising ~5% and regional premia pulling back.",
+            "source": "Morgan Stanley - IDEA: Hindalco Industries Ltd: Soft 2H; strong medium-term outlook",
+            "received": "01:59",
+            "detail": {
+              "summary": "2Q beat across segments, led by copper, but 2H should be soft as LME pulls back and costs stay high. Captive coal and non-LME growth underpin medium-term earnings, so the house keeps Overweight.",
+              "points": [
+                "TP Rs1,200, from Rs1,140; probability-weighted, up ~5%",
+                "EBITDA estimates up ~12%/2%/1% over F27-29",
+                "Copper 2Q EBITDA Rs16.7bn incl. Rs3.5-4.0bn one-offs; underlying Rs12-13bn guided",
+                "2H-F27: 29% of aluminium hedged at ~US$3,000/t",
+                "F28: 26% hedged at US$3,168/t, vs 21% at US$3,160/t in 1Q"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "REDUCE, TP Rs985, upgraded from Sell on price correction: assumes FY28E LME $2,800/t; consol EBITDA falls to Rs419bn from Rs473bn in FY27E.",
+            "source": "Avendus Spark - 2QFY27 Outlook review: Hindalco (Rating: REDUCE, TP: Rs.985)",
+            "received": "06:52",
+            "detail": {
+              "summary": "1H earnings were flattered by LME at $3,250/t. With LME seen normalising, higher debt and no deleveraging cap the upside. The current price already discounts $2,800 LME, Novelis EBITDA of $570/t and half of Bay Minette's contribution.",
+              "points": [
+                "TP Rs985 on 6x Novelis / 6.5x India FY28E EV/EBITDA",
+                "Net debt Rs775bn in FY28 vs Rs648bn in FY26; ~1.8x leverage",
+                "Novelis adj EBITDA $616/t in Q2'27 vs $600 in Q1",
+                "Scrap spread $1,130/t QTD vs $1,250 in Q2'27",
+                "3-year TP Rs1,250 (~33% return)"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Buy, TP Rs1,100 held: 2Q EBITDA Rs128bn beat consensus by 11% but includes ~Rs3.5-4.0bn copper one-offs; 3QFY27 seen as the softest quarter.",
+            "source": "Nomura - Hindalco Industries (HNDL IN) (Buy) - Normalizing earnings; growth story intact (+1 more in Outlook)",
+            "received": "07:45",
+            "detail": {
+              "summary": "Strip out the copper one-offs and EBITDA was only about 4% above Nomura's estimate. India upstream and copper both soften in 3Q on higher costs and normalisation, with 4Q recovering. Leverage is seen peaking in FY27, with capex the open question until Feb'27.",
+              "points": [
+                "EBITDA Rs128bn: +8% vs Nomura, +11% vs Bloomberg consensus",
+                "Ex-copper one-offs EBITDA ~Rs123bn, 4% above Nomura estimate",
+                "3Q India upstream EBITDA/t US$1,866 vs US$2,125 in 2Q",
+                "3Q copper EBITDA built at Rs10bn vs Rs16.7bn in 2Q",
+                "Net debt/EBITDA 1.8x at Sep'26; Novelis 4.7x"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Steel",
+        "bullets": [
+          {
+            "text": "Tata Steel 2Q in line: Kotak upgrades to ADD, FV Rs200 (from Rs180); Morgan Stanley Overweight, PT Rs235; Nomura trims TP to Rs210 (from Rs240).",
+            "source": "Kotak - Tata Steel (CMP: Rs186, FV: Rs200, ADD): In-line results; domestic strength overshadows weak Europe",
+            "received": "06:02",
+            "detail": {
+              "summary": "Kotak calls the quarter in line, with India strength offsetting a weak Europe, and raises estimates on higher domestic spreads. Upgrade to ADD rests on valuation rather than on a Europe recovery. Nomura cuts its TP on lower Europe EBITDA, so the houses split on how much to pay for the Europe drag.",
+              "points": [
+                "Kotak FV Rs200 from Rs180; ADD from SELL; 5.7x FY28E EV/EBITDA",
+                "Kotak EBITDA estimates +3.9%/+4.5% for FY27/FY28",
+                "India standalone EBITDA Rs100bn, Rs16,742/t; volume ~5.9mn t, +16% q-q",
+                "Morgan Stanley consol EBITDA ~Rs105bn, ~9% above consensus; net debt/EBITDA 2.4x",
+                "Nomura TP Rs210 from Rs240; Europe FY28/29 EBITDA cut 7%"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Tata 3Q guide: India realisation +Rs3,500-3,600/t q-q against coking coal +$15/t; UK breakeven slips to 4QFY27, Netherlands JLoI extended to Mar-27.",
+            "source": "Nomura - Tata Steel (TATA IN) (Buy) - India carries the load",
+            "received": "07:42",
+            "detail": {
+              "summary": "India EBITDA expands in 3Q on auto contract resets, while Europe stays the drag. Netherlands margin dips slightly on mix and coal. The UK sits well below breakeven volumes, with the grid connection delayed.",
+              "points": [
+                "India EBITDA/t seen ~Rs18,600 in 3Q from Rs16,750",
+                "Netherlands EBITDA/t ~EUR52 from EUR57; realisation -EUR11/t on mix",
+                "UK volumes ~0.38MT vs 0.5-0.6MT breakeven",
+                "Iron ore sales guided 10MT+ FY27, 14-15MT FY28 (~2MT last year)",
+                "India EV/EBITDA multiple cut to 7x from 8x on FY30 mine loss"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "India HRC +INR200/t w-w to INR63,850/t, rebar -INR200 to INR64,600 (flat-long spread -INR750/t); iron ore $88/t, CY26 low.",
+            "source": "Nomura - India steel - Steel weekly trends (week ended 06 Nov 2026) (+5 more in Outlook)",
+            "received": "04:57",
+            "detail": {
+              "summary": "Flat steel prices keep firming near four-year highs while rebar slips, so the spread has turned negative. Coking coal is stable and iron ore is at its weakest this year, easing input pressure. Nomura stays positive on India steel and reiterates Buy on Tata, JSW and Jindal Steel.",
+              "points": [
+                "India HRC spot margin ~INR35,556/t, +INR2,700/t vs 2QFY27",
+                "Imported coking coal flat at $266/t, ~3% below Sep average",
+                "NMDC lumps +INR150/t to INR5,400/t from Sep-26; fines INR4,500/t",
+                "Oct crude steel 14.05MT; finished steel imports +66% y-y to 0.76MT",
+                "Europe HRC flat at EUR750/t; China export HRC $505/t"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Cement",
+        "bullets": [
+          {
+            "text": "2QFY27 EBITDA/t ranks UltraTech Rs974 > Shree 912 > Ambuja 761 > Dalmia 694; only UltraTech rose yoy (+Rs60) while Shree, Ambuja and Dalmia fell Rs194-319.",
+            "source": "Emkay - Cement Corner: Leaderboard, Star Cement",
+            "received": "07:49",
+            "detail": {
+              "summary": "Emkay's 2QFY27 leaderboard ranks 17 cement companies on EBITDA/t. UltraTech is the only one of the desk's four scored names with margin above 2QFY26. Shree, Ambuja and Dalmia are all well below a year ago, and every name except UltraTech is also below its FY26 level.",
+              "points": [
+                "UltraTech 974 vs 914 yoy, 1,214 in 1QFY27, volume +12.9%",
+                "Shree 912 vs 1,106 yoy, volume +17.7%",
+                "Ambuja 761 vs 1,002 yoy, volume -0.9%",
+                "Dalmia 694 vs 1,013 yoy, 1,055 in 1QFY27, volume +3.3%",
+                "Star 1,281 tops the table; Ramco 653 ranks ninth"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Ramco keeps BUY, TP Rs1,000; 2QFY27 EBITDA/t Rs653 on fuel at Rs1.99/kcal, with Rs20/bag Nov price hike expected to offset it.",
+            "source": "Avendus Spark - 2QFY27 Outlook review: The Ramco Cements (Rating: BUY, TP: Rs.1,000)",
+            "received": "07:04",
+            "detail": {
+              "summary": "Avendus's thesis is a South pricing and margin revival after five years of weak profitability, helped by UltraTech and Ambuja consolidating capacity. UltraTech's South utilisation has crossed 70% and it indicates regional pricing is recovering. Ambuja's acquired-capacity ramp-up remains a near-term headwind, and the Nov hike depends on post-festive demand.",
+              "points": [
+                "Q2 EBITDA/t Rs653; H2FY27E expected at Rs760-780",
+                "FY27E EBITDA/t ~Rs725 vs Rs790 in FY26; FY28E Rs920",
+                "Volume growth ~8% in FY27E and FY28E; 31mt capacity by Mar'27",
+                "Valuation 16x/11x FY27E/FY28E EV/EBITDA; TP on 12x exit multiple"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Star Cement keeps BUY, TP Rs230 unchanged (35% upside from Rs170); 2QFY27 core EBITDA/t Rs981 ex-incentives vs Rs1,143 yoy, volume +2% on NE floods.",
+            "source": "Emkay - Star Cement: In-line show; risk reward favorable post correction; BUY; Target: Rs230",
+            "received": "23:18",
+            "detail": {
+              "summary": "Headline EBITDA of Rs1.53bn was in line, but ex-incentives it missed Emkay's estimate by about 7% on negative operating leverage. Emkay still sees Star's margin as the highest among peers and expects a recovery above Rs1,300/t ex-incentives as the Silchar grinding unit ramps up. The Rs15bn fund-raise has been shelved, with expansion to be funded by accruals and debt.",
+              "points": [
+                "EBITDA Rs1.53bn, down 19% yoy and 21% qoq",
+                "Reported EBITDA/t Rs1,281 vs Rs1,620 yoy",
+                "Fixed cost/t up Rs229 qoq; realisation ex-incentives down ~3% qoq",
+                "Trades at 8x 1-year-forward EV/EBITDA; TP on 10x 2QFY29E core EBITDA"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "EMS",
+        "bullets": [
+          {
+            "text": "ECMS sixth tranche approves 12 projects with Rs75bn outlay, covering multi-layer PCB and camera modules; JPM says bare-PCB and camera/display incentives could lift EMS earnings.",
+            "source": "JPM - J.P. Morgan India FTM 9 Nov 26: India Data Watch; Gujarat Energy Limited; Thermax Ltd; India EMS; Bharti Airtel Limited and More",
+            "received": "03:07",
+            "detail": {
+              "summary": "Most of the approved projects belong to JPM's coverage universe, so attention now moves to what turnover-linked incentive each company gets. JPM says bare PCB and camera/display modules are not fully built into its or Street estimates, which leaves possible upside.",
+              "points": [
+                "12 projects approved, investment outlay Rs75bn",
+                "Covers multi-layer PCB, relays, heat sinks, copper foil, cathode material",
+                "Turnover-linked incentive on bare PCB/camera/display still to be disclosed",
+                "Not fully in JPM or Street estimates"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Avendus downgrades Voltas to REDUCE (TP Rs1,044, from BUY) and keeps REDUCE on LG Electronics India (TP Rs1,655), while BofA stays BUY on Voltas at PO Rs1,320.",
+            "source": "Avendus Spark - 2QFY27 Outlook reviews: Voltas (Rating: Revised to REDUCE, TP: Rs.1,044); LG Electronics India (Rating: REDUCE, TP: Rs.1,655) (+3 more in Outlook)",
+            "received": "06:53",
+            "detail": {
+              "summary": "Voltas share gains have cost margin, and Avendus sees the market-share focus capping margin recovery. It cut the Voltas air-conditioner multiple to 35x from 50x. For LG it sees margins capped near 11.5% by FY28E as rivals enter and the new plant adds fixed cost.",
+              "points": [
+                "Voltas RAC volumes +32% in 2QFY27, market share 17.4%",
+                "Voltas cumulative price hikes ~18% since January 2026",
+                "Voltas EBIT margin 1.3% in 2QFY27",
+                "LG 2QFY27 EBITDA margin 9.5%, capped ~11.5% by FY28E"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "BofA on Voltas: cost inflation ~18% against ~14% pricing leaves a 3-4% gap, with another 5-7% hike billing since October; RAC volumes +32%, share 17.4%.",
+            "source": "BofA - VOLT IN: Voltas: 2QFY27: Price-cost gap closing - BUY - India",
+            "received": "00:40",
+            "detail": {
+              "summary": "BofA calls the margin pressure near-term rather than structural, since pricing is catching up and demand elasticity looks limited. Underlying EBIT halved and the company slipped into a recurring loss once one-offs are stripped out. It still sees the current level as a trough, setting up a buy for El Nino.",
+              "points": [
+                "Stock ~20% down YTD, 30x two-year forward P/E",
+                "Market share up ~150bps YTD to 17.4%",
+                "Projects (MEP) revenue -22% yoy, order book Rs68bn",
+                "Voltbek EBITDA breakeven pushed to FY28; PO cut to Rs1,320"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "IT / AI-tech",
+        "bullets": [
+          {
+            "text": "Mphasis: Avendus Spark keeps ADD, TP Rs.2,670 on 20x Sep-28e EPS; FY27 guide raised to low double-digit growth, FY27 EBIT margin seen down ~40bps.",
+            "source": "Avendus Spark - 2QFY27 Outlook reviews: Mphasis (Rating: ADD, TP: Rs.2,670)",
+            "received": "06:48",
+            "detail": {
+              "summary": "Spark stays positive after an in-line 2Q. New-deal TCV and a short-duration AI pipeline give revenue visibility, but the onsite-heavy deal mix and working-capital build for large deals weigh on margins and cash conversion. Blackstone stake sale is flagged as the key headwind.",
+              "points": [
+                "TCV above $400mn in each of the last 6 quarters",
+                "AI-led short-duration deals are 71% of pipeline",
+                "FY27 pre-tax OCF/EBITDA 75%, improving to ~85% in FY28e",
+                "Earnings CAGR 13% over FY26-28; valuation 20x FY28 EPS",
+                "EBIT margin to stabilise at ~16% over medium term"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Sonata Software cut to REDUCE, TP Rs.240 (10x vs 12x); 1HFY27 international revenue ~1% yoy, EBITDA margin down 150bps yoy.",
+            "source": "Avendus Spark - 2QFY27 Outlook reviews: ... Sonata Software (Rating: Revised to REDUCE, TP: Rs.240)",
+            "received": "06:48",
+            "detail": {
+              "summary": "Spark keeps a negative stance after a 2Q operating-margin miss and trims the multiple, arguing 11x FY28E EPS is not cheap if disappointments continue. International IT services stays weak while domestic strength sits on a low base and carries hyperscaler direct-billing risk.",
+              "points": [
+                "International services revenue ~1% yoy in 1H, margin -150bps yoy",
+                "Domestic revenue +19% yoy in 2Q, 14% growth seen FY27/28",
+                "Services margin estimate cut ~100bps for FY27",
+                "Multiple cut to 10x from 12x on Sep-28e EPS"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "IKS Health BUY, TP Rs.1,910 on 26x (from 29x); FY28 EBITDA margin cut 100bps for ESOP costs, EBITDA guide of INR 30bn unchanged.",
+            "source": "Avendus Spark - 2QFY27 Outlook reviews: ... Inventurus Knowledge Solutions (Rating: BUY, TP: Rs.1,910) (+3 more in Outlook)",
+            "received": "06:48",
+            "detail": {
+              "summary": "Spark stays positive on organic outperformance but lowers the multiple for a slower TruBridge recovery. Estimate cuts are driven by ESOP cost and finance cost and other income changes rather than revenue.",
+              "points": [
+                "Organic revenue ~$365mn, growing better than ~12% industry yoy",
+                "TruBridge ~$300mn revenue; RCM stabilises through 2HFY27",
+                "Consolidated revenue +9% in FY27, +10% in FY28",
+                "EBITDA margin cut 30bps FY27 and 100bps FY28",
+                "~150bps proforma margin uplift expected over FY27-29e"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Macro & strategy",
+        "bullets": [
+          {
+            "text": "BofA India consumer survey: 67% plan to buy a vehicle within six months while 76% use quick commerce weekly; eating out is the top planned cut.",
+            "source": "BofA - APAC Signal-to-Noise: Japan bottoming; India selective - Asia-Pacific",
+            "received": "20:38",
+            "detail": {
+              "summary": "Income gains are K-shaped and inflation is pushing spending back to essentials. Discretionary categories such as eating out and clothing are being cut, while autos and online channels hold up. The same note says Japan may be near a bottom.",
+              "points": [
+                "92% above Rs3mn income saw a rise vs 43% below Rs500k",
+                "Eating out/food delivery top planned cut, nearly half of respondents",
+                "Clothing/footwear next at 37%",
+                "89% plan a trip, with smaller budgets"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "JPM India Data Watch: 1HFY27 government spending strong but capex now slowing and tax collections below budget; October CPI due next week at 6% oya.",
+            "source": "JPM - J.P. Morgan India FTM 9 Nov 26: India Data Watch; Gujarat Energy Limited; Thermax Ltd; India EMS; Bharti Airtel Limited and More (+5 more in Outlook)",
+            "received": "03:07",
+            "detail": {
+              "summary": "Sajjid Chinoy's India Data Watch says 1HFY27 spending ran strong. Revenue is behind plan, so expenditure growth has to slow in 2HFY27 to hit the fiscal target. The note also says there is no India FTM on 10 November because of market closures.",
+              "points": [
+                "Capex has begun to slow after a strong 1H",
+                "Tax collections tracking below budgeted target",
+                "Expenditure growth needs to slow in 2HFY27",
+                "October CPI due next week at 6% oya"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      },
+      {
+        "sector": "Other coverage-adjacent",
+        "bullets": [
+          {
+            "text": "Siemens 2QFY27 order inflows Rs62.3bn (+38% yoy, 20% above JPMe), backlog Rs470bn; EBITDA margin 10.9% (-152bps yoy); JPM stays Underweight, PT Rs3,334.",
+            "source": "JPM - Hi Rajvaibhav, Siemens Ltd: First Take: In-line P&L; Strong Order Inflows",
+            "received": "11:55",
+            "detail": {
+              "summary": "The P&L was in line, and Smart Infrastructure was the bright spot. Mobility and Digital Industries margins were weak. JPM expects a positive stock reaction and no major change to consensus ahead of the analyst meeting.",
+              "points": [
+                "Revenue Rs57.3bn (+17% yoy), EBITDA Rs6.3bn (+3% yoy)",
+                "Smart Infrastructure revenue +20% yoy, EBIT 15% above JPMe",
+                "Mobility EBIT margin 7.5% vs JPMe 10.0%",
+                "Digital Industries EBIT margin 5.0% vs JPMe 6.5%"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "JPM upgrades Gujarat Energy to OW (PT Rs300, from UW): stock -39% YTD, under 8x FY28E P/E; 2QFY27 standalone EBITDA Rs8bn, -38% qoq.",
+            "source": "JPM - Hi Rajvaibhav, Gujarat Energy Limited: Inexpensive play on a medium-term decline in gas prices; Upgrade to OW",
+            "received": "07:00",
+            "detail": {
+              "summary": "JPM argues the sell-off prices in high gas prices that should ease if the Middle East conflict ends and new LNG capacity arrives. It sees low valuation as a sufficient margin of safety, though spot LNG and cheaper propane remain near-term risks to volumes.",
+              "points": [
+                "PT Rs300 on 10x forward P/E (from 17x)",
+                "Gas trading EBIT Rs3.3bn in 2Q vs Rs7.3bn in 1Q",
+                "CGD volumes 10.7 mmscmd, -13% qoq, +24% yoy",
+                "Gas trading ~40% of 2QFY27 EBITDA"
+              ],
+              "read": "body"
+            }
+          },
+          {
+            "text": "Avendus power round-up: October peak demand +24% yoy, avg DAM price Rs6.7/unit (+149% yoy), plant coal stocks 6 days (20MT) vs 16 days a year ago.",
+            "source": "Avendus Spark - India Power Sector Round up for October 2026 (+6 more in Outlook)",
+            "received": "06:49",
+            "detail": {
+              "summary": "Tight non-solar-hour supply drove exchange prices up. Avendus is constructive on merchant-exposed and thermal utilities near term. It warns that 6% demand growth through FY30E would leave surplus capacity, a near-term negative for new conventional and renewable projects.",
+              "points": [
+                "Thermal PLF 71%, up 1,332bps yoy",
+                "Peak shortage ~5.6GW in October",
+                "Transmission awards Rs956bn YTDFY27 vs Rs237bn",
+                "RE auctions 16.8GW YTDFY27, +128% yoy"
+              ],
+              "read": "body"
+            }
+          }
+        ]
+      }
+    ],
+    "quiet": ["Mining"]
+  },
+  "global": {
+    "ai_semis": [
+      {
+        "text": "JPM: semis sentiment only halfway through its adjustment and beta sentiment not yet below the 5th percentile; momentum L/S down 40% from peak, October long-momentum -11%.",
+        "source": "JPM - JPM Overnight Brief! 11/9 - AI and Semiconductor Unwind"
+      },
+      {
+        "text": "JPM sees the AI unwind as deleveraging, not fundamentals, holding S&P 500 target at 8,000 and 2027 EPS growth +20%; Japan equities fell 6.0% overnight.",
+        "source": "JPM - JPM Overnight Brief! 11/9 - AI and Semiconductor Unwind"
+      },
+      {
+        "text": "CLSA calls AI fears overdone: 150GW of US datacentres planned plus 46GW ex-US/China, Anthropic only ~11% of world tokens ex-China, funding need ~175bps of world GDP.",
+        "source": "CLSA - Global technology: AI: Four musketeers"
+      }
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}
