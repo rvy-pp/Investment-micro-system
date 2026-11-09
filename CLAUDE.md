@@ -3571,6 +3571,68 @@ the roster**, add only on the PM's word. Entity ids: `ntpc`, `power_grid`,
   field that does that work, as captive inputs do in non-ferrous. Merchant
   tariffs (IEX) have no series yet.
 
+### Power Grid — the first coverage case and the regulated-utility model (2026-11-09)
+
+PM: *"Let's start with Powergrid modelling and agent (powergid-agent). Fetch
+valuations, you will find 3 models in downloads."* Power Grid is not on the
+book, so three things had to exist before a case could: a way for the Analysis
+roster to carry a name with no pair, a consensus for a name the Yahoo capture
+does not cover, and a model whose driver is not a commodity.
+
+- **`specs/book.yaml analysis_coverage`** lists stocks on the Analysis roster
+  WITHOUT a book position (`{token: PWGR, group: POWER}`; the token must be in
+  `ticker_map`). `analysis.roster()` adds them with side `coverage` and no
+  pair; `expected_legs()` counts them (32 now); `dictated_pairs()` never sees
+  them, so a coverage name reaches no Kelly edge until the PM dictates a pair.
+  `analysis.coverage_groups()` feeds the orchestrator: a coverage group must
+  sit on one rota day like a pair group (POWER is on Thursday), and
+  `--sector POWER` works. The agent file is named by the token as always,
+  **`pwgr-agent`** (PWGR IN is what the IMS would print); the PM's
+  "powergid-agent" is read as that.
+- **A P/E build may carry its own `consensus`** (`{FY: {eps, source}}`),
+  the way an EV build carries EBITDA, when `estimates` has nothing for the
+  name (`case_brief.brief`, `consensus_source: build`). Power Grid's is
+  Bloomberg's, read from the JPM model's own `consensus` sheet (FY27 19.215,
+  FY28 19.34). The daily Yahoo capture stays IT + EMS (PM, 2026-10-06).
+- **POWER runs on P/E, median anchor, σ range** (`case_bands` / `case_anchor`
+  entries; `multiple_sigma.SYMBOLS` has POWERGRID). σ on the first fetch:
+  8.6% (13-week, 90 weeks), the lowest in the set — a utility's multiple
+  moves a third as much as an IT large cap's.
+- **`packages/book/power_model.py`** (21-check selftest, Excel recalculation
+  included when Excel is on the box) builds `Power_Grid_model.xlsx` from
+  `model_config.json`. The driver is **capitalisation**: each fiscal year's
+  guidance (yellow) spread over its forecast quarters by the year's observed
+  Q4-heavy shape, net of the quarters already reported, so a plan line never
+  double-counts a printed quarter. Gross block = opening + capitalisation;
+  transmission revenue = average block × a **yield** (trailing four quarters
+  plus a drift); opex a ratio on the block; depreciation the LATEST quarter's
+  rate carried (the pool's rate is stepping down as old assets reach the 90%
+  cap, and a four-quarter average put FY28 depreciation 9% above BofA's flat
+  line); interest on opening debt; gross debt grows by 70% of capex; dividends
+  a payout of the previous year's PAT in Q2/Q3/Q4; cash is the plug. The
+  Valuation sheet is **P/E** (`"Valuation basis"` row, which `model_view` now
+  reads so the Analysis card prints "EPS × P/E" instead of "EBITDA × ?x"),
+  with a P/BV cross-check and a rolling four-quarters-forward EPS from the
+  price date. What it leaves out is written on its README: the CERC tariff
+  line by line, working capital, FX, the regulatory deferral and JV true-ups.
+- **First read.** Model FY27 EPS 16.47, FY28 16.74 against Bloomberg 19.22 /
+  19.34 and JPM/BofA ~19.4 / 19.2. The gap is the yield (held at 14.0% where
+  FY26 ran 14.9% with its year-end true-ups) and interest on debt-funded
+  capex, not the block. At the ten-house median implied FY28 P/E of 15.82x
+  (Kotak 270 REDUCE … Elara 360 BUY; median TP 306) the model's own target is
+  Rs265 (+2%); the P/BV route the houses actually use gives Rs313 at JPM's
+  2.5x, an 18.7x P/E on the model's EPS because consolidated RoE runs 13-14%
+  (CWIP equity not yet earning), not the regulated 15.5%. FY27 consensus
+  needs H2 EPS of 5.59 a quarter against Q2's 4.16, so the panel has not
+  taken the capitalisation cut (Rs300bn → 250-300bn, 03-Nov, RoW delays).
+  Brief: base +3.5% / bear −5.0% / bull +12.8% on FY28 at the anchor; Q3 is a
+  model DRAFT (capitalisation Rs6,825cr, EPS 4.36 vs MS's pre-result 4.98).
+- **The three models in Downloads** were MS `794240.PGRD.NS.XLSX` (01-Oct,
+  PRE-result; MS's RIC is PGRD), JPM `PGRD.NS_Equity_model.xlsx` (06-Nov,
+  the consensus sheet and the quarterly actuals) and BofA `13039097.xlsx`
+  (annual only; its PO is not in the file, the mail says 300). Q2FY27
+  consolidated came from screener.in's table plus the Kotak and JPM notes.
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed

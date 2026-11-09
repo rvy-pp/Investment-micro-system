@@ -182,6 +182,9 @@
   .ana-side{display:inline-block;font-size:var(--t-label);font-weight:600;padding:1px 8px;margin-left:6px;
             border-radius:var(--r-pill);vertical-align:1px}
   .ana-side.long{color:var(--up);background:var(--up-soft)} .ana-side.short{color:var(--down);background:var(--down-soft)}
+  /* a coverage name (specs/book.yaml analysis_coverage, 2026-11-09): a case
+     agent with no book position; neutral so it never reads as a side */
+  .ana-side.coverage{color:var(--muted);background:var(--accent-soft)}
   .ana-grp{color:var(--accent);font-size:var(--t-sm);font-weight:700;letter-spacing:.04em;
            padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--rule)}
   .ana-ico{font-size:16px;font-weight:700}
@@ -4298,10 +4301,17 @@ function anaModelUp(v, long){
   if (v.error) return `<div class="mdl-up" style="color:var(--warn)" title="${esc(v.error)}">▦ model: no number</div>`;
   if (v.upside_pct == null) return '';
   const tp = Number(v.tp).toLocaleString('en-IN', { maximumFractionDigits: 0 });
-  const tip = `Model target ₹${tp}: ${v.year || ''} EBITDA × ${v.multiple != null ? Number(v.multiple).toFixed(2) + 'x' : '?'}, `
-    + `net debt at ${v.nd_quarter || '?'}. Upside on the close of ₹${Number(v.close).toLocaleString('en-IN')} (${dmy(v.close_date)}). `
+  /* a P/E model (power_model.py, 2026-11-09) says so on its Valuation sheet's
+     "Valuation basis" row; the EV text would print "EBITDA × ?x" for it */
+  const pe = (v.basis || '').toString().toUpperCase().startsWith('P/E');
+  const how = pe ? `${v.year || ''} EPS ₹${v.eps != null ? Number(v.eps).toFixed(2) : '?'} × ${v.pe_typed != null ? Number(v.pe_typed).toFixed(2) + 'x' : '?'} P/E`
+    : `${v.year || ''} EBITDA × ${v.multiple != null ? Number(v.multiple).toFixed(2) + 'x' : '?'}, net debt at ${v.nd_quarter || '?'}`;
+  const tip = `Model target ₹${tp}: ${how}. Upside on the close of ₹${Number(v.close).toLocaleString('en-IN')} (${dmy(v.close_date)}). `
     + `Workbook as last saved ${mdlTime(v.saved)}.`;
   if (!long) return `<div class="mdl-up" title="${esc(tip)}">▦ <b class="${v.upside_pct >= 0 ? 'pos' : 'neg'}">${anaPct(v.upside_pct)}</b> <span>₹${tp}</span></div>`;
+  if (pe) return `<div class="mdl-upl">Model target <b>₹${tp}</b> · ${esc(v.year || '')} EPS ₹${v.eps != null ? Number(v.eps).toFixed(2) : '?'} × <b>${v.pe_typed != null ? Number(v.pe_typed).toFixed(2) + 'x' : '?'}</b> P/E`
+    + ` · upside <b class="${v.upside_pct >= 0 ? 'pos' : 'neg'}">${anaPct(v.upside_pct)}</b>`
+    + ` on ₹${Number(v.close).toLocaleString('en-IN')} (${esc(dmy(v.close_date))}) · last save ${esc(dmy(v.saved))}</div>`;
   return `<div class="mdl-upl">Model target <b>₹${tp}</b> · ${esc(v.year || '')} EBITDA × <b>${v.multiple != null ? Number(v.multiple).toFixed(2) + 'x' : '?'}</b>`
     + (v.multiple_typed != null && v.multiple != null && Math.abs(v.multiple_typed - v.multiple) > 0.005 ? ` (${Number(v.multiple_typed).toFixed(2)}x less the JV)` : '')
     + `, net debt at ${esc(v.nd_quarter || '?')} · upside <b class="${v.upside_pct >= 0 ? 'pos' : 'neg'}">${anaPct(v.upside_pct)}</b>`

@@ -159,7 +159,35 @@ def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
         out[ent] = {"entity": ent, "token": u["token"], "name": names.get(u["token"], u["token"]),
                     "side": word[u["side"]], "group": u["group"], "pairs": [],
                     "unpaired": u["was"]}
+    # Coverage names (PM, 2026-11-09: "Let's start with Powergrid modelling
+    # and agent"): a stock with a case agent and NO book position, listed in
+    # specs/book.yaml analysis_coverage. It sits on the roster with side
+    # "coverage" and no pair, so the brief, the σ fetch, the orchestrator's
+    # daily watch and its sector day all see it, while dictated_pairs() never
+    # does: no pair, no Kelly edge, until the PM dictates one that names it.
+    for c in cfg.get("analysis_coverage") or []:
+        tok = c.get("token")
+        ent = tmap.get(tok)
+        if not ent or tok in skip or ent in out:
+            continue
+        out[ent] = {"entity": ent, "token": tok, "name": names.get(tok, tok),
+                    "side": "coverage", "group": c.get("group") or "COVERAGE", "pairs": [],
+                    "coverage": True}
     return list(out.values())
+
+
+def coverage_groups(cfg: dict | None = None) -> list[str]:
+    """The groups analysis_coverage adds beyond the pair headings, for the
+    rota check and the sector day (a coverage group with no rota day would
+    never be reviewed, the same silent shape as a missing pair group)."""
+    cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    pairs = cfg.get("pairs") or {}
+    seen = []
+    for c in cfg.get("analysis_coverage") or []:
+        g = c.get("group") or "COVERAGE"
+        if g not in pairs and g not in seen:
+            seen.append(g)
+    return seen
 
 
 def expected_legs(cfg: dict | None = None, sides: dict | None = None) -> int:
@@ -179,6 +207,7 @@ def expected_legs(cfg: dict | None = None, sides: dict | None = None) -> int:
     toks = {t for ps in live.values() for p in ps
             for side in ("long", "short") for t in p.get(side) or []}
     toks |= {u["token"] for u in _unpaired(cfg, sides if sides is not None else _held(None))}
+    toks |= {c["token"] for c in cfg.get("analysis_coverage") or [] if c.get("token")}   # coverage names, 2026-11-09
     return len({tmap.get(t) or f"UNMAPPED:{t}" for t in toks if t not in skip})
 
 
@@ -527,6 +556,16 @@ def _selftest() -> None:
                               {"name": "C_B", "long": ["C"], "short": ["B"]}]}}
         assert [x["entity"] for x in roster(fx)] == ["a", "b", "c"] and expected_legs(fx) == 3; ok += 1
         fx["analysis_exclude"] = {"C": "cash"}
+        assert [x["entity"] for x in roster(fx)] == ["a", "b"] and expected_legs(fx) == 2; ok += 1
+        # a coverage name (2026-11-09): on the roster with side "coverage", no
+        # pair, its own group; counted by expected_legs; never in dictated_pairs
+        fx["ticker_map"]["P"] = "p"; fx["analysis_coverage"] = [{"token": "P", "group": "POWER"}]
+        rp = roster(fx)
+        assert [x["entity"] for x in rp] == ["a", "b", "p"] and expected_legs(fx) == 3
+        assert rp[-1]["side"] == "coverage" and rp[-1]["pairs"] == [] and rp[-1]["group"] == "POWER"
+        assert coverage_groups(fx) == ["POWER"]
+        assert all("p" not in p["long"] + p["short"] for p in dictated_pairs(fx)); ok += 1
+        fx["analysis_coverage"] = [{"token": "C", "group": "POWER"}]           # an excluded token stays excluded
         assert [x["entity"] for x in roster(fx)] == ["a", "b"] and expected_legs(fx) == 2; ok += 1
         live = {x["token"] for x in r}
         assert "SYRMA" in live and not live & {"DALBHARA", "LTTS"}, live; ok += 1

@@ -58,6 +58,7 @@ SYMBOLS = {"tcs": "TCS", "infosys": "INFY", "wipro": "WIPRO", "hcl_tech": "HCLTE
            "tech_mahindra": "TECHM", "ltimindtree": "LTM", "persistent": "PERSISTENT",
            "coforge": "COFORGE", "mphasis": "MPHASIS", "tata_elxsi": "TATAELXSI",
            "kpit": "KPITTECH", "ultratech": "ULTRACEMCO", "shree": "SHREECEM",
+           "power_grid": "POWERGRID",          # coverage name, 2026-11-09 (screener consolidated P/E)
            "ambuja": "AMBUJACEM", "dalmia": "DALBHARAT", "jsw_steel": "JSWSTEEL",
            "tata_steel": "TATASTEEL"}
 DAYS = 1095        # three years fetched; the window takes what it needs

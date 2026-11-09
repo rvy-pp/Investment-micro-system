@@ -66,6 +66,11 @@ ticker_map:
   DIXON: dixon
   KAYNE: kaynes
   PGEL: pg_electroplast   # on the book since EMS 2; added on the PM's instruction 2026-10-25
+  # Power: coverage names with a case agent and NO book position yet (PM,
+  # 2026-11-09: "Let's start with Powergrid modelling and agent"). The token
+  # is the Bloomberg ticker, which is what the IMS will print if a position
+  # is ever taken (PWGR IN).
+  PWGR: power_grid
   # IT
   TCS: tcs
   INFO: infosys
@@ -190,6 +195,17 @@ analysis_exclude:
   DALBHARA: cash line, Dalmia is out of F&O
   LTTS: cash line, not in F&O; the PM is removing it from the book
 
+# analysis_coverage: stocks on the Analysis roster WITHOUT a book position
+# (PM, 2026-11-09: "Let's start with Powergrid modelling and agent"). The
+# roster used to be the dictated legs alone; a coverage name gets a case
+# agent, a build, the daily orchestrator watch and the sector-day sweep
+# exactly like a leg, but sits in NO pair, so it reaches no Kelly edge until
+# the PM dictates a pair that names it. `group` is the heading the Analysis
+# tab and the rota use; it must sit on one rota day like a pair group.
+# The token must be in ticker_map.
+analysis_coverage:
+  - {token: PWGR, group: POWER}
+
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
 names:
@@ -198,6 +214,7 @@ names:
   DIXON: Dixon
   KAYNE: Kaynes
   PGEL: PG Electroplast
+  PWGR: Power Grid
   TCS: TCS
   INFO: Infosys
   WPRO: Wipro
@@ -351,6 +368,10 @@ case_bands:
   # PM, 2026-11-03, on the JSW Steel agent: "earlier method of valuation
   # aggregation and so forth" — the cement method carried to steel.
   STEEL: {multiple_sigma: {window_weeks: 90, change_weeks: 13}}
+  # POWER (2026-11-09, Power Grid): P/E, the σ range on the trailing P/E from
+  # screener, the same rule as IT. A regulated utility's earnings barely move
+  # between scenarios; the multiple is where the range is.
+  POWER: {multiple_sigma: {window_weeks: 90, change_weeks: 13}}
 
 # case_valuation: the multiple a sector's case agents run on (PM, 2026-10-25:
 # "cement sector agents ... we will use EV/EBITDA instead of P/E. Process is
@@ -373,6 +394,7 @@ case_anchor:
   IT: median
   CEMENT: median
   STEEL: median          # PM, 2026-11-03: "earlier method of valuation aggregation"
+  POWER: median          # 2026-11-09, Power Grid: the IT rule, implied P/E = TP / consensus EPS
 
 # orchestrator: the day-end watch over every dictated leg and its case agent
 # (PM, 2026-10-26: "an orchestrator agent that monitors all company-agents. It
@@ -423,7 +445,7 @@ orchestrator:
     Mon: [CEMENT]
     Tue: [IT LARGECAP, IT MIDCAP]
     Wed: [STEEL]
-    Thu: [ZINC, ALUMINIUM, MINING]
+    Thu: [ZINC, ALUMINIUM, MINING, POWER]   # POWER is a coverage group (analysis_coverage), 2026-11-09
     Fri: [EMS]
   move_flag_pp: 3.0
   juice_flag_pp: 1.0

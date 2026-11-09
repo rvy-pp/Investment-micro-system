@@ -248,7 +248,11 @@ def render(entity: str, sheet: str | None = None, since: float | None = None,
 # every time a line is added (the JV rows moved everything by three on 4-Nov).
 VAL_LABELS = {"tp": "Expected price (Rs)", "year": "Valuation year",
               "nd_quarter": "Net debt as of (quarter)", "multiple": "Core multiple, ex JV (x)",
-              "multiple_typed": "Target EV/EBITDA multiple"}
+              "multiple_typed": "Target EV/EBITDA multiple",
+              # a P/E model (power_model.py, 2026-11-09): the basis row says
+              # which multiple the card should print; absent = EV/EBITDA
+              "basis": "Valuation basis", "pe_typed": "Target P/E multiple (x)",
+              "eps": "EPS of the valuation year (Rs)"}
 
 
 def _val_rows(ws) -> dict:

@@ -83,7 +83,9 @@ def check_rota(cfg: dict) -> list[str]:
     """Every dictated group on exactly one weekday, and nothing else there.
     A group missing from the rota would never be reviewed and nothing else
     would notice — the silent shape — so every run refuses it."""
-    groups = list((cfg.get("pairs") or {}).keys())
+    # the pair headings plus the coverage groups (analysis_coverage, 2026-11-09):
+    # a coverage name has no pair but is reviewed on its sector day like a leg
+    groups = list((cfg.get("pairs") or {}).keys()) + analysis.coverage_groups(cfg)
     rota = (cfg.get("orchestrator") or {}).get("rota") or {}
     probs, seen = [], {}
     for day, gs in rota.items():
@@ -91,7 +93,7 @@ def check_rota(cfg: dict) -> list[str]:
             probs.append(f"rota day {day!r} is not a weekday (Mon..Fri)")
         for g in gs or []:
             if g not in groups:
-                probs.append(f"rota {day}: {g!r} is not a group in specs/book.yaml pairs")
+                probs.append(f"rota {day}: {g!r} is not a group in specs/book.yaml pairs or analysis_coverage")
             elif g in seen:
                 probs.append(f"{g!r} sits on both {seen[g]} and {day}")
             else:
@@ -673,9 +675,9 @@ def sector(groups: list[str], today: dt.date | None = None, write: bool = True) 
     import move_check
     today = today or dt.date.today()
     cfg = load_cfg()
-    bad = [g for g in groups if g not in (cfg.get("pairs") or {})]
+    bad = [g for g in groups if g not in (cfg.get("pairs") or {}) and g not in analysis.coverage_groups(cfg)]
     if bad:
-        raise SystemExit(f"not a dictated group: {bad}")
+        raise SystemExit(f"not a dictated or coverage group: {bad}")
     th = cfg["orchestrator"]
     runs = load_state()["sector_runs"]
     legs, unwatched = watched([g for g in analysis.roster(cfg) if g["group"] in groups])
@@ -742,9 +744,9 @@ def render_sector(doc: dict) -> str:
 
 def mark(groups: list[str], today: dt.date | None = None) -> dict:
     cfg = load_cfg()
-    bad = [g for g in groups if g not in (cfg.get("pairs") or {})]
+    bad = [g for g in groups if g not in (cfg.get("pairs") or {}) and g not in analysis.coverage_groups(cfg)]
     if bad:
-        raise SystemExit(f"not a dictated group: {bad}")
+        raise SystemExit(f"not a dictated or coverage group: {bad}")
     st = load_state()
     for g in groups:
         st["sector_runs"][g] = (today or dt.date.today()).isoformat()

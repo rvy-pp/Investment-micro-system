@@ -945,7 +945,22 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
                 pe_today = {fy: (mcap + nd) / c for fy, c in cons.items()}
             else:
                 pe_today = {}
+        cons_src = "yahoo" if cons else None
+        if valuation != "ev_ebitda" and not cons:
+            # No Yahoo consensus for this name: the daily capture covers IT and
+            # EMS only (PM 2026-10-06, "remove the consensus schtick", keeps it
+            # so). A P/E build may then carry `consensus` {FY: {eps, source}}
+            # the way an EV build carries EBITDA, sourced from the houses and
+            # re-struck when they publish. Power Grid (2026-11-09) is the
+            # first; Bloomberg's consensus from the JPM model's own sheet.
+            bc = (build or {}).get("consensus") or {}
+            cons = {fy: c["eps"] for fy, c in bc.items()
+                    if isinstance(c, dict) and isinstance(c.get("eps"), (int, float)) and c["eps"] > 0}
+            if cons:
+                cons_src = "build"
+                pe_today = {fy: px[1] / e for fy, e in cons.items()} if px else {}
         out = {"entity": ent, "name": me["name"], "token": me["token"], "side": me["side"],
+               "consensus_source": cons_src,
                "group": me["group"], "as_of": today.isoformat(), "valuation": valuation,
                "multiple": "EV/EBITDA" if valuation == "ev_ebitda" else "P/E",
                "ev": ev, "consensus": cons, "open_quarter": quarter_of(today),
@@ -1203,9 +1218,8 @@ name: {agent}
 description: {description}
 ---
 
-You are the case agent for **{name}** ({token}, entity `{entity}`), the
-{side_word} leg in {pairs} ({group}). You work on this one stock and nothing
-else. If asked about another name, say which agent owns it and stop.
+You are the case agent for **{name}** ({token}, entity `{entity}`), {leg_line}.
+You work on this one stock and nothing else. If asked about another name, say which agent owns it and stop.
 
 **First, every run, read in this order:**
 
@@ -1272,7 +1286,7 @@ CASE_TEMPLATE = """# {name} — case file
 *Maintained by the `{agent}` agent. Rewritten each run; the Analysis
 log in ims.db is the dated record, this file is the current thinking.*
 
-**Leg:** {side_word} in {pairs} ({group}) · **Last run:** never
+**Leg:** {leg_line} · **Last run:** never
 
 ## Thesis
 _Not yet written._
@@ -1320,6 +1334,14 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
             # a held leg whose pair was retired sits in no pair (PM 2026-11-09)
             "pairs": ", ".join(r["pairs"]) or f"no pair (was {r.get('unpaired') or '?'})",
             "agent": agent_name(r["token"]),
+            # a coverage name (specs/book.yaml analysis_coverage, 2026-11-09) has
+            # no book position and no pair: say so, instead of "the coverage leg"
+            "leg_line": (f"a COVERAGE name in {r['group']} with no book position and no pair yet, so its "
+                         f"case reaches no Kelly edge until the PM dictates a pair that names it"
+                         if r.get("coverage") else
+                         f"the {r['side']} leg in "
+                         + (", ".join(r["pairs"]) or f"no pair (was {r.get('unpaired') or '?'})")
+                         + f" ({r['group']})"),
             "it_block": IT_BLOCK.format(entity=ent, name=r["name"]) if it else "",
             "deals_desc": (" - and the deal list: reported TCV, named deals, what is delayed and "
                            "what has rolled off, cross-checked before each result") if it else ""}
