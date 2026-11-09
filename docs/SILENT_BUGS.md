@@ -281,6 +281,34 @@ there. Nothing reads `alloc_lt`, and it was exactly 2x the month's real figure.
 A field kept only for provenance is still a check, provided someone sets it
 beside the source.
 
+### 15. A dead-contract guard that read a tick grid as a dead contract — NHPC
+
+*Found 2026-11-09, loading the Power roster's history.*
+
+`yahoo_prices.fetch_bars` refused a series as "frozen" when fewer than half
+its closes were DISTINCT. It was written for ZNC=F, a dead 2019 zinc contract
+that returned five distinct closes in 23 sessions. Pointed at NHPC's history
+from its 2009 listing it refused the whole series: **28% distinct closes**.
+NHPC is a liquid F&O name; it spent twelve years between Rs15 and Rs36 on a
+5-paise tick, which leaves at most ~420 distinct prices for ~3,000 sessions.
+The low share was the tick grid, not a frozen print.
+
+`load()` then swallowed the refusal with a bare `continue`, printed
+"loaded 27767 price rows ... for adani_energy_solutions, ..., nhpc, ..." and
+left NHPC with **zero rows**. The summary line named the entity it had not
+loaded. Caught by counting rows per name after the load, not by the loader.
+
+**Fix:** the statistic is now the share of consecutive sessions on which the
+close CHANGED (`MIN_MOVED_RATIO`). NHPC moves on ~93% of sessions; the ZNC=F
+shape can move on at most 4 of 22, 18%. Every current candidate re-probed
+clean. And `load()` prints one line per refused symbol.
+
+**What this one adds:** a guard calibrated on one failure shape (a repeating
+print) will fire on a different shape that shares the statistic (a coarse
+grid). The question to ask of any such threshold is what ELSE lands below
+it. And a loader's summary line must be built from what it wrote, never from
+what it was asked for.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:

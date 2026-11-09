@@ -92,7 +92,12 @@ CONVICTIONS = ("low", "medium", "high")
 # Sector of each spec file's roster; IT has no spec and lives in `entities`.
 SPEC_SECTOR = {"aluminium.yaml": "non_ferrous", "steel.yaml": "steel",
                "cement.yaml": "cement", "mining.yaml": "mining",
-               "ems.yaml": "ems"}
+               "ems.yaml": "ems",
+               # power.yaml (2026-11-09) is a roster with no peer group yet —
+               # tracked, not scored. Listed here so its eight F&O names are
+               # a sector for sector_rel baskets, fo_basis and results_today
+               # from day one, the same way IT is below.
+               "power.yaml": "power"}
 
 DDL = """
 CREATE TABLE IF NOT EXISTS book_calls (

@@ -1257,10 +1257,13 @@ async function loadPos(){
   </div>`;
 
   // IT (2026-08-31) is OI-only: tracked for positioning, modelled nowhere.
-  const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems', 'it'];
+  // power (2026-11-09) has no OI rows yet (the vault fetcher does not pull
+  // it); listed so the day it does, the group lands in order rather than
+  // under "Other".
+  const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems', 'it', 'power'];
   const SEC_LABEL = {aluminium:'Aluminium', zinc:'Zinc', steel:'Steel',
                      cement:'Cement', mining:'Mining', ems:'EMS', it:'IT',
-                     other:'Other'};
+                     power:'Power', other:'Other'};
   const bySector = {};
   for (const r of rows) (bySector[r.sector || 'other'] =
       bySector[r.sector || 'other'] || []).push(r);

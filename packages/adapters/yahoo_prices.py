@@ -147,6 +147,22 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     # ather / eicher REMOVED 2026-10-21 with the Auto tab (PM: "auto is no
     # longer in coverage"). Their stored closes stay in `prices`; nothing
     # fetches them any more. ATHERENERG-BL.NS stays in REJECTED as a note.
+    # --- equities: power, added 2026-11-09 (PM: "add a power tab to the
+    # active coverage"; tracked, not scored — specs/entities/power.yaml) ---
+    # All eight resolved with yahoo_search.py first. One trap: a bare "NTPC"
+    # search returns NTPC GREEN ENERGY LIMITED (NTPCGREEN.NS) beside NTPC LTD,
+    # so the pattern requires "ntpc ltd" to reject the listed subsidiary.
+    # JSW Energy's name pattern requires "energy" so JSW STEEL can never
+    # satisfy it; Adani has four listed names here and each pattern names its
+    # own second word.
+    "ntpc":                   [("NTPC.NS", r"ntpc\s+ltd")],
+    "power_grid":             [("POWERGRID.NS", r"power\s*grid\s*corp")],
+    "tata_power":             [("TATAPOWER.NS", r"tata\s*power")],
+    "jsw_energy":             [("JSWENERGY.NS", r"jsw\s*energy")],
+    "nhpc":                   [("NHPC.NS", r"nhpc\s+ltd")],
+    "adani_power":            [("ADANIPOWER.NS", r"adani\s*power")],
+    "adani_green":            [("ADANIGREEN.NS", r"adani\s*green")],
+    "adani_energy_solutions": [("ADANIENSOL.NS", r"adani\s*energy\s*solution")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -197,6 +213,8 @@ EQUITIES = {
     "dixon", "amber", "kaynes", "pg_electroplast", "syrma_sgs", "avalon",
     "infosys", "tcs", "hcl_tech", "wipro", "tech_mahindra", "ltimindtree",
     "persistent", "coforge", "mphasis", "kpit", "tata_elxsi", "ofss", "ltts",
+    "ntpc", "power_grid", "tata_power", "jsw_energy", "nhpc",
+    "adani_power", "adani_green", "adani_energy_solutions",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.
@@ -227,7 +245,18 @@ RESEARCH_SOURCED = {
 
 # --- validation thresholds -------------------------------------------------
 MAX_STALE_DAYS = 5          # a live series prints at least weekly
-MIN_DISTINCT_RATIO = 0.5    # a live series moves; a dead contract repeats
+# A live series MOVES; a dead contract repeats. The statistic is the share of
+# consecutive sessions on which the close CHANGED, not the share of distinct
+# closes. It was the distinct share until 2026-11-09, and that refused NHPC's
+# deep history (2009..2026) as "frozen: only 28% distinct closes": a liquid
+# stock that spent twelve years between Rs15 and Rs36 on a 5-paise tick has
+# at most ~420 distinct prices available to ~3,000 sessions, so a low distinct
+# share is the tick grid, not a dead print. The consecutive-change share tells
+# the two apart: NHPC 2009..2026 moves on ~93% of sessions; the ZNC=F case this
+# guard was written for (5 distinct closes in 23 sessions) can move on at most
+# 4 of 22, 18%. Caught because load() loaded 0 rows for one of eight names and
+# SAID NOTHING (the except/continue below used to be silent; it now prints).
+MIN_MOVED_RATIO = 0.5
 # instrumentType is recorded but NOT used to reject: ALTSYMBOL covers both a
 # dead 2019 contract (ZNC=F) and a live alumina series (ALA=F). Liveness and
 # the name pattern do the discriminating.
@@ -326,10 +355,14 @@ def fetch_bars(symbol: str, rng: str = "3mo",
     if stale > MAX_STALE_DAYS:
         raise ValueError(f"stale: last print {out[-1][0]} ({stale}d ago)")
 
-    ratio = len(set(round(c, 6) for _, c, _b in out)) / len(out)
-    if ratio < MIN_DISTINCT_RATIO:
-        raise ValueError(f"frozen: only {ratio:.0%} distinct closes "
-                         f"— dead or illiquid contract")
+    # Consecutive-change share, not distinct share — see MIN_MOVED_RATIO on
+    # why the distinct share misreads a low-priced stock as a dead contract.
+    if len(out) >= 2:
+        moved = sum(1 for a, b in zip(out, out[1:])
+                    if round(a[1], 6) != round(b[1], 6)) / (len(out) - 1)
+        if moved < MIN_MOVED_RATIO:
+            raise ValueError(f"frozen: the close changed on only {moved:.0%} "
+                             f"of sessions — dead or illiquid contract")
 
     return out
 
@@ -391,7 +424,13 @@ def load(rng: str = "3mo", only: set[str] | None = None) -> int:
         for sym, pat in syms:
             try:
                 series = fetch_bars(sym, rng, pat)
-            except Exception:
+            except Exception as exc:
+                # Say so. This was a bare `continue` until 2026-11-09, and a
+                # deep backfill of eight power names loaded seven, printed
+                # "loaded 27767 price rows ... for ... nhpc ..." and left NHPC
+                # with zero rows — the silent shape. One line per refused
+                # symbol; the next candidate (if any) is still tried.
+                print(f"   {eid}: {sym} refused — {type(exc).__name__}: {exc}")
                 continue
             conn.execute(
                 "INSERT OR IGNORE INTO entities (id,kind,name,is_tradeable,active) "

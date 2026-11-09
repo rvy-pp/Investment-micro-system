@@ -73,13 +73,17 @@ actionable.
 Buckets = the modelled sectors plus the desk's standing interests:
 
 ```
-Non-ferrous (aluminium/zinc) · Steel · Cement · Mining · EMS
+Non-ferrous (aluminium/zinc) · Steel · Cement · Mining · EMS · Power
 IT / AI-tech · Macro & strategy · Other coverage-adjacent
 ```
 
 The first five come from `specs/sectors/*.yaml` — a newly modelled sector
 gets a bucket by existing here, so check the directory rather than trusting
-this list. Bucket on subject + summary in the main chat (cheap); a mail that
+this list. Power (added 2026-11-09) is the exception: it has an ENTITY spec
+(`specs/entities/power.yaml`, eight utilities, tracked not scored) and no
+sector spec yet, and it gets a bucket on the PM's instruction that it is
+active coverage — NTPC, Power Grid, Tata Power, JSW Energy, NHPC, Adani
+Power, Adani Green, Adani Energy Solutions. Bucket on subject + summary in the main chat (cheap); a mail that
 plausibly belongs to two buckets goes to both.
 
 Spawn the sector agents **in parallel, one per non-empty bucket**, each with

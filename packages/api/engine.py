@@ -763,6 +763,46 @@ SECTORS = [
         },
     },
     # `auto` REMOVED 2026-10-21 (PM: "auto is no longer in coverage").
+    {
+        "id": "power",
+        "label": "Power",
+        # Added 2026-11-09. PM: "Add a power tab to the active coverage and
+        # the front-end. We will start with modelling and tracking soon." So
+        # this is the IT shape on 2026-08-31 — a tab, a roster, no pillars —
+        # with one difference: the roster is a SPEC (specs/entities/power.yaml,
+        # eight names, every one peer_group: null) rather than the entities
+        # table alone, so the Results tab, Futures-vs-cash, results_today and
+        # grading's sector map all pick it up through the paths that already
+        # read specs. Invariant 7 keeps all eight out of scoring until a peer
+        # group is written. Do NOT give `power` a peer group to make the tab
+        # look finished — that is the day the model exists, not before.
+        "peer_groups": [],
+        # The fuel complex, as context. Seaborne thermal coal is the input
+        # that reaches the imported-coal plants (Mundra x2, Ratnagiri); the
+        # Coal India realisation series are the domestic linkage price; brent
+        # rides along as the gas/LNG proxy until a gas series exists; copper
+        # and aluminium are the T&D capex inputs (Power Grid, Adani Energy).
+        # Linked from no spec; nothing scores off this list.
+        "commodities": [
+            "thermal_coal_seaborne", "thermal_coal_indonesia_6322",
+            "coal_eauction_realisation_inr", "coal_fsa_realisation_inr",
+            "coalindia_offtake_ttm_mt",
+            "brent", "usdinr", "lme_copper", "lme_aluminium",
+        ],
+        "chart": {
+            "ids": ["thermal_coal_seaborne", "thermal_coal_indonesia_6322"],
+            "divide": 1.0,
+            "unit": "USD/t",
+            "title": "Thermal coal · USD/t · Richards Bay and Indonesia 6,322 GAR",
+            "caption": "Context, not a driver: no power name is bridged yet. "
+                       "The two seaborne grades are what the imported-coal "
+                       "plants burn (Tata Power and Adani Power at Mundra, JSW "
+                       "Energy at Ratnagiri); the regulated fleet (NTPC, NHPC, "
+                       "Power Grid) passes fuel through and sees none of it. "
+                       "Both series are the Kotak metals pack's.",
+            "marks": [],
+        },
+    },
 ]
 
 # Series the pack carries that no sector claims yet. Surfaced so a captured

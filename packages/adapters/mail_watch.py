@@ -85,6 +85,17 @@ KEYWORDS: dict[str, list[str]] = {
         r"OSAT", r"display fab", r"backward integration", r"component",
         r"smart meter", r"compressor", r"PCB", r"copper[- ]clad", r"JV",
     ],
+    # added 2026-11-09 with the Power roster (specs/entities/power.yaml).
+    # INERT until a power name carries a peer_group — watch_list() skips
+    # peer_group: null entities — but written now so the day modelling starts
+    # the block is not the thing that was forgotten (the mining precedent).
+    "power": [
+        r"PLF", r"plant load factor", r"merchant", r"tariff", r"PPA",
+        r"power purchase agreement", r"CERC", r"SERC", r"regulated equity",
+        r"TBCB", r"transmission line", r"substation", r"hydro", r"hydrology",
+        r"coal stock", r"imported coal", r"blending", r"FGD", r"DISCOM",
+        r"late payment", r"LPS", r"smart meter", r"pumped storage", r"IEX",
+    ],
 }
 
 # Aliases the spec fields cannot supply. Keep SMALL — anything derivable should

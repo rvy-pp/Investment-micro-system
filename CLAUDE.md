@@ -3519,6 +3519,58 @@ The "Auto is not scored…" line is removed from the Auto tab (PM); **IT still
 carries the identical line.** `SIAM wholesale` runs after `vahan share`, both in
 the afternoon `vahan_refresh.py` since 2026-09-29; route `/api/auto_inventory` is in the exporter and the verifier.
 
+## Power — a tracked, unscored sector tab, added 2026-11-09
+
+PM: *"Add a power tab to the active coverage and the front-end. We will start
+with modelling and tracking soon."* So Power is the IT shape of 2026-08-31 —
+a top-level sector tab ("prices only" chip), a roster, no pillars — with one
+difference that matters for everything downstream: **the roster is a spec,
+`specs/entities/power.yaml`, eight names, every one `peer_group: null`**, the
+convention cement's non-F&O names and EMS's Syrma/Avalon already use for "in
+coverage, scored by nothing". Invariant 7 keeps all eight out of every pillar,
+pair chart and backtest; the spec is what puts them INTO coverage, because
+the Results roster, `grading.load_config` (and so the Futures-vs-cash
+sub-tab, `results_today`'s core list, `sector_rel` baskets and
+`move_check`) and `mail_watch` all derive from `specs/entities/*.yaml`.
+`grading.SPEC_SECTOR` carries `power.yaml`.
+
+**The roster is the eight power UTILITIES on the extended coverage list**
+(Teams "Extended Paper Coverage 1.xlsx", GICS Utilities): NTPC, Power Grid,
+Tata Power, JSW Energy, NHPC, Adani Power, Adani Green, Adani Energy
+Solutions. All eight trade F&O (checked against `fo_oi`, 2026-11-06 rows).
+The four renewable-EQUIPMENT names on the same list (Waaree, Premier,
+Suzlon, Inox Wind) are a capex-cycle business, not generation, and sit in
+the desk's own split under "renewable equipment": **deliberately not in
+the roster**, add only on the PM's word. Entity ids: `ntpc`, `power_grid`,
+`tata_power`, `jsw_energy`, `nhpc`, `adani_power`, `adani_green`,
+`adani_energy_solutions`.
+
+- **Closes:** `yahoo_prices.CANDIDATES`/`EQUITIES`, resolved with
+  `yahoo_search.py` first. The trap met: a bare "NTPC" search returns NTPC
+  GREEN ENERGY (NTPCGREEN.NS) beside NTPC LTD, so the pattern requires
+  "ntpc ltd". JSW Energy's Bloomberg token is `JSW IN` (JSW Steel is JSTL).
+  Backfilled from 2007-01-01 through the ISO-date path (daily bars).
+  `fo_bhavcopy.coverage_symbols()` picks the symbols up from CANDIDATES, so
+  delivery rows follow.
+- **The tab** (`engine.SECTORS` `power`, `peer_groups: []`): the fuel complex
+  as context — both seaborne thermal coal grades (what Mundra and Ratnagiri
+  burn), the Coal India realisation series, brent, USDINR, copper and
+  aluminium (T&D capex) — and a chart of the two coal series. Linked from
+  no spec. **Do not give `power` a peer group to make the tab look
+  finished.**
+- **Mail:** a `power` block in `mail_watch.KEYWORDS` (inert until a name
+  carries a peer group, written now so it is not the forgotten piece — the
+  mining precedent), and a Power bucket in the morning-brief skill.
+- **Positioning:** no OI rows — the vault fetcher does not pull these names.
+  `ORDER`/`SEC_LABEL` in app.html know the sector for the day it does.
+- **What a bridge will have to decide**, recorded in the spec so it is not
+  rediscovered: the cost side is fuel and the store already carries it, but
+  the revenue side is REGULATED for NTPC, Power Grid, NHPC and the licensee
+  books (CERC return on equity with fuel pass-through), so a coal move
+  reaches only merchant and imported-coal capacity. `market_pct` is the
+  field that does that work, as captive inputs do in non-ferrous. Merchant
+  tariffs (IEX) have no series yet.
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed

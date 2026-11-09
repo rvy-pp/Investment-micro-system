@@ -1,0 +1,182 @@
+# ============================================================================
+# Power — entity roster, TRACKED NOT SCORED (added 2026-11-09)
+# ============================================================================
+# PM, 2026-11-09: "Add a power tab to the active coverage and the front-end.
+# We will start with modelling and tracking soon."
+#
+# So this file is the ROSTER and nothing else yet. Every name carries
+# `peer_group: null` — the convention cement's five non-F&O names and EMS's
+# Syrma/Avalon already use for "in coverage, scored by nothing" — so
+# invariant 7 keeps all eight out of every pillar, pair chart and backtest
+# while the names still land in `entities`, `prices` (Yahoo closes from 2007),
+# the Results tab, the Futures-vs-cash sub-tab, results_today and the
+# grading/sector_rel universe. Modelling is the next step and is NOT in here:
+# no outputs, no inputs, no base_ebitda. When it starts, the spec grows a peer
+# group and lines in the usual way (steel's playbook), and the Power entry in
+# engine.SECTORS gains that peer group.
+#
+# THE ROSTER is the eight power utilities on the PM's extended coverage list
+# (OneDrive Teams Chat Files "Extended Paper Coverage 1.xlsx", 21-Oct,
+# sheet "Proposed Coverage" — GICS Utilities: Electric Utilities and
+# Independent Power & Renewable Producers). The four renewable-EQUIPMENT
+# names on that list (Waaree, Premier Energies, Suzlon, Inox Wind) are a
+# different business — capital goods on a solar/wind capex cycle, not
+# generation or transmission — and sit in the desk's own split under
+# "renewable equipment", so they are deliberately NOT here. Add them only on
+# the PM's word.
+#
+# All eight are F&O names (checked against fo_oi on 2026-11-09), so when a
+# peer group is assigned every pair will be expressible.
+#
+# Yahoo symbols were resolved with packages/adapters/yahoo_search.py, not
+# guessed (the VAML lesson). One trap met: a bare "NTPC" search returns NTPC
+# GREEN ENERGY LIMITED (NTPCGREEN) beside NTPC LTD — the name pattern in
+# yahoo_prices.CANDIDATES requires "ntpc ltd" to reject the subsidiary.
+#
+# What a power bridge will have to decide, written down now so it is not
+# rediscovered: the cost side is FUEL and the store already carries it
+# (thermal_coal_seaborne, thermal_coal_indonesia_6322 for the imported-coal
+# plants — Tata Power Mundra, Adani Power Mundra, JSW Energy Ratnagiri; the
+# coal_fsa / coal_eauction realisation series for domestic linkage), but the
+# REVENUE side is REGULATED for NTPC, Power Grid, NHPC and the licensee
+# businesses (CERC return on equity with fuel pass-through), so a coal move
+# reaches only the merchant/imported-coal capacity, not the regulated book.
+# market_pct is the field that does that work, exactly as captive inputs do
+# in non-ferrous. Merchant tariffs (IEX DAM) have no series here yet.
+
+sector: power
+spec_version: 0.1.0
+currency: INR
+
+# No reference_entities: nothing here price_links a commodity series yet.
+# The Power tab DISPLAYS the fuel complex via engine.SECTORS — context, not
+# arithmetic.
+reference_entities: []
+
+entities:
+  - id: ntpc
+    kind: company
+    name: NTPC
+    sector: power
+    peer_group: null
+    nse_symbol: NTPC
+    bloomberg: NTPC IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      India's largest thermal generator, ~80GW group capacity, regulated
+      (CERC RoE) tariffs with fuel pass-through on the coal fleet; NTPC Green
+      (listed separately, NTPCGREEN) holds the renewables. Roster entry only —
+      no model yet.
+    verify: pending
+
+  - id: power_grid
+    kind: company
+    name: Power Grid
+    sector: power
+    peer_group: null
+    nse_symbol: POWERGRID
+    bloomberg: PWGR IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Central transmission utility, regulated (CERC) transmission tariffs on
+      a capitalised asset base; no fuel exposure. Roster entry only.
+    verify: pending
+
+  - id: tata_power
+    kind: company
+    name: Tata Power
+    sector: power
+    peer_group: null
+    nse_symbol: TATAPOWER
+    bloomberg: TPWR IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Integrated: Mumbai/Delhi/Odisha distribution, Mundra imported-coal UMPP
+      (seaborne coal exposure), renewables + solar cell/module manufacturing,
+      Indonesian coal mine stakes (a partial natural hedge on Mundra).
+      Roster entry only.
+    verify: pending
+
+  - id: jsw_energy
+    kind: company
+    name: JSW Energy
+    sector: power
+    peer_group: null
+    nse_symbol: JSWENERGY
+    bloomberg: JSW IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Thermal (Ratnagiri imported coal, Barmer lignite, Vijayanagar) plus a
+      fast-growing renewable book (O2 Power, KSK Mahanadi acquisitions);
+      part merchant. Bloomberg token is JSW, not JSTL (that is JSW Steel).
+      Roster entry only.
+    verify: pending
+
+  - id: nhpc
+    kind: company
+    name: NHPC
+    sector: power
+    peer_group: null
+    nse_symbol: NHPC
+    bloomberg: NHPC IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Hydro generator, regulated tariffs, no fuel; the variable is hydrology
+      and project commissioning (Subansiri, Parbati). Roster entry only.
+    verify: pending
+
+  - id: adani_power
+    kind: company
+    name: Adani Power
+    sector: power
+    peer_group: null
+    nse_symbol: ADANIPOWER
+    bloomberg: ADANI IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Largest private thermal generator (~17GW), Mundra imported coal plus
+      domestic plants; a meaningful merchant/short-term share, so seaborne
+      coal and merchant tariffs both reach it. Roster entry only.
+    verify: pending
+
+  - id: adani_green
+    kind: company
+    name: Adani Green
+    sector: power
+    peer_group: null
+    nse_symbol: ADANIGREEN
+    bloomberg: ADANIGR IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Pure renewable generator (Khavda), fixed-tariff PPAs; no fuel, the
+      variables are capacity addition and module cost. Roster entry only.
+    verify: pending
+
+  - id: adani_energy_solutions
+    kind: company
+    name: Adani Energy Solutions
+    sector: power
+    peer_group: null
+    nse_symbol: ADANIENSOL
+    bloomberg: ADANIENS IN
+    effective_from: 2026-11-09
+    outputs: []
+    inputs: []
+    source_note: >
+      Transmission (regulated and TBCB) plus Mumbai distribution and smart
+      meters; no fuel. Roster entry only.
+    verify: pending
