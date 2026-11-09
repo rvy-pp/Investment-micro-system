@@ -727,6 +727,31 @@ the case agents) and the Risk tab all use it; `label` stays the dictated key,
 is the cue to ask the PM to re-dictate `specs/book.yaml pairs`. Grading is
 untouched: its unit is the dictated direction, so a reversal ends the episode.
 
+**The dictation is DATED since 2026-11-09** (PM: *"Dalmia is not a pair,
+KPIT_TELX is a pair, JINDALSTEL_JSTL is pair, so is sail_jstl and tata_jstl.
+fix it from the date it was taken"*). A pair may carry `since` / `until`,
+both inclusive snapshot dates (`book_io.pair_in_force`). A re-cut pair is
+never deleted: LTTS_KPITTECH, JSTL_TATA, JINDA_TATA, SAIL_TATA and JSTL_APAT
+end 2026-11-05, DALBHARA_ACEM ends 2026-10-23 (the last snapshot with
+Dalmia), and KPIT_TELX, JINDALSTEL_JSTL, SAIL_JSTL and TATA_JSTL start
+2026-11-06. What follows from that:
+- **Replays.** A replay shows the pairs in force on its own date.
+- **Since-entry %.** A dated pair's % runs from its start. A leg held from
+  before that day is measured from that day's OPEN, so Jindal's move since
+  04-09 is not set against JSW's since 06-11. Undated pairs keep each leg's
+  own anchor. HCLT_WPRO and SYRMA_DIXON still mix two windows, and Syrma's
+  anchor reset at its 28-10 cash -> futures switch. Neither was moved
+  unasked.
+- **Grading.** Each unit is graded only inside its window. Past `until` it is
+  RETIRED and takes no new call.
+- **Lone legs.** A held leg whose pair retired and that no pair in force
+  names (`book_io.unpaired_legs`: APAT, ACEM today) is drawn alone under its
+  old group with a "no pair" chip and no %. It stays on the Analysis roster
+  and is skipped by Kelly. It is never re-paired by guess, and never dropped,
+  which would silently take a live position off the tab.
+- **Agent files.** The six case-agent files naming changed pairs were
+  regenerated (`case_brief.py --scaffold <entity> --force`).
+
 `specs/book.yaml` also holds `ticker_map` (ticker first token → entity_id,
 joins each leg to its model composite — SEEDED from IMS-Spec's PM-confirmed
 table, so it is sourced, not guessed; unrecognized tickers are flagged,

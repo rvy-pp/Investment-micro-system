@@ -109,6 +109,12 @@ ticker_map:
 # leg's DOLLARS across its pairs by the gross of the opposite side it hedges
 # (TCS's P&L splits ~pro-rata across WPRO/INFO/HCLT shorts); price-%s need
 # no apportioning. Tokens are the IMS ticker's first token.
+#
+# DATED since 2026-11-09 (PM: "fix it from the date it was taken"). A pair may
+# carry `since` / `until`, both INCLUSIVE snapshot dates (book_io.pair_in_force).
+# A re-cut pair is never deleted: the old one gets `until`, the new one
+# `since`, so a replay shows the pairs of its own date, grading keeps the old
+# history, and the new pair's since-entry % runs from the day it was put on.
 pairs:
   IT LARGECAP:
     - {name: TCS_INFO,      long: [TCS],      short: [INFO]}
@@ -121,18 +127,30 @@ pairs:
     - {name: HCLT_WPRO,     long: [HCLT],     short: [WPRO]}
   IT MIDCAP:
     - {name: COFORGE_PSYS,  long: [COFOR],    short: [PSYS]}
-    - {name: LTTS_KPITTECH, long: [LTTS],     short: [KPITT]}
+    # PM, 2026-11-09: "KPIT_TELX is a pair". KPIT flipped short -> long on
+    # 2026-11-06, which ended LTTS_KPITTECH; Tata Elxsi's short now backs
+    # LTTS and KPIT.
+    - {name: LTTS_KPITTECH, long: [LTTS],     short: [KPITT], until: "2026-11-05"}
+    - {name: KPIT_TELX,     long: [KPITT],    short: [TELX],  since: "2026-11-06"}
     - {name: LTTS_TELX,     long: [LTTS],     short: [TELX]}
     - {name: MPHL_PSYS,     long: [MPHL],     short: [PSYS]}
   STEEL:
-    - {name: JSTL_TATA,     long: [JSTL],     short: [TATA]}
+    - {name: JSTL_TATA,     long: [JSTL],     short: [TATA],  until: "2026-11-05"}
     # PM, 2026-10-25: "Jindal and SAIL are two different pairs with Tata steel
     # as a short for now." JINDA_SAIL (SAIL short 04-09 .. 30-09) closed 01-10
     # and retires with its frozen exit grade; SAIL came back LONG on 08-10.
     # Tata's short now backs three longs (JSTL, JINDA, SAIL).
-    - {name: JINDA_TATA,    long: [JINDA],    short: [TATA]}
-    - {name: SAIL_TATA,     long: [SAIL],     short: [TATA]}
-    - {name: JSTL_APAT,     long: [JSTL],     short: [APAT]}
+    - {name: JINDA_TATA,    long: [JINDA],    short: [TATA],  until: "2026-11-05"}
+    - {name: SAIL_TATA,     long: [SAIL],     short: [TATA],  until: "2026-11-05"}
+    - {name: JSTL_APAT,     long: [JSTL],     short: [APAT],  until: "2026-11-05"}
+    # PM, 2026-11-09: "JINDALSTEL_JSTL is pair, so is sail_jstl and tata_jstl."
+    # On 2026-11-06 JSW went long -> short and Tata short -> long, so JSW's
+    # short now backs three longs (Jindal, SAIL, Tata). APAT is still short
+    # and was named in no new pair: it shows as a lone leg until the PM pairs
+    # it (book_io.unpaired_legs), never re-paired by guess.
+    - {name: JINDALSTEL_JSTL, long: [JINDA],  short: [JSTL],  since: "2026-11-06"}
+    - {name: SAIL_JSTL,     long: [SAIL],     short: [JSTL],  since: "2026-11-06"}
+    - {name: TATA_JSTL,     long: [TATA],     short: [JSTL],  since: "2026-11-06"}
   EMS:
     - {name: KAYNES_DIXON,  long: [KAYNE],    short: [DIXON]}
     - {name: SYRMA_DIXON,   long: [SYRMA],    short: [DIXON]}
@@ -145,7 +163,9 @@ pairs:
     - {name: PGEL_AMBER,    long: [PGEL],     short: [AMBER]}
   CEMENT:
     - {name: UTCEM_SRCM,    long: [UTCEM],    short: [SRCM]}
-    - {name: DALBHARA_ACEM, long: [DALBHARA], short: [ACEM]}
+    # PM, 2026-11-09: "Dalmia is not a pair". Dalmia left the book after the
+    # 2026-10-23 snapshot; Ambuja's short stays on as a lone leg.
+    - {name: DALBHARA_ACEM, long: [DALBHARA], short: [ACEM],  until: "2026-10-23"}
   ZINC:
     # PM, 2026-09-23 (same instruction): the pair REVERSED on 2026-09-21 with
     # the U6 -> V6 roll — long HZ / short VEDL. The old direction VEDL_HZ

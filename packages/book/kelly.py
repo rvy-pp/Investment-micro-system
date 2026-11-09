@@ -634,7 +634,7 @@ def build(view: list[dict], nav: float, conn: sqlite3.Connection | None = None,
             continue
         # every leg on one side of the book (book_io.reconcile_pair): there
         # is no spread to size, and a guessed re-pairing is the PM's call
-        if p.get("direction") == "broken":
+        if p.get("direction") in ("broken", "unpaired"):
             skipped.append({"label": lab, "why": p.get("direction_note")
                             or "legs no longer long vs short: re-dictate"})
             continue

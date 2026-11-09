@@ -310,6 +310,55 @@ def held_sides(conn: sqlite3.Connection | None = None,
             conn.close()
 
 
+# ---- dated dictation (PM, 2026-11-09: "fix it from the date it was taken") --
+# A dictated pair may carry `since` and `until`, both INCLUSIVE snapshot
+# dates. A pair re-cut by the PM is not deleted: the old one gets `until` (its
+# last snapshot as that pair) and the new one `since` (the snapshot it was put
+# on), so a replay of any past date shows the pairs that stood THEN, and the
+# grading keeps the old pair's history. A pair with neither is in force on
+# every date, which is every pair dictated before this rule existed.
+def pair_in_force(sp: dict, on: str | None) -> bool:
+    """Is dictated pair `sp` in force on snapshot date `on`? (None = live)."""
+    d = on or "9999-12-31"
+    since, until = sp.get("since"), sp.get("until")
+    if since and d < str(since):
+        return False
+    return not (until and d > str(until))
+
+
+def pairs_in_force(spec_pairs: dict, on: str | None) -> dict:
+    """{group: [pair, ...]} keeping only the pairs in force on `on`. Every
+    group stays as a key (empty or not), so the rota and the section order
+    never lose a heading because its pairs were re-cut."""
+    return {g: [p for p in (ps or []) if pair_in_force(p, on)]
+            for g, ps in (spec_pairs or {}).items()}
+
+
+def unpaired_legs(spec_pairs: dict, on: str | None, sides: dict) -> list[dict]:
+    """Legs HELD on `on` that sit in no pair in force but did sit in a
+    dictated pair once (ACEM after Dalmia left, APAT after JSW went short).
+    They are listed under that pair's group as a lone leg, never re-paired by
+    guess: dropping them would take a live position off the Positions tab
+    with nothing raised. A held token no dictation ever named is not here; it
+    stays in `unassigned`, as before. Returns [{token, side, group, was}]."""
+    live = {t for ps in pairs_in_force(spec_pairs, on).values() for p in ps
+            for s in ("long", "short") for t in p.get(s) or []}
+    last: dict[str, tuple] = {}
+    for g, ps in (spec_pairs or {}).items():
+        for p in ps or []:
+            end = str(p.get("until") or "9999-12-31")
+            for s in ("long", "short"):
+                for t in p.get(s) or []:
+                    if t not in last or end >= last[t][0]:
+                        last[t] = (end, g, str(p.get("name")))
+    out = []
+    for t, side in sides.items():
+        if t in live or t not in last:
+            continue
+        out.append({"token": t, "side": side, "group": last[t][1], "was": last[t][2]})
+    return out
+
+
 def reconcile_pair(name: str, longs: list, shorts: list, sides: dict) -> dict:
     """One dictated pair against the held sides. Returns {long, short,
     direction, display, dictated_long, dictated_short, note}; `long`/`short`
@@ -1720,6 +1769,26 @@ def _selftest() -> None:
     assert rc["direction"] == "as_dictated" and rc["long"] == ["VAML"], rc
     rc = reconcile_pair("X_Y", ["X"], ["Y"], {})
     assert rc["direction"] == "off" and rc["long"] == ["X"], rc
+
+    # dated dictation (pair_in_force / unpaired_legs, PM 2026-11-09) --------
+    dp = {"STEEL": [{"name": "JSTL_TATA", "long": ["JSTL"], "short": ["TATA"],
+                     "until": "2026-11-05"},
+                    {"name": "JSTL_APAT", "long": ["JSTL"], "short": ["APAT"],
+                     "until": "2026-11-05"},
+                    {"name": "TATA_JSTL", "long": ["TATA"], "short": ["JSTL"],
+                     "since": "2026-11-06"}],
+          "CEMENT": [{"name": "UTCEM_SRCM", "long": ["UTCEM"], "short": ["SRCM"]}]}
+    names_on = lambda d: [p["name"] for ps in pairs_in_force(dp, d).values() for p in ps]
+    assert names_on("2026-11-05") == ["JSTL_TATA", "JSTL_APAT", "UTCEM_SRCM"]
+    assert names_on("2026-11-06") == ["TATA_JSTL", "UTCEM_SRCM"]       # until is inclusive, since too
+    assert names_on(None) == ["TATA_JSTL", "UTCEM_SRCM"]               # live = no until passed
+    assert names_on("2026-09-04") == ["JSTL_TATA", "JSTL_APAT", "UTCEM_SRCM"]
+    assert list(pairs_in_force(dp, "2026-11-06")) == ["STEEL", "CEMENT"]  # headings survive
+    # APAT is held and in no pair in force: a lone leg under its last group.
+    # A token no dictation named (NEW) is NOT one, and a paired leg is not.
+    up = unpaired_legs(dp, "2026-11-06", {"TATA": "L", "JSTL": "S", "APAT": "S", "NEW": "L"})
+    assert up == [{"token": "APAT", "side": "S", "group": "STEEL", "was": "JSTL_APAT"}], up
+    assert unpaired_legs(dp, "2026-11-05", {"JSTL": "L", "TATA": "S", "APAT": "S"}) == []
 
     # TSV parse: 2 positions + sector row + N.A. + total, cross-foot true ----
     def row(t, cost, cap, pair, q, ls, nums):

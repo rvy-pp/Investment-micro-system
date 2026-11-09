@@ -1932,10 +1932,11 @@ def book_view(date: str | None = None) -> dict:
     view of the 24th must not show the 25th's positions). The composites and
     review verdicts are clipped to the same date. Kelly is a today-only sizing
     tool with editable inputs, so it is withheld on a replay rather than shown
-    with today's edges against a past book. The pair LIST is still today's
-    dictation in specs/book.yaml, but each leg's SIDE is the replayed
-    snapshot's (book_io.reconcile_pair), so a pair held the other way round
-    on that date reads `reversed` and a split one `broken`, never as dictated.
+    with today's edges against a past book. The pair LIST is the dictation
+    IN FORCE on the replayed date (specs/book.yaml `since`/`until`,
+    book_io.pair_in_force) and each leg's SIDE is that snapshot's
+    (book_io.reconcile_pair), so a pair held the other way round on that
+    date reads `reversed` and a split one `broken`, never as dictated.
     """
     sys.path.insert(0, str(REPO / "packages" / "book"))
     import book_io
@@ -2124,6 +2125,28 @@ def book_view(date: str | None = None) -> dict:
             t["gap"] = t["gap"] or p.get("gap_risk", False)
             t["first_seen"] = min(t["first_seen"], leg["first_seen"])
 
+    def _px_on(eid: str, day: str):
+        """(price, basis) to anchor a leg at a pair's start: that day's OPEN,
+        else that day's close — the same precedence as a leg's own anchor."""
+        c2 = connect()
+        try:
+            r = c2.execute("SELECT open, close FROM prices WHERE entity_id=? AND date=?",
+                           (eid, day)).fetchone()
+        finally:
+            c2.close()
+        if r and r["open"]:
+            return r["open"], "open"
+        return (r["close"], "close") if r and r["close"] else (None, None)
+
+    def _px_now(eid: str, upto: str):
+        c2 = connect()
+        try:
+            r = c2.execute("SELECT close FROM prices WHERE entity_id=? AND date<=? "
+                           "ORDER BY date DESC LIMIT 1", (eid, upto)).fetchone()
+        finally:
+            c2.close()
+        return r["close"] if r else None
+
     if spec_pairs and tokens:
         view = []
         # The HELD side decides, not the dictated one (PM 2026-11-07; the
@@ -2131,12 +2154,29 @@ def book_view(date: str | None = None) -> dict:
         # the dictated name because reviews, carry, Kelly edges, grading and
         # watches all key on it; `display` is what the row prints.
         held = {k: t["book_side"] for k, t in tokens.items()}
-        for sector, plist in spec_pairs.items():
+        # Only the pairs IN FORCE on this snapshot (book_io.pair_in_force, PM
+        # 2026-11-09): a re-cut pair carries `until`, its successor `since`.
+        for sector, plist in book_io.pairs_in_force(spec_pairs, rep.get("as_of")).items():
             for sp in plist or []:
                 rc = book_io.reconcile_pair(str(sp.get("name")), sp.get("long") or [],
                                             sp.get("short") or [], held)
                 view.append({"sector": sector, "label": str(sp.get("name")),
-                             "L": rc["long"], "S": rc["short"], "rc": rc})
+                             "L": rc["long"], "S": rc["short"], "rc": rc,
+                             "since": sp.get("since")})
+        # A held leg whose pair was retired and that no pair in force names
+        # (ACEM after Dalmia, APAT after JSW went short) is drawn ALONE under
+        # its old group, with no pair %: never re-paired by guess, and never
+        # dropped, which would take a live position off the tab silently.
+        for u in book_io.unpaired_legs(spec_pairs, rep.get("as_of"), held):
+            nm = names.get(u["token"], u["token"])
+            word = "long" if u["side"] == "L" else "short"
+            view.append({"sector": u["group"], "label": u["token"],
+                         "L": [u["token"]] if u["side"] == "L" else [],
+                         "S": [u["token"]] if u["side"] == "S" else [],
+                         "since": None,
+                         "rc": {"direction": "unpaired", "display": f"{nm} ({word})",
+                                "note": f"{nm} is {word} and in no dictated pair; it was "
+                                        f"in {u['was']}, now retired. Pair it in specs/book.yaml"}})
         for v in view:
             v["_lg"] = sum(tokens[t]["gross_usd"] for t in v["L"] if t in tokens)
             v["_sg"] = sum(tokens[t]["gross_usd"] for t in v["S"] if t in tokens)
@@ -2174,16 +2214,33 @@ def book_view(date: str | None = None) -> dict:
                         agg[k] += (t[k] or 0) * w
                     legs.append({**t, "side": side, "share": round(w, 3),
                                  "side_mismatch": t["book_side"] != side})
-            lr = [t["ret_pct"] for t in L]
-            sr = [t["ret_pct"] for t in S]
+            # A DATED pair starts at its `since` (or when its last leg went on,
+            # if later), and a leg held from before that is measured from the
+            # OPEN of the start day, not from its own entry (PM 2026-11-09:
+            # "fix it from the date it was taken"). JINDALSTEL_JSTL would
+            # otherwise read Jindal's move since 04-09 against JSW's since
+            # 06-11, a spread over two different windows.
+            # Undated pairs keep each leg's own anchor, as before. HCLT_WPRO
+            # and SYRMA_DIXON carry the same mixed windows (and Syrma's
+            # anchor reset at its 28-10 cash -> futures switch), but the PM
+            # has not asked for those to move, so they are left as they were.
+            inception = max([t["first_seen"] for t in L + S] + [str(v.get("since") or "")])
+            for lg in legs:
+                if v.get("since") and lg["first_seen"] < inception and lg.get("entity_id"):
+                    px, basis = _px_on(lg["entity_id"], inception)
+                    now = _px_now(lg["entity_id"], rep["as_of"])
+                    lg["ret_pct"] = round((now / px - 1) * 100, 2) if px and now else None
+                    lg["anchor_px"], lg["anchor_date"], lg["anchor_basis"] = px, inception, basis
+            lr = [lg["ret_pct"] for lg in legs if lg["side"] == "L"]
+            sr = [lg["ret_pct"] for lg in legs if lg["side"] == "S"]
             ret = None
-            broken = v["rc"]["direction"] == "broken"
-            # a "pair" with every leg on one side has no spread: withheld
-            if not broken and all(r is not None for r in lr + sr) and (lr or sr):
+            # a "pair" with every leg on one side has no spread, and a lone
+            # leg is not a pair: both withheld
+            withheld = v["rc"]["direction"] in ("broken", "unpaired")
+            if not withheld and all(r is not None for r in lr + sr) and (lr or sr):
                 lm = sum(lr) / len(lr) if lr else 0.0
                 sm = sum(sr) / len(sr) if sr else 0.0
                 ret = round(lm - sm, 2)
-            inception = max(t["first_seen"] for t in L + S)
             c = carry.get(v["label"])
             out.append({
                 "sector": v["sector"], "label": v["label"],

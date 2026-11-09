@@ -1316,7 +1316,10 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
     evs = case_valuation(r["group"]) == "ev_ebitda"
     fill = {"earn": "EBITDA" if evs else "EPS", "mult": "EV/EBITDA" if evs else "P/E",
             "ev_block": EV_BLOCK.format(group=band_key(r["group"])) if evs else "","entity": ent, "name": r["name"], "token": r["token"], "group": r["group"],
-            "side_word": r["side"], "pairs": ", ".join(r["pairs"]), "agent": agent_name(r["token"]),
+            "side_word": r["side"],
+            # a held leg whose pair was retired sits in no pair (PM 2026-11-09)
+            "pairs": ", ".join(r["pairs"]) or f"no pair (was {r.get('unpaired') or '?'})",
+            "agent": agent_name(r["token"]),
             "it_block": IT_BLOCK.format(entity=ent, name=r["name"]) if it else "",
             "deals_desc": (" - and the deal list: reported TCV, named deals, what is delayed and "
                            "what has rolled off, cross-checked before each result") if it else ""}

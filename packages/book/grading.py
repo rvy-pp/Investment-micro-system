@@ -168,8 +168,15 @@ def load_config(conn) -> dict:
             for lt in L:
                 for st in S:
                     name = str(sp["name"]) if (len(L), len(S)) == (1, 1) else f"{sp['name']}:{lt}/{st}"
-                    units.append({"pair": name, "heading": sector, "L": lt, "S": st,
-                                  "long": tmap.get(lt), "short": tmap.get(st)})
+                    # dated dictation (PM 2026-11-09): a re-cut pair keeps
+                    # being graded on its own window; past its `until` it is
+                    # RETIRED, so no new call can be logged against it
+                    until = sp.get("until")
+                    units.append({"pair": name,
+                                  "heading": "RETIRED" if until and str(until) < str(dt.date.today()) else sector,
+                                  "L": lt, "S": st,
+                                  "long": tmap.get(lt), "short": tmap.get(st),
+                                  "since": sp.get("since"), "until": until})
     # pairs that have left the dictation but carry a call keep being graded
     known = {u["pair"] for u in units}
     for r in conn.execute("SELECT pair, long_token, short_token, MAX(id) FROM book_calls GROUP BY pair"):
@@ -276,8 +283,12 @@ def episodes(conn, unit, as_of=None):
             continue
         held.setdefault(d, set()).add(((root.split() or [""])[0], side))
     out, cur = [], None
+    since, until = str(unit.get("since") or ""), str(unit.get("until") or "9999-12-31")
     for i, d in enumerate(snaps):
         live = (unit["L"], "L") in held.get(d, set()) and (unit["S"], "S") in held.get(d, set())
+        # only inside the pair's dictated window (specs/book.yaml since/until):
+        # the same two legs held that way before `since` were another pair's
+        live = live and since <= d <= until
         if live and cur is None:
             cur = {"entry": d, "last": d, "pre_capture": i == 0}
         elif live:
@@ -672,6 +683,13 @@ def _selftest() -> None:
     assert eps[0]["pre_capture"] and not eps[1]["pre_capture"]
     assert episodes(conn, cfg["units"][1]) == [], "an option leg must not make a pair live"
     ok += 3
+    # 1b. dated dictation: the same legs held outside since/until belong to
+    # another pair; `until` closes an episode the book itself never closed
+    dated = dict(cfg["units"][0], since=snaps[5], until=snaps[25])
+    assert [(e["entry"], e["exit"]) for e in episodes(conn, dated)] == \
+        [(snaps[5], snaps[20]), (snaps[23], snaps[26])], episodes(conn, dated)
+    assert not episodes(conn, dated)[0]["pre_capture"]
+    ok += 1
     # 2. dividends: ex ON d0 not owed, ex inside the window added back
     st = Store(conn, list(names))
     d0, d1 = snaps[0], snaps[10]
