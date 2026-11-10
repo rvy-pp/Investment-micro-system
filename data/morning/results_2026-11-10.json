@@ -1,0 +1,215 @@
+{
+ "date": "2026-11-10",
+ "session": true,
+ "generated_at": "2026-11-10T08:19:57",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "post": [
+   "Cochin Shipyard"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "COCHINSHIP",
+   "date": "2026-11-10",
+   "purpose": "Financial Results/Dividend",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend",
+   "entity": "ext:COCHINSHIP",
+   "name": "Cochin Shipyard",
+   "sector": "extended",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-14",
+     "time": "17:52",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-15",
+     "time": "19:24",
+     "when": "post"
+    },
+    {
+     "date": "2026-01-28",
+     "time": "20:04",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-12",
+     "time": "20:09",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-11",
+  "groups": {
+   "during": [
+    "Hindustan Copper"
+   ],
+   "post": [
+    "Tata Power"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "HINDCOPPER",
+    "date": "2026-11-11",
+    "purpose": "Financial Results",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+    "entity": "hindustan_copper",
+    "name": "Hindustan Copper",
+    "sector": "mining",
+    "when": "during",
+    "history": [
+     {
+      "date": "2026-08-10",
+      "time": "13:25",
+      "when": "during"
+     },
+     {
+      "date": "2026-05-15",
+      "time": "16:18",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-05",
+      "time": "14:58",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-11",
+      "time": "14:04",
+      "when": "during"
+     }
+    ],
+    "counts": {
+     "during": 3,
+     "post": 1
+    },
+    "filed_at": null
+   },
+   {
+    "symbol": "TATAPOWER",
+    "date": "2026-11-11",
+    "purpose": "Financial Results/Other business matters",
+    "desc": "To consider and approve the financial results for the quarter and half year ended September 30, 2026, and other business matters",
+    "entity": "tata_power",
+    "name": "Tata Power",
+    "sector": "power",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-07-27",
+      "time": "16:49",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-12",
+      "time": "16:44",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-04",
+      "time": "17:05",
+      "when": "post"
+     },
+     {
+      "date": "2025-11-11",
+      "time": "17:24",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 4
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-11",
+   "name": "Hindustan Copper",
+   "symbol": "HINDCOPPER"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Tata Power",
+   "symbol": "TATAPOWER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Amber Enterprises",
+   "symbol": "AMBER"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Avalon Technologies",
+   "symbol": "AVALON"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Bharat Dynamics",
+   "symbol": "BDL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hindustan Aeronautics",
+   "symbol": "HAL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Hitachi Energy India",
+   "symbol": "POWERINDIA"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "NMDC",
+   "symbol": "NMDC"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Oil India",
+   "symbol": "OIL"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Rail Vikas Nigam",
+   "symbol": "RVNL"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "ABB India",
+   "symbol": "ABB"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Inox Wind",
+   "symbol": "INOXWIND"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Rail Vikas Nigam",
+   "symbol": "RVNL"
+  },
+  {
+   "date": "2026-11-14",
+   "name": "Ashok Leyland",
+   "symbol": "ASHOKLEY"
+  },
+  {
+   "date": "2026-11-14",
+   "name": "Kaynes Technology",
+   "symbol": "KAYNES"
+  }
+ ],
+ "errors": [],
+ "n_extended": 46
+}

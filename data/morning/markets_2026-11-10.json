@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-10",
+ "fetched_at": "2026-11-10T08:19:43",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-09",
+    "close": 7549.94,
+    "prev_date": "2026-11-06",
+    "chg_pct": 2.35,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-09",
+    "close": 25253.14,
+    "prev_date": "2026-11-06",
+    "chg_pct": 2.74,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-09",
+    "close": 52389.75,
+    "prev_date": "2026-11-06",
+    "chg_pct": 2.15,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-09",
+    "close": 10033.93,
+    "prev_date": "2026-11-06",
+    "chg_pct": 6.85,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-09",
+    "close": 178.67,
+    "prev_date": "2026-11-06",
+    "chg_pct": -4.27,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-09",
+    "close": 508.58,
+    "prev_date": "2026-11-06",
+    "chg_pct": 13.26,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-09",
+    "close": 388.62,
+    "prev_date": "2026-11-06",
+    "chg_pct": 3.51,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-09",
+    "close": 319.48,
+    "prev_date": "2026-11-06",
+    "chg_pct": 8.78,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-09",
+    "close": 254.37,
+    "prev_date": "2026-11-06",
+    "chg_pct": -2.35,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-09",
+    "close": 63.6,
+    "prev_date": "2026-11-06",
+    "chg_pct": -1.73,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Australia's Qantas to axe 850 jobs in offshoring deal with Accenture",
+    "publisher": "Reuters",
+    "when": "2026-11-10 01:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/australias-qantas-axe-850-jobs-012757322.html"
+   },
+   {
+    "title": "Take the Zacks Approach to Beat the Markets: Ulta Beauty, Accenture, HCA in Focus",
+    "publisher": "Zacks",
+    "when": "2026-11-09 11:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-approach-beat-markets-ulta-110300678.html"
+   },
+   {
+    "title": "39 ETFs Add to Accenture (ACN) on Thursday",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-09 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/39-etfs-add-accenture-acn-110215274.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Completes Acquisition of AI-Native Digital Engineering Firm Wizeline",
+    "publisher": "MT Newswires",
+    "when": "2026-11-06 23:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-completes-acquisition-ai-native-231453957.html"
+   },
+   {
+    "title": "Cognizant Completes Acquisition of Wizeline",
+    "publisher": "PR Newswire",
+    "when": "2026-11-06 22:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-completes-acquisition-wizeline-220000323.html"
+   },
+   {
+    "title": "Digital Transformation in BPO - Global Strategic Business Report: Capitalize on a US$263.9 Billion Market by 2030 as Accenture, Capgemini, Cognizant, Genpact and IBM Accelerate AI-Led Disruption",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-05 15:49Z",
+    "link": "https://finance.yahoo.com/technology/articles/digital-transformation-bpo-global-strategic-154900777.html"
+   },
+   {
+    "title": "Cognizant to Present at the BMO Technology and Innovation Leaders Conference",
+    "publisher": "PR Newswire",
+    "when": "2026-11-04 13:00Z",
+    "link": "https://finance.yahoo.com/technology/articles/cognizant-present-bmo-technology-innovation-130000580.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Micron, FormFactor, Amkor, Teradyne, and Nvidia shares skyrocket, what you need to know",
+    "publisher": "StockStory",
+    "when": "2026-11-10 02:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/micron-formfactor-amkor-teradyne-nvidia-024536276.html"
+   },
+   {
+    "title": "Nvidia Faces Class Action Suit Over Huang Allegations; Senator Seeks Probe, Analyst Puts CEO Exit Odds At 15%",
+    "publisher": "Stocktwits",
+    "when": "2026-11-10 02:44Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-faces-class-action-suit-024448260.html"
+   },
+   {
+    "title": "Dow Jones Soars 1,132 Points As Amazon, Tesla Rally, But Nvidia Dives; CPI Inflation Report Next",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-10 02:31Z",
+    "link": "https://finance.yahoo.com/m/db2f6d95-b7a5-3274-8193-c767d2b681c1/dow-jones-soars-1%2C132-points.html"
+   },
+   {
+    "title": "Nasdaq Stock Market Correction: 2 Stocks I Wouldn't Hesitate to Buy the Dip On (Hint: It's Not Nvidia)",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 02:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nasdaq-stock-market-correction-2-022000976.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "The Real Winner of Google\u2019s $135 Billion Chip Forecast: Broadcom",
+    "publisher": "TIKR",
+    "when": "2026-11-09 20:45Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/real-winner-google-135-billion-204531962.html"
+   },
+   {
+    "title": "Broadcom Stock Is Down Over 25% in 3 Months. How to Play the Selloff Here.",
+    "publisher": "Barchart",
+    "when": "2026-11-09 19:53Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-down-over-25-195319316.html"
+   },
+   {
+    "title": "Broadcom Stocks Jump 8.21% as Investors Eye $21.7 Billion AI Revenue Guide",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-09 18:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-jump-8-21-180538383.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Stock Market Today, Nov. 9: AMD Jumps on Oppenheimer Upgrade and Google Cloud Chip Selection",
+    "publisher": "Motley Fool",
+    "when": "2026-11-09 22:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-9-223002825.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25158.0,
+  "chg_pct": 0.15,
+  "stamp": "10-Nov-2026 08:19:36",
+  "expiry": "23-Nov-2026",
+  "volume": 1136,
+  "nifty_close": {
+   "close": 25044.65,
+   "stamp": "09-Nov-2026 15:30"
+  },
+  "gap_pts": 113.3,
+  "gap_pct": 0.45
+ }
+}
