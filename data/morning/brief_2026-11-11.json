@@ -1,0 +1,354 @@
+{
+ "date": "2026-11-11",
+ "generated_at": "2026-11-11T08:16:26",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 70,
+  "sectors": [
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "UltraTech 2QFY27 EBITDA/t Rs974 (1QFY27 Rs1,214) on +12.9% volume; Shree Rs912 (Rs1,024) on +17.7%, the fastest of the big four.",
+      "source": "Emkay - Cement Corner: Q2 Leaderboard",
+      "received": "07:37",
+      "detail": {
+       "summary": "Emkay's leaderboard ranks cement names on 2QFY27 EBITDA/t against 2QFY26, 1QFY27 and FY26, with yoy volume growth and core regions. The two largest names grew volume sharply but lost per-tonne margin sequentially.",
+       "points": [
+        "UltraTech Rs974 vs Rs914 in 2QFY26, Rs1,214 in 1QFY27",
+        "Shree Rs912 vs Rs1,106 in 2QFY26, Rs1,024 in 1QFY27",
+        "Star Cement tops at Rs1,281 on +2.0% volume",
+        "JSW Cement volume +26.4% at Rs707 EBITDA/t"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambuja 2QFY27 EBITDA/t Rs761 (Rs1,002 a year ago) on -0.9% volume; Dalmia Rs694 (Rs1,013) on +3.3%.",
+      "source": "Emkay - Cement Corner: Q2 Leaderboard",
+      "received": "07:37",
+      "detail": {
+       "summary": "The weaker end of the large-cap table is Ambuja and Dalmia, where per-tonne margins fell about a quarter or more year on year with little volume offset. Ambuja is the only top-eight name with shrinking volume.",
+       "points": [
+        "Ambuja Rs761 vs Rs917 in 1QFY27, FY26 Rs865",
+        "Dalmia Rs694 vs Rs1,055 in 1QFY27, FY26 Rs1,012",
+        "Ramco Rs653 on +8.7% volume, Prism Rs526",
+        "ACC Rs386 on -13.4% volume"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cement NSR seen up ~Rs200/t QoQ for coverage but power & fuel up ~Rs100/t in 2H; Industry View In-Line, prefers UltraTech.",
+      "source": "Morgan Stanley - IDEA: India Materials: Cement: Stay Selective",
+      "received": "15:07",
+      "detail": {
+       "summary": "Morgan Stanley says demand and sustained price hikes since September support 3Q margins, but elevated petcoke and thermal coal keep costs higher for longer despite the crude pullback. Later-dated rural demand risk and F27 estimate risk keep it selective.",
+       "points": [
+        "Pan-India demand ~10% yoy in 2Q vs ~9% in 1Q",
+        "Trade prices up >Rs10/bag since September, more hikes expected post-festive",
+        "Petcoke ~35% and thermal coal ~20% higher since end-July",
+        "Winter sowing area ~17% down yoy so far"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Whirlpool 2QFY27 gross margin fell 430bps yoy to 31.9% on RM inflation and INR weakness; another ~5% price hike from 1-Nov-2026.",
+      "source": "Kotak - [Kotak] Whirlpool of India (Rs832; BUY) 2QFY27 first cut - cost optimization drives EBITDA beat",
+      "received": "10:05",
+      "detail": {
+       "summary": "Whirlpool's margin hit came from regulatory change, raw material inflation and currency, not demand. Kotak says its mass/economy mix leaves it more exposed than peers in an input-cost cycle. A further price hike is meant to rebuild profitability.",
+       "points": [
+        "Gross margin 31.9%, down 430bps yoy",
+        "EBITDA down 31% yoy to Rs399mn",
+        "EBITDA margin 2.1%, down 140bps yoy",
+        "BEE table change hit REF/RAC",
+        "Further ~5% price hike from 1-Nov-2026"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Sec keeps REDUCE, TP Rs758 (from 730): price hikes failed to offset inflation, competition caps pricing, so earnings recovery stays muted.",
+      "source": "ICICI Securities - Whirlpool of India (REDUCE): Top-line recovery sustains; persistent cost inflation impacts margins",
+      "received": "19:52",
+      "detail": {
+       "summary": "ICICI argues margin recovery depends on more pricing, easing commodity costs and operating leverage. Competitive intensity limits how much cost can be passed to consumers. Weak industry dynamics cap near-term rerating.",
+       "points": [
+        "Revenue +13.7% yoy, EBITDA -31.0% yoy",
+        "Gross margin down 435bps yoy",
+        "Freight, commodity and INR depreciation cited",
+        "TP Rs758, 22x FY28E EPS",
+        "Upside risk: steep fall in competition and input prices"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Whirlpool revenue grew 13.7% yoy on industry volume growth and premiumisation, 1% below Kotak; no market share gains called out.",
+      "source": "Kotak - [Kotak] Whirlpool of India (Rs832; BUY) 2QFY27 first cut - cost optimization drives EBITDA beat",
+      "received": "10:05",
+      "detail": {
+       "summary": "Whirlpool's topline growth was attributed to industry volume growth, price actions and premiumisation. Kotak notes the press release claimed no share gains. Durable demand held up, with the stress sitting in margins rather than volumes.",
+       "points": [
+        "Consolidated revenue Rs18.7bn, +13.7% yoy",
+        "About 1.1% miss versus Kotak estimate",
+        "Standalone revenue Rs17.1bn, +13.9% yoy",
+        "Elica revenue +11.5% yoy to Rs1.6bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "BofA downgrades NHPC to Underperform, PO Rs75 against Rs80.39 price, as CoE rises to 11.4%; final CERC under-recovery rulings due 11 Nov.",
+      "source": "BofA - NHPC IN: NHPC Ltd: Higher rates tilt risk-reward unfavorably - UNDERPERFORM - India",
+      "received": "02:01",
+      "detail": {
+       "summary": "BofA says the catalysts behind its March upgrade have played out, with Parbati-II fully commissioned and five Subansiri Lower units running. A higher risk-free rate and a shift in investor focus tilt risk-reward negative. An adverse CERC ruling could trigger a sharper price correction.",
+       "points": [
+        "PO Rs75 from Rs80; CoE 11.4% from 10.9%",
+        "Implied 1.6x two-year forward P/B",
+        "Regulated equity Rs311bn by FY29E, 12% CAGR FY26-29E",
+        "Estimates 16%/6%/4% below guidance FY27E/FY28E/FY29E",
+        "Parbati-II/Subansiri under-recoveries equal 7%/2% of regulated equity"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA cuts Tata Power PO to Rs325 from Rs380, keeps Underperform, and prefers NTPC (1.25x) and Power Grid (2x) on two-year forward P/B.",
+      "source": "BofA - Electric Utilities - India: Still some value, but turn more selective - India",
+      "received": "02:01",
+      "detail": {
+       "summary": "BofA stays constructive on regulated utilities despite a 100bp rise in risk-free rates, but turns more selective. NTPC and Power Grid are the top picks on regulated growth and returns. Tata Power's growth skews toward lower-return renewables.",
+       "points": [
+        "Tata Power target solar-manufacturing P/E cut to 15x from 21x",
+        "Tata Power risk-free rate 7% from 6%; consolidated RoE 11-12%",
+        "NTPC valuation implies 0% terminal growth",
+        "Power Grid: Rs8tn opportunity through FY32E, 8% EPS/BVPS CAGR",
+        "Power Grid RoE fell from 19% in FY22 to 16% in FY26"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley names Adani Power an Asian beneficiary of data-centre power demand, citing a $1.9bn SoftBank Malaysia plan needing 250-300MW of base-load power.",
+      "source": "Morgan Stanley - IDEA: Powering AI: Malaysia: More Natural Gas, More Tokens",
+      "received": "06:03",
+      "detail": {
+       "summary": "Morgan Stanley argues US hyperscaler demand is pushing data-centre builds into Asia, shifting pricing power from equipment suppliers to asset owners as behind-the-meter capacity grows. India is among the three markets drawing the most hyperscaler interest. Adani Power is the only India name on its beneficiary list.",
+       "points": [
+        "Thailand, India and Malaysia draw most hyperscaler interest",
+        "SoftBank plan implies about 200-250MW of data-centre capacity",
+        "Sarawak to have 3GW of hydro and gas under construction by 2027-2028",
+        "Other beneficiaries: Gulf Developments, Keppel, Yangtze Power, Samsung SDI, Hokkaido Electric"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak keeps TechM, Coforge and Persistent as BUY top picks, prefers challengers over incumbents, and is comfortable only with TCS (FV Rs2,500, 15x Sep-2028E EPS).",
+      "source": "Kotak - [Kotak] IT Services: 2QFY27 review-from relevance to sustainable growth",
+      "received": "07:53",
+      "detail": {
+       "summary": "Kotak says the sector re-rated as terminal-value fears eased and Accenture's medium-term outlook gave comfort on core growth. Further upside now depends on revenue growth, not multiples, which favours challengers and hybrids that can take share over Tier 1 incumbents.",
+       "points": [
+        "Top picks: TechM, Coforge, Persistent, Indegene, Sagility, all BUY",
+        "TCS FV Rs2,500 at 15x Sep-2028E EPS",
+        "Tier 1 organic growth down to low-single-digit yoy",
+        "Mid-tier led by Persistent, then Coforge",
+        "LTM, Hexaware, Mphasis named as re-rating candidates"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak FY27E EBIT margin: TCS -120bps, Wipro -80bps, Persistent -60bps, Infosys -30bps, Mphasis -20bps; TechM +240bps, Coforge +190bps.",
+      "source": "Kotak - [Kotak] IT Services: 2QFY27 review-from relevance to sustainable growth",
+      "received": "07:53",
+      "detail": {
+       "summary": "Margins held better than expected in 2QFY27, helped by rupee depreciation, G&A optimisation, restructuring and delayed wage hikes. Kotak sees competitive intensity in large deals, AI investments and M&A dilution as pressures to be tested over the next 2-3 quarters.",
+       "points": [
+        "TCS -120bps, Wipro -80bps FY27E EBIT margin",
+        "Persistent -60bps, Infosys -30bps, Mphasis -20bps",
+        "TechM +240bps, Coforge +190bps are the outliers",
+        "Hexaware CY2026 EBIT margin 13.1%, low end of guide",
+        "Margin test comes in next 2-3 quarters"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak expects 3QFY27 sequential revenue decline at Infosys, Wipro and Hexaware, modest growth at TCS, LTM and TechM, and HCLT leading on products seasonality.",
+      "source": "Kotak - [Kotak] IT Services: 2QFY27 review-from relevance to sustainable growth",
+      "received": "07:53",
+      "detail": {
+       "summary": "3Q is seasonally weak, so Kotak sets a split near-term read. Among mid-tier, ramp-up of deal wins puts Persistent and Coforge ahead, then Mphasis. Pre-print focus will be furloughs, discretionary spend and deals that slipped into 3QFY27.",
+       "points": [
+        "HCLT leads sequential growth on products seasonality",
+        "Infosys, Wipro, Hexaware: sequential revenue decline",
+        "TCS, LTM, TechM: modest sequential growth",
+        "Persistent and Coforge lead mid-tier, then Mphasis",
+        "Watch furloughs, discretionary spend, slipped deals"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "UBS: FY27E GDP 7.2%, 75bp of RBI hikes, rupee at 96 by March 2027; $100 Brent cuts FY28E growth to 6.6%.",
+      "source": "UBS - India economic outlook 2027-28E: walking a tightrope",
+      "received": "07:55",
+      "detail": {
+       "summary": "UBS sees growth moderating to trend as the tax impulse fades, global financial conditions tighten and oil and the monsoon weigh. The key risk is a capital-account squeeze on the rupee rather than the current account, which leaves the RBI trading off currency support, inflation and growth.",
+       "points": [
+        "FY27E real GDP 7.2%, FY28E 7.0%, FY29E 7.2%",
+        "H1 FY27E growth 7.5% YoY",
+        "75bp cumulative RBI hikes expected in FY27E",
+        "INR 96 by end-FY27E, 100 by end-FY28E",
+        "Brent near US$100 and higher yields: FY28E GDP 6.6%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays overweight Quality and Momentum and underweight Value: in 46 months since 2010 with oil down 5% or more, Value lost 1.3% while Momentum made 3.0%.",
+      "source": "JPM - India Equity Strategy: Factor Investing - Nov'26: Value tends to lag when crude falls; Quality regained leadership in October",
+      "received": "14:38",
+      "detail": {
+       "summary": "Falling oil is a macro positive for India, but the market-wide recovery rewards growth, quality and momentum rather than commodity-linked and cyclical value names, whose earnings weaken. JPM reads the cycle as Mid-phase and expects its QMI composite to recover from the October dip.",
+       "points": [
+        "Oil down 5% or more: Momentum +3.0%, Quality +2.2%, Value -1.3%",
+        "October: Quality L/S spread +3.8%, best factor",
+        "Nifty 500 -0.8% in October vs MSCI EM -8.1%",
+        "YTD: small caps +5.4%, mid caps -3.4%, Nifty 50 -13.9%",
+        "Vedanta added to the Momentum and All-Weather long screens"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA upgraded India to overweight at 1.1x MSCI: 18% dollar upside on its macro model, forward P/E 17.9x against 26.7x two years ago.",
+      "source": "CLSA - Global Equity Strategy: Insulated India (+8 more in Outlook)",
+      "received": "18:28",
+      "detail": {
+       "summary": "CLSA argues India's two-year underperformance and foreign selling have reset valuations and positioning, while the lack of AI exposure, once a handicap, is now a support. Dollar EPS is rising again and the rupee looks cheap, with a possible RBI defence line at 97.",
+       "points": [
+        "India lagged the region by 49% over 26 months to mid-October",
+        "US$64bn foreign net equity selling since August 2024",
+        "Macro model: MSCI India 26% oversold",
+        "RBI may defend USD:INR at 97",
+        "Quality large-cap list of 14 includes HDFC Bank, SBI, L&T"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Festive 2026 ended flat for 2Ws and down mid-single digit for PVs; MHCVs +30% Y/Y, and BofA prefers 4Ws (M&M, Hyundai) over 2Ws.",
+      "source": "BofA - Autos - India: Festive 2026 wrap: Stable festive on a tough base, watch out for rural risks",
+      "received": "06:01",
+      "detail": {
+       "summary": "Festive demand held up against a high base that included GST-led pent-up buying. PVs are supply-constrained, with channel stock very low at M&M and Maruti, while rural 2W demand risks emerge from a deficient monsoon, price hikes and tighter financing. BofA stays selective, prefers 4Ws, and calls easing crude and metals supportive for CV names.",
+       "points": [
+        "2W 2Y CAGR 10%, PV 6% - underlying demand healthy",
+        "2Ws flat now vs +6% Y/Y in first 10 days",
+        "Tractors +4% Y/Y; MHCVs +30% on benign base",
+        "TVS, Honda gain 2W share; Hero, Bajaj lose",
+        "Key buys: MM, Hyundai, AL, TMCV; Bajaj in 2Ws"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus upgrades Gravita to BUY (TP Rs1,866) after a ~20% fall; FY27 lead volumes flat on West Asia scrap shortages, copper ramps.",
+      "source": "Avendus Spark - 2QFY27 Outlook review: Gravita India (Rating: BUY, TP: Rs.1,866)",
+      "received": "06:48",
+      "detail": {
+       "summary": "The ~20% correction creates upside, so the rating moves to BUY on a largely unchanged TP. Revenue is cut on a pullback from rubber and a slower copper ramp, but richer copper margins keep EPS revisions small. Lead recovers from 3Q as new sourcing geographies arrive, and GST reverse charge on battery scrap shifts supply to organised players.",
+       "points": [
+        "FY27/28e revenue cut 7%/15%; EPS -4%/0%",
+        "FY26-28e revenue/EBITDA/PAT CAGR ~42%/34%/21%",
+        "Copper ~28% of FY28e revenue from ~1% in FY26",
+        "Lead volumes ~14% CAGR to ~240k MT",
+        "Valued at 25x FY28e P/E; capex lifts net debt ~1.1x EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Cochin Shipyard 2QFY27 EBITDA fell 31% Y/Y to Rs509mn (4.1% margin) as shipbuilding EBIT turned negative at -0.8%; PhillipCapital keeps BUY.",
+      "source": "PhillipCapital - Cochin Shipyard Ltd - 2QFY27 First cut: Execution largely in-line; margins disappoint (+4 more in Outlook)",
+      "received": "23:44",
+      "detail": {
+       "summary": "Revenue was in line, but a mix shift to bought-out components in shipbuilding crushed margins, with ship repair carrying the quarter. Gross margin fell sharply and PAT halved, with lower other income adding to the miss. PhillipCapital maintains BUY at a CMP of Rs1,290.",
+       "points": [
+        "Revenue Rs12.5bn, +12% Y/Y; PAT Rs538mn, -50% Y/Y",
+        "Shipbuilding revenue +3% Y/Y; EBIT -0.8% vs 19.7% a year ago",
+        "Ship repair revenue +30% Y/Y at 30.8% EBIT margin",
+        "Gross margin 23.3% vs 28.8% a year ago",
+        "Other income Rs826mn vs Rs1,273mn a year ago"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Steel",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Nvidia -5.5% on the day while AMD +1.3%, TSMC +2.0% and Broadcom +3.9%; SOX -0.35%, Nasdaq -0.74% after a hot US CPI.",
+    "source": "morning_markets (Yahoo closes, 10-Nov); CLSA - Macropulse"
+   },
+   {
+    "text": "AMD rose on a plan to invest $2.5bn; Dow futures lifted by a CoreWeave jump after the Nvidia drop.",
+    "source": "Motley Fool / Investor's Business Daily headlines, 10-Nov"
+   },
+   {
+    "text": "GS's global industrial-automation team pushed back 800VDC data-centre power product launches by at least six months.",
+    "source": "GS - AI Series: China In Motion sales note, 07:32"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": "Qantas to cut 850 jobs under an Accenture outsourcing deal (MT Newswires, 10-Nov)"
+   },
+   {
+    "name": "Cognizant",
+    "reason": "Cognizant set up a 25,000-person Claude AI delivery group and launched managed services (Kotak Technology News Wrap, 11-Nov)"
+   }
+  ]
+ }
+}

@@ -1,0 +1,243 @@
+{
+ "date": "2026-11-11",
+ "fetched_at": "2026-11-11T08:17:26",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-10",
+    "close": 7520.93,
+    "prev_date": "2026-11-09",
+    "chg_pct": -0.38,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-10",
+    "close": 25065.88,
+    "prev_date": "2026-11-09",
+    "chg_pct": -0.74,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-10",
+    "close": 52231.89,
+    "prev_date": "2026-11-09",
+    "chg_pct": -0.3,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-10",
+    "close": 9998.33,
+    "prev_date": "2026-11-09",
+    "chg_pct": -0.35,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-10",
+    "close": 168.89,
+    "prev_date": "2026-11-09",
+    "chg_pct": -5.47,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-10",
+    "close": 515.21,
+    "prev_date": "2026-11-09",
+    "chg_pct": 1.3,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-10",
+    "close": 396.48,
+    "prev_date": "2026-11-09",
+    "chg_pct": 2.02,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-10",
+    "close": 331.98,
+    "prev_date": "2026-11-09",
+    "chg_pct": 3.91,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-10",
+    "close": 258.51,
+    "prev_date": "2026-11-09",
+    "chg_pct": 1.63,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-10",
+    "close": 65.0,
+    "prev_date": "2026-11-09",
+    "chg_pct": 2.2,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Qantas to Cut 850 Jobs in Accenture Outsourcing Deal",
+    "publisher": "MT Newswires",
+    "when": "2026-11-11 00:58Z",
+    "link": "https://finance.yahoo.com/technology/articles/qantas-cut-850-jobs-accenture-005831190.html"
+   },
+   {
+    "title": "Is Accenture Stock Becoming A Different Bet?",
+    "publisher": "Trefis",
+    "when": "2026-11-10 21:51Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-becoming-different-bet-215134697.html"
+   },
+   {
+    "title": "Accenture vs. Palo Alto Networks: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 21:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-palo-alto-networks-211002700.html"
+   },
+   {
+    "title": "Accenture vs. Adobe: What Does Fluctuating vs. Steady Revenue Tell Investors?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 20:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-adobe-does-fluctuating-200602521.html"
+   },
+   {
+    "title": "Accenture vs. Intuit: Does Corporate Consulting or Financial Software Make For a Better Stock Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 19:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-intuit-does-corporate-191002202.html"
+   },
+   {
+    "title": "Life Science Analytics - Global Strategic Business Report 2026: Capitalize on a US$6.6 Billion Revenue Surge to 2032 as IBM, Oracle, Accenture, SAS, and Cognizant Disrupt Data-Driven Healthcare",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-10 14:59Z",
+    "link": "https://finance.yahoo.com/healthcare/articles/life-science-analytics-global-strategic-145900451.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Establishes 25,000-Person Claude AI Group and Introduces Enterprise Managed Services",
+    "publisher": "InvestorsHub",
+    "when": "2026-11-10 15:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-establishes-25-000-person-151221219.html"
+   },
+   {
+    "title": "Cognizant Forms 25,000-Person Claude Group, Launches Managed Services Model",
+    "publisher": "MT Newswires",
+    "when": "2026-11-10 13:17Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-forms-25-000-person-131704533.html"
+   },
+   {
+    "title": "Cognizant dedicates more than 25,000 professionals to Claude delivery, introduces managed services model to run Claude at the core of enterprise operations",
+    "publisher": "CNW Group",
+    "when": "2026-11-10 11:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-dedicates-more-25-000-113000212.html"
+   },
+   {
+    "title": "Cognizant dedicates more than 25,000 professionals to Claude delivery, introduces managed services model to run Claude at the core of enterprise operations",
+    "publisher": "PR Newswire",
+    "when": "2026-11-10 11:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-dedicates-more-25-000-113000051.html"
+   },
+   {
+    "title": "Cognizant dedicates more than 25,000 professionals to Claude delivery, introduces managed services model to run Claude at the core of enterprise operations",
+    "publisher": "PR Newswire",
+    "when": "2026-11-10 11:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-dedicates-more-25-000-113000969.html"
+   },
+   {
+    "title": "Accenture Stock Rallied 31.5% Since October 6. Is Cognizant Now the Better Buy?",
+    "publisher": "TIKR",
+    "when": "2026-11-10 08:31Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-rallied-31-5-083121871.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Rise As CoreWave Jumps, Lifts AI Stocks After Nvidia, Surging Yields Hit Stocks",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-11 02:32Z",
+    "link": "https://finance.yahoo.com/m/656fca57-9896-3dfb-96e8-e0af2bc227df/dow-jones-futures-rise-as.html"
+   },
+   {
+    "title": "Michael Burry Sees Nvidia Becoming \u2018A Heck Of A Trade\u2019 \u2014 Reveals His 2 Biggest Bets And Where He\u2019s Buying More",
+    "publisher": "Stocktwits",
+    "when": "2026-11-11 02:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/michael-burry-sees-nvidia-becoming-022008093.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Jim Cramer Warns About the AI Data Center Trade. What It Means for Nvidia and Broadcom",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-11 00:07Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/jim-cramer-warns-ai-data-000739886.html"
+   },
+   {
+    "title": "Will Broadcom Inc. (AVGO) Beat Estimates Again in Its Next Earnings Report?",
+    "publisher": "Zacks",
+    "when": "2026-11-10 19:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-inc-avgo-beat-estimates-193927747.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "What Would It Take For AMD Stock To Move Higher?",
+    "publisher": "Trefis",
+    "when": "2026-11-11 01:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-move-higher-010944172.html"
+   },
+   {
+    "title": "2 Reasons AMD Can Still Outperform by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 23:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/2-reasons-amd-still-outperform-233302049.html"
+   },
+   {
+    "title": "Stock Market Today, Nov. 10: AMD Rises on Plan to Invest $2.5 Billion in Anthropic",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 23:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-10-230252946.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25313.5,
+  "chg_pct": 0.0,
+  "stamp": "11-Nov-2026 08:17:40",
+  "expiry": "23-Nov-2026",
+  "volume": 1758,
+  "nifty_close": {
+   "close": 25044.65,
+   "stamp": "09-Nov-2026 15:30"
+  },
+  "gap_pts": 268.8,
+  "gap_pct": 1.07
+ }
+}
