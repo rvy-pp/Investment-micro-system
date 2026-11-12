@@ -1,0 +1,237 @@
+{
+ "date": "2026-11-12",
+ "fetched_at": "2026-11-12T08:13:50",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-11",
+    "close": 7619.38,
+    "prev_date": "2026-11-10",
+    "chg_pct": 1.31,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-11",
+    "close": 25466.19,
+    "prev_date": "2026-11-10",
+    "chg_pct": 1.6,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-11",
+    "close": 52486.49,
+    "prev_date": "2026-11-10",
+    "chg_pct": 0.49,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-11",
+    "close": 10564.11,
+    "prev_date": "2026-11-10",
+    "chg_pct": 5.66,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-11",
+    "close": 173.73,
+    "prev_date": "2026-11-10",
+    "chg_pct": 2.87,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-11",
+    "close": 552.9,
+    "prev_date": "2026-11-10",
+    "chg_pct": 7.32,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-11",
+    "close": 413.35,
+    "prev_date": "2026-11-10",
+    "chg_pct": 4.25,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-11",
+    "close": 345.22,
+    "prev_date": "2026-11-10",
+    "chg_pct": 3.99,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-11",
+    "close": 253.66,
+    "prev_date": "2026-11-10",
+    "chg_pct": -1.88,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-11",
+    "close": 64.43,
+    "prev_date": "2026-11-10",
+    "chg_pct": -0.88,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "What Will Decide Accenture Stock Over The Next Six Months?",
+    "publisher": "Trefis",
+    "when": "2026-11-11 20:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/decide-accenture-stock-over-next-203946961.html"
+   },
+   {
+    "title": "Qantas to Cut 850 Jobs in Accenture Outsourcing Deal",
+    "publisher": "MT Newswires",
+    "when": "2026-11-11 00:58Z",
+    "link": "https://finance.yahoo.com/technology/articles/qantas-cut-850-jobs-accenture-005831190.html"
+   },
+   {
+    "title": "Is Accenture Stock Becoming A Different Bet?",
+    "publisher": "Trefis",
+    "when": "2026-11-10 21:51Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-becoming-different-bet-215134697.html"
+   },
+   {
+    "title": "Accenture vs. Palo Alto Networks: Which Technology Stock Is a Better Buy in 2026?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 21:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-palo-alto-networks-211002700.html"
+   },
+   {
+    "title": "Accenture vs. Adobe: What Does Fluctuating vs. Steady Revenue Tell Investors?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-10 20:06Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-adobe-does-fluctuating-200602521.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 7% Undervalued On Claude AI Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 10:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-could-101148155.html"
+   },
+   {
+    "title": "Will Claude AI Services Change Cognizant Stock Narrative",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 08:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/claude-ai-services-change-cognizant-081346256.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Stock Could Be 42% Undervalued On Fresh AI Services Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 07:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-stock-could-42-071011669.html"
+   },
+   {
+    "title": "Cognizant Establishes 25,000-Person Claude AI Group and Introduces Enterprise Managed Services",
+    "publisher": "InvestorsHub",
+    "when": "2026-11-10 15:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-establishes-25-000-person-151221219.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Rise, Techs Fall As Nvidia May Oust CEO Huang After CoreWave Leads Rally",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-12 02:31Z",
+    "link": "https://finance.yahoo.com/m/672e6ef4-2ba3-319b-b948-a356a7f1fcbe/dow-jones-futures-rise%2C-techs.html"
+   },
+   {
+    "title": "Nvidia live updates: Stock tanks after new affair allegations, board reportedly preparing to oust Jensen Huang",
+    "publisher": "Yahoo Finance",
+    "when": "2026-11-12 02:30Z",
+    "link": "https://finance.yahoo.com/technology/live/nvidia-live-updates-nvidia-stock-tanks-in-after-hours-after-allegations-of-a-second-affair-surface-222438011.html"
+   },
+   {
+    "title": "Warren Buffett\u2019s 1991 Playbook Points The Path Forward As Nvidia Reportedly Prepares To Oust Jensen Huang. Buffett Said He Could Forgive Losses, But There Was One Thing He Would Be Ruthless About",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-12 02:26Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/warren-buffett-1991-playbook-points-022606315.html"
+   },
+   {
+    "title": "Nvidia board meets to decide CEO Huang's future as leadership crisis deepens",
+    "publisher": "Reuters",
+    "when": "2026-11-12 02:21Z",
+    "link": "https://finance.yahoo.com/news/nvidia-preparing-oust-ceo-jensen-223546395.html"
+   },
+   {
+    "title": "Top Democrats Target Trump Administration\u2019s Nvidia-China Records",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-11-12 02:00Z",
+    "link": "https://finance.yahoo.com/m/196a00ad-d7ae-32c8-8f9b-6a494ece336a/top-democrats-target-trump.html"
+   },
+   {
+    "title": "Asian stocks fragile, Nvidia plummets as board to decide CEO's fate",
+    "publisher": "Reuters",
+    "when": "2026-11-12 01:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/asian-stocks-fragile-nvidia-plummets-015524144.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Here's My Biggest Worry About Broadcom Stock. It Isn't Enough to Stop Me From Buying.",
+    "publisher": "Motley Fool",
+    "when": "2026-11-12 02:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-biggest-worry-broadcom-stock-021302005.html"
+   },
+   {
+    "title": "Nvidia Stock Sinks as Jensen Huang Ouster Report Sends Investors Toward AMD, Broadcom",
+    "publisher": "Benzinga",
+    "when": "2026-11-12 00:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvidia-stock-sinks-jensen-huang-002504447.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Lisa Su Just Delivered Fantastic News for AMD Investors",
+    "publisher": "Motley Fool",
+    "when": "2026-11-11 21:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/lisa-su-just-delivered-fantastic-214600391.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25277.5,
+  "chg_pct": 0.07,
+  "stamp": "12-Nov-2026 08:13:51",
+  "expiry": "23-Nov-2026",
+  "volume": 1516,
+  "nifty_close": {
+   "close": 25255.05,
+   "stamp": "11-Nov-2026 15:30"
+  },
+  "gap_pts": 22.5,
+  "gap_pct": 0.09
+ }
+}

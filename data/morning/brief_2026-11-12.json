@@ -1,0 +1,450 @@
+{
+ "date": "2026-11-12",
+ "generated_at": "2026-11-12T08:15:51",
+ "mail": {
+  "window": "24h to 08:02 IST",
+  "n_scanned": 145,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Ambit keeps Hindalco SELL and cuts TP 12% to Rs850 after trimming FY28-30 LME aluminium to US$2,600/t; FY28/FY29 EBITDA cut 5%/7%.",
+      "source": "Ambit - Ambit Sales | Hindalco: Cut estimates on LME caution; Acutaas: CDMO gets another leg-up; Strategy: Increase OW on Cement",
+      "received": "09:22",
+      "detail": {
+       "summary": "Ambit argues the 2Q beat flatters the trajectory: copper one-offs and by-product realisations drove it, while aluminium costs rise again in 3Q. Management itself guided to a softer LME next year as Middle East and Indonesian supply returns.",
+       "points": [
+        "TP Rs850 from Rs965, SELL maintained",
+        "FY28-30 LME US$2,600/t vs US$2,800/t earlier",
+        "FY28/FY29 EBITDA cut 5%/7%",
+        "Al production cost up ~5% QoQ in 3Q",
+        "Reuters poll: 410kt surplus in 2027 vs 720kt deficit 2026"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay prefers ferrous over non-ferrous; NALCO 2Q EBITDA missed 4.2% vs consensus, but FY28-29 raised on US$350/t alumina; Hindalco ADD, TP Rs1,150.",
+      "source": "Emkay - Emkay Metals Weekly – Preferring ferrous over non-ferrous",
+      "received": "10:04",
+      "detail": {
+       "summary": "Emkay stays cautious on aluminium as Middle East smelter recovery and Indonesian capacity cap upside, though tight inventories keep the market in deficit to 2028. Ferrous looks better, with HRC and rebar near Rs65,000/t and strong 2HFY27 volumes expected.",
+       "points": [
+        "NALCO 2Q EBITDA miss 5.2% vs Emkay, 4.2% vs consensus",
+        "Alumina assumption US$350/t vs US$325/t for FY28-29",
+        "Aluminium ~US$3,100/t, alumina US$398/t",
+        "Hindalco 2Q EBITDA Rs128.1bn, 11.2% above consensus",
+        "Hindalco ADD, target Rs1,150"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Ambit lifts Tata Steel TP to Rs180 (SELL), FY27-29 EBITDA +6-10%; spot implies ~Rs2,500/t QoQ India EBITDA/t gain in 3Q.",
+      "source": "Ambit - Ambit Metals: Tata Steel (SELL) - Merchant ore adds earnings; structural risks persist",
+      "received": "08:35",
+      "detail": {
+       "summary": "2QFY27 EBITDA of Rs106.7bn beat Ambit by 3% and Street by 7% on resilient India margins and a Netherlands return to profit. Upside rests on spot pricing and merchant ore sales, but flat India volumes and post-2030 mining economics keep the SELL.",
+       "points": [
+        "India EBITDA/t Rs17,250, down only Rs950/t QoQ vs Rs1,650/t expected",
+        "Spot implies Rs3,500/t NSR gain in 3Q; ~Rs2,500/t EBITDA/t expansion built",
+        "Merchant ore: 8-10MT FY27, 14MT from FY28, Rs1,300-1,400/t EBITDA",
+        "Equals ~Rs600/t incremental EBITDA across steel deliveries",
+        "TP Rs180 at 6.5x FY28 EBITDA; Dutch coke oven hearing 20 Nov"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay prefers ferrous over non-ferrous: HRC at Rs63,900/t and rebar Rs64,600/t, up 10.2% and 24.2% over the quarter, above its base case.",
+      "source": "Emkay - Emkay Metals Weekly - Preferring ferrous over non-ferrous",
+      "received": "10:04",
+      "detail": {
+       "summary": "Emkay sees ferrous outlook staying constructive on firm HRC and rebar plus strong 2HFY27 volume growth, while it stays cautious on aluminium as supply recovers. Ferrous spot earnings run ahead of its base case, whereas non-ferrous is broadly in line.",
+       "points": [
+        "HRC and rebar sustaining at ~Rs65,000/t",
+        "Spot HRC Rs63,900/t, rebar Rs64,600/t; +10.2% and +24.2% over quarter",
+        "Metal equities outperformed on strong 2Q and guided 2H improvement",
+        "Aluminium eased to ~$3,100/t; alumina rose to $398/t",
+        "Tata Steel BUY, target Rs210"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Morgan Stanley stays selective on cement, UltraTech preferred: 2QF27 demand ~10% YoY, price hikes add ~Rs200/t QoQ, but 2H power and fuel cost up ~Rs100/t.",
+      "source": "Morgan Stanley - MS India Trends & Themes: Sep-26 Earnings: India Results So Far; Cement Stays Selective; & more...",
+      "received": "09:06",
+      "detail": {
+       "summary": "Morgan Stanley sees demand running ahead of expectations and sustained price hikes lifting realisations, but energy costs and a weaker rural demand risk later cap enthusiasm. That balance leads to a selective stance with UltraTech the preferred name.",
+       "points": [
+        "2Q-F27 pan-India demand growth ~10% YoY, momentum expected into 3Q",
+        "Realisations for coverage up ~Rs200/t QoQ on sustained price hikes",
+        "Power and fuel costs could rise ~Rs100/t over 2H",
+        "Weaker rural demand flagged as a later risk",
+        "UltraTech is the preferred pick"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit adds Dalmia Bharat to its model portfolio and raises cement overweight: 3Q EBITDA/t seen +Rs120 QoQ to Rs820, stock at 1.5x FY28 BVPS trough.",
+      "source": "Ambit - Ambit strategy: Model portfolio rejig - Trim defensives, add cement",
+      "received": "09:10",
+      "detail": {
+       "summary": "Ambit argues cement spreads have bottomed after landed petcoke and Indonesian coal rose further on the west-Asia war, with spot prices above the 2Q average. Dalmia is chosen because pricing and regional mix offset fuel, and it trades at the bottom of its historical P/BV band.",
+       "points": [
+        "Spot cement prices ~Rs10-15/bag above 2Q average",
+        "Petcoke +37% and Indonesian coal +14% since June note",
+        "Dalmia 3Q EBITDA/t seen Rs820, +Rs120 QoQ",
+        "1.5x FY28 BVPS vs 1.5-1.7x trough band",
+        "Belgaum expansion ahead of schedule toward ~67-70MT; Jaypee cost drag peaks 3Q"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara keeps Prism Johnson Buy, TP Rs135 (from 131); Q2 cement EBITDA/t fell to Rs526 from Rs701 YoY on fuel at Rs1.67/Mcal.",
+      "source": "Elara - Cement - Prism Johnson - Improved balance-sheet to aid earnings - Q2FY27 Update - Buy - TP: INR 135 - Upside: 24% (Author: Ravi Sodah)",
+      "received": "20:04",
+      "detail": {
+       "summary": "Q2 EBITDA was in line, with fuel inflation squeezing cement margins despite higher alternative fuel use. Elara leans on deleveraging, recent industry price hikes and exit from the insurance business to support earnings, and lifts FY27 EBITDA estimates on lower debt.",
+       "points": [
+        "Q2 consolidated EBITDA ~Rs1.9bn, +4% YoY, -7% QoQ",
+        "Cement volume 1.66mn t, realisation Rs4,662/t, cost Rs4,134/t",
+        "Net debt Rs4.67bn from Rs8.88bn in Q4FY26",
+        "FY27E EBITDA raised 8%; FY28-29E unchanged",
+        "Valuation 8x March 2028E EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NMDC Q2FY27 due today: Nuvama sees EBITDA flat YoY at Rs20.4bn, 1% under Bloomberg consensus, with PAT Rs17.0bn about 9% below the Street.",
+      "source": "Nuvama - Result Estimates for 12th November 2026 : HNAL, NMDC, IDEA, PAG, BDL, ALKEM, AMBER, POWERIND",
+      "received": "10:03",
+      "detail": {
+       "summary": "Nuvama expects flat EBITDA because a higher realisation is offset by higher royalty, with sales volume stuck on logistics despite a production jump. The note is a trading preview of estimates against Bloomberg consensus, with futures positioning on the stock.",
+       "points": [
+        "EBITDA Rs20.38bn vs consensus Rs20.65bn; margin 33.15% vs 33.73%",
+        "PAT Rs17.04bn vs consensus Rs18.77bn",
+        "Realisation +Rs418/t YoY to Rs5,391/t; royalty +Rs249/t to Rs2,280/t",
+        "Production +19% YoY to 12.2mt; sales flat at 10.5mt",
+        "Futures short-heavy; a beat could take the stock towards 75 from 72"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Coal India's October e-auction premium jumped to 140% from 94% in September, with output +19.1% YoY to 67.2mt and offtake 70.3mt, per Emkay.",
+      "source": "Emkay - Emkay Metals Weekly – Preferring ferrous over non-ferrous",
+      "received": "10:04",
+      "detail": {
+       "summary": "Emkay says offtake has outrun production by 63.3mt in FY27 YTD, backed by a 21% YoY recovery in thermal generation, while elevated international coal keeps imports constrained. Production is still behind target but improving mining conditions should allow a second-half catch-up, and the premium jump improves 2HFY27 earnings visibility.",
+       "points": [
+        "E-auction premium 140% in Oct vs 94% in Sep",
+        "Production 67.2mt, +19.1% YoY, +25.6% MoM; offtake 70.3mt",
+        "FY27E run-rate 783mt production, 815mt offtake",
+        "Apr-Oct production ~32mt below seasonality-adjusted target",
+        "International coal ~$150/t for RB2 limits imports"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Amber Q2 post-market today: Nuvama sees EBITDA Rs1.50bn vs street 1.45bn but revenue Rs19.37bn vs 21.17bn and a PAT loss of Rs0.32bn vs 0.26bn.",
+      "source": "Nuvama - Result Estimates for 12th November 2026 : HNAL, NMDC, IDEA, PAG, BDL, ALKEM, AMBER, POWERIND",
+      "received": "10:03",
+      "detail": {
+       "summary": "Nuvama expects Amber's margin gain to be optical, from electronics mix and a weak durables base, while a seasonally weak durables quarter and acquisition-related interest, depreciation and minorities hit the bottom line. Futures OI is at year lows with options pricing a modest move.",
+       "points": [
+        "Revenue Rs19.37bn vs street Rs21.17bn",
+        "EBITDA Rs1.50bn vs Rs1.45bn; margin 7.76% vs 6.84%",
+        "PAT Rs(0.32)bn vs street Rs(0.26)bn",
+        "Electronics +30% YoY on acquisitions; durables price-led",
+        "Straddle ~8.5%; 6000 seen as demand zone on weak result"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Dixon targets silicon-photonics transceivers via Gemtek JV from next quarter, while Diwali handset volumes fell 18-20% on memory-driven price rises.",
+      "source": "Nomura - India Consumer Durables and EMS: Electronics Inc runs ops update to build AI infra; Smartphone volumes slumped this Diwali season amid a surge in prices; Karnataka clears 147 projects worth Rs 6,826 crore",
+      "received": "09:06",
+      "detail": {
+       "summary": "Indian electronics makers are chasing AI data-centre equipment, with Dixon seeking optical and advanced-packaging deals. Handset demand is the offset: retailers report a volume slump as memory-chip inflation lifted prices and buyers deferred upgrades, relevant to mobile EMS volumes.",
+       "points": [
+        "Dixon-Gemtek transceiver operations expected to start next quarter",
+        "Diwali handset volumes down 18-20% (AIMRA); value flat",
+        "Pre-Diwali volume slump about 40%",
+        "PG Electroplast evaluating AI data-centre entry",
+        "Xiaomi scouting Indian white-goods partners"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak sees RAC emerging from its weak phase: 2Q primary growth ~35-40% YoY, lean channel inventory and 3Q price hikes, though margins stay pressured.",
+      "source": "Kotak - [Kotak] Durables 2QFY27 review: Some improvement in trends",
+      "received": "08:25",
+      "detail": {
+       "summary": "Kotak sees RAC slowly emerging from a weak phase after a low base, extended summer and pre-buying ahead of price hikes lifted primary sales. Lean channel stock and new 3Q price hikes improve the profitability outlook, though second-quarter RAC margins remained under pressure.",
+       "points": [
+        "Primary RAC growth ~35-40% YoY in 2Q",
+        "Voltas/Blue Star/Lloyd 28-29% YoY growth",
+        "Margins under pressure; channel inventory lean",
+        "New price hikes in 3QFY27 help outlook",
+        "Preferred picks: Crompton, Eureka, Whirlpool"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "Tata Power targets split after Q2: Elara Buy Rs485, IIFL Buy 420, Avendus Add 410, JPM Neutral 423, BofA Underperform 325, against Rs360.",
+      "source": "Elara - Utilities - Tata Power - Strong triggers ahead - Q2FY27 Update - Buy - TP: INR 485",
+      "received": "22:00",
+      "detail": {
+       "summary": "Elara keeps Buy but trims its SOTP target to price in the Rs61.13bn arbitration award, leaving earnings estimates unchanged. BofA stays Underperform because the beat came from Indonesian coal JVs while core earnings fell, and calls the P/B demanding.",
+       "points": [
+        "Elara TP Rs485 vs Rs504 earlier; 35% upside from Rs360",
+        "BofA PO Rs325; core earnings -6% YoY, 8% below BofAe",
+        "BofA: 2.3x two-year forward P/B demanding",
+        "Elara: adj PAT +46% YoY to Rs15.21bn",
+        "Elara: EBITDA +11.1% YoY, down 8.6% QoQ to Rs36.7bn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA downgrades NHPC to Underperform, PO cut to Rs75, as regulated-equity growth peaks and estimates sit below guidance through FY29; prefers NTPC and Power Grid.",
+      "source": "BofA - BofA India Insight - Utlities | NHPC -Downgrade | Divi-Downgrade | Autos | Strategy | Fintech",
+      "received": "08:50",
+      "detail": {
+       "summary": "BofA sees NHPC's catalysts as played out and risk-reward unfavourable, with execution delays pulling estimates under management guidance. It still sees value in the sector on demand visibility and defensive earnings, ranking NTPC and Power Grid first and keeping Tata Power at Underperform.",
+       "points": [
+        "NHPC PO cut to Rs75; downgrade to Underperform",
+        "Estimates below management guidance through FY29E",
+        "CERC under-recovery rulings are a key near-term risk",
+        "Top picks NTPC and PWGR; TPWR lower-RoE mix, Underperform"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Power's Mundra Section 11 order lapses 31-Dec; SPPA needs a procurer majority, and the US$650mn Singapore case is JPM's key swing factor.",
+      "source": "JPM - Tata Power Ltd: 2QFY27 : Healthy results; outcome of arbitration case is key from here on (+4 more in Outlook)",
+      "received": "23:25",
+      "detail": {
+       "summary": "JPM calls the quarter healthy but keeps Neutral at a Rs423 target, saying valuation leaves limited upside. Mundra's visibility rests on the Supplementary PPA, signed with Gujarat and awaiting two more states, and the Singapore arbitration is the contingent liability to watch.",
+       "points": [
+        "Section 11 directions expire 31 Dec 2026",
+        "Contingent liability US$650mn in Singapore case",
+        "JV profit Rs4.9bn vs Rs1.3bn; ~Rs4bn/quarter seen for two more quarters",
+        "1HFY27 capex Rs100bn vs FY27 guide Rs250bn",
+        "Net debt Rs626.8bn, 1.27x equity"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak prefers challengers and hybrids over incumbents after 2QFY27: BUY on TechM, Coforge, Persistent, Indegene, Sagility; TCS the only incumbent it is comfortable with.",
+      "source": "Kotak - 2Q Review: IT services; Durables; DR Agrarwal ADD; PI - Margin Reset; ...",
+      "received": "08:32",
+      "detail": {
+       "summary": "Kotak calls 2QFY27 results middling with demand still subdued, though deal activity has improved and selective hiring resumed. Stocks rose as the debate moved from the model's relevance to sustainable growth, helped by Accenture's medium-term outlook, so further upside for incumbents needs growth delivery.",
+       "points": [
+        "Top BUYs: TechM, Coforge, Persistent, Indegene, Sagility",
+        "TCS the relatively comfortable incumbent",
+        "Deal activity improved; selective hiring resumed",
+        "Valuations already adjusted; incumbents need growth delivery",
+        "Accenture medium-term outlook cited as the sentiment driver"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay initiates Fractal Analytics at BUY, TP Rs1,000 (27.1% upside on Rs787 CMP), on a ~15% FY26-29E USD revenue CAGR and 220bps EBITDA margin gain.",
+      "source": "Emkay - Fractal Analytics: Closing the loop from insight to action; initiate with BUY; Target: Rs1,000",
+      "received": "22:23",
+      "detail": {
+       "summary": "Emkay values the pure-play data, analytics and AI firm on SOTP: 24x Sep-28E PER for Fractal.ai, 3x EV/sales for Alpha, and Qure.ai at its last funding round. The case rests on enterprise AI adoption, a new go-to-market, large-account penetration and a shift to outcome-based and product revenue; a sustained tech recovery is the swing factor.",
+       "points": [
+        "TP Rs1,000 vs CMP Rs787; 24x PER, 8%/20% below Coforge/Persistent",
+        "FY27E/FY28E adj EPS Rs19.5/Rs26.5; P/E 39.7x/29.7x",
+        "EBITDA margin 15.4% FY26 to 18.4% FY28E",
+        "Risks: TMT weakness, Alpha/Qure.ai break-even delay, slow large accounts"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA hosts India IT year-ahead expert calls: NASSCOM 20-Nov, BCG 23-Nov, McKinsey 24-Nov, BofA CTO 25-Nov, on AI spend and IT services economics.",
+      "source": "BofA - BofA Expert calls - IT Services and Property - BofA CTO team / NASSCOM / BCG / McKinsey (+3 more in Outlook)",
+      "received": "14:11",
+      "detail": {
+       "summary": "BofA's IT team is running a virtual CY27 outlook call series. BCG is pitched on a $100-200B applied-AI opportunity that SIs struggle to capture, and McKinsey on a fundamental change in IT services economics. NASSCOM covers AI investment, US-India and GCC-provider dynamics.",
+       "points": [
+        "NASSCOM Fri 20-Nov, 12:00 IST",
+        "BCG Mon 23-Nov, 11:30 IST",
+        "McKinsey Tue 24-Nov, 13:30 IST (newly added)",
+        "BofA CTO team Wed 25-Nov, 13:30 IST on customer AI budgets"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "CLSA's Redman upgrades India to Overweight, citing six reasons to be bullish after two years in the wilderness.",
+      "source": "CLSA - CLSA Digital: Equity Insights - Insulated India: Six reasons to turn bullish",
+      "received": "06:47"
+     },
+     {
+      "text": "MSCI adds Coforge (US$550mn est. passive inflow, 9.7x ADV), LICI, Adani Green, Meesho, drops PI; JSTL, COAL weights up, NTPC down; 30 Nov close.",
+      "source": "Kotak - [Kotak] MSCI November Changes (Effective 30th Nov Close)",
+      "received": "06:39",
+      "detail": {
+       "summary": "Kotak's derivatives desk lists the MSCI November quarterly review: four additions and one deletion, all as expected except ICICILIFE, a medium-probability deletion candidate that held. Weight changes from free-float adjustments, with India's MSCI EM weight edging up.",
+       "points": [
+        "India MSCI EM weight 12.94% to 13.15%, about 21bps",
+        "One-way turnover estimated at 1.73%",
+        "Coforge US$550mn, 9.7x ADV; LICI US$401mn; Adani Green US$309mn",
+        "PI deletion -US$99mn; JSTL +US$59mn, COAL +US$44mn",
+        "NTPC -US$84mn, Grasim -US$55mn, MRF -US$26mn"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit adds Dalmia Bharat (1.5x FY28 BVPS, trough band) to model portfolio on cement spreads bottoming; drops Infosys, trims IT for banks.",
+      "source": "Ambit - Ambit strategy: Model portfolio rejig - Trim defensives, add cement (+5 more in Outlook)",
+      "received": "09:10",
+      "detail": {
+       "summary": "Ambit raises its cement overweight, arguing spreads have bottomed with spot Rs10-15/bag above the 2Q average despite higher fuel costs. It stays tilted to large caps and defensives, rotating banks over IT, and exits Infosys on weak 2H and sub-zero FY27 organic growth.",
+       "points": [
+        "Dalmia 3Q EBITDA/t seen +Rs120 QoQ to Rs820",
+        "Petcoke +37%, Indonesian coal +14% since June call",
+        "Out: Infosys, Max Financial, HCG; in: Dalmia, ICICI Lombard, Delhivery",
+        "Nifty Bank/IT ratio ~1.85x, support 1.7x; 5-7% outperformance left",
+        "Large-cap allocation 74%; repo hike of 25-50bps expected by Mar'27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "JPM prefers BPCL/IOCL as lower crude restarts OMC upgrades: each $10/bbl annualised fall adds Rs700-800bn EBITDA against under Rs1.1tn FY28 consensus.",
+      "source": "JPM - Indian Oil Marketing Companies: At the beginning of the lower oil trade",
+      "received": "07:00",
+      "detail": {
+       "summary": "FY27 estimates were cut hard but FY28 stayed stable, and spot integrated margins are only just back near FY26 levels. An FY28 upgrade cycle needs crude to stay lower. Risks are a government reversal of excise cuts and gradual stock response.",
+       "points": [
+        "$10/bbl lower crude = Rs700-800bn EBITDA for the three OMCs",
+        "FY28 consensus EBITDA under Rs1.1tn for HPCL/BPCL/IOCL",
+        "12-month Brent futures under $78/bbl",
+        "BPCL Rs315.25 and IOC Rs148.38, both Overweight",
+        "Possible partial LPG loss reimbursement if oil stays lower"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Brent broke below $90/bbl, below 100/200-day averages for the first time since August; BNPP reads a rapid unwind of the war risk premium.",
+      "source": "BNPP - INDIA QUICK NOTES: Whirlpool India: Margin Miss | US Economics | Oil & Gas: Premium Unwind",
+      "received": "08:54",
+      "detail": {
+       "summary": "Brent fell after Trump said further Iran strikes were unnecessary, extending Monday's near-6% drop, with the prompt spread weakest since late August. Saudi and ADNOC cut December selling prices, but Houthi attacks and Ukrainian strikes on Russian refining keep conflict and product risk alive.",
+       "points": [
+        "Brent under $90/bbl; Monday's selloff near 6%",
+        "ADNOC cut Murban premium by over 60% to $4/bbl",
+        "Ukrainian strikes cut Russian refining capacity about 30%",
+        "TTF settled around EUR85"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "L&T won a significant Noida Metro Aqua Line extension order; Adani Group reportedly plans over $120bn capex across five years.",
+      "source": "Kotak - Infra Daily Wrap: L&T bags Noida Metro order for Aqua Line; Round 2 of coal gasification scheme fails to garner private sector response (+1 more in Outlook)",
+      "received": "08:20",
+      "detail": {
+       "summary": "Capital goods headlines carry the L&T order and a press report of Adani's multi-year capex plan. Round 2 of the coal gasification scheme drew no private-sector response. The wrap gives headlines and links only, with no order value or capex split.",
+       "points": [
+        "Adani Group capex above $120bn over five years, per report",
+        "L&T order classed Significant, value not stated",
+        "Coal gasification round 2: no private bids",
+        "BHEL: Rs207cr GST demand dropped"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "GS: NDX back above pre-election levels and SOX near its 200-dma; asset managers and HFs re-risked across semis, with NVDA down 3% after hours on negative headlines.",
+    "source": "GS - [GS Daily] NDX back to pre-election levels // China Consumer 3Q26 wrap-up // ..."
+   },
+   {
+    "text": "CLSA: Musk's Terafab targets up to US$119bn capex by 2036 and 1H27 research-fab commissioning; equipment names ASML, AMAT, Lam, TEL and KLA get earliest exposure.",
+    "source": "CLSA - Semiconductors: Terafab turning ambition into orders"
+   },
+   {
+    "text": "GS China: CPO names led the A-share rebound after Reuters reported Microsoft lobbying against a US block on Chinese optics; the debate is whether AI capex holds into 2028.",
+    "source": "GS - China Front Row: CPO rebound | The AI capex debate"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
