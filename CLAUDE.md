@@ -1128,7 +1128,11 @@ then *"let Syrma be there, it will come in fno"*). A cash name is a leg the IMS
 prints with no futures contract (the `IN Equity` lines): DALBHARA, SYRMA and
 LTTS. `specs/book.yaml analysis_exclude` lists DALBHARA and LTTS with reasons,
 and `roster()` and `expected_legs()` both honour it. Syrma stays. Only the
-Analysis roster changes (and so the case agents and the orchestrator). Their
+Analysis roster changes (and so the case agents and the orchestrator).
+**VAML joined `analysis_exclude` on 2026-11-12** (PM: *"In the analysis subtab,
+remove VAML"*; 31 rows). The same day `roster()` began returning each group's
+rows together: lone legs are appended after the pair legs, so Ambuja and APL
+Apollo had each opened a second CEMENT / STEEL heading at the bottom. Their
 pairs, P&L, the index, Kelly and VaR still carry them while they are on the book. **JINDA_SAIL retired the same way** (PM: *"Jindal
 and SAIL are two different pairs with Tata steel as a short for now"*). SAIL was
 short 04-09 .. 30-09 and came back LONG on 08-10. The dictation now has

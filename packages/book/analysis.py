@@ -173,7 +173,18 @@ def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
         out[ent] = {"entity": ent, "token": tok, "name": names.get(tok, tok),
                     "side": "coverage", "group": c.get("group") or "COVERAGE", "pairs": [],
                     "coverage": True}
-    return list(out.values())
+    # Keep each group's rows TOGETHER, groups in first-appearance order. The
+    # lone legs are appended after every pair leg, so Ambuja (CEMENT) and APL
+    # Apollo (STEEL) landed after MINING and the tab, which starts a heading
+    # whenever the group changes, printed a second CEMENT and a second STEEL
+    # heading (PM, 2026-11-12: "why is ambuja a separate entity in a
+    # different cement heading?"). The sort is stable: order inside a group
+    # is untouched, a lone leg sits last under its own heading.
+    rows = list(out.values())
+    first = {}
+    for r in rows:
+        first.setdefault(r["group"], len(first))
+    return sorted(rows, key=lambda r: first[r["group"]])
 
 
 def coverage_groups(cfg: dict | None = None) -> list[str]:
@@ -569,6 +580,18 @@ def _selftest() -> None:
         assert [x["entity"] for x in roster(fx)] == ["a", "b"] and expected_legs(fx) == 2; ok += 1
         live = {x["token"] for x in r}
         assert "SYRMA" in live and not live & {"DALBHARA", "LTTS"}, live; ok += 1
+        # a group's rows are contiguous (2026-11-12): a lone leg appended last
+        # must not open a second heading for its group. Fixture: a retired
+        # pair in G leaves C held alone, with group H dictated after it.
+        fx = {"ticker_map": {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e"},
+              "pairs": {"G": [{"name": "A_B", "long": ["A"], "short": ["B"]},
+                              {"name": "C_B", "long": ["C"], "short": ["B"], "until": "2000-01-01"}],
+                        "H": [{"name": "D_E", "long": ["D"], "short": ["E"]}]}}
+        rg = roster(fx, sides={"A": "L", "B": "S", "C": "L", "D": "L", "E": "S"})
+        assert [x["entity"] for x in rg] == ["a", "b", "c", "d", "e"], [x["entity"] for x in rg]
+        assert rg[2]["unpaired"] == "C_B" and rg[2]["group"] == "G"
+        gs = [x["group"] for x in r]
+        assert len([i for i in range(len(gs)) if i == 0 or gs[i] != gs[i - 1]]) == len(set(gs)), gs; ok += 1
         conn.close()
     finally:
         os.unlink(tmp.name)

@@ -194,6 +194,9 @@ pairs:
 analysis_exclude:
   DALBHARA: cash line, Dalmia is out of F&O
   LTTS: cash line, not in F&O; the PM is removing it from the book
+  # PM, 2026-11-12: "In the analysis subtab, remove VAML". Not a cash name;
+  # taken off on instruction. VAML_NACL stays a dictated pair everywhere else.
+  VAML: removed from Analysis on the PM's instruction, 2026-11-12
 
 # analysis_coverage: stocks on the Analysis roster WITHOUT a book position
 # (PM, 2026-11-09: "Let's start with Powergrid modelling and agent"). The
