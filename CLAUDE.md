@@ -3627,6 +3627,31 @@ does not cover, and a model whose driver is not a commodity.
   taken the capitalisation cut (Rs300bn → 250-300bn, 03-Nov, RoW delays).
   Brief: base +3.5% / bear −5.0% / bull +12.8% on FY28 at the anchor; Q3 is a
   model DRAFT (capitalisation Rs6,825cr, EPS 4.36 vs MS's pre-result 4.98).
+- **A Balance sheet sheet, a sanity check only** (PM, 2026-11-11: *"no
+  adjustments or new connections, just a separate sheet for sanity check"*).
+  It reads Assets, P&L and Cash flow and NOTHING reads it; the selftest
+  holds that. The reported block is screener's consolidated balance sheet for
+  Mar-25, Mar-26 and Sep-26 (`model_config.json balance_sheet`, cross-footed:
+  each date must balance and carry the model's net worth). The model block is
+  gross block less cumulative depreciation, CWIP, the cash plug and one
+  balancing figure held at the opening, against net worth and gross debt.
+  "Unexplained change" must be zero in every quarter; the two rows above it
+  say which typed actual moved by more than the model carries.
+  `power_model.py --add-balance-sheet power_grid` writes it into the LIVE
+  workbook through Excel (`model_view.excel` grew `addsheet` and `freeze`
+  operations); a rebuild writes it too. A config with no `balance_sheet`
+  block builds none.
+  - First read: the typed actuals hang together (the gap is Rs1,075cr on a
+    Rs300,000cr balance sheet after six quarters). But the model's net block
+    sits Rs12,378cr above reported fixed assets at Mar-26 and Rs16,891cr at
+    Sep-26: the presentation gross block grew Rs29,619cr in FY26 while
+    balance-sheet fixed assets grew Rs4,211cr after Rs13,030cr of
+    depreciation. "Other assets" took the difference (+Rs14,403cr). Cause not
+    read from the annual report. No EPS effect: yield and depreciation are
+    both measured on the presentation block.
+  - Excel refuses FreezePanes on a MINIMISED window. The first live write
+    died there with the sheet half made and nothing saved; the step now
+    restores the window for a moment and a failure is a note, never an abort.
 - **The three models in Downloads** were MS `794240.PGRD.NS.XLSX` (01-Oct,
   PRE-result; MS's RIC is PGRD), JPM `PGRD.NS_Equity_model.xlsx` (06-Nov,
   the consensus sheet and the quarterly actuals) and BofA `13039097.xlsx`

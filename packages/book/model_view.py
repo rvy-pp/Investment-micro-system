@@ -379,9 +379,26 @@ if ($wb -eq $null) {
   $xl.Visible = $false; $xl.DisplayAlerts = $false
   $wb = $xl.Workbooks.Open($path)
 }
-$out = @()
+$out = @(); $notes = @()
 try {
   foreach ($op in $ops) {
+    # 'addsheet' makes a NEW worksheet after the one named in value (power_model
+    # --add-balance-sheet). Add() activates the new sheet, so the sheet the PM
+    # was looking at is put back. An existing sheet is left alone unless the op
+    # says clear, and is never duplicated.
+    if ($op.mode -eq 'addsheet') {
+      $exists = $false
+      foreach ($s in $wb.Worksheets) { if ($s.Name -eq [string]$op.sheet) { $exists = $true } }
+      if (-not $exists) {
+        $was = $wb.ActiveSheet
+        $new = $wb.Worksheets.Add([System.Reflection.Missing]::Value, $wb.Worksheets.Item([string]$op.value))
+        $new.Name = [string]$op.sheet
+        $was.Activate()
+      } elseif ($op.clear) { $wb.Worksheets.Item([string]$op.sheet).Cells.Clear() | Out-Null }
+      $out += [pscustomobject]@{ sheet = $op.sheet; cell = ''; before = ''; formula = '';
+                                 value = $(if ($exists) { 'exists' } else { 'added' }) }
+      continue
+    }
     $rng = $wb.Worksheets.Item($op.sheet).Range($op.cell)
     $before = $rng.Formula
     if ($op.mode -eq 'set') {
@@ -398,6 +415,27 @@ try {
       $rng.AddComment([string]$op.value) | Out-Null
     }
     elseif ($op.mode -eq 'width') { $rng.EntireColumn.ColumnWidth = [double]$op.value }
+    # 'freeze' pins the rows above and the columns left of the cell. Panes
+    # belong to the window's ACTIVE sheet, so the sheet is activated in this
+    # workbook's own window and the PM's sheet is put back afterwards.
+    # Excel refuses FreezePanes on a MINIMISED window ("Unable to set the
+    # FreezePanes property"): the PM's workbook had sat minimised for two days
+    # and the first live write died here with the sheet half made and nothing
+    # saved (2026-11-11). So a minimised window is restored for the moment it
+    # takes and put back, and a failure is a note on the result, never an
+    # abort: panes are cosmetic, the cells are not.
+    elseif ($op.mode -eq 'freeze') {
+      $was = $wb.ActiveSheet
+      $win = $wb.Windows.Item(1)
+      $state = $win.WindowState
+      try {
+        $wb.Worksheets.Item($op.sheet).Activate()
+        if ($state -eq -4140) { $win.WindowState = -4143 }
+        $win.FreezePanes = $false; $win.ScrollRow = 1; $win.ScrollColumn = 1
+        $win.SplitColumn = $rng.Column - 1; $win.SplitRow = $rng.Row - 1; $win.FreezePanes = $true
+      } catch { $notes += ("panes not frozen on '" + $op.sheet + "': " + $_.Exception.Message) }
+      finally { if ($state -eq -4140) { $win.WindowState = -4140 }; $was.Activate() }
+    }
     # optional formatting on a set (steel_model --add-rolling writes a whole
     # formatted block into a live workbook this way); colours are Excel BGR ints
     if ($op.mode -eq 'set') {
@@ -409,6 +447,7 @@ try {
       if ($op.size -ne $null) { $rng.Font.Size = [double]$op.size }
       if ($op.fill -ne $null) { $rng.Interior.Color = [int]$op.fill }
       if ($op.wrap) { $rng.WrapText = $true }
+      if ($op.center) { $rng.HorizontalAlignment = -4108 }
     }
     $out += [pscustomobject]@{ sheet = $op.sheet; cell = $op.cell; before = $before;
                                formula = $rng.Formula; value = $rng.Text }
@@ -418,12 +457,12 @@ try {
   # was then discarded by Close($false), with nothing raising (2026-11-02).
   if (@($ops | Where-Object { $_.mode -ne 'get' }).Count -gt 0) {
     $xl.Calculate(); $wb.Save()
-    foreach ($o in $out) { $o.value = $wb.Worksheets.Item($o.sheet).Range($o.cell).Text }
+    foreach ($o in $out) { if ($o.cell) { $o.value = $wb.Worksheets.Item($o.sheet).Range($o.cell).Text } }
   }
 } finally {
   if (-not $attached) { $wb.Close($false); $xl.Quit() }
 }
-[pscustomobject]@{ attached = $attached; cells = $out } | ConvertTo-Json -Depth 4 -Compress
+[pscustomobject]@{ attached = $attached; cells = $out; notes = @($notes) } | ConvertTo-Json -Depth 4 -Compress
 """
 
 

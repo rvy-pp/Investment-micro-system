@@ -28,6 +28,11 @@ and capitalisation. The shape, and what it deliberately leaves out:
   capex (the 70:30 norm); dividends are a payout of the PREVIOUS fiscal
   year's PAT paid in Q2/Q3/Q4; cash is the plug; net worth rolls with PAT
   less dividends.
+- A Balance sheet sheet (PM, 2026-11-11: "add one for the power model, no
+  adjustments or new connections, just a separate sheet for sanity check")
+  rebuilds a balance sheet from the rows above and sets it against the
+  reported one. It READS Assets, P&L and Cash flow and nothing reads it, so
+  it cannot move a forecast; the selftest holds that.
 - Valuation is P/E on the valuation year's EPS, at a typed target multiple
   (the median house-implied P/E, which the case brief recomputes), with a
   P/BV cross-check and a rolling four-quarters-forward EPS from the price
@@ -42,6 +47,7 @@ without `--force`.
 
     python packages/book/power_model.py --config data/analysis/cases/power_grid/model_config.json \\
         --out data/analysis/cases/power_grid/Power_Grid_model.xlsx --recalc
+    python packages/book/power_model.py --add-balance-sheet power_grid   # into the LIVE workbook, via Excel
     python packages/book/power_model.py --selftest
 
 openpyxl writes formulas without cached values; `--recalc` drives Excel over
@@ -62,7 +68,7 @@ from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from steel_model import (ACT, BLACK, BLUE, FIRST_COL, FMT, FONT, GREEN, HEAD, SEC, YELLOW,  # noqa: E402
-                         Sheet, col, errors, fy_of, name, quarter_dates, quarters, recalc)
+                         Sheet, _bgr, col, errors, fy_of, name, quarter_dates, quarters, recalc)
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
 
@@ -71,10 +77,60 @@ LINES = ("transmission_rev", "consultancy_rev", "telecom_rev", "other_rev", "sal
          "depreciation", "interest", "pbt", "tax", "jv_share", "reg_deferral", "pat", "capex",
          "capitalisation", "gross_block", "cwip", "gross_debt", "net_worth", "dividends_paid")
 
+# The Balance sheet: the reported lines typed per published date (Rs crore),
+# and the model rows it links to, found by the label each carries in column A.
+BS_SHEET = "Balance sheet"
+BS_LINES = ("net_worth", "borrowings", "other_liabilities", "fixed_assets", "cwip", "investments", "other_assets")
+BS_LINKS = {"capex": ("Assets", "Capex"), "gb": ("Assets", "Gross block, closing"), "cwip": ("Assets", "CWIP, closing"),
+            "dep": ("P&L", "Depreciation"), "pat": ("P&L", "PAT"), "div": ("Cash flow", "Dividends paid"),
+            "debt": ("Cash flow", "Gross debt, closing"),
+            "cash": ("Cash flow", "Cash and bank balances, closing (the plug)"),
+            "nw": ("Cash flow", "Net worth, closing")}
+BS_OPEN_NAMES = ("Open_GB", "Open_CWIP", "Open_debt", "Open_cash", "Open_NW")
+BS_README = [
+    ("", ""),
+    ("Balance sheet (a sanity check)", "h"),
+    ("Built from the other sheets; nothing reads it, so it cannot move a forecast. The reported block is typed for "
+     "the dates a balance sheet is published (March and September). The model block rebuilds one from the gross "
+     "block, cumulative depreciation, CWIP, the cash plug, net worth and gross debt, with everything else held at "
+     "its opening figure. 'Unexplained change' must be zero in every quarter. The last rows say, line by line, "
+     "where the model's balance sheet differs from the reported one.", ""),
+]
+
 
 # --------------------------------------------------------------------------
 # config checks
 # --------------------------------------------------------------------------
+def bs_errors(cfg: dict, tol: float = 3.0) -> list[str]:
+    """The optional reported balance sheet: every typed date must balance
+    (assets = equity and liabilities, to rounding) and carry the net worth the
+    model already holds for that date. A mistyped line refuses here; on the
+    sheet it would only show as a gap nobody could tell from a real one."""
+    bs = cfg.get("balance_sheet")
+    if not bs:
+        return []
+    errs = []
+    reported = bs.get("reported") or {}
+    if "opening" not in reported:
+        errs.append("balance_sheet.reported.opening: missing (the model block starts from its net fixed assets)")
+    acts = cfg["consolidated"]["net_worth"]
+    for when, d in reported.items():
+        miss = [k for k in BS_LINES if not isinstance(d.get(k), (int, float))]
+        if miss:
+            errs.append(f"balance_sheet {when}: missing {', '.join(miss)}")
+            continue
+        liab = d["net_worth"] + d["borrowings"] + d["other_liabilities"]
+        assets = d["fixed_assets"] + d["cwip"] + d["investments"] + d["other_assets"]
+        if abs(assets - liab) > tol:
+            errs.append(f"balance_sheet {when}: assets {assets:,.0f} vs equity and liabilities {liab:,.0f}")
+        held = cfg["opening"]["net_worth"]["value"] if when == "opening" else acts.get(when)
+        if held is None:
+            errs.append(f"balance_sheet {when}: not an actual quarter")
+        elif abs(held - d["net_worth"]) > tol:
+            errs.append(f"balance_sheet {when}: net worth {d['net_worth']:,.0f} vs the model's {held:,.0f}")
+    return errs
+
+
 def crossfoot(cfg: dict, tol: float = 3.0) -> list[str]:
     """Every actual quarter must foot before anything is written: sales from
     its segments, PBT from its components (ex JV, as JPM's consolidated
@@ -108,7 +164,117 @@ def crossfoot(cfg: dict, tol: float = 3.0) -> list[str]:
     ds = cfg["constants"]["div_split"]["value"]
     if len(ds) != 4 or abs(sum(ds) - 1.0) > 1e-6:
         errs.append(f"constants.div_split: four shares summing to 1.0, got {ds}")
-    return errs
+    return errs + bs_errors(cfg, tol)
+
+
+# --------------------------------------------------------------------------
+# the Balance sheet (a sanity check; reads the model, feeds nothing)
+# --------------------------------------------------------------------------
+def balance_sheet(wb, cfg: dict, qs: list[str], R: dict) -> dict:
+    """Write the Balance sheet into `wb`. `R` is the row of each model line it
+    links to (BS_LINKS). Column C is the opening balance sheet, the quarters
+    run from D as on every other sheet.
+
+    The model block needs no new input: gross block less cumulative
+    depreciation, CWIP, the cash plug and ONE balancing figure (everything
+    else, net) fixed at the opening, against net worth and gross debt. Because
+    cash is the plug, that identity can only drift where a TYPED actual moved
+    by something the model does not carry, and the two 'from ...' rows name
+    which. 'Unexplained change' is then zero in every quarter by arithmetic;
+    a non-zero there means a formula on another sheet was broken."""
+    bs = cfg["balance_sheet"]
+    reported = bs["reported"]
+    BS = Sheet(wb, BS_SHEET, qs, f"{cfg['company']} - balance sheet (a sanity check)",
+               "Reads Assets, P&L and Cash flow; NOTHING reads this sheet, so it cannot move a forecast. "
+               "Column C is the opening balance sheet. Rs crore.")
+    ws = BS.ws
+    ws["A3"] = "Reported block: " + bs.get("source", "")
+    ws["A3"].font = Font(name=FONT, italic=True, size=8, color="595959")
+    BS.header()
+    for r, txt in ((4, "Opening"), (5, cfg["opening"]["as_of"])):
+        c = ws.cell(r, 3, txt)
+        c.font = Font(name=FONT, bold=r == 4, color="FFFFFF")
+        c.alignment = Alignment(horizontal="center")
+
+    def copen(r, v, bold=False):
+        c = ws.cell(r, 3, v)
+        is_f = isinstance(v, str) and v.startswith("=")
+        linked = is_f and ("!" in v or "Open_" in v)
+        c.font = Font(name=FONT, bold=bold, color=(GREEN if linked else BLACK) if is_f else BLUE)
+        c.number_format = FMT["cr"]
+
+    def trow(label, key):
+        r = BS.row(label, "Rs cr", {q: reported[q][key] for q in qs if q in reported})
+        copen(r, reported["opening"][key])
+        return r
+
+    def frow(label, fn, bold=False):
+        """One formula for the opening column and every quarter: fn(L) with L the column letter."""
+        r = BS.row(label, "Rs cr", lambda i, q, r: fn(col(i)), bold=bold)
+        copen(r, fn("C"), bold)
+        return r
+
+    def lrow(label, fn, opening, bold=False):
+        """A linked row: fn(L, P) for the quarters (P = the column before), `opening` for column C."""
+        r = BS.row(label, "Rs cr", lambda i, q, r: fn(col(i), col(i - 1)), bold=bold)
+        if opening is not None:
+            copen(r, opening, bold)
+        return r
+
+    total = lambda a, b, k: (lambda L: f'=IF(COUNT({L}{a}:{L}{b})={k},SUM({L}{a}:{L}{b}),"")')
+    BS.section("Reported (typed, for the dates a balance sheet is published)")
+    r_nw_r = trow("Net worth (share capital + reserves)", "net_worth")
+    r_bor_r = trow("Borrowings", "borrowings")
+    r_ol_r = trow("Other liabilities", "other_liabilities")
+    r_tl = frow("Total equity and liabilities", total(r_nw_r, r_ol_r, 3), bold=True)
+    r_fa_r = trow("Fixed assets, net of depreciation", "fixed_assets")
+    r_cw_r = trow("Capital work in progress", "cwip")
+    trow("Investments", "investments")
+    r_oa_r = trow("Other assets (cash, receivables, regulatory deferral, the rest)", "other_assets")
+    r_ta = frow("Total assets", total(r_fa_r, r_oa_r, 4), bold=True)
+    r_chk = frow("Check: assets less equity and liabilities (rounding only)",
+                 lambda L: f'=IF(ISNUMBER({L}{r_ta}),{L}{r_ta}-{L}{r_tl},"")')
+
+    BS.section("Model (links to Assets, P&L and Cash flow)")
+    r_gb = lrow("Gross block", lambda L, P: f"=Assets!{L}{R['gb']}", "=Open_GB")
+    r_ad = BS.r
+    lrow("Less: accumulated depreciation", lambda L, P: f"={P}{r_ad}+'P&L'!{L}{R['dep']}", f"=Open_GB-C{r_fa_r}")
+    r_nb = frow("Net block", lambda L: f"={L}{r_gb}-{L}{r_ad}", bold=True)
+    r_cw = lrow("Capital work in progress", lambda L, P: f"=Assets!{L}{R['cwip']}", "=Open_CWIP")
+    r_cash = lrow("Cash and bank balances (the plug)", lambda L, P: f"='Cash flow'!{L}{R['cash']}", "=Open_cash")
+    r_ona = BS.r
+    lrow("Other net assets, held at the opening figure", lambda L, P: f"=$C${r_ona}",
+         f"=Open_NW+Open_debt-C{r_nb}-C{r_cw}-C{r_cash}")
+    r_na = frow("Net assets", lambda L: f"=SUM({L}{r_nb}:{L}{r_ona})", bold=True)
+    r_nwm = lrow("Net worth", lambda L, P: f"='Cash flow'!{L}{R['nw']}", "=Open_NW")
+    r_debt = lrow("Gross debt", lambda L, P: f"='Cash flow'!{L}{R['debt']}", "=Open_debt")
+    r_fund = frow("Funding: net worth + gross debt", lambda L: f"={L}{r_nwm}+{L}{r_debt}", bold=True)
+
+    BS.section("Checks")
+    r_gap = frow("Gap: net assets less funding (zero at the opening by construction)",
+                 lambda L: f"={L}{r_na}-{L}{r_fund}", bold=True)
+    # ROUND on the four rows below: a forecast quarter's change is float dust
+    # (1e-11), which the crore format prints as "(0)" on a row that says zero
+    r_dgap = lrow("Change in the gap in the quarter", lambda L, P: f"=ROUND({L}{r_gap}-{P}{r_gap},2)", None)
+    r_g1 = lrow("   from gross block + CWIP moving by other than capex",
+                lambda L, P: f"=ROUND(({L}{r_gb}+{L}{r_cw})-({P}{r_gb}+{P}{r_cw})-Assets!{L}{R['capex']},2)", None)
+    r_g2 = lrow("   from net worth moving by other than PAT less dividends",
+                lambda L, P: f"=ROUND('P&L'!{L}{R['pat']}-'Cash flow'!{L}{R['div']}-({L}{r_nwm}-{P}{r_nwm}),2)", None)
+    r_un = lrow("Unexplained change (must be zero in every quarter)",
+                lambda L, P: f"=ROUND({L}{r_dgap}-{L}{r_g1}-{L}{r_g2},2)", None, bold=True)
+    pub = lambda L, body: f'=IF(ISNUMBER({L}{r_ta}),{body},"")'
+    BS.section("Model less reported, line by line (where a balance sheet is published)")
+    r_d1 = frow("Net block less reported fixed assets", lambda L: pub(L, f"{L}{r_nb}-{L}{r_fa_r}"))
+    frow("CWIP less reported", lambda L: pub(L, f"{L}{r_cw}-{L}{r_cw_r}"))
+    frow("Cash + other net assets, less reported (net worth + borrowings - fixed assets - CWIP)",
+         lambda L: pub(L, f"{L}{r_cash}+{L}{r_ona}-({L}{r_nw_r}+{L}{r_bor_r}-{L}{r_fa_r}-{L}{r_cw_r})"))
+    frow("Reported borrowings less model gross debt", lambda L: pub(L, f"{L}{r_bor_r}-{L}{r_debt}"))
+    r_d5 = frow("Reported net worth less model", lambda L: pub(L, f"{L}{r_nw_r}-{L}{r_nwm}"))
+    r_rec = frow("Those five less the gap (must be zero)",
+                 lambda L: pub(L, f"ROUND(SUM({L}{r_d1}:{L}{r_d5})-{L}{r_gap},2)"), bold=True)
+    ws.column_dimensions["A"].width = 74
+    return {"reported_check": r_chk, "gap": r_gap, "g1": r_g1, "g2": r_g2, "unexplained": r_un,
+            "net_block_diff": r_d1, "reconcile": r_rec, "net_block": r_nb, "other_net": r_ona}
 
 
 # --------------------------------------------------------------------------
@@ -142,7 +308,8 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     # ---------------------------------------------------------------- README
     rd = wb.create_sheet("README")
     rd.column_dimensions["A"].width = 120
-    for k, (txt, style) in enumerate(readme_lines(cfg, qs, n_act), start=1):
+    for k, (txt, style) in enumerate(readme_lines(cfg, qs, n_act) + (BS_README if cfg.get("balance_sheet") else []),
+                                     start=1):
         c = rd.cell(k, 1, txt)
         c.font = Font(name=FONT, bold=style == "h", size=13 if style == "t" else 10,
                       color=BLUE if style == "blue" else BLACK)
@@ -450,6 +617,12 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
         c.font = Font(name=FONT, color=GREEN)
         c.number_format = FMT["pct"]
 
+    # ---------------------------------------------------------------- Balance sheet
+    bs_rows = None
+    if cfg.get("balance_sheet"):
+        bs_rows = balance_sheet(wb, cfg, qs, {"capex": r_capex, "gb": r_gb, "cwip": r_cwip, "dep": r_dep, "pat": r_pat,
+                                              "div": r_div, "debt": r_debt, "cash": r_cash, "nw": r_nw})
+
     # ---------------------------------------------------------------- Annual
     an = wb.create_sheet("Annual")
     an["A1"] = f"{cfg['company']} - fiscal-year summary"
@@ -620,7 +793,7 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     wb.move_sheet("README", offset=-wb.index(wb["README"]))
     out.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out)
-    return {"quarters": N, "actual": n_act,
+    return {"quarters": N, "actual": n_act, "bs": bs_rows,
             "rows": {"pat": r_pat, "eps": r_eps, "rev": r_rev, "gb": r_gb, "cap": r_cap, "nd": r_nd, "yield": r_yield}}
 
 
@@ -667,6 +840,110 @@ def readme_lines(cfg, qs, n_act):
 
 
 # --------------------------------------------------------------------------
+# the Balance sheet into a LIVE workbook, through Excel
+# --------------------------------------------------------------------------
+def live_rows(wb) -> dict:
+    """Where each line the Balance sheet links to sits in an existing workbook,
+    by its column-A label. Exactly one row each, or nothing is written: a link
+    to the wrong row would still calculate."""
+    out, bad = {}, []
+    for key, (sheet, label) in BS_LINKS.items():
+        if sheet not in wb.sheetnames:
+            bad.append(f"no '{sheet}' sheet")
+            continue
+        ws = wb[sheet]
+        hits = [r for r in range(1, ws.max_row + 1) if str(ws.cell(r, 1).value or "").strip() == label]
+        if len(hits) != 1:
+            bad.append(f"{sheet}: {len(hits)} rows labelled '{label}'")
+        else:
+            out[key] = hits[0]
+    miss = [n for n in BS_OPEN_NAMES if n not in wb.defined_names]
+    if miss:
+        bad.append("names missing: " + ", ".join(miss))
+    if bad:
+        raise SystemExit("cannot place the Balance sheet's links:\n  " + "\n  ".join(bad))
+    return out
+
+
+def sheet_ops(ws) -> list[dict]:
+    """An openpyxl sheet as model_view.excel() operations: widths, every cell
+    with a value or a fill, the frozen panes. Typed text carries a leading
+    apostrophe, or Excel turns '31-Mar-2025' into a date serial."""
+    rgb = lambda c: c.rgb[-6:] if c is not None and isinstance(c.rgb, str) else None
+    ops = [{"sheet": ws.title, "cell": f"{L}1", "mode": "width", "value": d.width}
+           for L, d in sorted(ws.column_dimensions.items()) if d.width]
+    for row in ws.iter_rows():
+        for c in row:
+            solid = c.fill is not None and c.fill.fill_type == "solid"
+            if c.value is None and not solid:
+                continue
+            v = c.value
+            if isinstance(v, str) and not v.startswith("="):
+                v = "'" + v
+            ops.append({"sheet": ws.title, "cell": c.coordinate, "mode": "set", "value": v, "font": c.font.name or FONT,
+                        "numfmt": None if c.number_format == "General" else c.number_format,
+                        "fcolor": _bgr(rgb(c.font.color) or BLACK), "bold": bool(c.font.b), "italic": bool(c.font.i),
+                        "size": c.font.sz, "fill": _bgr(rgb(c.fill.fgColor)) if solid else None,
+                        "wrap": bool(c.alignment.wrap_text), "center": c.alignment.horizontal == "center"})
+    if ws.freeze_panes:
+        ops.append({"sheet": ws.title, "cell": ws.freeze_panes, "mode": "freeze", "value": None})
+    return ops
+
+
+def add_balance_sheet(entity: str, force: bool = False, base: pathlib.Path | None = None) -> int:
+    """Write the Balance sheet into an EXISTING workbook through Excel, so the
+    PM's yellow cells survive (a rebuild overwrites them) and an open window
+    takes the edit in place. Only the new sheet and two lines at the foot of
+    the README are written; no other cell is touched. The reported lines come
+    from the `balance_sheet` block of the model_config.json beside the workbook."""
+    import model_view
+    base = base or model_view.CASES
+    p = model_view.path_for(entity, base)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    cfg = json.loads((p.parent / "model_config.json").read_text(encoding="utf-8"))
+    if not cfg.get("balance_sheet"):
+        raise SystemExit("model_config.json has no balance_sheet block: nothing to type into the reported rows")
+    errs = bs_errors(cfg)
+    if errs:
+        raise SystemExit("the reported balance sheet does not hold:\n  " + "\n  ".join(errs))
+    live = load_workbook(p)
+    if BS_SHEET in live.sheetnames and not force:
+        raise SystemExit(f"'{BS_SHEET}' is already in {p.name}; --force rewrites it (its typed cells too)")
+    inp, qs = live["Inputs"], []
+    while inp.cell(4, FIRST_COL + len(qs)).value:
+        qs.append(inp.cell(4, FIRST_COL + len(qs)).value)
+    if qs != quarters(cfg["first_quarter"], cfg["last_quarter"]):
+        raise SystemExit("the workbook's quarters are not the config's; refusing to line the sheet up by guess")
+    R = live_rows(live)
+    scratch = Workbook()
+    rows = balance_sheet(scratch, cfg, qs, R)
+    ops = [{"sheet": BS_SHEET, "cell": "A1", "mode": "addsheet", "value": "Cash flow", "clear": bool(force)}]
+    ops += sheet_ops(scratch[BS_SHEET])
+    rd = live["README"]
+    if not any(rd.cell(r, 1).value == BS_README[1][0] for r in range(1, rd.max_row + 1)):
+        for k, (txt, style) in enumerate(BS_README):
+            if txt:
+                ops.append({"sheet": "README", "cell": f"A{rd.max_row + 1 + k}", "mode": "set", "value": "'" + txt,
+                            "font": FONT, "fcolor": _bgr(BLACK), "bold": style == "h", "italic": False, "size": 10,
+                            "wrap": True})
+    res = model_view.excel(entity, ops, base)
+    print(f"{p.name}: '{BS_SHEET}' written after 'Cash flow', {len(ops)} operations"
+          + (" (into the open window)" if res.get("attached") else ""))
+    for note in res.get("notes") or []:
+        print(f"  NOTE {note}")
+    vals = load_workbook(p, data_only=True)[BS_SHEET]
+    for key, lab in (("reported_check", "reported check"), ("gap", "gap"), ("g1", "  from the asset base"),
+                     ("g2", "  from net worth"), ("unexplained", "unexplained"),
+                     ("net_block_diff", "net block less reported"), ("reconcile", "five less the gap")):
+        cells = [vals.cell(rows[key], c).value for c in range(3, FIRST_COL + len(qs))]
+        print(f"  {lab:<26}" + " ".join(f"{v:>8,.0f}" if isinstance(v, (int, float)) else f"{'':>8}" for v in cells))
+    bad = errors(p)
+    print(f"  {len(bad)} error cells" + "".join(f"\n    {b}" for b in bad[:10]))
+    return 1 if bad else 0
+
+
+# --------------------------------------------------------------------------
 # selftest
 # --------------------------------------------------------------------------
 def _fixture() -> dict:
@@ -692,6 +969,11 @@ def _fixture() -> dict:
                       "capex": {"FY26": e(39967), "FY27": e(38500)},
                       "weights_capitalisation": e([0.1, 0.1, 0.3, 0.5]), "weights_capex": e([0.2, 0.22, 0.27, 0.31])},
             "consolidated": {k: {q: v[j] for j, q in enumerate(qs)} for k, v in lines.items()},
+            "balance_sheet": {"source": "fixture", "reported": {
+                "opening": dict(net_worth=92663, borrowings=131030, other_liabilities=42326,
+                                fixed_assets=172320, cwip=33585, investments=3117, other_assets=56997),
+                "Q2FY26": dict(net_worth=98932, borrowings=135990, other_liabilities=43000,
+                               fixed_assets=171000, cwip=44000, investments=3000, other_assets=59922)}},
             "sources": [["a", "b", "c"]], "decks": {}}
 
 
@@ -715,12 +997,44 @@ def selftest() -> int:
     chk("capex weights not summing to one refused", len(crossfoot(bad)), 1)
     bad = json.loads(json.dumps(fx)); del bad["consolidated"]["cwip"]
     chk("missing line refused", crossfoot(bad), ["consolidated.cwip: missing"])
+    bad = json.loads(json.dumps(fx)); bad["balance_sheet"]["reported"]["Q2FY26"]["other_assets"] = 59292   # transposed
+    chk("a reported balance sheet that does not balance is refused", len(crossfoot(bad)), 1)
+    bad = json.loads(json.dumps(fx)); bad["balance_sheet"]["reported"]["Q2FY26"].update(net_worth=98392, other_liabilities=43540)
+    chk("one that balances on the wrong net worth is refused", len(crossfoot(bad)), 1)
+    bad = json.loads(json.dumps(fx)); bad["balance_sheet"]["reported"]["Q3FY26"] = bad["balance_sheet"]["reported"]["Q2FY26"]
+    chk("a date that is not an actual quarter is refused", len(crossfoot(bad)), 1)
+    old = json.loads(json.dumps(fx)); del old["balance_sheet"]
+    chk("a config with no balance sheet still foots", crossfoot(old), [])
     with tempfile.TemporaryDirectory() as d:
         out = pathlib.Path(d) / "Fixture_model.xlsx"
         info = build(fx, out)
         chk("8 quarters, 2 actual", (info["quarters"], info["actual"]), (8, 2))
         wb = load_workbook(out)
-        chk("sheets", wb.sheetnames, ["README", "Inputs", "Assets", "P&L", "Cash flow", "Annual", "Valuation", "Sources"])
+        chk("sheets", wb.sheetnames, ["README", "Inputs", "Assets", "P&L", "Cash flow", BS_SHEET, "Annual", "Valuation",
+                                      "Sources"])
+        # "no new connections": the sheet reads the model, the model never reads the sheet
+        readers = [f"{ws.title}!{c.coordinate}" for ws in wb if ws.title != BS_SHEET for row in ws.iter_rows() for c in row
+                   if isinstance(c.value, str) and c.value.startswith("=") and BS_SHEET in c.value]
+        readers += [n for n, d in wb.defined_names.items() if BS_SHEET in (d.attr_text or "")]
+        chk("nothing reads the Balance sheet", readers, [])
+        chk("the live-workbook row finder lands on the builder's rows",
+            (live_rows(wb)["gb"], live_rows(wb)["pat"]), (info["rows"]["gb"], info["rows"]["pat"]))
+        gone = load_workbook(out)
+        gone["P&L"].cell(info["rows"]["pat"], 1).value = "PAT (renamed)"
+        try:
+            live_rows(gone)
+            chk("a moved label refuses the links", "accepted", "refused")
+        except SystemExit:
+            chk("a moved label refuses the links", "refused", "refused")
+        ops = sheet_ops(wb[BS_SHEET])
+        byc = {o["cell"]: o for o in ops if o["mode"] == "set"}
+        chk("typed text goes to Excel as text, formulas as formulas",
+            (byc["C5"]["value"], byc["D4"]["value"], byc["D6"]["value"]), ("'31-Mar-2025", "'Q1FY26", "=Inputs!D6"))
+        chk("panes and widths travel with the sheet", (ops[-1]["mode"], ops[-1]["cell"], ops[0]["mode"]),
+            ("freeze", "D7", "width"))
+        old_out = pathlib.Path(d) / "Old_model.xlsx"
+        build(old, old_out)
+        chk("a config with no balance sheet builds none", BS_SHEET in load_workbook(old_out).sheetnames, False)
         import model_view
         labels = {wb["Valuation"].cell(r, 1).value for r in range(1, 40)}
         chk("Valuation labels model_view reads", all(model_view.VAL_LABELS[k] in labels for k in ("tp", "year", "basis", "pe_typed", "eps")), True)
@@ -753,6 +1067,20 @@ def selftest() -> int:
             chk("valuation basis reads P/E", labs["Valuation basis"], "P/E")
             cap_fy26 = sum(vals["Assets"].cell(r["cap"], FIRST_COL + i).value for i in range(4))
             chk("FY26 capitalisation = the plan after the spread", round(cap_fy26, 1), 28206.0)
+            vb, b = vals[BS_SHEET], info["bs"]
+            row = lambda k: [vb.cell(b[k], c).value for c in range(FIRST_COL, FIRST_COL + 8)]
+            chk("the gap is zero at the opening", round(vb.cell(b["gap"], 3).value, 6), 0)
+            chk("unexplained change is zero in every quarter", max(abs(v) for v in row("unexplained")) < 1e-6, True)
+            # the fixture's two actual quarters DO move by more than the model carries
+            # (Q1: net worth +3,819 against PAT 3,631), so a gap must appear there ...
+            chk("an actual quarter's typed lines open a gap", abs(row("gap")[0]) > 100, True)
+            # ... and must then stand still: forecasts roll by the model's own identities
+            chk("the gap does not move in a forecast quarter", max(abs(v - row("gap")[1]) for v in row("gap")[2:]) < 1e-6, True)
+            chk("the reported block balances", [vb.cell(b["reported_check"], c).value for c in (3, FIRST_COL + 1)], [0, 0])
+            chk("unpublished quarters stay blank", vb.cell(b["reported_check"], FIRST_COL).value in (None, ""), True)
+            chk("the five differences rebuild the gap",
+                [round(vb.cell(b["reconcile"], c).value, 6) for c in (3, FIRST_COL + 1)], [0, 0])
+            chk("opening net block is the reported fixed assets", vb.cell(b["net_block"], 3).value, 172320)
         except Exception as ex:                                                     # noqa: BLE001
             print(f"  skip  Excel recalculation not available here: {str(ex)[:80]}")
     print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
@@ -766,9 +1094,14 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="overwrite an existing workbook (loses its edits)")
     ap.add_argument("--recalc", action="store_true", help="open in Excel over COM, recalculate, save, check errors")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--add-balance-sheet", metavar="ENTITY",
+                    help="write the Balance sheet into an existing workbook, via Excel (keeps every other cell)")
+    ap.add_argument("--cases", type=pathlib.Path, help="another cases folder (a scratch copy, for testing)")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
+    if a.add_balance_sheet:
+        return add_balance_sheet(a.add_balance_sheet, a.force, a.cases)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:
