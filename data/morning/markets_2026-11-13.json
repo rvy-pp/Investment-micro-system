@@ -1,0 +1,218 @@
+{
+ "date": "2026-11-13",
+ "fetched_at": "2026-11-13T08:10:26",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-12",
+    "close": 7592.4,
+    "prev_date": "2026-11-11",
+    "chg_pct": -0.35,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-12",
+    "close": 25366.09,
+    "prev_date": "2026-11-11",
+    "chg_pct": -0.39,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-12",
+    "close": 52297.09,
+    "prev_date": "2026-11-11",
+    "chg_pct": -0.36,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-12",
+    "close": 10506.67,
+    "prev_date": "2026-11-11",
+    "chg_pct": -0.54,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-12",
+    "close": 166.19,
+    "prev_date": "2026-11-11",
+    "chg_pct": -4.34,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-12",
+    "close": 585.3,
+    "prev_date": "2026-11-11",
+    "chg_pct": 5.86,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-12",
+    "close": 405.49,
+    "prev_date": "2026-11-11",
+    "chg_pct": -1.9,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-12",
+    "close": 364.36,
+    "prev_date": "2026-11-11",
+    "chg_pct": 5.54,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-12",
+    "close": 249.95,
+    "prev_date": "2026-11-11",
+    "chg_pct": -1.46,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-12",
+    "close": 63.75,
+    "prev_date": "2026-11-11",
+    "chg_pct": -1.06,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Why Accenture (ACN) Dipped More Than Broader Market Today",
+    "publisher": "Zacks",
+    "when": "2026-11-12 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-accenture-acn-dipped-more-215002863.html"
+   },
+   {
+    "title": "Accenture (ACN): Record Managed Services Contracts Meet a Tougher Regulatory Backdrop",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-12 21:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-record-managed-services-211241828.html"
+   },
+   {
+    "title": "Is Accenture's Next Big Thing Already Here?",
+    "publisher": "Trefis",
+    "when": "2026-11-12 15:54Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accentures-next-big-thing-already-155428681.html"
+   },
+   {
+    "title": "Accenture (ACN) Lands 850 Role Outsourcing Mandate In Major IT And AI Overhaul",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-12 15:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-lands-850-role-151243516.html"
+   },
+   {
+    "title": "Is Wall Street Bullish or Bearish on Accenture Stock?",
+    "publisher": "Barchart",
+    "when": "2026-11-12 13:46Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/wall-street-bullish-bearish-accenture-134631835.html"
+   },
+   {
+    "title": "Accenture PLC (ACN) Is a Trending Stock: Facts to Know Before Betting on It",
+    "publisher": "Zacks",
+    "when": "2026-11-12 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-plc-acn-trending-stock-130002396.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions Sees Possible AI Pricing Relief in 2027",
+    "publisher": "MarketBeat",
+    "when": "2026-11-12 20:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-sees-possible-201456716.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 7% Undervalued On Claude AI Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 10:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-could-101148155.html"
+   },
+   {
+    "title": "Will Claude AI Services Change Cognizant Stock Narrative",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 08:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/claude-ai-services-change-cognizant-081346256.html"
+   },
+   {
+    "title": "Cognizant (CTSH) Stock Could Be 42% Undervalued On Fresh AI Services Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 07:10Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-ctsh-stock-could-42-071011669.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Rise After Market Weathers Nvidia CEO Huang's Exit, Surging Yields; SpaceX-Tesla Merger Deal Close",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-13 02:25Z",
+    "link": "https://finance.yahoo.com/m/4a3dff17-3e8e-33ca-823f-8ac12eff6a4a/dow-jones-futures-rise-after.html"
+   },
+   {
+    "title": "What Does Nvidia (NVDA) CEO Resignation Mean For Its AI Leadership?",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-13 02:13Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/does-nvidia-nvda-ceo-resignation-021322420.html"
+   },
+   {
+    "title": "Stocks recover from Nvidia whiplash, dollar climbs with US yields",
+    "publisher": "Reuters",
+    "when": "2026-11-13 01:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stocks-recover-nvidia-whiplash-dollar-015858641.html"
+   },
+   {
+    "title": "Nvidia\u2019s Plunge Exposes the Hidden Cost of Leveraged ETFs",
+    "publisher": "etf.com",
+    "when": "2026-11-13 01:56Z",
+    "link": "https://finance.yahoo.com/markets/options/articles/nvidia-plunge-exposes-hidden-cost-015651859.html"
+   }
+  ],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Stock Market Today, Nov. 12: AMD Jumps 5.9% on Bank of America Price Target Hike to $700",
+    "publisher": "Motley Fool",
+    "when": "2026-11-12 22:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-12-222003587.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25185.0,
+  "chg_pct": -0.35,
+  "stamp": "13-Nov-2026 08:10:25",
+  "expiry": "23-Nov-2026",
+  "volume": 1438,
+  "nifty_close": {
+   "close": 25299.350000000002,
+   "stamp": "12-Nov-2026 15:30"
+  },
+  "gap_pts": -114.4,
+  "gap_pct": -0.45
+ }
+}
