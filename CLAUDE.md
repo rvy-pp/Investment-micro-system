@@ -3656,6 +3656,46 @@ does not cover, and a model whose driver is not a commodity.
   - Excel refuses FreezePanes on a MINIMISED window. The first live write
     died there with the sheet half made and nothing saved; the step now
     restores the window for a moment and a failure is a note, never an abort.
+- **A project list on the Assets sheet, from the CEA** (PM, 2026-11-13: *"get
+  the projects list, their capex requirement, how much has been capitalized,
+  the commissioning date/completed. Make it match with the asset base, any
+  leftover/spillover report it back"*). **`packages/book/power_projects.py`**
+  (34-check selftest) reads the Central Electricity Authority's three monthly
+  reports (TBCB under construction, TBCB completed, RTM under construction;
+  cea.nic.in Reports > Transmission Schemes), keeps PGCIL's rows and writes
+  `projects.json` beside the model, PDFs in `sources/cea/`. **Fetch from the
+  listing page** (`LIST_URL`): every link a web search returned for these
+  reports was a 404, and only the page's current UUIDs download. Each
+  under-construction report's own PGCIL summary row is the guard (count exact,
+  cost within half a crore per project, because the report rounds each line).
+  `power_model.py --add-projects power_grid [--force]` writes the block under
+  the Assets rows through Excel: a quarter grid (the model's capitalisation;
+  the listed projects' estimate by charge quarter; still to capitalise by
+  anticipated quarter, a live SUMIFS over the table; the difference), a
+  summary against the gross block and works in hand, then one row per project.
+  Like the Balance sheet, nothing in the forecast reads it (selftested: every
+  formula outside the block is identical with and without it).
+  - **"Capitalised" is an ESTIMATE**: cost x charged elements / all elements,
+    each element weighted equally, transformers and circuits counted in units.
+    The CEA gives no rupees. A charged element is booked at COD, later.
+  - **Five completed SPVs were sold to the InvIT in 2021** (Vizag, Kala Amb,
+    Parli, Warora, Jabalpur). The CEA still lists them under PGCIL, so
+    `DIVESTED` keeps them out of every total, matched on scheme text.
+  - **First read, September 2026 reports.** Completed TBCB projects (CEA cost
+    Rs49,016cr) sit within Rs766cr of the TBCB gross block (consolidated less
+    standalone, Rs49,782cr). The charged-but-not-at-COD elements (est.
+    Rs6,797cr) are mostly not booked yet. Works in hand not on the CEA's lists:
+    TBCB Rs42,449cr (InSTS wins and SPVs not yet transferred), RTM Rs4,943cr
+    (the CEA leaves out bay-only work). Rest of FY27: listed projects
+    anticipate Rs17,794cr against the model's Rs18,200cr. FY28: Rs69,641cr
+    anticipated against the model's Rs32,500cr, Rs48,904cr of it in Q1FY28
+    alone (Rajasthan REZ Ph-IV). 70 of 104 projects are late (median 5
+    months), and Rs69,997cr has moved into a later fiscal year.
+  - **The bulk write route.** `model_view`'s Excel script grew `values` (one
+    rectangle in one call) and `style` (one range) operations, and pauses
+    recalculation only when a batch carries them. Cell by cell, ~2,000
+    formatted cells ran past the 240s limit and left the PM's open window half
+    written and unsaved (2026-11-13); in bulk it is 71 operations in ~4s.
 - **The three models in Downloads** were MS `794240.PGRD.NS.XLSX` (01-Oct,
   PRE-result; MS's RIC is PGRD), JPM `PGRD.NS_Equity_model.xlsx` (06-Nov,
   the consensus sheet and the quarterly actuals) and BofA `13039097.xlsx`

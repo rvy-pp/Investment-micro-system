@@ -48,6 +48,7 @@ without `--force`.
     python packages/book/power_model.py --config data/analysis/cases/power_grid/model_config.json \\
         --out data/analysis/cases/power_grid/Power_Grid_model.xlsx --recalc
     python packages/book/power_model.py --add-balance-sheet power_grid   # into the LIVE workbook, via Excel
+    python packages/book/power_model.py --add-projects power_grid        # the CEA project list, same route
     python packages/book/power_model.py --selftest
 
 openpyxl writes formulas without cached values; `--recalc` drives Excel over
@@ -278,6 +279,179 @@ def balance_sheet(wb, cfg: dict, qs: list[str], R: dict) -> dict:
 
 
 # --------------------------------------------------------------------------
+# the project list (PM, 2026-11-13)
+# --------------------------------------------------------------------------
+PJ_TITLE = "Projects (CEA monthly progress reports): a sanity check, nothing in the forecast reads it"
+PJ_COLS = (("Project (as the CEA names it)", None), ("Route", None), ("Status", None), ("Cost", "cr"),
+           ("Capitalised, est.", "cr"), ("Still to capitalise", "cr"), ("Original target", None),
+           ("Anticipated / actual", None), ("Delay, months", "cr"), ("Completion quarter", None),
+           ("Elements charged", None), ("Spillover", None), ("SPV", None), ("CEA list, serial", None))
+PJ_README = [
+    ("", ""),
+    ("Projects (on the Assets sheet, below the model)", "h"),
+    ("Every PGCIL project in the CEA's three monthly reports (TBCB under construction, TBCB completed, RTM under "
+     "construction): cost, original and anticipated completion, and how much is charged. 'Capitalised, est.' is an "
+     "ESTIMATE: cost x charged elements / all elements, each element weighted equally, because the CEA gives no "
+     "rupees. The block above the table sets the model's capitalisation against what the listed projects say will "
+     "finish each quarter, and the company's gross block and works in hand against the list. Nothing in the forecast "
+     "reads it. Refresh: power_projects.py --fetch, then power_model.py --add-projects power_grid --force.", ""),
+]
+
+
+def projects_data(cfg: dict, folder: pathlib.Path) -> dict | None:
+    """The project list for a build: inline (`projects_data`, the selftest's
+    fixture) or the file `projects_file` names beside the workbook. None when
+    the config asks for neither, so a config without one builds exactly as
+    before."""
+    if cfg.get("projects_data"):
+        return cfg["projects_data"]
+    f = cfg.get("projects_file")
+    if f and (folder / f).exists():
+        return json.loads((folder / f).read_text(encoding="utf-8"))
+    return None
+
+
+def _pj_order(ps: list[dict]) -> list[dict]:
+    """TBCB under construction by completion date, then RTM, then completed
+    projects newest first, then the SPVs divested to the InvIT."""
+    uc = lambda r: sorted([p for p in ps if p["route"] == r and p["list"] != "completed"],
+                          key=lambda p: (p.get("completion") or "9999", p["serial"]))
+    done = sorted([p for p in ps if p["list"] == "completed" and not p.get("divested")],
+                  key=lambda p: (p.get("completion") or "", p["serial"]), reverse=True)
+    return uc("TBCB") + uc("RTM") + done + [p for p in ps if p.get("divested")]
+
+
+def projects_block(ws, qs: list[str], data: dict, cfg: dict, start: int, cap_row: int) -> dict:
+    """Write the project list onto `ws` (the Assets sheet) from row `start`.
+    `cap_row` is the model's Capitalisation row on that sheet. Everything the
+    block computes is local to the block; no row above it, and no other sheet,
+    reads it."""
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import power_projects as pp
+    R = cfg.get("projects_reconcile") or {}
+    rows = _pj_order(data["projects"])
+    ncol = FIRST_COL + len(qs) - 1
+    last = col(len(qs) - 1)
+
+    def put(r, c, v, fmt=None, color=BLACK, bold=False, italic=False, size=None, fill=None):
+        cell = ws.cell(r, c, v)
+        cell.font = Font(name=FONT, color=color, bold=bold, italic=italic, size=size)
+        if fmt:
+            cell.number_format = FMT[fmt]
+        if fill is not None:
+            cell.fill = fill
+        return cell
+
+    def section(r, text):
+        put(r, 1, text, bold=True)
+        for c in range(1, ncol + 1):
+            ws.cell(r, c).fill = SEC
+
+    note = lambda r, text: put(r, 1, text, italic=True, size=8, color="595959")
+    r = start
+    section(r, PJ_TITLE)
+    files = ", ".join(data.get("files", {}).values())
+    note(r + 1, f"{data['source']}, {data['as_of']} ({files}). PGCIL only; the five SPVs divested to the InvIT are "
+                "listed last and left out of every total. Cost is the CEA's estimated cost. Rs crore.")
+    note(r + 2, "'Capitalised, est.' is an ESTIMATE: cost x charged elements / all elements, every element weighted "
+                "equally (the CEA gives no rupees). A charged element is not yet a capitalised one: it is booked at COD.")
+    # the table sits below the two summary blocks; its range is fixed first so the grid can point at it
+    g0 = r + 4
+    s0 = g0 + 7
+    s_rows = 17
+    h = s0 + s_rows + 2
+    t0, t1 = h + 1, h + len(rows)
+    rng = lambda L: f"${L}${t0}:${L}${t1}"
+
+    put(g0, 1, "By quarter", bold=True)
+    g1, g2, g3, g4 = g0 + 1, g0 + 2, g0 + 3, g0 + 4
+    est = data.get("capitalised_by_quarter_est") or {}
+    for c_, lab in ((g1, "Capitalisation, the model's row above"),
+                    (g2, "Listed projects: capitalisation estimated from charged elements, by charge quarter"),
+                    (g3, "Listed projects: still to capitalise, by anticipated completion quarter"),
+                    (g4, "Model less listed (actual quarters: less the estimate; forecasts: less still to capitalise)")):
+        put(c_, 1, lab, bold=c_ == g4)
+        put(c_, 2, "Rs cr", size=9, color="595959")
+    for i, q in enumerate(qs):
+        L = col(i)
+        put(g1, FIRST_COL + i, f"={L}{cap_row}", "cr")
+        if q in est:
+            put(g2, FIRST_COL + i, est[q], "cr", color=BLUE)
+        put(g3, FIRST_COL + i, f'=SUMIFS({rng("F")},{rng("J")},{L}$4)', "cr")
+        put(g4, FIRST_COL + i, f'=IF(Inputs!{L}$6="A",{L}{g1}-{L}{g2},{L}{g1}-{L}{g3})', "cr", color=GREEN, bold=True)
+
+    put(s0, 1, f"Against the asset base and the works in hand ({R.get('as_of', 'n/a')})", bold=True)
+    gc, gs = (R.get("gfa_consolidated") or {}), (R.get("gfa_standalone") or {})
+    wt, wr = ((R.get("works_in_hand") or {}).get(k) or {} for k in ("TBCB", "RTM"))
+    sumif = lambda val, crit_col, crit: f'=SUMIFS({rng(val)},{rng(crit_col)},"{crit}")'
+    yr = lambda row, fy, extra="": f'=SUMIFS($D${row}:${last}${row},FYrow,"{fy}"{extra})'
+    S = [("gfa_c", "Gross fixed assets, consolidated (incl. lease receivables)", gc.get("value"), gc.get("source")),
+         ("gfa_s", "Gross fixed assets, standalone", gs.get("value"), gs.get("source")),
+         ("tbcb_gb", "The TBCB part of the gross block: consolidated less standalone", "={gfa_c}-{gfa_s}", None),
+         ("done", "Completed TBCB projects still consolidated, CEA cost", sumif("D", "C", "completed"), None),
+         ("gap_in", "Gap: the TBCB gross block less the completed projects", "={tbcb_gb}-{done}", None),
+         ("part", "Part-commissioned TBCB projects, capitalised est. (charged; mostly not booked until COD)",
+          f'=SUMIFS({rng("E")},{rng("C")},"part commissioned",{rng("B")},"TBCB")', None),
+         ("wih_t", "Works in hand, TBCB (company, incl. CWIP)", wt.get("value"), wt.get("source")),
+         ("list_t", "Listed TBCB projects, still to capitalise", sumif("F", "B", "TBCB"), None),
+         ("left_t", "Leftover: TBCB works in hand not on the CEA's list", "={wih_t}-{list_t}", None),
+         ("wih_r", "Works in hand, RTM (company, incl. CWIP)", wr.get("value"), wr.get("source")),
+         ("list_r", "Listed RTM projects, still to capitalise", sumif("F", "B", "RTM"), None),
+         ("left_r", "Leftover: RTM works in hand not on the CEA's list (the CEA leaves out bay-only work)",
+          "={wih_r}-{list_r}", None),
+         ("h2_m", "FY27 still to come: the model's capitalisation", yr(g1, "FY27", ',Status,"F"'), None),
+         ("h2_l", "FY27 still to come: listed projects anticipated to complete", yr(g3, "FY27", ',Status,"F"'), None),
+         ("fy28_m", "FY28: the model's capitalisation", yr(g1, "FY28"), None),
+         ("fy28_l", "FY28: listed projects anticipated to complete", yr(g3, "FY28"), None),
+         ("spill", "Spillover: listed projects now due in a later fiscal year than first scheduled, still to capitalise",
+          f'=SUMIFS({rng("F")},{rng("L")},"?*")', None)]
+    assert len(S) == s_rows
+    at = {k: f"C{s0 + 1 + j}" for j, (k, *_) in enumerate(S)}
+    for j, (k, lab, v, src) in enumerate(S):
+        rr = s0 + 1 + j
+        put(rr, 1, lab, bold=k.startswith(("gap", "left", "spill")))
+        put(rr, 2, "Rs cr", size=9, color="595959")
+        if isinstance(v, str) and v.startswith("="):
+            put(rr, 3, v.format(**at), "cr", bold=k.startswith(("gap", "left", "spill")))
+        elif v is not None:
+            put(rr, 3, v, "cr", color=BLUE)
+        if src:
+            put(rr, 4, src, size=8, italic=True, color="595959")
+
+    for c, (lab, _) in enumerate(PJ_COLS, start=1):
+        cell = put(h, c, lab, bold=True, color="FFFFFF", fill=HEAD)
+        cell.alignment = Alignment(horizontal="center" if c > 1 else "left", wrap_text=True)
+    mon = lambda s: dt.date.fromisoformat(s).strftime("%b-%y") if s else None
+    for k, p in enumerate(rows):
+        rr = t0 + k
+        spill = None
+        if p["list"] != "completed" and p.get("target_original") and p.get("completion"):
+            fo = pp.quarter(dt.date.fromisoformat(p["target_original"]))[2:]
+            fa = pp.quarter(dt.date.fromisoformat(p["completion"]))[2:]
+            spill = f"{fo} to {fa}" if fa > fo else None
+        grey = "808080" if p.get("divested") else BLACK
+        put(rr, 1, p["name"], color=grey)
+        put(rr, 2, p["route"], color=grey)
+        put(rr, 3, p["status"], color=grey)
+        put(rr, 4, p["cost_cr"], "cr", color=BLUE)
+        put(rr, 5, p["capitalised_est_cr"], "cr", color=BLUE, italic=p["list"] != "completed")
+        put(rr, 6, f"=D{rr}-E{rr}", "cr")
+        put(rr, 7, mon(p.get("target_original")), color=grey)
+        put(rr, 8, mon(p.get("completion")), color=grey)
+        if p.get("delay_months") is not None:
+            put(rr, 9, p["delay_months"], "cr", color=BLUE)
+        put(rr, 10, p.get("completion_quarter"), color=grey)
+        put(rr, 11, f"{p['elements_charged']:g} / {p['elements_total']}", color=grey)
+        if spill:
+            put(rr, 12, spill, color="C00000", bold=True)
+        put(rr, 13, p.get("divested") and f"{p.get('spv') or ''} (divested: {p['divested']})".strip() or p.get("spv"),
+            size=9, color=grey)
+        put(rr, 14, f"{'TBCB' if p['route'] == 'TBCB' else 'RTM'} {p['list']} #{p['serial']}", size=9, color="595959")
+    return {"g1": g1, "g2": g2, "g3": g3, "g4": g4, "head": h, "t0": t0, "t1": t1,
+            "s": {k: s0 + 1 + j for j, (k, *_) in enumerate(S)}}
+
+
+# --------------------------------------------------------------------------
 # build
 # --------------------------------------------------------------------------
 def build(cfg: dict, out: pathlib.Path) -> dict:
@@ -308,8 +482,8 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     # ---------------------------------------------------------------- README
     rd = wb.create_sheet("README")
     rd.column_dimensions["A"].width = 120
-    for k, (txt, style) in enumerate(readme_lines(cfg, qs, n_act) + (BS_README if cfg.get("balance_sheet") else []),
-                                     start=1):
+    extra = (BS_README if cfg.get("balance_sheet") else []) + (PJ_README if projects_data(cfg, out.parent) else [])
+    for k, (txt, style) in enumerate(readme_lines(cfg, qs, n_act) + extra, start=1):
         c = rd.cell(k, 1, txt)
         c.font = Font(name=FONT, bold=style == "h", size=13 if style == "t" else 10,
                       color=BLUE if style == "blue" else BLACK)
@@ -455,6 +629,8 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
            fmt="x2")
     AS.row("Fiscal-year capitalisation to date", "Rs cr",
            lambda i, q, r: f"=SUMIFS({rng('Assets', r_cap)},FYrow,Inputs!{col(i)}$5,Inputs!$D$7:${last}$7,\"<=\"&Inputs!{col(i)}$7)")
+    pj_data = projects_data(cfg, out.parent)
+    pj_rows = projects_block(AS.ws, qs, pj_data, cfg, AS.r + 1, r_cap) if pj_data else None
 
     # ---------------------------------------------------------------- P&L
     PL = Sheet(wb, "P&L", qs, f"{cfg['company']} - consolidated P&L",
@@ -793,7 +969,7 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     wb.move_sheet("README", offset=-wb.index(wb["README"]))
     out.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out)
-    return {"quarters": N, "actual": n_act, "bs": bs_rows,
+    return {"quarters": N, "actual": n_act, "bs": bs_rows, "projects": pj_rows,
             "rows": {"pat": r_pat, "eps": r_eps, "rev": r_rev, "gb": r_gb, "cap": r_cap, "nd": r_nd, "yield": r_yield}}
 
 
@@ -943,6 +1119,127 @@ def add_balance_sheet(entity: str, force: bool = False, base: pathlib.Path | Non
     return 1 if bad else 0
 
 
+def bulk_ops(ws, sheet: str, r0: int, r1: int, ncol: int, clear_to: int | None = None) -> list[dict]:
+    """Rows r0..r1 of a scratch sheet as model_view 'values' and 'style' ops:
+    ONE rectangle of values (text carries a leading apostrophe, empty cells
+    clear), then the formatting as ranges, runs of equal style along a row
+    merged down across rows. A reset of the whole rectangle goes first, so
+    whatever was there before (a half-written block) cannot survive."""
+    end = max(r1, clear_to or r1)
+    last = get_column_letter(ncol)
+    rgb = lambda c: c.rgb[-6:] if c is not None and isinstance(c.rgb, str) else None
+    ops = [{"sheet": sheet, "cell": f"A{r0}:{last}{end}", "mode": "style", "font": FONT, "numfmt": "General",
+            "fcolor": _bgr(BLACK), "bold": False, "italic": False, "nofill": True, "wrap": False}]
+    vals = []
+    for r in range(r0, r1 + 1):
+        row = []
+        for c in range(1, ncol + 1):
+            v = ws.cell(r, c).value
+            row.append("'" + v if isinstance(v, str) and not v.startswith("=") else v)
+        vals.append(row)
+    ops.append({"sheet": sheet, "cell": f"A{r0}", "mode": "values", "value": vals})
+    if end > r1:
+        ops.append({"sheet": sheet, "cell": f"A{r1 + 1}", "mode": "values", "value": [[None] * ncol] * (end - r1)})
+    runs: dict[tuple, list[int]] = {}
+    for r in range(r0, r1 + 1):
+        c = 1
+        while c <= ncol:
+            cell = ws.cell(r, c)
+            solid = cell.fill is not None and cell.fill.fill_type == "solid"
+            if cell.value is None and not solid:
+                c += 1
+                continue
+            sig = (cell.font.name or FONT, None if cell.number_format == "General" else cell.number_format,
+                   _bgr(rgb(cell.font.color) or BLACK), bool(cell.font.b), bool(cell.font.i), cell.font.sz,
+                   _bgr(rgb(cell.fill.fgColor)) if solid else None, bool(cell.alignment.wrap_text),
+                   cell.alignment.horizontal == "center")
+            c1 = c
+            while c1 + 1 <= ncol:
+                nx = ws.cell(r, c1 + 1)
+                nsolid = nx.fill is not None and nx.fill.fill_type == "solid"
+                nsig = (nx.font.name or FONT, None if nx.number_format == "General" else nx.number_format,
+                        _bgr(rgb(nx.font.color) or BLACK), bool(nx.font.b), bool(nx.font.i), nx.font.sz,
+                        _bgr(rgb(nx.fill.fgColor)) if nsolid else None, bool(nx.alignment.wrap_text),
+                        nx.alignment.horizontal == "center")
+                if (nx.value is None and not nsolid) or nsig != sig:
+                    break
+                c1 += 1
+            runs.setdefault((c, c1, sig), []).append(r)
+            c = c1 + 1
+    for (c0, c1, sig), rs in runs.items():
+        font, numfmt, fcolor, bold, italic, size, fill, wrap, center = sig
+        a = rs[0]
+        for k, r in enumerate(rs + [None]):
+            if r is not None and (k == 0 or r == rs[k - 1] + 1):
+                continue
+            b = rs[k - 1]
+            ops.append({"sheet": sheet, "cell": f"{get_column_letter(c0)}{a}:{get_column_letter(c1)}{b}",
+                        "mode": "style", "font": font, "numfmt": numfmt, "fcolor": fcolor, "bold": bold,
+                        "italic": italic, "size": size, "fill": fill, "wrap": wrap or None, "center": center})
+            a = r
+    return ops
+
+
+def add_projects(entity: str, force: bool = False, base: pathlib.Path | None = None) -> int:
+    """Write the project block under the Assets sheet's model rows of an
+    EXISTING workbook, through Excel (the Balance sheet's route: the PM's
+    yellow cells survive and an open window takes the edit). It reads
+    projects.json and the `projects_reconcile` block beside the workbook.
+    --force rewrites a block already there: its cells are cleared first."""
+    import model_view
+    base = base or model_view.CASES
+    p = model_view.path_for(entity, base)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    cfg = json.loads((p.parent / "model_config.json").read_text(encoding="utf-8"))
+    data = projects_data({**cfg, "projects_file": cfg.get("projects_file") or "projects.json"}, p.parent)
+    if not data:
+        raise SystemExit(f"no projects.json beside {p.name}; run power_projects.py --fetch first")
+    live = load_workbook(p)
+    inp, qs = live["Inputs"], []
+    while inp.cell(4, FIRST_COL + len(qs)).value:
+        qs.append(inp.cell(4, FIRST_COL + len(qs)).value)
+    if qs != quarters(cfg["first_quarter"], cfg["last_quarter"]):
+        raise SystemExit("the workbook's quarters are not the config's; refusing to line the block up by guess")
+    ws = live["Assets"]
+    labels = {r: str(ws.cell(r, 1).value or "").strip() for r in range(1, ws.max_row + 1)}
+    cap = [r for r, v in labels.items() if v == "Capitalisation"]
+    if len(cap) != 1:
+        raise SystemExit(f"Assets: {len(cap)} rows labelled 'Capitalisation'; refusing to link the block by guess")
+    have = [r for r, v in labels.items() if v == PJ_TITLE]
+    if have and not force:
+        raise SystemExit(f"the project block is already on Assets (row {have[0]}); --force rewrites it")
+    start = have[0] if have else max(r for r, v in labels.items() if v) + 2
+    scratch = Workbook()
+    sws = scratch.active
+    sws.title = "Assets"
+    rows = projects_block(sws, qs, data, cfg, start, cap[0])
+    ops = bulk_ops(sws, "Assets", start, rows["t1"], max(FIRST_COL + len(qs) - 1, len(PJ_COLS)),
+                   clear_to=ws.max_row if have else None)
+    rd = live["README"]
+    if not any(rd.cell(r, 1).value == PJ_README[1][0] for r in range(1, rd.max_row + 1)):
+        for k, (txt, style) in enumerate(PJ_README):
+            if txt:
+                ops.append({"sheet": "README", "cell": f"A{rd.max_row + 1 + k}", "mode": "set", "value": "'" + txt,
+                            "font": FONT, "fcolor": _bgr(BLACK), "bold": style == "h", "italic": False, "size": 10,
+                            "wrap": True})
+    res = model_view.excel(entity, ops, base)
+    print(f"{p.name}: project block written on Assets from row {start}, {len(data['projects'])} projects, "
+          f"{len(ops)} operations" + (" (into the open window)" if res.get("attached") else ""))
+    for n in res.get("notes") or []:
+        print(f"  NOTE {n}")
+    vals = load_workbook(p, data_only=True)["Assets"]
+    for k, rr in rows["s"].items():
+        v = vals.cell(rr, 3).value
+        print(f"  {vals.cell(rr, 1).value[:96]:<96} {v:>10,.0f}" if isinstance(v, (int, float)) else f"  {k}: {v!r}")
+    for key in ("g1", "g2", "g3", "g4"):
+        cells = [vals.cell(rows[key], FIRST_COL + i).value for i in range(len(qs))]
+        print(f"  {key} " + " ".join(f"{v:>7,.0f}" if isinstance(v, (int, float)) else f"{'':>7}" for v in cells))
+    bad = errors(p)
+    print(f"  {len(bad)} error cells" + "".join(f"\n    {b}" for b in bad[:10]))
+    return 1 if bad else 0
+
+
 # --------------------------------------------------------------------------
 # selftest
 # --------------------------------------------------------------------------
@@ -1035,6 +1332,39 @@ def selftest() -> int:
         old_out = pathlib.Path(d) / "Old_model.xlsx"
         build(old, old_out)
         chk("a config with no balance sheet builds none", BS_SHEET in load_workbook(old_out).sheetnames, False)
+        # the project block: built from fixture rows shaped like the CEA's reports
+        import power_projects as pp
+        uc = [["1", "Scheme A (SPV: POWERGRID Alpha Transmission Ltd)", "PGCIL", "", "", "1,000", "Dec-23", "Dec-25",
+               "Oct - 26"] + [""] * 8,
+              ["", "Alpha 765 kV D/c line", "PGCIL", "200", "", "", "", "", "Jul - 26"] + [""] * 7
+              + ["Tx. Line charged on 30.07.2026"],
+              ["", "2x1500 MVA Alpha PS", "PGCIL", "", "3000", "", "", "", "Oct - 26"] + [""] * 7 + ["Under progress"]]
+        dn = [["2", "Scheme C", "PGCIL", "", "", "300", "", "", "Jan-2025", "Mar - 25"],
+              ["", "C line", "PGCIL", "100", "", "", "", "", "", "Mar - 25"],
+              ["3", "Strengthening in SR", "PGCIL", "", "", "1,180", "", "", "Aug-2016", "Sep - 16"],
+              ["", "Srikakulam PP - Vemagiri-II 765kV D/c line", "PGCIL", "1,336", "", "", "", "", "", "Sep - 16"]]
+        ps = [pp.finish(x) for x in pp.parse_uc(uc, "TBCB", "2026-09") + pp.parse_done(dn, "2026-09")]
+        pdata = {"as_of": "2026-09", "source": "fixture", "files": {}, "projects": ps,
+                 "capitalised_by_quarter_est": pp.capitalised_by_quarter(ps)}
+        fxp = {**json.loads(json.dumps(fx)), "projects_data": pdata,
+               "projects_reconcile": {"as_of": "fixture", "gfa_consolidated": {"value": 2000},
+                                      "gfa_standalone": {"value": 1500}, "works_in_hand": {"TBCB": {"value": 900}}}}
+        pj_out = pathlib.Path(d) / "Projects_model.xlsx"
+        pinfo = build(fxp, pj_out)
+        pwb, pr = load_workbook(pj_out), pinfo["projects"]
+        chk("one table row per project, divested last", (pr["t1"] - pr["t0"] + 1,
+            pwb["Assets"].cell(pr["t1"], 3).value), (3, "completed, divested to InvIT"))
+        chk("the quarter grid sums the table by completion quarter",
+            pwb["Assets"].cell(pr["g3"], FIRST_COL).value,
+            f'=SUMIFS($F${pr["t0"]}:$F${pr["t1"]},$J${pr["t0"]}:$J${pr["t1"]},D$4)')
+        # "nothing in the forecast reads it": every formula outside the block is
+        # the same with and without it
+        f_of = lambda w: {(s.title, c.coordinate): c.value for s in w for row in s.iter_rows() for c in row
+                          if isinstance(c.value, str) and c.value.startswith("=")
+                          and not (s.title == "Assets" and c.row >= pr["g1"] - 5)}
+        base_f = f_of(wb)
+        chk("nothing outside the block changes when it is added", f_of(pwb) == base_f, True)
+        chk("a config with no project list builds no block", info["projects"], None)
         import model_view
         labels = {wb["Valuation"].cell(r, 1).value for r in range(1, 40)}
         chk("Valuation labels model_view reads", all(model_view.VAL_LABELS[k] in labels for k in ("tp", "year", "basis", "pe_typed", "eps")), True)
@@ -1081,6 +1411,15 @@ def selftest() -> int:
             chk("the five differences rebuild the gap",
                 [round(vb.cell(b["reconcile"], c).value, 6) for c in (3, FIRST_COL + 1)], [0, 0])
             chk("opening net block is the reported fixed assets", vb.cell(b["net_block"], 3).value, 172320)
+            recalc(pj_out.resolve())
+            pa = load_workbook(pj_out, data_only=True)["Assets"]
+            chk("still to capitalise lands in its completion quarter (Q3FY27)",
+                [pa.cell(pr["g3"], FIRST_COL + i).value for i in range(8)], [0, 0, 0, 0, 0, 0, 500, 0])
+            sv = {k: pa.cell(r_, 3).value for k, r_ in pr["s"].items()}
+            chk("the TBCB block less completed projects (divested left out)", sv["gap_in"], 200)
+            chk("works-in-hand leftover", sv["left_t"], 400)
+            chk("a project first due in FY26, now FY27, is spillover", sv["spill"], 500)
+            chk("no error cells with the block", errors(pj_out)[:3], [])
         except Exception as ex:                                                     # noqa: BLE001
             print(f"  skip  Excel recalculation not available here: {str(ex)[:80]}")
     print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
@@ -1096,12 +1435,16 @@ def main() -> int:
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--add-balance-sheet", metavar="ENTITY",
                     help="write the Balance sheet into an existing workbook, via Excel (keeps every other cell)")
+    ap.add_argument("--add-projects", metavar="ENTITY",
+                    help="write the CEA project block under the Assets sheet's model rows, via Excel")
     ap.add_argument("--cases", type=pathlib.Path, help="another cases folder (a scratch copy, for testing)")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     if a.add_balance_sheet:
         return add_balance_sheet(a.add_balance_sheet, a.force, a.cases)
+    if a.add_projects:
+        return add_projects(a.add_projects, a.force, a.cases)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:

@@ -380,8 +380,50 @@ if ($wb -eq $null) {
   $wb = $xl.Workbooks.Open($path)
 }
 $out = @(); $notes = @()
+# A bulk write ('values' / 'style' ops, power_model --add-projects) pauses
+# recalculation and screen updates for the batch. Written cell by cell, ~2,000
+# formatted cells into the PM's open window ran past the 240s limit with every
+# set recalculating the workbook (2026-11-13), leaving the block half written
+# and unsaved. Ordinary edits keep Excel's settings exactly as they were.
+$bulk = @($ops | Where-Object { $_.mode -eq 'values' -or $_.mode -eq 'style' }).Count -gt 0
+$calc = $null
+if ($bulk) { $calc = $xl.Calculation; $xl.ScreenUpdating = $false; $xl.Calculation = -4135 }
 try {
   foreach ($op in $ops) {
+    # 'values' writes a rectangle in ONE call: value is a list of rows, each a
+    # list of cells (a number, a formula, text with a leading apostrophe, or
+    # null to clear). 'style' formats a range ('D60:F140') in one call per
+    # property. Neither is echoed back cell by cell.
+    if ($op.mode -eq 'values') {
+      $nr = @($op.value).Count; $nc = @($op.value[0]).Count
+      $arr = New-Object 'object[,]' $nr, $nc
+      for ($i = 0; $i -lt $nr; $i++) {
+        $row = @($op.value[$i])
+        for ($j = 0; $j -lt $nc; $j++) {
+          $v = $row[$j]
+          if ($v -eq $null) { $arr[$i, $j] = $null }
+          elseif ($v -is [string]) { $arr[$i, $j] = $v }
+          else { $arr[$i, $j] = [double]$v }
+        }
+      }
+      $rng = $wb.Worksheets.Item($op.sheet).Range($op.cell).Resize($nr, $nc)
+      $rng.Formula = $arr
+      continue
+    }
+    if ($op.mode -eq 'style') {
+      $rng = $wb.Worksheets.Item($op.sheet).Range($op.cell)
+      if ($op.font) { $rng.Font.Name = [string]$op.font }
+      if ($op.numfmt) { $rng.NumberFormat = [string]$op.numfmt }
+      if ($op.fcolor -ne $null) { $rng.Font.Color = [int]$op.fcolor }
+      if ($op.bold -ne $null) { $rng.Font.Bold = [bool]$op.bold }
+      if ($op.italic -ne $null) { $rng.Font.Italic = [bool]$op.italic }
+      if ($op.size -ne $null) { $rng.Font.Size = [double]$op.size }
+      if ($op.fill -ne $null) { $rng.Interior.Color = [int]$op.fill }
+      if ($op.nofill) { $rng.Interior.ColorIndex = -4142 }
+      if ($op.wrap -ne $null) { $rng.WrapText = [bool]$op.wrap }
+      if ($op.center) { $rng.HorizontalAlignment = -4108 }
+      continue
+    }
     # 'addsheet' makes a NEW worksheet after the one named in value (power_model
     # --add-balance-sheet). Add() activates the new sheet, so the sheet the PM
     # was looking at is put back. An existing sheet is left alone unless the op
@@ -456,10 +498,12 @@ try {
   # .Count, and the save was skipped - the first edit read back "1,000" and
   # was then discarded by Close($false), with nothing raising (2026-11-02).
   if (@($ops | Where-Object { $_.mode -ne 'get' }).Count -gt 0) {
+    if ($bulk) { $xl.Calculation = $calc; $xl.ScreenUpdating = $true; $calc = $null }
     $xl.Calculate(); $wb.Save()
     foreach ($o in $out) { if ($o.cell) { $o.value = $wb.Worksheets.Item($o.sheet).Range($o.cell).Text } }
   }
 } finally {
+  if ($bulk -and $calc -ne $null) { $xl.Calculation = $calc; $xl.ScreenUpdating = $true }
   if (-not $attached) { $wb.Close($false); $xl.Quit() }
 }
 [pscustomobject]@{ attached = $attached; cells = $out; notes = @($notes) } | ConvertTo-Json -Depth 4 -Compress
