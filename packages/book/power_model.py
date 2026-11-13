@@ -577,12 +577,22 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     inp.section("Quarter shapes: share of a year's plan in each quarter, and of the year's dividend")
     wcap, wcpx, dsp = P["weights_capitalisation"]["value"], P["weights_capex"]["value"], C["div_split"]["value"]
     qn = lambda q: int(q[1]) - 1
+    # The sources are written IN FULL on note lines beneath the block, not in column C. They used to be
+    # cut to 60 characters into C, where the quarter values in D clip them anyway, so the sheet read
+    # "...of the year's capitalisation by" and stopped (PM, 2026-11-13: "the description is incomplete").
+    shape_src = [("Capitalisation weight", P["weights_capitalisation"]["source"]),
+                 ("Capex weight", P["weights_capex"]["source"]),
+                 ("Dividend timing", C["div_split"]["source"])]
     r_wcap = inp.row("Capitalisation weight by quarter", "share", {q: wcap[qn(q)] for q in qs}, fmt="pct",
-                     note=P["weights_capitalisation"]["source"][:60], fill=lambda i, q: True)
+                     note="note below", fill=lambda i, q: True)
     r_wcpx = inp.row("Capex weight by quarter", "share", {q: wcpx[qn(q)] for q in qs}, fmt="pct",
-                     note=P["weights_capex"]["source"][:60], fill=lambda i, q: True)
+                     note="note below", fill=lambda i, q: True)
     r_dsp = inp.row("Dividend timing: share of the previous FY's payout paid", "share", {q: dsp[qn(q)] for q in qs},
-                    fmt="pct", note=C["div_split"]["source"][:60], fill=lambda i, q: True)
+                    fmt="pct", note="note below", fill=lambda i, q: True)
+    inp.r += 1
+    for lab, src in shape_src:
+        inp.ws.cell(inp.r, 1, f"{lab}: {src}").font = Font(name=FONT, size=8, italic=True, color="595959")
+        inp.r += 1
 
     # ---------------------------------------------------------------- Assets
     cs = cfg["consolidated"]
