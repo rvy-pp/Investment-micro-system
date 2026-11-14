@@ -1,0 +1,92 @@
+{
+ "date": "2026-11-14",
+ "session": false,
+ "generated_at": "2026-11-14T08:08:04",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {
+  "during": [
+   "Ashok Leyland"
+  ],
+  "post": [
+   "Kaynes Technology"
+  ]
+ },
+ "rows": [
+  {
+   "symbol": "ASHOKLEY",
+   "date": "2026-11-14",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the Unaudited Financial results of the Company for the period ended September 30, 2026",
+   "entity": "ext:ASHOKLEY",
+   "name": "Ashok Leyland",
+   "sector": "extended",
+   "when": "during",
+   "history": [
+    {
+     "date": "2026-08-14",
+     "time": "13:08",
+     "when": "during"
+    },
+    {
+     "date": "2026-02-11",
+     "time": "13:45",
+     "when": "during"
+    },
+    {
+     "date": "2025-11-12",
+     "time": "14:03",
+     "when": "during"
+    }
+   ],
+   "counts": {
+    "during": 3
+   },
+   "filed_at": null
+  },
+  {
+   "symbol": "KAYNES",
+   "date": "2026-11-14",
+   "purpose": "Financial Results",
+   "desc": "To consider and approve the financial results for the period ended September 30, 2026",
+   "entity": "kaynes",
+   "name": "Kaynes Technology",
+   "sector": "ems",
+   "when": "post",
+   "history": [
+    {
+     "date": "2026-08-07",
+     "time": "18:43",
+     "when": "post"
+    },
+    {
+     "date": "2026-05-13",
+     "time": "17:24",
+     "when": "post"
+    },
+    {
+     "date": "2026-02-05",
+     "time": "19:20",
+     "when": "post"
+    },
+    {
+     "date": "2025-11-04",
+     "time": "21:16",
+     "when": "post"
+    }
+   ],
+   "counts": {
+    "post": 4
+   },
+   "filed_at": null
+  }
+ ],
+ "next": {
+  "date": "2026-11-16",
+  "groups": {},
+  "rows": []
+ },
+ "ahead": [],
+ "errors": [],
+ "n_extended": 46
+}

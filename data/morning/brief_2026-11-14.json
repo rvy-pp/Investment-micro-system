@@ -1,0 +1,389 @@
+{
+ "date": "2026-11-14",
+ "generated_at": "2026-11-14T08:12:17+05:30",
+ "mail": {
+  "window": "24h to 08:15 IST",
+  "n_scanned": 113,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Nuvama upgrades Hindalco to BUY with TP INR1,184 (from 1,108), lifting FY27E/28E EBITDA 4-5% on higher copper profits.",
+      "source": "Nuvama - Q2FY27 Results : List of Upgrades/Downgrades as well as significant estimate changes by Nuvama Research",
+      "received": "21:57",
+      "detail": {
+       "summary": "Nuvama's post-Q2FY27 tracker upgrades Hindalco to BUY on stronger copper earnings flowing into estimates. The stock is valued at 5.6x FY28E EV/EBITDA on the new target.",
+       "points": [
+        "TP INR1,184 vs INR1,108 earlier",
+        "FY27E/28E EBITDA raised 4-5%",
+        "Driver: higher copper profits",
+        "Trades at 5.6x FY28E EV/EBITDA",
+        "Rating upgraded to BUY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Nuvama upgrades Tata Steel to BUY, TP INR219 (from 209); FY27E/28E EBITDA +2%/+9% on higher prices and iron ore sale.",
+      "source": "Nuvama - Q2FY27 Results : List of Upgrades/Downgrades as well as significant estimate changes by Nuvama Research",
+      "received": "21:57",
+      "detail": {
+       "summary": "Nuvama's post-Q2FY27 tracker raises Tata Steel estimates on higher steel prices and an iron ore sale, and upgrades the rating to BUY. The same note upgrades JSW Steel and SAIL to HOLD on higher steel prices.",
+       "points": [
+        "Tata Steel TP INR219 vs INR209",
+        "FY27E/28E EBITDA +2%/+9%",
+        "Trades at 5.7x FY28E EV/EBITDA",
+        "JSW Steel TP INR1,352, EBITDA +14%/+11%, to HOLD",
+        "SAIL TP INR182 (from 150), EBITDA ~+8%, to HOLD"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley: HRC steady at Rs63.5K/t, 7% above import parity; met coal US$261/t, +21% since end-July; steel stocks +12% YTD.",
+      "source": "Morgan Stanley - PULSE: India Materials: India Steel Tracker",
+      "received": "15:57",
+      "detail": {
+       "summary": "MS sees limited near-term upside to domestic steel prices at a 7% premium to import parity, but spreads supported by the safeguard duty in a seasonally strong demand period. Key risks are China met coal supply and China's steel balance.",
+       "points": [
+        "HRC Rs63.5K/t, +10% since end-July",
+        "Rebar Rs49.6K/t, +13% since end-July",
+        "China CFR iron ore ~US$91/t, -3% WoW",
+        "Spreads up ~46% since mid-December lows",
+        "Industry View In-Line"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "IIFL calls 2Q the cement earnings trough: EBITDA/t down 20% qoq to Rs853; picks UltraTech and Dalmia, with another Rs5-10/bag hike needed.",
+      "source": "IIFL - Cement 2QFY27 Review - Weak 2Q, but the worst may be behind",
+      "received": "18:43",
+      "detail": {
+       "summary": "IIFL sees price, cost and volume all improving after a weak but in-line 2Q. October hikes largely offset the fuel spike, and festive-season volumes and a possible Middle East de-escalation help. Capacity additions and fuel remain the key risks.",
+       "points": [
+        "EBITDA/t Rs853, -Rs200 qoq (-20%), -10% yoy",
+        "Price +Rs10-15/bag in Oct; further hike possible mid-Nov",
+        "Petcoke at US$185/t; Rs5-10/bag more needed for ~Rs1,050/t",
+        "Picks: UltraTech, JK Cement (execution); Dalmia, JK Lakshmi (valuation)",
+        "Ambuja back to 155mt capacity target; guides mid-single-digit volume growth"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley: Grasim (UltraTech parent) standalone EBITDA Rs4.9bn vs MSe Rs6.6bn and consensus Rs8.0bn; Overweight, TP Rs4,000; paints losses Rs2.7-2.9bn.",
+      "source": "Morgan Stanley - PULSE: Grasim Industries Ltd: Big EBITDA miss across core businesses; weak paints revenues",
+      "received": "18:51",
+      "detail": {
+       "summary": "Grasim missed across cellulose, chemicals and paints on higher costs and weak paints revenue, though adj. PAT beat. MS says its thesis is unchanged and expects a modest downward revision to 12-month consensus EPS. Con call at 4pm IST.",
+       "points": [
+        "Standalone EBITDA Rs4.9bn vs MSe Rs6.6bn, consensus Rs8.0bn",
+        "Adj. PAT Rs31.3bn vs MSe Rs29.6bn",
+        "Paints revenue ~Rs13.4bn (+35% yoy); implied EBITDA loss Rs2.7-2.9bn",
+        "Cellulose EBITDA Rs5.2bn vs MSe Rs6.2bn; chemicals Rs3.3bn vs Rs3.7bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Elara cuts NMDC TP to Rs91 from Rs97 but upgrades to Buy (28% upside); Q2 EBITDA Rs19.4bn missed Rs21.4bn estimate.",
+      "source": "Elara - Ferrous Metals - NMDC - Higher cost dents margin - Q2FY27 Update - Buy - TP: INR 91",
+      "received": "20:28",
+      "detail": {
+       "summary": "A 27-day rail disruption from a Chhattisgarh landslide cut volumes and lifted costs. Elara expects H2FY27 recovery as volumes ramp and sees room for a price hike. It trims EBITDA estimates and rolls forward to Sept 2028E at an unchanged 5x EV/EBITDA.",
+       "points": [
+        "TP Rs91 vs Rs97; rating Buy from Accumulate; CMP Rs71",
+        "EBITDA Rs19.4bn, -21% qoq vs Elara Rs21.4bn, consensus Rs20.0bn",
+        "Volume 10.5mn t (-11% qoq); EBITDA/t Rs1,853 vs est Rs1,924",
+        "FY27/FY28 EBITDA cut ~5% each, FY29 ~2%",
+        "Lump price +~Rs150/t in Sept after Rs200 Aug cut"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak first take: NMDC 2Q EBITDA Rs21.6bn, 2.2% below estimates, EBITDA/t Rs2,060; ECL provisions Rs4.7bn on RINL and Rs1.8bn on NSL receivables.",
+      "source": "Kotak - [Kotak] NMDC 2QFY27 First take - Miss on higher costs",
+      "received": "12:30",
+      "detail": {
+       "summary": "Kotak calls it a miss on higher costs, partly pellet-sales distortion at negligible margin. Receivables from RINL and NSL keep rising and some are funded via recourse bill discounting. ADD rating kept; estimates and fair value to be reviewed after the call.",
+       "points": [
+        "EBITDA Rs21.6bn vs Rs22.1bn est; EBITDA/t Rs2,060 (-12% qoq)",
+        "Sales 10.5mn t (-10.6% qoq); production 12.2mn t (-20% qoq)",
+        "RINL/NSL receivables Rs55.6bn/Rs45.8bn vs Rs47.1bn/Rs45.0bn in 1Q",
+        "Karnataka levy contingent liability Rs161.9bn; Nagarnar pellet plant started Sept 27"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "CLSA keeps O-PF on Amber but cuts TP to Rs7,750 from Rs8,100; 2Q adj EBITDA Rs1.12bn missed, FY27 EPS cut 26%.",
+      "source": "CLSA - Amber (AMBER IN): Margins miss",
+      "received": "22:18",
+      "detail": {
+       "summary": "2Q margins missed on durables and mobility; durables margin was 0.3% on commodity-cost lag, new Sri City underutilisation, wages and FX. FY27 RAC growth guided 20-22% with 50-100bps margin compression, while mobility growth guidance was cut. Execution and margin recovery are key to a rerating.",
+       "points": [
+        "Adj EBITDA Rs1.12bn, +23% YoY, -66% QoQ",
+        "Durables revenue +41% YoY, margin 0.3% (-346bps)",
+        "FY27-29 EPS cut 6-26%; TP Rs7,750 (was Rs8,100)",
+        "Mobility growth guide 15-20% vs 30-35% before",
+        "Capex guided Rs18-20bn in FY27/28"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays Neutral on Kaynes, TP Rs3,150; Vishay's $56.4mn for 49% of OSAT implies $115mn, below JPM's $210mn SOTP value.",
+      "source": "JPM - Kaynes Technology: Stake sale in OSAT entity is a better way to raise funds but dilution seems higher and valuation lower",
+      "received": "08:29",
+      "detail": {
+       "summary": "Binding term sheet with Vishay for 49% of Kaynes Semicon. JPM sees a stake sale as better than a QIP but finds the dilution high and the valuation low. Rationale likely funding OSAT capex and Vishay revenue commitments; working capital stays a concern.",
+       "points": [
+        "Vishay invests $56.4mn for 49% of OSAT unit",
+        "Implied OSAT value $115mn vs JPM $210mn",
+        "OSAT capex Rs32bn, Rs7bn done so far",
+        "Price Rs3,484 vs TP Rs3,150 (Sep-27)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays Underweight on Avalon but lifts TP to Rs1,700 from Rs1,650; FY27 revenue guide raised to 30% growth from 26-30%.",
+      "source": "JPM - Avalon Technologies: Revenue guidance upgraded as expected; capex to be higher (+4 more in Outlook)",
+      "received": "21:23",
+      "detail": {
+       "summary": "Guidance upgrade followed 1H growth of 44% and was in line with JPM's expectation. Working capital, debt and capex rose, with higher capex guided for the next couple of years. JPM raises FY27 margins but cuts FY28-29 earnings on lower other income.",
+       "points": [
+        "FY27 revenue guide 30% vs 26-30%; JPM models 35%",
+        "NWC days guided 120-130 vs 112 in FY26",
+        "Order book +27% YoY",
+        "Semicap expected ~10% of revenue in 12 months",
+        "TP Rs1,700 on 42x Sep-28E P/E"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "JPM prefers NTPC (1.1x FY28E BVPS) and Power Grid (2x) as regulated utilities after six months of underperformance despite 9.7% FYTD demand growth.",
+      "source": "JPM - Indian Electric Utilities & IPPs: Power Paradox: Strong Demand, Weak Stocks - Value Emerging in the Disconnect",
+      "received": "19:07",
+      "detail": {
+       "summary": "Power stocks lagged despite strong demand because merchant-price upside helps few large caps, renewables face curtailment and execution delays, and the next demand peak is after March 2027. JPM sees regulated utilities as reasonably valued.",
+       "points": [
+        "FYTD Sep energy demand +9.7% y/y, peak +11.6%",
+        "12-month average demand growth 5.7% y/y",
+        "Coal stock at plants 8 days vs 13.2 average",
+        "BESS pipeline 63 GW / 198 GWh; operational 5,318 MW",
+        "Merchant prices capped at Rs10/kWh on IEX in evening hours"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: power generation up 12.7% y/y to 59.2BU in first 12 days of Nov; DAM price +29% to Rs3.9/unit.",
+      "source": "Elara - Power Generation increased 12.7% YoY to 59.2BU during the first 12 days of Nov'26",
+      "received": "13:34",
+      "detail": {
+       "summary": "November generation is running well above last year's weak base, led by coal and renewables, while hydro and gas fell. Exchange prices rose with DAM volume down and RTM volume up.",
+       "points": [
+        "YTD FY27 generation +11.6% y/y to 1,292BU",
+        "Coal generation +15.5% y/y; RES +33.4%; hydro -33.7%",
+        "Peak demand 215.2GW on 12 Nov; high 228.2GW on 6 Nov",
+        "DAM volume -21% to 1,779MU; RTM +32% to 2,195MU",
+        "RTM average price +25% to Rs3.6/unit"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "BofA hosts India IT CY27 outlook calls: NASSCOM 20-Nov, BCG 23-Nov, McKinsey 24-Nov, BofA CTO team 25-Nov.",
+      "source": "BofA - Rajvaibhav, India IT: Year Ahead Call Series with BofA CTO team / NASSCOM / BCG / McKinsey",
+      "received": "08:31",
+      "detail": {
+       "summary": "The series tests the CY27 sector outlook from client, industry and consultant angles, including AI budgets, GCC-provider dynamics and BCG's view that service integrators struggle to capture the applied-AI opportunity.",
+       "points": [
+        "NASSCOM Fri 20-Nov, 12:00 IST",
+        "BCG Mon 23-Nov, 11:30 IST",
+        "McKinsey Tue 24-Nov, 13:30 IST",
+        "BofA CTO team Wed 25-Nov, 13:30 IST",
+        "BCG cites $100-200B applied-AI opportunity"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA circulates a 120-page India AI landscape Blue Top covering the AI stack; most players are unlisted, with deep dives on Neysa, Sarvam and Emergent.",
+      "source": "CLSA - Blue Top: India AI Landscape | Banks: Inflection Delivered | MGFL U/G | SPCX New Internet",
+      "received": "18:25",
+      "detail": {
+       "summary": "The report maps which companies are doing what across the Indian AI stack. Listed exposure is limited for now.",
+       "points": [
+        "120-page report, resent",
+        "Deep dives: Neysa (hyperscaler), Sarvam (LLM), Emergent (vibe coding)",
+        "Most companies covered are unlisted"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Kotak: October CPI breached 6% at 6.1% yoy; it now pencils in 25bps repo hikes in both December and February.",
+      "source": "Kotak - CPI - Breaching ; Molbio - Initiate BUY FV RS 1700; PAGE - Another Q, Another Miss ; HAL - Eyes on Margins ; IPM - What base? ; Pharma 2Q",
+      "received": "09:11",
+      "detail": {
+       "summary": "Inflation hit a two-year high on GST-related base effects, with food and core both accelerating. Kotak expects CPI above 6% for three more quarters and sees upside risk to its 50bps of hikes if food shocks persist.",
+       "points": [
+        "Oct CPI 6.1% yoy vs Kotak 6.2%, Sept 5.5%",
+        "Food inflation 8.9% yoy; core 4.5% vs 4.3%",
+        "FY27/FY28E CPI revised to 5.3% / 5%",
+        "25bps hikes pencilled for Dec and Feb",
+        "Over 6% average expected for next three quarters"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: India saw record US$5.6bn weekly foreign net buying to 12 Nov; adds Mahindra & Mahindra to Focus List, TP Rs4,650.",
+      "source": "CLSA - Global Equity Strategy: TGIF - week #45",
+      "received": "19:02",
+      "detail": {
+       "summary": "CLSA argues India is returning to the limelight after 26 months of underperformance as the AI trade overshadowed it. It ties the outlook to a more stable rupee and a resumption of dollar EPS growth.",
+       "points": [
+        "US$5.6bn weekly India foreign net buying, a record",
+        "Taiwan -US$6.6bn, Korea -US$1.5bn foreign net selling",
+        "India upgraded to 1.1x MSCI last week",
+        "18% USD upside on CLSA macro model",
+        "M&M added to Focus List, TP Rs4,650"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS Evidence Lab: crude and product flows out of the Gulf of Oman fell to the lowest since early September.",
+      "source": "UBS - Crude, product flows out of Gulf of Oman at lowest level since early September (+9 more in Outlook)",
+      "received": "02:35",
+      "detail": {
+       "summary": "UBS's daily maritime monitor tracks traffic into and out of the Gulf of Oman to catch vessels going dark near Hormuz. The 13 Nov print shows oil and product flows at a two-month low, with the featured note being the Hormuz tracker for days 255-258.",
+       "points": [
+        "7-day average oil and product flows lowest since early September",
+        "Featured note: Hormuz tracker, days 255-258, 13 Nov",
+        "LNG flows also tracked; AIS data may undercount vessels"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Avendus Spark INDX 2026, 16-18 Nov at Grand Hyatt Mumbai: Pinpoint schedule updated; Persistent CEO Sandeep Kalra speaks on enterprise AI (date TBC).",
+      "source": "Avendus Spark - UPDATED SCHEDULE Pinpoint : Avendus Spark Conference | 16-18 Nov, Grand Hyatt, Mumbai",
+      "received": "14:02",
+      "detail": {
+       "summary": "Avendus has sent Pinpoint's updated meeting schedule as a PDF per attendee for its annual conference with 200+ companies. Main-track panels run simultaneously on 16 and 17 Nov, and some requested meetings could not be accommodated.",
+       "points": [
+        "16-18 Nov 2026, Grand Hyatt, Kalina, Mumbai",
+        "Sandeep Kalra, Persistent: AI enterprise panel, date TBC",
+        "Delhivery CEO 16 Nov 10:00; Tata Consumer CEO 17 Nov 15:00",
+        "Sona Comstar CEO, humanoids, 16 Nov 15:00"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak Midcap Conference, Grand Hyatt Mumbai: Pinpoint meets Nuvoco and Inox Wind on 26 Nov, JSW Cement and KPIT on 27 Nov.",
+      "source": "Kotak - [Kotak Schedule] - IN-PERSON - Midcap Conference 2026 - Rajvaibhav Yadav, Pinpoint Asset Management Ltd.",
+      "received": "09:54",
+      "detail": {
+       "summary": "Kotak confirmed Rajvaibhav Yadav's in-person delegate schedule for the Midcap Conference. Two meetings on Thursday 26 Nov and two on Friday 27 Nov; all times IST.",
+       "points": [
+        "26 Nov 15:00-16:00: Nuvoco Vistas, group",
+        "26 Nov 16:00-17:00: Inox Wind, 1x1",
+        "27 Nov 11:00-12:00: JSW Cement, small group",
+        "27 Nov 13:00-14:00: KPIT Technologies, 1x1"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak keeps Eicher at ADD, FV Rs8,200 unchanged: 2QFY27 EBITDA Rs17.6bn (+16% yoy) missed by 4.2% on marketing spend.",
+      "source": "Kotak - Eicher Motors (CMP: Rs7,650, FV: Rs8,200, ADD): Higher spending drives a miss; volume outlook remains strong (+ Eicher notes from CLSA, Phillip, Avendus in Outlook)",
+      "received": "21:29",
+      "detail": {
+       "summary": "Revenue grew 20% yoy but EBITDA missed on higher marketing and employee costs and lower ASPs, partly offset by better gross margin. Kotak expects volumes to outperform on GST cut, launches and capacity, with margins recovering from 3QFY27.",
+       "points": [
+        "EBITDA margin 23.7%, -80bps yoy, 70bps below Kotak",
+        "Revenue +20% yoy, 1.4% below estimates",
+        "Adjusted PAT Rs15.7bn, 6.3% below estimates",
+        "FV Rs8,200 vs CMP Rs7,650; VECV at 18x Dec-28E EPS",
+        "Price increase of 70bps taken in October"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "CLSA's 120-page India AI Blue Top maps the AI stack, with deep dives on Neysa, Sarvam and Emergent; most are unlisted.",
+    "source": "CLSA - Blue Top: India AI Landscape | Banks: Inflection Delivered | MGFL U/G | SPCX New Internet"
+   },
+   {
+    "text": "CLSA flags concerns over Alibaba's access to US chips.",
+    "source": "CLSA - Blue Top: India AI Landscape | Banks: Inflection Delivered | MGFL U/G | SPCX New Internet"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
