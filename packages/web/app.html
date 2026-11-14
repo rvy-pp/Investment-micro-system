@@ -1035,7 +1035,9 @@
     <nav class="vnav" id="vnav" role="tablist" aria-label="view">
       <button class="tab" role="tab" aria-selected="true" data-t="pair">Scores &amp; Price</button>
       <button class="tab" role="tab" aria-selected="false" data-t="scores">Bridge</button>
-      <button class="tab" role="tab" aria-selected="false" data-t="pos">Positioning</button>
+      <!-- Positioning (the OI table) left the sector bar on 2026-11-14 (PM:
+           "remove the OI positioning from all sector tabs and just keep it in
+           the flows tab"). It is the Flows tab's OI sub-tab, its default. -->
       <!-- Only shown for a sector that declares a price chart or a watch
            (cement). For every other live sector the loader hides it — an
            always-on fourth tab that usually renders "nothing here" would
@@ -1055,7 +1057,6 @@
 
   <section id="s-pair" class="on"><div class="loading">loading…</div></section>
   <section id="s-scores"><div class="loading">loading…</div></section>
-  <section id="s-pos"><div class="loading">loading…</div></section>
   <section id="s-sector"><div class="loading">loading…</div></section>
   <section id="s-overview"><div class="loading">loading…</div></section>
   <section id="s-book"><div class="loading">loading…</div></section>
@@ -1241,7 +1242,11 @@ function oiStatusPill(dateStr){
   return `<span class="pill bad">Stale · ${esc(dateStr)}</span>`;
 }
 
-async function loadPos(){
+async function loadPos(host){
+  // Renders into the Flows tab's OI pane (2026-11-14); it was #s-pos, a
+  // sub-view repeated on every sector tab although the table is global.
+  host = host || document.getElementById('fl-pane-oi');
+  if (!host) return;
   const rows = await (await fetch('/api/oi')).json();
   if (rows.error) return showErr(rows.error);
 
@@ -1306,7 +1311,7 @@ async function loadPos(){
       </tr></thead><tbody>${trs}</tbody></table></div></div>`;
   }).join('');
 
-  $('#s-pos').innerHTML =
+  host.innerHTML =
     `<div class="pgt">OI Positioning</div>
      <div class="meta-line">Futures Open Interest · buildup and Mag on a 3-month horizon ·
        percentile is the raw rank of today's OI over the last 42 sessions
@@ -1341,7 +1346,7 @@ async function loadPos(){
 
   // Property assignment, not addEventListener: loadPos re-renders this section
   // wholesale on every visit, and a listener added per render would stack.
-  $('#s-pos').onclick = ev => {
+  host.onclick = ev => {
     const tr = ev.target.closest('tr.oirow');
     if (tr) toggleOiRow(tr);
   };
@@ -2887,8 +2892,8 @@ function sector(id){
   // the panel reachable as Prices & Watch.
   const hasCo = !!e.has_company;
   $('#vnav').hidden = !e.live && !hasCo;
-  document.querySelectorAll('#vnav .tab[data-t="pair"], #vnav .tab[data-t="scores"], '
-    + '#vnav .tab[data-t="pos"]').forEach(b => { b.hidden = !e.live; });
+  document.querySelectorAll('#vnav .tab[data-t="pair"], #vnav .tab[data-t="scores"]')
+    .forEach(b => { b.hidden = !e.live; });
   const vt = document.getElementById('vtab-sector');
   if (vt) vt.hidden = e.live ? !extra : !hasCo;
   const vc = document.getElementById('vtab-company');
@@ -5508,7 +5513,40 @@ function w1Panel(w, f){
   </div>`;
 }
 
+/* Flows has two sub-tabs (PM, 2026-11-14): "make a sub tab called OI, the
+   global flows in the second tab (default open of flow tab will be OI page)".
+   OI is the Positioning table that used to sit on every sector tab. The
+   choice is deliberately NOT remembered across reloads, so the tab always
+   opens on OI. Global flows renders on its FIRST open, not behind a hidden
+   pane: its bubble canvas measures its container, and hidden measures 0. */
+let FLOW_SUB = 'oi';
 async function loadFlows(){
+  $('#s-flows').innerHTML = `<nav class="vnav" role="tablist" aria-label="flows view" style="margin-bottom:var(--s2)">
+      <button class="btab" role="tab" data-f="oi" aria-selected="${FLOW_SUB === 'oi'}">OI</button>
+      <button class="btab" role="tab" data-f="global" aria-selected="${FLOW_SUB === 'global'}">Global flows</button>
+    </nav>
+    <div id="fl-pane-oi"${FLOW_SUB === 'oi' ? '' : ' hidden'}><div class="loading">loading…</div></div>
+    <div id="fl-pane-global"${FLOW_SUB === 'global' ? '' : ' hidden'}></div>`;
+  const loaded = {};
+  const show = () => {
+    document.querySelectorAll('#s-flows .btab[data-f]').forEach(x =>
+      x.setAttribute('aria-selected', String(x.dataset.f === FLOW_SUB)));
+    document.getElementById('fl-pane-oi').hidden = FLOW_SUB !== 'oi';
+    document.getElementById('fl-pane-global').hidden = FLOW_SUB !== 'global';
+    if (loaded[FLOW_SUB]) return Promise.resolve();
+    loaded[FLOW_SUB] = true;
+    const host = document.getElementById('fl-pane-' + FLOW_SUB);
+    return (FLOW_SUB === 'oi' ? loadPos(host) : loadGlobalFlows(host))
+      .catch(e => { loaded[FLOW_SUB] = false; showErr(e.message); });
+  };
+  document.querySelectorAll('#s-flows .btab[data-f]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.f === FLOW_SUB) return;
+    FLOW_SUB = b.dataset.f; show();
+  }));
+  await show();
+}
+
+async function loadGlobalFlows(host){
   const d = await (await fetch('/api/flows')).json();
   if (d.error) throw new Error(d.error);
   const stCls = s => s === 'ready' ? 'st-ready' : s === 'thin' ? 'st-thin'
@@ -5528,7 +5566,7 @@ async function loadFlows(){
       <td><span class="st ${stCls(m.state === 'blocked' ? 'blocked' : 'open')}">${esc(m.state)}</span></td>
       <td>${esc(m.detail)}</td></tr>`).join('');
 
-  $('#s-flows').innerHTML = `
+  host.innerHTML = `
     <h3>Flows — who is buying, not what is worth buying</h3>
     ${w1Panel(d.w1, d.f1)}
     <h2 style="margin-top:26px">F2 · Sector positioning — the OI bubble tape</h2>
@@ -7716,7 +7754,7 @@ async function loadResults(){
   else loadResultsBoard(d.sector).catch(e => showErr(e.message));
 }
 
-const loaders = {pair:loadPair, scores:loadScores, pos:loadPos,
+const loaders = {pair:loadPair, scores:loadScores,
                 sector:loadSector, overview:loadOverview, book:loadBook,
                 flows:loadFlows, company:loadCompany, results:loadResults};
 
@@ -7750,7 +7788,7 @@ function tab(name){
   // Only the three sector sub-views are remembered. Overview and Flows are
   // top-level tabs, so recording them here would send you to a hidden section
   // the next time you picked a live sector.
-  if (name === 'pair' || name === 'scores' || name === 'pos'
+  if (name === 'pair' || name === 'scores'
       || name === 'sector' || name === 'company') LAST_VIEW = name;
   const live = (name === 'scores');
   $('#winwrap').hidden = !live;

@@ -33,6 +33,102 @@ def connect() -> sqlite3.Connection:
     return conn
 
 
+# ---- why the Book tab took 3.3s, and the two fixes (2026-11-14) -------------
+# PM: "the frontend is too bulky to load, specially the book tab. Is it because
+# we have the excel loaded there?" It was NOT the Excel viewer: /api/book_model
+# is fetched only when "View model" is clicked. Measured in the browser, the
+# tab waited 3.3s on /api/book alone, which recomputed VaR (46 snapshot
+# replays), Kelly, grading and sector_rel on every visit, and parsed
+# specs/book.yaml ~20 times with PyYAML's pure-Python parser along the way.
+#
+# 1. YAML. In this process every yaml.safe_load parses with libyaml's C parser
+#    and parses a given TEXT once. Keyed on the text itself, so an edited file
+#    is new text and re-parses; the caller gets a deep copy, so a caller that
+#    mutates its config cannot change the next caller's. Checked before
+#    switching: SafeLoader and CSafeLoader agree on all 17 spec files.
+try:
+    import copy as _copy
+    import yaml as _yaml
+    if getattr(_yaml, "CSafeLoader", None) is not None and not getattr(_yaml.safe_load, "_ims_fast", False):
+        _YAML_MEMO: dict = {}
+        _py_safe_load = _yaml.safe_load
+
+        def _fast_safe_load(stream):
+            text = stream.read() if hasattr(stream, "read") else stream
+            if not isinstance(text, str):
+                return _py_safe_load(text)
+            if text not in _YAML_MEMO:
+                if len(_YAML_MEMO) > 256:
+                    _YAML_MEMO.clear()
+                _YAML_MEMO[text] = _yaml.load(text, Loader=_yaml.CSafeLoader)
+            return _copy.deepcopy(_YAML_MEMO[text])
+        _fast_safe_load._ims_fast = True
+        _yaml.safe_load = _fast_safe_load
+except ImportError:                                   # pragma: no cover
+    pass
+
+
+# 2. The Book payloads are cached until an INPUT changes. The stamp hashes
+#    (path, mtime, size) of every file under specs/, data/book/ and
+#    data/analysis/ (case files, models, Excel's ~$ lock file), plus ims.db and
+#    its WAL, plus today's date. A hash rather than the newest mtime, because a
+#    DELETED file (the lock file going away when a workbook closes) moves no
+#    mtime. The stamp is taken BEFORE computing, so a write that lands mid-
+#    compute makes the next request recompute rather than keep a stale answer.
+#    Costs ~40ms a request. serve.py warms the defaults in the background.
+import datetime as _dt
+import hashlib as _hashlib
+import os as _os
+
+_BOOK_MEMO: dict = {}
+_BOOK_ROOTS = (REPO / "specs", REPO / "data" / "book", REPO / "data" / "analysis")
+
+
+def book_inputs_stamp() -> str:
+    h = _hashlib.blake2b(digest_size=16)
+    h.update(_dt.date.today().isoformat().encode())
+    for p in (DB, DB.with_name(DB.name + "-wal")):
+        try:
+            st = p.stat()
+            h.update(f"{p.name}|{st.st_mtime_ns}|{st.st_size}\n".encode())
+        except OSError:
+            pass
+    for root in _BOOK_ROOTS:
+        for dp, dn, fn in _os.walk(root):
+            dn.sort()
+            for f in sorted(fn):
+                try:
+                    st = _os.stat(_os.path.join(dp, f))
+                except OSError:
+                    continue
+                h.update(f"{dp}/{f}|{st.st_mtime_ns}|{st.st_size}\n".encode())
+    return h.hexdigest()
+
+
+def _book_memo(key, compute):
+    stamp = book_inputs_stamp()
+    hit = _BOOK_MEMO.get(key)
+    if hit is not None and hit[0] == stamp:
+        return hit[1]
+    val = compute()
+    if not (isinstance(val, dict) and val.get("error")):
+        _BOOK_MEMO[key] = (stamp, val)
+    return val
+
+
+def book_warm() -> None:
+    """Recompute the Book tab's default payloads if their inputs moved.
+    serve.py calls this at boot and every minute, so the PM's click finds them
+    ready. A failure here is only a cold cache, never an error on the page."""
+    for key, fn in ((("book", None), lambda: _book_view(None)),
+                    (("index", "5y"), lambda: _book_index("5y")),
+                    (("analysis",), _book_analysis)):
+        try:
+            _book_memo(key, fn)
+        except Exception:                             # noqa: BLE001
+            pass
+
+
 def active_overrides(conn) -> list[dict]:
     return [dict(r) for r in conn.execute(
         "SELECT * FROM overrides WHERE active=1 ORDER BY created_at DESC")]
@@ -1954,6 +2050,11 @@ def book_snap_dates() -> list[str]:
 
 
 def book_view(date: str | None = None) -> dict:
+    """Cached on the Book inputs stamp (see book_inputs_stamp); _book_view computes."""
+    return _book_memo(("book", (date or "").strip() or None), lambda: _book_view(date))
+
+
+def _book_view(date: str | None = None) -> dict:
     """The PM's ACTUAL book — /api/book. Pair-wise IMS positions from the
     daily_review skill's snapshots, P&L chained across futures rolls by
     packages/book/book_io.py. Read-only here; nothing on this path writes.
@@ -2434,6 +2535,11 @@ def results_save_view(body: dict) -> dict:
 
 
 def book_index(rng: str = "5y") -> dict:
+    """Cached on the Book inputs stamp (see book_inputs_stamp); _book_index computes."""
+    return _book_memo(("index", rng), lambda: _book_index(rng))
+
+
+def _book_index(rng: str = "5y") -> dict:
     """Equal-weighted long/short indices, windowed for display.
 
     Recomputed per request from `prices` and `book_positions` — there is no
@@ -2454,6 +2560,11 @@ def book_index(rng: str = "5y") -> dict:
 
 
 def book_analysis() -> dict:
+    """Cached on the Book inputs stamp (see book_inputs_stamp); _book_analysis computes."""
+    return _book_memo(("analysis",), _book_analysis)
+
+
+def _book_analysis() -> dict:
     """The Book tab's Analysis sub-tab (PM, 2026-10-10): one checklist per
     stock for the 32 dictated legs, pairs derived as long juice minus short.
     Transport shim — packages/book/analysis.py owns the roster, the automatic

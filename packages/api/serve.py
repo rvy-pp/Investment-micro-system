@@ -329,6 +329,19 @@ if __name__ == "__main__":
               f"then re-run with --port <free port>.", file=sys.stderr)
         raise SystemExit(1)
 
+    # Keep the Book tab's default payloads computed (engine.book_warm,
+    # 2026-11-14): at boot, then every minute, recomputing only when an input
+    # file or the DB moved. Without it the first click after any write waited
+    # ~3s on VaR, Kelly and grading. A daemon thread, so ctrl-c still stops.
+    import threading
+    import time as _time
+
+    def _warm_book():
+        while True:
+            engine.book_warm()
+            _time.sleep(60)
+    threading.Thread(target=_warm_book, name="book-warm", daemon=True).start()
+
     print(f"Investment Micro-System  ->  http://{HOST}:{args.port}")
     print("ctrl-c to stop")
     try:

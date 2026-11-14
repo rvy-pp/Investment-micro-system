@@ -290,6 +290,38 @@ does equity closes, corporate actions, preflight and score-and-persist, and it
 **names the four things it did not do** on every run — Wind zinc, broker mail,
 the metals pack and extraction, three of which no unattended process can do.
 
+### The Book tab is cached; Positioning lives under Flows (2026-11-14)
+
+PM: *"The frontend is too bulky to load, specially the book tab. Is it because
+we have the excel loaded there?"* **It was not the Excel viewer** —
+`/api/book_model` is fetched only on "View model", so the viewer STAYS (the
+PM made removal conditional on it being the bottleneck). Measured in the
+browser, the tab waited **3.3s on `/api/book`**, which recomputed VaR (46
+snapshot replays), Kelly, grading and sector_rel on every visit and parsed
+`specs/book.yaml` ~20 times with PyYAML's pure-Python parser. Two fixes in
+`engine.py`, both commented at the site:
+- **YAML:** inside the server process `yaml.safe_load` parses with libyaml's C
+  parser, once per distinct text, and returns a deep copy (SafeLoader and
+  CSafeLoader agreed on all 17 spec files before the switch).
+- **`book_view` / `book_index` / `book_analysis` are cached on an input
+  stamp** (`engine.book_inputs_stamp`): a hash of (path, mtime, size) for every
+  file under `specs/`, `data/book/`, `data/analysis/`, plus `ims.db` and its
+  WAL and today's date. A hash, not the newest mtime, so a DELETED file (Excel's
+  `~$` lock file) still invalidates. `serve.py` re-warms the defaults at boot and
+  every minute. Book tab 3,408ms → 70ms; Analysis 62ms; a touched spec
+  recomputes on the next request (~2.7s), then caches again.
+  **A new input that lives outside those roots must be added to
+  `_BOOK_ROOTS`**, or the tab will serve a stale answer and nothing will raise.
+
+Same day: *"remove the OI positioning from all sector tabs and just keep it in
+the flows tab, make a sub tab called OI, the global flows in the second tab
+(default open of flow tab will be OI page)"*. The sector bar's Positioning
+button and `#s-pos` are gone. `loadPos(host)` renders into the Flows tab's
+**OI** sub-tab, which is the default on every load (`FLOW_SUB` is deliberately
+not stored in sessionStorage). The old Flows page is **Global flows**, rendered
+on its first open because the bubble canvas measures its container and a hidden
+pane measures zero. `/api/oi` is unchanged, so the vault copy needed nothing.
+
 ## The morning brief — the Overview's pre-market block (2026-08-30)
 
 The Daily Overview opens with the overnight callout at the TOP (US, semis,
