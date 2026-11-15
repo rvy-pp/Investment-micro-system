@@ -1,0 +1,132 @@
+{
+ "date": "2026-11-15",
+ "generated_at": "2026-11-15T08:10:00+05:30",
+ "mail": {
+  "window": "24h to 08:08 IST (Sun; weekend mail-only run)",
+  "n_scanned": 29,
+  "sectors": [
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Elara raises Amber TP to Rs9,040 (BUY) but cuts electronics margin target 50-100bps; Q2 EBITDA margin 3.7%, Sidwal guide cut to 15-20%.",
+      "source": "Elara - Amber Enterprises - Robust sales growth; margin under heat - Q2FY27 Update - Buy - TP: INR 9,040",
+      "received": "23:26",
+      "detail": {
+       "summary": "Q2 sales beat on electronics and a weak RAC base, but price-hike lags in RACs and fixed-price railway contracts crushed margins. Elara keeps BUY on the mobile venture and PCB capex, rolling forward at a lower multiple; FY28E/FY29E EPS trimmed for margin pressure.",
+       "points": [
+        "Q2 sales Rs26.3bn, +60% YoY, 37% above Elara est",
+        "Electronics +94% YoY to Rs12.5bn; margin 9.3% (+350bps)",
+        "Durables margin 0.3% (-340bps); railways 4.6% (-1150bps)",
+        "TP Rs8,730 -> Rs9,040 on 42x (from 45x) Sep FY28E",
+        "FY27E EPS +6%; FY28E -2%; FY29E -3%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNPP puts Dixon on its five-name India long list after the rally from 26-Oct lows.",
+      "source": "BNP Paribas - BNPP India Reflexions: Uncoiling Spring",
+      "received": "17:26"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "I-Sec upgrades NMDC to BUY (TP Rs91 from 95); Q2 EBITDA Rs19.4bn 6% below est on monsoon-hit Chhattisgarh dispatch, H2 rebound expected.",
+      "source": "ICICI Securities - NMDC (BUY): Monsoon-related disruptions impact dispatches; expect sharp rebound in H2",
+      "received": "10:22",
+      "detail": {
+       "summary": "A damaged railway line cut Chhattisgarh dispatch for about a month, so higher realisations were offset by volume. I-Sec expects the new 15mtpa Bacheli-Nagarnar slurry pipeline and rail doubling to recover most of H1's sales miss in H2, and builds 7% volume CAGR to 60mtpa by FY29E.",
+       "points": [
+        "Sales 10.49mt (-2% YoY/-11% QoQ)",
+        "Realisation Rs5,682/t (+14% YoY/+2% QoQ)",
+        "EBITDA/t Rs1,851; royalty +30% YoY to Rs28.3bn",
+        "Rs3.4bn favourable inventory adjustment in EBITDA",
+        "6x FY28E EV/EBITDA; upgrade from ADD"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Nagarro tracking the low end of CY26 guide (9M +2.7% cc, 14.2% margin); Persistent holds ~94%, completion awaits regulatory approval.",
+      "source": "IIFL - Persistent Systems [PSYS IN, BUY]: Takeaways from Nagarro's 3QCY26 results",
+      "received": "10:03",
+      "detail": {
+       "summary": "Nagarro's quarter was soft, with the US and Germany both down and demand described as challenging. Guidance was reiterated, but 9M run-rates sit at its lower end on growth and margin, so the integration upside Persistent is paying for is the thing to watch.",
+       "points": [
+        "3Q +0.6% cc QoQ, -0.2% cc YoY; organic -1.6% YoY",
+        "Adj EBITDA margin 15.0%, -230bps YoY",
+        "US -3.4% QoQ; Germany -0.7%",
+        "CY26 guide EUR1.0-1.06bn, 14.5-15.5% margin",
+        "EUR350mn RCF (EUR275mn drawn) restructuring by end-Dec"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNPP lists Wipro among five India shorts; IT the rally's laggard, Nifty IT -1% since 26-Oct against Nifty +11%.",
+      "source": "BNP Paribas - BNPP India Reflexions: Uncoiling Spring",
+      "received": "17:26"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "BNPP: FPIs +$8bn in November after $30bn YTD outflows; Nifty +11% from 26-Oct lows on oil -17% and a stable INR.",
+      "source": "BNP Paribas - BNPP India Reflexions: Uncoiling Spring",
+      "received": "17:26",
+      "detail": {
+       "summary": "BNPP says the late-October rotation into defensives has broadened into top-100 rate-sensitives (financials, autos, realty). The two triggers are a US mid-term result that raised AI-regulation fears, making India an anti-AI trade, and falling oil with RBI holding the rupee. It urges discernment from here because both can reverse.",
+       "points": [
+        "FPI +$8bn Nov vs -$30bn YTD to Oct",
+        "Brent -17% since 26-Oct",
+        "Nifty Metal +8% since 26-Oct, +13% YTD",
+        "Longs: CGPOWER, DIXON, BJFIN, KFINTECH, TTAN",
+        "Shorts: INDUSTOW, CIPLA, WPRO, ZYDUSLIF, SWIGGY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MS: India petcoke consumption -11% YoY in October as coal undercuts it on freight; diesel +12%, bitumen +17% on post-monsoon construction.",
+      "source": "Morgan Stanley - PULSE: India Energy: Tracking Demand",
+      "received": "19:53",
+      "detail": {
+       "summary": "October fuel demand rose 2% YoY to ~5.4mbpd on transport fuels while industrial and household use fell. MS stays constructive on refiners and estimates a ~US$90/bbl Brent breakeven for retailers' normal margins.",
+       "points": [
+        "Petcoke -11% YoY; fuel oil +6%",
+        "Diesel +12%, gasoline +4% YoY",
+        "LPG -12% YoY on Gulf supply disruption",
+        "Industrial fuel -3% YoY"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": ["Non-ferrous", "Steel", "Cement", "Power", "Other coverage-adjacent"]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "BNPP: a Democrat US mid-term win raised fears of AI regulation and datacenter limits; Nasdaq 100 -5% since 26-Oct.",
+    "source": "BNP Paribas - BNPP India Reflexions: Uncoiling Spring"
+   }
+  ],
+  "bellwethers": [
+   {"name": "Accenture", "reason": null},
+   {"name": "Cognizant", "reason": null}
+  ]
+ }
+}
