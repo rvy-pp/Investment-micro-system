@@ -322,6 +322,22 @@ not stored in sessionStorage). The old Flows page is **Global flows**, rendered
 on its first open because the bubble canvas measures its container and a hidden
 pane measures zero. `/api/oi` is unchanged, so the vault copy needed nothing.
 
+**The options chart is call/put OI BY STRIKE since 2026-11-15** (PM:
+*"instead of the weighted average of the options OI, just simply have the
+normal graph of call/put OI at each strike"*). The weighted-average-range
+chart and its 60-session row mini are deleted from app.html. The row now
+carries the front expiry's profile (calls above the line, puts below, futures
+marked, strikes within 15%); the expanded chart is bars per strike within
+20% of futures, with expiry tabs (front by default, or all pooled), PCR,
+max-OI strikes and the IV line kept in its header, and the day's OI change on
+hover. Data: **`fo_option_strikes`**, written by `fo_options.store` off the
+same bhavcopy zip, **ROLLING at `STRIKE_KEEP` = 5 sessions** (~12k rows a
+session; a year would be millions of rows to draw one chart). `fo_options`'
+weighted columns still load and IV still comes from there. Both ride
+`/api/oi` (`opt.strk`) and `/api/oi_history` (`strikes`), so the vault copy
+needed no new route. `fo_options.py --selftest` covers the strike rows and
+the prune (15 checks).
+
 ## The morning brief — the Overview's pre-market block (2026-08-30)
 
 The Daily Overview opens with the overnight callout at the TOP (US, semis,

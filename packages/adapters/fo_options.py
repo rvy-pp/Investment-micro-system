@@ -6,6 +6,15 @@ just add the weighted average graph. Include IV %ile."* So this is the data
 half of that, and ONLY the parts asked for — the strike-level OI chart of the
 guide is not built yet.
 
+AMENDED 2026-11-15: the strike-level chart IS built now, and it replaced the
+weighted-average one on the page. PM: *"instead of the weighted average of the
+options OI, just simply have the normal graph of call/put OI at each strike"*.
+`fo_option_strikes` holds call/put OI and the day's OI change per (symbol,
+date, live expiry, strike), off the same zip. It is ROLLING: only the latest
+STRIKE_KEEP sessions are kept (~25k rows a session across every F&O stock; a
+year would be ~6M rows to draw one bar chart). The weighted columns in
+`fo_options` still load (cheap, and IV lives there); they are just not drawn.
+
 The source is the SAME zip fo_bhavcopy.py already downloads for futures
 (FinInstrmTp 'STO' rows in the UDiFF file). Nothing on this path reaches
 `prices` or `pillar_scores`: options are a positioning read, a timing veto,
@@ -76,7 +85,21 @@ CREATE TABLE IF NOT EXISTS fo_options (
     CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
     CHECK (expiry GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 ) STRICT;
+CREATE TABLE IF NOT EXISTS fo_option_strikes (
+    symbol     TEXT NOT NULL,
+    date       TEXT NOT NULL,
+    expiry     TEXT NOT NULL,
+    strike     REAL NOT NULL,
+    call_oi    REAL NOT NULL,        -- shares (OpnIntrst)
+    put_oi     REAL NOT NULL,
+    call_chg   REAL NOT NULL,        -- ChngInOpnIntrst, shares, vs the previous session
+    put_chg    REAL NOT NULL,
+    PRIMARY KEY (symbol, date, expiry, strike),
+    CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    CHECK (expiry GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+) STRICT;
 """
+STRIKE_KEEP = 5     # sessions of strike-level OI kept; older dates are pruned
 
 
 # ------------------------------------------------------------ Black-76 ----
@@ -120,11 +143,17 @@ def implied_vol(price: float, F: float, K: float, T: float,
 
 def parse_options(raw: bytes, iso: str) -> list[dict]:
     """Aggregate one day's STO rows per (symbol, live expiry)."""
+    return _parse(raw, iso)[0]
+
+
+def _parse(raw: bytes, iso: str) -> tuple[list[dict], list[tuple]]:
+    """(per-expiry aggregates, per-strike rows) from ONE read of the zip."""
     zf = zipfile.ZipFile(io.BytesIO(raw))
     rd = csv.DictReader(io.TextIOWrapper(zf.open(zf.namelist()[0]),
                                          encoding="utf-8"))
     fut: dict[tuple, float] = {}
     agg: dict[tuple, dict] = {}
+    strikes: dict[tuple, list] = {}   # (sym, exp, strike) -> [co, po, cchg, pchg]
     for r in rd:
         tp = r.get("FinInstrmTp")
         if tp == "STF":
@@ -148,6 +177,11 @@ def parse_options(raw: bytes, iso: str) -> list[dict]:
         k = float(r["StrkPric"])
         oi = float(r["OpnIntrst"] or 0)
         call = r["OptnTp"] == "CE"
+        chg = float(r.get("ChngInOpnIntrst") or 0)
+        if oi or chg:
+            sk = strikes.setdefault((r["TckrSymb"], exp, k), [0.0, 0.0, 0.0, 0.0])
+            sk[0 if call else 1] += oi
+            sk[2 if call else 3] += chg
         if oi:
             if call:
                 a["co"] += oi; a["cs"] += oi * k
@@ -184,7 +218,9 @@ def parse_options(raw: bytes, iso: str) -> list[dict]:
                                atm_iv=sum(legs) / len(legs), iv_legs=len(legs))
                     break
         out.append(row)
-    return out
+    srows = [(sym, iso, exp, k, v[0], v[1], v[2], v[3])
+             for (sym, exp, k), v in strikes.items()]
+    return out, srows
 
 
 # ---------------------------------------------------------------- store ----
@@ -202,25 +238,48 @@ def store(conn: sqlite3.Connection, raw: bytes, iso: str) -> int:
     """Called by fo_bhavcopy.load on the zip it already downloaded, so the
     daily run fetches each file once."""
     ensure(conn)
-    rows = parse_options(raw, iso)
+    rows, srows = _parse(raw, iso)
     conn.execute("DELETE FROM fo_options WHERE date=?", (iso,))
     conn.executemany(
         f"INSERT INTO fo_options ({','.join(COLS)}) VALUES "
         f"({','.join('?' * len(COLS))})",
         [tuple(r[c] for c in COLS) for r in rows])
+    store_strikes(conn, srows, iso)
     conn.commit()
     return len(rows)
+
+
+def store_strikes(conn: sqlite3.Connection, srows: list[tuple], iso: str) -> None:
+    """Write one session's strike rows, then prune to the latest STRIKE_KEEP
+    sessions. A backfill therefore ends holding the newest five, whatever
+    order the dates arrive in."""
+    conn.execute("DELETE FROM fo_option_strikes WHERE date=?", (iso,))
+    conn.executemany("INSERT INTO fo_option_strikes VALUES (?,?,?,?,?,?,?,?)",
+                     srows)
+    conn.execute(
+        "DELETE FROM fo_option_strikes WHERE date NOT IN (SELECT DISTINCT date "
+        "FROM fo_option_strikes ORDER BY date DESC LIMIT ?)", (STRIKE_KEEP,))
 
 
 def load(days_back: int = 10) -> None:
     conn = sqlite3.connect(fb.DB)
     ensure(conn)
     have = {r[0] for r in conn.execute("SELECT DISTINCT date FROM fo_options")}
+    have_k = {r[0] for r in conn.execute(
+        "SELECT DISTINCT date FROM fo_option_strikes")}
+    # The strike table wants only the latest STRIKE_KEEP sessions, so a date
+    # already in fo_options is re-fetched for it only inside a recent window
+    # (~2 calendar weeks) and only if newer than what it holds; never across
+    # a 400-day backfill.
     today = dt.date.today()
+    recent = (today - dt.timedelta(days=STRIKE_KEEP * 2 + 4)).isoformat()
+    newest_k = max(have_k) if have_k else ""
     n = n_skip = 0
     for k in range(days_back, 0, -1):
         d = today - dt.timedelta(days=k)
-        if d.weekday() > 4 or d.isoformat() in have:
+        iso = d.isoformat()
+        need_k = iso >= recent and iso > newest_k
+        if d.weekday() > 4 or (iso in have and not need_k):
             continue
         try:
             raw = fb._get(fb.FO_URL.format(d=d), timeout=60)
@@ -246,6 +305,10 @@ def status() -> None:
                      "FROM fo_options").fetchone()
     print(f"  fo_options  {r[0]} days  {r[1]} .. {r[2]}  {r[3]} symbols  "
           f"IV on {r[4]} of {r[5]} symbol-expiries")
+    k = conn.execute("SELECT COUNT(DISTINCT date), MIN(date), MAX(date), "
+                     "COUNT(*) FROM fo_option_strikes").fetchone()
+    print(f"  fo_option_strikes  {k[0]} days  {k[1]} .. {k[2]}  {k[3]} rows "
+          f"(rolling, keeps {STRIKE_KEEP})")
     conn.close()
 
 
@@ -273,7 +336,7 @@ def selftest() -> int:
     # a synthetic bhavcopy: weighted strikes, stale-leg gate, expiring-today drop
     hdr = ["FinInstrmTp", "TckrSymb", "XpryDt", "StrkPric", "OptnTp",
            "OpnIntrst", "ClsPric", "SttlmPric", "TtlTradgVol", "UndrlygPric",
-           "NewBrdLotQty"]
+           "NewBrdLotQty", "ChngInOpnIntrst"]
     F, T = 1000.0, 28 / 365
     c1000 = round(b76(F, 1000, T, 0.30, True), 2)
     p1000 = round(b76(F, 1000, T, 0.30, False), 2)
@@ -290,6 +353,7 @@ def selftest() -> int:
         ["STO", "XYZ", "2026-10-28", "500", "CE", "50", "134.55", "", "0", "500", "100"],
         ["STO", "XYZ", "2026-10-28", "500", "PE", "50", "130.00", "", "0", "500", "100"],
     ]
+    rows = [r + (["25"] if r[0] == "STO" else ["0"]) for r in rows]
     buf = io.StringIO()
     w = csv.writer(buf); w.writerow(hdr); w.writerows(rows)
     zb = io.BytesIO()
@@ -310,6 +374,32 @@ def selftest() -> int:
     ok(x and x["atm_iv"] is None and x["iv_legs"] == 0,
        "untraded stale premium yields no IV (absent, not guessed)")
     ok(x and x["call_wtd"] == 500, "untraded leg still counts toward OI weights")
+
+    # strike-level rows (2026-11-15): one row per strike, calls and puts side
+    # by side, the expiring-today contract absent
+    _r, srows = _parse(zb.getvalue(), "2026-09-30")
+    sk = {(s[0], s[2], s[3]): s for s in srows}
+    abc = sorted(s[3] for s in srows if s[0] == "ABC")
+    ok(abc == [900.0, 1000.0, 1100.0], f"ABC carries strikes 900/1000/1100: {abc}")
+    s1000 = sk.get(("ABC", "2026-10-28", 1000.0))
+    ok(s1000 is not None and s1000[4:] == (100, 100, 25, 25),
+       f"1000 strike: call 100 / put 100, chg 25 / 25 ({s1000})")
+    s1100 = sk.get(("ABC", "2026-10-28", 1100.0))
+    ok(s1100 is not None and s1100[4] == 300 and s1100[5] == 0,
+       f"1100 strike: call 300, no put ({s1100})")
+    ok(not any(s[2] == "2026-09-30" for s in srows),
+       "expiring-today contract has no strike rows")
+    # the rolling prune keeps the newest STRIKE_KEEP sessions: the oldest
+    # goes (rejection) and the newest stays (acceptance)
+    mem = sqlite3.connect(":memory:")
+    ensure(mem)
+    for i in range(STRIKE_KEEP + 2):
+        d = f"2026-10-{i + 1:02d}"
+        store_strikes(mem, [("ABC", d, "2026-10-28", 1000.0, 1, 1, 0, 0)], d)
+    kept = [r[0] for r in mem.execute(
+        "SELECT DISTINCT date FROM fo_option_strikes ORDER BY date")]
+    ok(len(kept) == STRIKE_KEEP and kept[-1] == f"2026-10-{STRIKE_KEEP + 2:02d}"
+       and "2026-10-01" not in kept, f"prune keeps the newest {STRIKE_KEEP}: {kept}")
     print(f"{'PASS' if not fails else 'FAIL'} ({fails} failures)")
     return 1 if fails else 0
 

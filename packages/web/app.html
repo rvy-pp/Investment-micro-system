@@ -1294,7 +1294,7 @@ async function loadPos(host){
       <td class="n">${r.price == null ? '—'
           : '₹' + r.price.toLocaleString('en-IN')}</td>
       <td>${spark(r.spark)}</td>
-      <td>${warMini(r.opt)}</td>
+      <td>${strikeMini(r.opt)}</td>
       <td class="n">${ivCell(r.opt)}</td>
       <td>${oiStatusPill(r.date)}</td>
     </tr>`).join('');
@@ -1305,7 +1305,7 @@ async function loadPos(host){
         <th>Company</th><th class="n">Futures OI</th>
         <th>Buildup (3m)</th><th class="n" title="rank of today's futures OI among the last 42 sessions (~2 months, rolling)">2m pctl</th><th class="n">Mag (3m)</th>
         <th class="n">Spot</th><th>60d OI</th>
-        <th title="OI-weighted call strike (red), futures (blue), OI-weighted put strike (green), last 60 sessions">Wtd avg range (60d)</th>
+        <th title="front expiry, latest session: call OI by strike above the line (red), put OI below (green), futures marked in blue; strikes within 15% of futures">Call / put OI by strike</th>
         <th class="n" title="ATM implied vol, front expiry (the next once 7 days or fewer remain); percentile over the last 252 sessions">ATM IV · 1y %ile</th>
         <th>Status</th>
       </tr></thead><tbody>${trs}</tbody></table></div></div>`;
@@ -1322,7 +1322,7 @@ async function loadPos(host){
      <div class="hint" style="margin-bottom:4px">🟢 Long Buildup (OI↑ Price↑) ·
        🔴 Short Buildup (OI↑ Price↓) · 🟡 Short Covering (OI↓ Price↑) ·
        🟡 Long Unwinding (OI↓ Price↓) · click a row for its OI-vs-time and
-       weighted-average-range charts</div>
+       call/put OI by strike charts</div>
      ${secTables || '<div class="panel"><div class="hint">no OI loaded</div></div>'}
      <div class="hint" style="margin-top:16px">Percentile: raw rank over a rolling
        2 months (42 sessions; not expiry-cycle normalised — the chart shows
@@ -1333,11 +1333,10 @@ async function loadPos(host){
        how <em>far</em> OI has moved, not just its rank. Z ≤ −1σ / ≤ −15% = light
        positioning (green). Z ≥ +1σ / ≥ +15% = heavy (red). OI is T-1 by design.
        The refresh pulls it daily; <code>--force</code> re-pulls.
-       <br><b>Wtd avg range</b>: per session, Σ(strike × call OI) ÷ Σ call OI
-       across every live expiry (red, above), the same for puts (green,
-       below), against the front-month futures (blue) — where the option
-       book is positioned relative to price. History restated for
-       splits/bonuses. <b>ATM IV</b>: Black-76 on the expiry's futures at
+       <br><b>Call / put OI by strike</b>: open interest at each strike in the
+       latest session, calls red and puts green, futures marked in blue — the
+       row shows the front expiry; the expanded chart switches expiry or pools
+       them all. <b>ATM IV</b>: Black-76 on the expiry's futures at
        6.5%, from closing premiums of options that TRADED that day (a stale
        untraded close is never solved for), front expiry rolled to the next
        once 7 days or fewer remain. <b>1y %ile</b>: share of the last 252
@@ -1399,39 +1398,57 @@ async function toggleOiRow(tr){
   const panel = tr.closest('.panel');
   const w = Math.max(520, Math.min(1100,
     (panel ? panel.clientWidth : 940) - 32));
-  td.innerHTML = oiChart(eid, d, w) + warChart(eid, d.options, w);
+  td.innerHTML = oiChart(eid, d, w) + strikeChart(eid, d.strikes, d.options, w);
   wireOiChart(eid);
-  wireWarChart(eid);
+  wireStrikeChart(eid);
 }
 
-/* WEIGHTED AVERAGE RANGE (2026-09-30, PM: "just add the weighted average
-   graph") — the vault Options-OI guide's second chart, under the futures OI
-   chart in the same dropdown. Per session: the OI-weighted CALL strike
-   above, futures in the middle, the OI-weighted PUT strike below, every live
-   expiry pooled by OI (engine.options_series says why pooled). Calls red /
-   puts green / futures blue, the guide's grammar on this page's tokens. */
+/* CALL / PUT OI BY STRIKE (2026-11-15). PM: "instead of the weighted average
+   of the options OI, just simply have the normal graph of call/put OI at each
+   strike". This REPLACED the weighted-average-range chart (2026-09-30) in the
+   dropdown and its 60-session mini in the row. Latest session only — the
+   strike table is rolling (fo_options.STRIKE_KEEP). Calls red, puts green,
+   the futures price as a dashed marker; one expiry at a time (front by
+   default) or every live expiry pooled. OI is in SHARES, like the futures OI
+   chart above it. The IV header and the ATM IV column are unchanged. */
 const fmtRs = v => v == null ? '—'
   : '₹' + v.toLocaleString('en-IN', {maximumFractionDigits: 1});
-const pctVs = (v, f) => (v == null || !f) ? '' :
-  ((v / f - 1) >= 0 ? '+' : '−') + Math.abs((v / f - 1) * 100).toFixed(1) + '%';
+const fmtK = v => (+v).toLocaleString('en-IN', {maximumFractionDigits: 2});
+const STRIKE_BAND = 0.20;   // dropdown chart: strikes within 20% of futures
 
-function warMini(o){
-  const pts = o && o.war;
-  if (!pts || pts.length < 2)
+function strikeMini(o){
+  const s = o && o.strk;
+  if (!s || !s.k || s.k.length < 2)
     return '<span class="neu" style="font-size:11px">no options</span>';
-  const w = 120, h = 26;
-  const all = pts.flat(), lo = Math.min(...all), hi = Math.max(...all);
-  const rng = (hi - lo) || 1;
-  const line = (k, col) => '<polyline points="' + pts.map((q, i) =>
-    (i / (pts.length - 1) * w).toFixed(1) + ',' +
-    (h - 1 - (q[k] - lo) / rng * (h - 2)).toFixed(1)).join(' ') +
-    '" fill="none" style="stroke:' + col + '" stroke-width="1.4"' +
-    ' stroke-linejoin="round"/>';
-  const q = pts[pts.length - 1];
+  const w = 120, h = 26, mid = h / 2;
+  const n = s.k.length, bw = w / n;
+  const hi = Math.max(...s.c, ...s.p) || 1;
+  let bars = '';
+  for (let i = 0; i < n; i++){
+    const x = (i * bw + bw * 0.15).toFixed(1), bwid = Math.max(0.8, bw * 0.7).toFixed(1);
+    const hc = s.c[i] / hi * (mid - 1), hp = s.p[i] / hi * (mid - 1);
+    if (hc > 0) bars += '<rect x="' + x + '" y="' + (mid - hc).toFixed(1) + '" width="' +
+      bwid + '" height="' + hc.toFixed(1) + '" style="fill:var(--down)"/>';
+    if (hp > 0) bars += '<rect x="' + x + '" y="' + mid + '" width="' + bwid +
+      '" height="' + hp.toFixed(1) + '" style="fill:var(--up)"/>';
+  }
+  // futures marker: interpolated between the two strikes around it
+  let fx = null;
+  if (s.fut){
+    const j = s.k.findIndex(k => k >= s.fut);
+    if (j > 0) fx = ((j - 1) + (s.fut - s.k[j - 1]) / (s.k[j] - s.k[j - 1]) + 0.5) * bw;
+    else if (j === 0) fx = bw / 2;
+  }
+  const mc = s.k[s.c.indexOf(Math.max(...s.c))], mp = s.k[s.p.indexOf(Math.max(...s.p))];
   return '<svg width="' + w + '" height="' + h + '" role="img" aria-label="' +
-    'call wtd ' + Math.round(q[0]) + ', futures ' + Math.round(q[1]) +
-    ', put wtd ' + Math.round(q[2]) + '">' +
-    line(0, 'var(--down)') + line(2, 'var(--up)') + line(1, 'var(--accent)') +
+    'call and put OI by strike, ' + esc(s.expiry) + ' expiry: max call OI at ' + fmtK(mc) +
+    ', max put OI at ' + fmtK(mp) + (s.pcr == null ? '' : ', PCR ' + s.pcr) + '">' +
+    '<title>' + esc(s.expiry) + ' expiry · calls above (red), puts below (green) · ' +
+    'max call OI ' + fmtK(mc) + ' · max put OI ' + fmtK(mp) +
+    (s.pcr == null ? '' : ' · PCR ' + s.pcr) + ' · futures ' + fmtRs(s.fut) + '</title>' +
+    bars +
+    (fx == null ? '' : '<line x1="' + fx.toFixed(1) + '" x2="' + fx.toFixed(1) +
+      '" y1="0" y2="' + h + '" style="stroke:var(--accent)" stroke-width="1.2"/>') +
     '</svg>';
 }
 
@@ -1449,94 +1466,141 @@ function ivCell(o){
     '<div class="dbar ' + cls + '" style="width:' + Math.max(2, p) + '%"></div></div>';
 }
 
-const WARV = {};   // entity_id -> weighted-range chart geometry, for hover
-const WAR_DAYS = 91;   // dropdown chart window, calendar days (~3 months)
-function warChart(eid, o, w){
-  if (!o || !o.dates || !o.dates.length)
-    return '<div class="hint" style="margin-top:14px">no stock options for this name in the store</div>';
-  const rows = o.dates.map((d, i) => ({date: d, c: o.call[i], f: o.fut[i],
-      p: o.put[i], iv: o.iv[i]}))
-    .filter(r => r.c != null && r.f != null && r.p != null)
-    // Last 3 months only (PM, 2026-09-30: "shrink the graph to 3 months").
-    // A VIEW window: the IV percentile in the header still ranks a full year.
-    .filter((r, _i, a) => a.length && Date.parse(r.date) >=
-      Date.parse(a[a.length - 1].date) - WAR_DAYS * 86400e3);
-  if (rows.length < 2)
-    return '<div class="hint" style="margin-top:14px">not enough options history yet</div>';
-  const h = 260, ML = 60, MR = 72, MT = 20, MB = 30;
-  const T = s => Date.parse(s);
-  const x0 = T(rows[0].date), x1 = T(rows[rows.length - 1].date);
-  const X = ms => ML + (x1 === x0 ? 0 : (ms - x0) / (x1 - x0)) * (w - ML - MR);
-  const all = rows.flatMap(r => [r.c, r.f, r.p]);
-  let lo = Math.min(...all), hi = Math.max(...all);
-  const pd = ((hi - lo) || hi || 1) * 0.06;
-  lo -= pd; hi += pd;
-  const Y = v => MT + (1 - (v - lo) / ((hi - lo) || 1)) * (h - MT - MB);
+const STRV = {};   // entity_id -> {s, o, w, sel, geometry} for the strike chart
 
+// One expiry's strike rows, or every live expiry pooled ('all').
+function strikeRows(s, sel){
+  const ex = sel === 'all' ? s.expiries : s.expiries.filter(e => e.expiry === sel);
+  const by = new Map();
+  for (const e of ex)
+    e.k.forEach((k, i) => {
+      const r = by.get(k) || {k: k, c: 0, p: 0, cc: 0, pc: 0};
+      r.c += e.c[i]; r.p += e.p[i]; r.cc += e.cc[i]; r.pc += e.pc[i];
+      by.set(k, r);
+    });
+  const fut = (ex[0] && ex[0].fut) || (s.expiries[0] && s.expiries[0].fut) || s.spot;
+  return {fut: fut, rows: [...by.values()].sort((a, b) => a.k - b.k)};
+}
+
+function strikeChart(eid, s, o, w){
+  if (!s || !s.expiries || !s.expiries.length)
+    return '<div class="hint" style="margin-top:14px">no stock options for this name in the store</div>';
+  const st = STRV[eid] || (STRV[eid] = {sel: s.expiries[0].expiry});
+  st.s = s; st.o = o; st.w = w;
+  const pills = s.expiries.map(e => [e.expiry, dtick(e.expiry, false)])
+    .concat([['all', 'All expiries']])
+    .map(([v, t]) => '<button class="btab" aria-selected="' + (v === st.sel) +
+      '" data-sx="' + esc(v) + '">' + esc(t) + '</button>').join('');
+  return '<div class="chartwrap" id="cw-strk-' + eid + '" style="margin-top:18px">' +
+    '<nav class="vnav" style="margin-bottom:6px">' + pills + '</nav>' +
+    '<div class="strk-body">' + strikeBody(eid) + '</div></div>';
+}
+
+function strikeBody(eid){
+  const st = STRV[eid], s = st.s, o = st.o, w = st.w;
+  const {fut, rows: all} = strikeRows(s, st.sel);
+  const rows = all.filter(r => (r.c || r.p) && (!fut || Math.abs(r.k / fut - 1) <= STRIKE_BAND));
+  if (rows.length < 2)
+    return '<div class="hint">no open interest within ' + STRIKE_BAND * 100 +
+      '% of futures for this expiry</div>';
+  const h = 280, ML = 60, MR = 16, MT = 20, MB = 30;
+  const n = rows.length, band = (w - ML - MR) / n;
+  const hi = Math.max(...rows.map(r => Math.max(r.c, r.p))) * 1.06 || 1;
+  const Y = v => MT + (1 - v / hi) * (h - MT - MB);
+  const cx = i => ML + (i + 0.5) * band;
   let grid = '', yl = '';
   for (const f of [0, 1 / 3, 2 / 3, 1]){
     const y = (MT + f * (h - MT - MB)).toFixed(1);
-    grid += '<line class="grid" x1="' + ML + '" x2="' + (w - MR) +
-            '" y1="' + y + '" y2="' + y + '"/>';
-    yl += '<text class="ax" x="' + (w - MR + 8) + '" y="' + y +
-          '" dominant-baseline="middle">' + fmtOiPrice(hi - f * (hi - lo)) + '</text>';
+    grid += '<line class="grid" x1="' + ML + '" x2="' + (w - MR) + '" y1="' + y + '" y2="' + y + '"/>';
+    yl += '<text class="ax" x="' + (ML - 8) + '" y="' + y + '" text-anchor="end"' +
+      ' dominant-baseline="middle">' + (f === 1 ? '0' : fmtOiLots(hi * (1 - f))) + '</text>';
   }
-  let xax = '';
-  const seen = new Set();
-  for (let i = 0; i < 6; i++){
-    const k = Math.round(i * (rows.length - 1) / 5);
-    if (seen.has(k)) continue;
-    seen.add(k);
-    xax += '<text class="ax" x="' + X(T(rows[k].date)).toFixed(1) + '" y="' +
-      (h - 9) + '" text-anchor="middle">' + esc(dtick(rows[k].date, false)) + '</text>';
+  const bw = Math.max(1, band * 0.38);
+  let bars = '', xax = '';
+  const step = Math.max(1, Math.ceil(44 / band));
+  rows.forEach((r, i) => {
+    const x = cx(i);
+    if (r.c > 0) bars += '<rect x="' + (x - bw).toFixed(1) + '" y="' + Y(r.c).toFixed(1) +
+      '" width="' + bw.toFixed(1) + '" height="' + (h - MB - Y(r.c)).toFixed(1) +
+      '" style="fill:var(--down)"/>';
+    if (r.p > 0) bars += '<rect x="' + x.toFixed(1) + '" y="' + Y(r.p).toFixed(1) +
+      '" width="' + bw.toFixed(1) + '" height="' + (h - MB - Y(r.p)).toFixed(1) +
+      '" style="fill:var(--up)"/>';
+    if (i % step === 0)
+      xax += '<text class="ax" x="' + x.toFixed(1) + '" y="' + (h - 9) +
+        '" text-anchor="' + (i === 0 ? 'start' : 'middle') + '">' + fmtK(r.k) + '</text>';
+  });
+  // the futures marker sits between the strikes around it
+  let fx = null;
+  if (fut){
+    const j = rows.findIndex(r => r.k >= fut);
+    if (j > 0) fx = cx(j - 1) + (fut - rows[j - 1].k) / (rows[j].k - rows[j - 1].k) * band;
+    else if (j === 0) fx = cx(0);
   }
-  const pts = k => rows.map(r => X(T(r.date)).toFixed(1) + ',' + Y(r[k]).toFixed(1));
-  const band = pts('c').concat(pts('p').reverse()).join(' ');
-  const pl = (k, col) => '<polyline points="' + pts(k).join(' ') +
-    '" fill="none" style="stroke:' + col + '" stroke-width="2"' +
-    ' stroke-linejoin="round" stroke-linecap="round"/>';
-  WARV[eid] = {w: w, h: h, ML: ML, MR: MR, MT: MT, x0: x0, x1: x1, X: X, rows: rows};
-
-  const L = rows[rows.length - 1];
-  const ivTxt = o.iv_now == null ? 'ATM IV n/a' :
+  const co = all.reduce((a, r) => a + r.c, 0), po = all.reduce((a, r) => a + r.p, 0);
+  const mc = all.reduce((a, r) => r.c > a.c ? r : a, all[0]);
+  const mp = all.reduce((a, r) => r.p > a.p ? r : a, all[0]);
+  st.g = {w: w, h: h, ML: ML, MR: MR, MT: MT, band: band, rows: rows, cx: cx};
+  const ivTxt = !o || o.iv_now == null ? 'ATM IV n/a' :
     'ATM IV ' + o.iv_now.toFixed(1) + '% (' + esc(o.iv_exp_now) + ' expiry) · ' +
     (o.iv_pctile == null ? '1y %ile withheld, ' + o.iv_n + ' readings'
       : o.iv_pctile.toFixed(0) + 'th 1y %ile, range ' + o.iv_lo.toFixed(1) +
         '–' + o.iv_hi.toFixed(1) + '%');
-  return '<div class="chartwrap" id="cw-war-' + eid + '" style="margin-top:18px">' +
-    '<div class="hint" style="margin-bottom:4px;font-family:var(--mono)">' +
-      '<span style="color:var(--down)">Call ' + fmtRs(L.c) + ' (' + pctVs(L.c, L.f) + ')</span> · ' +
-      '<span style="color:var(--accent)">Fut ' + fmtRs(L.f) + '</span> · ' +
-      '<span style="color:var(--up)">Put ' + fmtRs(L.p) + ' (' + pctVs(L.p, L.f) + ')</span> · ' +
-      'width ' + ((L.c - L.p) / L.f * 100).toFixed(1) + '% of fut · ' + ivTxt +
-      (o.adj ? ' · history restated for a ×' + o.adj.ratio + ' split/bonus on ' +
-        esc(o.adj.date) : '') + '</div>' +
+  const expTxt = st.sel === 'all' ? 'all live expiries pooled' : esc(st.sel) + ' expiry';
+  return '<div class="hint" style="margin-bottom:4px;font-family:var(--mono)">' +
+      esc(s.date) + ' · ' + expTxt + ' · ' +
+      '<span style="color:var(--accent)">Fut ' + fmtRs(fut) + '</span> · ' +
+      '<span style="color:var(--down)">Call OI ' + fmtOiLots(co) + ', max at ' + fmtK(mc.k) + '</span> · ' +
+      '<span style="color:var(--up)">Put OI ' + fmtOiLots(po) + ', max at ' + fmtK(mp.k) + '</span> · ' +
+      'PCR ' + (co ? (po / co).toFixed(2) : '—') + ' · ' + ivTxt + '</div>' +
     '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h +
-      '" role="img" tabindex="0" aria-label="OI-weighted call and put strikes vs futures, ' +
-      esc(o.symbol) + '">' + grid +
-    '<polygon points="' + band + '" style="fill:var(--ink)" opacity="0.05"/>' +
-    '<line class="xhair" x1="0" x2="0" y1="' + MT + '" y2="' + (h - MB) +
-      '" style="display:none"/>' +
-    pl('c', 'var(--down)') + pl('p', 'var(--up)') + pl('f', 'var(--accent)') +
+      '" role="img" tabindex="0" aria-label="Call and put open interest by strike, ' +
+      esc(s.symbol) + ', ' + expTxt + '">' + grid +
+    '<rect class="strk-hl" x="0" y="' + MT + '" width="' + band.toFixed(1) + '" height="' +
+      (h - MT - MB) + '" style="fill:var(--ink);display:none" opacity="0.06"/>' +
+    bars +
+    (fx == null ? '' : '<line x1="' + fx.toFixed(1) + '" x2="' + fx.toFixed(1) + '" y1="' + MT +
+      '" y2="' + (h - MB) + '" style="stroke:var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/>' +
+      '<text class="ax" x="' + (fx + 4).toFixed(1) + '" y="' + (MT + 10) + '" style="fill:var(--accent)">fut ' +
+      fmtRs(fut) + '</text>') +
     yl + xax +
-    '<text class="axl" x="' + ML + '" y="12">WEIGHTED AVERAGE RANGE — ' +
-      esc(o.symbol) + ' · last 3 months · all live expiries pooled by OI</text>' +
+    '<text class="axl" x="' + ML + '" y="12">CALL / PUT OI BY STRIKE — ' + esc(s.symbol) +
+      ' · strikes within ' + STRIKE_BAND * 100 + '% of futures</text>' +
     '</svg><div class="viztip" role="status"></div>' +
     '<div class="legend">' +
-      '<span><i style="border-top:2.5px solid var(--down)"></i> OI-weighted call strike</span>' +
-      '<span><i style="border-top:2.5px solid var(--accent)"></i> Front-month futures</span>' +
-      '<span><i style="border-top:2.5px solid var(--up)"></i> OI-weighted put strike</span>' +
-    '</div></div>';
+      '<span><i style="border-top:6px solid var(--down)"></i> Call OI</span>' +
+      '<span><i style="border-top:6px solid var(--up)"></i> Put OI</span>' +
+      '<span><i style="border-top:2.5px dashed var(--accent)"></i> Futures</span>' +
+      '<span class="neu">shares · hover a strike for the day’s change</span>' +
+    '</div>';
 }
 
-function wireWarChart(eid){
-  const m = WARV[eid];
-  const wrap = document.getElementById('cw-war-' + eid);
-  if (!wrap || !m) return;
-  const svg = wrap.querySelector('svg'), xh = wrap.querySelector('.xhair');
-  const tip = wrap.querySelector('.viztip');
+function wireStrikeChart(eid){
+  const wrap = document.getElementById('cw-strk-' + eid);
+  if (!wrap || !STRV[eid]) return;
+  // Property assignment, not addEventListener: the body is re-rendered on
+  // every expiry switch and a listener per render would stack.
+  wrap.onclick = ev => {
+    const b = ev.target.closest('[data-sx]');
+    if (!b) return;
+    ev.stopPropagation();
+    STRV[eid].sel = b.dataset.sx;
+    wrap.querySelectorAll('[data-sx]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+    wrap.querySelector('.strk-body').innerHTML = strikeBody(eid);
+    wireStrikeHover(eid);
+  };
+  wireStrikeHover(eid);
+}
+
+function wireStrikeHover(eid){
+  const wrap = document.getElementById('cw-strk-' + eid);
+  const m = STRV[eid] && STRV[eid].g;
+  const svg = wrap && wrap.querySelector('svg');
+  if (!svg || !m) return;
+  const hl = svg.querySelector('.strk-hl'), tip = wrap.querySelector('.viztip');
   let idx = -1;
-  const hide = () => { xh.style.display = 'none'; tip.classList.remove('on'); idx = -1; };
+  const hide = () => { hl.style.display = 'none'; tip.classList.remove('on'); idx = -1; };
+  const sg = v => (v >= 0 ? '+' : '−') + fmtOiLots(Math.abs(v));
   const line = (label, val, col) => {
     const row = document.createElement('div'); row.className = 'r';
     const key = document.createElement('i'); key.style.borderTopColor = col;
@@ -1548,19 +1612,19 @@ function wireWarChart(eid){
   const draw = i => {
     if (i < 0 || i >= m.rows.length) return hide();
     idx = i;
-    const r = m.rows[i], x = m.X(Date.parse(r.date));
-    xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.style.display = '';
+    const r = m.rows[i], x = m.cx(i);
+    hl.setAttribute('x', (x - m.band / 2).toFixed(1)); hl.style.display = '';
     tip.textContent = '';
-    const hd = document.createElement('div'); hd.className = 'd'; hd.textContent = r.date;
+    const hd = document.createElement('div'); hd.className = 'd';
+    hd.textContent = 'strike ' + fmtK(r.k);
     tip.appendChild(hd);
-    tip.appendChild(line('call wtd ' + pctVs(r.c, r.f), fmtRs(r.c), 'var(--down)'));
-    tip.appendChild(line('futures', fmtRs(r.f), 'var(--accent)'));
-    tip.appendChild(line('put wtd ' + pctVs(r.p, r.f), fmtRs(r.p), 'var(--up)'));
-    const ex = document.createElement('div'); ex.className = 'r';
-    const em = document.createElement('em');
-    em.textContent = 'width ' + ((r.c - r.p) / r.f * 100).toFixed(1) + '%' +
-      (r.iv == null ? '' : ' · ATM IV ' + r.iv.toFixed(1) + '%');
-    ex.appendChild(em); tip.appendChild(ex);
+    tip.appendChild(line('call OI (' + sg(r.cc) + ' on the day)', fmtOiLots(r.c), 'var(--down)'));
+    tip.appendChild(line('put OI (' + sg(r.pc) + ' on the day)', fmtOiLots(r.p), 'var(--up)'));
+    if (r.c){
+      const ex = document.createElement('div'); ex.className = 'r';
+      const em = document.createElement('em'); em.textContent = 'put/call ' + (r.p / r.c).toFixed(2);
+      ex.appendChild(em); tip.appendChild(ex);
+    }
     tip.classList.add('on');
     const tw = tip.offsetWidth || 170;
     tip.style.left = Math.max(4, (x + 14 + tw > m.w) ? x - tw - 14 : x + 14) + 'px';
@@ -1569,25 +1633,19 @@ function wireWarChart(eid){
   const nearest = clientX => {
     const rc = svg.getBoundingClientRect();
     if (!rc.width) return -1;
-    const frac = ((clientX - rc.left) * (m.w / rc.width) - m.ML) / (m.w - m.ML - m.MR);
-    if (frac < -0.03 || frac > 1.03) return -1;
-    const ms = m.x0 + Math.min(1, Math.max(0, frac)) * (m.x1 - m.x0);
-    let best = -1, bd = Infinity;
-    for (let i = 0; i < m.rows.length; i++){
-      const dd = Math.abs(Date.parse(m.rows[i].date) - ms);
-      if (dd < bd){ bd = dd; best = i; }
-    }
-    return best;
+    const px = (clientX - rc.left) * (m.w / rc.width) - m.ML;
+    const i = Math.floor(px / m.band);
+    return (i < 0 || i >= m.rows.length) ? -1 : i;
   };
   svg.addEventListener('pointermove', ev => draw(nearest(ev.clientX)));
   svg.addEventListener('pointerleave', hide);
   svg.addEventListener('blur', hide);
-  svg.addEventListener('focus', () => draw(idx < 0 ? m.rows.length - 1 : idx));
+  svg.addEventListener('focus', () => draw(idx < 0 ? Math.floor(m.rows.length / 2) : idx));
   svg.addEventListener('keydown', ev => {
     if (ev.key === 'ArrowLeft'){
-      draw(Math.max(0, (idx < 0 ? m.rows.length - 1 : idx) - 1)); ev.preventDefault();
+      draw(Math.max(0, (idx < 0 ? m.rows.length : idx) - 1)); ev.preventDefault();
     } else if (ev.key === 'ArrowRight'){
-      draw(Math.min(m.rows.length - 1, (idx < 0 ? 0 : idx) + 1)); ev.preventDefault();
+      draw(Math.min(m.rows.length - 1, (idx < 0 ? -1 : idx) + 1)); ev.preventDefault();
     } else if (ev.key === 'Escape') hide();
   });
 }

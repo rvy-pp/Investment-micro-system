@@ -335,20 +335,20 @@ def oi_snapshot() -> list[dict]:
             [{"oi": h[1]} for h in reversed(hist)], n=OI_PCT_SESSIONS)
         r["oi_pct_sessions"] = OI_PCT_SESSIONS
     conn.close()
-    # Options columns (2026-09-30): ATM IV + its 1y percentile, and the last
-    # 60 sessions of the weighted average range for the row's mini chart.
+    # Options columns (2026-09-30): ATM IV + its 1y percentile. The row's mini
+    # chart was the 60-session weighted average range until 2026-11-15; it is
+    # now the front expiry's call/put OI by strike (`strk`), PM: "just simply
+    # have the normal graph of call/put OI at each strike".
     for r in rows:
         o = options_series(r["entity_id"])
         if not o or not o.get("dates"):
             r["opt"] = None
             continue
-        tail = list(zip(o["dates"], o["call"], o["fut"], o["put"]))[-60:]
         r["opt"] = {k: o[k] for k in ("symbol", "iv_now", "iv_exp_now",
                                       "iv_pctile", "iv_n", "iv_lo", "iv_hi",
                                       "iv_min_obs")}
         r["opt"]["date"] = o["dates"][-1]
-        r["opt"]["war"] = [[c, f, p] for _d, c, f, p in tail
-                           if None not in (c, f, p)]
+        r["opt"]["strk"] = _strike_mini(option_strikes(r["entity_id"]))
     return rows
 
 
@@ -386,8 +386,78 @@ def oi_history(entity_id: str) -> dict:
         "rows": rows,
         # Options layer (2026-09-30) rides on the SAME route, so the vault
         # copy's per-id oi_history bake carries it with no new enumeration.
+        # Since 2026-11-15 the page draws only its IV from `options`; the
+        # chart is call/put OI by strike, from `strikes`.
         "options": options_series(entity_id),
+        "strikes": option_strikes(entity_id),
     }
+
+
+def option_strikes(entity_id: str) -> dict | None:
+    """Call and put OI at each strike, LATEST session, every live expiry —
+    the plain OI-by-strike chart (PM, 2026-11-15: "instead of the weighted
+    average of the options OI, just simply have the normal graph of call/put
+    OI at each strike"). fo_option_strikes is rolling (fo_options.STRIKE_KEEP
+    sessions), so only the newest date is ever drawn; OI is SHARES, and the
+    day's change rides along for the hover. No split restatement: one date
+    cannot straddle an action."""
+    sym = _nse_symbol(entity_id)
+    if not sym:
+        return None
+    conn = connect()
+    try:
+        d = conn.execute("SELECT MAX(date) FROM fo_option_strikes WHERE symbol=?",
+                         (sym,)).fetchone()[0]
+        if not d:
+            conn.close()
+            return {"symbol": sym, "date": None, "expiries": []}
+        rows = conn.execute(
+            "SELECT expiry, strike, call_oi, put_oi, call_chg, put_chg FROM "
+            "fo_option_strikes WHERE symbol=? AND date=? ORDER BY expiry, strike",
+            (sym, d)).fetchall()
+        meta = {r["expiry"]: r for r in conn.execute(
+            "SELECT expiry, fut, spot, lot FROM fo_options WHERE symbol=? AND date=?",
+            (sym, d))}
+    except sqlite3.OperationalError:          # table not created yet
+        conn.close()
+        return {"symbol": sym, "date": None, "expiries": []}
+    conn.close()
+    exps: dict[str, dict] = {}
+    for r in rows:
+        e = exps.setdefault(r["expiry"], {"expiry": r["expiry"], "k": [], "c": [],
+                                          "p": [], "cc": [], "pc": []})
+        e["k"].append(r["strike"]); e["c"].append(r["call_oi"])
+        e["p"].append(r["put_oi"]); e["cc"].append(r["call_chg"])
+        e["pc"].append(r["put_chg"])
+    spot = lot = None
+    for e in exps.values():
+        m = meta.get(e["expiry"])
+        e["fut"] = m["fut"] if m else None
+        spot = spot or (m["spot"] if m else None)
+        lot = lot or (m["lot"] if m else None)
+    return {"symbol": sym, "date": d, "spot": spot, "lot": lot,
+            "expiries": sorted(exps.values(), key=lambda e: e["expiry"])}
+
+
+STRIKE_MINI_BAND = 0.15   # the row's mini profile: strikes within 15% of futures
+
+
+def _strike_mini(s: dict | None) -> dict | None:
+    """Front expiry's profile for the Positioning row, cut to strikes within
+    STRIKE_MINI_BAND of its futures (spot when no future is listed)."""
+    if not s or not s.get("expiries"):
+        return None
+    e = s["expiries"][0]
+    ref = e.get("fut") or s.get("spot")
+    keep = [i for i, k in enumerate(e["k"])
+            if not ref or abs(k / ref - 1) <= STRIKE_MINI_BAND]
+    if not keep:
+        return None
+    co, po = sum(e["c"]), sum(e["p"])
+    return {"date": s["date"], "expiry": e["expiry"], "fut": ref,
+            "k": [e["k"][i] for i in keep], "c": [e["c"][i] for i in keep],
+            "p": [e["p"][i] for i in keep],
+            "pcr": round(po / co, 2) if co else None}
 
 
 # ---------------------------------------------------------------------------
