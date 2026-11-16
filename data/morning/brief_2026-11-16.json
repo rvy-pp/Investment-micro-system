@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-16",
+  "generated_at": "2026-11-16T08:35:00+05:30",
+  "mail": {
+    "window": "24h to 08:15 IST",
+    "n_scanned": 90,
+    "sectors": [
+      {"sector": "Steel", "bullets": [
+        {"text": "India HRC slipped Rs50/t to Rs63,800/t and rebar fell Rs700/t to Rs63,900/t; the flat-long spread is now -Rs100/t, with long products outpacing flats.",
+         "source": "Nomura - India steel - Steel weekly trends (week ended 13 Nov 2026)", "received": "20:20",
+         "detail": {"summary": "Nomura says domestic steel prices stay resilient, with HRC near a four-year high. Rebar has gained momentum faster than HRC, so the flat-long differential has turned negative. Nomura stays positive on the sector and expects the price hikes to more than absorb raw-material inflation in 2HFY27.",
+                    "points": ["HRC Rs63,800/t, -Rs50/t w-w", "Rebar Rs63,900/t, -Rs700/t w-w", "Flat-long spread -Rs100/t", "HRC spot margin ~Rs35,640/t in Nov, +Rs2,800/t q-q", "Buy on Tata Steel, JSW Steel, Jindal Steel"], "read": "body"}},
+        {"text": "Imported coking coal is flat w-w at $261/t, about 6% above the 2QFY27 average, while iron ore (62% Fe) is at a CY26 low of $86/t.",
+         "source": "Nomura - India steel - Steel weekly trends (week ended 13 Nov 2026)", "received": "20:20",
+         "detail": {"summary": "Global input cost pressure is easing after the coking coal rally, which followed supply disruptions and a fatal mine accident in China. Iron ore is at its lowest level this year.",
+                    "points": ["Coking coal $261/t, flat w-w", "Coking coal ~6% above 2QFY27 average", "China domestic coking coal $330/t, up over 40% since accident", "Iron ore 62% Fe CFR China $86/t, CY26 low"], "read": "body"}},
+        {"text": "India's Oct finished steel imports jumped 66% y-y to 0.76MT while exports fell 32% to 0.44MT, leaving India a net importer by 0.33MT.",
+         "source": "Nomura - India steel - Steel weekly trends (week ended 13 Nov 2026)", "received": "20:20",
+         "detail": {"summary": "October data show modest domestic production growth but surging imports against weaker exports. Consumption remains resilient, and India turned a net steel importer for the month.",
+                    "points": ["Imports 0.76MT, +66% y-y, +16.4% m-m", "Exports 0.44MT, -32% y-y, -22.6% m-m", "Net import 0.33MT", "Consumption 14.28MT, +6.6% y-y", "Crude steel 14.05MT, +0.7% y-y"], "read": "body"}}
+      ]},
+      {"sector": "Cement", "bullets": [
+        {"text": "I-Sec cuts Grasim TP to Rs4,000 from Rs4,175, citing a change in UltraTech's TP; it values UltraTech at a 25% holdco discount.",
+         "source": "I-Sec - Grasim Industries (BUY): Soft quarter, yet a promising outlook", "received": "07:38",
+         "detail": {"summary": "I-Sec retains BUY on Grasim but cuts TP to Rs4,000 after a soft Q2FY27 and an 11% FY27E EBITDA cut. The new TP reflects a change in UltraTech's TP, and the holdco discount applied to UltraTech is 25%, justified by continued high dividend income.",
+                    "points": ["Grasim TP Rs4,000 vs Rs4,175 earlier", "UltraTech holdco discount assumed at 25%", "UltraTech dividend to Grasim Rs39.68bn in Q2", "Other holdings valued at 40% holdco discount", "FY27E EBITDA cut 11%; FY28 risks seen as limited"], "read": "body"}}
+      ]},
+      {"sector": "Mining", "bullets": [
+        {"text": "Kotak cuts NMDC FV to Rs80 from Rs95 and trims FY27/28E EBITDA 4%/8%, as dispatches of 22.2mt lag 1HFY27 output of 27.3mt.",
+         "source": "Kotak - [Kotak] NMDC (CMP: Rs70, FV: Rs80, ADD): Dispatch volumes continue to lag output", "received": "08:04",
+         "detail": {"summary": "Kotak keeps ADD but lowers FV to 6x EV/EBITDA from 6.5x because production keeps outrunning sales, building inventory. Receivables from stressed RINL are rising and seaborne ore weakness caps pricing. October shows the same gap between output and dispatch.",
+                    "points": ["FV Rs80 vs Rs95; 6x EV/EBITDA Sep-28E", "1HFY27 output 27.3mt vs dispatches 22.2mt", "2QFY27 EBITDA Rs21.6bn, Rs2,060/t, below estimates", "RINL receivables Rs55.6bn vs Rs47.1bn in 1Q", "NMDC prices ~16% below import parity"], "read": "body"}},
+        {"text": "NMDC lump ore price was raised Rs150/t to Rs5,400/t wef Sep-26, with fines steady at Rs4,500/t.",
+         "source": "Nomura - India steel - Steel weekly trends (week ended 13 Nov 2026)", "received": "20:20",
+         "detail": {"summary": "Nomura's weekly notes the NMDC lump price hike alongside a weak seaborne ore market. Kotak's NMDC note separately says NMDC cut prices twice in Jul-Aug.",
+                    "points": ["Lump +Rs150/t to Rs5,400/t, wef Sep-26", "Fines unchanged at Rs4,500/t", "Seaborne iron ore 62% Fe at $86/t"], "read": "body"}}
+      ]},
+      {"sector": "EMS", "bullets": [
+        {"text": "Kaynes 2Q miss: revenue +4% yoy, EBITDA margin 13.2%, PAT 47% below consensus, FY26 restated; JPM expects negative reaction, call 16-Nov 8:30.",
+         "source": "JPM & Kotak - Kaynes Technology: First Take: Miss led by lower smart meters; restatement of previous year financials", "received": "01:58",
+         "detail": {"summary": "Miss came from lower smart meter sales as management prioritises cutting working capital. A change in auditor led to restated FY26 and 1QFY27 numbers. Kotak flags a 49% stake sale in Kaynes Semicon to Vishay as a call focus.",
+                    "points": ["JPM: revenue 8% and EBITDA 17% below consensus", "JPM Neutral, TP Rs3,150; consensus cuts expected", "FY26 EBITDA restated 9% lower, net income 12% higher", "Working capital days 169 vs 163 in 1Q (JPM)", "Order book Rs106bn, +31% yoy (Kotak)", "Vishay buys 49% of Kaynes Semicon for US$56.4mn (Kotak)"], "read": "body"}},
+        {"text": "Amber 2Q EBITDA 26% below Kotak on 3.7% margin despite revenue +60% yoy; Kotak FV cut to Rs8,300 from Rs8,600, still BUY.",
+         "source": "Kotak - Amber Enterprises (CMP: Rs6,772, FV: Rs8,300, BUY): Growth strong, margins disappoint; focus shifts to ILJIN", "received": "17:52",
+         "detail": {"summary": "Electronics beat strongly but consumer durables margin collapsed on commodity inflation, forex, wages and Sri City ramp-up costs. Focus shifts to the ILJIN electronics IPO, whose DRHP is filed with the OPPO business excluded.",
+                    "points": ["Electronics revenue Rs12.5bn, +94% yoy; margin 9.3%", "Consumer durables EBITDA margin 0.3%; some pass-through in 3QFY27", "Adjusted loss Rs706mn vs Kotak Rs290mn", "FY27-29 estimates cut 15.1% to up 1.1%", "FY27 guidance kept: RAC-in-line growth, margin down 50-100bps"], "read": "body"}},
+        {"text": "Avalon raises FY27 revenue growth guidance to ~30% from 26-30%; 2Q revenue +37% yoy, order book +27%; Emkay BUY, TP Rs2,400 unchanged.",
+         "source": "Emkay - Avalon Technologies: Strong 2Q results, strong growth prospects ahead; BUY; Target: Rs2,400 (+4 more in Outlook)", "received": "23:44",
+         "detail": {"summary": "Emkay sees the guidance as conservative: about 30% implies only ~20% yoy growth in 2HFY27. It balances strong growth against a share price already up ~132% YTD. TP implies 60x/41x FY28/29E P/E.",
+                    "points": ["EBITDA margin 12.6% vs consensus 11.8%", "Implied book-to-bill 1.34 vs 1.05 in 1QFY27", "Semicon could reach 10% of revenue with one customer", "TN government MoU for 25 acres, Rs530-540mn capex", "CMP Rs2,050; upside 17.1% to TP"], "read": "body"}}
+      ]},
+      {"sector": "Power", "bullets": [
+        {"text": "Avendus INDX conference meetings: Power Grid Tue 17-Nov 10:00, Tata Power Tue 17-Nov 11:00, JSW Energy Wed 18-Nov 14:00.",
+         "source": "Avendus Spark Conferences - Calendar Invite | INDX Annual Investor Conference", "received": "19:26"},
+        {"text": "MS sees power shortages emerging 2028 with pricing power shifting to asset owners; stays selective on power equipment, prefers behind-the-meter providers.",
+         "source": "Morgan Stanley - IDEA: Energy and Power: Beyond AI: Our Key Ideas", "received": "06:24",
+         "detail": {"summary": "MS argues new gas/coal plants take 4-6 years to build and renewables plus batteries cannot supply dependable power. Power shortages are expected in 2028, and new equipment capacity comes online in 2028-29. Top picks are Asia names (HPCL, Gulf, Keppel), not Indian power utilities.",
+                    "points": ["Industry View Attractive; top OW HPCL, Thai Oil, Gulf Development", "New power plants take 4-6 years to build", "Aircon power demand to match datacenter growth by 2030", "Industrial power demand is 2x that of datacenters", "Pricing power shifts to asset owners as shortages emerge in 2028"], "read": "body"}},
+        {"text": "MS estimates ~36trn units of global power use by 2030; consumption outside China is growing 3.3x faster than last decade.",
+         "source": "Morgan Stanley - Energy & Power: What's C-Suite Thinking?", "received": "14:36",
+         "detail": {"summary": "MS says power and energy demand has become more inelastic to price, with 2026 consumption surprising to the upside. Rising power prices are speeding grid deployment, and more nuclear and renewables raise the need for behind-the-meter supply. MS hosts C-suite at its Singapore conference over the next five days.",
+                    "points": ["~36trn units of power consumed by 2030, above IEA forecasts", "Non-China power consumption growing 3.3x faster than last decade", "Europe and Japan power consumption growing after decades of decline", "India gas consumption flat despite high LNG prices", "Grid deployment need accelerating as power prices rise"], "read": "body"}}
+      ]},
+      {"sector": "IT / AI-tech", "bullets": [
+        {"text": "I-Sec flags guidance cuts at Infosys, HCLT and Cognizant on soft Q2FY27 growth, and prefers Mphasis, Coforge, Persistent and TechM for near-term visibility.",
+         "source": "I-Sec - Technology: IT Services review – Q2FY27: Soft growth in seasonally strong quarter leads to guidance cuts for full-FY27", "received": "12:27",
+         "detail": {"summary": "Q2FY27 sequential growth was softer than expected at most large caps, and TCV is still not converting to revenue. Large-cap EBIT margins are trending down. I-Sec sees no AI revenue offset yet and prefers mid-caps plus TechM.",
+                    "points": ["TechM +2.4% QoQ CC, the only large-cap exception", "Coforge fresh order intake USD 1bn, up 104% YoY", "Large-cap EBIT margin ~100-200bps below pre-Covid average", "Coforge H1FY27 EBIT margin 16% vs 13.3% in H1FY26", "AI ~10-11% of revenue at TCS and Infosys; growth not offsetting non-AI decline"], "read": "body"}},
+        {"text": "Avendus Spark INDX conference hosts a LTIMindtree meeting today, Mon 16-Nov at 1:00 PM.",
+         "source": "Avendus - Calendar Invite | Avendus Spark INDX conference | Meeting with LTIMindtree", "received": "19:26"}
+      ]},
+      {"sector": "Macro & strategy", "bullets": [
+        {"text": "UBS: India October CPI 6.1% (Sep 5.5%), a two-year high; expects another 25bp RBI hike in December.",
+         "source": "UBS - Hi Rajvaibhav UBS India: what's trending in India's macro", "received": "06:17",
+         "detail": {"summary": "Food inflation rose to 8.9% from 7.7% on vegetables, pulses and an unfavourable base. CPI is set to stay above the RBI's 6% upper bound for the next couple of months, and UBS sees September-quarter GDP at 7-7.5%.",
+                    "points": ["CPI 6.1% YoY in October vs 5.5% in September", "Food inflation 8.9% vs 7.7%", "Core inflation 4.4% vs 4.3%", "Real GDP growth seen 7-7.5% in September quarter", "India-CEI momentum +2% QoQ; growth to soften in H2 FY27E"], "read": "body"}},
+        {"text": "GS raises India and China-H to OW, cuts Taiwan and China-A to MW; sees RBI hiking three more times and USD/INR 96 in 12 months.",
+         "source": "GS - [GS Daily] 2027 Macro & Strategy Outlook: raise China-H and India to OW, lower TW and China-A to MW", "received": "06:05",
+         "detail": {"summary": "GS upgrades India to Overweight in both its APAC and EM equity outlooks to balance AI-hardware exposure. It is more hawkish than consensus on the RBI, forecasts CY27 GDP of 7.2%, and recommends long India 30y bonds as oil retreats.",
+                    "points": ["India GDP seen 7.2% YoY in CY27 vs 7.9% in CY26", "CY27 headline CPI 5.7%, above consensus; core 4.7%", "RBI seen hiking three more times", "USD/INR seen at 94/95/96 over 3/6/12 months", "Utilities raised to MW; MXAPJ target 960, 19% USD return"], "read": "body"}},
+        {"text": "Kotak expects moderate market returns ahead; Nifty FY27E/FY28E profit growth 18%/13%; 2QFY27 Nifty net income grew 25% vs 21% expected.",
+         "source": "Kotak - [Kotak] Strategy: Two weeks of celebrations after two years of exile (+4 more in Outlook)", "received": "06:40",
+         "detail": {"summary": "Kotak sees returns tracking earnings growth with stable multiples after the past fortnight's rebound. It sees a high probability of quick resolution of the Iran-US conflict and a sharp fall in crude. Margin pressure from raw-material inflation was the only sore point in 2QFY27 results.",
+                    "points": ["Nifty-50 2QFY27 net income +25% vs 21% expected", "KIE universe net income +29% vs 21% expected", "Nifty-50 2QFY27 EBITDA +24% vs 22% expected", "Nifty FY27E/FY28E net profit growth 18%/13%", "Commodity sectors a meaningful share of FY27 incremental profit"], "read": "body"}}
+      ]},
+      {"sector": "Other coverage-adjacent", "bullets": [
+        {"text": "Kotak keeps SELL on Tata Motors PV, FV cut to Rs250 from Rs285; cuts FY27-29E consolidated EBITDA 10-26% after weak JLR and domestic PV.",
+         "source": "Kotak - [Kotak] Tata Motors PV (CMP: Rs287, FV: Rs250, SELL): Weak on all fronts", "received": "10:53",
+         "detail": {"summary": "JLR adjusted EBIT was GBP67mn, with EBITDA of GBP391mn 26% below Kotak's estimate on adverse mix and higher VME. Domestic PV EBITDA of Rs7.9bn was 17% below estimate. Kotak sees no FCF from JLR and does not expect market share gains to last.",
+                    "points": ["JLR EBIT margin 1.1%, down 170bps QoQ", "JLR VME up from 7.6% to 8.2%", "Domestic PV EBITDA Rs7.9bn, flat YoY, 17% below estimate", "FV Rs250 vs Rs285 earlier; CMP Rs287", "FY27-29E EBITDA cut 10-26%"], "read": "body"}},
+        {"text": "BofA: JLR FY27 guide cut to EBIT 2-3% (from 4%) and FCF minus GBP1.25bn; Tata Motors PV PO cut to Rs250 from Rs305, Underperform.",
+         "source": "BofA - TMPV IN: JLR cash burn woes return; Reiterate Underperform, PO 250", "received": "02:12",
+         "detail": {"summary": "JLR missed again with a 1.1% EBIT margin against BofA's 3.2% and a GBP0.5bn FCF outflow. BofA cuts FY27/FY28 estimates by 50%/20% and sees India business as almost the entire SOTP, with JLR near negligible given GBP4.2bn net debt.",
+                    "points": ["FY27 JLR FCF guide minus GBP1.25bn vs breakeven earlier", "1H JLR FCF outflow GBP1.5bn; Q2 outflow GBP0.5bn", "FY27/FY28 estimates cut 50%/20%", "India PV Q2 volume +40% YoY, share 14.9%", "India PV EBITDA margin 3.9%, down 30bps QoQ"], "read": "body"}},
+        {"text": "CLSA keeps Oil India O-PF, TP Rs550 (25% upside); 2QFY27 PAT Rs22.6bn missed 22% on write-offs, oil output +20% YoY.",
+         "source": "CLSA - CLSA: Oil India (OINL IS): Exploration write-off drives miss (+10 more in Outlook)", "received": "23:57",
+         "detail": {"summary": "Standalone PAT missed on higher exploration write-offs, including an Andaman block well, though EBITDA beat by 2%. Oil output hit a 19-year high; management guides FY27 oil production up 15%+. CLSA says the stock prices in about US$67/bbl Brent.",
+                    "points": ["PAT Rs22.6bn, +116% YoY, 22% below estimate", "EBITDA Rs52.6bn, 2% ahead of estimate", "Oil production 80kbpd, +20% YoY", "FY27 EPS cut 3%; TP Rs550 unchanged", "Stock prices in ~US$67/bbl Brent, 30% below spot"], "read": "body"}}
+      ]}
+    ],
+    "quiet": ["Non-ferrous (aluminium/zinc)"]
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "CLSA downgrades Nvidia to Outperform from High-Conviction Outperform and cuts TP to US$255 from US$425 (15x FY28 PE vs 25x), with earnings estimates unchanged.", "source": "CLSA - Nvidia (NVDA US): After Jensen"},
+      {"text": "BofA sees Samsung staying disciplined on HBM (high-30s to 40% share), with NAND spot down ~20% since mid-Oct and 1Q27 NAND ASP down low-single-digit against Street +10%.", "source": "BofA - BofA ASIA Daily: MEMORY: Bottom Fish?"},
+      {"text": "BOCI's TMT Daily carries Chinese-language reports that Huang is helping pick his successor and that a petition to reinstate him has passed 120,000 signatures.", "source": "BOCI - BOCI TMT Daily (16 Nov)"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": "Deutsche Bank downgraded Cognizant to Hold from Buy, saying the growth thesis hasn't played out (Investing.com / MT Newswires)."}
+    ]
+  }
+}

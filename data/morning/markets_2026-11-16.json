@@ -1,0 +1,261 @@
+{
+ "date": "2026-11-16",
+ "fetched_at": "2026-11-16T08:11:40",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-13",
+    "close": 7561.67,
+    "prev_date": "2026-11-12",
+    "chg_pct": -0.4,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-13",
+    "close": 25136.27,
+    "prev_date": "2026-11-12",
+    "chg_pct": -0.91,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-13",
+    "close": 52347.55,
+    "prev_date": "2026-11-12",
+    "chg_pct": 0.1,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-13",
+    "close": 10146.32,
+    "prev_date": "2026-11-12",
+    "chg_pct": -3.43,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-13",
+    "close": 162.85,
+    "prev_date": "2026-11-12",
+    "chg_pct": -2.01,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-13",
+    "close": 534.06,
+    "prev_date": "2026-11-12",
+    "chg_pct": -8.75,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-13",
+    "close": 398.73,
+    "prev_date": "2026-11-12",
+    "chg_pct": -1.67,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-13",
+    "close": 347.01,
+    "prev_date": "2026-11-12",
+    "chg_pct": -4.76,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-13",
+    "close": 250.49,
+    "prev_date": "2026-11-12",
+    "chg_pct": 0.22,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-13",
+    "close": 63.01,
+    "prev_date": "2026-11-12",
+    "chg_pct": -1.16,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture vs. Adobe: Which Technology Stock Is a Better Buy for 2027?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-14 19:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-adobe-technology-stock-190202938.html"
+   },
+   {
+    "title": "Global Managed Learning Services Market Report 2026 | Capitalize on AI Reskilling as Market Hits $14.65B by 2030; Accenture, Deloitte, IBM, Capgemini and NIIT Scale AI Learning",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-13 14:51Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/global-managed-learning-services-market-145100362.html"
+   },
+   {
+    "title": "Global Lean and Six Sigma Services Market Report 2026 | Capitalize on $8.39 Billion Market by 2030; Industry 4.0 Drives Demand as Accenture, Deloitte, Capgemini and Genpact Compete",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-13 14:46Z",
+    "link": "https://finance.yahoo.com/small-business/articles/global-lean-six-sigma-services-144600589.html"
+   },
+   {
+    "title": "AI software is sinking, why is Accenture winning $84.5B deals?",
+    "publisher": "Investing.com",
+    "when": "2026-11-13 12:41Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/ai-software-sinking-why-accenture-124147461.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank cautious on Cognizant, says growth thesis hasn\u2019t played out",
+    "publisher": "Investing.com",
+    "when": "2026-11-13 15:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-cautious-cognizant-says-155532399.html"
+   },
+   {
+    "title": "Update: Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Raises Price Target to $75 From $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 13:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-134727001.html"
+   },
+   {
+    "title": "Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Price Target is $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 11:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-115957048.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Sees Possible AI Pricing Relief in 2027",
+    "publisher": "MarketBeat",
+    "when": "2026-11-12 20:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-sees-possible-201456716.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 7% Undervalued On Claude AI Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 10:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-could-101148155.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Jensen Huang Reportedly Considers Returning To Nvidia: FT",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-16 02:23Z",
+    "link": "https://finance.yahoo.com/m/694d3941-721c-31d4-aff5-d306f1116454/jensen-huang-reportedly.html"
+   },
+   {
+    "title": "Dow Jones Futures Waver As Jensen Huang Mulls Nvidia Return",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-16 02:23Z",
+    "link": "https://finance.yahoo.com/m/53e50dc8-f137-3f6c-bfd6-912334fef9f1/dow-jones-futures-waver-as.html"
+   },
+   {
+    "title": "US Treasury chief wants answers soon from Nvidia",
+    "publisher": "AFP",
+    "when": "2026-11-16 02:16Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/us-treasury-chief-wants-answers-202317355.html"
+   },
+   {
+    "title": "U.S. stock futures little changed as investors await Nvidia earnings",
+    "publisher": "Investing.com",
+    "when": "2026-11-16 02:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/u-stock-futures-little-changed-020537465.html"
+   },
+   {
+    "title": "Dow, S&P 500, Nasdaq Futures Edge Lower As Markets Brace For Nvidia Earnings, Anthropic IPO, Fed Minutes: SMMT, NBIS, HELP, MSTR In Focus",
+    "publisher": "Stocktwits",
+    "when": "2026-11-16 02:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/dow-p-500-nasdaq-futures-020421221.html"
+   },
+   {
+    "title": "Nvidia stock steady as Jensen Huang reportedly weighs CEO comeback, Musk backs return",
+    "publisher": "Yahoo Finance",
+    "when": "2026-11-16 01:56Z",
+    "link": "https://finance.yahoo.com/markets/article/nvidia-stock-steady-as-jensen-huang-reportedly-weighs-ceo-comeback-musk-backs-return-015644730.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Broadcom Heads 3 Top Growth Stocks To Watch",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-15 18:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-heads-3-top-growth-180757072.html"
+   },
+   {
+    "title": "AMD vs. Broadcom: With NVDA\u2019s Jensen Huang Gone, Which AI Stock Wins the Most?",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-15 17:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-vs-broadcom-nvda-jensen-171640410.html"
+   },
+   {
+    "title": "Broadcom Stock Jumps as Nvidia\u2019s Leadership Crisis Raises a Billion-Dollar Opportunity for Its AI Chip Business",
+    "publisher": "Barchart",
+    "when": "2026-11-15 14:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stock-jumps-nvidia-leadership-142525268.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD vs. Broadcom: With NVDA\u2019s Jensen Huang Gone, Which AI Stock Wins the Most?",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-15 17:16Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-vs-broadcom-nvda-jensen-171640410.html"
+   },
+   {
+    "title": "Forget Jensen Huang\u2019s Resignation. AMD May Be Nvidia\u2019s Biggest Threat in 2027",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-15 17:09Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/forget-jensen-huang-resignation-amd-170923389.html"
+   },
+   {
+    "title": "The Evidence Is Piling Up: AMD Could Be the Best Artificial Intelligence (AI) Stock to Buy Amid the Sell-Off",
+    "publisher": "Motley Fool",
+    "when": "2026-11-15 13:45Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/evidence-piling-amd-could-best-134502914.html"
+   },
+   {
+    "title": "Anthropic Just Delivered Great News for AMD Investors and Bad News for Nvidia",
+    "publisher": "Motley Fool",
+    "when": "2026-11-15 10:40Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/anthropic-just-delivered-great-news-104002159.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25267.5,
+  "chg_pct": 0.01,
+  "stamp": "16-Nov-2026 08:11:35",
+  "expiry": "23-Nov-2026",
+  "volume": 1565,
+  "nifty_close": {
+   "close": 25144.3,
+   "stamp": "13-Nov-2026 15:30"
+  },
+  "gap_pts": 123.2,
+  "gap_pct": 0.49
+ }
+}
