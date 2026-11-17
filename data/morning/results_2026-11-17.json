@@ -1,0 +1,17 @@
+{
+ "date": "2026-11-17",
+ "session": true,
+ "generated_at": "2026-11-17T08:15:03",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {},
+ "rows": [],
+ "next": {
+  "date": "2026-11-18",
+  "groups": {},
+  "rows": []
+ },
+ "ahead": [],
+ "errors": [],
+ "n_extended": 46
+}

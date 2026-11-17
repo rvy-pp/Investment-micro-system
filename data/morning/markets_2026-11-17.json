@@ -1,0 +1,243 @@
+{
+ "date": "2026-11-17",
+ "fetched_at": "2026-11-17T08:14:50",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-16",
+    "close": 7416.59,
+    "prev_date": "2026-11-13",
+    "chg_pct": -1.92,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-16",
+    "close": 24509.76,
+    "prev_date": "2026-11-13",
+    "chg_pct": -2.49,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-16",
+    "close": 51608.17,
+    "prev_date": "2026-11-13",
+    "chg_pct": -1.41,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-16",
+    "close": 9610.65,
+    "prev_date": "2026-11-13",
+    "chg_pct": -5.28,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-16",
+    "close": 156.14,
+    "prev_date": "2026-11-13",
+    "chg_pct": -4.12,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-16",
+    "close": 504.28,
+    "prev_date": "2026-11-13",
+    "chg_pct": -5.58,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-16",
+    "close": 373.45,
+    "prev_date": "2026-11-13",
+    "chg_pct": -6.34,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-16",
+    "close": 333.4,
+    "prev_date": "2026-11-13",
+    "chg_pct": -3.92,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-16",
+    "close": 247.7,
+    "prev_date": "2026-11-13",
+    "chg_pct": -1.11,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-16",
+    "close": 62.29,
+    "prev_date": "2026-11-13",
+    "chg_pct": -1.14,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Stock May Trade At A Discount On Fresh AI Outsourcing News",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-17 02:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-may-trade-020729980.html"
+   },
+   {
+    "title": "Value-Added Reseller (VAR) Market 2026-2030: Size, Trends and Forecast | Capitalize on AI, Cloud, Cybersecurity and Managed Services with Accenture, NTT DATA, TCS and Capgemini",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-16 15:35Z",
+    "link": "https://finance.yahoo.com/technology/articles/value-added-reseller-var-market-153500523.html"
+   },
+   {
+    "title": "Most work doesn\u2019t need the Ferrari of AI, Wharton and Accenture find, but companies may be paying for it anyway",
+    "publisher": "Fortune",
+    "when": "2026-11-16 14:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/most-doesn-t-ferrari-ai-140000997.html"
+   },
+   {
+    "title": "ETFs Are Net Sellers of Accenture (ACN) on Nov. 12",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-16 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/etfs-net-sellers-accenture-acn-110237195.html"
+   },
+   {
+    "title": "Accenture vs. Adobe: Which Technology Stock Is a Better Buy for 2027?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-14 19:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-vs-adobe-technology-stock-190202938.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank cautious on Cognizant, says growth thesis hasn\u2019t played out",
+    "publisher": "Investing.com",
+    "when": "2026-11-13 15:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-cautious-cognizant-says-155532399.html"
+   },
+   {
+    "title": "Update: Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Raises Price Target to $75 From $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 13:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-134727001.html"
+   },
+   {
+    "title": "Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Price Target is $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 11:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-115957048.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Sees Possible AI Pricing Relief in 2027",
+    "publisher": "MarketBeat",
+    "when": "2026-11-12 20:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-sees-possible-201456716.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 7% Undervalued On Claude AI Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 10:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-could-101148155.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures: AMD, Nvidia, Micron Lead AI Trade Lower With Nvidia Earnings On Deck",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-17 02:31Z",
+    "link": "https://finance.yahoo.com/m/d0a3411e-5f2b-302d-801a-a42b1d7ca5ea/dow-jones-futures%3A-amd%2C.html"
+   },
+   {
+    "title": "1 Number Reveals Which Is the Better Buy Between Nvidia and AMD",
+    "publisher": "Motley Fool",
+    "when": "2026-11-17 02:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/1-number-reveals-better-buy-022202608.html"
+   },
+   {
+    "title": "AMD\u2019s Nvidia Rally Fades: Michael Burry Calls AMD \u2018Too Expensive As Eternal Alternative\u2019",
+    "publisher": "Stocktwits",
+    "when": "2026-11-17 02:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-nvidia-rally-fades-michael-022002772.html"
+   },
+   {
+    "title": "Asia shares slide on tech weakness ahead of Nvidia earnings",
+    "publisher": "Reuters",
+    "when": "2026-11-17 02:05Z",
+    "link": "https://finance.yahoo.com/markets/world-indices/articles/asia-shares-stumble-tech-weakness-012906483.html"
+   },
+   {
+    "title": "NOK Slides After-Hours: Nvidia Dumps More Than Half Its Nokia Stake \u2014 Retail Bears Eye $5 Despite AI Push, ASUS Deal",
+    "publisher": "Stocktwits",
+    "when": "2026-11-17 02:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nok-slides-hours-nvidia-dumps-020414079.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Why Broadcom Stock Got Mashed on Monday",
+    "publisher": "Motley Fool",
+    "when": "2026-11-17 01:04Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-stock-got-mashed-010403830.html"
+   },
+   {
+    "title": "Broadcom vs. Nvidia: Which Semiconductor Stock Is the Better AI Buy over the Next 3 Years?",
+    "publisher": "Motley Fool",
+    "when": "2026-11-17 00:22Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-vs-nvidia-semiconductor-stock-002202308.html"
+   },
+   {
+    "title": "Broadcom Is \u201cthe Best Play\u201d on Nvidia\u2019s CEO Exit, One Investor Argues. The Reason Is China",
+    "publisher": "TIKR",
+    "when": "2026-11-16 23:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-best-play-nvidia-ceo-231259559.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD\u2019s Nvidia Rally Fades: Michael Burry Calls AMD \u2018Too Expensive As Eternal Alternative\u2019",
+    "publisher": "Stocktwits",
+    "when": "2026-11-17 02:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-nvidia-rally-fades-michael-022002772.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25283.0,
+  "chg_pct": -0.08,
+  "stamp": "17-Nov-2026 08:11:47",
+  "expiry": "23-Nov-2026",
+  "volume": 1330,
+  "nifty_close": {
+   "close": 25291.100000000002,
+   "stamp": "16-Nov-2026 15:30"
+  },
+  "gap_pts": -8.1,
+  "gap_pct": -0.03
+ }
+}
