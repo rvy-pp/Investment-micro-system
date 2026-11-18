@@ -1,0 +1,206 @@
+{
+ "date": "2026-11-18",
+ "fetched_at": "2026-11-18T08:08:26",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-17",
+    "close": 7340.53,
+    "prev_date": "2026-11-16",
+    "chg_pct": -1.03,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-17",
+    "close": 24328.38,
+    "prev_date": "2026-11-16",
+    "chg_pct": -0.74,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-17",
+    "close": 50759.42,
+    "prev_date": "2026-11-16",
+    "chg_pct": -1.64,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-17",
+    "close": 9642.88,
+    "prev_date": "2026-11-16",
+    "chg_pct": 0.34,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-17",
+    "close": 155.46,
+    "prev_date": "2026-11-16",
+    "chg_pct": -0.44,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-17",
+    "close": 503.41,
+    "prev_date": "2026-11-16",
+    "chg_pct": -0.17,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-17",
+    "close": 359.69,
+    "prev_date": "2026-11-16",
+    "chg_pct": -3.68,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-17",
+    "close": 341.6,
+    "prev_date": "2026-11-16",
+    "chg_pct": 2.46,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-17",
+    "close": 239.28,
+    "prev_date": "2026-11-16",
+    "chg_pct": -3.4,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-17",
+    "close": 60.0,
+    "prev_date": "2026-11-16",
+    "chg_pct": -3.68,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "PRIIPs KID Production Market Report 2026 | Capitalize on 12.7% CAGR to $2.41B by 2030 as Deloitte, Accenture, Broadridge and Regnology Scale AI and Cloud Compliance",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-17 14:25Z",
+    "link": "https://finance.yahoo.com/technology/articles/priips-kid-production-market-report-142500305.html"
+   },
+   {
+    "title": "Accenture (ACN) Stock May Trade At A Discount On Fresh AI Outsourcing News",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-17 02:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-stock-may-trade-020729980.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Deutsche Bank cautious on Cognizant, says growth thesis hasn\u2019t played out",
+    "publisher": "Investing.com",
+    "when": "2026-11-13 15:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-cautious-cognizant-says-155532399.html"
+   },
+   {
+    "title": "Update: Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Raises Price Target to $75 From $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 13:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-134727001.html"
+   },
+   {
+    "title": "Deutsche Bank Downgrades Cognizant Technology Solutions to Hold From Buy, Price Target is $66",
+    "publisher": "MT Newswires",
+    "when": "2026-11-13 11:59Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/deutsche-bank-downgrades-cognizant-technology-115957048.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions Sees Possible AI Pricing Relief in 2027",
+    "publisher": "MarketBeat",
+    "when": "2026-11-12 20:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-sees-possible-201456716.html"
+   },
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Could Be 7% Undervalued On Claude AI Expansion",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-11 10:11Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-could-101148155.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Waver After Nvidia Beats, Says This On Jensen Huang; Target, Anthropic IPO Ahead",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-18 02:26Z",
+    "link": "https://finance.yahoo.com/m/3b22ed8c-00c3-32f8-89f5-91bc21ccb366/dow-jones-futures-waver-after.html"
+   },
+   {
+    "title": "Nvidia\u2019s startup stakes ballooned to $65B, but Huang\u2019s exit puts future  deals in doubt",
+    "publisher": "TechCrunch",
+    "when": "2026-11-18 01:44Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-startup-stakes-ballooned-65b-014421727.html"
+   },
+   {
+    "title": "Asia stocks set to snap losing streak on Nvidia beat as Anthropic looms",
+    "publisher": "Reuters",
+    "when": "2026-11-18 01:43Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/asia-stocks-set-snap-losing-014340794.html"
+   },
+   {
+    "title": "Nvidia says 'no' to rehiring Huang and WSJ reports SEC is probing the chipmaker",
+    "publisher": "Reuters",
+    "when": "2026-11-18 01:32Z",
+    "link": "https://finance.yahoo.com/news/nvidia-board-forms-committee-national-102208048.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "TD Cowen Cut Its Broadcom Target to $425. It Still Sees 24% Upside",
+    "publisher": "TIKR",
+    "when": "2026-11-17 22:52Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/td-cowen-cut-broadcom-target-225242474.html"
+   },
+   {
+    "title": "AMD, Broadcom, CoreWeave stocks rise on Nvidia earnings beat",
+    "publisher": "Yahoo Finance",
+    "when": "2026-11-17 22:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/article/amd-broadcom-tsmc-stocks-rise-on-nvidia-earnings-coreweave-nebius-shares-also-rally-220159436.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": []
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25255.5,
+  "chg_pct": -0.37,
+  "stamp": "18-Nov-2026 08:08:06",
+  "expiry": "23-Nov-2026",
+  "volume": 5226,
+  "nifty_close": {
+   "close": 25387.4,
+   "stamp": "17-Nov-2026 15:30"
+  },
+  "gap_pts": -131.9,
+  "gap_pct": -0.52
+ }
+}
