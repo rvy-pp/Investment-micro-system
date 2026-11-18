@@ -71,6 +71,7 @@ ticker_map:
   # is the Bloomberg ticker, which is what the IMS will print if a position
   # is ever taken (PWGR IN).
   PWGR: power_grid
+  NTPC: ntpc            # coverage, 2026-11-18 (PM: "let's build the ntpc-agent"); Bloomberg NTPC IN
   # IT
   TCS: tcs
   INFO: infosys
@@ -208,6 +209,7 @@ analysis_exclude:
 # The token must be in ticker_map.
 analysis_coverage:
   - {token: PWGR, group: POWER}
+  - {token: NTPC, group: POWER}   # 2026-11-18
 
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
@@ -218,6 +220,7 @@ names:
   KAYNE: Kaynes
   PGEL: PG Electroplast
   PWGR: Power Grid
+  NTPC: NTPC
   TCS: TCS
   INFO: Infosys
   WPRO: Wipro

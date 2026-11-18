@@ -3750,6 +3750,69 @@ does not cover, and a model whose driver is not a commodity.
   (annual only; its PO is not in the file, the mail says 300). Q2FY27
   consolidated came from screener.in's table plus the Kotak and JPM notes.
 
+### NTPC — the second power case and the regulated-generator model (2026-11-18)
+
+PM: *"let's build the ntpc-agent. I have downloaded the models as well, check
+them out and let's start building the excel model as well."* NTPC is a
+coverage name like Power Grid (`analysis_coverage: {token: NTPC, group:
+POWER}`, `ticker_map NTPC: ntpc`, agent **`ntpc-agent`**; the Bloomberg
+ticker is NTPC IN). The Analysis roster is 32 rows. Thursday's POWER rota day
+now reviews both.
+
+- **`packages/book/genco_model.py`** (25-check selftest, Excel recalculation
+  included when Excel is on the box) builds `NTPC_model.xlsx` from
+  `model_config.json`. It is `power_model.py` with two differences, which is
+  why it is its own builder and not a config switch:
+  - **Fuel is passed through.** About half of sales is the energy charge. A
+    revenue yield on the asset base would move with coal and generation,
+    which earn nothing. So sales = fuel (the same quarter a year earlier x
+    1 + `Fuel_growth`) + the **margin over fuel**. The selftest builds the
+    fixture twice, with fuel +25%, and holds that no quarter's PAT moves.
+  - **The driver is consolidated regulated equity**, the number the company
+    reports each quarter. Each fiscal year's ADDITION (yellow) is spread over
+    its forecast quarters net of what is reported. Margin over fuel = average
+    regulated equity x a yield (trailing four quarters + drift); employee and
+    other expenses a ratio on the same base; depreciation the latest
+    quarter's rate, carried.
+- **Sales INCLUDE the regulatory deferral movement** (the brokers'
+  presentation). On the filed layout the movement sits after tax, PBT swings
+  by ~Rs2,000cr a quarter while PAT does not, and the tax rate reads anywhere
+  from −10% to 34%. On this layout it is 22-28%.
+- **Capex, borrowings and net worth are SPARSE typed rows.** They are
+  published at balance-sheet dates or not by quarter at all. A model row reads
+  the typed figure where there is one and rolls where there is none; untyped
+  capex quarters take their weight's share of the year's plan less the typed
+  quarters. `crossfoot` refuses a sparse figure typed on a forecast quarter.
+- **The addition row's reported figures sit on their own row.** A SUMIFS that
+  ranges over its own row is a circular reference in Excel even when the
+  criteria exclude the cell; the selftest checks no formula does.
+- **A Memo sheet** (the standalone-to-consolidated bridge, standalone
+  regulated equity, units, capacity) is typed and nothing reads it; selftested.
+- **Valuation is P/E** like Power Grid's, read by `model_view` through the
+  same labels. The cross-check is the houses' own route: P/BV on book ex NTPC
+  Green, plus the stake per share (`Sub_book_ps`, `Sub_value_ps`). At JPM's
+  1.75x and Rs48.7 it prints Rs468 against JPM's own 467.6, so the book roll
+  agrees with theirs.
+- **Consensus is a ONE-OFF Yahoo read, not stored.** Neither NTPC model has a
+  consensus sheet (JPM's Power Grid model did). `yahoo_estimates`' helpers
+  were called for `NTPC.NS` once: FY27 26.71 (20 analysts), FY28 28.27 (21).
+  It sits in build.json `consensus` with that source. The daily capture stays
+  IT + EMS. FY27 looks stale: it leaves 6.27 a quarter for H2 against Q2's
+  7.25 and Morgan Stanley's 6.75.
+- **First read, 17-Nov close Rs321.8.** Result 31-Oct-2026. Thirteen targets,
+  Kotak 355 to JPM 468, median 407 = 14.40x FY28 consensus. σ 11.5%. Brief:
+  base +25.9% / bear +12.2% / bull +41.2%, nearly all multiple (build FY28
+  EPS 28.14 vs 28.27). Model FY27 28.07 / FY28 28.53; Q3 draft EPS 6.72 vs
+  Morgan Stanley's 6.75. Over 90 days the price fell 4.4% while FY28
+  consensus rose 13.5%.
+- **Known and not fixed:** dividends by quarter are an assumed split of the
+  reported annual total (they size only cash and net worth). The cash plug
+  sits Rs11,800cr above reported at Mar-26 (no working capital). The
+  orchestrator's mail search term for this leg is the bare `NTPC`, which also
+  matches NTPC Green; hits must be checked by hand.
+- The two models were MS `868893.NTPC.NS.XLSM` (16-Nov, post-result; PT 386)
+  and JPM `NTPC.NS_Equity_model.xlsx` (05-Nov; FV 467.6).
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed
