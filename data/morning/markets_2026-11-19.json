@@ -1,0 +1,189 @@
+{
+ "date": "2026-11-19",
+ "fetched_at": "2026-11-19T08:15:25",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-18",
+    "close": 7323.63,
+    "prev_date": "2026-11-17",
+    "chg_pct": -0.23,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-18",
+    "close": 24429.88,
+    "prev_date": "2026-11-17",
+    "chg_pct": 0.42,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-18",
+    "close": 50198.17,
+    "prev_date": "2026-11-17",
+    "chg_pct": -1.11,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-18",
+    "close": 9652.8,
+    "prev_date": "2026-11-17",
+    "chg_pct": 0.1,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-18",
+    "close": 150.96,
+    "prev_date": "2026-11-17",
+    "chg_pct": -2.89,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-18",
+    "close": 530.14,
+    "prev_date": "2026-11-17",
+    "chg_pct": 5.31,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-18",
+    "close": 362.62,
+    "prev_date": "2026-11-17",
+    "chg_pct": 0.81,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-18",
+    "close": 354.05,
+    "prev_date": "2026-11-17",
+    "chg_pct": 3.64,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-18",
+    "close": 227.49,
+    "prev_date": "2026-11-17",
+    "chg_pct": -4.93,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-18",
+    "close": 57.95,
+    "prev_date": "2026-11-17",
+    "chg_pct": -3.42,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Can Accenture Stock Jump 30%?",
+    "publisher": "Trefis",
+    "when": "2026-11-18 22:27Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-jump-30-222709005.html"
+   },
+   {
+    "title": "Accenture (ACN) Registers a Bigger Fall Than the Market: Important Facts to Note",
+    "publisher": "Zacks",
+    "when": "2026-11-18 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-registers-bigger-fall-215001379.html"
+   },
+   {
+    "title": "Accenture (ACN) Joins 40 Plus Organizations In AI Transparency Initiative",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-18 16:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-joins-40-plus-161416063.html"
+   },
+   {
+    "title": "Accenture Life Trends 2027 Finds People Want Progress in an AI Era, but on Their Own Terms",
+    "publisher": "Business Wire",
+    "when": "2026-11-18 13:59Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-life-trends-2027-finds-135900872.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Here Is Why Investors Should Pay Attention to Cognizant Technology (CTSH)",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-18 17:12Z",
+    "link": "https://finance.yahoo.com/technology/articles/why-investors-pay-attention-cognizant-171233409.html"
+   },
+   {
+    "title": "What Changed for Deutsche Bank on Cognizant (CTSH)?",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-18 16:12Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/changed-deutsche-bank-cognizant-ctsh-161201078.html"
+   },
+   {
+    "title": "Cognizant Joins Qualys Global mROC Alliance to Deliver Managed Risk Operations for the Frontier AI Era",
+    "publisher": "PR Newswire",
+    "when": "2026-11-18 14:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-joins-qualys-global-mroc-140000641.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "CEO Scandals Typically Cost About 1%. Here\u2019s Why It\u2019s Different for Nvidia",
+    "publisher": "TIKR",
+    "when": "2026-11-19 02:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/ceo-scandals-typically-cost-1-021318764.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Thinking About Buying Anthropic\u2019s IPO on Nov. 19? Here\u2019s an AI Stock I\u2019d Consider First (Hint: It\u2019s Not Nvidia or Broadcom).",
+    "publisher": "Motley Fool",
+    "when": "2026-11-18 23:35Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/thinking-buying-anthropic-ipo-nov-233502633.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why Is AMD Stock Rising Overnight?",
+    "publisher": "Stocktwits",
+    "when": "2026-11-19 02:05Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-rising-overnight-020525527.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25166.0,
+  "chg_pct": -0.13,
+  "stamp": "19-Nov-2026 08:13:25",
+  "expiry": "23-Nov-2026",
+  "volume": 7104,
+  "nifty_close": {
+   "close": 25387.4,
+   "stamp": "18-Nov-2026 15:30"
+  },
+  "gap_pts": -221.4,
+  "gap_pct": -0.87
+ }
+}
