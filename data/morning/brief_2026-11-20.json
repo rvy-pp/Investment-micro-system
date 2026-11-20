@@ -1,0 +1,344 @@
+{
+ "date": "2026-11-20",
+ "generated_at": "2026-11-20T08:12:21",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 118,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Ambit sees LME aluminium falling to $2,600-2,800/t on the cost curve; prefers Hindalco over VAML as cautious on metals.",
+      "source": "Ambit - Ambit Metals: Chartbook - Macro headwinds build, China weakens further",
+      "received": "08:23",
+      "detail": {
+       "summary": "Ambit argues macro headwinds outweigh Super El Nino supply disruption: Fed hike odds, a firmer dollar and weak China demand. Investor positioning in aluminium has started turning while GCC and Chinese output rise. It prefers ferrous over non-ferrous and lower upstream exposure.",
+       "points": [
+        "LME target range $2,600-2,800/t on cost curve",
+        "GCC output inching up; Chinese output strong",
+        "Indonesian exports moderated in Sep'26, still a key monitorable",
+        "Copper tariff delay and higher rates cited as headwinds",
+        "Preference: HNDL over VAML"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Metals fell 3-5% Wednesday with copper worst, then zinc; MCX copper dropped about Rs70/kg on dollar strength and rupee gain.",
+      "source": "Emkay - Commodity Market Report: Metals rout deepens: gold and silver slide, copper leads base metals lower, crude weakens",
+      "received": "09:49",
+      "detail": {
+       "summary": "Stronger dollar and weak global equities triggered long liquidation across base metals, with Wednesday's volume the highest versus the prior month's daily average. LME third-Wednesday expiry added volatility. Emkay expects some follow-through weakness today, then consolidation after three sharp sessions.",
+       "points": [
+        "Losses of 3-5% across the metals complex",
+        "Copper biggest loser, then zinc",
+        "MCX copper down about Rs70/kg, rupee appreciation amplified it",
+        "Highest single-day volume versus prior month's average"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA 2027 outlook: aluminium an underappreciated opportunity with Indonesian supply fears overdone; copper may pause but super-cycle intact.",
+      "source": "CLSA - Back from our India Forum - Key takeaways | 2027 Commodity Outlook (+2 more in Outlook)",
+      "received": "09:01",
+      "detail": {
+       "summary": "CLSA and CITIC call 2027 tight markets with softer growth. They see copper taking a breather versus 2026 without ending the super-cycle, and aluminium as underappreciated. This cuts against Ambit's bearish aluminium read in the same morning's mail.",
+       "points": [
+        "Copper: breather vs 2026, super-cycle continues",
+        "Aluminium: Indonesian supply threat looks overdone",
+        "Gold heading back towards $5,000/oz",
+        "Oil $80-90/bbl sustainable medium term"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Ambit: steel margins peaked early; Indian prices already at Rs3,500/t premium to imports, rebar and HRC rolling over.",
+      "source": "Ambit - Ambit Metals: Chartbook - Macro headwinds build, China weakens further",
+      "received": "08:23",
+      "detail": {
+       "summary": "Rebar margins normally peak in Apr/May but are showing signs of peaking now, as is HRC. With Indian prices already at a wide import premium, further domestic upside looks limited. Ambit prefers ferrous over non-ferrous overall.",
+       "points": [
+        "Indian premium to imports at Rs3,500/t",
+        "Rebar and HRC margins peaking ahead of seasonal peak",
+        "Indian premium usually builds in winter/spring"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit says avoid iron ore: Simandou shipping 1.5-2.0MT a month and El Nino year removes seasonal support; ranks JSL > JSW > TSL > NMDC.",
+      "source": "Ambit - Ambit Sales | 2Q Review ...; Metals Chartbook: Remain cautious",
+      "received": "09:19",
+      "detail": {
+       "summary": "Iron ore enters its seasonally strong period but the El Nino year removes that support, while Simandou ramps. Ambit prefers lower upstream exposure within ferrous, which puts NMDC last in its ranking.",
+       "points": [
+        "Simandou at 1.5-2.0MT monthly run-rate",
+        "Seasonal support fades in El Nino year",
+        "Ranking: JSL > JSW > TSL > NMDC",
+        "Avoid iron ore exposure"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "China steel exports stay above 10MT a month despite lower output; credit impulse and housing still weakening.",
+      "source": "Ambit - Ambit Metals: Chartbook - Macro headwinds build, China weakens further",
+      "received": "08:23",
+      "detail": {
+       "summary": "Chinese demand shows no improvement: credit impulse moderating, new construction starts and housing prices weak. Exports persist even as domestic production falls, which keeps pressure on regional steel pricing.",
+       "points": [
+        "China steel exports above 10MT monthly",
+        "Credit impulse continues to moderate",
+        "New construction starts and housing prices weak"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Crisil: cement makers plan Rs75,000 crore capex, with sector debt peaking in FY27.",
+      "source": "Kotak - [Kotak] Infra Daily Wrap: Defense ministry seeks 20% hike in capex outlay; ...",
+      "received": "08:49"
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Ambit ranks NMDC last among iron ore exposures, citing Simandou ramp and fading seasonal support; avoid iron ore.",
+      "source": "Ambit - Ambit Sales | 2Q Review ...; Metals Chartbook: Remain cautious",
+      "received": "09:19",
+      "detail": {
+       "summary": "Ambit's cautious metals stance penalises upstream iron ore exposure. NMDC sits at the bottom of its JSL > JSW > TSL > NMDC ordering.",
+       "points": [
+        "Simandou at 1.5-2.0MT monthly run-rate",
+        "Seasonal support fades in El Nino year",
+        "NMDC last in preference order"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "IIFL cuts Kaynes FY27/28/29 EPS 35%/8%/7%, keeps ADD with PT Rs3,647 (26% upside); Gridcrest sale and Vishay JV drive the stock.",
+      "source": "IIFL - Kaynes Technology (meeting update) - Growth Intact, Semicon Ambitions, B/S Reset [KAYNES IN, ADD]",
+      "received": "03:29",
+      "detail": {
+       "summary": "Core EMS is intact but the balance sheet needed a reset: FY26 borrowings were restated up and the auditor changed. IIFL sees near-term performance as event-driven, hinging on the Gridcrest divestment and definitive Vishay JV terms, which are not yet finalised.",
+       "points": [
+        "FY27/28/29 EPS cut 35%/8%/7%; ADD retained, PT Rs3,647",
+        "FY26 borrowings restated up ~Rs5.2bn to Rs13.9bn; net debt/equity 0.3x",
+        "Core EMS +34% yoy in 2QFY27; smart metering supplies -76% yoy",
+        "Vishay JV 51:49; 30-45% of capacity reserved for merchant customers",
+        "Walker Chandiok & Co LLP appointed auditor; FY27 EMS growth guide above 30%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Sec: listed EMS revenue/EBITDA/PAT grew 65.3%/41.3%/63.6% YoY in Q2FY27, but Syrma's margins were hit by input costs, FX and ramp-up.",
+      "source": "ICICI Securities - White Goods: Q2FY27 result review: Demand momentum improves, though margin recovery remains gradual",
+      "received": "11:30",
+      "detail": {
+       "summary": "EMS growth was led by electronics, with outsourcing, new customers and localisation continuing. Gross margins slipped slightly as price hikes trailed commodity inflation. ICICI stays constructive on the sector but names RAC makers as top picks, not EMS.",
+       "points": [
+        "EMS revenue/EBITDA/PAT +65.3%/+41.3%/+63.6% YoY",
+        "Copper/aluminium up ~53%/37% YoY in Q2FY27; copper has since mellowed",
+        "Syrma: strong growth, profitability hit by costs, FX, new-facility ramp",
+        "Memory inflation extremely steep; may hurt laptop and mobile prices",
+        "Top picks: LG, Havells, Blue Star, Voltas"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "November MTD power demand +12.19% YoY, coal generation +15.09%, but peak only +5.1%; IEX evening price Rs6.72/kWh, +32.3% YoY.",
+      "source": "Nuvama - Daily Power Demand",
+      "received": "09:16",
+      "detail": {
+       "summary": "Nuvama's daily tracker (data to 17 Nov) shows energy demand running well ahead of peak demand, with coal generation growing faster than demand. Merchant prices on IEX are sharply higher, which is the channel that reaches uncovered merchant capacity.",
+       "points": [
+        "MTD demand +12.19% YoY; YTD +11.74%",
+        "MTD coal generation +15.09%; YTD +12.76%",
+        "Nov peak demand 2,26,580MW, +5.1% YoY",
+        "IEX Nov average Rs3.93/kWh, +27.9% YoY",
+        "IEX 17:00-23:00 average Rs6.72/kWh, +32.3% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara: utility valuations down 20-40% in six months (NTPC, NLC, AESL, CESC); calls it a buying opportunity on 5-6% demand CAGR to FY36.",
+      "source": "Elara - Utilities: Valuation reset creates compelling buying opportunity",
+      "received": "22:38",
+      "detail": {
+       "summary": "Elara argues the six-month de-rating has outrun earnings visibility. It leans on structural demand growth and new capex themes such as BESS, pumped storage, data centres and nuclear as the case to re-enter.",
+       "points": [
+        "NTPC, NLC, AESL, CESC down 20-40% over six months",
+        "Demand CAGR 5-6% over FY27-36E; YTD FY27 generation +11.6% to 1,311BU",
+        "Peak demand seen at 459GW by FY36 (CEA)",
+        "Solar and wind ~41% of installed capacity in FY27 YTD; coal 231GW"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "TCS CFO: AI revenue US$775mn (10.1% of sales); incremental deflation to moderate, but 2HFY27 margin can dip below 24% with MHP drag.",
+      "source": "Kotak - [Kotak] TCS (CMP: Rs2,343, FV: Rs2,500, ADD): CFO meeting notes",
+      "received": "18:43",
+      "detail": {
+       "summary": "Management says AI-led deflation continues but the drag eases as the first round of productivity pass-through is already in contracts. Faster AI revenue plus slower deflation can lift growth. Near-term margin hit is from investments and M&A, not repricing.",
+       "points": [
+        "AI revenue US$775mn, 10.1% of revenue vs 5.1% a year ago",
+        "More than half of top 200 clients already renegotiated",
+        "MHP acquisition: 50-60 bps 2HFY27 margin impact",
+        "MHP bought for EUR320 mn; EUR1.25 bn Porsche deal",
+        "Medium-term margin aspirations unchanged"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Infosys (1-2%, ~1.5% from M&A) and HCL Tech (2.5-4%) reiterated FY27 revenue guides at MS summit; Infosys flags 2H margin headwinds.",
+      "source": "Morgan Stanley - PULSE: Infosys Limited / HCL Technologies: Asia Pacific Summit 2026 Feedback",
+      "received": "07:24",
+      "detail": {
+       "summary": "Both managements said demand is stable since results. Infosys sees 2H seasonality, salary hikes and currency as margin headwinds, partly offset by project Maximus. HCL expects software revenue to fall YoY in FY27 while advanced AI offsets traditional deflation.",
+       "points": [
+        "Infosys FY27 margin 20-22% maintained",
+        "Infosys mega deal to add ~1% to FY28 growth",
+        "HCL FY27 margin 17.5-18.5%, medium term 18-19%",
+        "HCL: no restructuring charges adds 50bps tailwind in FY28",
+        "MS: Infosys PT Rs1,075, HCL PT Rs1,390, both equal-weight"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "INR up 2.5% vs USD quarter to date implies 50-110 bps near-term margin drag for IT; each 1% USD/INR move is 2-4% EPS.",
+      "source": "Kotak - Kotak : Strong 2Q; IT - INR Dampener ; Capital markets - leverage or not (+6 more in Outlook)",
+      "received": "08:32",
+      "detail": {
+       "summary": "Europe-heavy names carry the larger margin hit. KPIT, TELX and Cyient are more exposed, while LTM and Mphasis are cushioned by hedges. Kotak keeps its FY2028E base case at USD/INR 97.",
+       "points": [
+        "INR +2.5% vs USD, +6.2% vs EUR, +3.4% vs GBP QTD",
+        "IT services drag 50-70 bps at spot",
+        "1% USD/INR: 20-35 bps EBIT margin",
+        "LTM and Mphasis cushioned by significant hedges"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "JPM sees three Fed hikes (Dec, Jan, Mar) to 4.5-4.75%; house view stays short zinc and aluminium, bullish copper at $15k.",
+      "source": "JPM - JPM Overnight Brief! 11/20 - 2027 US Economic Outlook: After the AI High",
+      "received": "05:56",
+      "detail": {
+       "summary": "JPM's 2027 outlook says the AI capex boom matures and inflation stays sticky, so the Fed hikes to preserve credibility rather than to weaken labour markets. Doubts on AI returns are the named downside risk. Commodity desk stays bullish precious and copper, short zinc and aluminium.",
+       "points": [
+        "Fed hikes: Dec, Jan, Mar; funds rate 4.5-4.75%",
+        "Two cuts pencilled for 2028",
+        "Copper $15k, gold $4,300-$4,500 near term",
+        "Brent $92.66, +0.8% on the day",
+        "10-year Treasury yield 5.04%",
+        "Gold spot -15% from Aug 19 high"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FPIs bought INR 843bn in Nov to 15th, ~70% into financials and discretionary; IT drew INR 51bn yet fell on DII selling.",
+      "source": "ICICI Securities - Strategy: FPIs rush back to India's high-beta sectors as AI sell-off intensifies and oil cools",
+      "received": "17:08",
+      "detail": {
+       "summary": "FPI money is rotating into high-beta, capital-intensive sectors as the AI sell-off intensifies and oil cools. IT Services prices keep sliding despite FPI buying, which the note attributes to likely DII selling.",
+       "points": [
+        "INR 843bn net FPI buying, fortnight to 15 Nov",
+        "Financials INR 431bn; telecom INR 76bn; autos INR 76bn",
+        "Energy INR 20bn; power, metals, construction material also bought",
+        "IT INR 51bn, FMCG INR 30bn, healthcare INR 10bn",
+        "Industrials INR 9bn and chemicals INR 4bn sold"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA calls a 25bp Fed hike in December after hawkish October minutes; sees 65% odds of a hold in 2027, 35% hike risk.",
+      "source": "CLSA - CLSA: Macropulse - FOMC minutes (+6 more in Outlook)",
+      "received": "09:15",
+      "detail": {
+       "summary": "CLSA reads the October FOMC minutes as a hawkish hold that makes a December hike effectively certain. It expects 25bp rather than 50bp, then a pause through next year with a tail risk of further tightening.",
+       "points": [
+        "Dec hike: 25bp, not 50bp",
+        "2027: Fed on hold, 65%",
+        "2027: 35% risk of a further hike"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Other coverage-adjacent"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Alibaba's external cloud revenue grew 64% YoY in the September quarter and it reiterated US$100bn CY2030 cloud target despite tighter BIS restrictions.",
+    "source": "BOCI - BOCI TMT Daily (20 Nov) - Alibaba & Netease & Lenovo Result Reviews"
+   },
+   {
+    "text": "Lenovo fell 5.5% (intraday -12%) despite ISG revenue up 178% YoY; BOCI cites an AI server pipeline of US$80bn.",
+    "source": "BOCI - BOCI TMT Daily (20 Nov) - Alibaba & Netease & Lenovo Result Reviews"
+   },
+   {
+    "text": "GlobalFoundries invested US$10mn in Cyient Semiconductors at US$490mn pre-money, adding a wafer supply partnership; Emkay keeps ADD, TP Rs1,300.",
+    "source": "Emkay - Cyient: Strategic investment from GlobalFoundries in semicon business; ADD; Target: Rs1,300"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

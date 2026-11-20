@@ -1,0 +1,213 @@
+{
+ "date": "2026-11-20",
+ "fetched_at": "2026-11-20T08:12:23",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-19",
+    "close": 7175.83,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.02,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-19",
+    "close": 23879.2,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.25,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-19",
+    "close": 49097.06,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.19,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-19",
+    "close": 9419.72,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.41,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-19",
+    "close": 145.98,
+    "prev_date": "2026-11-18",
+    "chg_pct": -3.3,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-19",
+    "close": 489.19,
+    "prev_date": "2026-11-18",
+    "chg_pct": -7.72,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-19",
+    "close": 352.09,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.9,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-19",
+    "close": 346.65,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.09,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-19",
+    "close": 218.58,
+    "prev_date": "2026-11-18",
+    "chg_pct": -3.92,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-19",
+    "close": 56.31,
+    "prev_date": "2026-11-18",
+    "chg_pct": -2.83,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Gains as AI Disruption Fears Eased",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-19 15:19Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-gains-ai-disruption-151958461.html"
+   },
+   {
+    "title": "Is Accenture Stock About To Rebound?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 11:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-rebound-114716497.html"
+   },
+   {
+    "title": "Can Accenture Stock Jump 30%?",
+    "publisher": "Trefis",
+    "when": "2026-11-18 22:27Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-jump-30-222709005.html"
+   },
+   {
+    "title": "Accenture (ACN) Registers a Bigger Fall Than the Market: Important Facts to Note",
+    "publisher": "Zacks",
+    "when": "2026-11-18 21:50Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-acn-registers-bigger-fall-215001379.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "How Did IBM Stock Leave Cognizant Behind?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 21:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/did-ibm-stock-leave-cognizant-215511163.html"
+   },
+   {
+    "title": "BofA Adjusts Price Target on Cognizant Technology Solutions to $70 From $91",
+    "publisher": "MT Newswires",
+    "when": "2026-11-19 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bofa-adjusts-price-target-cognizant-133701172.html"
+   },
+   {
+    "title": "Here Is Why Investors Should Pay Attention to Cognizant Technology (CTSH)",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-18 17:12Z",
+    "link": "https://finance.yahoo.com/technology/articles/why-investors-pay-attention-cognizant-171233409.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Michael Burry Says He Warned on AI With NVIDIA and CoreWeave: Big Short D\u00e9j\u00e0 Vu?",
+    "publisher": "BeInCrypto",
+    "when": "2026-11-20 02:19Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/michael-burry-says-warned-ai-021922066.html"
+   },
+   {
+    "title": "Nvidia Backed AI Data Center Demand Puts Schneider Electric Stock In Focus",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-20 02:14Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-backed-ai-data-center-021420909.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Why Broadcom Inc. (AVGO) Dipped More Than Broader Market Today",
+    "publisher": "Zacks",
+    "when": "2026-11-19 21:45Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-inc-avgo-dipped-214502356.html"
+   },
+   {
+    "title": "Nvidia, Broadcom, and Micron stocks decline as Anthropic goes public",
+    "publisher": "Yahoo Finance",
+    "when": "2026-11-19 21:21Z",
+    "link": "https://finance.yahoo.com/markets/article/nvidia-broadcom-micron-stocks-decline-as-anthropic-goes-public-170845481.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Just Plunged Almost 8%, Lost $67 Billion and Kept Falling After Hours. A Short Seller Says It Shares Nvidia\u2019s China Risk",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-20 02:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-just-plunged-almost-8-020702845.html"
+   },
+   {
+    "title": "US Approved Nvidia, AMD AI Chip Sales to China",
+    "publisher": "MT Newswires",
+    "when": "2026-11-20 00:05Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/us-approved-nvidia-amd-ai-000557363.html"
+   },
+   {
+    "title": "Shots Fired: Hunterbrook Shorts AMD Over China. Its China and Hong Kong Billing Share Is Nearly 2.5x Nvidia\u2019s",
+    "publisher": "TIKR",
+    "when": "2026-11-19 22:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/shots-fired-hunterbrook-shorts-amd-223749072.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25332.5,
+  "chg_pct": -0.58,
+  "stamp": "20-Nov-2026 08:12:14",
+  "expiry": "23-Nov-2026",
+  "volume": 2498,
+  "nifty_close": {
+   "close": 25514.3,
+   "stamp": "19-Nov-2026 15:30"
+  },
+  "gap_pts": -181.8,
+  "gap_pct": -0.71
+ }
+}
