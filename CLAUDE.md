@@ -3613,8 +3613,23 @@ the roster**, add only on the PM's word. Entity ids: `ntpc`, `power_grid`,
 - **Mail:** a `power` block in `mail_watch.KEYWORDS` (inert until a name
   carries a peer group, written now so it is not the forgotten piece — the
   mining precedent), and a Power bucket in the morning-brief skill.
-- **Positioning:** no OI rows — the vault fetcher does not pull these names.
-  `ORDER`/`SEC_LABEL` in app.html know the sector for the day it does.
+- **Positioning: OI since 2026-11-20, from the NSE bhavcopy** (PM: *"add
+  syrma to OI. Add power sector as well below IT: all names, including
+  premier, waaree, suzlon, inox wind, and the gencos, transcos"*). The vault
+  fetcher carries neither (it still stamps Syrma `not_in_fno`), so
+  `vault_oi.BHAVCOPY` lists 13 names whose `oi` rows are built from `fo_oi`
+  by `vault_oi.py --load-bhavcopy` (source `fo_bhavcopy`; refresh.py step
+  `open interest (bhavcopy names)`, AFTER the bhavcopy and options steps).
+  `fo_oi` is the same number the vault prints, and `derive_3m` (z on the
+  sample sd, median gap, endpoint buildup over 63 sessions) reproduces the
+  vault's own latest row on all 30 vault names; `--selftest` re-checks that.
+  Two differences from a vault row: the price is the front FUTURES close, and
+  under 63 sessions the 3m read is withheld (Syrma, futures since
+  2026-10-28). The four equipment names (Waaree, Premier, Suzlon, Inox Wind)
+  are **OI only**: `entities` rows with sector `power`, no peer group,
+  `active = 0`, not in `power.yaml`, the Results roster or
+  `yahoo_prices.CANDIDATES` (`engine._nse_symbol` falls back to `BHAVCOPY`
+  for their options).
 - **What a bridge will have to decide**, recorded in the spec so it is not
   rediscovered: the cost side is fuel and the store already carries it, but
   the revenue side is REGULATED for NTPC, Power Grid, NHPC and the licensee

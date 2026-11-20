@@ -120,6 +120,11 @@ STEPS = [
     # no-op, zero requests.
     ("F&O options",       ["packages/adapters/fo_options.py", "--load",
                            "--days", "10"],                                   False),
+    # OI rows for the names the vault fetcher does not carry (Syrma, Power;
+    # 2026-11-20), built from fo_oi. AFTER the two steps above on purpose: it
+    # reads the day's fo_oi rows and the lot size from fo_options.
+    ("open interest (bhavcopy names)",
+     ["packages/adapters/vault_oi.py", "--load-bhavcopy"],                    False),
     # Futures vs cash (2026-10-25): each live contract's close against the
     # cash close, for the Overview's "Futures vs cash" sub-tab. Same zip,
     # stored by the bhavcopy step above; this tops up a missed day. The

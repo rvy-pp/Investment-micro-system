@@ -503,7 +503,13 @@ def _nse_symbol(entity_id: str) -> str | None:
         t = c[0] if isinstance(c, tuple) else c
         if isinstance(t, str) and t.endswith(".NS"):
             return t[:-3]
-    return None
+    # OI-only names with no Yahoo candidate (the four renewable-equipment
+    # names, 2026-11-20) carry their NSE symbol in vault_oi.BHAVCOPY.
+    try:
+        from vault_oi import BHAVCOPY
+        return BHAVCOPY[entity_id][0] if entity_id in BHAVCOPY else None
+    except Exception:
+        return None
 
 
 def options_series(entity_id: str) -> dict | None:

@@ -1265,9 +1265,9 @@ async function loadPos(host){
   </div>`;
 
   // IT (2026-08-31) is OI-only: tracked for positioning, modelled nowhere.
-  // power (2026-11-09) has no OI rows yet (the vault fetcher does not pull
-  // it); listed so the day it does, the group lands in order rather than
-  // under "Other".
+  // power (OI since 2026-11-20) sits below IT on the PM's instruction; its
+  // rows and Syrma's come from the NSE bhavcopy (vault_oi.BHAVCOPY), not
+  // from a vault file.
   const ORDER = ['aluminium', 'zinc', 'steel', 'cement', 'mining', 'ems', 'it', 'power'];
   const SEC_LABEL = {aluminium:'Aluminium', zinc:'Zinc', steel:'Steel',
                      cement:'Cement', mining:'Mining', ems:'EMS', it:'IT',
