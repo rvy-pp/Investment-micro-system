@@ -3828,6 +3828,35 @@ now reviews both.
 - The two models were MS `868893.NTPC.NS.XLSM` (16-Nov, post-result; PT 386)
   and JPM `NTPC.NS_Equity_model.xlsx` (05-Nov; FV 467.6).
 
+## Sector positioning in the daily review — `sector_oi.py` (2026-11-20)
+
+PM: *"an analysis on each sector, looking at the OI in the daily review? Not
+a dtd, but a 1-2 month analysis that shows how each sector is in flavour"*,
+then *"% numbers dont mean anything on an individual basis on stocks. What I
+like: read column on a long-term basis. I also would like weekly sharp
+movements in sectors"*. `packages/book/sector_oi.py` (20-check selftest,
+read-only, no table, no route) prints one line per sector, and daily_review
+Step 2d shows it before the pair review.
+
+- **The long-term read** is words, never per-stock percentages: the sign of
+  the sector's median OI change against its average price change (longs
+  building / shorts building / shorts covering / longs leaving, with a
+  dead-band), over one and two expiry cycles, led by whether the sector's
+  share of ALL stock-futures OI by value rose or fell more than 10%. Power is
+  read by half (utilities, equipment) when the halves disagree.
+- **Anchors are cycle-matched, not "21 sessions ago".** OI across expiries
+  drops the session AFTER expiry (27-Oct: Rs5.26 lakh cr, then 4.85) and
+  rebuilds. A fixed lookback from early in a cycle lands late in the last one
+  and reads the roll as everyone leaving.
+- **The week** is the same reading over 5 sessions against the sector's own
+  trailing weekly readings. 1.5 sd on OI or price prints `SHARP`. A window
+  spanning a roll is "expiry week, not read" and is kept out of the history.
+  A sector direction that under half its names share prints "Mixed".
+- Sectors are the OI page's, with aluminium and zinc as non-ferrous. A name
+  short of history (Syrma) is left out and named under the table.
+- First read, 19-Nov: one sharp line, non-ferrous shorts building in all four
+  names (OI move 4.5 sd of a normal week).
+
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
 PM: *"can we create a copy of the front-end in the vault that can be accessed

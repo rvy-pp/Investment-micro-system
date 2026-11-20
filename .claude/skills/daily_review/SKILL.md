@@ -265,6 +265,30 @@ verdicts** — `add_review` is the PM's call reached in conversation, never a
 scheduled default. Step 3's evidence may be summarised for the PM to read
 later; the decisions wait for them.
 
+## Step 2d — sector positioning from OI (every review)
+
+```bash
+python packages/book/sector_oi.py
+```
+
+Print its table to the PM as it comes, before the pair review (PM,
+2026-11-20: a 1-2 month read of how each sector is in flavour, plus sharp
+weekly moves). One line per sector: the long-term read in words, and what
+the last five sessions did. Rules that came with it:
+
+- **No per-stock percentages.** The PM: "% numbers dont mean anything on an
+  individual basis on stocks". Name a stock only to explain a `SHARP` line
+  or a `split`, in words.
+- **Lead with any `SHARP` line**, in one sentence, and say which book pairs
+  sit in that sector. No sharp line: say "no sharp sector move this week" and
+  move on. Do not pad the quiet sectors.
+- **"Expiry week, not read"** is correct on the week contracts roll: OI falls
+  in every sector the session after expiry. Do not read it as selling.
+- It is positioning context, the same standing as the Flows tab: it sets no
+  direction, enters no score and is never a reason to re-mark a target.
+- Read-only, so it owes the vault copy nothing. On an unattended run, print
+  the table after the `--report` output.
+
 ## Step 3 — the review (the point of all of it)
 
 For each pair the PM wants (default: all, worst since-start % first),
