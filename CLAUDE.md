@@ -3834,7 +3834,7 @@ PM: *"an analysis on each sector, looking at the OI in the daily review? Not
 a dtd, but a 1-2 month analysis that shows how each sector is in flavour"*,
 then *"% numbers dont mean anything on an individual basis on stocks. What I
 like: read column on a long-term basis. I also would like weekly sharp
-movements in sectors"*. `packages/book/sector_oi.py` (20-check selftest,
+movements in sectors"*. `packages/book/sector_oi.py` (19-check selftest,
 read-only, no table, no route) prints one line per sector, and daily_review
 Step 2d shows it before the pair review.
 
