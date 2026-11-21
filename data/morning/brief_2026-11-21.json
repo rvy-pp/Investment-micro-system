@@ -1,0 +1,131 @@
+{
+  "date": "2026-11-21",
+  "generated_at": "2026-11-21T08:45:00+05:30",
+  "mail": {
+    "window": "24h to 08:15 IST",
+    "n_scanned": 82,
+    "sectors": [
+      {"sector": "Non-ferrous", "bullets": [
+        {"text": "Hindalco guides Novelis Q3 EBITDA down c.US$200/t QoQ on c.5% higher costs and weaker LME & premiums; Bay Minette ships from Q1FY28.",
+         "source": "CLSA - CLSA: Hindalco (HNDL IB): IF26: Execution key", "received": "14:27",
+         "detail": {"summary": "From the India Forum, Hindalco flagged a near-term Novelis cost squeeze but a strong growth pipeline. Bay Minette drives volume growth from FY28, and net leverage and the ramp-up are the key monitorables.",
+          "points": ["Novelis FY27 volume c.3.8mt, rising to c.4mt in FY28", "Bay Minette 600kt, c.420kt contracted, steady state Jan-29", "Insurance recoveries US$200-230mn in H2FY27, US$500mn in FY28", "India capex c.Rs120bn/150bn/180bn in FY27/28/29", "Copper EBITDA c.Rs12bn a quarter on sulphuric-acid realisations"], "read": "body"}},
+        {"text": "Copper three-month forwards fell over 2% in Friday Asian trade and other base metals are down 0.5-1.5%, with the dollar index near 104.",
+         "source": "Emkay - Commodity Market Report: Hawkish FOMC minutes and strong dollar extend precious metals sell-off", "received": "09:38",
+         "detail": {"summary": "Zinc led a Thursday recovery after the prior session's sell-off, but selling returned on hawkish Fed signals and weak Asian equities. MCX metals are expected to open weaker, with copper likely hit hardest.",
+          "points": ["Copper 3M down over 2%, other LME base metals down 0.5-1.5%", "Dollar index holding near 104", "Aluminium backwardation c.Rs4/kg, zinc c.Rs20/kg", "Copper Nov-Dec contango almost gone", "Oversold metals could see short-covering pullbacks"], "read": "body"}},
+        {"text": "Copper has corrected 11% since Oct'26; ICICI Sec sees negligible revenue and margin impact for Havells (BUY) and Polycab (ADD).",
+         "source": "ICICI Securities - White Goods: Negligible impact of copper price volatility on cable & wire companies (+1 more in Outlook)", "received": "09:05",
+         "detail": {"summary": "The note argues the copper correction stokes inventory-loss fears but that organised cable players pass through inflation with a mark-up. Past corrections in FY15-16 and FY23 did not hurt revenue or margins.",
+          "points": ["Copper down 11% since Oct'26", "Copper vs revenue growth correlation 0.42 Havells, 0.38 Polycab", "Copper vs EBIT margin correlation 0.11 Havells, 0.24 Polycab", "Brand spend FY26 c.INR6bn Havells, c.INR2bn Polycab"], "read": "body"}}
+      ]},
+      {"sector": "Steel", "bullets": [
+        {"text": "APL Apollo promoter Gupta family reportedly exploring a 28.2% stake sale, deal above Rs32.7k cr with open offer; no buyer named.",
+         "source": "Nuvama - Nuvama Daily | Top Buy/Avoid | Nuvama Strategy | Company update- Whirlpool", "received": "08:44",
+         "detail": {"summary": "A press report says the promoter family is exploring a change-of-control sale. Nuvama sees optionality, not a thesis change, as no buyer, price or company confirmation exists and financing limits the buyer universe. A denial could unwind the pop quickly.",
+          "points": ["28.2% promoter stake; deal could exceed Rs32.7k cr incl. open offer", "Financing a Rs36-39k cr control deal limits buyers", "Stock near ATHs at a rich multiple; OI rose sharply into the news", "Core story: Rs6k/t EBITDA margins and FY27 EBITDA guidance", "Prefers buying dips at Rs2,150-2,175 after company clarification"], "read": "body"}},
+        {"text": "India HRC at Rs63.5K/t is a ~10% premium to import parity incl. safeguard duty (7% last week); Australian HCC US$258/t, +19% since end-July.",
+         "source": "Morgan Stanley - PULSE: India Materials: India Steel Tracker", "received": "11:18",
+         "detail": {"summary": "Morgan Stanley sees limited near-term upside to domestic steel prices given the premium to import parity. The safeguard duty and seasonally strong demand keep prices and spreads supported, so steel stocks should keep outperforming near term.",
+          "points": ["HRC +1% WoW, +11% since end-July; secondary rebar -1% to Rs49.4K/t", "China CFR iron ore ~US$89/t, -2% WoW; domestic ore at 47% discount to parity", "Spreads +2% in the week, +49% since mid-December lows", "Steel stocks +6% YTD MCAP-weighted vs Sensex -3%", "Watch China met coal supply disruption and China steel balance"], "read": "body"}},
+        {"text": "Targets raised: JSW Steel Rs1,352 (upgrade to HOLD), SAIL Rs182 from Rs150 (HOLD), Tata Steel Rs219 from Rs209 (upgrade to BUY).",
+         "source": "Nuvama - Nuvama Daily | Top Buy/Avoid | Nuvama Strategy | Company update- Whirlpool (+2 more in Outlook)", "received": "08:44",
+         "detail": {"summary": "The earnings-tracker section of the daily lists EBITDA and target changes after higher steel prices. House attribution of this list is not stated beside the items, so treat the source as the daily.",
+          "points": ["JSW Steel: FY27E/28E EBITDA +14%/+11%, 9.5x FY28E/29E EV/EBITDA", "SAIL: FY27E/28E EBITDA ~+8%, 6.5x avg FY28E/29E EV/EBITDA", "Tata Steel: FY27E/28E EBITDA +2%/+9%, 5.7x FY28E EV/EBITDA", "UBS also names Shyam Metalics and APL Apollo among midcap top picks"], "read": "body"}}
+      ]},
+      {"sector": "Cement", "bullets": [
+        {"text": "3Q cement prices are up 5% qoq (Rs15/bag, Rs240/t ex-GST); IIFL sees industry Ebitda/t recovering from Rs850 to Rs1,000.",
+         "source": "IIFL - Cement - Dealers Price checks - Prices hold in Nov; 3Q pricing up 5% qoq", "received": "21:39",
+         "detail": {"summary": "November prices were flat in the first half, but the October hike has largely held. Fuel costs added Rs80-100/t of pressure in Sept-Oct, yet the price increase and operating leverage could still lift industry Ebitda/t. Dealers expect volume targets to take priority, so further hikes are unlikely before December.",
+          "points": ["All-India prices +0.5% vs end-October; Patna and Indore fell", "Hike largest in West and East, then Central, North, South", "2Q Ebitda/t fell Rs200 to Rs850 on fuel and operating leverage", "East players Nuvoco and Dalmia benefit most if hike sustains", "Picks: UltraTech, JK Cement (execution); Dalmia, JK Lakshmi (valuation)"], "read": "body"}},
+        {"text": "PhillipCapital invites clients to a JK Cement Panna plant visit on 10-12/13 Dec 2026, calling it its mid-cap cement top pick.",
+         "source": "PhillipCapital - A PhillipCapital EXCLUSIVE - Invitation: (10-12/13 Dec 2026): JK Cement (JKCE IN) - Panna plant visit", "received": "13:23",
+         "detail": {"summary": "Panna is described as JK Cement's largest current growth trigger. It runs two clinker lines and can scale to four. The visit includes plant and mine tours and management interaction, and option 2 adds dealer and distributor meetings.",
+          "points": ["Option 1: 10-12 Dec; Option 2: 10-13 Dec", "Panna runs 2 clinker lines, scalable to 4", "Last PhillipCapital visit was December 2023"], "read": "body"}},
+        {"text": "Cement makers plan 120 mnt/y of capacity additions by FY28 on Rs75,000 crore of investment, per a Bigmint headline in Kotak's daily.",
+         "source": "Kotak - Basic materials - daily news and prices", "received": "09:47"}
+      ]},
+      {"sector": "Mining", "bullets": [
+        {"text": "Coal India-led consortium with NFTDC declared L2 bidder for sintered NdFeB rare-earth magnets, planning a 1,200 TPA plant through an SPV.",
+         "source": "CLSA India Research - CLSA India Research | LG Electronics | Consumer", "received": "08:50",
+         "detail": {"summary": "The Ministry of Heavy Industries named the consortium second-ranked (L2) bidder under its scheme to promote sintered rare earth permanent magnet manufacturing. The facility would be set up through a special purpose vehicle. This is a news item in a morning pack; no financials or investment figures are given.",
+          "points": ["L2 bidder status, not a win", "1,200 tonnes per annum capacity", "Sintered neodymium-iron-boron magnets", "Partner: NFTDC, via an SPV", "No capex or earnings impact stated"], "read": "body"}},
+        {"text": "China CFR iron ore (~61% Fe) fell ~2% WoW to ~US$89/t; domestic ore trades at ~47% discount to parity versus 5Y average ~56%.",
+         "source": "Morgan Stanley - PULSE: India Materials: India Steel Tracker", "received": "11:18",
+         "detail": {"summary": "The weekly steel tracker puts domestic iron ore at a narrower discount to import parity than its five-year average, while global ore eased. No NMDC price change is stated in the email text.",
+          "points": ["China CFR I/O ~US$89/t, down ~2% WoW", "Domestic ore ~47% below parity", "5Y average discount ~56%", "NMDC price figures are in an image, not the text"], "read": "body"}}
+      ]},
+      {"sector": "EMS", "bullets": [
+        {"text": "IIFL cuts Kaynes FY27/28/29 EPS 35%/8%/7%, retains ADD with TP Rs3,647 (26% upside); core EMS grew 34% yoy at 13.2% OPM.",
+         "source": "IIFL - The Front Page: TATATECH; MSUMI; KAYNES", "received": "07:27",
+         "detail": {"summary": "IIFL's interaction with the Kaynes Semicon CEO points to the Vishay relationship scaling ATMP capacity multi-fold over five years. Near-term stock performance is seen as event-driven, with the Gridcrest divestment and the OSAT JV as the catalysts. A new auditor should ease governance concerns.",
+          "points": ["EPS cut 35% FY27, 8% FY28, 7% FY29; ADD, TP Rs3,647", "Smart metering supplies scaled down 76% yoy; core EMS +34% yoy", "ATMP capacity 2.2bn devices p.a., to scale multi-fold with Vishay", "FY26 PAT revised up 8% to Rs3.9bn; debt reclassification raised leverage", "Walker Chandiok (Grant Thornton member) appointed auditor"], "read": "body"}},
+        {"text": "Syrma SGS orderbook exceeds Rs74bn with Rs60-62bn executable in 12 months; PCB investment c.Rs20bn, power-on targeted Mar-27.",
+         "source": "CLSA - Syrma SGS (SYRMA IN): IF26: India Forum takeaways", "received": "14:17",
+         "detail": {"summary": "Management at CLSA's India Forum saw no demand-side constraints across core EMS verticals, with supply of components and chemicals the near-term limit. Data centres and PCBs are emerging growth vectors, supporting the US$1bn FY29 and US$2bn FY32 revenue targets.",
+          "points": ["Autos revenue to Rs17-18bn from c.Rs12bn in FY26, EVs 40-45%", "Data centres Rs7-8bn annual opportunity, revenue from FY28 at Rs1.5-2bn", "Growth aspiration 30-35%; FCF conversion target 35-40%", "Organic EMS capex Rs1.0-1.5bn, funded by internal accruals", "Selective M&A in aerospace, IT and high-end power modules"], "read": "body"}},
+        {"text": "Kaynes fell 17% and Avalon 16% in the week to 19-Nov, the two largest losers in Kotak's covered universe.",
+         "source": "Kotak - [Kotak] Strategy: Friday Flash: Outperformance continues (+1 more in Outlook)", "received": "13:49",
+         "detail": {"summary": "Kotak's weekly flash lists Kaynes Technology and Avalon Technologies as the week's largest losers among covered stocks, while large-caps led. Nuvama separately flagged short covering in Amber futures OI.",
+          "points": ["Kaynes -17%, Avalon -16% in week ending 19-Nov", "Nifty Midcap-100 -0.6%, Smallcap-100 -1.1% vs Nifty-50 +0.8%", "Nuvama: Amber futures OI short covering -22% ($19.2mn) on 19-Nov"], "read": "body"}}
+      ]},
+      {"sector": "Power", "bullets": [
+        {"text": "November MTD power demand +12.20% YoY, coal generation +14.85%, peak demand 227,758MW only +5.7%; IEX evening price Rs6.67/kWh (+31.4%).",
+         "source": "Nuvama - Daily Power Demand", "received": "09:19",
+         "detail": {"summary": "Nuvama's daily demand file runs to 18 November. Energy demand and coal generation are running well ahead of last year, while peak demand growth is much slower. IEX prices are sharply higher, with the evening block rising most.",
+          "points": ["Nov MTD demand +12.20% YoY; YTD +11.74%", "Nov MTD coal generation +14.85%; YTD +12.75%", "Nov peak demand 227,758MW, +5.7% YoY", "IEX Nov average Rs3.91/kWh, +27.5% YoY", "IEX 17:00-23:00 average Rs6.67/kWh, +31.4% YoY"], "read": "body"}},
+        {"text": "Elara webinar: RE bidding fell from 40.6GW in FY25 to about 15GW in FY26; 40-45GW of awarded capacity is unsigned.",
+         "source": "Elara - Renewable Energy Webinar - Firming the renewables: Grid & Storage Imperatives-KTA", "received": "13:02",
+         "detail": {"summary": "The webinar's argument is that RE additions will moderate because PPA/PSA delays and transmission constraints are holding back awards. Tendering is shifting to firm power (RTC, FDRE, solar plus storage). Storage is scaling fast, but merchant BESS economics rest on today's wide peak spreads.",
+          "points": ["ICRA sees FY27 RE additions at 45GW; 27.9GW done in 7M", "BESS commissioned 14,543MWh (Sep-26)", "Transmission needs 24-36 months; constraints persist 1-2 years", "FDRE tender discovered about Rs5.25/unit; new thermal about Rs6+", "Merchant BESS needs at least Rs4/unit spread; now Rs6-7"], "read": "body"}},
+        {"text": "MoP proposes mandatory storage with new solar and domestic-content rules for batteries; India targets 900GW clean capacity by 2035.",
+         "source": "Kotak - [Kotak] ESG: Weekly Wrap | November 20, 2026 (+3 more in Outlook)", "received": "15:32",
+         "detail": {"summary": "Kotak's weekly ESG wrap leads with storage and renewable investment news. The Ministry of Power proposal would tie storage to new solar projects and impose domestic-content rules on batteries, which would feed storage and transmission demand.",
+          "points": ["Mandatory storage with solar proposed by Ministry of Power", "900GW clean-energy target by 2035; US$20bn grid upgrades", "Solar PLI draws Rs648.7bn, adding 24GW manufacturing capacity", "Amazon plans US$7bn renewable investment in India by 2030"], "read": "body"}}
+      ]},
+      {"sector": "IT / AI-tech", "bullets": [
+        {"text": "TCS AI revenue hit US$775mn, 10.1% of 2QFY27 revenue versus 5.1% a year ago; over half of top-200 clients already renegotiated on AI.",
+         "source": "Kotak - Kotak: Hotels - Luxury Rules ; Whirlpool ; Auto market shares ; TCS - CFO meeting notes ; TATA Tech - lofty aspirations", "received": "08:19",
+         "detail": {"summary": "Kotak met TCS CFO Samir Seksaria. Management expects AI-led revenue deflation to continue but at a moderating pace as the first round of productivity pass-through is already in contracts. Medium-term margin aspirations are unchanged despite near-term headwinds from growth investments and M&A.",
+          "points": ["AI revenue US$775mn, 10.1% of revenue in 2QFY27", "Year-ago AI share was 5.1%", "Top-200 clients are 80-85% of revenue", "More than half of top-200 have renegotiated", "Medium-term margin aspirations unchanged"], "read": "body"}},
+        {"text": "Infosys reiterated FY27 revenue growth of 1-2% at MS's Asia Pacific Summit; TCS flagged 2H margin headwinds despite management's aspiration to improve.",
+         "source": "Morgan Stanley - MS India Trends & Themes: Asia Pacific Summit 2026 Feedback: TCS & Infosys", "received": "08:50",
+         "detail": {"summary": "Summit feedback shows demand trends unchanged at both firms. Infosys sees 2H margins pressured by seasonality, salary hikes and currency, partly offset by Project Maximus. TCS sees stable demand and easing deflationary pressure, with execution on margins seen as challenging.",
+          "points": ["Infosys FY27 revenue growth outlook 1-2% reiterated", "Infosys pipeline replenished, some mega deals", "Infosys 2H margin: seasonality, wage hikes, currency", "TCS sees easing deflation, strong new-service growth", "TCS 2H margins face headwinds, execution challenging"], "read": "body"}},
+        {"text": "Kotak keeps Tata Technologies at SELL, FV Rs535, after analyst day targeting US$1.1-1.3bn revenue and 20%+ EBITDA margin by FY30.",
+         "source": "Kotak - Kotak: Hotels - Luxury Rules ; Whirlpool ; Auto market shares ; TCS - CFO meeting notes ; TATA Tech - lofty aspirations (+3 more in Outlook)", "received": "08:19",
+         "detail": {"summary": "Tata Tech aspires to double revenue and add at least 450bps to EBITDA margin over FY2026-30. Kotak says execution must be tighter and demand stronger to meet these elevated aspirations, and notes the stock trades at a premium to peers.",
+          "points": ["Revenue aspiration US$1.1-1.3bn by FY2030", "EBITDA margin up 450bps+ to 20%+", "Software and aerospace revenue 25-30% CAGR", "15-20% revenue CAGR expected over FY2027-30E", "29x FY2028E PE, 10-40% premium to peers"], "read": "body"}}
+      ]},
+      {"sector": "Macro & strategy", "bullets": [
+        {"text": "FIIs bought US$4.1bn this week, November c.US$12.5bn, the highest month on record; Nifty +2.6% WoW to a nine-month high.",
+         "source": "CLSA - CLSA: India strategy: Weekly wrap", "received": "20:32",
+         "detail": {"summary": "The Nifty was the only major market to gain this week, led by banks (Nifty Bank at a record). Sentiment is still bullish, but credit spreads are the one stress signal: the widest since Covid.",
+          "points": ["Nifty c.2% below its peak; 12m fwd PE 18.8x, 15.6% above 20-year average", "INR +1.7% WoW, six-month high, top EM currency", "Credit spread +30bps to 1.2ppts; bond-earnings yield gap flat at 1.9ppts", "Bull-Bear Index 84.5% vs 88.8% last week", "FIIs marginal debt sellers; US$9bn debt inflow CY26-TD"], "read": "body"}},
+        {"text": "Nifty rollover is only 40% vs 3M avg 47%, and Bank Nifty 42% vs 47%, with roll costs of 60 bps and 73 bps ahead of Dec expiry.",
+         "source": "Nuvama - HIGHEST EVER FII INFLOWS this month: Nuvama Deriv Highlights", "received": "08:48",
+         "detail": {"summary": "Short rollers expect spreads to widen while long rollers are not chasing, so rollover is weak. Total single-stock futures OI is light, which Nuvama says supports the uptrend resuming after a brief consolidation. Nuvama prefers SMIDs for long-only buying but expects them to lag large-caps.",
+          "points": ["Market-wide rollover 61% vs 3M avg 63%", "FII index futures long/short ratio 51% vs 48% d-o-d", "FII index options PCR-OI 1.29 vs 1.05; Nifty monthly PCR 1.34", "Nifty IV 14.2 vs 14.6", "Long banks, autos, O&G, Adani, cement; short select pharma, metals, tech"], "read": "body"}},
+        {"text": "India October WPI rose to 12.3% yoy from 11.4%, with fuel & power at 32.8%; 10-year G-sec fell to 7.19% and USD-INR to 92.61.",
+         "source": "Kotak - [Kotak] Economy Tracker: Markets Update; October WPI; October PPI; October core IIP; October labor data", "received": "19:08",
+         "detail": {"summary": "Producer inflation is accelerating on fuel while core WPI eased slightly. Core industries output jumped to 10.9% on coal, power and cement. Yields and rupee both moved favourably over the week.",
+          "points": ["Core WPI 9.6% vs 9.9%; OPPI 12.1% vs 11.4%", "Core industries 10.9% vs 8.2%; cement 15.4%, steel 5.6%", "USD-INR 92.61 vs 94.27 a week earlier", "Brent US$92.7/bbl; gold -8% and LME copper -7% on the week", "Unemployment 4.9% vs 5.0%; surplus liquidity Rs877 bn"], "read": "body"}}
+      ]}
+    ],
+    "quiet": []
+  },
+  "global": {
+    "ai_semis": [
+      {"text": "NVIDIA is 39% off last month's peak with its 14-day RSI under 20, first time since June 2019; TAIEX slipped into a bear market.",
+       "source": "CLSA - CLSA: Global Equity Strategy: TGIF - week #46"},
+      {"text": "US semis fell 4% on Thursday after tighter chip export controls; Marvell -4.9%, NVIDIA -3.3%, AMD -7.7% on a firmware report.",
+       "source": "Morgan Stanley - MS India Trends & Themes: Asia Pacific Summit 2026 Feedback"},
+      {"text": "Nasdaq fell 2.25% on Thursday amid AI-stock de-risking, and the Nikkei dropped 4.6% as Asian tech shares were hammered.",
+       "source": "UBS - UBS INDIA - MIDCAP TOP PICKS ... I INDIAN IT - Sent shifting I KOREA STRATEGY"}
+    ],
+    "bellwethers": [
+      {"name": "Accenture", "reason": null},
+      {"name": "Cognizant", "reason": null}
+    ]
+  }
+}
