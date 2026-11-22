@@ -3774,7 +3774,7 @@ POWER}`, `ticker_map NTPC: ntpc`, agent **`ntpc-agent`**; the Bloomberg
 ticker is NTPC IN). The Analysis roster is 32 rows. Thursday's POWER rota day
 now reviews both.
 
-- **`packages/book/genco_model.py`** (NN-check selftest, Excel recalculation
+- **`packages/book/genco_model.py`** (32-check selftest, Excel recalculation
   included when Excel is on the box) builds `NTPC_model.xlsx` from
   `model_config.json`. It is `power_model.py` with two differences, which is
   why it is its own builder and not a config switch:
