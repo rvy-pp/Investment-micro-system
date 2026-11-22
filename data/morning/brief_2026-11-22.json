@@ -1,0 +1,121 @@
+{
+ "date": "2026-11-22",
+ "generated_at": "2026-11-22T08:20:00+05:30",
+ "mail": {
+  "window": "24h to 08:07 IST",
+  "n_scanned": 5,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "NLC India plans a 1,080 MW (4 x 270 MW) coal-based power JV to meet NALCO's expansion power needs; land is available with NALCO.",
+      "source": "Elara - NLC India – Q2FY27 Investor Meeting KTA",
+      "received": "09:04",
+      "detail": {
+       "summary": "The NALCO JV is one of four thermal projects NLC lists as under consideration in its corporate plan to 2032. No award date or cost is given for it, and management says thermal projects generally take four to six years to complete.",
+       "points": [
+        "1,080 MW, 4 x 270 MW, coal-based",
+        "Purpose: NALCO's expansion-related power requirements",
+        "Land available with NALCO",
+        "Thermal projects take around 4-6 years to complete"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "NLC says its coal realisations rose from about Rs1,500-1,800/t to nearly Rs2,800/t over the previous year and expects prices to normalise as eastern output recovers.",
+      "source": "Elara - NLC India – Q2FY27 Investor Meeting KTA",
+      "received": "09:04",
+      "detail": {
+       "summary": "Management ties the firm coal prices to lower production in eastern India from monsoon disruption and expects a gradual normalisation. Talabira is its only mine at full scale, with part of the output sold through government entities and e-auctions.",
+       "points": [
+        "Realisation about Rs1,500-1,800/t to nearly Rs2,800/t",
+        "Talabira dispatch 10.12 MT in H1FY27, up 15% YoY",
+        "About 3.5 MT supplied to NTPC, balance via government entities and e-auction",
+        "Pachwara South evacuation from Feb-Mar 2027, about 9 MT in 2-3 years",
+        "Ghatampur gets 3-4 coal rakes a day against 7-7.5 needed"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "LME copper fell 8% and aluminium 3% week on week in rupees; Voltas signed a JV with Atomberg for room AC compressors, taking 50%.",
+      "source": "Kotak - India durables/electricals: Weekly wrap on news flow, weather patterns, and valuations",
+      "received": "12:46",
+      "detail": {
+       "summary": "The weekly wrap shows input costs easing over the week but still far above last year, with Kotak's theoretical raw-material indices for durables up sharply. News flow points to post-Diwali price hikes across phones, TVs and refrigerators.",
+       "points": [
+        "Copper / aluminium / domestic HRC: -8% / -3% / flat WoW",
+        "Same three: +24% / +15% / +38% YoY",
+        "RM indices for RAC, washers, refrigerators, fans up 29-57% YoY",
+        "Week's gainers: Blue Star +12.8%, Voltas +9%, Crompton +5.7%",
+        "Laggards: RR Kabel -8.7%, KEI -5.2%, TTK Prestige -4.7%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "NLC India's board approved a plan to 2032: thermal 6.6 GW to 14.9 GW and renewables 1.8 GW to 16.2 GW, on about Rs1,600bn of capex.",
+      "source": "Elara - NLC India – Q2FY27 Investor Meeting KTA",
+      "received": "09:04",
+      "detail": {
+       "summary": "The meeting notes pair a large expansion plan with near-term drag from under-recoveries, which management expects to stay elevated in FY27 and fall substantially from FY28. About 600 MW of renewable capacity is ready but waiting on transmission lines.",
+       "points": [
+        "Mining capacity 50 MTPA to 122 MTPA by 2032",
+        "H1FY27 thermal generation 14.62 BU, up 19% YoY",
+        "Neyveli TPS-II Expansion 2,500 MW, award targeted this financial year",
+        "Ghatampur under-recoveries about Rs4.9bn as of September",
+        "About 950 MW renewable additions by end FY27, about 2 GW a year from FY28"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak Midcap Conference schedule: Nuvoco and Inox Wind on Thu 26 Nov, JSW Cement and KPIT on Fri 27 Nov, Grand Hyatt Mumbai.",
+      "source": "Kotak - [Kotak Schedule] - IN-PERSON - Midcap Conference 2026",
+      "received": "11:05",
+      "detail": {
+       "summary": "The delegate schedule lists four in-person meetings over two days at the Grand Hyatt, Kalina. Two are one-on-ones and two are group meetings.",
+       "points": [
+        "Thu 26 Nov 15:00-16:00: Nuvoco Vistas, group",
+        "Thu 26 Nov 16:00-17:00: Inox Wind, 1x1",
+        "Fri 27 Nov 11:00-12:00: JSW Cement, small group, CFO attending",
+        "Fri 27 Nov 13:00-14:00: KPIT Technologies, 1x1"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": ["Steel", "Cement", "IT / AI-tech", "Macro & strategy"]
+ },
+ "global": {
+  "ai_semis": [],
+  "bellwethers": [
+   {"name": "Accenture", "reason": null},
+   {"name": "Cognizant", "reason": null}
+  ]
+ }
+}
