@@ -3629,7 +3629,9 @@ the roster**, add only on the PM's word. Entity ids: `ntpc`, `power_grid`,
   are **OI only**: `entities` rows with sector `power`, no peer group,
   `active = 0`, not in `power.yaml`, the Results roster or
   `yahoo_prices.CANDIDATES` (`engine._nse_symbol` falls back to `BHAVCOPY`
-  for their options).
+  for their options). **Inox Wind is the exception since 2026-11-22**: it has
+  a case agent (below), so its closes are in `CANDIDATES`; it is still out of
+  `power.yaml` and `active = 0`.
 - **What a bridge will have to decide**, recorded in the spec so it is not
   rediscovered: the cost side is fuel and the store already carries it, but
   the revenue side is REGULATED for NTPC, Power Grid, NHPC and the licensee
@@ -3869,6 +3871,50 @@ now reviews both.
   matches NTPC Green; hits must be checked by hand.
 - The two models were MS `868893.NTPC.NS.XLSM` (16-Nov, post-result; PT 386)
   and JPM `NTPC.NS_Equity_model.xlsx` (05-Nov; FV 467.6).
+
+### Inox Wind — the third coverage case, on EV/EBITDA (2026-11-22)
+
+PM: *"inox-wind agent, lets go. use EV/EBITDA instead of P/E"*. Agent
+**`inxw-agent`** (Bloomberg INXW IN; "inox-wind agent" read by the token
+rule), entity `inox_wind`. No Excel model, and none was asked for.
+- **Registered as a coverage name**, like Power Grid and NTPC:
+  `analysis_coverage {token: INXW, group: POWER}`, `ticker_map`, `names`.
+  The Analysis roster is 32 with it. It is renewable EQUIPMENT and stays out
+  of `specs/entities/power.yaml`. It sits under POWER because that is its OI
+  page and its rota sector (Thursday), so no new group needs a rota day.
+- **EV/EBITDA by name**: `case_valuation_names: INXW: ev_ebitda`, the
+  mechanism NTPC's switch added the same day. σ is fetched on screener's EV
+  multiple (`multiple_sigma.SYMBOLS inox_wind: INOXWIND`): 16.2% on the first
+  fetch. The build's quarters carry `ebitda_cr` directly; there is no
+  per-tonne driver.
+- **Closes**: `INOXWIND.NS` added to `yahoo_prices.CANDIDATES`/`EQUITIES`
+  (pattern "inox wind limited", so the former holding company Inox Wind
+  ENERGY cannot match). Backfilled from 2015. The `entities` row stays
+  `active = 0`, so it is still off the Results roster.
+- **The street is ONE house.** The mailbox holds one post-result note with a
+  target, I-Sec's (Rs85 from Rs120, FY27/FY28 EBITDA Rs966cr / Rs1,438cr,
+  16-Nov). Its basis matches screener's consolidated operating profit to the
+  crore, so actuals come from screener. Nuvama's Rs123 (18-Nov valuation sheet)
+  is LEFT OUT and listed under `conflicts`: the same sheet still carries the
+  pre-result model (FY27 revenue Rs6,999cr against H1's Rs2,168cr), and
+  divided by post-result EBITDA it would read 15.9x, a multiple Nuvama never
+  chose. Yahoo's six-analyst target median (Rs97) is context, not an input.
+  The Nuvama and Avendus sheets are binary attachments the M365 connector
+  cannot read; they were saved through Outlook COM (outlook_pack's method) to
+  the scratchpad, and the Avendus `.xlsb` was converted through Excel. Avendus
+  does not cover Inox.
+- **First read, 20-Nov close Rs55.46**: EV Rs11,158cr (net debt Rs1,575cr,
+  Sep-26), 11.55x FY27 / 7.76x FY28 street EBITDA. Q3 and Q4 are `street`
+  (no house prints a quarter), so the base is the anchor alone: +53.3%
+  (I-Sec's Rs85), bear +27.8%, bull +83.2%. Nearly all of it is FY28's +49%
+  EBITDA growth at an unchanged multiple. The street's H2FY27 needs Rs304cr a
+  quarter against Q2's Rs205cr. The PM has a 1x1 with Inox IR at Kotak's
+  midcap conference on 26-Nov.
+- **Two side effects, both handled:** the orchestrator selftest required at
+  least five held targets on every watched case. It now requires every
+  `house_tps` row to be read back (the 5-house floor stays for legs parsed out
+  of `anchor_why`). And the day-end prints no own-vs-sector split for Inox:
+  grading's sector map comes from the entity specs, and Inox is in none.
 
 ## Sector positioning in the daily review — `sector_oi.py` (2026-11-20)
 

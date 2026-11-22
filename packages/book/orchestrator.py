@@ -828,8 +828,15 @@ def _selftest() -> None:
     assert "stays" not in flags({**tq, "lean_default": True}, tp_prev, th, "2026-10-26", t)[0]; ok += 1
     for g in watched(analysis.roster(live := load_cfg()))[0]:                 # every watched case holds its targets
         if has_case(g["entity"]):
-            kt = known_tps(g["entity"], cb.load_build(g["entity"]))
-            assert len(kt["houses"]) >= 5, (g["entity"], kt)
+            bld = cb.load_build(g["entity"])
+            kt = known_tps(g["entity"], bld)
+            # A build's own house_tps must ALL be read back. The floor of 5 is
+            # for legs whose targets are parsed out of anchor_why / valuation.json
+            # (the parser check it was written as). It used to apply to every leg
+            # and failed on Inox Wind (2026-11-22), which genuinely holds ONE
+            # post-result target (I-Sec's Rs85) — a thin mailbox, not a parse miss.
+            want = len((bld or {}).get("house_tps") or []) or 5
+            assert len(kt["houses"]) >= want, (g["entity"], want, kt)
     ok += 1
 
     # ---- watches (UTCEM_SRCM, PM 2026-10-27)

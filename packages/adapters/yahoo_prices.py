@@ -163,6 +163,13 @@ CANDIDATES: dict[str, list[tuple[str, str]]] = {
     "adani_power":            [("ADANIPOWER.NS", r"adani\s*power")],
     "adani_green":            [("ADANIGREEN.NS", r"adani\s*green")],
     "adani_energy_solutions": [("ADANIENSOL.NS", r"adani\s*energy\s*solution")],
+    # --- equities: Inox Wind, 2026-11-22 (PM: "inox-wind agent, lets go") ---
+    # A coverage name on the Analysis roster (specs/book.yaml analysis_coverage,
+    # INXW), NOT in power.yaml: it is renewable EQUIPMENT, kept out of the
+    # power roster by design. Resolved with yahoo_search.py ("INOX WIND
+    # LIMITED"). The pattern requires "wind limited" so the former holding
+    # company, Inox Wind ENERGY Ltd, can never satisfy it.
+    "inox_wind":              [("INOXWIND.NS", r"inox\s*wind\s+limited")],
     # --- fx ---
     "usdinr":         [("USDINR=X", r"usd\s*/?\s*inr")],
     "usdcny":         [("CNY=X", r"usd\s*/?\s*cny")],
@@ -215,6 +222,7 @@ EQUITIES = {
     "persistent", "coforge", "mphasis", "kpit", "tata_elxsi", "ofss", "ltts",
     "ntpc", "power_grid", "tata_power", "jsw_energy", "nhpc",
     "adani_power", "adani_green", "adani_energy_solutions",
+    "inox_wind",
 }
 
 # Symbols probed and DELIBERATELY rejected. Kept so nobody re-adds them.
