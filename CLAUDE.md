@@ -3774,7 +3774,7 @@ POWER}`, `ticker_map NTPC: ntpc`, agent **`ntpc-agent`**; the Bloomberg
 ticker is NTPC IN). The Analysis roster is 32 rows. Thursday's POWER rota day
 now reviews both.
 
-- **`packages/book/genco_model.py`** (25-check selftest, Excel recalculation
+- **`packages/book/genco_model.py`** (NN-check selftest, Excel recalculation
   included when Excel is on the box) builds `NTPC_model.xlsx` from
   `model_config.json`. It is `power_model.py` with two differences, which is
   why it is its own builder and not a config switch:
@@ -3808,6 +3808,19 @@ now reviews both.
   Green, plus the stake per share (`Sub_book_ps`, `Sub_value_ps`). At JPM's
   1.75x and Rs48.7 it prints Rs468 against JPM's own 467.6, so the book roll
   agrees with theirs.
+- **EV/EBITDA sits beside the P/E** (PM, 2026-11-22: *"Get the implied
+  EV/ebitda for all houses, make a column at the side of the P/E"*).
+  `genco_model.ev_block` writes Valuation column C (what each cell is, in D)
+  and a table of every house's target with its implied P/E and EV/EBITDA;
+  `--add-ev-ebitda ntpc [--force]` puts it into the live workbook through
+  Excel, and a rebuild writes it when build.json has `house_tps`. EV is
+  price x shares + net debt at the LAST REPORTED quarter, on the MODEL's
+  valuation-year EBITDA (no consensus EBITDA is stored), so the median
+  multiple gives back the median target exactly. Minorities and JV
+  investments are not adjusted. Column B, the basis row and the juice stay
+  P/E. First read: 7.72x today, houses 8.17x to 9.66x, median 8.86x. The
+  targets spread 32% top to bottom, the multiples 18%, because net debt is
+  45% of enterprise value.
 - **Consensus is a ONE-OFF Yahoo read, not stored.** Neither NTPC model has a
   consensus sheet (JPM's Power Grid model did). `yahoo_estimates`' helpers
   were called for `NTPC.NS` once: FY27 26.71 (20 analysts), FY28 28.27 (21).

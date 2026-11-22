@@ -48,6 +48,12 @@ subsidiary, plus that stake per share.
     python packages/book/genco_model.py --config data/analysis/cases/ntpc/model_config.json \\
         --out data/analysis/cases/ntpc/NTPC_model.xlsx --recalc
     python packages/book/genco_model.py --selftest
+    python packages/book/genco_model.py --add-ev-ebitda ntpc     # EV/EBITDA beside the P/E, live, through Excel
+
+EV/EBITDA sits BESIDE the P/E on the Valuation sheet (column C, with the
+houses' targets and the multiple each implies in a table under the sheet)
+whenever build.json carries `house_tps`: see `ev_block`. The basis the
+Analysis card reads stays P/E.
 
 The workbook is built ONCE; after that it is the working surface (type the
 new quarter into the blue rows, flip its status on Inputs). A rebuild
@@ -60,6 +66,7 @@ import argparse
 import datetime as dt
 import json
 import pathlib
+import re
 import sys
 import tempfile
 
@@ -628,6 +635,12 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
         if s.get("source"):
             va.cell(r, 5, s["source"]).font = Font(name=FONT, size=8, italic=True, color="595959")
 
+    houses = cfg.get("house_tps")
+    if not houses and (out.parent / "build.json").exists():
+        houses = json.loads((out.parent / "build.json").read_text(encoding="utf-8")).get("house_tps")
+    if houses:
+        ev_block(va, houses, rng("P&L", r_ebitda), rng("Cash flow", r_nd))
+
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
     for L, w in (("A", 48), ("B", 22), ("C", 120)):
@@ -657,6 +670,180 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     out.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out)
     return {"quarters": N, "actual": n_act}
+
+
+# --------------------------------------------------------------------------
+# EV/EBITDA beside the P/E, and the houses' targets as implied multiples
+# --------------------------------------------------------------------------
+EV_HEAD = "Houses' targets and the multiple each one implies"
+EV_PE_LABELS = ("Valuation basis", "Valuation year", "Quarters in the valuation year", "PAT, valuation year (Rs cr)",
+                "EPS of the valuation year (Rs)", "P/E today, on the valuation year", "Target P/E multiple (x)",
+                "Expected price (Rs)", "Upside vs CMP", "Dividend per share in the valuation year (Rs)",
+                "Total return vs CMP, price plus that dividend")
+
+
+def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int | None = None) -> dict:
+    """PM, 2026-11-22: *"can we do an ev/ebitda analysis ... Get the implied
+    EV/ebitda for all houses, make a column at the side of the P/E"*.
+
+    Column C of the P/E block carries the same steps on EV/EBITDA (column D
+    says what each cell is), and a table under the sheet lists every house's
+    target with the P/E and the EV/EBITDA it implies. Column B is not touched:
+    model_view and the Analysis card read B, and the basis stays P/E.
+
+    EV = price x shares + net debt at the LAST REPORTED quarter, for today's
+    multiple and for every house alike, so the median multiple times the
+    EBITDA less that net debt is the median target exactly. EBITDA is the
+    MODEL's valuation-year figure: no consensus EBITDA is stored for a name
+    outside the daily capture. Minority interests and the JV investments are
+    not adjusted, on either side. The implied P/E uses the typed consensus
+    EPS of the valuation year, as case_brief.py does.
+
+    Writes into `va` and returns the cells it wrote (the live writer turns
+    them into Excel operations)."""
+    L = _rows(va)
+    miss = [x for x in EV_PE_LABELS if x not in L]
+    cons = sorted(r for lab, r in L.items() if lab.startswith("Consensus EPS "))
+    if miss or not cons:
+        raise SystemExit("cannot place the EV/EBITDA column: the Valuation sheet lacks " + ", ".join(miss or ["the consensus EPS rows"]))
+    rb, ry, rq, rpat, reps, rpe, rtg, rtp, rup, rdv, rtr = (L[x] for x in EV_PE_LABELS)
+    hs = sorted((h for h in houses if isinstance(h.get("tp"), (int, float))), key=lambda h: h["tp"])
+    top = top or va.max_row + 2
+    h1, hn = top + 2, top + 1 + len(hs)
+    done: list[str] = []
+    va.column_dimensions["D"].width = 46
+
+    def put(r, c, v, fmt=None, color=BLACK, bold=False, fill=False, note=False):
+        cell = va.cell(r, c, v)
+        cell.font = (Font(name=FONT, size=8, italic=True, color="595959") if note
+                     else Font(name=FONT, color=color, bold=bold))
+        if fmt:
+            cell.number_format = FMT[fmt]
+        if fill:
+            cell.fill = YELLOW
+        done.append(cell.coordinate)
+
+    # the column beside the P/E
+    put(rb - 1, 2, "P/E", bold=True)
+    put(rb - 1, 3, "EV/EBITDA", bold=True)
+    put(rb - 1, 4, "What the EV/EBITDA column holds", note=True)
+    put(rb, 3, "EV/EBITDA")
+    put(rb, 4, "Shown beside the P/E. The Analysis card still reads column B.", note=True)
+    put(ry, 3, f"=B{ry}", color=GREEN)
+    put(rq, 3, f"=B{rq}", color=GREEN)
+    put(rpat, 3, f"=SUMIFS({ebitda_rng},FYrow,B{ry})", "cr", GREEN)
+    put(rpat, 4, "EBITDA, valuation year (Rs cr): the model's")
+    put(reps, 3, f'=LOOKUP(2,1/(Status="A"),{netdebt_rng})', "cr", GREEN)
+    put(reps, 4, "Net debt at the last reported quarter (Rs cr)")
+    put(rpe, 3, f"=(CMP*Shares_mn/10+C{reps})/C{rpat}", "x2", GREEN)
+    put(rpe, 4, "EV/EBITDA today, on the valuation year")
+    put(rtg, 3, f"=MEDIAN(D{h1}:D{hn})", "x2", GREEN, bold=True)
+    put(rtg, 4, "Target EV/EBITDA (x): the houses' median, below")
+    put(rtp, 3, f"=(C{rtg}*C{rpat}-C{reps})*10/Shares_mn", "rs", bold=True)
+    put(rtp, 4, "Expected price on EV/EBITDA (Rs)", bold=True)
+    put(rup, 3, f"=C{rtp}/CMP-1", "pct", GREEN, bold=True)
+    put(rdv, 3, f"=B{rdv}", "rs", GREEN)
+    put(rtr, 3, f"=(C{rtp}+C{rdv})/CMP-1", "pct", GREEN)
+
+    # the houses
+    eps = f'INDEX($B${cons[0]}:$B${cons[-1]},MATCH("Consensus EPS "&$B${ry}&" (Rs)",$A${cons[0]}:$A${cons[-1]},0))'
+    put(top, 1, EV_HEAD, bold=True)
+    put(top, 5, "Implied P/E = target / the consensus EPS typed above for the valuation year. Implied EV/EBITDA = "
+                "(target x shares + net debt at the last reported quarter) / the MODEL's valuation-year EBITDA; "
+                "minorities and JV investments are not adjusted. Retype a target after a re-strike.", note=True)
+    for j, h in enumerate(("House", "Target (Rs)", "Implied P/E", "Implied EV/EBITDA", "Date, rating and basis")):
+        put(top + 1, 1 + j, h, bold=True)
+    for k, h in enumerate(hs):
+        r = h1 + k
+        put(r, 1, str(h.get("house", "")))
+        put(r, 2, float(h["tp"]), "rs", BLUE, fill=True)
+        put(r, 3, f"=B{r}/{eps}", "x2")
+        put(r, 4, f"=(B{r}*Shares_mn/10+$C${reps})/$C${rpat}", "x2", GREEN)
+        put(r, 5, ", ".join(str(x) for x in (h.get("date"), h.get("basis")) if x), note=True)
+    foot = [("Median", "MEDIAN"), ("Mean", "AVERAGE")]
+    for k, (lab, fn) in enumerate(foot):
+        r = hn + 1 + k
+        put(r, 1, lab, bold=True)
+        for c, f in ((2, "rs"), (3, "x2"), (4, "x2")):
+            Lc = get_column_letter(c)
+            put(r, c, f"={fn}({Lc}{h1}:{Lc}{hn})", f, bold=True)
+    r = hn + 3
+    put(r, 1, "Highest over lowest")
+    for c in (2, 3, 4):
+        Lc = get_column_letter(c)
+        put(r, c, f"=MAX({Lc}{h1}:{Lc}{hn})/MIN({Lc}{h1}:{Lc}{hn})-1", "pct")
+    put(r, 5, "Debt is most of the enterprise value, so the same spread of targets is a much narrower spread of EV/EBITDA.", note=True)
+    r = hn + 4
+    put(r, 1, "At today's price")
+    put(r, 2, "=CMP", "rs", GREEN)
+    put(r, 3, f"=CMP/{eps}", "x2", GREEN)
+    put(r, 4, f"=C{rpe}", "x2", GREEN)
+    return {"top": top, "first": h1, "last": hn, "end": hn + 4, "cells": done, "tp_cell": f"C{rtp}", "target_cell": f"C{rtg}"}
+
+
+def add_ev_ebitda(entity: str, force: bool = False, base: pathlib.Path | None = None) -> int:
+    """Write the EV/EBITDA column and the house table into an EXISTING workbook
+    through Excel, so the PM's yellow cells survive and an open window takes
+    the edit in place. Targets come from build.json `house_tps` beside the
+    workbook. Only Valuation columns C and D beside the P/E block, row 3 and
+    the table under the sheet are written."""
+    import model_view
+    from power_model import _bgr
+    base = base or model_view.CASES
+    p = model_view.path_for(entity, base)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    bj = p.parent / "build.json"
+    houses = json.loads(bj.read_text(encoding="utf-8")).get("house_tps") if bj.exists() else None
+    if not houses:
+        raise SystemExit(f"{bj} carries no house_tps: nothing to imply a multiple from")
+    live = load_workbook(p)
+    va, inp = live["Valuation"], live["Inputs"]
+    n = 0
+    while inp.cell(4, FIRST_COL + n).value:
+        n += 1
+    last = get_column_letter(FIRST_COL + n - 1)
+    PLr, CFr = _rows(live["P&L"]), _rows(live["Cash flow"])
+    if "EBITDA" not in PLr or "Net debt, closing" not in CFr:
+        raise SystemExit("the workbook has no EBITDA or net debt row; refusing to guess")
+    old = next((r for r in range(1, va.max_row + 1) if va.cell(r, 1).value == EV_HEAD), None)
+    if old and not force:
+        raise SystemExit(f"the EV/EBITDA block is already in {p.name}; --force rewrites it (its typed targets too)")
+    ops = []
+    if old:
+        ops.append({"sheet": "Valuation", "cell": f"A{old}", "mode": "values",
+                    "value": [[None] * 5 for _ in range(va.max_row - old + 1)]})
+        for r in range(old, va.max_row + 1):
+            for c in range(1, 6):
+                va.cell(r, c).value = None
+    info = ev_block(va, houses, f"'P&L'!$D${PLr['EBITDA']}:${last}${PLr['EBITDA']}",
+                    f"'Cash flow'!$D${CFr['Net debt, closing']}:${last}${CFr['Net debt, closing']}", top=old)
+    rgb = lambda c: c.rgb[-6:] if c is not None and isinstance(c.rgb, str) else None
+    ops.append({"sheet": "Valuation", "cell": "D1", "mode": "width", "value": va.column_dimensions["D"].width})
+    for co in info["cells"]:
+        c = va[co]
+        v = c.value
+        if isinstance(v, str) and not v.startswith("="):
+            v = "'" + v
+        solid = c.fill is not None and c.fill.fill_type == "solid"
+        ops.append({"sheet": "Valuation", "cell": co, "mode": "set", "value": v, "font": c.font.name or FONT,
+                    "numfmt": None if c.number_format == "General" else c.number_format,
+                    "fcolor": _bgr(rgb(c.font.color) or BLACK), "bold": bool(c.font.b), "italic": bool(c.font.i),
+                    "size": c.font.sz, "fill": _bgr(rgb(c.fill.fgColor)) if solid else None})
+    res = model_view.excel(entity, ops, base)
+    print(f"{p.name}: EV/EBITDA column and {info['last'] - info['first'] + 1} houses written to Valuation, "
+          f"{len(ops)} operations" + (" (into the open window)" if res.get("attached") else ""))
+    for note in res.get("notes") or []:
+        print(f"  NOTE {note}")
+    v = load_workbook(p, data_only=True)["Valuation"]
+    R = _rows(v)
+    g = lambda lab, c: v.cell(R[lab], c).value
+    print(f"  today {g('P/E today, on the valuation year', 3):.2f}x, target {g('Target P/E multiple (x)', 3):.2f}x, "
+          f"expected price Rs{g('Expected price (Rs)', 3):.1f} (P/E route Rs{g('Expected price (Rs)', 2):.1f})")
+    bad = errors(p)
+    for b in bad[:20]:
+        print(f"  ERROR CELL {b}")
+    return 1 if bad else 0
 
 
 def readme_lines(cfg, qs, n_act):
@@ -729,6 +916,9 @@ def _fixture() -> dict:
                              "gross_debt": {"Q2FY26": 255000.0}, "capex": {"Q1FY26": 9000.0}},
             "memo": {"sections": [{"title": "Bridge", "rows": [{"label": "Standalone PAT", "unit": "Rs cr",
                                                                 "values": {"Q1FY26": 4774.7, "Q2FY26": 4653.3}}]}]},
+            "street": {"FY27": {"eps": 26.0, "source": "t"}},
+            "house_tps": [{"house": "C", "tp": 460, "date": "2026-11-02", "basis": "t"}, {"house": "A", "tp": 355},
+                          {"house": "B", "tp": 400}],
             "sources": [["a", "b", "c"]], "decks": {}}
 
 
@@ -772,6 +962,20 @@ def selftest() -> int:
     chk("model_view finds the target, basis, year, EPS and typed P/E rows by label",
         sorted(vr), ["basis", "eps", "pe_typed", "tp", "year"])
     chk("the basis row says P/E", wb["Valuation"].cell(vr["basis"], 2).value, "P/E")
+    bare = json.loads(json.dumps(fx)); del bare["house_tps"]
+    pb = tmp / "Bare_model.xlsx"
+    build(bare, pb)
+    vb, vh = load_workbook(pb)["Valuation"], wb["Valuation"]
+    chk("no house targets, no EV/EBITDA block", EV_HEAD in _rows(vb), False)
+    # B3 is the block's own "P/E" header over the existing column, the one cell of column B it writes
+    chk("the EV/EBITDA block leaves column B (bar its header) and every other sheet's formulas as they were",
+        [f"{w.title}!{c.coordinate}" for w in load_workbook(pb).worksheets for row in w.iter_rows() for c in row
+         if not (w.title == "Valuation" and c.row == vr["basis"] - 1) and (w.title != "Valuation" or c.column == 2) and c.value != wb[w.title][c.coordinate].value], [])
+    chk("...and the header is what it wrote there", vh.cell(vr["basis"] - 1, 2).value, "P/E")
+    chk("nothing outside the block reads it",
+        [c.coordinate for row in vh.iter_rows(max_row=_rows(vh)[EV_HEAD] - 1) for c in row
+         if c.column not in (3, 4) and isinstance(c.value, str) and c.value.startswith("=")
+         and re.search(r"\$?[CD]\$?(%d|%d)\b" % (vr["tp"], vr["pe_typed"]), c.value)], [])
     reads_memo = [f"{ws.title}!{c.coordinate}" for ws in wb.worksheets if ws.title != "Memo"
                   for row in ws.iter_rows() for c in row if isinstance(c.value, str) and c.value.startswith("=") and "Memo" in c.value]
     chk("nothing reads the Memo sheet", reads_memo, [])
@@ -823,6 +1027,16 @@ def selftest() -> int:
     chk("the houses' route: (book ex subsidiary) x P/BV + the stake",
         round(vv("Price on the houses' route (Rs)"), 6),
         round((vv("Book value per share at the end of the valuation year (Rs)") - 7.7) * 1.75 + 48.7, 6))
+    hr = V[EV_HEAD]
+    imp = {v0["Valuation"].cell(r, 1).value: v0["Valuation"].cell(r, 4).value for r in range(hr + 2, hr + 5)}
+    ebitda27 = sum(val(v0, "P&L", "EBITDA", i) for i in range(4, 8))
+    nd = val(v0, "Cash flow", "Net debt, closing", 1)
+    chk("houses sorted by target; implied EV/EBITDA = (target x shares + last reported net debt) / model EBITDA",
+        [(k, round(x, 6)) for k, x in imp.items()],
+        [(k, round((tp * 969.67 + nd) / ebitda27, 6)) for k, tp in (("A", 355), ("B", 400), ("C", 460))])
+    chk("the median multiple round-trips to the median target", round(v0["Valuation"].cell(V["Expected price (Rs)"], 3).value, 6), 400.0)
+    chk("implied P/E = target / the typed consensus EPS of the valuation year",
+        round(v0["Valuation"].cell(hr + 3, 3).value, 6), round(400 / 26.0, 6))
     chk("forecast margin = average regulated equity x the trailing yield",
         round(val(v0, "P&L", "Margin over fuel", 2), 4),
         round(val(v0, RE, "Regulated equity, average", 2)
@@ -839,9 +1053,13 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="overwrite an existing workbook (loses its edits)")
     ap.add_argument("--recalc", action="store_true", help="open in Excel over COM, recalculate, save, check errors")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--add-ev-ebitda", metavar="ENTITY",
+                    help="write the EV/EBITDA column and the house table into the live workbook through Excel")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
+    if a.add_ev_ebitda:
+        return add_ev_ebitda(a.add_ev_ebitda, a.force)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:
