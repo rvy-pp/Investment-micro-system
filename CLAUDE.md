@@ -3774,7 +3774,7 @@ POWER}`, `ticker_map NTPC: ntpc`, agent **`ntpc-agent`**; the Bloomberg
 ticker is NTPC IN). The Analysis roster is 32 rows. Thursday's POWER rota day
 now reviews both.
 
-- **`packages/book/genco_model.py`** (32-check selftest, Excel recalculation
+- **`packages/book/genco_model.py`** (34-check selftest, Excel recalculation
   included when Excel is on the box) builds `NTPC_model.xlsx` from
   `model_config.json`. It is `power_model.py` with two differences, which is
   why it is its own builder and not a config switch:
@@ -3817,10 +3817,39 @@ now reviews both.
   price x shares + net debt at the LAST REPORTED quarter, on the MODEL's
   valuation-year EBITDA (no consensus EBITDA is stored), so the median
   multiple gives back the median target exactly. Minorities and JV
-  investments are not adjusted. Column B, the basis row and the juice stay
-  P/E. First read: 7.72x today, houses 8.17x to 9.66x, median 8.86x. The
+  investments are not adjusted. As first written, column B, the basis row and
+  the juice stayed P/E (the next bullet changed that the same day). First
+  read: 7.72x today, houses 8.17x to 9.66x, median 8.86x. The
   targets spread 32% top to bottom, the multiples 18%, because net debt is
   45% of enterprise value.
+- **NTPC's CASE runs on EV/EBITDA since 2026-11-22** (PM: *"Switch to
+  EV/EBITDA"*), NTPC alone: `specs/book.yaml case_valuation_names: {NTPC:
+  ev_ebitda}` wins over the sector's `case_valuation`, and Power Grid stays on
+  P/E. `case_brief.case_valuation(group, token=)`, the sigma fetch and the
+  scaffold all take the token, so the three cannot pick different multiples
+  for one stock. A name-level case gets its own agent text (`EV_BLOCK_NAME`):
+  the sector text says a quarter is volume x EBITDA per tonne.
+  - **The build** is quarterly consolidated EBITDA on the model's layout,
+    typed as `ebitda_cr`. The street EBITDA is ONE HOUSE, Morgan Stanley's
+    model (FY27 Rs68,407cr, FY28 Rs72,771cr), and the build says so:
+    J.P. Morgan's consolidated EBITDA is on another layout and no feed has a
+    consensus. Net debt Rs271,522cr is September borrowings less MARCH cash
+    (September cash is not on file), flagged as mixed dates.
+  - **The workbook.** B4 (the basis) says EV/EBITDA and
+    `model_view._val_col` reads the column whose header in row 3 matches it,
+    so the Analysis card prints column C. C8 is the case's typed net debt,
+    not the model's plug. Every older workbook has no header row and reads
+    column B as before.
+  - **First read at Rs321.5:** anchor 9.15x (thirteen houses, 8.46x to
+    9.97x), sigma 6.9% on screener's EV multiple, base +21.0%, bear +7.1%,
+    bull +35.9%. On P/E the same day the base was +26.6%. All 5.6 points are
+    the Q3 carry: the PM's accepted Q3 was in line on EPS (6.72 vs 6.75) and
+    is 2.6% under Morgan Stanley on EBITDA (Rs16,689cr vs Rs17,137cr), the
+    rule carries that to FY28, and net debt is 47% of enterprise value, so
+    the gap reaches the equity at 1.9 times. The workbook's own target stays
+    Rs407 (+26.6%), on the model's FY28 EBITDA of Rs73,184cr.
+  - `eps_memo` in build.json keeps the P/E quarters; the P/E build as it
+    stood is not kept in the repo (`data/` is ignored).
 - **Consensus is a ONE-OFF Yahoo read, not stored.** Neither NTPC model has a
   consensus sheet (JPM's Power Grid model did). `yahoo_estimates`' helpers
   were called for `NTPC.NS` once: FY27 26.71 (20 analysts), FY28 28.27 (21).

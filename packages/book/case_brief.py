@@ -381,12 +381,22 @@ def case_band(group: str | None, cfg: dict | None = None) -> dict | None:
     return {**band, "key": band_key(group)} if band else None
 
 
-def case_valuation(group: str | None, cfg: dict | None = None) -> str:
+def case_valuation(group: str | None, cfg: dict | None = None, token: str | None = None) -> str:
     """Which multiple a leg's case runs on: specs/book.yaml `case_valuation`
     by sector (CEMENT: ev_ebitda, PM 2026-10-25), else P/E. A sector setting,
-    like the band — never chosen name by name."""
+    like the band.
+
+    One exception, by the PM's word and listed by token in
+    `case_valuation_names`: NTPC runs on EV/EBITDA while the rest of POWER
+    (Power Grid) stays on P/E (2026-11-22, "Switch to EV/EBITDA"). A name
+    listed there wins over its sector; every caller that knows the token
+    passes it, or the brief, the sigma fetch and the agent file would each
+    pick a different multiple for the same stock."""
     import yaml
     cfg = cfg if cfg is not None else yaml.safe_load(analysis.BOOK_YAML.read_text(encoding="utf-8"))
+    by_name = cfg.get("case_valuation_names") or {}
+    if token and token in by_name:
+        return by_name[token]
     return (cfg.get("case_valuation") or {}).get(band_key(group), "pe")
 
 
@@ -928,7 +938,7 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
         px = analysis._close(conn, ent)
         pe_today = {fy: px[1] / e for fy, e in cons.items()} if px else {}
         build = build if build is not None else load_build(ent)
-        valuation = case_valuation(me["group"])
+        valuation = case_valuation(me["group"], token=me["token"])
         ev = None
         if valuation == "ev_ebitda":
             # No feed carries these names' consensus EBITDA, so the build does
@@ -988,8 +998,9 @@ def brief(ent: str, conn=None, today: dt.date | None = None, build: dict | None 
             out["band"] = band
             probs = validate_build(build, band)
             if (build.get("valuation") or "pe") != valuation:
-                probs.append(f"build says valuation {build.get('valuation') or 'pe'!r} but the {band_key(me['group'])} "
-                             f"sector runs on {valuation!r} (specs/book.yaml case_valuation)")
+                probs.append(f"build says valuation {build.get('valuation') or 'pe'!r} but {me['token']} "
+                             f"({band_key(me['group'])}) runs on {valuation!r} (specs/book.yaml case_valuation / "
+                             f"case_valuation_names)")
             want = case_anchor(me["group"])
             got = ((build.get("scenarios") or {}).get("base") or {}).get("anchor")
             if want and got and got != want:
@@ -1281,6 +1292,27 @@ consensus EBITDA and the median, and names every TP in `anchor_why`. Never type
 a multiple yourself. The stock-case skill's "EV/EBITDA sectors" section is the
 method."""
 
+# A NAME on EV/EBITDA inside a P/E sector (specs/book.yaml case_valuation_names;
+# NTPC, 2026-11-22). The sector text above would tell its agent that the whole
+# sector runs on EV/EBITDA and that a quarter is volume x EBITDA per tonne,
+# both wrong for a utility.
+EV_BLOCK_NAME = """
+
+**{name} runs on EV/EBITDA, not P/E, by the PM's word for this name**
+(`specs/book.yaml case_valuation_names`); the rest of {group} stays on P/E.
+The build is quarterly consolidated EBITDA in Rs crore, typed as `ebitda_cr`
+on the layout `ebitda_basis` names (there is no volume x per-tonne driver
+here; take the quarter from the stock's Excel model and say so in `why`).
+Street EBITDA per year, the share count and net debt are written into
+`build.json` (no feed carries them), each with a source, and re-struck when
+a house publishes or the company reports; say how many houses the street
+figure rests on. The anchor is the MEDIAN of the houses' implied EV/EBITDA on
+the headline year (`case_anchor`): list every post-result TP in `house_tps`
+and set the base `"anchor": "median"`. The brief computes each
+(TP x shares + net debt) / street EBITDA and the median. Never type a multiple
+yourself. An EBITDA gap reaches the equity levered by EV / market cap, so say
+that ratio whenever you quote a gap."""
+
 CASE_TEMPLATE = """# {name} — case file
 
 *Maintained by the `{agent}` agent. Rewritten each run; the Analysis
@@ -1327,9 +1359,11 @@ def scaffold(ent: str, force: bool = False, agents_dir: pathlib.Path = AGENTS,
         raise SystemExit(f"{ent!r} is not one of the dictated legs")
     r = ros[ent]
     it = is_it(r["group"])
-    evs = case_valuation(r["group"]) == "ev_ebitda"
+    evs = case_valuation(r["group"], token=r["token"]) == "ev_ebitda"
     fill = {"earn": "EBITDA" if evs else "EPS", "mult": "EV/EBITDA" if evs else "P/E",
-            "ev_block": EV_BLOCK.format(group=band_key(r["group"])) if evs else "","entity": ent, "name": r["name"], "token": r["token"], "group": r["group"],
+            "ev_block": ("" if not evs else
+                         EV_BLOCK.format(group=band_key(r["group"])) if case_valuation(r["group"]) == "ev_ebitda" else
+                         EV_BLOCK_NAME.format(group=band_key(r["group"]), name=r["name"])),"entity": ent, "name": r["name"], "token": r["token"], "group": r["group"],
             "side_word": r["side"],
             # a held leg whose pair was retired sits in no pair (PM 2026-11-09)
             "pairs": ", ".join(r["pairs"]) or f"no pair (was {r.get('unpaired') or '?'})",
@@ -1558,6 +1592,10 @@ def _selftest() -> None:
     cfgv = {"case_valuation": {"CEMENT": "ev_ebitda"},
             "case_bands": {"CEMENT": {"per_t_inr": 50, "growth_pp": 1.0}}}
     assert case_valuation("CEMENT", cfgv) == "ev_ebitda" and case_valuation("IT LARGECAP", cfgv) == "pe"; ok += 1
+    # a name listed in case_valuation_names wins over its sector, and only that name
+    cfgn = {**cfgv, "case_valuation_names": {"NTPC": "ev_ebitda"}}
+    assert case_valuation("POWER", cfgn, "NTPC") == "ev_ebitda"; ok += 1
+    assert case_valuation("POWER", cfgn, "PWGR") == "pe" and case_valuation("POWER", cfgn) == "pe"; ok += 1
     # PM 2026-10-27: IT and cement anchor on the median; every IT sub-group reads IT
     cfga = {"case_anchor": {"IT": "median", "CEMENT": "median"}}
     assert case_anchor("IT MIDCAP", cfga) == "median" and case_anchor("CEMENT", cfga) == "median"; ok += 1

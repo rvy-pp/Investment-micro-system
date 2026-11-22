@@ -635,11 +635,10 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
         if s.get("source"):
             va.cell(r, 5, s["source"]).font = Font(name=FONT, size=8, italic=True, color="595959")
 
-    houses = cfg.get("house_tps")
-    if not houses and (out.parent / "build.json").exists():
-        houses = json.loads((out.parent / "build.json").read_text(encoding="utf-8")).get("house_tps")
-    if houses:
-        ev_block(va, houses, rng("P&L", r_ebitda), rng("Cash flow", r_nd))
+    evi = ev_inputs(cfg if cfg.get("house_tps") else
+                    json.loads((out.parent / "build.json").read_text(encoding="utf-8")) if (out.parent / "build.json").exists() else None)
+    if evi["houses"]:
+        ev_block(va, evi["houses"], rng("P&L", r_ebitda), rng("Cash flow", r_nd), basis=evi["basis"], net_debt=evi["net_debt"])
 
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
@@ -682,7 +681,20 @@ EV_PE_LABELS = ("Valuation basis", "Valuation year", "Quarters in the valuation 
                 "Total return vs CMP, price plus that dividend")
 
 
-def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int | None = None) -> dict:
+def ev_inputs(build: dict | None) -> dict:
+    """What ev_block takes from a build.json: the targets, and for a case that
+    RUNS on EV/EBITDA (specs/book.yaml case_valuation_names) the basis the
+    Analysis card should read and the case's own sourced net debt, so the
+    workbook and case_brief.py bridge enterprise value to equity with one
+    figure."""
+    b = build or {}
+    ev = b.get("valuation") == "ev_ebitda"
+    nd = (b.get("net_debt_cr"), b.get("net_debt_asof") or "the case build") if ev and isinstance(b.get("net_debt_cr"), (int, float)) else None
+    return {"houses": b.get("house_tps") or [], "basis": "EV/EBITDA" if ev else None, "net_debt": nd}
+
+
+def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int | None = None,
+             basis: str | None = None, net_debt: tuple | None = None) -> dict:
     """PM, 2026-11-22: *"can we do an ev/ebitda analysis ... Get the implied
     EV/ebitda for all houses, make a column at the side of the P/E"*.
 
@@ -698,6 +710,14 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     outside the daily capture. Minority interests and the JV investments are
     not adjusted, on either side. The implied P/E uses the typed consensus
     EPS of the valuation year, as case_brief.py does.
+
+    `basis` ("EV/EBITDA", PM 2026-11-22: "Switch to EV/EBITDA") is typed into
+    the basis cell in column B, the one cell of the P/E block this changes.
+    model_view._val_col then reads the column whose header in the row above
+    matches it, so the Analysis card prints column C. `net_debt` (value,
+    as-of text) types the case build's sourced net debt in place of the
+    model's last reported quarter: the model's cash is a plug with no working
+    capital and ran Rs11,800cr above the reported figure at March 2026.
 
     Writes into `va` and returns the cells it wrote (the live writer turns
     them into Excel operations)."""
@@ -728,13 +748,21 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     put(rb - 1, 3, "EV/EBITDA", bold=True)
     put(rb - 1, 4, "What the EV/EBITDA column holds", note=True)
     put(rb, 3, "EV/EBITDA")
-    put(rb, 4, "Shown beside the P/E. The Analysis card still reads column B.", note=True)
+    if basis:
+        put(rb, 2, basis, color=BLUE, fill=True)
+        put(rb, 4, f"B{rb} is the basis the Analysis card reads: it takes the column headed with that word (P/E or EV/EBITDA).", note=True)
+    else:
+        put(rb, 4, "Shown beside the P/E. The Analysis card reads the column B4 names (P/E).", note=True)
     put(ry, 3, f"=B{ry}", color=GREEN)
     put(rq, 3, f"=B{rq}", color=GREEN)
     put(rpat, 3, f"=SUMIFS({ebitda_rng},FYrow,B{ry})", "cr", GREEN)
     put(rpat, 4, "EBITDA, valuation year (Rs cr): the model's")
-    put(reps, 3, f'=LOOKUP(2,1/(Status="A"),{netdebt_rng})', "cr", GREEN)
-    put(reps, 4, "Net debt at the last reported quarter (Rs cr)")
+    if net_debt:
+        put(reps, 3, float(net_debt[0]), "cr", BLUE, fill=True)
+        put(reps, 4, f"Net debt (Rs cr), as of {net_debt[1]}")        # model_view reads the date after "as of"
+    else:
+        put(reps, 3, f'=LOOKUP(2,1/(Status="A"),{netdebt_rng})', "cr", GREEN)
+        put(reps, 4, "Net debt (Rs cr), as of the last reported quarter")
     put(rpe, 3, f"=(CMP*Shares_mn/10+C{reps})/C{rpat}", "x2", GREEN)
     put(rpe, 4, "EV/EBITDA today, on the valuation year")
     put(rtg, 3, f"=MEDIAN(D{h1}:D{hn})", "x2", GREEN, bold=True)
@@ -749,7 +777,7 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     eps = f'INDEX($B${cons[0]}:$B${cons[-1]},MATCH("Consensus EPS "&$B${ry}&" (Rs)",$A${cons[0]}:$A${cons[-1]},0))'
     put(top, 1, EV_HEAD, bold=True)
     put(top, 5, "Implied P/E = target / the consensus EPS typed above for the valuation year. Implied EV/EBITDA = "
-                "(target x shares + net debt at the last reported quarter) / the MODEL's valuation-year EBITDA; "
+                f"(target x shares + the net debt in C{reps}) / the MODEL's valuation-year EBITDA; "
                 "minorities and JV investments are not adjusted. Retype a target after a re-strike.", note=True)
     for j, h in enumerate(("House", "Target (Rs)", "Implied P/E", "Implied EV/EBITDA", "Date, rating and basis")):
         put(top + 1, 1 + j, h, bold=True)
@@ -794,7 +822,8 @@ def add_ev_ebitda(entity: str, force: bool = False, base: pathlib.Path | None = 
     if p is None:
         raise SystemExit(f"no model for {entity!r}")
     bj = p.parent / "build.json"
-    houses = json.loads(bj.read_text(encoding="utf-8")).get("house_tps") if bj.exists() else None
+    evi = ev_inputs(json.loads(bj.read_text(encoding="utf-8")) if bj.exists() else None)
+    houses = evi["houses"]
     if not houses:
         raise SystemExit(f"{bj} carries no house_tps: nothing to imply a multiple from")
     live = load_workbook(p)
@@ -817,7 +846,8 @@ def add_ev_ebitda(entity: str, force: bool = False, base: pathlib.Path | None = 
             for c in range(1, 6):
                 va.cell(r, c).value = None
     info = ev_block(va, houses, f"'P&L'!$D${PLr['EBITDA']}:${last}${PLr['EBITDA']}",
-                    f"'Cash flow'!$D${CFr['Net debt, closing']}:${last}${CFr['Net debt, closing']}", top=old)
+                    f"'Cash flow'!$D${CFr['Net debt, closing']}:${last}${CFr['Net debt, closing']}", top=old,
+                    basis=evi["basis"], net_debt=evi["net_debt"])
     rgb = lambda c: c.rgb[-6:] if c is not None and isinstance(c.rgb, str) else None
     ops.append({"sheet": "Valuation", "cell": "D1", "mode": "width", "value": va.column_dimensions["D"].width})
     for co in info["cells"]:
@@ -838,7 +868,7 @@ def add_ev_ebitda(entity: str, force: bool = False, base: pathlib.Path | None = 
     v = load_workbook(p, data_only=True)["Valuation"]
     R = _rows(v)
     g = lambda lab, c: v.cell(R[lab], c).value
-    print(f"  today {g('P/E today, on the valuation year', 3):.2f}x, target {g('Target P/E multiple (x)', 3):.2f}x, "
+    print(f"  basis {g('Valuation basis', 2)}; today {g('P/E today, on the valuation year', 3):.2f}x, target {g('Target P/E multiple (x)', 3):.2f}x, "
           f"expected price Rs{g('Expected price (Rs)', 3):.1f} (P/E route Rs{g('Expected price (Rs)', 2):.1f})")
     bad = errors(p)
     for b in bad[:20]:
@@ -976,6 +1006,17 @@ def selftest() -> int:
         [c.coordinate for row in vh.iter_rows(max_row=_rows(vh)[EV_HEAD] - 1) for c in row
          if c.column not in (3, 4) and isinstance(c.value, str) and c.value.startswith("=")
          and re.search(r"\$?[CD]\$?(%d|%d)\b" % (vr["tp"], vr["pe_typed"]), c.value)], [])
+    evfx = json.loads(json.dumps(fx)); evfx.update(valuation="ev_ebitda", net_debt_cr=250000.0, net_debt_asof="Sep-26")
+    pe_ = tmp / "Ev_model.xlsx"
+    build(evfx, pe_)
+    ve = load_workbook(pe_)["Valuation"]
+    chk("an EV/EBITDA case types the basis and its own net debt; the card reader takes column C, and B without it",
+        (ve.cell(vr["basis"], 2).value, ve.cell(vr["eps"], 3).value, ve.cell(vr["eps"], 4).value,
+         model_view._val_col(ve, vr), model_view._val_col(vh, vr), model_view._val_col(vb, vr)),
+        ("EV/EBITDA", 250000.0, "Net debt (Rs cr), as of Sep-26", 3, 2, 2))
+    chk("...and changes nothing else in column B",
+        [c.coordinate for row in ve.iter_rows(min_col=2, max_col=2) for c in row
+         if c.row != vr["basis"] and c.value != vh[c.coordinate].value], [])
     reads_memo = [f"{ws.title}!{c.coordinate}" for ws in wb.worksheets if ws.title != "Memo"
                   for row in ws.iter_rows() for c in row if isinstance(c.value, str) and c.value.startswith("=") and "Memo" in c.value]
     chk("nothing reads the Memo sheet", reads_memo, [])

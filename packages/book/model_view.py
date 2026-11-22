@@ -265,6 +265,22 @@ def _val_rows(ws) -> dict:
     return out
 
 
+def _val_col(ws, rows: dict) -> int:
+    """The Valuation column the card reads. Normally B. A sheet that carries
+    two routes side by side (genco_model.ev_block: P/E in B, EV/EBITDA in C)
+    names each column in the row above "Valuation basis"; the basis typed in
+    B then picks the column whose header matches it. No header row, or no
+    match, is column B, so every older workbook reads as it always did."""
+    r = rows.get("basis")
+    if not r or r < 2:
+        return 2
+    basis = str(ws.cell(r, 2).value or "").strip().upper()
+    for c in (2, 3, 4):
+        if basis and str(ws.cell(r - 1, c).value or "").strip().upper() == basis:
+            return c
+    return 2
+
+
 def _name_cell(wb, name: str) -> tuple[str, str] | None:
     """A workbook-level defined name -> (sheet, A1 cell without $), or None."""
     dn = wb.defined_names.get(name)
@@ -292,6 +308,18 @@ def valuation(entity: str, close: tuple[str, float] | None = None, base: pathlib
     if "tp" not in rows:
         return {"error": "no 'Expected price (Rs)' row on the Valuation sheet"}
     out = {k: ws.cell(r, 2).value for k, r in rows.items()}
+    col = _val_col(ws, rows)
+    if col != 2:
+        # The side column holds the route the basis names (EV/EBITDA beside a
+        # P/E block): its expected price, its multiple on the typed-multiple
+        # row, and the net-debt date from the label beside the net-debt cell
+        # ("Net debt (Rs cr), as of Sep-26").
+        out["tp"] = ws.cell(rows["tp"], col).value
+        if "pe_typed" in rows:
+            out["multiple"] = ws.cell(rows["pe_typed"], col).value
+        if "eps" in rows:
+            m = re.search(r"as of (.+)$", str(ws.cell(rows["eps"], col + 1).value or ""))
+            out["nd_quarter"] = m.group(1).strip() if m else None
     if not isinstance(out.get("tp"), (int, float)):
         return {"error": "the expected price has no saved value: recalculate the workbook in Excel"}
     nc = _name_cell(forms, "CMP")
@@ -299,7 +327,7 @@ def valuation(entity: str, close: tuple[str, float] | None = None, base: pathlib
     out["model_cmp"] = vals[nc[0]][nc[1]].value if nc else None
     out["model_cmp_date"] = str(vals[nd[0]][nd[1]].value) if nd else None
     out["saved"] = models(base)[entity]["saved"]
-    out["tp_cell"] = f"Valuation!B{rows['tp']}"
+    out["tp_cell"] = f"Valuation!{'ABCD'[col - 1]}{rows['tp']}"
     if close and close[1]:
         out["close_date"], out["close"] = close[0], close[1]
         out["upside_pct"] = round((out["tp"] / close[1] - 1) * 100, 2)

@@ -60,6 +60,7 @@ SYMBOLS = {"tcs": "TCS", "infosys": "INFY", "wipro": "WIPRO", "hcl_tech": "HCLTE
            "kpit": "KPITTECH", "ultratech": "ULTRACEMCO", "shree": "SHREECEM",
            "power_grid": "POWERGRID",          # coverage name, 2026-11-09 (screener consolidated P/E)
            "ntpc": "NTPC",                     # coverage name, 2026-11-18 (screener consolidated P/E)
+           "inox_wind": "INOXWIND",            # coverage name, 2026-11-22 (screener consolidated EV multiple)
            "ambuja": "AMBUJACEM", "dalmia": "DALBHARAT", "jsw_steel": "JSWSTEEL",
            "tata_steel": "TATASTEEL"}
 DAYS = 1095        # three years fetched; the window takes what it needs
@@ -164,8 +165,11 @@ def _legs() -> list[tuple[str, str, dict | None]]:
     """(entity, multiple kind, sector band) for every leg with a case build."""
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     import case_brief
-    groups = {r["entity"]: r["group"] for r in case_brief.analysis.roster()}
-    return [(f.parent.name, case_brief.case_valuation(groups[f.parent.name]), case_brief.case_band(groups[f.parent.name]))
+    ros = {r["entity"]: r for r in case_brief.analysis.roster()}
+    groups = {e: r["group"] for e, r in ros.items()}
+    # the token goes with the group: a name may run on another multiple than its sector (NTPC, 2026-11-22)
+    return [(f.parent.name, case_brief.case_valuation(groups[f.parent.name], token=ros[f.parent.name]["token"]),
+             case_brief.case_band(groups[f.parent.name]))
             for f in sorted(case_brief.CASES.glob("*/build.json")) if f.parent.name in groups]
 
 

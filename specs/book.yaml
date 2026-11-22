@@ -72,6 +72,7 @@ ticker_map:
   # is ever taken (PWGR IN).
   PWGR: power_grid
   NTPC: ntpc            # coverage, 2026-11-18 (PM: "let's build the ntpc-agent"); Bloomberg NTPC IN
+  INXW: inox_wind       # coverage, 2026-11-22 (PM: "inox-wind agent, lets go"); Bloomberg INXW IN
   # IT
   TCS: tcs
   INFO: infosys
@@ -210,6 +211,10 @@ analysis_exclude:
 analysis_coverage:
   - {token: PWGR, group: POWER}
   - {token: NTPC, group: POWER}   # 2026-11-18
+  # 2026-11-22. Inox Wind is renewable EQUIPMENT, not a utility, and stays out
+  # of specs/entities/power.yaml; it sits under POWER here because that is its
+  # OI page and rota sector (Thursday), so no new group needs its own rota day.
+  - {token: INXW, group: POWER}
 
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
@@ -221,6 +226,7 @@ names:
   PGEL: PG Electroplast
   PWGR: Power Grid
   NTPC: NTPC
+  INXW: Inox Wind
   TCS: TCS
   INFO: Infosys
   WPRO: Wipro
@@ -386,6 +392,16 @@ case_bands:
 case_valuation:
   CEMENT: ev_ebitda
   STEEL: ev_ebitda       # PM, 2026-11-03 (JSW Steel): the cement method; steel houses value on EV/EBITDA
+
+# case_valuation_names: a NAME that runs on another multiple than its sector,
+# by ticker token (PM, 2026-11-22, on NTPC: "Switch to EV/EBITDA"; Power Grid
+# and the rest of POWER stay on P/E). A name listed here wins over
+# case_valuation. Its build.json then carries ebitda_cr quarters, consensus
+# EBITDA, shares and net debt like a cement or steel build, and its sigma is
+# fetched on screener's EV multiple.
+case_valuation_names:
+  NTPC: ev_ebitda
+  INXW: ev_ebitda        # PM, 2026-11-22: "inox-wind agent ... use EV/EBITDA instead of P/E"
 
 # case_anchor: which statistic of the houses' implied multiples a sector's
 # base anchors on (PM, 2026-10-27: "make all IT and cement as median",
