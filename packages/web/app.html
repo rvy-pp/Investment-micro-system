@@ -342,6 +342,8 @@
   .pill{display:inline-block;font-size:var(--t-label);padding:1px 8px;
         border-radius:10px;border:1px solid var(--rule);color:var(--soft);
         white-space:nowrap}
+  details.soi > summary::-webkit-details-marker{display:none}
+  details.soi[open] > summary .soi-c{transform:rotate(90deg)}
   .pill.ok{border-color:var(--up);color:var(--up)}
   .pill.warn{border-color:var(--warn);color:var(--warn)}
   .pill.bad{border-color:var(--down);color:var(--down)}
@@ -2996,11 +2998,33 @@ function sectorOiHtml(m){
     const sharp = r.week && r.week.sharp;
     return `<tr><td style="white-space:nowrap;font-weight:600;padding:5px 14px 5px 0;vertical-align:top">${esc(r.label)}</td>
       <td style="padding:5px 14px 5px 0;vertical-align:top;color:var(--soft)">${esc(r.read)}</td>
-      <td style="padding:5px 0;vertical-align:top${sharp ? ';color:var(--warn);font-weight:600' : ''}">${esc(r.week_text)}</td></tr>`;
+      <td style="padding:5px 0;vertical-align:top${sharp ? ';color:var(--' + (Math.max(Math.abs(r.week.z_oi || 0), Math.abs(r.week.z_px || 0)) >= 3 ? 'down' : 'warn') + ');font-weight:600' : ''}">${esc(r.week_text)}</td></tr>`;
   }).join('');
   const left = [...new Set(s.rows.flatMap(r => r.left_out || []))].sort();
-  return `<div class="sechead">Sector positioning · futures OI</div>
-    <div class="panel"><table style="width:100%;border-collapse:collapse;font-size:13px">
+  /* COLLAPSIBLE, AND THE CLOSED BAR CARRIES THE URGENCY (PM, 2026-11-23:
+     "in the collapsed state, depending on the urgency, make the tab
+     colored"). Three levels off the week's own sd reading: no sharp sector =
+     plain; a sharp sector (>= 1.5 sd, sector_oi.SHARP_Z) = amber; any sector
+     at >= 3 sd = red. The bar names the sharp sectors, so closed it still
+     says what to open it for. Closed by default; native <details>. */
+  const sharpRows = s.rows.filter(r => r.week && r.week.sharp);
+  const zmax = Math.max(0, ...sharpRows.map(r => Math.max(
+      Math.abs(r.week.z_oi || 0), Math.abs(r.week.z_px || 0))));
+  const lvl = !sharpRows.length ? 0 : zmax >= 3 ? 2 : 1;
+  const col = ['var(--rule)', 'var(--warn)', 'var(--down)'][lvl];
+  const bg = ['var(--surface)', 'var(--warn-soft)', 'rgba(248,81,73,.15)'][lvl];
+  const head = lvl
+    ? `${sharpRows.length} sharp: ` + sharpRows.map(r => esc(r.label) + ' — '
+        + esc(r.week_text.replace(/^SHARP:\s*/, '').split(';')[0])).join(' · ')
+    : 'no sharp move this week';
+  return `<details class="soi" style="margin:14px 0">
+    <summary style="cursor:pointer;list-style:none;padding:8px 12px;border:1px solid ${col};
+        border-left:4px solid ${col};border-radius:6px;background:${bg}">
+      <span class="soi-c" style="display:inline-block;width:14px;color:var(--soft)">▸</span>
+      <b>Sector positioning · futures OI</b>
+      <span style="margin-left:10px;${lvl ? 'color:' + col + ';font-weight:600' : 'color:var(--soft)'}">${head}</span>
+    </summary>
+    <div class="panel" style="margin-top:6px"><table style="width:100%;border-collapse:collapse;font-size:13px">
       <thead><tr style="text-align:left;color:var(--soft);font-size:var(--t-label)">
         <th style="padding:0 14px 6px 0;font-weight:500">Sector</th>
         <th style="padding:0 14px 6px 0;font-weight:500">1–2 month read</th>
@@ -3008,7 +3032,7 @@ function sectorOiHtml(m){
       <tbody>${rows}</tbody></table>
       <p class="note" style="margin-bottom:0">Long-term read against ${esc(d(s.anchor_1m))}
         and ${esc(d(s.anchor_2m))}, the same point in the last two expiry cycles.${
-        left.length ? ' Too little futures history to count: ' + esc(left.join(', ')) + '.' : ''}</p></div>`;
+        left.length ? ' Too little futures history to count: ' + esc(left.join(', ')) + '.' : ''}</p></div></details>`;
 }
 
 function overnightHtml(m){

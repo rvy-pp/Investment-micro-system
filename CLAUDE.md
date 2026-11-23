@@ -3951,6 +3951,10 @@ Step 2d shows it before the pair review.
   cached on fo_oi's newest date and row count), so it rides `/api/morning`
   and the vault copy needed no new route. `sectorOiHtml` in app.html; only a
   SHARP week is coloured. A build failure is one line in the amber warning.
+  **Collapsible, closed by default** (PM, same day: *"in the collapsed
+  state, depending on the urgency, make the tab colored"*): the closed bar
+  is plain with no sharp sector, amber with one (>= 1.5 sd), red when any
+  sector is at >= 3 sd, and it names the sharp sectors.
 
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 
