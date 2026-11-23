@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-23",
+ "fetched_at": "2026-11-23T08:09:39",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-20",
+    "close": 6910.39,
+    "prev_date": "2026-11-19",
+    "chg_pct": -3.7,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-20",
+    "close": 22617.73,
+    "prev_date": "2026-11-19",
+    "chg_pct": -5.28,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-20",
+    "close": 48147.33,
+    "prev_date": "2026-11-19",
+    "chg_pct": -1.93,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-20",
+    "close": 8408.59,
+    "prev_date": "2026-11-19",
+    "chg_pct": -10.73,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-20",
+    "close": 125.53,
+    "prev_date": "2026-11-19",
+    "chg_pct": -14.01,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-20",
+    "close": 424.39,
+    "prev_date": "2026-11-19",
+    "chg_pct": -13.25,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-20",
+    "close": 318.71,
+    "prev_date": "2026-11-19",
+    "chg_pct": -9.48,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-20",
+    "close": 304.41,
+    "prev_date": "2026-11-19",
+    "chg_pct": -12.19,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-20",
+    "close": 221.17,
+    "prev_date": "2026-11-19",
+    "chg_pct": 1.18,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-20",
+    "close": 58.06,
+    "prev_date": "2026-11-19",
+    "chg_pct": 3.11,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Financial Process Management Market 2026: Size, Share, Trends, and Forecast to 2030 | Capitalize on $13.11B AI and Cloud Growth with Accenture, IBM, TCS, NTT DATA, and Capgemini",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-20 14:51Z",
+    "link": "https://finance.yahoo.com/technology/articles/financial-process-management-market-2026-145100629.html"
+   },
+   {
+    "title": "Accenture (ACN) Gains as AI Disruption Fears Eased",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-19 15:19Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-gains-ai-disruption-151958461.html"
+   },
+   {
+    "title": "Is Accenture Stock About To Rebound?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 11:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-rebound-114716497.html"
+   },
+   {
+    "title": "Can Accenture Stock Jump 30%?",
+    "publisher": "Trefis",
+    "when": "2026-11-18 22:27Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-stock-jump-30-222709005.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Puts AI To Work In Healthcare And Cybersecurity",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-22 19:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-puts-190639419.html"
+   },
+   {
+    "title": "How Did IBM Stock Leave Cognizant Behind?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 21:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/did-ibm-stock-leave-cognizant-215511163.html"
+   },
+   {
+    "title": "BofA Adjusts Price Target on Cognizant Technology Solutions to $70 From $91",
+    "publisher": "MT Newswires",
+    "when": "2026-11-19 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bofa-adjusts-price-target-cognizant-133701172.html"
+   },
+   {
+    "title": "Here Is Why Investors Should Pay Attention to Cognizant Technology (CTSH)",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-18 17:12Z",
+    "link": "https://finance.yahoo.com/technology/articles/why-investors-pay-attention-cognizant-171233409.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Jensen Huang Has Lost $92 Billion and Nvidia\u2019s Board Does Not Intend to Bring Him Back. Here\u2019s What 9 Stocks Did the Year After Their Founder Handed Over",
+    "publisher": "24/7 Wall St.",
+    "when": "2026-11-23 01:47Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/jensen-huang-lost-92-billion-014700698.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Google\u2019s 2027 chip plan is bad news for Broadcom",
+    "publisher": "TheStreet",
+    "when": "2026-11-22 19:47Z",
+    "link": "https://finance.yahoo.com/technology/articles/google-2027-chip-plan-bad-194700249.html"
+   },
+   {
+    "title": "Here's What a $1,000 Investment in Broadcom Stock Could Be Worth By 2035",
+    "publisher": "Motley Fool",
+    "when": "2026-11-22 19:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/heres-1-000-investment-broadcom-192202429.html"
+   },
+   {
+    "title": "Broadcom (AVGO) Faces Reported AI Chip Order Cut From A Major Customer",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-22 15:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/broadcom-avgo-faces-reported-ai-150805371.html"
+   },
+   {
+    "title": "Why Broadcom Stock Could Double by 2030",
+    "publisher": "Motley Fool",
+    "when": "2026-11-22 14:20Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-stock-could-double-142002691.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "NVDA, INTC, MU, AMD Chip Stocks Rip Higher: Dan Ives Says \u2018Bears Feel Validated,\u2019 But There\u2019s No Stopping The AI Wave",
+    "publisher": "Stocktwits",
+    "when": "2026-11-23 02:24Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nvda-intc-mu-amd-chip-022405766.html"
+   },
+   {
+    "title": "AMD Gained From Nvidia\u2019s China Scandal. Now a Short Seller Says AMD Has a China Problem Too.",
+    "publisher": "Barchart",
+    "when": "2026-11-22 19:01Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-gained-nvidia-china-scandal-190104037.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 26061.5,
+  "chg_pct": 0.41,
+  "stamp": "23-Nov-2026 08:09:41",
+  "expiry": "29-Dec-2026",
+  "volume": 3662,
+  "nifty_close": {
+   "close": 25800.600000000002,
+   "stamp": "20-Nov-2026 15:30"
+  },
+  "gap_pts": 260.9,
+  "gap_pct": 1.01
+ }
+}

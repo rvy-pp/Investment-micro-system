@@ -1,0 +1,403 @@
+{
+ "date": "2026-11-23",
+ "generated_at": "2026-11-23T08:11:39",
+ "mail": {
+  "window": "24h to 08:04 IST",
+  "n_scanned": 73,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "BofA cuts aluminium 2028E 19% to US$2,625/t (2027E -12% to $3,188) and lifts copper 2028E 3% to US$15,500/t.",
+      "source": "BofA - BofA ASIA Daily: Global & China Yr Aheads, Alu/Copper, CKI CKA CKH, TW Financials w/ AI, China Semi's, Flow Show",
+      "received": "06:22",
+      "detail": {
+       "summary": "Tight inventories support aluminium in 1H27, but Indonesian supply builds in 2H and drives the forecast cuts. Copper stays supported by tight mine supply and US warehousing, with China grid spending the key 2H27 upside catalyst. This is sales commentary, not the research note.",
+       "points": [
+        "Aluminium 2027E -12% to US$3,188/t",
+        "Aluminium 2028E -19% to US$2,625/t",
+        "Copper 2027E -4% to US$14,625/t",
+        "Copper 2028E +3% to US$15,500/t",
+        "Gold 2027E -8% to US$4,438/oz"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "I-Sec group call on Metals & Mining Q2FY27 results review with Vikash Singh, today 16:00 IST.",
+      "source": "I-Sec - INVITATION: Group interaction with Vikash Singh, Research Analyst, ICICI Securities to discuss \"Metals & Mining sector - Q2FY27 results review\" on Monday, November 23, 2026 at 16:00 hrs India Time",
+      "received": "21:14"
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "APL Apollo buys Tata Steel's tubes and Colors units for Rs280bn cash at 6.5x book; Elara sees APAT FY29 EPS ~15% dilutive.",
+      "source": "Elara - APL Apollo acquires Tata Steel tubes and colour-coated steel businesses",
+      "received": "23:19",
+      "detail": {
+       "summary": "Elara calls the deal positive for Tata Steel (deleveraging, valuation well above its own 2.3x P/BV) and negative for APL Apollo, which turns net debt and bears dilution. Kotak, Emkay and CLSA also cover it; Kotak questions the strategic logic of exiting downstream.",
+       "points": [
+        "Rs280bn: Rs117bn tubes + Rs163bn Colors, close by Mar-28",
+        "FY26 turnover Rs160.8bn; 1.7x sales, 6.5x net worth",
+        "APAT capacity +54%; FY29E EPS ~15% dilutive, RoE -330bps",
+        "Tata net debt Rs914bn at Q2FY27; deal ~13% of mcap",
+        "Elara advises APAT accumulation only below Rs2,000"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley says steel spreads are peaking at ~US$435/t, a 3-year high; downgrades Tata Steel to Equal-weight, keeps JSW and Jindal OW, SAIL UW.",
+      "source": "Morgan Stanley - IDEA: India Materials: Steel: Spreads are peaking out",
+      "received": "06:49",
+      "detail": {
+       "summary": "Domestic HRC trades about 10% above import parity and China prices look range-bound, so further spread expansion needs lower coking coal. MS shifts preference to volume growth as the spread tailwind fades.",
+       "points": [
+        "Spot spreads ~US$435/t, +45% (US$135/t), highest since Sep-23",
+        "Domestic HRC +35% (~US$180/t) from mid-December lows",
+        "HRC at ~10% premium to import parity",
+        "Tata Steel to EW; JSW, Jindal OW; SAIL UW"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: India HRC Rs64,000/t (+Rs200 w-w), spot margin ~Rs35,837/t; EU imposes 9.5% anti-dumping duty on Indian cold-rolled steel, Buy on Tata, JSW, Jindal kept.",
+      "source": "Nomura - India steel - Steel weekly trends (week ended 20 Nov 2026) (+5 more in Outlook)",
+      "received": "05:14",
+      "detail": {
+       "summary": "Flat prices stay near four-year highs while rebar slips, turning the flat-long spread positive. Nomura sees the EU duty as immaterial given limited export exposure and keeps its positive sector stance.",
+       "points": [
+        "Rebar -Rs750/t w-w to Rs63,150/t; flat-long spread +Rs850/t",
+        "Coking coal -US$4/t to US$257/t; iron ore US$84/t, CY26 low",
+        "EU duty 9.5% from 16 Nov; EU imports from India EUR282mn",
+        "Oct-26 India imports +66% y-y to 0.76mt; exports -32%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "IIFL dealer checks: 3Q cement prices up 5% qoq (Rs15/bag), enough to lift industry EBITDA/t from Rs850 to about Rs1,000 despite fuel costs.",
+      "source": "IIFL - IIFL: The Front Page: GRAN (Initiation); Agri-Chem; Cement",
+      "received": "07:44",
+      "detail": {
+       "summary": "November prices held after the October hike, with attempts at fresh hikes failing. The 3Q average is 5% above 2Q, which more than offsets a further Rs80-100/t fuel cost rise. IIFL expects 2H profitability to beat 1H as crude eases.",
+       "points": [
+        "3Q prices +5% qoq, Rs15/bag; Rs12/bag ex-GST, Rs240/t",
+        "All-India prices +0.5% from end-October",
+        "Industry EBITDA/t fell Rs200 to Rs850 in 2Q",
+        "Fuel up Rs80-100/t more in Sep-Oct",
+        "Patna and Indore prices declined"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL sees East-focused Nuvoco and Dalmia gaining most as West and East hikes lead; prefers UltraTech and JK Cement, Dalmia and JK Lakshmi.",
+      "source": "IIFL - IIFL: The Front Page: GRAN (Initiation); Agri-Chem; Cement",
+      "received": "07:44",
+      "detail": {
+       "summary": "The hike was biggest in West and East, then Central, North and South. Dealers say demand moderated in November and volume targets make further hikes unlikely before December. January peak season should lift demand and earnings visibility.",
+       "points": [
+        "Hike largest in West and East",
+        "UltraTech, Ambuja gain from pan-India increase in West",
+        "Demand soft: festive, Delhi construction ban, Hyderabad water",
+        "Further hikes unlikely until December",
+        "Risk: aggressive capacity additions"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Morgan Stanley (OW, TP Rs480): MCL IPO at Rs129-136 values it at 8.0-8.4x F26 P/E vs CIL 7.9x; OFS raises Rs85-90bn for CIL.",
+      "source": "Morgan Stanley - PULSE: Coal India Limited: Mahanadi Coalfields Monetisation through IPO",
+      "received": "01:58",
+      "detail": {
+       "summary": "MCL, a wholly owned CIL subsidiary, is selling a 10% OFS with no fresh issue; the issue closes 23 Nov. MCL becomes a direct valuation benchmark for CIL, but with SECL also filing, listed subsidiaries would cover nearly 60% of volumes and raise holding-company discount risk.",
+       "points": [
+        "Price band Rs129-136; equity value Rs854-900bn",
+        "MCL ~29% of CIL volumes, ~34% of consol PAT",
+        "Dividend yield 9.3-9.8% vs 6.7% for CIL",
+        "OFS proceeds ~Rs85-90bn, ~Rs14-15/share for CIL",
+        "SECL (~24% of volumes) has filed DRHP"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM keeps Dixon and Amber as top OW, Kaynes N, Syrma/Avalon/CyientDLM UW; Syrma margins seen surprising negatively again over six months.",
+      "source": "JPM - India EMS: Postcard from HK marketing and TIG conference: To buy or not to buy",
+      "received": "12:42",
+      "detail": {
+       "summary": "After 15 investor meetings, JPM sees Dixon's near-term visibility improved but memory prices as the overhang. Syrma's supply-side cost inflation is guided to take at least six more months to normalise, so another margin miss is the risk. Amber and Kaynes lack triggers.",
+       "points": [
+        "Order: Dixon OW > Amber OW > Kaynes N > Avalon UW > Syrma UW > CyientDLM UW",
+        "Dixon: 3Q/4Q volume guide, Motorola export orders, new domestic customer",
+        "Dixon watch: Q Tech camera and HKC display ramp delays",
+        "Syrma: cost inflation to take 6+ months to normalise",
+        "Kaynes 'show me' until smart meter and working capital fixed"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay's first EMS Pulse: electronics exports +44% yoy to $32bn, HMLV multiples weak post-results, metals and crude corrected 8-21% from October-end.",
+      "source": "Emkay - EMS Pulse: Weeks of 9-22 Nov-26",
+      "received": "00:26",
+      "detail": {
+       "summary": "Emkay says 2QFY27 revenue growth was strong across EMS, with HMLV demand firm and lead times lengthening, yet HMLV multiples weakened with global AI-capex names while consumer-electronics EMS held up. Memory prices may be plateauing after an extended upcycle.",
+       "points": [
+        "Electronics exports +44% yoy to $32bn; non-smartphone share 43.2% vs 39.7%",
+        "Smartphone exports ~36% (volume +8% in 1HFY27); US share down 6ppts",
+        "Global smartphone volume -22% yoy in 3QCY26",
+        "Metals and crude down 8-21% from end-October levels",
+        "LPDDR4 +400% yoy as of Sep-26, plateaued Jul-Sep"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "BofA keeps Power Grid at BUY, PO Rs300 (price Rs269); sees 2.0x two-year forward P/B pricing in the rate reset.",
+      "source": "BofA - PWGR IN: Power Grid Corporation of India Ltd: Rate reset, fundamentals intact - BUY - India",
+      "received": "02:02",
+      "detail": {
+       "summary": "A 100bps rise in risk-free rates cut upside 12% since Mar'26 but leaves growth and RoE intact. TBCB share loss is read as bidding discipline, and re-leveraging as capex accelerates should hold RoEs at 15%+.",
+       "points": [
+        "PO Rs300 vs price Rs269",
+        "2.0x two-year forward P/B",
+        "TBCB award share 46% FY27 YTD vs 24% FY26",
+        "RoE 20% FY22 to 16% FY26; 15%+ through FY29E",
+        "~8% EPS/BVPS CAGR, ~3% dividend yield FY26-29E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley prefers Adani Power among Asian power picks and puts Tata Power on its avoid list; Industry View In-Line.",
+      "source": "Morgan Stanley - IDEA: Powering AI: Key Investor Questions: 2028 in Focus",
+      "received": "04:36",
+      "detail": {
+       "summary": "New US chip export rules delay China hyperscaler data-centre builds, so Asia power demand ramps much slower than the Street models into 2028. Asset owners are preferred over equipment makers; non-DC demand still sustains growth.",
+       "points": [
+        "Adani Power a key pick; Tata Power on avoid list",
+        "~20GW potential shortfall to be covered by Asian DC adds",
+        "Growth at 66% of estimates even with no 2028 DC builds",
+        "Malaysia tightening DC power rules this month"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley sees 7-15% NAV hit for Asian power generators as policy risks create a 2028 consumption air pocket.",
+      "source": "Morgan Stanley - AI, Power and Policy",
+      "received": "12:31",
+      "detail": {
+       "summary": "US curbs on Chinese hyperscalers' chip access lower Asia data-centre estimates, though other hyperscalers should partly fill the gap. Generators face slower consumption growth, with Keppel and Gulf Development re-assessing plans; no India-specific call in the note.",
+       "points": [
+        "7-15% NAV impact for power generators",
+        "Asia ~27GW spare capacity; ~12GW earlier assumed for Chinese hyperscalers",
+        "Malaysia ~8GW DC under development, half China-linked",
+        "Powering everything could add US$0.5trn market cap by 2027"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "CLSA, post India Forum: LTIMindtree guides 3Q at c.1.5% QoQ, FY27 growth of at least c.5% and 15.4% Ebit margin; Hold kept.",
+      "source": "CLSA - CLSA: LTIMindtree (LTM IN): IF26 takeaways: Better 2H over 1H",
+      "received": "20:57",
+      "detail": {
+       "summary": "LTIMindtree expects 2H to beat 1H, with BFSI growing strongly outside its muted top account. AI is shortening deal tenures and lowering ACVs, though AI deals carry above-average margins. CLSA stays at Hold on AI-led uncertainty and soft macro.",
+       "points": [
+        "3Q growth c.1.5% QoQ, better than 2Q",
+        "FY27 growth at least c.5% YoY, ex c.1% Middle East hit",
+        "Ebit margin 15.4% in FY27, same as FY26",
+        "3Q deal TCV US$1.5bn+; mega-deal frequency low",
+        "Deal tenure down from five years to three"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA, post India Forum: TechM sees FY27 at 6%-6.5% YoY CC and is confident of 15% Ebit margin; next three-year plan due April 2027.",
+      "source": "CLSA - CLSA: Tech Mahindra (TECHM IB): IF26: Sights on the next 3-year plan",
+      "received": "19:31",
+      "detail": {
+       "summary": "TechM's next plan targets growth with stable margins, with telecom, manufacturing and BFSI as primary drivers and M&A possible in BFSI or healthcare. Margin expansion beyond FY27 may be slower than the past three years. CLSA keeps Hold on AI-led deflation.",
+       "points": [
+        "FY27 growth 6%-6.5% YoY CC",
+        "15% Ebit margin guidance on track for FY27",
+        "Fixed price and outcome-based contracts 55%-60% of revenue",
+        "Next three-year plan rolls out April 2027",
+        "No change in deal duration or ACV from AI"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "JPM now sees three Fed hikes (Dec, Jan, Mar) to 4.50-4.75% as global stocks fell 2.6%, US 3.7%, Japan 5.1% on HF de-grossing.",
+      "source": "JPM - JPM Overnight Brief 11/23 - Extreme HF selling...watching for broader capitulation, anticipate three consecutive hikes from Fed",
+      "received": "05:23",
+      "detail": {
+       "summary": "October FOMC minutes read hawkish and sticky inflation plus resilient growth lead JPM to accelerate re-tightening. JPM calls the pullback mostly AI de-leveraging plus a hawkish reaction function, and expects a rebound once catalysts clear, but no obvious place to hide for now.",
+       "points": [
+        "Fed funds to 4.50-4.75% after Dec, Jan, Mar hikes",
+        "HF MTD about -4%; net selling near -2z",
+        "US 10Y 4.93%; Brent $92.87 (+1.0%)",
+        "Semis still most net-sold US group over 2 months",
+        "Staying long USD; 2s/5s UST flatteners"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura: 2QFY27 earnings +31% y-y, 14% above consensus; Nifty at 18.8x, 14% premium to SPX, sees valuation resistance.",
+      "source": "Nomura - India Equity Strategy - 2QFY27 delivers strong beat",
+      "received": "05:21",
+      "detail": {
+       "summary": "Beat was led by oil and gas; ex-oil and gas and metals still 5% ahead, with sales at a four-year high but EBITDA margin (19.3%) at a four-year low. After record FII inflows and a 21% USD rally from the 8 October low, valuation premia leave limited room for further upmove.",
+       "points": [
+        "264 cos: earnings +31% y-y, 14% ahead; oil and gas +73% beat",
+        "FII inflows USD11bn in November, highest monthly ever",
+        "Nifty +21% in USD from 8-Oct low",
+        "Premium to EM 65% vs 40% average; yield ratio 1.81%",
+        "Consensus 2HFY27 EBITDA margin +36bp; Nomura flags gross margin pressure"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak: INR rally is a breather; raises USD-INR forecast path to 94.3/95.8 for FY27/FY28, near-term range 91-95.",
+      "source": "Kotak - [Kotak] Economy: INR: A breather rather than a reversal (+4 more in Outlook)",
+      "received": "07:56",
+      "detail": {
+       "summary": "INR strength came from heavy FPI equity inflows and RBI FX measures, which historically fade; the RBI must rebuild reserves and BoP surplus risk remains. Kotak expects near-term appreciation to persist if FPI flows and measures continue, then depreciation pressure to resurface.",
+       "points": [
+        "USD-INR up 3.7% appreciation from early-Oct low of 96.8",
+        "FPI equity inflows about US$15bn in four weeks",
+        "RBI OMC dollar window US$10-12bn a month still in place",
+        "FY27 forecast cut to 94.3 from 95.1",
+        "Medium-term range 92-98"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Emkay keeps Eicher BUY, lifts TP 3% to Rs9,400 (30x Sep-28E core EPS), building a 250cc launch by Aug-27E; FY28/29E EPS +3%/+4%.",
+      "source": "Emkay - Eicher Motors: Potential 250cc launch to drive next growth phase; BUY; Target: Rs9,400",
+      "received": "07:06",
+      "detail": {
+       "summary": "Royal Enfield's potential 250cc, modelled from 2HFY28E, widens the addressable market to younger and women riders, as the Hunter did without cannibalising Bullet/Classic. Emkay sees capacity rising from 1.5mn to 2.45mn units by FY30 supporting it.",
+       "points": [
+        "TP Rs9,400 vs CMP Rs8,090, 16.2% upside",
+        "250cc volumes modelled 10k/20k per month in 2HFY28E/FY29E",
+        "EPS Rs239/298/343 for FY27E/28E/29E",
+        "Capacity 1.8mn after Cheyyar module 2 (end-4QFY27)",
+        "Stock 33.8x FY27E, 27.2x FY28E P/E"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Avendus initiates NSE at BUY, TP Rs2,530 (42x Dec-28E core EPS); sees FY26-29E revenue/EBITDA/PAT CAGR of 24%/26%/21%.",
+      "source": "Avendus - Initiating Coverage: National Stock Exchange of India (NSE) (Rating: BUY, TP: Rs 2,530) - Built to Last Beyond Expiry",
+      "received": "06:48",
+      "detail": {
+       "summary": "NSE's dominance across cash, futures and options, plus options revenue less concentrated around expiry days than BSE, gives earnings resilience despite repeated F&O regulatory hits. Benchmark index options share has stabilised, and fixed costs drive operating leverage.",
+       "points": [
+        "Core valued at 42x, 5% premium to BSE/MCX; NDSL at 20% discount",
+        "Benchmark index options share ~50%+ notional, ~60%+ premium",
+        "Expiry day plus prior day ~38% of NSE options income vs ~76% BSE",
+        "EBITDA margin averaging 78.5% over FY27-29E",
+        "Risks: BG lines unwinding by Jun-27, STT hike, fewer expiries"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "I-Sec sales desk pitches long Oil India (TP Rs585, ~6x FY28E EPS) against short Petronet LNG (TP Rs330, ~12x); Hormuz normalisation is the key risk.",
+      "source": "I-Sec - Sales Note - Pair trade - LONG OINL IN & SHORT PLNG IN (+6 more in Outlook)",
+      "received": "20:31",
+      "detail": {
+       "summary": "Oil India has Numaligarh's 3 to 9 MMT expansion and volume growth ahead at cheap multiples. Petronet faces margin contraction before volumes return, regas tariff pressure from Qatar renewal talks, and petchem capex. A crude fall hurts the long while volume recovery helps the short.",
+       "points": [
+        "Oil India 24% consol earnings CAGR FY26-29E; ~5% dividend yield",
+        "Numaligarh mechanical completion Mar-27; 50-60% utilisation by Q3FY28",
+        "Oil output 4mmt FY27; 100 wells targeted vs 74",
+        "Petronet ~6% EPS CAGR FY26-28E; capex Rs90bn each FY27, FY28",
+        "Petronet 12x FY28E, above its 5-year average"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Friday's semis rout was long-only panic selling amplified by ETF shorting; Nasdaq 100 fell 10.4% on the week, worst since March 2020.",
+    "source": "Goldman Sachs - [GS Daily] US Panic Selling?"
+   },
+   {
+    "text": "Broadcom faces a reported AI chip order cut from a major customer, a headline as the stock fell 12.2%.",
+    "source": "Simply Wall St."
+   },
+   {
+    "text": "Micron reportedly has 75% of 2027 memory supply sold out, with 2027 tighter than this year.",
+    "source": "BOCI - BOCI TMT Daily (23 Nov)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
