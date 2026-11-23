@@ -3944,6 +3944,13 @@ Step 2d shows it before the pair review.
   short of history (Syrma) is left out and named under the table.
 - First read, 19-Nov: one sharp line, non-ferrous shorts building in all four
   names (OI move 4.5 sd of a normal week).
+- **Also on the Morning read since 2026-11-23** (PM: *"why do i not see it in
+  the daily today"*, then *"Yes, Morning read"*): a "Sector positioning ·
+  futures OI" panel under the overnight callout, above the cement watch and
+  the mail. `engine.morning` attaches `sector_oi` (`engine._sector_oi`,
+  cached on fo_oi's newest date and row count), so it rides `/api/morning`
+  and the vault copy needed no new route. `sectorOiHtml` in app.html; only a
+  SHARP week is coloured. A build failure is one line in the amber warning.
 
 ## The vault copy — one file in OneDrive, rewritten every refresh (2026-09-20)
 

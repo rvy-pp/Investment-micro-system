@@ -1934,7 +1934,33 @@ def morning() -> dict:
     elif (out["results"].get("errors") or []) and not out["results"].get("rows"):
         out["warnings"].append("results-today check failed: "
                                + "; ".join(out["results"]["errors"]))
+    # Sector positioning (PM, 2026-11-23: "Yes, Morning read"): the daily
+    # review's one-line-per-sector OI read, on the page every morning. It
+    # rides on THIS route so the vault export needs no new entry. Read-only
+    # off fo_oi, no network; a failure is one warning, never a broken tab.
+    out["sector_oi"] = _sector_oi()
+    if out["sector_oi"] and out["sector_oi"].get("error"):
+        out["warnings"].append("sector positioning: " + out["sector_oi"]["error"])
     return out
+
+
+_SECTOR_OI_CACHE: dict = {}
+
+
+def _sector_oi() -> dict | None:
+    """sector_oi.build(), cached on fo_oi's newest date and row count (the
+    build is ~0.3s and the Overview is the first screen)."""
+    try:
+        sys.path.insert(0, str(REPO / "packages" / "book"))
+        import sector_oi as _so
+        key = tuple(connect().execute(
+            "SELECT MAX(date), COUNT(*) FROM fo_oi").fetchone())
+        if _SECTOR_OI_CACHE.get("key") != key:
+            _SECTOR_OI_CACHE["key"] = key
+            _SECTOR_OI_CACHE["val"] = _so.build()
+        return _SECTOR_OI_CACHE["val"]
+    except Exception as e:  # noqa: BLE001
+        return {"error": f"{type(e).__name__}: {e}"}
 
 
 def flows() -> dict:
