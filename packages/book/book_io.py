@@ -535,6 +535,75 @@ def effective_pairs(spec_pairs: dict, on: str | None,
     return out
 
 
+def tag_check(spec_pairs: dict, snaps: list[tuple[str, dict]], tmap: dict | None = None,
+              on: str | None = None) -> list[str]:
+    """The pairing check run on EVERY scan (PM, 2026-11-24: "check the pairing
+    the next time you scan. make it a habit"). One line per IMS Tag Pair on the
+    latest snapshot in `snaps`: its legs, and what pairs them (a dictated pair,
+    a tag pair, or nothing, with the reason). Then the tag moves since the
+    previous snapshot (a leg retagged, a tag new or gone) and every held token
+    missing from ticker_map. Pure: the caller supplies the snapshots."""
+    if not snaps:
+        return ["no snapshot"]
+    d, cur = snaps[-1]
+    prev = snaps[-2][1] if len(snaps) > 1 else {}
+    sides = {t: s for t, (s, _) in cur.items()}
+    eff = effective_pairs(spec_pairs, on or d, snaps=snaps)
+    live = [p for ps in pairs_in_force(eff, on or d).values() for p in ps]
+    rcs = [(p, reconcile_pair(str(p.get("name")), p.get("long") or [], p.get("short") or [], sides))
+           for p in live]
+    by_tag: dict[str, list] = {}
+    for t, (s, tag) in cur.items():
+        by_tag.setdefault(tag or "UNTAGGED", []).append((t, s))
+    out = [f"pairing check {d} (IMS Tag Pair column)"]
+    for tag in sorted(by_tag, key=lambda x: (_tag_word(x), x)):
+        legs = by_tag[tag]
+        L = [t for t, s in legs if s == "L"]
+        S = [t for t, s in legs if s == "S"]
+        head = f"  {tag:<12} L {'+'.join(L) or '—':<14} S {'+'.join(S) or '—':<14}"
+        used = []
+        for p, rc in rcs:
+            toks = set(rc["long"] + rc["short"]) & {t for t, _ in legs}
+            if not toks:
+                continue
+            if p.get("tag"):
+                used.append(f"{p['name']} (tag pair, since {p.get('since')})")
+            elif rc["direction"] in ("as_dictated", "reversed") and \
+                    any(t in sides for t in rc["long"]) and any(t in sides for t in rc["short"]):
+                used.append(p["name"] + (" (reversed)" if rc["direction"] == "reversed" else ""))
+            else:
+                used.append(f"{p['name']} ({rc['direction']}, NOT a pair as held)")
+        paired = {t for p, rc in rcs if (p.get("tag") or (rc["direction"] in ("as_dictated", "reversed")
+                  and any(t in sides for t in rc["long"]) and any(t in sides for t in rc["short"])))
+                  for t in rc["long"] + rc["short"]}
+        loose = [t for t, _ in legs if t not in paired]
+        line = head + "-> " + ("; ".join(used) or "nothing")
+        if loose:
+            why = "one-sided tag" if not (L and S) else "no pair formed"
+            line += f"   ⚠ unpaired: {', '.join(loose)} ({why})"
+        out.append(line)
+    moved = [f"{t} {prev[t][1]} -> {cur[t][1]}" for t in cur if t in prev and prev[t][1] != cur[t][1]]
+    new_tags = sorted({tg for _, tg in cur.values()} - {tg for _, tg in prev.values()}) if prev else []
+    gone_tags = sorted({tg for _, tg in prev.values()} - {tg for _, tg in cur.values()}) if prev else []
+    if moved:
+        out.append("  retagged: " + "; ".join(moved))
+    if new_tags:
+        out.append("  new tags: " + ", ".join(new_tags))
+    if gone_tags:
+        out.append("  tags gone: " + ", ".join(gone_tags))
+    if tmap is not None:
+        miss = sorted(t for t in cur if t not in tmap)
+        if miss:
+            out.append("  ⚠ not in ticker_map (no price, no Analysis row): " + ", ".join(miss))
+    return out
+
+
+def _tag_check_live(on: str | None = None) -> list[str]:
+    import yaml
+    cfg = yaml.safe_load((REPO / "specs" / "book.yaml").read_text(encoding="utf-8")) or {}
+    return tag_check(cfg.get("pairs") or {}, book_snaps(None, on), cfg.get("ticker_map") or {}, on)
+
+
 def _migrate(conn: sqlite3.Connection) -> None:
     """v1 tables (2026-09-05, pre-IMS-format) had avg_price/last_price/mv.
     Empty ones are dropped and recreated; a populated one refuses — data
@@ -1956,6 +2025,17 @@ def _selftest() -> None:
     assert [p["name"] for p in eff["POWER"]] == ["NTPC_PWGR"]
     assert "KAYNES_DIXON" not in [p["name"] for p in eff["EMS"]]
     assert unpaired_legs(eff, "2026-11-23", {k: v[0] for k, v in day.items()}) == []
+    # the pairing check (PM, 2026-11-24): names the tag pair, the one-sided
+    # tag's unpaired leg, the retag and the unmapped token; silent on none
+    tc = "\n".join(tag_check(tp, [("2026-11-20", {**prev, "HCLT": ("S", "IT 9")}), ("2026-11-23", day)],
+                             {k: k.lower() for k in day if k != "OFSS"}))
+    assert "NTPC_PWGR (tag pair, since 2026-11-23)" in tc, tc
+    # INFO is in no pair in this fixture, so both IT 1 legs are loose (the
+    # assertion first named HCLT alone; the code was right)
+    assert "unpaired: HCLT, INFO (one-sided tag)" in tc, tc
+    assert "HCLT IT 9 -> IT 1" in tc and "new tags: POWER 1" in tc, tc
+    assert "not in ticker_map (no price, no Analysis row): OFSS" in tc, tc
+    assert "COFORGE_PSYS" in tc and "unpaired: TATA" not in tc, tc
 
     # TSV parse: 2 positions + sector row + N.A. + total, cross-foot true ----
     def row(t, cost, cap, pair, q, ls, nums):
@@ -2410,6 +2490,8 @@ if __name__ == "__main__":
                     help="replay all stored snapshots into book_anchor_log")
     ap.add_argument("--fetch-anchors", action="store_true",
                     help="fetch entry-day opens for live legs (Yahoo)")
+    ap.add_argument("--tags", nargs="?", const="latest", metavar="DATE",
+                    help="the pairing check: every IMS Tag Pair and what pairs it")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
 
@@ -2448,6 +2530,7 @@ if __name__ == "__main__":
             print(f"  ⚠ {w}")
         _fetch_anchors_step()       # new entries need their entry-day open
         _print_report(pair_report())
+        print("\n".join(_tag_check_live()))   # every scan checks the pairing (PM, 2026-11-24)
     elif a.load:
         res = load_snapshot(pathlib.Path(a.load), replace=a.replace)
         print(f"loaded {res['date']}: {res['n_positions']} positions "
@@ -2456,6 +2539,9 @@ if __name__ == "__main__":
             print(f"  ⚠ {w}")
         _fetch_anchors_step()
         _print_report(pair_report())
+        print("\n".join(_tag_check_live()))
+    elif a.tags:
+        print("\n".join(_tag_check_live(None if a.tags == "latest" else a.tags)))
     elif a.report:
         _print_report(pair_report(
             as_of=None if a.report == "latest" else a.report))

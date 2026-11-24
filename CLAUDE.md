@@ -812,6 +812,10 @@ Dalmia), and KPIT_TELX, JINDALSTEL_JSTL, SAIL_JSTL and TATA_JSTL start
   dictation still wins wherever it works. A tag pair's group is the tag's word
   when that is a group, else its legs' dictated group; a NEW group word needs
   a rota day or the orchestrator never reviews it.
+  **Every scan checks the pairing** (PM, same day: *"make it a habit to scan
+  tag 3"*, meaning the grid's `Tag Pair` column; its `Tag3` column is cap
+  size): `book_io.py --tags` (`tag_check`, selftested), also printed by
+  `--parse`/`--load`, and step 4b of the `daily-review-book` task.
 - **Agent files.** The six case-agent files naming changed pairs were
   regenerated (`case_brief.py --scaffold <entity> --force`).
 

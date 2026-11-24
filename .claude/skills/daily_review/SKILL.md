@@ -141,6 +141,23 @@ only what the tag cannot pair: a leg in a ONE-SIDED tag (all long or all
 short) whose dictated pair is broken, and a ticker missing from `ticker_map`
 (map it when the entity and its Yahoo symbol already exist; otherwise flag).
 
+**Check the pairing on EVERY scan** (PM, 2026-11-24: *"check the pairing the
+next time you scan. make it a habit to scan tag 3"*). The PM's "tag 3" is the
+grid's **`Tag Pair`** column (POWER 1, IT 4). The grid's own `Tag3` column
+holds LARGE CAP / MID CAP and is not it. `--parse` and `--load` now print the
+check after the pair report; to rerun it alone:
+
+```bash
+python packages/book/book_io.py --tags
+```
+
+One line per tag: its legs and what pairs them (a dictated pair, a tag pair
+with its since date, or a dictated pair NOT a pair as held), then any
+retag, new or gone tag, and held tokens missing from `ticker_map`. Report
+every ⚠ line in the summary. A one-sided tag that leaves a leg unpaired
+(today: IT 3 = LTM+TECHM long, IT 1 HCLT short, EMS 2 PGEL long) is the
+only pairing question for the PM.
+
 ## Step 2b — the index, and the ONE case where it needs you
 
 The Book tab's **equal-weighted long and short indices** (`/api/book_index`,
@@ -266,7 +283,8 @@ When this skill fires from a schedule with no PM in the conversation: run
 Step 1 on the day's scraped file (if `scraped/portfolio_<today>.tsv` is
 missing, or its `# Trading date:` is not today's session, do NOTHING and say
 so — never load yesterday's file under today's date), then Steps 2, 2b and
-2c, and end with the `--report` output and any flags. **Record no
+2c, and end with the `--report` output, the pairing check (`--tags`) and any
+flags. **Record no
 verdicts** — `add_review` is the PM's call reached in conversation, never a
 scheduled default. Step 3's evidence may be summarised for the PM to read
 later; the decisions wait for them.
