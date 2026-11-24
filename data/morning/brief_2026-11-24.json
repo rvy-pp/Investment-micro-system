@@ -1,0 +1,426 @@
+{
+ "date": "2026-11-24",
+ "generated_at": "2026-11-24T08:11:14",
+ "mail": {
+  "window": "24h to 08:10 IST",
+  "n_scanned": 113,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "CLSA flags Hindalco Q3 profitability lower by c.US$200/t QoQ on c.5% higher costs and weaker LME/premiums; keeps O-PF.",
+      "source": "CLSA - Hindalco - O-PF (IF26: Execution key), in CLSA India Research pack",
+      "received": "08:29",
+      "detail": {
+       "summary": "After hosting Hindalco at India Forum, CLSA sees near-term Novelis margin pressure but a long growth pipeline. Bay Minette drives Novelis volumes from FY28, with domestic aluminium, alumina and copper expansions next. Leverage and ramp-up are the watch items.",
+       "points": [
+        "Q3 profit/t lower by c.US$200 QoQ",
+        "Costs c.5% higher; LME and premiums weaker",
+        "Bay Minette lifts Novelis volume from FY28",
+        "India aluminium, alumina, copper expansions next leg",
+        "Monitor net leverage and Bay Minette ramp"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: MCX copper fell 11.88% on the week to Rs1,152.90/kg, breaking its 20-week EMA of Rs1,335.86; volatility to stay elevated.",
+      "source": "Emkay commodities - Base Metals Market Report: Copper: Global supply shifts and risk-off sentiment weigh on MCX",
+      "received": "10:26",
+      "detail": {
+       "summary": "Copper is pressured by a stronger dollar, higher Treasury yields and risk aversion. 30,000-80,000MT of US-held copper may move to Asia before January, which could ease Shanghai tightness and weigh on Chinese premiums.",
+       "points": [
+        "MCX copper -11.88% weekly, Rs1,152.90/kg",
+        "20-week EMA Rs1,335.86 broken",
+        "30,000-80,000MT US copper may head to Asia by January",
+        "Shanghai nearby supply still tight",
+        "Stronger USD and higher yields add pressure"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BNPP China field trip: aluminium cap likely to hold with subdued end-demand; copper supported by grid investment, solar weak.",
+      "source": "BNP Paribas - BNPP INDIA QUICK NOTES: METALS & MINING: China field trip 2026 - flash feedback",
+      "received": "08:52",
+      "detail": {
+       "summary": "Alan Spence met 20+ corporates across China and finds a K-shaped economy with worsening housing sentiment. Demand is split by end-market, with grid supporting copper while solar and steel lag.",
+       "points": [
+        "20+ corporates met across Inner Mongolia, Beijing, Shanghai, HK",
+        "Aluminium cap likely to hold",
+        "End-demand for aluminium subdued",
+        "Copper demand backed by grid, solar weak",
+        "Steel faces demand decline and carbon policy"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "MS: Tata Steel sells Tubes (3.6x P/B) and Colors (16x P/B) to APL Apollo for up to Rs280bn cash; buys 26.38% of APAT at Rs2,100.",
+      "source": "Morgan Stanley - Tata Steel: Sells select downstream businesses to APL Apollo; to also acquire stake in APL Apollo",
+      "received": "09:32",
+      "detail": {
+       "summary": "Tata Steel is selling its Tubes and Colors units to APL Apollo and buying a promoter stake in APL Apollo, which triggers an open offer. MS sees value unlocking and deleveraging, with Tata trading at 2.2x FY26 consolidated book. Rating Equal-weight, PT Rs185.",
+       "points": [
+        "Tubes up to Rs117bn; Colors Rs163bn; total up to Rs280bn",
+        "26.38% APAT stake for ~Rs155bn; open offer 26% at Rs2,301.4",
+        "Full acceptance: Tata holds 52.38%, outlay ~Rs323bn",
+        "1H-F27 net debt Rs914bn; close by 31 Mar 2028"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Elara downgrades APL Apollo to Sell from Buy, TP Rs1,413 (from Rs2,503), 15% downside; sees ~29% FY29E EPS dilution, ~640bps RoE hit.",
+      "source": "Elara - APL Apollo Tubes - Near-term earnings dilution on cards - Sell - TP INR 1,413 - Downside 15%",
+      "received": "00:12",
+      "detail": {
+       "summary": "Rs280bn outlay at 6.5x P/BV turns APAT from net cash to net debt, with deleveraging expected over 3-3.5 years. Elara cuts the target multiple to 25x from 35x and rolls to March 2029E. Tata management guides to EPS accretion within 3-3.5 years of completion.",
+       "points": [
+        "Consideration Rs280bn, 6.5x P/BV",
+        "Capacity 5mt to 7.5mt (+2.5mt, ~50%)",
+        "FY27-28E EPS unchanged; FY29E cut ~29%",
+        "Target multiple 25x March 2029E P/E vs 35x"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Steel stays Buy post-deal: Elara TP Rs205 (26% upside, flags FY29 earnings drag from value-added growth), Emkay TP Rs210.",
+      "source": "Elara - Tata Steel - Value-added growth to weigh on FY29 earnings - Buy - TP INR 205 - Upside 26% (+12 more in Outlook)",
+      "received": "00:51",
+      "detail": {
+       "summary": "Elara keeps Buy on Tata Steel at CMP Rs163 but flags FY29 earnings weighed by value-added growth; Emkay (Buy, Rs210) frames it as sell the business, buy the platform.",
+       "points": [
+        "Elara TP Rs205, upside 26%, CMP Rs163",
+        "Emkay Buy, target Rs210",
+        "Elara: value-added growth weighs on FY29 earnings"
+       ],
+       "read": "snippet"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Dalmia Bharat board approves Rs7bn open-market buyback at up to Rs1,850/share (~17% premium), 2.02% of equity; Morgan Stanley stays Underweight, TP Rs1,640.",
+      "source": "Morgan Stanley - PULSE: Dalmia Bharat Ltd: Announced share buyback",
+      "received": "13:24",
+      "detail": {
+       "summary": "Morgan Stanley sees the buyback as a positive shareholder-return signal but flags higher leverage. The Rs1,850 is a ceiling price in an open-market programme, not an assured exit, and timelines are awaited.",
+       "points": [
+        "Rs7bn max size, at least Rs5.25bn (75%) to be deployed",
+        "~3.78mn shares at Rs1,850; 2.02-2.26% across Rs1,650-1,850",
+        "Promoter stake 55.84% to ~56.99%; promoters not participating",
+        "Outflow ~25% of Sep-26 cash of ~Rs28bn",
+        "Post-buyback F27 net debt ~Rs69bn, 2.4x net debt/EBITDA"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital invites institutions to JK Cement's Panna plant, 10-12/13 Dec; calls JKCE its top mid-cap cement pick and Panna its largest growth trigger.",
+      "source": "PhillipCapital - REMINDER: A PhillipCapital EXCLUSIVE - Invitation: (10-12/13 Dec 2026): JK Cement (JKCE IN) - Panna plant visit - Central India operations",
+      "received": "14:08",
+      "detail": {
+       "summary": "PhillipCapital is reminding clients to confirm a plant visit hosted by JK Cement, citing overwhelming response. It describes Panna as the company's largest current growth trigger, last visited in Dec 2023, with scalability to four clinker lines.",
+       "points": [
+        "Visit 10-12 Dec (option 1) or 10-13 Dec (option 2)",
+        "Panna runs two clinker lines, scalable to four",
+        "Includes mines visit and senior management interaction",
+        "Option 2 adds dealer/distributor interaction on 12 Dec",
+        "Attendees book own flights from Mumbai via Khajuraho"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Mining",
+    "bullets": [
+     {
+      "text": "Coal India's 10% OFS in Mahanadi Coalfields values MCL at Rs854-900bn, raising Rs85-90bn; a possible SECL listing too risks a holdco discount on CIL.",
+      "source": "MS India sales - MS India Trends & Themes: NSE India & SEBI Governance; Coal India Mahanadi IPO; HCL Technologies AP Summit",
+      "received": "09:08",
+      "detail": {
+       "summary": "Morgan Stanley's note says the MCL IPO gives a direct valuation benchmark and more transparency for the subsidiary. The flip side is that listing MCL alongside a potential SECL listing could lead the market to treat CIL as a holding company and apply a discount.",
+       "points": [
+        "10% OFS by Coal India in Mahanadi Coalfields",
+        "MCL valuation Rs854-900bn",
+        "Proceeds to CIL Rs85-90bn",
+        "Potential SECL listing adds holdco-discount risk"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM hosts an expert session on India iron ore & steel with BigMint's CEO on 26 Nov, 10am IST; HRC prices at highest since mid-2022.",
+      "source": "JPM - Expert Session on India Iron Ore & Steel Outlook - Nov. 26 (Thu) at 10 am IST",
+      "received": "10:39",
+      "detail": {
+       "summary": "JPMorgan invites clients to a call with BigMint's Dhruv Goel on iron ore and steel pricing, demand and policy. The invite cites safeguard duties, slow capacity additions and healthy consumption as drivers of the steel rally. No replay will be available.",
+       "points": [
+        "26 Nov 2026, 10:00 IST",
+        "Safeguard duties in place until April 2028",
+        "Maharashtra iron ore share 10% in FY27TD vs 4% in FY25",
+        "Odisha share down to 47% from ~55%",
+        "Imports driven by Brazil, Oman; JSW bringing Australian volumes"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "Festive-season smartphone sales fell 22% on memory-driven price hikes; flagship prices seen up 30% by year-end, with memory at 43% of phone cost.",
+      "source": "Nomura - India Consumer Durables and EMS: India's smartphone sales during festive season drop by 22 pc; Premium flagship smartphone prices likely to go up by over 30 pc; Budget 2027 may see 1-3% duty cut on 115 manufacturing inputs",
+      "received": "09:00",
+      "detail": {
+       "summary": "Counterpoint data show handset demand shrinking after memory-cost inflation lifted device prices, with Apple also losing share. Separately, the government is weighing a 1-3% duty cut on 115+ manufacturing inputs, possibly in the FY28 budget.",
+       "points": [
+        "Festive smartphone sales -22%; Q3CY26 supplies -20% (CyberMedia)",
+        "Memory 43% of phone cost by year-end vs 13% in 1Q25",
+        "Flagship prices +30%, to over Rs1 lakh",
+        "Oppo flagships +82-87% YoY; iPhone +20-22%",
+        "Duty cut 1-3% on 115+ inputs, electronics included"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM ranks Dixon (OW) > Amber (OW) > Kaynes (N) > Avalon, Syrma, CyientDLM (UW); sees another Syrma margin surprise as cost inflation needs 6 more months.",
+      "source": "JPM India sales - India Daily: Tata Steel: Surprise transfer of tubes and colors business to APL Apollo | Capex: Strong Order Inflows & Execution | EMS: HK marketing feedback",
+      "received": "09:20",
+      "detail": {
+       "summary": "After meeting 15 investors in Hong Kong, JPM finds Dixon dominating the debate, with the dilemma being whether to buy. Dixon is its top pick on near-term visibility; Syrma stays UW on margin risk. Kaynes sits on the sidelines and Amber lacks a positive trigger.",
+       "points": [
+        "Order: Dixon OW > Amber OW > Kaynes N > Avalon UW > Syrma UW > CyientDLM UW",
+        "Dixon: 3Q/4Q volume guide, Motorola export orders, new domestic customer",
+        "Dixon concern: memory prices hit volume and margins",
+        "Syrma: supply-side cost inflation seen lasting 6+ months",
+        "Amber: no positive trigger; Kaynes: stay on sidelines"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA keeps Syrma SGS at HLD after India Forum; management sees data centres and PCBs emerging as growth vectors beside autos and industrials.",
+      "source": "CLSA India Research - Tata Steel, LTIMindtree, Tech Mahindra, Bandhan Bank, Hindalco, Syrma SGS, India Strategy",
+      "received": "08:29",
+      "detail": {
+       "summary": "Management was constructive on growth at the 29th India Forum, citing robust core EMS demand and healthy orderbook visibility. It targets strong growth and FCF conversion with disciplined capital allocation, and is selectively evaluating inorganic options.",
+       "points": [
+        "Rating: HLD (hold)",
+        "Autos and industrials remain key growth drivers",
+        "Data centres and PCBs emerging as new growth vectors",
+        "Healthy orderbook visibility; targeting strong FCF conversion",
+        "Selectively evaluating inorganic opportunities"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "Nuvama: November MTD power demand +12.12% YoY and IEX average price Rs3.91/kWh (+27.2% YoY), evening Rs6.65 (+30.9%).",
+      "source": "Nuvama - Daily Power Demand",
+      "received": "09:31",
+      "detail": {
+       "summary": "Data till 19 November show strong demand growth with coal generation outpacing it, while exchange prices run well above last year. Peak demand also grew, though at a slower pace than overall demand.",
+       "points": [
+        "Nov MTD demand +12.12% YoY; YTD +11.73%",
+        "Nov MTD coal generation +14.39%; YTD +12.72%",
+        "Nov peak demand 2,28,179MW, +5.9% YoY",
+        "IEX Nov avg Rs3.91/kWh, +27.2% YoY",
+        "IEX 17:00-23:00 avg Rs6.65/kWh, +30.9% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA reiterates Buy on Power Grid at 2x forward P/B, calling the rate-driven correction an opportunity; TBCB share rebounded to 46% in FY27 YTD.",
+      "source": "BofA India sales - BofA India Insight - Econ - Year Ahead | Financials | Internet | Paytm | PWGR - reiterate buy | Pharma",
+      "received": "09:24",
+      "detail": {
+       "summary": "BofA argues the stock's fall reflects a rate reset, not weaker fundamentals. It sees TBCB share worries as overdone, since the rebound points to bidding discipline rather than lost share. Re-leveraging should hold 15% RoE as capex accelerates.",
+       "points": [
+        "Buy maintained; stock at 2x forward P/B",
+        "TBCB share FY27 YTD rebounded to 46%",
+        "15% RoE seen sustainable via re-leveraging",
+        "Offsets CWIP/TBCB drag as capex accelerates"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "LTIMindtree guides 3Q ~1.5% QoQ, FY27 growth 5%+ at 15.4% Ebit margin; TechM sees FY27 CC growth of 6-6.5%; CLSA holds both.",
+      "source": "CLSA - Tata Steel, LTIMindtree, Tech Mahindra, Bandhan Bank, Hindalco, Syrma SGS, India Strategy",
+      "received": "08:29",
+      "detail": {
+       "summary": "Both managements spoke at CLSA's India Forum. LTIMindtree expects 2H better than 1H, though growth in its top BFSI account is muted. TechM is on track for its three-year plan and is moving to a growth-with-stable-margins plan. CLSA stays at Hold on AI-led deflation.",
+       "points": [
+        "LTM 3Q: c.1.5% QoQ revenue growth, margins stable or better",
+        "LTM FY27: at least c.5% YoY, Ebit margin c.15.4%",
+        "LTM: AI means shorter deals, lower ACVs, higher margins",
+        "TechM FY27 exit: 6-6.5% YoY CC growth",
+        "TechM current plan: above-peer growth, 15% Ebit margin"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA AI tour: experts see 30-70% AI-led deflation over 4-5-year contracts; Hold on TCS/INFY/HCL/TechM/LTM, U-PF Wipro, Coforge top pick.",
+      "source": "CLSA - India IT: AI tour KTAs: Not doomsday yet",
+      "received": "20:20",
+      "detail": {
+       "summary": "CLSA met eight industry players on AI's impact on IT services. Most expect deflation and little near-term growth pickup as budgets shift to hardware, though ISG and TPG see an AI services opportunity. CLSA stays cautious on large caps.",
+       "points": [
+        "30-70% AI-led deflation on 4-5-year contracts (Avasant)",
+        "IT budgets +6% YoY in 2026, skewed to GPUs/infra (Avasant)",
+        "ISG: growth back to mid-single-digit for 10 years",
+        "McKinsey: US$300-400bn new AI services opportunity by 2030",
+        "Carlyle: US$1-3bn revenue mid-size SIs best placed"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Persistent filed a BSE company statement on a cybersecurity incident; Kotak's wrap carries only the headline, so scope and impact are unknown.",
+      "source": "Kotak - TECHNOLOGY NEWS WRAP NOVEMBER 23, 2026 (+2 more in Outlook)",
+      "received": "08:55"
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Banks told RBI higher costs will hit consumption demand as it weighs a further repo hike at the 4 Dec policy review.",
+      "source": "CLSA (Piran Engineer) - India Financials - Banks warn higher costs could hit demand as RBI weighs further repo hike",
+      "received": "09:13",
+      "detail": {
+       "summary": "Bank executives met top RBI officials ahead of the 4 December policy review. Feedback was that core sector growth stays strong but consumption demand suffers if prices stay high, with job creation weak and stress showing in some segments.",
+       "points": [
+        "Policy review 4 Dec; further repo hike under consideration",
+        "Interbank call rate 5.27% on 20 Nov",
+        "Banks placed Rs545bn with RBI on 20 Nov vs Rs877bn on 19 Nov",
+        "Drought-induced asset stress and inflation risks raised",
+        "IndusInd clawback on ex-CEO Kathpalia, pay since Mar-2020"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak lowers FY27 USD-INR average to 94.3 (from 95.1), sees 95.8 for FY28; FIIs bought $1bn Friday, $14bn this expiry.",
+      "source": "Kotak sales - SHFL added to MSCI; India Melt up / Global Melt down",
+      "received": "09:52",
+      "detail": {
+       "summary": "Kotak expects INR strength to persist near term on FPI inflows and RBI FX measures, but sees depreciation pressure returning as RBI rebuilds reserves. It flags near-term volatility from the global melt-down and expects crude and later earnings to drive Indian returns.",
+       "points": [
+        "USD-INR ranges: 91-95 near term, 92-98 medium term",
+        "USD-INR up 3.7% from early-Oct low of 96.8; FPI inflows ~$15bn in four weeks",
+        "Nifty closed above 25,500; next target 26,300, support 25,350",
+        "SHFL replaces TRENT in Sensex 18 Dec: $560mn buy vs $290mn sell",
+        "Sensex: HNDL missed expected inclusion"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: FIIs sold $3.6bn of India in October but have bought over $13.8bn in November to 20th; DMF inflows fell 12% MoM.",
+      "source": "CLSA (Vikash Jain) - India strategy: Against the tide",
+      "received": "19:54",
+      "detail": {
+       "summary": "The Nifty rose 1.9% in October, beating EM and AxJ by over 10ppt, though FII selling continued for a second month and domestic MF flows moderated. Discretionary MF money pulled back sharply while FIIs rotated into telecom and autos.",
+       "points": [
+        "DMF equity inflows Rs522bn, down 12% MoM; SIP stoppage ratio 116%",
+        "Taiwan/Korea FII selling $31.8bn/$14.6bn vs India $3.6bn",
+        "IT +17.7% in Oct; capital goods -7.2%",
+        "FIIs added telecom +27bps, autos +4bps; cut industrials 16bps",
+        "Large+midcap fund inflows doubled Rs43bn to Rs85bn"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Maruti takes 4th price hike of CY26 (~0.3%, weighted avg); Ambit sees another in Jan-27 and EPS 5-7% above consensus.",
+      "source": "UBS sales - UBS INDIA ... MSIL Price Hikes; Ambit Sales - Maruti: 4th price hike in CY26",
+      "received": "10:33",
+      "detail": {
+       "summary": "UBS calls the November hike a surprise, having expected the next one only in January, and still expects a January round. Ambit separately cites receding discounts and a 6-8% fall in the commodity basket aiding gross margin from 4QFY27.",
+       "points": [
+        "UBS Neutral, PT Rs12,060; hike effective November",
+        "Ambit: cumulative CY26 hikes ~1.5%; ~1% pricing in 2HFY27",
+        "Ambit: 24x FY28E P/E vs 10Y median 26x",
+        "UBS: Oct retail 2W -28% YoY, PV -15% YoY",
+        "MSIL fresh longs: OI +13.2% (Kotak), $132mn delivery"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak Midcap Conference 2026, in person, Thu 26 Nov, Grand Hyatt Mumbai.",
+      "source": "Kotak (Kumar Singhee) - [Kotak Schedule] IN-PERSON Midcap Conference 2026",
+      "received": "14:50",
+      "detail": {
+       "summary": "Schedule mail for the PM's own meetings at Kotak's in-person Midcap Conference. Only the date and venue were taken from the subject and snippet; company list not read.",
+       "points": [
+        "Date: Thu 26 Nov 2026",
+        "Venue: Grand Hyatt Mumbai"
+       ],
+       "read": "snippet"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": []
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Nvidia +31.5% on Jensen Huang's return; CLSA stays Outperform, TP US$255 on 15x FY28 EPS, expects ~US$1.5tn AI capex in 2027.",
+    "source": "CLSA - Nvidia (NVDA US): I'll be back!"
+   },
+   {
+    "text": "GS desk reads the Nvidia jump as short covering and macro-hedge unwinds with NDX volumes up ~60%, and sees no fresh AI catalyst to buy the dip.",
+    "source": "GS - [GS Daily] Jensen back drive AI rally // US rate hike, expect 25bps in Dec and Mar"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

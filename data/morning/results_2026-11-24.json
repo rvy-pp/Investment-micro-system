@@ -1,0 +1,65 @@
+{
+ "date": "2026-11-24",
+ "session": true,
+ "generated_at": "2026-11-24T08:12:47",
+ "source": "NSE event calendar (date) + NSE result-filing times, last 4 session prints (timing)",
+ "n_coverage": 93,
+ "groups": {},
+ "rows": [],
+ "next": {
+  "date": "2026-11-25",
+  "groups": {
+   "post": [
+    "Siemens Energy India"
+   ]
+  },
+  "rows": [
+   {
+    "symbol": "ENRIN",
+    "date": "2026-11-25",
+    "purpose": "Financial Results/Dividend",
+    "desc": "To consider and approve the financial results for the period ended September 30, 2026 and dividend, if any.",
+    "entity": "ext:ENRIN",
+    "name": "Siemens Energy India",
+    "sector": "extended",
+    "when": "post",
+    "history": [
+     {
+      "date": "2026-08-06",
+      "time": "20:43",
+      "when": "post"
+     },
+     {
+      "date": "2026-05-14",
+      "time": "18:08",
+      "when": "post"
+     },
+     {
+      "date": "2026-02-13",
+      "time": "13:57",
+      "when": "during"
+     },
+     {
+      "date": "2025-11-24",
+      "time": "19:24",
+      "when": "post"
+     }
+    ],
+    "counts": {
+     "post": 3,
+     "during": 1
+    },
+    "filed_at": null
+   }
+  ]
+ },
+ "ahead": [
+  {
+   "date": "2026-11-25",
+   "name": "Siemens Energy India",
+   "symbol": "ENRIN"
+  }
+ ],
+ "errors": [],
+ "n_extended": 46
+}

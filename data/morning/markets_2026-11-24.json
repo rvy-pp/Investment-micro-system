@@ -1,0 +1,236 @@
+{
+ "date": "2026-11-24",
+ "fetched_at": "2026-11-24T08:12:33",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-23",
+    "close": 7237.17,
+    "prev_date": "2026-11-20",
+    "chg_pct": 4.73,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-23",
+    "close": 24089.56,
+    "prev_date": "2026-11-20",
+    "chg_pct": 6.51,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-23",
+    "close": 49595.31,
+    "prev_date": "2026-11-20",
+    "chg_pct": 3.01,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-23",
+    "close": 9588.05,
+    "prev_date": "2026-11-20",
+    "chg_pct": 14.03,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-23",
+    "close": 165.05,
+    "prev_date": "2026-11-20",
+    "chg_pct": 31.48,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-23",
+    "close": 453.46,
+    "prev_date": "2026-11-20",
+    "chg_pct": 6.85,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-23",
+    "close": 363.6,
+    "prev_date": "2026-11-20",
+    "chg_pct": 14.08,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-23",
+    "close": 313.55,
+    "prev_date": "2026-11-20",
+    "chg_pct": 3.0,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-23",
+    "close": 222.29,
+    "prev_date": "2026-11-20",
+    "chg_pct": 0.51,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-23",
+    "close": 58.57,
+    "prev_date": "2026-11-20",
+    "chg_pct": 0.88,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Pushes Deeper Into Regulatory Data With AI And Real Time Risk Monitoring",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-24 02:17Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-pushes-deeper-regulatory-021708658.html"
+   },
+   {
+    "title": "Global Regulatory Data Market Report 2026 | Capitalize on 18.3% CAGR as AI, cloud and real-time reporting fuel $5.96B by 2030; IBM, Oracle, SAP and Accenture accelerate innovation",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-23 15:30Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/global-regulatory-data-market-report-153000330.html"
+   },
+   {
+    "title": "Global Smart Ports Market Report 2026-2035: Trends, Forecast and Competitive Analysis Featuring ABB, IBM, Kaleris, Siemens, General Electric, Cisco, Trelleborg, ZPMC, Liebherr, Accenture",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-23 14:14Z",
+    "link": "https://finance.yahoo.com/technology/articles/global-smart-ports-market-report-141400244.html"
+   },
+   {
+    "title": "Financial Process Management Market 2026: Size, Share, Trends, and Forecast to 2030 | Capitalize on $13.11B AI and Cloud Growth with Accenture, IBM, TCS, NTT DATA, and Capgemini",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-20 14:51Z",
+    "link": "https://finance.yahoo.com/technology/articles/financial-process-management-market-2026-145100629.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Puts AI To Work In Healthcare And Cybersecurity",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-22 19:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-puts-190639419.html"
+   },
+   {
+    "title": "How Did IBM Stock Leave Cognizant Behind?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 21:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/did-ibm-stock-leave-cognizant-215511163.html"
+   },
+   {
+    "title": "BofA Adjusts Price Target on Cognizant Technology Solutions to $70 From $91",
+    "publisher": "MT Newswires",
+    "when": "2026-11-19 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bofa-adjusts-price-target-cognizant-133701172.html"
+   },
+   {
+    "title": "Here Is Why Investors Should Pay Attention to Cognizant Technology (CTSH)",
+    "publisher": "Insider Monkey",
+    "when": "2026-11-18 17:12Z",
+    "link": "https://finance.yahoo.com/technology/articles/why-investors-pay-attention-cognizant-171233409.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Singapore investigating Nvidia-linked Megaspeed after US blacklisting",
+    "publisher": "Reuters",
+    "when": "2026-11-24 02:33Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/singapore-investigating-nvidia-linked-megaspeed-023356234.html"
+   },
+   {
+    "title": "Analysts comment on market impact of Huang's return as Nvidia CEO",
+    "publisher": "Reuters",
+    "when": "2026-11-24 02:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/analysts-market-impact-huangs-return-023347180.html"
+   },
+   {
+    "title": "Nvidia's $130 billion outlook faces new White House test",
+    "publisher": "TheStreet",
+    "when": "2026-11-24 02:17Z",
+    "link": "https://finance.yahoo.com/technology/articles/nvidias-130-billion-outlook-faces-021700723.html"
+   },
+   {
+    "title": "Asia chipmaking stocks soar tracking Nvidia rally; S.Korea, Taiwan lead",
+    "publisher": "Investing.com",
+    "when": "2026-11-24 02:15Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/asia-chipmaking-stocks-soar-tracking-021520376.html"
+   },
+   {
+    "title": "Dow Jones Futures: Tech Stocks, Nvidia Snap Back On Jensen Huang's Return; Elon Musk-Led SpaceX, Tesla Rally",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-24 02:14Z",
+    "link": "https://finance.yahoo.com/m/be493228-4ecf-338d-9017-054d3d6efc36/dow-jones-futures%3A-tech.html"
+   },
+   {
+    "title": "Nasdaq, Dow, S&P 500 Futures Gain As Jensen Huang\u2019s Return To Nvidia Sparks $3T Market Rally: SOXS, IBRX, HPE, TSM In Focus",
+    "publisher": "Stocktwits",
+    "when": "2026-11-24 02:13Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/nasdaq-dow-p-500-futures-021343688.html"
+   },
+   {
+    "title": "Gold extends rebound as Nvidia CEO news lifts equities, dip-buying lifts bullion",
+    "publisher": "Investing.com",
+    "when": "2026-11-24 02:13Z",
+    "link": "https://finance.yahoo.com/markets/commodities/articles/gold-extends-rebound-nvidia-ceo-021330781.html"
+   },
+   {
+    "title": "Nvidia Stock Rebound Puts AI Infrastructure Stocks Back On The Radar",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-24 02:12Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/nvidia-stock-rebound-puts-ai-021257945.html"
+   }
+  ],
+  "AVGO": [],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stock Rallies Nearly 8% as a Bernstein Analyst Remains Bullish Despite the Hunterbrook Short Report",
+    "publisher": "TipRanks",
+    "when": "2026-11-23 23:58Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stock-rallies-nearly-8-235832362.html"
+   },
+   {
+    "title": "AMD registers up to 337 million shares for resale tied to OpenAI, Meta warrants",
+    "publisher": "Investing.com",
+    "when": "2026-11-23 23:22Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-registers-337-million-shares-232224001.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25548.5,
+  "chg_pct": 0.05,
+  "stamp": "24-Nov-2026 08:12:21",
+  "expiry": "29-Dec-2026",
+  "volume": 1445,
+  "nifty_close": {
+   "close": 25349.65,
+   "stamp": "23-Nov-2026 15:30"
+  },
+  "gap_pts": 198.8,
+  "gap_pct": 0.78
+ }
+}
