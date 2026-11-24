@@ -795,8 +795,23 @@ Dalmia), and KPIT_TELX, JINDALSTEL_JSTL, SAIL_JSTL and TATA_JSTL start
 - **Lone legs.** A held leg whose pair retired and that no pair in force
   names (`book_io.unpaired_legs`: APAT, ACEM today) is drawn alone under its
   old group with a "no pair" chip and no %. It stays on the Analysis roster
-  and is skipped by Kelly. It is never re-paired by guess, and never dropped,
-  which would silently take a live position off the tab.
+  and is skipped by Kelly. It is never dropped, which would silently take a
+  live position off the tab. **Superseded 2026-11-24 by tag pairing:** a held
+  leg that no WORKING dictated pair covers (none in force, one broken, or one
+  whose other side left the book) is paired by its IMS tag
+  (`book_io.tag_pairs` / `effective_pairs`; PM: *"The tag like Power 1 should
+  be enough for you to make pairs in the analysis subtab"*). Needing legs on
+  both sides of a tag pair with each other (NTPC_PWGR, OFSS_MPHL), else with
+  the tag's whole opposite side (TATA_APAT, ACEM_SRCM, SYRMA_KAYNE). `since`
+  is the start of the unbroken run with every leg on its side. A broken
+  dictated pair whose held legs are all paired elsewhere drops out of the
+  view (KAYNES_DIXON, MPHL_PSYS). A one-sided tag (IT 1 = HCLT+INFO short,
+  IT 3 = LTM+TECHM long) pairs nothing, so TECHM_LTM and HCLT_WPRO still show
+  broken. The Book view, the Analysis roster, Kelly, VaR and the case agents
+  read the tag pairs; **grading does not** (its units are the yaml's). The
+  dictation still wins wherever it works. A tag pair's group is the tag's word
+  when that is a group, else its legs' dictated group; a NEW group word needs
+  a rota day or the orchestrator never reviews it.
 - **Agent files.** The six case-agent files naming changed pairs were
   regenerated (`case_brief.py --scaffold <entity> --force`).
 

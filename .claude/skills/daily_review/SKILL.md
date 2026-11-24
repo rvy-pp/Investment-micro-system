@@ -132,8 +132,14 @@ clusters and stay internal. A leg may serve several pairs (TCS long backs
 three shorts); the engine apportions a shared leg's DOLLARS across its pairs
 by the gross of the opposite side it hedges, so book totals still sum —
 price-%s are never apportioned. When a snapshot brings a position that is in
-no dictated pair, the tab flags it: **ask the PM which pair it belongs to and
-add it to the spec — never guess.**
+no dictated pair, **its IMS tag pairs it** (PM, 2026-11-24: "The tag like
+Power 1 should be enough for you to make pairs"; `book_io.tag_pairs`): the
+untagged-by-dictation legs of a tag pair against each other, or against the
+tag's opposite side (POWER 1 -> NTPC_PWGR, IT 4 -> OFSS_MPHL). Do NOT ask the
+PM for a dictation. Report the tag pairs formed today in the summary, and flag
+only what the tag cannot pair: a leg in a ONE-SIDED tag (all long or all
+short) whose dictated pair is broken, and a ticker missing from `ticker_map`
+(map it when the entity and its Yahoo symbol already exist; otherwise flag).
 
 ## Step 2b — the index, and the ONE case where it needs you
 

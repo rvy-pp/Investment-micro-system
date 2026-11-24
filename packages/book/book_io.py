@@ -401,6 +401,140 @@ def reconcile_pair(name: str, longs: list, shorts: list, sides: dict) -> dict:
     return out
 
 
+# ---- the IMS tag pairs what the dictation does not (PM, 2026-11-24) --------
+# PM, after NTPC / Power Grid / OFSS went on under tags "POWER 1" and "IT 4"
+# and the review asked for a dictation: "The tag like Power 1 should be
+# enough for you to make pairs in the analysis subtab. why do you mess it up".
+# So the dictation still wins wherever it WORKS, and the IMS tag pairs every
+# held leg it does not cover. A leg "needs" a pair when no pair in force holds
+# it as a working pair (as_dictated or reversed, with a long AND a short on
+# the book). Per tag, the needing legs pair against each other when they sit
+# on both sides (POWER 1: NTPC_PWGR; IT 4: OFSS_MPHL, beside the dictated
+# COFORGE_PSYS), else against the tag's whole opposite side (STEEL 1:
+# TATA_APAT; CEMENT 1: ACEM_SRCM). A one-sided tag (IT 1 = HCLT+INFO short,
+# IT 3 = LTM+TECHM long) pairs nothing, and its legs stay as they were. A
+# broken dictated pair whose held legs are ALL paired elsewhere now is
+# superseded and drops out of the view (KAYNES_DIXON once Kaynes came back
+# short beside Syrma). `since` is the first snapshot of the unbroken run in
+# which every leg sat on its side, so the since-entry % is the pair's own.
+# This replaced the 2026-11-09 "never re-pair by guess, ask the PM" rule for
+# undictated legs: the tag is the PM's own grouping, not a guess.
+def _tag_word(tag: str) -> str:
+    parts = str(tag).split()
+    return " ".join(parts[:-1]) if len(parts) > 1 and parts[-1].isdigit() else str(tag)
+
+
+def tag_pairs(spec_pairs: dict, on: str | None,
+              snaps: list[tuple[str, dict]]) -> tuple[list[dict], set]:
+    """snaps: [(snap_date, {token: (side, tag)}), ...] ascending, the last one
+    being the snapshot `on`. Returns ([{group, name, long, short, since, tag}],
+    {names of superseded broken dictated pairs})."""
+    if not snaps:
+        return [], set()
+    cur = snaps[-1][1]
+    sides = {t: s for t, (s, _) in cur.items()}
+    live = pairs_in_force(spec_pairs, on)
+    working, group_of = set(), {}
+    rcs = []
+    for g, ps in live.items():
+        for p in ps:
+            rc = reconcile_pair(str(p.get("name")), p.get("long") or [], p.get("short") or [], sides)
+            rcs.append((g, p, rc))
+            for t in (p.get("long") or []) + (p.get("short") or []):
+                group_of.setdefault(t, g)
+            held_L = [t for t in rc["long"] if t in sides]
+            held_S = [t for t in rc["short"] if t in sides]
+            if rc["direction"] in ("as_dictated", "reversed") and held_L and held_S:
+                working |= set(held_L + held_S)
+    for g, ps in (spec_pairs or {}).items():          # retired pairs: last resort for a heading
+        for p in ps or []:
+            for t in (p.get("long") or []) + (p.get("short") or []):
+                group_of.setdefault(t, g)
+    names_in_force = {str(p.get("name")) for _, p, _ in rcs}
+    by_tag: dict[str, list] = {}
+    for t, (s, tag) in cur.items():
+        by_tag.setdefault(tag, []).append((t, s))
+    out, covered = [], set(working)
+    for tag in sorted(by_tag):
+        legs = by_tag[tag]
+        need = [(t, s) for t, s in legs if t not in working]
+        if not need:
+            continue
+        NL = [t for t, s in need if s == "L"]
+        NS = [t for t, s in need if s == "S"]
+        long_ = NL or [t for t, s in legs if s == "L"]
+        short = NS or [t for t, s in legs if s == "S"]
+        if not long_ or not short:
+            continue                               # one-sided tag: nothing to pair
+        name = "+".join(long_) + "_" + "+".join(short)
+        if name in names_in_force:
+            continue
+        word = _tag_word(tag)
+        group = word if word in (spec_pairs or {}) else next(
+            (group_of[t] for t in long_ + short if t in group_of), word)
+        since = snaps[-1][0]
+        for d, toks in reversed(snaps):
+            if all(toks.get(t, ("", ""))[0] == "L" for t in long_) and \
+               all(toks.get(t, ("", ""))[0] == "S" for t in short):
+                since = d
+            else:
+                break
+        out.append({"group": group, "name": name, "long": long_, "short": short,
+                    "since": since, "tag": tag})
+        covered |= set(long_ + short)
+    superseded = set()
+    for g, p, rc in rcs:
+        held = [t for t in rc["long"] + rc["short"] if t in sides]
+        works = (rc["direction"] in ("as_dictated", "reversed")
+                 and any(t in sides for t in rc["long"]) and any(t in sides for t in rc["short"]))
+        if held and not works and set(held) <= covered:
+            superseded.add(str(p.get("name")))
+    return out, superseded
+
+
+def book_snaps(conn: sqlite3.Connection | None = None,
+               as_of: str | None = None) -> list[tuple[str, dict]]:
+    """[(snap_date, {token: (side, tag)})] ascending up to `as_of`, options skipped."""
+    own = conn is None
+    conn = conn or connect()
+    try:
+        rows = conn.execute("SELECT snap_date, root, side, pair_tag FROM book_positions "
+                            "WHERE snap_date<=? ORDER BY snap_date",
+                            (as_of or "9999-12-31",)).fetchall()
+    finally:
+        if own:
+            conn.close()
+    out: dict[str, dict] = {}
+    for d, root, side, tag in rows:
+        if is_option_root(root):
+            continue
+        out.setdefault(d, {})[(str(root).split() or [""])[0]] = (side, tag)
+    return sorted(out.items())
+
+
+def effective_pairs(spec_pairs: dict, on: str | None,
+                    conn: sqlite3.Connection | None = None,
+                    snaps: list | None = None) -> dict:
+    """The dictation as the book is actually paired on `on`: specs/book.yaml
+    `pairs`, plus a pair per IMS tag for the legs it does not cover, minus the
+    broken dictated pairs those tag pairs supersede (tag_pairs has the rule).
+    A tag pair carries `since` and `tag`. Same shape as spec_pairs, so
+    pairs_in_force / unpaired_legs read it unchanged."""
+    if snaps is None:
+        try:
+            snaps = book_snaps(conn, on)
+        except Exception:                                   # noqa: BLE001
+            snaps = []
+    extra, gone = tag_pairs(spec_pairs, on, snaps)
+    out = {g: [p for p in (ps or []) if not (str(p.get("name")) in gone and pair_in_force(p, on))]
+           for g, ps in (spec_pairs or {}).items()}
+    for p in extra:
+        out.setdefault(p["group"], []).append(
+            {"name": p["name"], "long": p["long"], "short": p["short"],
+             "since": p["since"], "tag": p["tag"]})
+    return out
+
+
 def _migrate(conn: sqlite3.Connection) -> None:
     """v1 tables (2026-09-05, pre-IMS-format) had avg_price/last_price/mv.
     Empty ones are dropped and recreated; a populated one refuses — data
@@ -1789,6 +1923,39 @@ def _selftest() -> None:
     up = unpaired_legs(dp, "2026-11-06", {"TATA": "L", "JSTL": "S", "APAT": "S", "NEW": "L"})
     assert up == [{"token": "APAT", "side": "S", "group": "STEEL", "was": "JSTL_APAT"}], up
     assert unpaired_legs(dp, "2026-11-05", {"JSTL": "L", "TATA": "S", "APAT": "S"}) == []
+
+    # IMS tag pairs what the dictation does not (PM, 2026-11-24) -------------
+    tp = {"STEEL": [{"name": "TATA_JSTL", "long": ["TATA"], "short": ["JSTL"]},
+                    {"name": "JSTL_APAT", "long": ["JSTL"], "short": ["APAT"], "until": "2026-11-05"}],
+          "EMS": [{"name": "KAYNES_DIXON", "long": ["KAYNE"], "short": ["DIXON"]},
+                  {"name": "SYRMA_DIXON", "long": ["SYRMA"], "short": ["DIXON"]}],
+          "IT": [{"name": "COFORGE_PSYS", "long": ["COFOR"], "short": ["PSYS"]}]}
+    day = {"TATA": ("L", "STEEL 1"), "JSTL": ("S", "STEEL 1"), "APAT": ("S", "STEEL 1"),
+           "SYRMA": ("L", "EMS 1"), "DIXON": ("S", "EMS 1"), "KAYNE": ("S", "EMS 1"),
+           "NTPC": ("L", "POWER 1"), "PWGR": ("S", "POWER 1"),
+           "COFOR": ("L", "IT 4"), "OFSS": ("L", "IT 4"), "PSYS": ("S", "IT 4"),
+           "HCLT": ("S", "IT 1"), "INFO": ("S", "IT 1")}
+    prev = {k: v for k, v in day.items() if k not in ("NTPC", "PWGR", "OFSS")}
+    ex, gone = tag_pairs(tp, "2026-11-23", [("2026-11-20", prev), ("2026-11-23", day)])
+    got = {p["name"]: (p["group"], p["since"]) for p in ex}
+    # acceptance: a fresh two-sided tag pairs itself, under its tag word;
+    # a lone leg pairs with its tag's opposite side, under its mates' group
+    assert got["NTPC_PWGR"] == ("POWER", "2026-11-23"), got
+    assert got["TATA_APAT"] == ("STEEL", "2026-11-20"), got        # since = the unbroken run
+    assert got["OFSS_PSYS"] == ("IT", "2026-11-23"), got
+    # Kaynes sits on the prior snapshot too, so the run starts there (the
+    # fixture first said 11-23 and the code was right)
+    assert got["SYRMA_KAYNE"] == ("EMS", "2026-11-20"), got        # a broken pair's leg re-pairs
+    assert gone == {"KAYNES_DIXON"}, gone                          # ...and the broken pair goes
+    # rejection: a one-sided tag pairs nothing; a working dictated pair is
+    # never shadowed by a tag pair; a dictation-only book gets nothing
+    assert not any("HCLT" in n for n in got), got
+    assert "TATA_JSTL" not in got and "SYRMA_DIXON" not in got, got
+    assert tag_pairs(tp, None, [("2026-11-23", {"TATA": ("L", "S1"), "JSTL": ("S", "S1")})]) == ([], set())
+    eff = effective_pairs(tp, "2026-11-23", snaps=[("2026-11-23", day)])
+    assert [p["name"] for p in eff["POWER"]] == ["NTPC_PWGR"]
+    assert "KAYNES_DIXON" not in [p["name"] for p in eff["EMS"]]
+    assert unpaired_legs(eff, "2026-11-23", {k: v[0] for k, v in day.items()}) == []
 
     # TSV parse: 2 positions + sector row + N.A. + total, cross-foot true ----
     def row(t, cost, cap, pair, q, ls, nums):

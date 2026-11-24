@@ -2397,12 +2397,18 @@ def _book_view(date: str | None = None) -> dict:
         # the dictated name because reviews, carry, Kelly edges, grading and
         # watches all key on it; `display` is what the row prints.
         held = {k: t["book_side"] for k, t in tokens.items()}
+        # The dictation PLUS a pair per IMS tag for every held leg it does not
+        # cover (PM 2026-11-24: "the tag like Power 1 should be enough";
+        # book_io.tag_pairs has the rule). Replaces spec_pairs for the view.
+        spec_pairs = book_io.effective_pairs(spec_pairs, rep.get("as_of"))
         # Only the pairs IN FORCE on this snapshot (book_io.pair_in_force, PM
         # 2026-11-09): a re-cut pair carries `until`, its successor `since`.
         for sector, plist in book_io.pairs_in_force(spec_pairs, rep.get("as_of")).items():
             for sp in plist or []:
                 rc = book_io.reconcile_pair(str(sp.get("name")), sp.get("long") or [],
                                             sp.get("short") or [], held)
+                if sp.get("tag"):
+                    rc["note"] = f"paired by IMS tag {sp['tag']}; not in specs/book.yaml"
                 view.append({"sector": sector, "label": str(sp.get("name")),
                              "L": rc["long"], "S": rc["short"], "rc": rc,
                              "since": sp.get("since")})

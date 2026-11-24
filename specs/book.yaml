@@ -83,6 +83,7 @@ ticker_map:
   COFOR: coforge
   MPHL: mphasis
   PSYS: persistent
+  OFSS: ofss            # 2026-11-23, IMS tag IT 4 (long); OFSS.NS already in yahoo_prices
   TELX: tata_elxsi
   LTTS: ltts
   KPITT: kpit
@@ -236,6 +237,7 @@ names:
   COFOR: Coforge
   MPHL: Mphasis
   PSYS: Persistent
+  OFSS: Oracle Fin Serv
   TELX: Tata Elxsi
   LTTS: LTTS
   KPITT: KPIT

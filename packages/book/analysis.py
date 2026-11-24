@@ -100,21 +100,30 @@ def _book_io():
     return book_io
 
 
-def _reconciled(cfg: dict, sides: dict) -> list[tuple[str, dict, dict]]:
+def _pairs(cfg: dict, tags: bool) -> dict:
+    """specs/book.yaml `pairs`, plus the IMS-tag pairs for every held leg the
+    dictation does not cover (PM 2026-11-24, book_io.tag_pairs) when `tags` —
+    i.e. when the sides come from the store. A caller passing its own sides
+    (the selftest's fixtures) gets the dictation alone."""
+    sp = cfg.get("pairs") or {}
+    return _book_io().effective_pairs(sp, None) if tags else sp
+
+
+def _reconciled(cfg: dict, sides: dict, tags: bool = False) -> list[tuple[str, dict, dict]]:
     """The pairs IN FORCE today (specs/book.yaml `since`/`until`, PM
     2026-11-09), each reconciled against the held sides. A retired pair is
     not here; its legs still on the book come back through _unpaired()."""
     book_io = _book_io()
-    live = book_io.pairs_in_force(cfg.get("pairs") or {}, None)
+    live = book_io.pairs_in_force(_pairs(cfg, tags), None)
     return [(g, p, book_io.reconcile_pair(p["name"], p.get("long") or [],
                                           p.get("short") or [], sides))
             for g, ps in live.items() for p in ps]
 
 
-def _unpaired(cfg: dict, sides: dict) -> list[dict]:
+def _unpaired(cfg: dict, sides: dict, tags: bool = False) -> list[dict]:
     """Held legs whose pair was retired and that no pair in force names
     (book_io.unpaired_legs). They stay on the roster: still a position."""
-    return _book_io().unpaired_legs(cfg.get("pairs") or {}, None, sides)
+    return _book_io().unpaired_legs(_pairs(cfg, tags), None, sides)
 
 
 def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
@@ -128,6 +137,7 @@ def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
     sides and off the book (none today) is reported as "both", never resolved.
     """
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    tags = sides is None
     sides = _held(sides)
     tmap, names = cfg.get("ticker_map") or {}, cfg.get("names") or {}
     # PM, 2026-10-27: cash names off the Analysis roster (Syrma kept). The
@@ -135,7 +145,7 @@ def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
     skip = set(cfg.get("analysis_exclude") or {})
     word = {"L": "long", "S": "short"}
     out: dict[str, dict] = {}
-    for group, p, rc in _reconciled(cfg, sides):
+    for group, p, rc in _reconciled(cfg, sides, tags):
         for dside, held in (("long", rc["long"]), ("short", rc["short"])):
             for tok in held:
                 ent = tmap.get(tok)
@@ -152,7 +162,7 @@ def roster(cfg: dict | None = None, sides: dict | None = None) -> list[dict]:
                 if tok in sides and word[sides[tok]] != dic:
                     row["dictated_side"] = dic
                 out[ent] = row
-    for u in _unpaired(cfg, sides):
+    for u in _unpaired(cfg, sides, tags):
         ent = tmap.get(u["token"])
         if not ent or u["token"] in skip or ent in out:
             continue
@@ -214,10 +224,11 @@ def expected_legs(cfg: dict | None = None, sides: dict | None = None) -> int:
     skip = set(cfg.get("analysis_exclude") or {})        # counted out by name, as roster() leaves them out
     # the same set roster() walks: pairs in force today plus the held legs a
     # retired pair left behind (PM 2026-11-09, dated dictation)
-    live = _book_io().pairs_in_force(cfg.get("pairs") or {}, None)
+    tags = sides is None
+    live = _book_io().pairs_in_force(_pairs(cfg, tags), None)
     toks = {t for ps in live.values() for p in ps
             for side in ("long", "short") for t in p.get(side) or []}
-    toks |= {u["token"] for u in _unpaired(cfg, sides if sides is not None else _held(None))}
+    toks |= {u["token"] for u in _unpaired(cfg, sides if sides is not None else _held(None), tags)}
     toks |= {c["token"] for c in cfg.get("analysis_coverage") or [] if c.get("token")}   # coverage names, 2026-11-09
     return len({tmap.get(t) or f"UNMAPPED:{t}" for t in toks if t not in skip})
 
@@ -227,6 +238,7 @@ def dictated_pairs(cfg: dict | None = None, sides: dict | None = None) -> list[d
     `direction` is as_dictated / reversed / broken / off; a broken pair gets
     no pair juice, so it never reaches the Kelly edge."""
     cfg = cfg or yaml.safe_load(BOOK_YAML.read_text(encoding="utf-8"))
+    tags = sides is None
     sides = _held(sides)
     tmap = cfg.get("ticker_map") or {}
     return [{"name": p["name"], "group": g,
@@ -234,7 +246,7 @@ def dictated_pairs(cfg: dict | None = None, sides: dict | None = None) -> list[d
              "short": [tmap.get(t) for t in rc["short"]],
              "direction": rc["direction"], "display": rc["display"],
              "direction_note": rc["note"]}
-            for g, p, rc in _reconciled(cfg, sides)]
+            for g, p, rc in _reconciled(cfg, sides, tags)]
 
 
 # --------------------------------------------------------------- priced in
