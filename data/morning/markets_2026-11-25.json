@@ -1,0 +1,207 @@
+{
+ "date": "2026-11-25",
+ "fetched_at": "2026-11-25T08:09:02",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-24",
+    "close": 7201.09,
+    "prev_date": "2026-11-23",
+    "chg_pct": -0.5,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-24",
+    "close": 23733.54,
+    "prev_date": "2026-11-23",
+    "chg_pct": -1.48,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-24",
+    "close": 50018.7,
+    "prev_date": "2026-11-23",
+    "chg_pct": 0.85,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-24",
+    "close": 8832.5,
+    "prev_date": "2026-11-23",
+    "chg_pct": -7.88,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-24",
+    "close": 155.38,
+    "prev_date": "2026-11-23",
+    "chg_pct": -5.86,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-24",
+    "close": 413.27,
+    "prev_date": "2026-11-23",
+    "chg_pct": -8.86,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-24",
+    "close": 349.2,
+    "prev_date": "2026-11-23",
+    "chg_pct": -3.96,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-24",
+    "close": 301.08,
+    "prev_date": "2026-11-23",
+    "chg_pct": -3.98,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-24",
+    "close": 232.32,
+    "prev_date": "2026-11-23",
+    "chg_pct": 4.51,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-24",
+    "close": 60.98,
+    "prev_date": "2026-11-23",
+    "chg_pct": 4.11,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture (ACN) Pushes Deeper Into AI Compliance Tools As Undervalued Narrative Builds",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-24 19:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-pushes-deeper-ai-190806006.html"
+   },
+   {
+    "title": "Asia-Pacific Digital Transformation Market: Size, Trends, and Forecast (2026-2034) Featuring Intelligence on Accenture, Google (Alphabet), IBM, Microsoft, Oracle, HPE, SAP, EMC (Dell EMC), Cognex, Adobe and Siemens",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-24 15:29Z",
+    "link": "https://finance.yahoo.com/technology/articles/asia-pacific-digital-transformation-market-152900939.html"
+   },
+   {
+    "title": "The Single Most Important Metric For Accenture Stock",
+    "publisher": "Trefis",
+    "when": "2026-11-24 13:56Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/single-most-important-metric-accenture-135614763.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Cognizant Technology Solutions (CTSH) Puts AI To Work In Healthcare And Cybersecurity",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-22 19:06Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-technology-solutions-ctsh-puts-190639419.html"
+   },
+   {
+    "title": "How Did IBM Stock Leave Cognizant Behind?",
+    "publisher": "Trefis",
+    "when": "2026-11-19 21:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/did-ibm-stock-leave-cognizant-215511163.html"
+   },
+   {
+    "title": "BofA Adjusts Price Target on Cognizant Technology Solutions to $70 From $91",
+    "publisher": "MT Newswires",
+    "when": "2026-11-19 13:37Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/bofa-adjusts-price-target-cognizant-133701172.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Dow Jones Futures Fall; Trump Says 'Not Too Late' For U.S. To Take Nvidia Stake",
+    "publisher": "Investor's Business Daily",
+    "when": "2026-11-25 02:34Z",
+    "link": "https://finance.yahoo.com/m/d96603c1-fe7f-3bf3-8158-0728b464d469/dow-jones-futures-fall%3B-trump.html"
+   },
+   {
+    "title": "Nvidia\u2019s Rebound, Falling Oil And A Strong Dollar: Three Signals Complicating The Fed\u2019s December Decision",
+    "publisher": "Stocktwits",
+    "when": "2026-11-25 02:09Z",
+    "link": "https://finance.yahoo.com/economy/policy/articles/nvidia-rebound-falling-oil-strong-020932908.html"
+   },
+   {
+    "title": "Jensen Huang\u2019s Vision for the New Nvidia Is a Lot Like the Old One",
+    "publisher": "The Wall Street Journal",
+    "when": "2026-11-25 02:00Z",
+    "link": "https://finance.yahoo.com/m/ba51af3c-0fda-3b5a-9119-29797323f1a0/jensen-huang%E2%80%99s-vision-for-the.html"
+   },
+   {
+    "title": "Why Nvidia's rebound may not mean the S&P 500 has bottomed",
+    "publisher": "TheStreet",
+    "when": "2026-11-25 01:23Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-nvidias-rebound-may-not-012310904.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Nvidia, AMD, Broadcom lead chip stocks lower as AI trade comes under pressure",
+    "publisher": "Yahoo Finance",
+    "when": "2026-11-24 21:03Z",
+    "link": "https://finance.yahoo.com/markets/article/nvidia-amd-broadcom-lead-chip-stocks-lower-as-ai-trade-comes-under-pressure-141635463.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "Why AMD Stock Fell Today",
+    "publisher": "Motley Fool",
+    "when": "2026-11-24 23:25Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/why-amd-stock-fell-today-232502689.html"
+   },
+   {
+    "title": "Stock Market Today, Nov. 24: AMD Plunges 9% as 337 Million-Share Resale Filing Adds to AI Sell-Off",
+    "publisher": "Motley Fool",
+    "when": "2026-11-24 22:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-24-223938818.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25774.5,
+  "chg_pct": -0.13,
+  "stamp": "25-Nov-2026 08:08:55",
+  "expiry": "29-Dec-2026",
+  "volume": 2109,
+  "nifty_close": {
+   "close": 25349.65,
+   "stamp": "23-Nov-2026 15:30"
+  },
+  "gap_pts": 424.8,
+  "gap_pct": 1.68
+ }
+}

@@ -1,0 +1,207 @@
+{
+ "date": "2026-11-25",
+ "generated_at": "2026-11-25T08:13:29",
+ "mail": {
+  "window": "24h to 08:07 IST",
+  "n_scanned": 88,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "APL Apollo cut by three houses: BofA to Underperform (PO Rs1,700 from Rs2,400), I-Sec to SELL (TP Rs1,345 from Rs2,200), Ambit SELL at Rs1,200.",
+      "source": "BofA - APAT IN: APL Apollo Tubes: Scale at Price? Downgrade to Underperform; I-Sec - APL Apollo Tubes (SELL): Promoter stake sale may weigh on valuation premium; Ambit - Tata Steel (SELL) - Sell-off already discounts worst-case APL outcome",
+      "received": "02:01",
+      "detail": {
+       "summary": "Both BofA and I-Sec argue the Rs280bn debt-funded purchase of Tata's tubes and colour-coated business is full-priced and dilutive. BofA drops P/B and cuts target multiples to long-term average; I-Sec cuts to 15x FY28E pro forma EV/EBITDA and flags minority dilution from the further capital raise.",
+       "points": [
+        "BofA: FY28E EPS Rs48 vs Rs67 combined, 28% dilution",
+        "I-Sec: pro forma FY28E EPS down 43% without new capital",
+        "Deal at ~25x EV/EBITDA; INR100bn EBITDA target seen far-fetched (I-Sec)",
+        "BofA: Rs100bn debt + Rs180bn equity at Rs1,700/sh",
+        "Ambit pulls APL valuation to Rs1,200, stays SELL"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Steel split on the APL deal: I-Sec BUY (TP Rs221), BofA Neutral (PO Rs185 from Rs220), Ambit SELL; CLSA calls it a pricey deal.",
+      "source": "I-Sec - Tata Steel (BUY): Strengthening downstream presence at premium valuations; BofA - TATA IN: Tata Steel: APL Apollo deal - downstream push adds debt, back-ends returns; CLSA - Tata Steel (TATA IB): Pricey deal",
+      "received": "22:27",
+      "detail": {
+       "summary": "Houses agree the deal is strategically sound but dilutive and expensive, and differ on whether the stock already reflects it. CLSA sees value-neutrality only if the APL stake is valued at 15x EV/EBITDA and expects an overhang; BofA sees EPS accretion only in 3-3.5 years.",
+       "points": [
+        "I-Sec: TP cut 6% to Rs221, 7.0x FY28E EV/EBITDA, BUY",
+        "BofA: PO Rs185, India FY28E EV/EBITDA 6.5x from 7.5x",
+        "CLSA: 25x FY28 consensus EV/EBITDA; pro forma net debt/EBITDA 2.9x vs 2.4x",
+        "BofA: consolidated net debt may rise up to INR323bn",
+        "CLSA: deal value-neutral at 15x on APL stake"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Ambit (SELL, no target stated) says Tata's 9-10% fall already prices the worst APL outcome; Rs170bn value loss needs an APL shareholder veto plus full buyout.",
+      "source": "Ambit - Tata Steel (SELL) - Sell-off already discounts worst-case APL outcome (+6 more in Outlook)",
+      "received": "07:13",
+      "detail": {
+       "summary": "Ambit stays structurally bearish on iron ore and post-2030 lease expiry, but argues the Rs200bn market-cap loss discounts the worst case. Full execution costs 3.3-5.6%; a CCI rejection after Tranche 1 costs far less. Insufficient upside keeps it from turning BUY.",
+       "points": [
+        "Rs200bn mcap lost; worst case -Rs170bn (~8%) if APL holders veto",
+        "Full execution: -3.3% baseline to -5.6% at Rs1,300/sh",
+        "Post-tax deal RoCE 5.6% (Case A), 3.3% (Case B)",
+        "CCI rejection after Tranche 1: Rs10bn notional loss",
+        "Open offer Rs2,301.4/sh; long-stop 31 March 2028"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak sees Persistent leading mid-tier BFS growth, then Coforge; incumbents face further base deflation as agentic coding lifts developer productivity.",
+      "source": "Kotak - [Kotak] IT Services: BFS tech outlook: Strong AI adoption trajectory",
+      "received": "07:47",
+      "detail": {
+       "summary": "Kotak reads US and European bank commentary as showing healthy tech spend and fast AI adoption, but says it has not fully reached Indian IT revenue. Challengers with strong technical and execution skills gain, while incumbents risk more deflation if productivity gains are not reinvested.",
+       "points": [
+        "BFSI/BFS revenue of Indian IT grew 6.1% yoy in Sep-26 quarter",
+        "Software development productivity quoted at 20-40%, unchanged from 6-9 months ago",
+        "Persistent to lead growth, then Coforge; Mphasis has concentration and mortgage risks",
+        "Hexaware and LTM hit by largest-account pressure",
+        "Visa cut 7% of tech and product staff; Wells Fargo prefers coding agents over hiring"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA hosted BCG/NASSCOM: agentic AI could add US$300-400bn to tech services over five years, but outcome-based pricing will decide share shifts; stays stock-specific.",
+      "source": "BofA - India IT Services: Assessing CY27 outlook: Feed 1 - India",
+      "received": "08:19 (24-Nov)",
+      "detail": {
+       "summary": "BofA argues agentic AI expands the services pool but near-term compression hides it in reported growth. Moving from T&M to outcome-based contracts is a prerequisite, and the ability to underwrite outcome risk will drive market-share shifts. No industry-wide rerating; clear winners will take time.",
+       "points": [
+        "US$300-400bn added over five years, c.3-5% CAGR",
+        "Non-T&M already c.50-60% of contracts",
+        "Buyers expect 30-40% AI productivity vs vendors committing 5-15%",
+        "L1-heavy infra/app maintenance and BPO most exposed to compression",
+        "Outsourcing propensity intact; repricing, not insourcing, dominates discussions"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "I-Sec sales desk pitches Adani Energy Solutions as BUY, TP Rs1,600 on SoTP, expecting EBITDA to double in two years on transmission commissioning and smart meters.",
+      "source": "I-Sec - Sales Note - 3 BUY Ideas - ADANIENS IN, MAXHEALT IN, ITCHOTEL IN",
+      "received": "22:36",
+      "detail": {
+       "summary": "The note frames ADANIENS as a direct play on India's transmission build-out and distribution reform. It keeps the Rs150bn FY27 capitalisation guidance, and Q3 numbers will show whether capitalisation is actually happening. Risks are commissioning delays, slow smart-meter rollout, aggressive bidding and possible cancellation of the West Bengal bid.",
+       "points": [
+        "TP Rs1,600, SoTP basis",
+        "FY27 capitalisation guidance retained at Rs150bn",
+        "60% of smart-meter order book installed",
+        "Book under construction rose to >Rs1trn",
+        "Expects >25% share of bids medium term"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "CLSA: 2QFY27 universe PBT grew 26% YoY vs its 16% forecast, led by OMCs; FY27 Nifty EPS raised 1.3%, FY28 cut 1.3%.",
+      "source": "CLSA - India strategy: Growth accelerates; estimates upped",
+      "received": "11:45",
+      "detail": {
+       "summary": "CLSA says 2QFY27 PBT growth hit a four-year high, but ex state-owned oil & gas it was 23% and only in line. Its Nifty EPS revisions are mixed, leaving it below consensus for FY27 and marginally above for FY28.",
+       "points": [
+        "PBT +26% YoY vs 16% forecast; ex O&G +23%",
+        "46% beat, 33% missed, 21% in line (164 stocks)",
+        "Nifty EPS FY27 +1.3%, FY28 -1.3%",
+        "2.2% below consensus FY27, 0.3% above FY28",
+        "EPS cut: cement, media, EMS; raised: O&G, metals"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay: Nifty rollover 75.5% vs 72.6% last expiry, market-wide 90.2% vs 92%; single-stock roll basis widened to 71bps from 49bps.",
+      "source": "Emkay - Alternative and Quantitative Research: Post Expiry Analysis - Nov 2026",
+      "received": "15:27",
+      "detail": {
+       "summary": "Emkay's post-expiry read shows index rollovers above last expiry but market-wide rollovers slightly below, with a wider roll basis on single-stock futures. Sector OI shifts were large, with autos adding and banks shedding open interest.",
+       "points": [
+        "Nifty rollover 75.5% vs 72.6%; 3m avg 74.8%",
+        "Bank Nifty rollover 70.3% vs 84.1% last month",
+        "Market-wide rollover 90.2% vs 92%",
+        "Auto OI +11.5%; Banking OI -16.6%",
+        "Utilities rolled 94%; autos 86.2%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM: Nasdaq fell 2.0% as semis gave back Monday's rally (NVDA -5.9%); new Section 301 tariffs on 16 economies expected, scope unknown.",
+      "source": "JPM - Overnight Brief! 11/25 - Give back in tech, new set of tariff measures (+1 more in Outlook)",
+      "received": "05:45",
+      "detail": {
+       "summary": "JPM says the AI trade gave back part of Monday's gains while the broader market held up better than the index. WSJ reported new Section 301 excess-capacity tariffs are coming; JPM's market intelligence desk moves back to tactically cautious.",
+       "points": [
+        "SPX -0.5%, NDX -2.0%, RTY +0.6%",
+        "Semis -7.9%; NVDA -5.9%; Memory -9.8%",
+        "Section 301 probe covers 16 economies; rate unknown",
+        "Brent +1.7% to $90.89; 10Y 4.93%",
+        "Mkt intel: tactically cautious, bounce not a bottom"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous (aluminium/zinc)",
+   "Cement",
+   "Mining",
+   "EMS",
+   "Other coverage-adjacent"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Overnight SOX fell 7.88%, Nvidia -5.86% and AMD -8.86%, with AMD hit by a reported 337m-share resale per a Motley Fool headline.",
+    "source": "Markets file / Yahoo"
+   },
+   {
+    "text": "GS cut TPs on Hynix, Samsung Electronics, Kioxia and CXMT on 23-Nov but kept Buy ratings, calling 2027 strong and 2028 more measured.",
+    "source": "Goldman Sachs - RE: [By Korea semi analyst]: We cut TP for Hynix, SEC, Kioxia & CXMT"
+   },
+   {
+    "text": "GS HBM tracker puts Samsung 2027/2028 HBM ASP estimates 19%/7% above consensus; Japan resin and film imports to Korean fabs up 12%/51% yoy.",
+    "source": "Goldman Sachs - RE: [By Korea semi analyst]: We cut TP for Hynix, SEC, Kioxia & CXMT"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
