@@ -49,9 +49,10 @@ roll resets to them.
 
 Valuation is EV/EBITDA ONLY, in column B (PM, 2026-11-25: "remove the PE
 column"; it was genco_model's P/E-in-B, EV/EBITDA-in-C layout for its first
-day). The target multiple is the median of the houses' targets as implied
-EV/EBITDA on the model's EBITDA and the case build's net debt, as
-`genco_model.ev_block` measures it. `--rewrite-valuation <entity>` rewrites
+day). The target multiple is the median of the houses' targets as EV/EBITDA
+on the STREET EBITDA they valued (build.json consensus, case_brief's
+denominator) and the case build's net debt, applied to the MODEL's EBITDA:
+the house multiple, our earnings. `--rewrite-valuation <entity>` rewrites
 that sheet in a LIVE workbook through Excel after a re-strike, and takes an
 old workbook's Target_pe row off Inputs.
 
@@ -614,8 +615,11 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
     # EV/EBITDA in C, and the two read Rs367 against Rs542.5 on the same model:
     # the P/E column applied a multiple measured on consensus EPS to an EPS 32%
     # below it, and depreciation plus interest are ~88% of this company's EBITDA.
-    # The target multiple is the median of the house table below, implied on
-    # the MODEL's EBITDA and the net debt here, as ev_block measures it.
+    # The target multiple is the median of the house table below: each target
+    # as EV/EBITDA on the STREET EBITDA it was set on (build.json consensus,
+    # case_brief's denominator), applied to the MODEL's EBITDA. For its first
+    # day it was implied on the model's own EBITDA, which handed back the
+    # median target (Rs542.5) whatever the model earned (SILENT_BUGS 16).
     if case is None:
         bj = out.parent / "build.json"
         case = json.loads(bj.read_text(encoding="utf-8")) if bj.exists() else None
@@ -623,6 +627,11 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
     hs = sorted((h for h in evi["houses"] if isinstance(h.get("tp"), (int, float))), key=lambda h: h["tp"])
     if not hs:
         raise SystemExit("the Valuation sheet needs house targets: house_tps in build.json (or the config)")
+    st = evi["street"].get(vfy) or ((cfg.get("street") or {}).get(vfy) or {}).get("ebitda_cr")
+    st = st if isinstance(st, tuple) else ((float(st), "config street") if isinstance(st, (int, float)) else None)
+    if not st:
+        raise SystemExit(f"no street EBITDA for {vfy}: the houses' targets cannot be turned into a multiple "
+                         "(build.json consensus: {FY: {ebitda_cr, source}})")
     nd_asof = evi["net_debt"][1] if evi["net_debt"] else cfg["actual_through"]
     nd_val = (float(evi["net_debt"][0]) if evi["net_debt"] else f"=INDEX({rng('Cash flow', r_nd)},MATCH(B8,Qrow,0))")
     fy_list = [fy for fy in ("FY27", "FY28", "FY29") if fy in {fy_of(q) for q in qs}]
@@ -641,8 +650,8 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
         ("EV today: market cap + that net debt (Rs cr)", "=B10+B9", "cr", "f", ""),                                    # 11
         ("EV/EBITDA today, on the valuation year", "=B11/B7", "x2", "f", ""),                                           # 12
         ("Target EV/EBITDA multiple", None, "x2", "key",
-         "The median of the houses' implied EV/EBITDA, below. Implied on the MODEL's EBITDA, so at the model's own "
-         "EBITDA it returns the houses' median target."),                                                              # 13
+         "The houses' median EV/EBITDA, below, measured on the street EBITDA they valued; applied here to the "
+         "MODEL's EBITDA in B7. The same multiple case_brief.py anchors on."),                                         # 13
         ("Enterprise value at the target (Rs cr)", "=B7*B13", "cr", "f", ""),                                          # 14
         ("Equity value (Rs cr)", "=B14-B9", "cr", "f", "Minority interest not deducted (as in the case)."),            # 15
         ("Expected price (Rs)", "=B15*10/Shares_mn", "rs", "f", ""),                                                    # 16
@@ -652,7 +661,8 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
     ]
     stb = 4 + len(vrows) + 1
     top = stb + 2 * (len(fy_list) + 2)                 # the house table, under the two street checks
-    h1, hn = top + 2, top + 1 + len(hs)
+    rs = top + 1                                       # the street EBITDA the targets are divided by
+    h1, hn = top + 3, top + 2 + len(hs)
     vrows[9] = vrows[9][:1] + (f"=MEDIAN(C{h1}:C{hn})",) + vrows[9][2:]
     for k, (lab, v, fmt, kind, note) in enumerate(vrows):
         r = 4 + k
@@ -701,16 +711,19 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
             cell.fill = YELLOW
 
     put(top, 1, EV_HEAD, bold=True)
-    put(top, 5, "Implied EV/EBITDA = (target x shares + the net debt in B9) / the MODEL's valuation-year EBITDA in B7; "
-                "minorities and JV investments are not adjusted. After a re-strike: ipp_model.py --rewrite-valuation "
-                f"{cfg['entity']}.", note=True)
+    put(top, 5, f"Implied EV/EBITDA = (target x shares + the net debt in B9) / the street EBITDA in B{rs}, the figure "
+                "the houses valued; minorities and JV investments are not adjusted. After a re-strike: ipp_model.py "
+                f"--rewrite-valuation {cfg['entity']}.", note=True)
+    put(rs, 1, f"Street EBITDA the targets are measured on, {vfy} (Rs cr)", bold=True)
+    put(rs, 2, st[0], "cr", BLUE, fill=True)
+    put(rs, 5, st[1][:220], note=True)
     for c, h in ((1, "House"), (2, "Target (Rs)"), (3, "Implied EV/EBITDA"), (5, "Date, rating and basis")):
-        put(top + 1, c, h, bold=True)
+        put(top + 2, c, h, bold=True)
     for k, h in enumerate(hs):
         r = h1 + k
         put(r, 1, str(h.get("house", "")))
         put(r, 2, float(h["tp"]), "rs", BLUE, fill=True)
-        put(r, 3, f"=(B{r}*Shares_mn/10+$B$9)/$B$7", "x2", GREEN)
+        put(r, 3, f"=(B{r}*Shares_mn/10+$B$9)/$B${rs}", "x2", GREEN)
         put(r, 5, ", ".join(str(x) for x in (h.get("date"), h.get("basis")) if x), note=True)
     for k, (lab, fn) in enumerate((("Median", "MEDIAN"), ("Mean", "AVERAGE"))):
         r = hn + 1 + k
@@ -725,7 +738,7 @@ def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
                    "EV/EBITDA.", note=True)
     put(hn + 4, 1, "At today's price")
     put(hn + 4, 2, "=CMP", "rs", GREEN)
-    put(hn + 4, 3, "=B12", "x2")
+    put(hn + 4, 3, f"=B11/B{rs}", "x2")                # today's EV on street EBITDA, like the houses
 
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
@@ -1072,8 +1085,19 @@ def selftest() -> int:
     eb27 = sum(val(v0, "P&L", "EBITDA", k) for k in range(4, 8))
     chk("EBITDA of the valuation year is the P&L's four quarters", round(vv.cell(V["EBITDA, valuation year (Rs cr)"], 2).value, 6),
         round(eb27, 6))
-    chk("the median EV/EBITDA multiple round-trips to the median target (500 / 540 / 600)",
-        round(vv.cell(V["Expected price (Rs)"], 2).value, 6), 540.0)
+    nd0 = vv.cell(V["Net debt at that quarter (Rs cr)"], 2).value
+    med = (540 * 180.0 + nd0) / 13000.0                 # the median target on the fixture's street FY27 EBITDA
+    chk("target multiple = the houses' median on STREET EBITDA", round(vv.cell(V["Target EV/EBITDA multiple"], 2).value, 9),
+        round(med, 9))
+    chk("expected price = that multiple x the MODEL's EBITDA less net debt, NOT the median target (540)",
+        (round(vv.cell(V["Expected price (Rs)"], 2).value, 6), round(eb27) != 13000),
+        (round((med * eb27 - nd0) / 180.0, 6), True))
+    nost = cp(fx); nost["street"]["FY27"].pop("ebitda_cr")
+    try:
+        build(nost, tmp / "Nostreet_model.xlsx", case={})
+        chk("no street EBITDA for the valuation year refused", "built", "refused")
+    except SystemExit:
+        chk("no street EBITDA for the valuation year refused", "refused", "refused")
 
     # the live writer: an old workbook's Target_pe row and name go, a re-struck
     # target reaches the price, and every formula then reads as a fresh build's
@@ -1093,8 +1117,10 @@ def selftest() -> int:
     chk("rewrite: clean, Target_pe row and name gone",
         (rc, "Target_pe" in wa.defined_names,
          any(str(c.value or "").startswith("Target P/E") for c in wa["Inputs"]["A"])), (0, False, False))
-    chk("rewrite: a re-struck target reaches the expected price (median 560)",
-        round(wv.cell(model_view._val_rows(wv)["tp"], 2).value, 6), 560.0)
+    eb = wv.cell(_rows(wv)["EBITDA, valuation year (Rs cr)"], 2).value
+    chk("rewrite: a re-struck target (median 560) reaches the expected price through the multiple",
+        round(wv.cell(model_view._val_rows(wv)["tp"], 2).value, 6),
+        round(((560 * 180.0 + 64000.0) / 13000.0 * eb - 64000.0) / 180.0, 6))
     print(f"ipp_model selftest: {'FAILED ' + str(fails) if fails else 'all checks passed'}")
     return 1 if fails else 0
 

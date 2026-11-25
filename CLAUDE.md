@@ -3835,9 +3835,15 @@ now reviews both.
   and a table of every house's target with its implied P/E and EV/EBITDA;
   `--add-ev-ebitda ntpc [--force]` puts it into the live workbook through
   Excel, and a rebuild writes it when build.json has `house_tps`. EV is
-  price x shares + net debt at the LAST REPORTED quarter, on the MODEL's
-  valuation-year EBITDA (no consensus EBITDA is stored), so the median
-  multiple gives back the median target exactly. Minorities and JV
+  price x shares + net debt at the LAST REPORTED quarter. **Each house's
+  multiple is measured on the STREET EBITDA (build.json `consensus`, typed in
+  a row above the table) and the median is applied to the MODEL's EBITDA.**
+  Until 2026-11-25 it was measured on the model's EBITDA, so the median
+  multiple gave back the median target exactly, whatever the model earned:
+  NTPC's card read Rs407.0, JSW Energy's Rs542.5 (SILENT_BUGS entry 16; PM:
+  *"Use house multiple but my ebitda ... whats the point of modelling if we
+  dont use the ebitda?"*). No street EBITDA for the valuation year refuses.
+  Minorities and JV
   investments are not adjusted. As first written, column B, the basis row and
   the juice stayed P/E (the next bullet changed that the same day). First
   read: 7.72x today, houses 8.17x to 9.66x, median 8.86x. The
@@ -3867,8 +3873,11 @@ now reviews both.
     the Q3 carry: the PM's accepted Q3 was in line on EPS (6.72 vs 6.75) and
     is 2.6% under Morgan Stanley on EBITDA (Rs16,689cr vs Rs17,137cr), the
     rule carries that to FY28, and net debt is 47% of enterprise value, so
-    the gap reaches the equity at 1.9 times. The workbook's own target stays
-    Rs407 (+26.6%), on the model's FY28 EBITDA of Rs73,184cr.
+    the gap reaches the equity at 1.9 times. The workbook's own target read
+    Rs407 (+26.6%), which was the median house target and not the model (see
+    above). Corrected 2026-11-25: 9.15x on Morgan Stanley's FY28 Rs72,771cr,
+    applied to the model's Rs73,184cr, is **Rs410.9**, and the P/E route
+    reads Rs410.8.
   - `eps_memo` in build.json keeps the P/E quarters; the P/E build as it
     stood is not kept in the repo (`data/` is ignored).
 - **Consensus is a ONE-OFF Yahoo read, not stored.** Neither NTPC model has a
@@ -4002,7 +4011,7 @@ Bloomberg's, the only consensus for this name).
 - **The valuation table:** ten post-result targets from the mailbox, Rs510
   (JPM UW) to Rs675 (I-Sec BUY), median Rs542.5 = 10.79x FY28 Bloomberg
   EBITDA. Sigma 10.7% (screener EV multiple, `multiple_sigma.SYMBOLS`).
-- **`packages/book/ipp_model.py`** (37-check selftest, Excel recalculation
+- **`packages/book/ipp_model.py`** (39-check selftest, Excel recalculation
   included) builds `JSW_Energy_model.xlsx` from `model_config.json`. An IPP is
   neither genco_model's regulated generator nor power_model's transmission
   book: earnings move with commissioned MW, PLF and earnings per unit. Per
@@ -4023,9 +4032,12 @@ Bloomberg's, the only consensus for this name).
   same model. The P/E column applied 31.5x, measured on Bloomberg EPS, to a
   model EPS 32% below it. Depreciation plus interest take ~88% of FY28 EBITDA,
   so a 5.5% EBITDA gap to Morgan Stanley is a 27% PAT gap. The target
-  multiple is the median of the house table, implied on the MODEL's EBITDA
-  and the case's net debt (ev_block's measure), so at the model's own EBITDA
-  it returns the houses' median target. Target_pe is gone from Inputs.
+  multiple is the houses' median on Bloomberg's FY28 EBITDA (Rs15,292cr, the
+  case's denominator), 10.79x, applied to the model's Rs14,296cr: **Rs484,
+  -0.4% on the 25-Nov close of Rs485.80**. For its first hours the house
+  multiple was implied on the model's own EBITDA (11.54x), which handed back
+  the median target of Rs542.5 whatever the model earned (SILENT_BUGS entry
+  16). Target_pe is gone from Inputs.
   `ipp_model.py --rewrite-valuation <entity>` rewrites the sheet in the live
   workbook through Excel after a re-strike: it refuses if P&L or Cash flow do
   not line up with a fresh build, takes an old workbook's Target_pe row and

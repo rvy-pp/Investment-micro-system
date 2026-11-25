@@ -309,6 +309,43 @@ grid). The question to ask of any such threshold is what ELSE lands below
 it. And a loader's summary line must be built from what it wrote, never from
 what it was asked for.
 
+### 16. A house multiple measured on our own EBITDA — the model that could not move its target
+
+*Found 2026-11-25, on the PM asking why the workbook's 11.54x and the case's
+10.79x were both "the house median EV/EBITDA".*
+
+`genco_model.ev_block` (22-Nov) turned each house's target into an
+EV/EBITDA multiple by dividing the target's enterprise value by the
+**MODEL's** valuation-year EBITDA, then applied the median multiple to that
+same model EBITDA. The two cancel, so the expected price was the median
+house target exactly, whatever the model earned. NTPC's Analysis card read
+**Rs407.0** and JSW Energy's **Rs542.5** (later reused by `ipp_model`), both
+the median TP to the paisa, both plausible, and nothing raised. JSW Energy's
+model EBITDA is 6.5% under Bloomberg, so the model was pricing the company
+7% above what the houses' own multiple gives it.
+
+**Fix:** the denominator is the STREET EBITDA the houses valued: build.json
+`consensus`, the same figure `case_brief.py` divides by, typed in its own
+row above the house table. The median is applied to the model's EBITDA.
+JSW Energy: 10.79x x Rs14,296cr = **Rs484** (was Rs542.5). NTPC: 9.15x on
+Morgan Stanley's Rs72,771cr, x the model's Rs73,184cr = **Rs410.9** (was
+Rs407.0), which now agrees with the workbook's own P/E route (Rs410.8). No
+street EBITDA for the valuation year refuses. Both selftests now assert the
+price is NOT the median target when the model's EBITDA differs from the
+street's.
+
+**Checked the same day, and clean:** Inox Wind (Target_ev 11.31x on I-Sec's
+EBITDA), JSW Steel (9.85x struck on Rs39,877cr house EBITDA, JV stripped),
+Tata Steel (8.33x on Rs43,811cr consensus) and Power Grid (15.82x P/E on
+Bloomberg EPS) all measure the multiple on the street's earnings and apply it
+to the model's.
+
+**What this one adds:** a round-trip test is not a test of a valuation. The
+selftest asserted "the median multiple round-trips to the median target" and
+passed, because that was the bug. When the code turns a number back into
+itself, the price carries no information from the model. The check to write
+is the opposite one: move the model's earnings and the price must move.
+
 ## What actually caught them
 
 Worth being honest, because it is thin and it is not the code:

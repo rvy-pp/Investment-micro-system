@@ -638,7 +638,8 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     evi = ev_inputs(cfg if cfg.get("house_tps") else
                     json.loads((out.parent / "build.json").read_text(encoding="utf-8")) if (out.parent / "build.json").exists() else None)
     if evi["houses"]:
-        ev_block(va, evi["houses"], rng("P&L", r_ebitda), rng("Cash flow", r_nd), basis=evi["basis"], net_debt=evi["net_debt"])
+        ev_block(va, evi["houses"], rng("P&L", r_ebitda), rng("Cash flow", r_nd), basis=evi["basis"], net_debt=evi["net_debt"],
+                 street=evi["street"])
 
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
@@ -690,11 +691,16 @@ def ev_inputs(build: dict | None) -> dict:
     b = build or {}
     ev = b.get("valuation") == "ev_ebitda"
     nd = (b.get("net_debt_cr"), b.get("net_debt_asof") or "the case build") if ev and isinstance(b.get("net_debt_cr"), (int, float)) else None
-    return {"houses": b.get("house_tps") or [], "basis": "EV/EBITDA" if ev else None, "net_debt": nd}
+    # The street EBITDA each fiscal year's targets are divided by: build.json
+    # `consensus` (what case_brief.py divides by), else a config's `street`.
+    cons = b.get("consensus") or b.get("street") or {}
+    street = {fy: (float(d["ebitda_cr"]), str(d.get("source") or "")) for fy, d in cons.items()
+              if isinstance(d, dict) and isinstance(d.get("ebitda_cr"), (int, float)) and d["ebitda_cr"] > 0}
+    return {"houses": b.get("house_tps") or [], "basis": "EV/EBITDA" if ev else None, "net_debt": nd, "street": street}
 
 
 def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int | None = None,
-             basis: str | None = None, net_debt: tuple | None = None) -> dict:
+             basis: str | None = None, net_debt: tuple | None = None, street: dict | None = None) -> dict:
     """PM, 2026-11-22: *"can we do an ev/ebitda analysis ... Get the implied
     EV/ebitda for all houses, make a column at the side of the P/E"*.
 
@@ -704,12 +710,24 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     model_view and the Analysis card read B, and the basis stays P/E.
 
     EV = price x shares + net debt at the LAST REPORTED quarter, for today's
-    multiple and for every house alike, so the median multiple times the
-    EBITDA less that net debt is the median target exactly. EBITDA is the
-    MODEL's valuation-year figure: no consensus EBITDA is stored for a name
-    outside the daily capture. Minority interests and the JV investments are
-    not adjusted, on either side. The implied P/E uses the typed consensus
-    EPS of the valuation year, as case_brief.py does.
+    multiple and for every house alike. Each house's implied EV/EBITDA is that
+    EV over the STREET EBITDA of the valuation year (`street`, FY -> (value,
+    source), from build.json `consensus`: the figure case_brief.py divides
+    by), typed in a row of its own above the table. The median is then
+    applied to the MODEL's EBITDA: the house multiple, our earnings.
+    Minority interests and the JV investments are not adjusted, on either
+    side. The implied P/E uses the typed consensus EPS of the valuation year,
+    as case_brief.py does. No street EBITDA for the valuation year refuses.
+
+    THE DENOMINATOR WAS THE MODEL'S EBITDA UNTIL 2026-11-25, and that made the
+    column circular: a multiple implied on the model's EBITDA, applied back to
+    the model's EBITDA, returns the houses' median target whatever the model
+    earns. NTPC's card read Rs407.0 (the median TP to the paisa) and JSW
+    Energy's Rs542.5 (likewise) for three days, plausible and raising
+    nothing. On street EBITDA, NTPC's median is 9.15x where it read 9.10x,
+    JSW Energy's 10.79x where it read 11.54x; the model's EBITDA now moves the
+    price. Caught by the PM asking why the workbook's 11.54x and the case's
+    10.79x were both "the house median" (SILENT_BUGS entry 16).
 
     `basis` ("EV/EBITDA", PM 2026-11-22: "Switch to EV/EBITDA") is typed into
     the basis cell in column B, the one cell of the P/E block this changes.
@@ -727,9 +745,15 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     if miss or not cons:
         raise SystemExit("cannot place the EV/EBITDA column: the Valuation sheet lacks " + ", ".join(miss or ["the consensus EPS rows"]))
     rb, ry, rq, rpat, reps, rpe, rtg, rtp, rup, rdv, rtr = (L[x] for x in EV_PE_LABELS)
+    vfy = str(va.cell(ry, 2).value or "")
+    st = (street or {}).get(vfy)
+    if not st:
+        raise SystemExit(f"cannot measure the houses' EV/EBITDA: no street EBITDA for {vfy or 'the valuation year'} "
+                         "(build.json consensus: {FY: {ebitda_cr, source}})")
     hs = sorted((h for h in houses if isinstance(h.get("tp"), (int, float))), key=lambda h: h["tp"])
     top = top or va.max_row + 2
-    h1, hn = top + 2, top + 1 + len(hs)
+    rs = top + 1                                   # the street EBITDA row
+    h1, hn = top + 3, top + 2 + len(hs)
     done: list[str] = []
     va.column_dimensions["D"].width = 46
 
@@ -766,7 +790,7 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     put(rpe, 3, f"=(CMP*Shares_mn/10+C{reps})/C{rpat}", "x2", GREEN)
     put(rpe, 4, "EV/EBITDA today, on the valuation year")
     put(rtg, 3, f"=MEDIAN(D{h1}:D{hn})", "x2", GREEN, bold=True)
-    put(rtg, 4, "Target EV/EBITDA (x): the houses' median, below")
+    put(rtg, 4, "Target EV/EBITDA (x): the houses' median on street EBITDA, below")
     put(rtp, 3, f"=(C{rtg}*C{rpat}-C{reps})*10/Shares_mn", "rs", bold=True)
     put(rtp, 4, "Expected price on EV/EBITDA (Rs)", bold=True)
     put(rup, 3, f"=C{rtp}/CMP-1", "pct", GREEN, bold=True)
@@ -777,16 +801,20 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     eps = f'INDEX($B${cons[0]}:$B${cons[-1]},MATCH("Consensus EPS "&$B${ry}&" (Rs)",$A${cons[0]}:$A${cons[-1]},0))'
     put(top, 1, EV_HEAD, bold=True)
     put(top, 5, "Implied P/E = target / the consensus EPS typed above for the valuation year. Implied EV/EBITDA = "
-                f"(target x shares + the net debt in C{reps}) / the MODEL's valuation-year EBITDA; "
-                "minorities and JV investments are not adjusted. Retype a target after a re-strike.", note=True)
+                f"(target x shares + the net debt in C{reps}) / the street EBITDA in B{rs}, the figure the houses "
+                f"valued; the median is applied to the MODEL's EBITDA in C{rpat}. Minorities and JV investments are "
+                "not adjusted. Retype a target after a re-strike.", note=True)
+    put(rs, 1, f"Street EBITDA the targets are measured on, {vfy} (Rs cr)", bold=True)
+    put(rs, 2, st[0], "cr", BLUE, fill=True)
+    put(rs, 5, st[1][:220], note=True)
     for j, h in enumerate(("House", "Target (Rs)", "Implied P/E", "Implied EV/EBITDA", "Date, rating and basis")):
-        put(top + 1, 1 + j, h, bold=True)
+        put(top + 2, 1 + j, h, bold=True)
     for k, h in enumerate(hs):
         r = h1 + k
         put(r, 1, str(h.get("house", "")))
         put(r, 2, float(h["tp"]), "rs", BLUE, fill=True)
         put(r, 3, f"=B{r}/{eps}", "x2")
-        put(r, 4, f"=(B{r}*Shares_mn/10+$C${reps})/$C${rpat}", "x2", GREEN)
+        put(r, 4, f"=(B{r}*Shares_mn/10+$C${reps})/$B${rs}", "x2", GREEN)
         put(r, 5, ", ".join(str(x) for x in (h.get("date"), h.get("basis")) if x), note=True)
     foot = [("Median", "MEDIAN"), ("Mean", "AVERAGE")]
     for k, (lab, fn) in enumerate(foot):
@@ -805,7 +833,7 @@ def ev_block(va, houses: list[dict], ebitda_rng: str, netdebt_rng: str, top: int
     put(r, 1, "At today's price")
     put(r, 2, "=CMP", "rs", GREEN)
     put(r, 3, f"=CMP/{eps}", "x2", GREEN)
-    put(r, 4, f"=C{rpe}", "x2", GREEN)
+    put(r, 4, f"=(CMP*Shares_mn/10+$C${reps})/$B${rs}", "x2", GREEN)        # on street EBITDA, like the houses
     return {"top": top, "first": h1, "last": hn, "end": hn + 4, "cells": done, "tp_cell": f"C{rtp}", "target_cell": f"C{rtg}"}
 
 
@@ -847,7 +875,7 @@ def add_ev_ebitda(entity: str, force: bool = False, base: pathlib.Path | None = 
                 va.cell(r, c).value = None
     info = ev_block(va, houses, f"'P&L'!$D${PLr['EBITDA']}:${last}${PLr['EBITDA']}",
                     f"'Cash flow'!$D${CFr['Net debt, closing']}:${last}${CFr['Net debt, closing']}", top=old,
-                    basis=evi["basis"], net_debt=evi["net_debt"])
+                    basis=evi["basis"], net_debt=evi["net_debt"], street=evi["street"])
     rgb = lambda c: c.rgb[-6:] if c is not None and isinstance(c.rgb, str) else None
     ops.append({"sheet": "Valuation", "cell": "D1", "mode": "width", "value": va.column_dimensions["D"].width})
     for co in info["cells"]:
@@ -946,7 +974,7 @@ def _fixture() -> dict:
                              "gross_debt": {"Q2FY26": 255000.0}, "capex": {"Q1FY26": 9000.0}},
             "memo": {"sections": [{"title": "Bridge", "rows": [{"label": "Standalone PAT", "unit": "Rs cr",
                                                                 "values": {"Q1FY26": 4774.7, "Q2FY26": 4653.3}}]}]},
-            "street": {"FY27": {"eps": 26.0, "source": "t"}},
+            "street": {"FY27": {"eps": 26.0, "ebitda_cr": 30000.0, "source": "t"}},
             "house_tps": [{"house": "C", "tp": 460, "date": "2026-11-02", "basis": "t"}, {"house": "A", "tp": 355},
                           {"house": "B", "tp": 400}],
             "sources": [["a", "b", "c"]], "decks": {}}
@@ -1069,15 +1097,24 @@ def selftest() -> int:
         round(vv("Price on the houses' route (Rs)"), 6),
         round((vv("Book value per share at the end of the valuation year (Rs)") - 7.7) * 1.75 + 48.7, 6))
     hr = V[EV_HEAD]
-    imp = {v0["Valuation"].cell(r, 1).value: v0["Valuation"].cell(r, 4).value for r in range(hr + 2, hr + 5)}
+    imp = {v0["Valuation"].cell(r, 1).value: v0["Valuation"].cell(r, 4).value for r in range(hr + 3, hr + 6)}
     ebitda27 = sum(val(v0, "P&L", "EBITDA", i) for i in range(4, 8))
     nd = val(v0, "Cash flow", "Net debt, closing", 1)
-    chk("houses sorted by target; implied EV/EBITDA = (target x shares + last reported net debt) / model EBITDA",
+    chk("houses sorted by target; implied EV/EBITDA = (target x shares + last reported net debt) / STREET EBITDA",
         [(k, round(x, 6)) for k, x in imp.items()],
-        [(k, round((tp * 969.67 + nd) / ebitda27, 6)) for k, tp in (("A", 355), ("B", 400), ("C", 460))])
-    chk("the median multiple round-trips to the median target", round(v0["Valuation"].cell(V["Expected price (Rs)"], 3).value, 6), 400.0)
+        [(k, round((tp * 969.67 + nd) / 30000.0, 6)) for k, tp in (("A", 355), ("B", 400), ("C", 460))])
+    med = (400 * 969.67 + nd) / 30000.0
+    chk("expected price = the houses' median multiple x the MODEL's EBITDA, less net debt (not the median target)",
+        (round(v0["Valuation"].cell(V["Expected price (Rs)"], 3).value, 6), round(ebitda27, 0) != 30000.0),
+        (round((med * ebitda27 - nd) / 969.67, 6), True))
     chk("implied P/E = target / the typed consensus EPS of the valuation year",
-        round(v0["Valuation"].cell(hr + 3, 3).value, 6), round(400 / 26.0, 6))
+        round(v0["Valuation"].cell(hr + 4, 3).value, 6), round(400 / 26.0, 6))
+    nost = json.loads(json.dumps(fx)); nost["street"]["FY27"].pop("ebitda_cr")
+    try:
+        build(nost, tmp / "Nostreet_model.xlsx")
+        chk("house targets with no street EBITDA for the valuation year refused", "built", "refused")
+    except SystemExit:
+        chk("house targets with no street EBITDA for the valuation year refused", "refused", "refused")
     chk("forecast margin = average regulated equity x the trailing yield",
         round(val(v0, "P&L", "Margin over fuel", 2), 4),
         round(val(v0, RE, "Regulated equity, average", 2)
