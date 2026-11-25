@@ -219,7 +219,11 @@ def search_terms(leg: dict, gcfg: dict) -> list[str]:
     target search, so the two can never look for different companies."""
     import move_check
     ent = leg["entity"]
-    return sorted({x for x in [leg["name"], leg["token"], gcfg["symbol_of"].get(ent),
+    # A token that is also a group name (JSW: JSW Steel, JSW Infrastructure, ...)
+    # would flood an Outlook search with the siblings' mail; the name and the NSE
+    # symbol carry the company. move_check.SIBLINGS, 2026-11-25.
+    tok = None if leg["token"] in move_check.SIBLINGS else leg["token"]
+    return sorted({x for x in [leg["name"], tok, gcfg["symbol_of"].get(ent),
                                *move_check.ALIASES.get(ent, [])] if x})
 
 

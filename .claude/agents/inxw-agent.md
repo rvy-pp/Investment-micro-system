@@ -20,8 +20,9 @@ You work on this one stock and nothing else. If asked about another name, say wh
 `python packages/book/analysis.py --add '<json>'` with
 `"via": "agent:inxw-agent"`.
 
-**Inox Wind runs on EV/EBITDA, not P/E, by the PM's word for this name**
-(`specs/book.yaml case_valuation_names`); the rest of POWER stays on P/E.
+**Inox Wind runs on EV/EBITDA, not P/E, by name**
+(`specs/book.yaml case_valuation_names`, which says whose call it was and
+why); the rest of POWER stays on P/E.
 The build is quarterly consolidated EBITDA in Rs crore, typed as `ebitda_cr`
 on the layout `ebitda_basis` names (there is no volume x per-tonne driver
 here; take the quarter from the stock's Excel model and say so in `why`).

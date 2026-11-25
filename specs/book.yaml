@@ -73,6 +73,9 @@ ticker_map:
   PWGR: power_grid
   NTPC: ntpc            # coverage, 2026-11-18 (PM: "let's build the ntpc-agent"); Bloomberg NTPC IN
   INXW: inox_wind       # coverage, 2026-11-22 (PM: "inox-wind agent, lets go"); Bloomberg INXW IN
+  # coverage, 2026-11-25 (PM: "jsw energy agent: valuation table, model").
+  # Bloomberg JSW IN, so the token is JSW. JSW Steel is JSTL; never alias them.
+  JSW: jsw_energy
   # IT
   TCS: tcs
   INFO: infosys
@@ -216,6 +219,7 @@ analysis_coverage:
   # of specs/entities/power.yaml; it sits under POWER here because that is its
   # OI page and rota sector (Thursday), so no new group needs its own rota day.
   - {token: INXW, group: POWER}
+  - {token: JSW, group: POWER}    # 2026-11-25, JSW Energy
 
 # names: what the dashboard prints for each ticker token. The pair line is
 # built from these as Long_Short (PM, 06-09-2026: "Coforge_Persistent").
@@ -228,6 +232,7 @@ names:
   PWGR: Power Grid
   NTPC: NTPC
   INXW: Inox Wind
+  JSW: JSW Energy
   TCS: TCS
   INFO: Infosys
   WPRO: Wipro
@@ -404,6 +409,11 @@ case_valuation:
 case_valuation_names:
   NTPC: ev_ebitda
   INXW: ev_ebitda        # PM, 2026-11-22: "inox-wind agent ... use EV/EBITDA instead of P/E"
+  # 2026-11-25, JSW Energy: chosen at the build, the PM did not name a multiple.
+  # Every house that states a basis is on EV/EBITDA (Kotak 11.6x, JPM 12x FY28,
+  # Morgan Stanley's segment multiples) and net debt is ~40% of EV and rising,
+  # so P/E would mostly read the capitalised-interest cycle. One line to flip.
+  JSW: ev_ebitda
 
 # case_anchor: which statistic of the houses' implied multiples a sector's
 # base anchors on (PM, 2026-10-27: "make all IT and cement as median",

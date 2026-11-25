@@ -61,6 +61,7 @@ SYMBOLS = {"tcs": "TCS", "infosys": "INFY", "wipro": "WIPRO", "hcl_tech": "HCLTE
            "power_grid": "POWERGRID",          # coverage name, 2026-11-09 (screener consolidated P/E)
            "ntpc": "NTPC",                     # coverage name, 2026-11-18 (screener consolidated P/E)
            "inox_wind": "INOXWIND",            # coverage name, 2026-11-22 (screener consolidated EV multiple)
+           "jsw_energy": "JSWENERGY",          # coverage name, 2026-11-25 (screener consolidated EV multiple)
            "ambuja": "AMBUJACEM", "dalmia": "DALBHARAT", "jsw_steel": "JSWSTEEL",
            "tata_steel": "TATASTEEL"}
 DAYS = 1095        # three years fetched; the window takes what it needs

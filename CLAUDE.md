@@ -3984,6 +3984,62 @@ reads it by label, `▦ model` chip on the card) with its own drivers:
 - The transcripts sit in `data/companies/inox-wind/sources/` (fetch_transcripts;
   no dossier, so no Company tab). The Q3FY24-Q2FY25 PDFs 404 on the company host.
 
+### JSW Energy — the fourth coverage case, and `ipp_model.py` (2026-11-25)
+
+PM: *"jsw energy agent: valuation table, model. Search downloads for models."*
+Agent **`jsw-agent`** (Bloomberg JSW IN, so the token is **JSW**; JSW Steel is
+JSTL), entity `jsw_energy`, coverage under POWER (`analysis_coverage`,
+`ticker_map`, `names`). The models in Downloads were Morgan Stanley's
+`649564.JSWE.NS.XLSX` (18-Nov, Overweight, PT Rs613; RIC JSWE) and J.P.
+Morgan's `JSWE.NS_Equity_model.xlsx` (02-Nov; its `Consensus` sheet is
+Bloomberg's, the only consensus for this name).
+- **EV/EBITDA, chosen at the build** (`case_valuation_names: JSW: ev_ebitda`;
+  the PM named no multiple). Every house that states a basis is on EV/EBITDA
+  and net debt is ~42% of EV. The EV-by-name agent text said "by the PM's word"
+  for every such name; it now says "by name" and points at the spec comment,
+  which records whose call it was. Regenerating the agents also fixed NTPC's and
+  Power Grid's leg lines (now NTPC_PWGR, a tag pair, not "coverage").
+- **The valuation table:** ten post-result targets from the mailbox, Rs510
+  (JPM UW) to Rs675 (I-Sec BUY), median Rs542.5 = 10.79x FY28 Bloomberg
+  EBITDA. Sigma 10.7% (screener EV multiple, `multiple_sigma.SYMBOLS`).
+- **`packages/book/ipp_model.py`** (31-check selftest, Excel recalculation
+  included) builds `JSW_Energy_model.xlsx` from `model_config.json`. An IPP is
+  neither genco_model's regulated generator nor power_model's transmission
+  book: earnings move with commissioned MW, PLF and earnings per unit. Per
+  bucket (thermal, hydro, renewables): MW from a fiscal-year addition plan
+  (yellow) net of what is reported; generation = average MW x hours x the
+  **same quarter's PLF a year earlier** (hydro runs ~90% in Q2 and ~14% in Q4);
+  EBITDA per unit on a basis the config names per bucket, `yoy` or
+  `trailing4`, with revenue per unit allowed its own (`rev_basis`), because
+  renewables' EBITDA per unit is seasonal while O2's Q4FY26 revenue was a
+  one-off. Others is the plug on reported quarters, so the buckets always add
+  back to EBITDA + other income (a check row, zero everywhere). **Gross debt
+  is the plug** (capex + dividends - CFO - equity), cash held at the last
+  reported balance: for a developer spending Rs20,000cr a year against
+  ~Rs7,000cr of CFO the funding gap must land on interest. Valuation reuses
+  genco_model's layout and `ev_block` (P/E in B, EV/EBITDA and the house table
+  in C, the basis typed from build.json).
+- **First read (Rs502.55, 23-Nov):** the model's FY27 / FY28 EBITDA is
+  Rs11,844cr / Rs14,296cr, 6% under Bloomberg (Rs12,583cr / Rs15,292cr) and
+  close to I-Sec and JPM. Its Q3FY27 draft is Rs2,398cr against Morgan
+  Stanley's Rs2,656cr: thermal and hydro agree within Rs15cr; renewables are
+  Rs114cr lower and Others Rs117cr lower (the trailing four quarters carry
+  Q4FY26's -Rs421cr year-end item). FY28 juice at the 10.79x anchor: bear
+  -25.9% / base -9.5% / bull +8.8%. The base is negative only through the Q3
+  carry (EV is 1.71x market cap); at a Q3 in line with MS it is ~+8%. No lean.
+- **A silent bug it would have tripped, fixed first:** the bare token `JSW`
+  matched "JSW Steel", "JSW Infrastructure" and "JSW Dulux" in move_check's
+  mail check. JSW Steel is a book leg with heavy mail, so its news would have
+  read as JSW Energy's. `move_check.SIBLINGS` adds a negative lookahead for
+  the group's other names (the token still counts in "JSW - UPGD ADD" and
+  I-Sec's code lists), with acceptance and rejection tests, and
+  `orchestrator.search_terms` drops such a token from the Outlook search.
+- **Known and not fixed:** Bloomberg's FY27 leaves Rs3,046cr a quarter for H2
+  against MS's Rs2,800cr, so some estimates probably predate the result. 47.6mn
+  promoter warrants (Rs525) are out of the money and left out of the share
+  count (JPM's 1,881mn includes them). The model has no working capital (H1
+  CFO was Rs570cr), so its debt runs light if that persists.
+
 ## Sector positioning in the daily review — `sector_oi.py` (2026-11-20)
 
 PM: *"an analysis on each sector, looking at the OI in the daily review? Not

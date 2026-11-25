@@ -73,6 +73,17 @@ ALIASES = {"ltimindtree": ["LTIMindtree", "LTIM", "L&T Mindtree", "LTM Ltd", "LT
 LTM_METRIC = re.compile(r"\bLTM\s+(?:TCV|revenues?|EBITDA|EBIT|PAT|basis|deal\s+wins|attrition"
                         r"|period|FCF\s+(?!conversion))", re.I)
 
+# A token that is also a GROUP name (2026-11-25, JSW Energy: Bloomberg JSW IN, so
+# its token is JSW). Bare "JSW" matched "JSW Steel raises prices", "JSW
+# Infrastructure: Sub-par cargo" and "JSW Dulux" - and JSW Steel is itself a book
+# leg (JSTL) with a heavy mail flow, so its news would have read as JSW Energy's,
+# plausibly and silently. The token still counts where the mail uses it for the
+# company ("JSW - UPGD ADD", I-Sec's "i-Opener (..., JSW, ...)"), only not when a
+# sibling's name follows it. Such a token is also kept out of the orchestrator's
+# Outlook search terms (orchestrator.search_terms), where the name and symbol do
+# the work.
+SIBLINGS = {"JSW": r"\s*(?:Steel|Infra(?:structure)?|Dulux|Cement|Paints?|Ispat|MG|Holdings|Group|Sports|Motors?)\b"}
+
 
 # ------------------------------------------------------------------ aliases
 def patterns(ent: str, token: str | None, name: str | None, symbol: str | None) -> list[re.Pattern]:
@@ -83,7 +94,8 @@ def patterns(ent: str, token: str | None, name: str | None, symbol: str | None) 
         if not a:
             continue
         flags = 0 if (a.isupper() and len(a) <= 6) else re.I
-        out.append(re.compile(r"(?<![A-Za-z0-9])" + re.escape(a) + r"(?![A-Za-z0-9])", flags))
+        not_sib = f"(?!{SIBLINGS[a]})" if a in SIBLINGS else ""
+        out.append(re.compile(r"(?<![A-Za-z0-9])" + re.escape(a) + r"(?![A-Za-z0-9])" + not_sib, flags))
     return list({p.pattern + str(p.flags): p for p in out}.values())
 
 
@@ -397,6 +409,11 @@ def _selftest() -> None:
     assert not mentions("the ltm figure", lt), "lowercase prose is not a ticker"; ok += 1
     assert mentions("Tech Mahindra wins a large comms deal", tm) and mentions("TechM 2Q beat", tm); ok += 1
     assert not mentions("TECHMAHINDRA", tm) and not mentions("FinTechMarket", tm); ok += 1
+    js = patterns("jsw_energy", "JSW", "JSW Energy", "JSWENERGY")          # the group-token guard, both ways
+    assert all(mentions(s, js) for s in ("JSW - UPGD ADD", "i-Opener (VEDL, JSW, INFOE)",
+                                         "JSW Energy commissions 300MW", "JSW IN, Reduce, TP Rs525")); ok += 1
+    assert not any(mentions(s, js) for s in ("JSW Steel raises HRC prices", "JSW Infrastructure: Sub-par cargo",
+                                             "JSW Dulux", "JSWSTEEL")), "a sibling's news is not JSW Energy's"; ok += 1
 
     # windows: a brief dated the window START is excluded, the END included
     root = pathlib.Path(tempfile.mkdtemp())
