@@ -4002,7 +4002,7 @@ Bloomberg's, the only consensus for this name).
 - **The valuation table:** ten post-result targets from the mailbox, Rs510
   (JPM UW) to Rs675 (I-Sec BUY), median Rs542.5 = 10.79x FY28 Bloomberg
   EBITDA. Sigma 10.7% (screener EV multiple, `multiple_sigma.SYMBOLS`).
-- **`packages/book/ipp_model.py`** (31-check selftest, Excel recalculation
+- **`packages/book/ipp_model.py`** (37-check selftest, Excel recalculation
   included) builds `JSW_Energy_model.xlsx` from `model_config.json`. An IPP is
   neither genco_model's regulated generator nor power_model's transmission
   book: earnings move with commissioned MW, PLF and earnings per unit. Per
@@ -4016,9 +4016,25 @@ Bloomberg's, the only consensus for this name).
   back to EBITDA + other income (a check row, zero everywhere). **Gross debt
   is the plug** (capex + dividends - CFO - equity), cash held at the last
   reported balance: for a developer spending Rs20,000cr a year against
-  ~Rs7,000cr of CFO the funding gap must land on interest. Valuation reuses
-  genco_model's layout and `ev_block` (P/E in B, EV/EBITDA and the house table
-  in C, the basis typed from build.json).
+  ~Rs7,000cr of CFO the funding gap must land on interest.
+- **The Valuation sheet is EV/EBITDA only, in column B** (PM, 2026-11-25:
+  *"remove the PE column"*). On its first day it was genco_model's layout,
+  P/E in B and EV/EBITDA in C, and the two read Rs367 against Rs542.5 on the
+  same model. The P/E column applied 31.5x, measured on Bloomberg EPS, to a
+  model EPS 32% below it. Depreciation plus interest take ~88% of FY28 EBITDA,
+  so a 5.5% EBITDA gap to Morgan Stanley is a 27% PAT gap. The target
+  multiple is the median of the house table, implied on the MODEL's EBITDA
+  and the case's net debt (ev_block's measure), so at the model's own EBITDA
+  it returns the houses' median target. Target_pe is gone from Inputs.
+  `ipp_model.py --rewrite-valuation <entity>` rewrites the sheet in the live
+  workbook through Excel after a re-strike: it refuses if P&L or Cash flow do
+  not line up with a fresh build, takes an old workbook's Target_pe row and
+  name off (`model_view` grew `delrow` / `delname`), and then checks that
+  every formula reads as a fresh build's. Two reader fixes came with it.
+  `model_view.valuation` falls back to the typed multiple when there is no
+  JV-stripped one, so Inox Wind's card stops printing "EBITDA × ?x".
+  `set_cmp` reads the column the card reads, so the orchestrator's MODELS line
+  for NTPC now shows the EV/EBITDA price, not the P/E one.
 - **First read (Rs502.55, 23-Nov):** the model's FY27 / FY28 EBITDA is
   Rs11,844cr / Rs14,296cr, 6% under Bloomberg (Rs12,583cr / Rs15,292cr) and
   close to I-Sec and JPM. Its Q3FY27 draft is Rs2,398cr against Morgan

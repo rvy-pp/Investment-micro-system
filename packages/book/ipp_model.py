@@ -47,9 +47,13 @@ plug with a fixed debt share would let cash go negative and understate
 interest. Debt, cash and net worth are typed at balance-sheet dates and the
 roll resets to them.
 
-Valuation reuses genco_model's layout: P/E in column B, EV/EBITDA in column C
-with every house's target and the multiple it implies (`genco_model.ev_block`),
-the basis the Analysis card reads typed in B from build.json.
+Valuation is EV/EBITDA ONLY, in column B (PM, 2026-11-25: "remove the PE
+column"; it was genco_model's P/E-in-B, EV/EBITDA-in-C layout for its first
+day). The target multiple is the median of the houses' targets as implied
+EV/EBITDA on the model's EBITDA and the case build's net debt, as
+`genco_model.ev_block` measures it. `--rewrite-valuation <entity>` rewrites
+that sheet in a LIVE workbook through Excel after a re-strike, and takes an
+old workbook's Target_pe row off Inputs.
 
     python packages/book/ipp_model.py --config data/analysis/cases/jsw_energy/model_config.json \\
         --out data/analysis/cases/jsw_energy/JSW_Energy_model.xlsx --recalc
@@ -76,7 +80,7 @@ from openpyxl.utils import get_column_letter
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from steel_model import (BLACK, BLUE, FIRST_COL, FMT, FONT, GREEN, HEAD, YELLOW,  # noqa: E402
                          Sheet, col, errors, fy_of, name, quarter_dates, quarters, recalc)
-from genco_model import EV_HEAD, _rows, ev_block, ev_inputs  # noqa: E402
+from genco_model import EV_HEAD, _rows, ev_inputs  # noqa: E402
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
 
@@ -145,7 +149,9 @@ def crossfoot(cfg: dict, tol: float = 3.0) -> list[str]:
     return errs
 
 
-def build(cfg: dict, out: pathlib.Path) -> dict:
+def build(cfg: dict, out: pathlib.Path, case: dict | None = None) -> dict:
+    """`case` is the build.json the Valuation sheet takes its targets, basis
+    and net debt from; default: the build.json beside `out`."""
     errs = crossfoot(cfg)
     if errs:
         raise SystemExit("config does not cross-foot:\n  " + "\n  ".join(errs))
@@ -235,7 +241,8 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     const("MI_share", "Minority share of profit after tax", C["mi_share"], "pct", yellow=True)
     const("DPS", "Dividend per share, paid in Q2 (Rs)", C["dps"], "rs", yellow=True)
     const("Dep_drift", "Depreciation-rate drift per quarter (Rs cr per MW per year)", C["dep_drift"], "w", yellow=True)
-    const("Target_pe", "Target P/E multiple (the P/E column of Valuation reads this)", C["target_pe"], "x2", yellow=True)
+    # No Target_pe since 2026-11-25: the Valuation sheet is EV/EBITDA only (PM:
+    # "remove the PE column"). A config's constants.target_pe is ignored.
     for b in BK:
         k = b["key"].capitalize()
         const(f"PLF_drift_{k}", f"{b['label']}: PLF drift on the year-ago quarter (pp)", b["plf_drift"], "pct", yellow=True)
@@ -602,53 +609,73 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
     va["A2"].font = Font(name=FONT, italic=True, size=9, color="595959")
     street = cfg.get("street") or {}
     vfy = cfg.get("valuation_fy", "FY28")
+    # EV/EBITDA ONLY, in column B (PM, 2026-11-25: "remove the PE column").
+    # Until then this was genco_model's layout, P/E in B and ev_block's
+    # EV/EBITDA in C, and the two read Rs367 against Rs542.5 on the same model:
+    # the P/E column applied a multiple measured on consensus EPS to an EPS 32%
+    # below it, and depreciation plus interest are ~88% of this company's EBITDA.
+    # The target multiple is the median of the house table below, implied on
+    # the MODEL's EBITDA and the net debt here, as ev_block measures it.
+    if case is None:
+        bj = out.parent / "build.json"
+        case = json.loads(bj.read_text(encoding="utf-8")) if bj.exists() else None
+    evi = ev_inputs(cfg if cfg.get("house_tps") else case)
+    hs = sorted((h for h in evi["houses"] if isinstance(h.get("tp"), (int, float))), key=lambda h: h["tp"])
+    if not hs:
+        raise SystemExit("the Valuation sheet needs house targets: house_tps in build.json (or the config)")
+    nd_asof = evi["net_debt"][1] if evi["net_debt"] else cfg["actual_through"]
+    nd_val = (float(evi["net_debt"][0]) if evi["net_debt"] else f"=INDEX({rng('Cash flow', r_nd)},MATCH(B8,Qrow,0))")
+    fy_list = [fy for fy in ("FY27", "FY28", "FY29") if fy in {fy_of(q) for q in qs}]
     vrows = [
-        ("Valuation basis", "P/E", None, "inp", "Read by the Analysis card (model_view): the column headed with this word."),
-        ("Valuation year", vfy, None, "inp", "Sum of that year's four quarters."),
-        ("Quarters in the valuation year", "=COUNTIFS(FYrow,B5)", None, "f", "Must read 4."),
-        ("PAT, valuation year (Rs cr)", f"=SUMIFS({rng('P&L', r_pat)},FYrow,B5)", "cr", "f", ""),
-        ("EPS of the valuation year (Rs)", "=B7*10/Shares_mn", "rs", "f", ""),
-        ("P/E today, on the valuation year", "=CMP/B8", "x2", "f", ""),
-        ("Target P/E multiple (x)", "=Target_pe", "x2", "key",
-         "Inputs!Target_pe: the median of the houses' implied P/E (target / consensus EPS of the valuation year)."),
-        ("Expected price (Rs)", "=B8*B10", "rs", "f", ""),
-        ("Upside vs CMP", "=B11/CMP-1", "pct", "f", ""),
-        ("Dividend per share in the valuation year (Rs)", f"=SUMIFS({rng('Cash flow', r_div)},FYrow,B5)*10/Shares_mn", "rs", "f", ""),
-        ("Total return vs CMP, price plus that dividend", "=(B11+B13)/CMP-1", "pct", "f", ""),
-        ("", None, None, "h", ""),
-        ("Rolling four quarters forward from the price date", None, None, "h",
-         "EPS of the 12 months starting on the price date, each quarter weighted by the share of its days inside the "
-         "window (the P&L's weight row), at the same target P/E."),
-        ("Price date", f"={D}", "date", "f", ""),
-        ("EPS, next four quarters from the price date (Rs)", f"=SUMPRODUCT({rng('P&L', r_w)},{rng('P&L', r_eps)})", "rs", "f", ""),
-        ("Expected price, rolling 12 months forward (Rs)", "=B18*B10", "rs", "f", ""),
-        ("Upside vs CMP, rolling", "=B19/CMP-1", "pct", "f", ""),
+        ("Valuation basis", "EV/EBITDA", None, "inp", "Read by the Analysis card (model_view)."),                       # 4
+        ("Valuation year", vfy, None, "inp", "Sum of that year's four quarters of EBITDA (before other income)."),      # 5
+        ("Quarters in the valuation year", "=COUNTIFS(FYrow,B5)", None, "f", "Must read 4."),                           # 6
+        ("EBITDA, valuation year (Rs cr)", f"=SUMIFS({rng('P&L', r_ebitda)},FYrow,B5)", "cr", "f", "The model's."),    # 7
+        ("Net debt as of (quarter)", nd_asof, None, "inp",
+         "The case build's date (build.json net_debt_asof)." if evi["net_debt"] else
+         "A model quarter: the last reported one by default."),                                                        # 8
+        ("Net debt at that quarter (Rs cr)", nd_val, "cr", "inp" if evi["net_debt"] else "f",
+         "build.json net_debt_cr, the figure case_brief.py bridges with, so the two use one net debt."
+         if evi["net_debt"] else ""),                                                                                  # 9
+        ("Market cap today (Rs cr)", "=CMP*Shares_mn/10", "cr", "f", "CMP x shares (Inputs)."),                         # 10
+        ("EV today: market cap + that net debt (Rs cr)", "=B10+B9", "cr", "f", ""),                                    # 11
+        ("EV/EBITDA today, on the valuation year", "=B11/B7", "x2", "f", ""),                                           # 12
+        ("Target EV/EBITDA multiple", None, "x2", "key",
+         "The median of the houses' implied EV/EBITDA, below. Implied on the MODEL's EBITDA, so at the model's own "
+         "EBITDA it returns the houses' median target."),                                                              # 13
+        ("Enterprise value at the target (Rs cr)", "=B7*B13", "cr", "f", ""),                                          # 14
+        ("Equity value (Rs cr)", "=B14-B9", "cr", "f", "Minority interest not deducted (as in the case)."),            # 15
+        ("Expected price (Rs)", "=B15*10/Shares_mn", "rs", "f", ""),                                                    # 16
+        ("Upside vs CMP", "=B16/CMP-1", "pct", "f", ""),                                                                # 17
+        ("Dividend per share in the valuation year (Rs)", f"=SUMIFS({rng('Cash flow', r_div)},FYrow,B5)*10/Shares_mn", "rs", "f", ""),  # 18
+        ("Total return vs CMP, price plus that dividend", "=(B16+B18)/CMP-1", "pct", "f", ""),                          # 19
     ]
+    stb = 4 + len(vrows) + 1
+    top = stb + 2 * (len(fy_list) + 2)                 # the house table, under the two street checks
+    h1, hn = top + 2, top + 1 + len(hs)
+    vrows[9] = vrows[9][:1] + (f"=MEDIAN(C{h1}:C{hn})",) + vrows[9][2:]
     for k, (lab, v, fmt, kind, note) in enumerate(vrows):
         r = 4 + k
-        bold = lab in ("Expected price (Rs)", "Upside vs CMP") or kind == "h"
+        bold = lab in ("Expected price (Rs)", "Upside vs CMP", "Target EV/EBITDA multiple")
         va.cell(r, 1, lab).font = Font(name=FONT, bold=bold)
-        if v is not None:
-            c = va.cell(r, 2, v)
-            is_f = isinstance(v, str) and v.startswith("=")
-            linked = is_f and any(t in v for t in ("!", "FYrow", "Qrow", "Status", "Shares_mn", "CMP", "Target_"))
-            c.font = Font(name=FONT, color=(GREEN if linked else BLACK) if is_f else BLUE, bold=bold)
-            if fmt:
-                c.number_format = FMT[fmt]
-            if kind in ("inp", "key"):
-                c.fill = YELLOW
+        c = va.cell(r, 2, v)
+        is_f = isinstance(v, str) and v.startswith("=")
+        linked = is_f and any(t in v for t in ("!", "FYrow", "Qrow", "Shares_mn", "CMP"))
+        c.font = Font(name=FONT, color=(GREEN if linked else BLACK) if is_f else BLUE, bold=bold)
+        if fmt:
+            c.number_format = FMT[fmt]
+        if kind in ("inp", "key"):
+            c.fill = YELLOW
         if note:
             va.cell(r, 5, note).font = Font(name=FONT, size=8, italic=True, color="595959")
-    stb = 4 + len(vrows) + 1
-    fy_list = [fy for fy in ("FY27", "FY28", "FY29") if fy in {fy_of(q) for q in qs}]
-    for blk, (key, unit, fmt, rowref) in enumerate((("eps", "Rs", "rs", r_eps), ("ebitda_cr", "Rs cr", "cr", r_ebitda))):
+    for blk, (key, unit, fmt, rowref) in enumerate((("ebitda_cr", "Rs cr", "cr", r_ebitda), ("eps", "Rs", "rs", r_eps))):
         word = "EPS" if key == "eps" else "EBITDA"
-        top = stb + blk * (len(fy_list) + 2)
+        t0 = stb + blk * (len(fy_list) + 2)
         for j, h in enumerate((f"Street check: consensus {word} (type in) against the model", "Street", "Model",
                                "Model vs street")):
-            va.cell(top, 1 + j, h).font = Font(name=FONT, bold=True)
+            va.cell(t0, 1 + j, h).font = Font(name=FONT, bold=True)
         for k, fy in enumerate(fy_list):
-            r = top + 1 + k
+            r = t0 + 1 + k
             va.cell(r, 1, f"Consensus {word} {fy} ({unit})").font = Font(name=FONT)
             s = (street.get(fy) or {})
             c = va.cell(r, 2, s.get(key))
@@ -663,11 +690,42 @@ def build(cfg: dict, out: pathlib.Path) -> dict:
             if s.get("source"):
                 va.cell(r, 5, s["source"]).font = Font(name=FONT, size=8, italic=True, color="595959")
 
-    bj = out.parent / "build.json"
-    evi = ev_inputs(cfg if cfg.get("house_tps") else
-                    json.loads(bj.read_text(encoding="utf-8")) if bj.exists() else None)
-    if evi["houses"]:
-        ev_block(va, evi["houses"], rng("P&L", r_ebitda), rng("Cash flow", r_nd), basis=evi["basis"], net_debt=evi["net_debt"])
+    # the houses' targets and the EV/EBITDA each implies (B13 is their median)
+    def put(r, c, v, fmt=None, color=BLACK, bold=False, fill=False, note=False):
+        cell = va.cell(r, c, v)
+        cell.font = (Font(name=FONT, size=8, italic=True, color="595959") if note
+                     else Font(name=FONT, color=color, bold=bold))
+        if fmt:
+            cell.number_format = FMT[fmt]
+        if fill:
+            cell.fill = YELLOW
+
+    put(top, 1, EV_HEAD, bold=True)
+    put(top, 5, "Implied EV/EBITDA = (target x shares + the net debt in B9) / the MODEL's valuation-year EBITDA in B7; "
+                "minorities and JV investments are not adjusted. After a re-strike: ipp_model.py --rewrite-valuation "
+                f"{cfg['entity']}.", note=True)
+    for c, h in ((1, "House"), (2, "Target (Rs)"), (3, "Implied EV/EBITDA"), (5, "Date, rating and basis")):
+        put(top + 1, c, h, bold=True)
+    for k, h in enumerate(hs):
+        r = h1 + k
+        put(r, 1, str(h.get("house", "")))
+        put(r, 2, float(h["tp"]), "rs", BLUE, fill=True)
+        put(r, 3, f"=(B{r}*Shares_mn/10+$B$9)/$B$7", "x2", GREEN)
+        put(r, 5, ", ".join(str(x) for x in (h.get("date"), h.get("basis")) if x), note=True)
+    for k, (lab, fn) in enumerate((("Median", "MEDIAN"), ("Mean", "AVERAGE"))):
+        r = hn + 1 + k
+        put(r, 1, lab, bold=True)
+        put(r, 2, f"={fn}(B{h1}:B{hn})", "rs", bold=True)
+        put(r, 3, f"={fn}(C{h1}:C{hn})", "x2", bold=True)
+    put(hn + 3, 1, "Highest over lowest")
+    for c in (2, 3):
+        Lc = get_column_letter(c)
+        put(hn + 3, c, f"=MAX({Lc}{h1}:{Lc}{hn})/MIN({Lc}{h1}:{Lc}{hn})-1", "pct")
+    put(hn + 3, 5, "Debt is most of the enterprise value, so the same spread of targets is a much narrower spread of "
+                   "EV/EBITDA.", note=True)
+    put(hn + 4, 1, "At today's price")
+    put(hn + 4, 2, "=CMP", "rs", GREEN)
+    put(hn + 4, 3, "=B12", "x2")
 
     # ---------------------------------------------------------------- Sources
     so = wb.create_sheet("Sources")
@@ -702,8 +760,8 @@ def readme_lines(cfg, qs, n_act):
         ("Inputs (timeline, constants, each bucket's capacity-addition plan, the capex and equity plans, quarter shapes) "
          f"-> {SEG} (per bucket: MW added, operating MW, PLF, net generation, revenue and EBITDA per unit; Others; "
          "totals) -> P&L (EBITDA = the buckets less other income; depreciation per MW; interest on opening debt) -> "
-         "Cash flow (CFO, capex, dividends, debt as the plug, cash, net worth) -> Annual -> Valuation (P/E in column B, "
-         "EV/EBITDA and the houses' targets in column C).", ""),
+         "Cash flow (CFO, capex, dividends, debt as the plug, cash, net worth) -> Annual -> Valuation (EV/EBITDA "
+         "on the valuation year, the houses' targets and the multiple each implies).", ""),
         ("", ""),
         ("Colours", "h"),
         ("Blue = typed. Black = formula. Green = link to another sheet. Yellow = a key assumption or the PM's override. "
@@ -734,6 +792,91 @@ def readme_lines(cfg, qs, n_act):
         ("Where the actuals come from", "h"),
         (cfg.get("readme_history") or "The Sources sheet names the document for every line.", ""),
     ]
+
+
+# --------------------------------------------------------------------------
+# the Valuation sheet into a LIVE workbook
+# --------------------------------------------------------------------------
+def _norm(f):
+    # Excel saves 'Inputs'!$D$72 as Inputs!$D$72: the same reference
+    return f.replace("'Inputs'!", "Inputs!") if isinstance(f, str) else f
+
+
+def rewrite_valuation(entity: str, base: pathlib.Path | None = None, quiet: bool = False) -> int:
+    """Rewrite the Valuation sheet of an EXISTING workbook through Excel, from
+    the model_config.json and build.json beside it, so every typed cell on the
+    other sheets survives and an open window takes the edit in place. Run it
+    after a re-strike (new house targets in build.json). On a workbook built
+    before 2026-11-25 it also takes Inputs' Target_pe row and name off: Excel
+    shifts every reference below the row, which puts the workbook where a
+    rebuild would, and the check after the write proves it.
+
+    Refused before Excel is touched when P&L or Cash flow do not line up row
+    for row with a fresh build: the sheet's formulas address their rows."""
+    import model_view
+    from power_model import bulk_ops
+    base = base or model_view.CASES
+    p = model_view.path_for(entity, base)
+    if p is None:
+        raise SystemExit(f"no model for {entity!r}")
+    cfg = json.loads((p.parent / "model_config.json").read_text(encoding="utf-8"))
+    bj = p.parent / "build.json"
+    case = json.loads(bj.read_text(encoding="utf-8")) if bj.exists() else None
+    live = load_workbook(p)
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="ipp_val_")) / "scratch.xlsx"
+    build(cfg, tmp, case=case)
+    new = load_workbook(tmp)
+    bad = []
+    for sh in ("Inputs", "P&L", "Cash flow"):
+        if sh not in live.sheetnames:
+            bad.append(f"no '{sh}' sheet")
+            continue
+        def labels(ws, drop_pe=False):
+            la = [ws.cell(r, 1).value for r in range(1, ws.max_row + 1)]
+            if drop_pe:               # an old workbook's Target_pe row is the one difference allowed
+                la = [x for x in la if not str(x or "").startswith("Target P/E multiple")]
+            while la and la[-1] is None:
+                la.pop()
+            return la
+        la, lb = labels(live[sh], sh == "Inputs"), labels(new[sh])
+        if la != lb:
+            at = next((i for i, (x, y) in enumerate(zip(la, lb), 1) if x != y), min(len(la), len(lb)) + 1)
+            bad.append(f"'{sh}' rows differ from a fresh build (from row {at})")
+    bad += [f"name {n} missing" for n in ("CMP", "Shares_mn", "FYrow", "Qrow") if n not in live.defined_names]
+    if bad:
+        raise SystemExit("refusing to rewrite the Valuation sheet:\n  " + "\n  ".join(bad))
+    nv, lv = new["Valuation"], live["Valuation"]
+    ncol = max(nv.max_column, lv.max_column)
+    ops = [{"sheet": "Valuation", "cell": f"{L}1", "mode": "width", "value": d.width}
+           for L, d in sorted(nv.column_dimensions.items()) if d.width]
+    ops += bulk_ops(nv, "Valuation", 1, nv.max_row, ncol, clear_to=lv.max_row)
+    rd, nrd = live["README"], new["README"]
+    for r in range(1, rd.max_row + 1):
+        v = rd.cell(r, 1).value
+        if isinstance(v, str) and "-> Valuation (" in v:
+            want = next((x.value for x in nrd["A"] if isinstance(x.value, str) and "-> Valuation (" in x.value), None)
+            if want and want != v:
+                ops.append({"sheet": "README", "cell": f"A{r}", "mode": "set", "value": "'" + want})
+    inp = live["Inputs"]
+    if "Target_pe" in live.defined_names:
+        ops.append({"sheet": "Inputs", "cell": "A1", "mode": "delname", "value": "Target_pe"})
+    for r in sorted((r for r in range(1, inp.max_row + 1)
+                     if str(inp.cell(r, 1).value or "").startswith("Target P/E multiple")), reverse=True):
+        ops.append({"sheet": "Inputs", "cell": f"A{r}", "mode": "delrow", "value": None})
+    res = model_view.excel(entity, ops, base)
+    out = print if not quiet else (lambda *a, **k: None)
+    out(f"{p.name}: Valuation rewritten, {len(ops)} operations" + (" (into the open window)" if res.get("attached") else ""))
+    for note in res.get("notes") or []:
+        out(f"  NOTE {note}")
+    # the proof: every formula outside the README now reads as a fresh build's
+    after = load_workbook(p)
+    diff = [f"{sh}!{c.coordinate}" for sh in new.sheetnames if sh != "README" for row in new[sh].iter_rows()
+            for c in row if isinstance(c.value, str) and c.value.startswith("=")
+            and _norm(after[sh][c.coordinate].value) != _norm(c.value)]
+    left = [n for n in ("Target_pe",) if n in after.defined_names]
+    bad_cells = errors(p)
+    out(f"  formulas unlike a fresh build: {len(diff)} {diff[:6]}; names left: {left}; error cells: {len(bad_cells)} {bad_cells[:6]}")
+    return 1 if diff or left or bad_cells else 0
 
 
 # --------------------------------------------------------------------------
@@ -770,8 +913,7 @@ def _fixture() -> dict:
             "sparse": {"gross_debt": {"Q4FY26": 70000.0}, "cash": {"Q4FY26": 6000.0}, "net_worth": {"Q4FY26": 31000.0},
                        "capex": {"Q2FY26": 9000.0}},
             "constants": {"shares_mn": e(1800.0), "cmp": e(500.0), "cmp_date": e("2026-11-24"), "tax_rate": e(0.2),
-                          "int_rate": e(0.08), "mi_share": e(0.1), "dps": e(2.0), "dep_drift": e(0.0),
-                          "target_pe": e(30.0)},
+                          "int_rate": e(0.08), "mi_share": e(0.1), "dps": e(2.0), "dep_drift": e(0.0)},
             "opening": {"as_of": "31-Mar-2025", "gross_debt": e(60000), "cash": e(5000), "net_worth": e(28000)},
             "plans": {"capex": {"FY26": e(25000), "FY27": e(20000)}, "equity": {"FY27": e(1000)},
                       "weights_mw": e([0.25, 0.25, 0.25, 0.25]), "weights_capex": e([0.2, 0.25, 0.25, 0.3])},
@@ -822,19 +964,50 @@ def selftest() -> int:
     wb = load_workbook(p0)
     chk("sheets", wb.sheetnames, ["README", "Inputs", SEG, "P&L", "Cash flow", "Annual", "Valuation", "Sources"])
     chk("CMP, CMP_date and the plans are workbook names (model_view.set_cmp writes CMP)",
-        all(n in wb.defined_names for n in ("CMP", "CMP_date", "Target_pe", "MWPlan_Renewables", "CapexPlan")))
+        all(n in wb.defined_names for n in ("CMP", "CMP_date", "MWPlan_Renewables", "CapexPlan")))
     import model_view
-    vr = model_view._val_rows(wb["Valuation"])
-    chk("model_view finds the target, basis, year, EPS and typed P/E rows by label",
-        sorted(vr), ["basis", "eps", "pe_typed", "tp", "year"])
-    chk("without an EV/EBITDA build the card reads column B (P/E)", model_view._val_col(wb["Valuation"], vr), 2)
+    va0 = wb["Valuation"]
+    vr = model_view._val_rows(va0)
+    chk("model_view finds the target, basis, year, net-debt date and typed multiple by label",
+        sorted(vr), ["basis", "multiple_typed", "nd_quarter", "tp", "year"])
+    chk("the sheet is EV/EBITDA only, in column B (PM 2026-11-25: 'remove the PE column')",
+        (va0.cell(vr["basis"], 2).value, model_view._val_col(va0, vr)), ("EV/EBITDA", 2))
+    pe_left = [f"{ws.title}!{c.coordinate}" for ws in wb for row in ws.iter_rows() for c in row
+               if isinstance(c.value, str) and ("P/E" in c.value or "Target_pe" in c.value) and ws.title != "README"]
+    chk("no P/E anywhere: no label, no formula, no Target_pe name", (pe_left, "Target_pe" in wb.defined_names), ([], False))
+    chk("without a case net debt: the last reported quarter, looked up on Cash flow",
+        (va0.cell(vr["nd_quarter"], 2).value, str(va0.cell(vr["nd_quarter"] + 1, 2).value).startswith("=INDEX(")),
+        ("Q4FY26", True))
     evfx = cp(fx); evfx.update(valuation="ev_ebitda", net_debt_cr=64000.0, net_debt_asof="Sep-26")
     pe_ = tmp / "Ev_model.xlsx"
     build(evfx, pe_)
     ve = load_workbook(pe_)["Valuation"]
-    chk("an EV/EBITDA case types the basis and its own net debt, and the card reader takes column C",
-        (ve.cell(vr["basis"], 2).value, ve.cell(vr["eps"], 3).value, model_view._val_col(ve, vr)),
-        ("EV/EBITDA", 64000.0, 3))
+    chk("an EV/EBITDA case types its own net debt and its date",
+        (ve.cell(vr["nd_quarter"], 2).value, ve.cell(vr["nd_quarter"] + 1, 2).value), ("Sep-26", 64000.0))
+    nohouse = cp(fx); nohouse.pop("house_tps")
+    try:
+        build(nohouse, tmp / "Nohouse_model.xlsx", case={})
+        chk("no house targets refused", "built", "refused")
+    except SystemExit:
+        chk("no house targets refused", "refused", "refused")
+    # the live writer refuses a workbook whose rows do not line up, before Excel
+    lb = tmp / "live" / "fixture_ipp"
+    lb.mkdir(parents=True)
+    cfg_nh = cp(fx); cfg_nh.pop("house_tps")
+    (lb / "model_config.json").write_text(json.dumps(cfg_nh), encoding="utf-8")
+    (lb / "build.json").write_text(json.dumps({"house_tps": fx["house_tps"], "valuation": "ev_ebitda",
+                                               "net_debt_cr": 64000.0, "net_debt_asof": "Sep-26"}), encoding="utf-8")
+    mis = tmp / "mis" / "fixture_ipp"
+    mis.mkdir(parents=True)
+    for f in ("model_config.json", "build.json"):
+        (mis / f).write_text((lb / f).read_text(encoding="utf-8"), encoding="utf-8")
+    build(cfg_nh, mis / "Fixture_model.xlsx")
+    wm = load_workbook(mis / "Fixture_model.xlsx"); wm["P&L"].insert_rows(12); wm.save(mis / "Fixture_model.xlsx")
+    try:
+        rewrite_valuation("fixture_ipp", base=mis.parent, quiet=True)
+        chk("a workbook whose P&L rows moved is refused before Excel", "written", "refused")
+    except SystemExit as ex:
+        chk("a workbook whose P&L rows moved is refused before Excel", "P&L" in str(ex) and "refused", "refused")
     sg = wb[SEG]; R = _rows(sg)
     self_ref = [c.coordinate for name_ in ("Thermal: MW added", "Renewables: MW added") for c in sg[R[name_]]
                 if isinstance(c.value, str) and f"${R[name_]}:" in c.value]
@@ -894,12 +1067,34 @@ def selftest() -> int:
         round(val(v0, "P&L", "Finance cost", 5), 6), round(cf("Gross debt, closing", 4) * 0.08 / 4, 6))
     chk("the typed balance sheet stands on its quarter",
         (cf("Gross debt, closing", 3), cf("Net worth attributable to owners, closing", 3)), (70000.0, 31000.0))
-    V = _rows(v0["Valuation"])
-    eps27 = sum(val(v0, "P&L", "EPS (Rs)", k) for k in range(4, 8))
-    chk("expected price on P/E = the valuation year's EPS x the target P/E",
-        round(v0["Valuation"].cell(V["Expected price (Rs)"], 2).value, 6), round(eps27 * 30.0, 6))
-    chk("the median EV/EBITDA multiple round-trips to the median target",
-        round(v0["Valuation"].cell(V["Expected price (Rs)"], 3).value, 6), 540.0)
+    vv = v0["Valuation"]
+    V = _rows(vv)
+    eb27 = sum(val(v0, "P&L", "EBITDA", k) for k in range(4, 8))
+    chk("EBITDA of the valuation year is the P&L's four quarters", round(vv.cell(V["EBITDA, valuation year (Rs cr)"], 2).value, 6),
+        round(eb27, 6))
+    chk("the median EV/EBITDA multiple round-trips to the median target (500 / 540 / 600)",
+        round(vv.cell(V["Expected price (Rs)"], 2).value, 6), 540.0)
+
+    # the live writer: an old workbook's Target_pe row and name go, a re-struck
+    # target reaches the price, and every formula then reads as a fresh build's
+    lw = lb / "Fixture_model.xlsx"
+    build(cfg_nh, lw)
+    wl = load_workbook(lw)
+    ri = wl["Inputs"].max_row + 2
+    wl["Inputs"].cell(ri, 1, "Target P/E multiple (the P/E column of Valuation reads this)")
+    wl["Inputs"].cell(ri, 3, 30.0)
+    name(wl, "Target_pe", f"Inputs!$C${ri}")
+    wl.save(lw)
+    bjl = json.loads((lb / "build.json").read_text(encoding="utf-8"))
+    bjl["house_tps"][2]["tp"] = 560                    # house B 540 -> 560: median 560
+    (lb / "build.json").write_text(json.dumps(bjl), encoding="utf-8")
+    rc = rewrite_valuation("fixture_ipp", base=lb.parent, quiet=True)
+    wa, wv = load_workbook(lw), load_workbook(lw, data_only=True)["Valuation"]
+    chk("rewrite: clean, Target_pe row and name gone",
+        (rc, "Target_pe" in wa.defined_names,
+         any(str(c.value or "").startswith("Target P/E") for c in wa["Inputs"]["A"])), (0, False, False))
+    chk("rewrite: a re-struck target reaches the expected price (median 560)",
+        round(wv.cell(model_view._val_rows(wv)["tp"], 2).value, 6), 560.0)
     print(f"ipp_model selftest: {'FAILED ' + str(fails) if fails else 'all checks passed'}")
     return 1 if fails else 0
 
@@ -911,9 +1106,13 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="overwrite an existing workbook (loses its edits)")
     ap.add_argument("--recalc", action="store_true", help="open in Excel over COM, recalculate, save, check errors")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--rewrite-valuation", metavar="ENTITY",
+                    help="rewrite the Valuation sheet of a live workbook through Excel (after a re-strike)")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
+    if a.rewrite_valuation:
+        return rewrite_valuation(a.rewrite_valuation)
     if not (a.config and a.out):
         ap.error("--config and --out are required")
     if a.out.exists() and not a.force:

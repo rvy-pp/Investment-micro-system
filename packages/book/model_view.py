@@ -320,6 +320,12 @@ def valuation(entity: str, close: tuple[str, float] | None = None, base: pathlib
         if "eps" in rows:
             m = re.search(r"as of (.+)$", str(ws.cell(rows["eps"], col + 1).value or ""))
             out["nd_quarter"] = m.group(1).strip() if m else None
+    # A single-column EV/EBITDA sheet (wind_model, ipp_model since 2026-11-25)
+    # has a "Target EV/EBITDA multiple" row and no steel-style "Core multiple,
+    # ex JV" row, so the card printed "EBITDA x ?x" for Inox Wind. With no JV
+    # to strip, the typed multiple IS the multiple.
+    if out.get("multiple") is None and isinstance(out.get("multiple_typed"), (int, float)):
+        out["multiple"] = out["multiple_typed"]
     if not isinstance(out.get("tp"), (int, float)):
         return {"error": "the expected price has no saved value: recalculate the workbook in Excel"}
     nc = _name_cell(forms, "CMP")
@@ -356,7 +362,11 @@ def set_cmp(entity: str, price: float, date: str, base: pathlib.Path = CASES) ->
            {"sheet": nd[0], "cell": nd[1], "mode": "set", "value": "'" + date},
            {"sheet": nc[0], "cell": src_cell, "mode": "set",
             "value": f"prices table, {entity} close {date} (Yahoo); set by the orchestrator"},
-           {"sheet": "Valuation", "cell": f"B{rows['tp']}", "mode": "get", "value": None}]
+           # The column the card reads, not always B: NTPC's case runs on the
+           # EV/EBITDA column C beside its P/E, and reading B handed the
+           # orchestrator's MODELS line the P/E price (found 2026-11-25).
+           {"sheet": "Valuation", "cell": f"{'ABCD'[_val_col(forms['Valuation'], rows) - 1]}{rows['tp']}",
+            "mode": "get", "value": None}]
     # `base` reaches excel() too. The first test run passed a scratch copy's
     # folder to everything EXCEPT this call, so excel() resolved the REAL model,
     # found it open and wrote the test close into the PM's window (2026-11-04).
@@ -467,6 +477,21 @@ try {
       } elseif ($op.clear) { $wb.Worksheets.Item([string]$op.sheet).Cells.Clear() | Out-Null }
       $out += [pscustomobject]@{ sheet = $op.sheet; cell = ''; before = ''; formula = '';
                                  value = $(if ($exists) { 'exists' } else { 'added' }) }
+      continue
+    }
+    # 'delrow' deletes the whole row(s) of the cell, and Excel shifts every
+    # formula and name below it, exactly as a rebuild without that row would
+    # place them. 'delname' deletes a workbook name (value); a missing name is a
+    # note. Both exist for ipp_model --rewrite-valuation, which takes the P/E
+    # target off Inputs (PM, 2026-11-25: "remove the PE column").
+    if ($op.mode -eq 'delrow') {
+      $wb.Worksheets.Item($op.sheet).Range($op.cell).EntireRow.Delete() | Out-Null
+      $out += [pscustomobject]@{ sheet = $op.sheet; cell = ''; before = $op.cell; formula = ''; value = 'row deleted' }
+      continue
+    }
+    if ($op.mode -eq 'delname') {
+      try { $wb.Names.Item([string]$op.value).Delete() } catch { $notes += ("no name '" + $op.value + "' to delete") }
+      $out += [pscustomobject]@{ sheet = ''; cell = ''; before = [string]$op.value; formula = ''; value = 'name deleted' }
       continue
     }
     $rng = $wb.Worksheets.Item($op.sheet).Range($op.cell)
