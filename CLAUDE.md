@@ -3895,7 +3895,7 @@ now reviews both.
 
 PM: *"inox-wind agent, lets go. use EV/EBITDA instead of P/E"*. Agent
 **`inxw-agent`** (Bloomberg INXW IN; "inox-wind agent" read by the token
-rule), entity `inox_wind`. No Excel model, and none was asked for.
+rule), entity `inox_wind`. The quarterly model came three days later (below).
 - **Registered as a coverage name**, like Power Grid and NTPC:
   `analysis_coverage {token: INXW, group: POWER}`, `ticker_map`, `names`.
   The Analysis roster is 32 with it. It is renewable EQUIPMENT and stays out
@@ -3934,6 +3934,55 @@ rule), entity `inox_wind`. No Excel model, and none was asked for.
   `house_tps` row to be read back (the 5-house floor stays for legs parsed out
   of `anchor_why`). And the day-end prints no own-vs-sector split for Inox:
   grading's sector map comes from the entity specs, and Inox is in none.
+
+**The quarterly model, `wind_model.py` (2026-11-25).** PM: *"can you build a
+model? I cant find jpm and ms having models for this"*. No house model
+exists, so `Inox_Wind_model.xlsx` is built from `model_config.json` on
+screener's filed quarters (crore-rounded, so a reported quarter foots to within
+Rs3cr and `crossfoot` refuses anything wider), Inox Green's own filed quarter
+and the earnings calls. Selftest has 36 checks, Excel recalculation included.
+It is the genco/power pattern (config, live formulas, Excel recalc, model_view
+reads it by label, `▦ model` chip on the card) with its own drivers:
+- **Two segments.** O&M is the listed Inox Green, typed from its filing, plus
+  Wind World's 4.5GW book. That book consolidates from Q3FY27: Rs120cr in Q3
+  (signed mid-October), Rs150cr a full quarter, +5% a year from FY28. It is a
+  step on Inputs that the WTG ratios never absorb, and the selftest proves it
+  moves EBITDA by exactly step × O&M margin. WTG & EPC = consolidated less O&M.
+- **The driver is a WTG & EPC REVENUE plan per fiscal year, not MW.** The
+  company stopped stating quarterly MW after Q2FY26: it declined on the
+  Q4FY26 and Q1FY27 calls, and it guides revenue (FY28 ~Rs7,500cr). A model
+  run on MW would need history nobody published. MW is IMPLIED: WTG revenue /
+  revenue per MW, measured only on quarters with stated MW (Q1FY26 146,
+  Q2FY26 202, and Q2FY27's 256, which is I-Sec's ESTIMATE). A reported
+  quarter with no stated MW shows blank, never a back-solved number (tested).
+  A yellow MW override reverses the direction. The order book rolls forward
+  from the last reported book; `crossfoot` requires that book.
+- **Costs:** material and EPC/other as ratios to WTG revenue (trailing four
+  quarters, revenue-weighted, plus a pp drift), with employee cost as the
+  fixed line. The PM's revenue and EBITDA-margin overrides sit on P&L; a
+  margin override breaks the segment sum on purpose, and a check row shows by
+  how much.
+- **Cash:** net working capital is screener's wide measure (other assets less
+  cash, less other liabilities). It is held as days of trailing revenue at
+  Sep-26's 370 until there is a view. Management's narrower measure read ~200
+  at Mar-26 against 310 on this one, and it targets ~150. Net debt resets to
+  borrowings less cash at every published balance sheet. Other income is held
+  at Q2FY27's Rs23cr, because the trailing average carried Wind World income
+  that is in O&M revenue from Q3.
+- **Valuation:** EV/EBITDA on FY28 at `Target_ev` (the case's median
+  implied, 11.31x) less net debt at Q4FY27 (model). A second line prices the
+  same EBITDA through the case's bridge (today's net debt).
+- **First read (Rs53.70, 23-Nov):** on I-Sec's revenue the model's FY27 /
+  FY28 EBITDA is Rs1,016cr / Rs1,489cr (+5% / +3.5% on I-Sec), because the
+  trailing ratios assume Q2's 66% material spike eases. At Q2's ratio Q3 is
+  ~Rs219cr instead of Rs320cr. FCF is -Rs1,660cr in FY27 at 370 days, and net
+  debt reaches ~Rs3,600cr by FY28. Model target Rs84 (+57%); Rs88 through the
+  case bridge. The case's Q3 moved from `street` to the model's `draft`
+  (Rs320cr, +5% on the even split), which lifted the base from +58.3% to
+  +67.1% (Rs90), bear +39.5%, bull +99.6%. It stays a draft until the PM
+  gives revenue and margin.
+- The transcripts sit in `data/companies/inox-wind/sources/` (fetch_transcripts;
+  no dossier, so no Company tab). The Q3FY24-Q2FY25 PDFs 404 on the company host.
 
 ## Sector positioning in the daily review — `sector_oi.py` (2026-11-20)
 
