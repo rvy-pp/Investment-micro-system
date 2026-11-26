@@ -1,0 +1,422 @@
+{
+ "date": "2026-11-26",
+ "generated_at": "2026-11-26T08:23:33",
+ "mail": {
+  "window": "24h to 08:16 IST",
+  "n_scanned": 128,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Emkay: aluminium ~$2,769/t, down 8.4% QTD, with alumina above $400/t; non-ferrous earnings now below its base case, though ~400kt CY27-28 deficit view holds.",
+      "source": "Emkay — Emkay Metals Weekly - Base and precious metals under stress",
+      "received": "10:58",
+      "detail": {
+       "summary": "Dollar Index at 104 and Fed-hike expectations drove the metals sell-off. Emkay still sees tight LME inventory and elevated physical premiums supporting a CY27-28 deficit, against Indonesian additions and Middle East restarts. Spot sits below its base case for non-ferrous.",
+       "points": [
+        "Al ~$2,769/t; -8.4% QTD",
+        "Alumina >$400/t weighs on margins",
+        "Bear case Al/alumina $2,600/$360 per t",
+        "Copper below $12,000/t",
+        "Market-surplus expectations for 2027 pressure sentiment"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Emkay ADD on Hindalco, target Rs1,150: 2Q adjusted EBITDA Rs128.1bn beat consensus by 11.2%; copper EBITDA +82.2% qoq; ~5% qoq cost inflation flagged for 3Q.",
+      "source": "Emkay — Emkay Metals Weekly - Base and precious metals under stress (Hindalco note)",
+      "received": "10:58",
+      "detail": {
+       "summary": "The beat came from India aluminium and copper, with Novelis in line helped by $39mn Oswego insurance recoveries. Oswego utilisation and Bay Minette commissioning should support Novelis recovery; by-product realisation supports copper, offsetting 3Q cost inflation.",
+       "points": [
+        "Adj EBITDA Rs128.1bn; +11.2% vs consensus",
+        "Copper EBITDA +82.2% qoq",
+        "Novelis in line; $39mn Oswego recoveries",
+        "~5% qoq cost inflation weighs on 3Q margins"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Aluminium industry seeks customs duty changes in Budget 2027 to protect a Rs4 lakh crore investment pipeline (ET Manufacturing, via Kotak daily).",
+      "source": "Kotak — Basic materials - daily news and prices",
+      "received": "10:04",
+      "detail": {
+       "summary": "Kotak's daily links the industry's Budget 2027 ask on customs duty. Only the headline is in the mail body; the article is not reproduced.",
+       "points": [
+        "Budget 2027 customs duty ask",
+        "Rs4 lakh crore investment pipeline cited",
+        "Headline only; no duty rates in mail"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "IIFL downgrades APL Apollo to SELL (from ADD), TP Rs1,400 (16% downside), on 25x-EBITDA Tata asset buy and promoter exit.",
+      "source": "IIFL Metals — [IIFL Metals] APL Apollo - Downgrade to SELL on Promoter exit and higher deal-linked leverage",
+      "received": "08:29",
+      "detail": {
+       "summary": "IIFL says the Rs280bn purchase of Tata's tubes and colour-coated assets and Gupta's exit end APAT's premium multiple whichever way the vote goes. It moves to 15x FY28 EBITDA and weights the deal-closes and deal-fails outcomes equally.",
+       "points": [
+        "Rs280bn outflow lifts FY28 debt/EBITDA to 6.4x",
+        "Tata to buy ~52% for Rs320bn; 9.9% bought, 12% and 4.6% to come",
+        "Fair value Rs1,228 if deal closes; Rs1,572 if it fails",
+        "Approval needs 75% of votes cast; Tata's 9.9% cannot vote",
+        "Tata to cut external net debt/EBITDA to 2.5x within 12 months of close"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA calls Tata Steel's APL Apollo deal pricey at 25x FY28 EV/EBITDA but value-neutral in SOTP at 15x; shareholder vote is the watch.",
+      "source": "CLSA — Tata Steel: Pricey Deal | Strategy: Earning Review | Forum Macro Tour: Hawkish",
+      "received": "08:52",
+      "detail": {
+       "summary": "CLSA sees no governance issue at Tata level. Its SOTP is value-neutral at 15x assuming no further equity infusion, and the payoff is a richer value-added mix. APL shareholder approval is the key watch.",
+       "points": [
+        "25x FY28 consensus EV/EBITDA paid",
+        "SOTP value-neutral at 15x, no further equity infusion",
+        "Integration rises from 35% to 53%",
+        "EPS accretion targeted in 3-3.5 years"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "ICICI Sec cuts APL Apollo to SELL, TP Rs1,345 (-20%), FY28E EPS dilution 43%; keeps Tata Steel BUY, TP Rs221 (+36%).",
+      "source": "ICICI Securities — Morning Note 25th November'26 (+5 more in Outlook)",
+      "received": "09:05",
+      "detail": {
+       "summary": "ICICI downgrades APL on expensive acquisition valuations, debt burden and promoter exit hurting its premium. On Tata Steel it stays BUY, seeing the deal lift downstream share but dilute EPS for 2-3 years, with net debt rising.",
+       "points": [
+        "APL funding: Rs100bn debt, Rs180bn future equity instruments",
+        "APL capacity 5.0mtpa to 7.5mtpa; 15x FY28E EV/EBITDA",
+        "Tata: 26.6% promoter stake Rs155.1bn plus 26% open offer",
+        "Tata net debt up ~Rs200-220bn post consolidation",
+        "Tata valued at 7x FY28E EV/EBITDA"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "BofA lifts FY27 cement demand growth to 7.5% (from 6.5%) on 9% 1H; November hikes elusive, East/South prices cut; reiterates Buy UTCEM.",
+      "source": "BofA — Cement - India: Concrete volumes, fluid prices - India",
+      "received": "17:00",
+      "detail": {
+       "summary": "1H volume growth beat expectations, but post-festive demand normalisation is slower than expected, so November price hikes have not held and East/South have corrected. Weak monsoon and low reservoirs are the risk to 1QFY28 volumes. Stocks have re-rated on Sep-Oct pricing, so pricing weakness is the valuation risk.",
+       "points": [
+        "FY27 demand +7.5% vs 6.5%; 2HFY27 ~6%; FY28 held at 7%",
+        "Sep-26 qtr volumes +10% YoY (13 listed cos); 1H 9%+",
+        "Sep-Oct hikes Rs10-15/bag; Nov flattish, East/South lower",
+        "South reservoirs 43% below 10-year average",
+        "ACEM guides HSD 2H volume growth vs -5% in 1H"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "CLSA tour: Kaynes OSAT ramp anchored by Vishay offtake; PCB Unit 1 revenue from 3QFY27; smart-meter divest-or-retain call likely near term.",
+      "source": "CLSA — India tech hardware: Wings of opportunity tour",
+      "received": "19:48",
+      "detail": {
+       "summary": "CLSA's tour sees Indian manufacturers shifting from capacity creation to commercialisation, with customer qualification as the moat. For Kaynes, two debates (OSAT ramp, smart-meter exit) are the swing factors, and low FCF and ROCE remain a broad concern.",
+       "points": [
+        "Vishay to anchor OSAT offtake and proportionately fund future capacity; final structure awaited",
+        "Smart-meter: divest installation & O&M (c.45% of metering revenue) or keep with better receivable terms",
+        "PCB Unit 1 revenue from 3QFY27; HDI supports next ramp leg",
+        "Low FCF and ROCE flagged as broad-based concern"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "LG Electronics India: promoter to sell up to 2% (13.58mn shares) in open market by 31-Dec-2026; holding falls 85% to 83%.",
+      "source": "PhillipCapital — LG Electronics India - Proposed 2% promoter stake sale to meet MPS requirements",
+      "received": "15:32",
+      "detail": {
+       "summary": "The sale is for minimum public shareholding compliance, not an urgent forced deadline. LG's IPO-price market cap puts it in the 5-year bracket, so the 25% MPS is due only by October 2030, leaving a further 8% dilution after this tranche.",
+       "points": [
+        "13.58mn shares, open market, one or multiple tranches, by 31-Dec-2026",
+        "Promoter 85% to 83%; public 15% to 17%",
+        "MPS deadline 14-Oct-2030 (FY31); IPO market cap ~Rs77,380cr at Rs1,140",
+        "Further 8% dilution needed after this sale"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Tata Electronics is sounding out EPC firms for OSAT Phase 2 at Jagiroad, Assam, a Rs27,000cr outlay under TSAT.",
+      "source": "Nomura — India Consumer Durables and EMS: IKEA India targets profitability by FY29... (+ more in Outlook)",
+      "received": "09:14",
+      "detail": {
+       "summary": "Tata Electronics has opened exploratory talks with global EPC and project-management firms for the second phase of its Assam OSAT facility. It is the nearest domestic competitor signal for Kaynes' OSAT build-out.",
+       "points": [
+        "Rs27,000cr (over $3bn) total outlay",
+        "Greenfield, Jagiroad Assam, under Tata Semiconductor Assembly and Test Pvt Ltd",
+        "Exploratory stage: EPC and project-management firms",
+        "Same note: IKEA India targets profitability by FY29, 30 stores by 2030"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "JPM (Neutral, PT Rs3,600) calls Siemens Energy India's Sept-Q a broad beat: EBITDA +72% YoY, orders Rs45.1bn up 92%, consensus upgrades likely.",
+      "source": "JPM — Siemens Energy India Limited First Take: Substantial all-around beat, as seen across power equipment names this quarter",
+      "received": "07:06",
+      "detail": {
+       "summary": "JPM sees execution and orders picking up across HV power equipment, with transmission driving the beat. It expects consensus to move up and the stock to outperform peers. Generation segment was the soft spot; the call is on 27 Nov, 10AM IST.",
+       "points": [
+        "Revenue/EBITDA/PAT +30%/+72%/+81% YoY, 14%/21%/25% above JPMe",
+        "Order inflow Rs45.1bn, +92% YoY, 23% above JPMe",
+        "Transmission revenue +63% YoY, EBIT margin 22.4%",
+        "Four peers' Sept-Q orders Rs173bn, +97% YoY, +57% QoQ",
+        "Price Rs2,970 (25 Nov); generation revenue -4% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA reiterates NHPC O-PF, Rs117 target; sees EPS doubling over FY26-28 as Parbati II and Subansiri Lower profits get recognised.",
+      "source": "CLSA — NHPC (NHPC IN): A confident NHPC",
+      "received": "01:12",
+      "detail": {
+       "summary": "CLSA says NHPC's conservative accounting has held back six quarters of earnings; final tariff orders would be recovered retrospectively at 9.7% interest, so no NPV loss. Indus treaty abeyance is a hydro growth tailwind, with 14 catalysts over the next year.",
+       "points": [
+        "Regulated equity +29% YoY FY26; +49% once Subansiri Lower completes",
+        "Subansiri Lower: 1.25GW of 2GW commissioned, balance by June 2027",
+        "1HFY27 PAT +40% YoY to Rs29bn",
+        "Regulated equity ex-minority growth 90% over FY26-30CL",
+        "FIIs up 290bps stake; stock down c.2% this year"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Morgan Stanley's NPUNL CEO call: NTPC targets 30GW nuclear by 2047, indicative capex ~Rs150mn/MW implying Rs6.5-7/unit tariffs; final licence rules still pending.",
+      "source": "Morgan Stanley — India Nuclear Power: Scaling The Opportunity (+2 more in Outlook)",
+      "received": "07:33",
+      "detail": {
+       "summary": "NTPC's nuclear build runs ahead of regulation: ~30 sites identified, 10 under feasibility, ~150-person team. Final SHANTI Act rules and project licences are the next investment trigger. Financing cost drives tariffs, since ~60% of tariff is capital-linked.",
+       "points": [
+        "30GW by 2047 vs India's 100GW ambition",
+        "Capex ~Rs150mn/MW (2027 base); Rs250-260mn/MW on 2035 base",
+        "Tariff ~Rs6.5-7/unit now; ~Rs9.5-10 on 2035 costs",
+        "1ppt cost of capital ~ Rs0.3/unit tariff",
+        "Draft licensing rules Aug 2026; detailed rules pending"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Kotak keeps Wipro SELL, FV Rs155: BP finance-BPO mega deal adds only ~70-80bps annualised revenue; stock at 14x FY28E PE.",
+      "source": "Kotak — [Kotak] Wipro (CMP: Rs189, FV: Rs155, SELL): Mega deal in horizontal BPO",
+      "received": "07:46",
+      "detail": {
+       "summary": "Net-new BP deal (3k staff, rebadged 1HCY27) is one of two large deals slipped from 2QFY27, so 3Q TCV should rebound. Kotak says it is too small to change the growth profile, with competitive intensity a drag early on.",
+       "points": [
+        "2QFY27 large-deal TCV US$674mn, -59% qoq, -76% yoy",
+        "Revenue uplift ~70-80bps annualised; FY28E contribution",
+        "Europe EMR revenue US$220mn (1QFY24) to US$141mn (2QFY27)",
+        "FY28-29E organic cc growth 0.4-0.6% yoy",
+        "Estimates unchanged; 14x FY28E PE, FV Rs155"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "JPM stays OW Tech Mahindra (PT Rs1,900, CMP Rs1,801): CEO sees 7% organic cc growth sustainable, margins structural with scope to expand.",
+      "source": "J.P. Morgan — Tech Mahindra Ltd.: CEO fireside chat takeaways: Growth over margins, but margins can keep expanding",
+      "received": "06:50",
+      "detail": {
+       "summary": "CEO Joshi says demand is not deteriorating, though clients push vendor consolidation, and productivity asks reflect competition more than AI deflation. JPM sees TechM outpacing peers on signings momentum while margins rise mildly, and notes openness to restarting M&A.",
+       "points": [
+        "7% organic cc yoy growth in 2Q seen sustainable",
+        "Net new TCV US$1.0-1.1bn/qtr; US$1.3-1.4bn could mean double-digit growth",
+        "Larger clients grew 11% yoy",
+        "M&A reopening: capital markets (BFSI), aerospace",
+        "PT Rs1,900 (Sep-27)"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA IT AI tour: experts see 30-70% AI deflation on 4-5 year contracts; Holds on TCS/INFY/HCL/TechM/LTM, U-PF Wipro, Coforge top pick.",
+      "source": "CLSA — CLSA India Research | Tata Steel | IT | Consumer | Economics | Strategy (+2 more in Outlook)",
+      "received": "08:51",
+      "detail": {
+       "summary": "After meeting eight industry players, CLSA finds near-term growth unlikely to pick up as IT budgets are crowded out by hardware, though ISG expects mid-single-digit growth sustained. It stays cautious on large caps and prefers Coforge and Persistent.",
+       "points": [
+        "AI deflation 30-70% over 4-5 year contracts per most experts",
+        "Hold: TCS, INFY, HCL, TechM, LTM; U-PF Wipro",
+        "Coforge top pick, O-PF; Persistent O-PF",
+        "McKinsey & Avasant: no near-term growth pick-up",
+        "Delivery pyramids seen turning diamond-shaped"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Emkay: US proposes Section 301 tariff of up to 25% on India, 17% if trade deal lands; not effective before Jan-27, hearings late Jan.",
+      "source": "Emkay — US Tariffs: Relative disadvantage for India, manageable impact",
+      "received": "07:48",
+      "detail": {
+       "summary": "India loses its relative tariff edge, as only Vietnam (35%) is higher among 14 countries. Effective hit should be smaller given exemptions, and frontloading plus diversification cushion exports near term. Backlash after the US midterm loss could moderate rates.",
+       "points": [
+        "25% India vs 18% Indonesia/Thailand, 15% Japan/Korea",
+        "Electronics, pharma, energy, Sec 232 goods exempt",
+        "US exports $8.4bn/month FY27TD, >30% growth recently",
+        "FY27E export growth >15%; CAD/GDP <1.5%",
+        "Public hearings late Jan-27; 17% needs India-US deal"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: NSE500 2QFY27 PAT +24.5% YoY, 10-quarter high; FY27 consensus up 1.5%, large caps +2.3%, mid/small caps cut.",
+      "source": "CLSA — India strategy: Another quarter of upgrades",
+      "received": "22:26",
+      "detail": {
+       "summary": "Earnings cycle broadened, with large caps now leading and two straight quarters of upgrades. Small cap expectations stay demanding against delivery, so CLSA sees most downgrade risk there and the best margin of safety in large caps.",
+       "points": [
+        "12 of 13 sectors grew PAT; healthcare only decline (-7.5%)",
+        "FY27/FY28 NSE500 upgrades 1.5%/0.7% vs 0.2%/0.3% in 1Q",
+        "FY26-28 PAT CAGR: large 11.2%, mid 20.2%, small 35.3%",
+        "63% of small caps forecast >20% CAGR vs 45% delivered",
+        "Large caps: 28% expected vs 41% delivered >20% CAGR"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA: October PCE inflation in line but spending missed; Fed still on hook for a December rate hike.",
+      "source": "CLSA Research Alerts — CLSA: Macropulse: US Inflation & Spending, Australia Inflation (+3 more in Outlook)",
+      "received": "03:03",
+      "detail": {
+       "summary": "US headline and core PCE matched expectations while spending disappointed, yet CLSA still sees the Fed hiking in December. Australia inflation surged, though the RBA is expected to hold in December.",
+       "points": [
+        "US Oct PCE headline and core as expected",
+        "US spending disappointed",
+        "Fed rate hike still expected December",
+        "Australia Oct inflation 4.9%; 125bps hikes done",
+        "RBA seen holding in December"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Kotak keeps Siemens SELL, FV up to Rs3,400 from Rs3,150 on 3-4% higher estimates; 62x forward P/E vs CMP Rs3,570.",
+      "source": "Kotak — [Kotak] Siemens (CMP: Rs3,570, FV: Rs3,400, SELL): Strong execution but weakening growth visibility",
+      "received": "06:58",
+      "detail": {
+       "summary": "Kotak argues 2Q execution was strong but growth visibility is weak: order inflow to revenue is only about 1.1x once a lumpy mobility order is stripped out. Estimate rises come from margin and other income, not growth; revenue growth assumptions were cut.",
+       "points": [
+        "Revenue +17% yoy; EBITDA +3% yoy, 11% beat",
+        "Orders/revenue 1.1x in 1H, adjusted",
+        "EBITDA margin down 150bps yoy, up 260bps qoq",
+        "62x one-year forward EPS, 15% discount to ABB",
+        "Data centre under 8% of business"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Kotak schedule, Thu 26 Nov at Grand Hyatt: Nuvoco group meeting 15:00-16:00, then Inox Wind 1x1 16:00-17:00 (Level 5).",
+      "source": "Kotak Events — [Kotak Schedule] - IN-PERSON - Midcap Conference 2026 - Rajvaibhav Yadav, Pinpoint Asset Management Ltd.",
+      "received": "07:03",
+      "detail": {
+       "summary": "Updated delegate schedule for the PM at Kotak's Midcap Conference, Grand Hyatt Kalina, Mumbai, all timings IST. Two meetings are listed for Thursday 26 November, one group and one 1x1.",
+       "points": [
+        "15:00-16:00 group, Nuvoco Vistas, room 5173",
+        "16:00-17:00 1x1, Inox Wind, room 5122",
+        "Inox Wind IR: Sweta Sultania",
+        "Nuvoco IR: Bishnu Sharma, Adit Raj Bando"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "PhillipCapital technical pair: buy Hero MotoCorp, sell Bajaj Auto at ratio 0.52884, target 0.58172 (+10%), stop 0.51033 (-3.5%).",
+      "source": "PhillipCapital — Actionable PAIR STRATEGY: Long–Short Pair Trade of BUY HEROMOTOCO SELL BAJAJ AUTO",
+      "received": "14:48",
+      "detail": {
+       "summary": "Technical pair call from the weekly charts and the Hero/Bajaj ratio chart, struck delta neutral on 25-Nov closes. Stop is on a daily closing basis.",
+       "points": [
+        "Hero 5,722; Bajaj 10,820 on 25-Nov",
+        "Ratio 0.52884; target 0.58172; stop 0.51033",
+        "1 lot each: Rs8.58 lakh vs Rs8.12 lakh",
+        "Lot sizes 150 Hero, 75 Bajaj"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Nvidia fell 3.9% and the SOX 0.65% overnight; TSMC ADR -2.0%, AMD -1.8%, Broadcom flat.",
+    "source": "Yahoo closes 25-Nov (markets_2026-11-26.json)"
+   },
+   {
+    "text": "BofA sales note: agentic AI could add US$300-400bn to IT services TAM over 5 years; outcome-based billing key to share shifts.",
+    "source": "BofA India Sales — BofA India Insight - MSIL | APAT - D/G to Underperform | TATA | IT | Consumer | Strategy"
+   },
+   {
+    "text": "Kotak: large US banks' tech spending rising strongly; AI gains most visible in software development and call centres, gradual shift to agentic AI.",
+    "source": "Kotak — India Daily: Updates - InterGlobe Aviation, Consumer Durables & Apparel, IT Services, Real Estate"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
