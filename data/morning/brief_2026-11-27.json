@@ -1,0 +1,311 @@
+{
+ "date": "2026-11-27",
+ "generated_at": "2026-11-27T08:13:27",
+ "mail": {
+  "window": "24h to 07:48 IST",
+  "n_scanned": 97,
+  "sectors": [
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "IIFL downgrades APL Apollo to SELL from ADD, TP Rs1,400 (16% downside), on the Rs280bn Tata Steel tubes deal and promoter exit.",
+      "source": "IIFL Sales - APL Apollo downgraded to SELL - Promoter exit & leverage concerns | Siemens upgraded to BUY",
+      "received": "11:50",
+      "detail": {
+       "summary": "IIFL sees the Rs280bn purchase of Tata Steel's tubes and colour-coated assets as expensive, and with the promoter exit it warrants a de-rating. Target multiple falls to 15x FY28 EV/EBITDA from an implied 20x.",
+       "points": [
+        "TP Rs1,400, 16% downside; SELL from ADD",
+        "Deal at 25x FY26 EBITDA",
+        "Combined leverage could reach 6.4x FY28 Debt/EBITDA",
+        "Tata targets 2.5x external net leverage within 12 months of closure",
+        "Fair value Rs1,228 if deal closes, Rs1,572 if not"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "UBS puts APL Apollo rating and Rs2,600 PT under review: deal is initially EPS-dilutive, raises interim leverage, and promoter exit may cut the premium multiple.",
+      "source": "UBS - UBS INDIA - BIG PICTURE 2027-28 ... | Siemens - Analyst Meet | GAIL | APAT",
+      "received": "09:07",
+      "detail": {
+       "summary": "UBS views the capacity and EBITDA targets positively but wants clarity on delivery. The deal needs approvals and funding is unclear, and a change in control could prompt investors to reassess APL's historical premium multiple.",
+       "points": [
+        "Rating Buy, PT Rs2,600 now Under Review",
+        "Deal value Rs280bn for Tata Steel businesses",
+        "Initially EPS-dilutive at acquisition valuations",
+        "Awaits Tata Steel's review, approvals and funding clarity",
+        "Material share price correction after announcement"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Kotak channel check: spot cement prices up 3-4% QoQ pan-India (east +5.7%, south +5.5%); pet coke down 8.7% from October peak; 3QFY27 margins seen improving.",
+      "source": "Kotak - [Kotak] Construction Materials: Prices improve; sustainability uncertain",
+      "received": "08:51",
+      "detail": {
+       "summary": "Kotak sees limited absorption of announced hikes, with ground prices ahead of announced ones, but flags rollbacks and cooling fuel as risks to further hikes. Seasonal weakness and ACEM's push for above-industry growth cap near-term pricing. Margins should recover sequentially with a lag on inventory costs.",
+       "points": [
+        "Spot 3QFY27 prices: N +1.8%, C +1.8%, E +5.7%, W +3.2%, S +5.5%",
+        "Pet coke -8.7%, seaborne coal -6.2% from October peaks",
+        "25-year average 3Q price move is -0.4% QoQ",
+        "Industry margin fell ~Rs200/t QoQ in 2QFY27; reversal expected",
+        "Top picks Nuvoco and JSW Cement; FY27 demand ~8% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA raises FY27 cement demand growth to 7.5% from 6.5%, but November hikes have stalled and East/South prices are being cut; Buy UltraTech.",
+      "source": "BofA - India Cement: Concrete volumes but fluid prices (+2 more in Outlook)",
+      "received": "10:51",
+      "detail": {
+       "summary": "Volume beat and Sep-Oct hikes drove a re-rating, but post-festive demand normalisation is slower, so pricing momentum is the key risk to 2H earnings and valuations. Weak monsoon and low reservoirs threaten 1QFY28 volumes. UltraTech preferred on volume and cost delivery.",
+       "points": [
+        "1H volume growth 9%; Sep-26 quarter +10% YoY (13 listed cos)",
+        "FY28 demand growth held at 7%; 2HFY27 implied ~6%",
+        "Sep-Oct hikes of Rs10-15/bag now being corrected in East/South",
+        "South India reservoirs 43% below 10-year average",
+        "ACEM guides HSD volume growth in 2H vs -5% in 1H"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM upgrades Syrma and Avalon to Neutral from UW after 17%/31% falls; PTs unchanged (Rs1,300/Rs1,650), Dixon and Amber stay top picks.",
+      "source": "JPM - India EMS: Upgrade Syrma, Avalon to N post recent correction",
+      "received": "17:06",
+      "detail": {
+       "summary": "JPM says EMS focus has shifted from growth to ROCE and working capital, so multiples are adjusting lower. Syrma and Avalon now trade in line with Dixon on FY28 P/E, against a 27-49% premium two months ago. Order of preference: Dixon, Amber, Kaynes, Avalon, Syrma, Cyient DLM.",
+       "points": [
+        "Sector down 9% in 2 months vs Nifty +10%",
+        "Syrma FY27 EBITDA margin guide cut to 10-10.5% from 10.5-11%",
+        "Avalon FY27 NWC guided 120-130 days vs 112 in FY26",
+        "FY28E P/E: Dixon 43.3x, Syrma 46.0x, Avalon 46.1x",
+        "CMP vs PT: Syrma Rs1,434 vs 1,300; Avalon Rs1,688 vs 1,650"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nuvama flags a negative read-through for Dixon: smartphone shipment targets for 2027 see sharp cuts.",
+      "source": "Nuvama - Nuvama Daily | Actionables: +SIEM; +BHEL; -DIXON; Top IDEAS",
+      "received": "08:51",
+      "detail": {
+       "summary": "Nuvama's daily lists Dixon as an avoid actionable on a negative read-through from sharply lower 2027 smartphone shipment targets. The same note says the US 25% no-deal tariff on India is a proposal, with comments due 5 Jan and no effective date.",
+       "points": [
+        "Dixon listed as -DIXON actionable",
+        "2027 smartphone shipment targets cut sharply",
+        "US 25% India tariff is a proposal, hearing 25 Jan",
+        "Detail beyond the one-line rationale not in the mail"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Nomura cuts 2026F global smartphone shipments to -17% (from -12.9%) and 2027F to a further -12.1% on memory inflation; phones exempt from proposed US tariff.",
+      "source": "Nomura - India Consumer Durables and EMS: Nomura Expert Series; Asia PC & Smartphone 2027F (+5 more in Outlook)",
+      "received": "09:22",
+      "detail": {
+       "summary": "Nomura sees AI-driven memory costs, around 50% of low-end phone BOM, shrinking consumer device volumes while ASPs rise. Brands may outsource more to Chinese ODMs in 2027F. A US proposal of 25% tariffs on India (17% with a deal) exempts smartphones.",
+       "points": [
+        "Global PC shipments -12% in 2026F, -12.6% in 2027F",
+        "Smartphones -17.0% in 2026F, -12.1% in 2027F",
+        "Memory 50% of low-end, 35-40% of high-end phone BOM",
+        "Wires & cables dealer call 27 Nov 11:00 IST"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "NHPC: CLSA keeps High-Conviction O-PF, TP Rs117; full Parbati-II and Subansiri profit recognised retrospectively at 9.7% interest once tariff orders land Jan-Mar'27.",
+      "source": "CLSA - NHPC (Buy) - A confident NHPC",
+      "received": "10:10",
+      "detail": {
+       "summary": "From the 29th India Forum, NHPC says conservative accounting defers full profit on two large new hydro projects. The final tariff order, likely Jan-Mar'27, brings retrospective recognition with interest, so CLSA sees no NPV loss and a steep earnings step-up.",
+       "points": [
+        "TP Rs117, rating HC O-PF reiterated",
+        "Subansiri Lower: 1.25GW of 2GW commissioned, rest by June 2027",
+        "Retrospective PAT recognition carries 9.7% interest",
+        "REE (ex-minority) growth 90% over FY26-30CL vs 31% past five years",
+        "EPS to double, ROE +810bps over FY26-28CL"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Wipro signs ~USD600mn large deal with bp, rebadging 3,000 employees; IIFL stays REDUCE, TP Rs160 (18% downside).",
+      "source": "IIFL - India IT - Large Deal Alert: Wipro signs USD600mn deal with bp",
+      "received": "12:07",
+      "detail": {
+       "summary": "IIFL flags a ~USD600mn Wipro deal with bp that involves rebadging 3,000 employees. Rating is unchanged: REDUCE with Rs160 target, 18% below the then price. The note is a short alert pointing to IIFL's large-deal tracker.",
+       "points": [
+        "~USD600mn deal value",
+        "3,000 employees rebadged to Wipro",
+        "REDUCE, TP Rs160",
+        "18% potential downside",
+        "Detail in IIFL large deal tracker PDF"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Domestic MFs cut IT active weight 33bps MoM in Oct to a 16-month-low 74bps underweight; Infosys -11bps, TCS -9bps.",
+      "source": "CLSA - CLSA: India strategy: Portfolio cues from DMF activity",
+      "received": "04:48",
+      "detail": {
+       "summary": "CLSA PortfolioPulse shows domestic funds rotating into financials and autos, funded by IT, utilities and chemicals cuts. IT saw the sharpest sector cut in October and has lost ground over three months too.",
+       "points": [
+        "IT active weight -33bps MoM; U-WT 74bps, 16-month low",
+        "Infosys -11bps, TCS -9bps",
+        "IT -48bps in active weight over three months",
+        "Other financials +22bps, autos +19bps",
+        "DMF cash buffers c.5% of AUM, near record lows"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "Proposed US Section 301 tariff of up to 25% on India falls to 17% with a deal; 48% of US exports exempt.",
+      "source": "Kotak - [Kotak] Economy: A tariff to negotiate",
+      "received": "08:49",
+      "detail": {
+       "summary": "Kotak reads the proposed tariff as negotiating leverage that puts the onus of a deal on India. Without a deal, labour-intensive exports risk losing share to competing EMs, and INR appreciation adds to the near-term headwind.",
+       "points": [
+        "25% proposed, net of existing Section 301 duties; 17% with a trade deal",
+        "India's rate second highest among peers, behind Vietnam's 35%",
+        "~48% of exports to US exempt (generic pharma, electronics, energy)",
+        "Textiles, gems, marine, leather, furniture, machinery exposed: 17% of India's exports in these",
+        "Comments due 5 Jan 2027; hearings begin 25 Jan 2027"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Domestic MFs cut IT active weight 33bps in October to a 16-month low underweight of 74bps; PSU banks turned underweight.",
+      "source": "CLSA - CLSA: India strategy: Portfolio cues from DMF activity",
+      "received": "04:48",
+      "detail": {
+       "summary": "DMFs rotated towards financials, real estate and autos, funded by cuts in IT, utilities and chemicals. Cash buffers are back near record lows, limiting further buying capacity. CLSA flags the unloved stocks as preferred ideas.",
+       "points": [
+        "Cash buffer c.5% of AUM, from 5.2% in September; October buying US$4.4bn",
+        "Infosys -11bps, TCS -9bps active weight; IT -48bps over three months",
+        "Autos +19bps, other financials +22bps, private banks +16bps",
+        "Most unloved: Titan, Shriram Finance, Bajaj Auto; preferred include JSW Steel, Hindalco",
+        "ONGC, DMart, NTPC near bottom decile of three-year active weight"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "India-dedicated funds saw US$1.1bn October outflows while GEM funds took in US$1bn; Asia ex-Japan allocation to India rose to 8.2%.",
+      "source": "Kotak - [Kotak] Strategy: Fund flows in October 2026 (+27 more in Outlook)",
+      "received": "07:34",
+      "detail": {
+       "summary": "India was the only listed EM with outflows in October while Korea, Taiwan and Brazil drew inflows. Allocations to India nonetheless rose, so the outflow is not an underweighting.",
+       "points": [
+        "India-dedicated: US$256mn ETF and US$880mn non-ETF outflows",
+        "Korea US$4.7bn, Taiwan US$3.9bn, Brazil US$3.1bn inflows",
+        "Asia ex-Japan allocation to India 8.2%, from 7.4% in September",
+        "GEM allocation to India 12.7%, from 11.7%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "CLSA expects Nov-26 2W wholesales up double digits (TVS ~44% domestic, Hero ~25%, Bajaj +8.5%), M&M UV ~10%, tractors down 15-16%.",
+      "source": "CLSA - India Autos: Preview: Auto Barometer",
+      "received": "11:18",
+      "detail": {
+       "summary": "CLSA sees growth holding despite a strong post-GST-cut base. Post-festive inventory correction is expected, heavier in 2Ws than PVs, where stocks are already below normal. Preferred plays are M&M, TVSL and TMCV.",
+       "points": [
+        "TVS domestic 2W ~44% YoY, exports +16%",
+        "M&M UV ~10% YoY; other PVs +3-7%",
+        "Tractors -15-16% YoY on El Nino and base",
+        "Oct wholesales exceeded retail ~15-30% in 2W, ~5-10% in PV",
+        "Preferred: M&M, TVSL, TMCV"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "IIFL upgrades Siemens to BUY from ADD, TP Rs4,201 (18% upside), on private capex revival and 1HFY27 order inflow up 26%.",
+      "source": "IIFL - APL Apollo downgraded to SELL / Siemens upgraded to BUY (+2 more in Outlook)",
+      "received": "11:50",
+      "detail": {
+       "summary": "IIFL sees private capex revival, order visibility and better execution supporting earnings, with margins recovering on easing input costs and locomotive ramp-up. It still prefers ABB India over Siemens.",
+       "points": [
+        "TP Rs4,201, 18% upside",
+        "29%/41% revenue/PAT CAGR FY27-29",
+        "Order book Rs470bn, +12% YoY",
+        "Valued at 45x Dec'28 PER"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Non-ferrous",
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "Kioxia to work with Nvidia on expanding GPU memory capacity; Meta Muse reportedly took about half of agent orders, ahead of Grok and ChatGPT.",
+    "source": "BOCI - BOCI TMT Daily (27 Nov)"
+   },
+   {
+    "text": "JPR: global PC GPU shipments fell 3.6% QoQ and 5.0% YoY in 3Q26.",
+    "source": "BOCI - BOCI TMT Daily (27 Nov)"
+   },
+   {
+    "text": "Nvidia -3.9%, SOX -0.7%, TSMC ADR -2.0% on 25-Nov; US shut 26-Nov for Thanksgiving, so no fresh US close.",
+    "source": "morning_markets (Yahoo closes, 25-Nov)"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,213 @@
+{
+ "date": "2026-11-27",
+ "fetched_at": "2026-11-27T08:12:39",
+ "quotes": {
+  "us": [
+   {
+    "symbol": "^GSPC",
+    "label": "S&P 500",
+    "date": "2026-11-25",
+    "close": 7182.78,
+    "prev_date": "2026-11-24",
+    "chg_pct": -0.25,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^IXIC",
+    "label": "Nasdaq",
+    "date": "2026-11-25",
+    "close": 23585.8,
+    "prev_date": "2026-11-24",
+    "chg_pct": -0.62,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "^DJI",
+    "label": "Dow",
+    "date": "2026-11-25",
+    "close": 50182.95,
+    "prev_date": "2026-11-24",
+    "chg_pct": 0.33,
+    "weekdays_skipped": 0
+   }
+  ],
+  "semis": [
+   {
+    "symbol": "^SOX",
+    "label": "SOX (semis)",
+    "date": "2026-11-25",
+    "close": 8774.86,
+    "prev_date": "2026-11-24",
+    "chg_pct": -0.65,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "NVDA",
+    "label": "Nvidia",
+    "date": "2026-11-25",
+    "close": 149.3,
+    "prev_date": "2026-11-24",
+    "chg_pct": -3.91,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AMD",
+    "label": "AMD",
+    "date": "2026-11-25",
+    "close": 406.03,
+    "prev_date": "2026-11-24",
+    "chg_pct": -1.75,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "TSM",
+    "label": "TSMC (ADR)",
+    "date": "2026-11-25",
+    "close": 342.34,
+    "prev_date": "2026-11-24",
+    "chg_pct": -1.96,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "AVGO",
+    "label": "Broadcom",
+    "date": "2026-11-25",
+    "close": 300.86,
+    "prev_date": "2026-11-24",
+    "chg_pct": -0.07,
+    "weekdays_skipped": 0
+   }
+  ],
+  "it": [
+   {
+    "symbol": "ACN",
+    "label": "Accenture",
+    "date": "2026-11-25",
+    "close": 240.49,
+    "prev_date": "2026-11-24",
+    "chg_pct": 3.52,
+    "weekdays_skipped": 0
+   },
+   {
+    "symbol": "CTSH",
+    "label": "Cognizant",
+    "date": "2026-11-25",
+    "close": 63.32,
+    "prev_date": "2026-11-24",
+    "chg_pct": 3.84,
+    "weekdays_skipped": 0
+   }
+  ]
+ },
+ "news": {
+  "ACN": [
+   {
+    "title": "Accenture PLC (ACN) is Attracting Investor Attention: Here is What You Should Know",
+    "publisher": "Zacks",
+    "when": "2026-11-26 13:00Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/accenture-plc-acn-attracting-investor-130003602.html"
+   },
+   {
+    "title": "50 ETFs Add to Accenture (ACN) Holdings on Tuesday",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-26 11:02Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/50-etfs-add-accenture-acn-110209157.html"
+   },
+   {
+    "title": "Global Risk Advisory Services Market Report 2026 | Capitalize on 11.2% CAGR to $151.31 Billion by 2030 as Accenture, Deloitte, KPMG and Aon Accelerate Cyber Risk Innovation",
+    "publisher": "GlobeNewswire",
+    "when": "2026-11-25 14:26Z",
+    "link": "https://finance.yahoo.com/technology/articles/global-risk-advisory-services-market-142600306.html"
+   },
+   {
+    "title": "Accenture (ACN) Pushes Deeper Into AI Compliance Tools As Undervalued Narrative Builds",
+    "publisher": "Simply Wall St.",
+    "when": "2026-11-24 19:08Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/accenture-acn-pushes-deeper-ai-190806006.html"
+   }
+  ],
+  "CTSH": [
+   {
+    "title": "Innodata vs. Cognizant: Which AI Services Stock Is a Better Buy?",
+    "publisher": "Zacks",
+    "when": "2026-11-26 16:23Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/innodata-vs-cognizant-ai-services-162300683.html"
+   },
+   {
+    "title": "Cognizant: 3 Key Takeaways for Long-Term Investors",
+    "publisher": "Motley Fool",
+    "when": "2026-11-26 02:03Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/cognizant-3-key-takeaways-long-020352883.html"
+   },
+   {
+    "title": "S&P Global may sell parts of Capital IQ unit to Cognizant - report",
+    "publisher": "Investing.com",
+    "when": "2026-11-25 14:07Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/p-global-may-sell-parts-140744300.html"
+   },
+   {
+    "title": "Cognizant to Present at the 30th Annual UBS Global Technology and AI Conference",
+    "publisher": "PR Newswire",
+    "when": "2026-11-25 13:00Z",
+    "link": "https://finance.yahoo.com/technology/ai/articles/cognizant-present-30th-annual-ubs-130000175.html"
+   },
+   {
+    "title": "Market Chatter: Cognizant Technology Solutions in Talks to Take Over Some S&P Global Operations",
+    "publisher": "MT Newswires",
+    "when": "2026-11-25 09:55Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/market-chatter-cognizant-technology-solutions-095513597.html"
+   }
+  ],
+  "NVDA": [
+   {
+    "title": "Trump Says Huang Is Excited About His \u2018Second Term\u2019 at Nvidia",
+    "publisher": "Bloomberg",
+    "when": "2026-11-27 00:39Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/trump-says-huang-excited-second-003925008.html"
+   }
+  ],
+  "AVGO": [
+   {
+    "title": "Goldman Sachs resets Broadcom's 12-month price target before earnings",
+    "publisher": "TheStreet",
+    "when": "2026-11-26 19:33Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/goldman-sachs-resets-broadcoms-12-193315984.html"
+   },
+   {
+    "title": "Broadcom Stocks Edge Lower After Rebounding From an Intraday Low of $278",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-26 18:30Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-edge-lower-rebounding-183041028.html"
+   },
+   {
+    "title": "What's Happening To Marvell's Cash Gap With Broadcom",
+    "publisher": "Trefis",
+    "when": "2026-11-26 15:15Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/whats-happening-marvells-cash-gap-151526078.html"
+   }
+  ],
+  "TSM": [],
+  "AMD": [
+   {
+    "title": "AMD Stocks Slip 1.75% After Filing Registers 337 Million Shares for Resale",
+    "publisher": "GuruFocus.com",
+    "when": "2026-11-26 18:29Z",
+    "link": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slip-1-75-182928246.html"
+   }
+  ]
+ },
+ "errors": [],
+ "gift_nifty": {
+  "last": 25963.5,
+  "chg_pct": -0.12,
+  "stamp": "27-Nov-2026 08:12:24",
+  "expiry": "29-Dec-2026",
+  "volume": 961,
+  "nifty_close": {
+   "close": 25884.5,
+   "stamp": "26-Nov-2026 15:30"
+  },
+  "gap_pts": 79.0,
+  "gap_pct": 0.31
+ }
+}
