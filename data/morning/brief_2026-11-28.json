@@ -1,0 +1,395 @@
+{
+ "date": "2026-11-28",
+ "generated_at": "2026-11-28T08:10:37+05:30",
+ "mail": {
+  "window": "24h to 08:06 IST",
+  "n_scanned": 82,
+  "sectors": [
+   {
+    "sector": "Non-ferrous",
+    "bullets": [
+     {
+      "text": "Zinc +3.3% to $3,504.5/t on Nyrstar's 26-Nov Budel smelter shutdown from 30-Nov; 200-220kt 2027 supply at risk.",
+      "source": "Emkay - Commodity Market Report: Metals rebound on tech rally; crude firms ahead of OPEC+ meeting",
+      "received": "09:27",
+      "detail": {
+       "summary": "Base metals extended recovery on risk appetite, with zinc leading after Nyrstar said it will shut its 315,000-tonne Budel smelter. Copper rebounded but rising LME stocks cap the move.",
+       "points": [
+        "Zinc +3.30% to $3,504.5/t",
+        "Budel capacity 315kt, shut from 30-Nov",
+        "2027 loss 200-220kt if suspended all year",
+        "Copper +1.90% to $11,872/t after ~17% four-week fall",
+        "LME copper stocks +1,175MT to 337,925MT"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "China aluminium producers see little chance of 45mt capacity cap being lifted; overproducing smelters ordered to cease; alumina overcapacity persists.",
+      "source": "BNP Paribas - BNPP India Quick Notes: ZYDUS ... | CHINA ALUMINIUM",
+      "received": "08:36",
+      "detail": {
+       "summary": "Takeaways from a 16-20 Nov China commodity tour of Chuangxin, Chalco and China Hongqiao. Supply discipline looks intact, while alumina stays oversupplied, so BNPP expects smelters to capture a larger share of industry profits.",
+       "points": [
+        "45mt aluminium capacity cap seen staying",
+        "Power meters installed to police smelter overproduction",
+        "Several 1H26 overproducing projects ordered to stop",
+        "Alumina overcapacity significant; refineries run at thin margins",
+        "Smelters to capture more of industry profit"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Steel",
+    "bullets": [
+     {
+      "text": "Ambit cuts APL Apollo TP to Rs1,200, volume CAGR to 10-12% from 15%; retains SELL on APL and Tata Steel after deal forensic.",
+      "source": "Ambit - Ambit Sales | Banks Thematic...; APL Deal: Forensic Lens; ...",
+      "received": "09:15",
+      "detail": {
+       "summary": "Ambit's forensic read of the four linked Tata Steel-APL agreements finds each step compliant but flags four governance nuances for minorities. Control passes to Tata even if minorities reject the asset purchase, so the Rs2,301 open offer is a partial exit, not a valuation anchor.",
+       "points": [
+        "APL buys Tata tubes & colours for Rs280bn; Tata buys APL control up to Rs323bn",
+        "Minorities vote only on transactions 1-2; transaction 3 may proceed regardless",
+        "Founder Rs2,100/share plus SG Spectra contract vs public Rs2,301 offer",
+        "RoCE seen falling from ~30% to ~11%",
+        "Tata Steel SELL: most deal downside priced in; CCI and APL vote next triggers"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "SEBI to seek details from Tata Steel and APL Apollo on the deal; APL's largest institutions object that it favours the outgoing promoter.",
+      "source": "UBS - UBS INDIA - WEAK BREADTH IN INDIA RALLY (News) I SEBI may examine TATA-APAT deal (News) I ...",
+      "received": "09:07",
+      "detail": {
+       "summary": "A news item relayed in UBS sales commentary (not UBS Research) says the regulator will ask both companies about the multipronged deal after governance complaints. Separately, APL Apollo's largest institutional holders are unhappy with the structure, arguing it benefits the outgoing promoter at minority expense.",
+       "points": [
+        "SEBI to seek deal details from Tata Steel and APL Apollo",
+        "Concerns raised over deal structure and governance",
+        "Largest APL institutional holders voice displeasure",
+        "Source is a news report citing people familiar, not UBS Research"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "HRC flat at Rs63.8K/t (+10% since end-July), 10% above import parity; MS sees spot spreads peaking, stocks to differentiate on volume.",
+      "source": "Morgan Stanley - PULSE: India Materials: India Steel Tracker (+2 more in Outlook)",
+      "received": "13:57",
+      "detail": {
+       "summary": "Morgan Stanley's weekly tracker (Industry View In-Line) argues spot spreads, at their highest since September 2023, are peaking as supply returns after seasonal shutdowns and new capacity ramps. With domestic HRC at a premium to import parity, further price upside is limited, so stock performance should turn volume-led.",
+       "points": [
+        "Rebar fell ~2% to Rs48.6K/t; HRC stable at Rs63.8K/t",
+        "Iron ore CFR China ~US$91/t (+2% WoW); domestic at ~47% discount to parity",
+        "Australian HCC US$254/t, -1% WoW, +18% since end-July",
+        "Spreads up ~50% since mid-December lows",
+        "Steel stocks ~+5% YTD vs Sensex -2%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Cement",
+    "bullets": [
+     {
+      "text": "Pan-India cement price -Rs1/bag MoM to Rs369 in November; South -Rs10, Central +Rs3, East +Rs2; Rs5-10 December hikes expected.",
+      "source": "Elara - Cement - Weak demand leads to price stagnation - Monthly Update",
+      "received": "12:55",
+      "detail": {
+       "summary": "November demand was weak on festival labour shortages, cyclone rain and delayed government payments, stalling prices. Elara expects a post-festival volume rebound and Q4FY27 margin expansion, but says subdued end-demand may make December hikes hard to sustain.",
+       "points": [
+        "Pan-India Rs369/bag, Oct-Nov Rs14 above Q2FY27",
+        "South -Rs10, West -Rs1, North flat",
+        "Dealers expect Rs5-10/bag hikes first week of December",
+        "Hike sustainability doubtful given quarter-end volume push",
+        "Early rural weakness after deficient monsoon"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "EMS",
+    "bullets": [
+     {
+      "text": "JPM upgrades Syrma and Avalon to Neutral after 17%/31% two-month falls; earnings and PT unchanged; Dixon and Amber remain Overweight top picks.",
+      "source": "JPM - India Daily: ... EMS: u/g Syrma & Avalon to N ...",
+      "received": "09:39",
+      "detail": {
+       "summary": "JPM says the market is accepting its thesis that EMS focus should shift from revenue growth to ROCE, given capex and working-capital intensity. Syrma and Avalon now bake in lower margins and higher capex, so both move to Neutral.",
+       "points": [
+        "Sector down 9% in 2 months vs Nifty +10%",
+        "Avalon -31%, CyientDLM -22%, Kaynes -22%, Syrma -17%",
+        "Dixon and Amber flat",
+        "Order: Dixon > Amber > Kaynes > Avalon > Syrma > CyientDLM",
+        "Kaynes N, CyientDLM UW"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "Dixon FY26 annual report: Rs11.1bn overperformance mobile PLI at Padget a key monitorable; auditor adds Emphasis of Matter.",
+      "source": "Kotak - [Kotak] ESG: Dixon Technologies: FY2026 Annual Report analysis",
+      "received": "08:36",
+      "detail": {
+       "summary": "Kotak flags recoverability of the Padget PLI overperformance incentive as the main risk, backed by a legal opinion but with an auditor EoM. Q Tech goodwill and the Lightanium JV are other items to watch, while free cash flow turned positive.",
+       "points": [
+        "Group incentive receivables ~Rs13.4bn; Rs9.6bn refundable to customers",
+        "Q Tech goodwill Rs5.2bn; FY26 revenue ~Rs18.2bn vs ~Rs20bn indicated",
+        "Adjusted FCF post interest Rs6.6bn",
+        "Contingent liabilities +13% yoy to Rs15.2bn",
+        "Ismartu PAT margin 3.2% vs Padget 1.3%"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Power",
+    "bullets": [
+     {
+      "text": "Tata Power TP cut to Rs351 from Rs415 on RE de-rating; CLSA stays Hold, citing c.2.5GW annual RE additions target.",
+      "source": "CLSA - CLSA India Research - Tata Power, India Autos, India Strategy",
+      "received": "08:35",
+      "detail": {
+       "summary": "CLSA hosted Tata Power at its India Forum 2026 and sees visibility on capex-led growth across generation, transmission and distribution, with UP DISCOM privatisation as further upside. The TP cut reflects a de-rated RE business; the Kleros Capital arbitration is called a manageable overhang by management.",
+       "points": [
+        "TP Rs351 from Rs415; rating Hold maintained",
+        "c.2.5GW annual RE additions targeted",
+        "c.Rs250bn annual capex through FY30",
+        "Kleros Capital arbitration: manageable overhang per management",
+        "UP DISCOM privatisation seen as upside"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "November MTD power demand +11.52% YoY to 25 Nov; IEX average price Rs3.95/kWh, +28.7% YoY, evening Rs6.65 (+30.9%).",
+      "source": "Nuvama - Daily Power Demand",
+      "received": "09:05",
+      "detail": {
+       "summary": "Nuvama's daily demand file runs to 25 November. Demand and coal generation are both growing at double digits, while spot power prices on the exchange are running about 29-31% above last year, which favours merchant capacity.",
+       "points": [
+        "Nov MTD demand +11.52% YoY; YTD +11.69%",
+        "Nov MTD coal generation +13.01% YoY; YTD +12.63%",
+        "Nov peak demand 2,35,121MW, +9.2% YoY",
+        "IEX Nov average Rs3.95/kWh, +28.7% YoY",
+        "IEX 17:00-23:00 average Rs6.65/kWh, +30.9% YoY"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "NTPC sits near three-year low on DMF positioning; CLSA flags it as potential entry as active funds cut utilities in October.",
+      "source": "CLSA - CLSA India Research - Tata Power, India Autos, India Strategy (+2 more in Outlook)",
+      "received": "08:35",
+      "detail": {
+       "summary": "CLSA's PortfolioPulse shows domestic mutual funds rotating towards financials, real estate and autos in October, funded largely by cuts in IT, utilities and chemicals. NTPC is named, with ONGC and DMart, as near three-year lows on positioning and a potential entry opportunity.",
+       "points": [
+        "DMF liquidity buffers at three-year lows in October 2026",
+        "Active funds cut IT, utilities and chemicals",
+        "NTPC, ONGC, DMart near three-year lows on positioning",
+        "CLSA calls these potential entry opportunities"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "IT / AI-tech",
+    "bullets": [
+     {
+      "text": "Ambit makes Persistent its top SELL as Tier-2 IT trades ~60% above Tier-1; only CTSH and TechM rate BUY; prefers Mphasis/Hexaware over Coforge/Persistent.",
+      "source": "Ambit - Ambit Sales | IT: Top clients of Tier 1 & 2; ER&D: Cyient top pick",
+      "received": "09:15",
+      "detail": {
+       "summary": "Ambit's LCA-filing review of top US clients finds market share quietly shifting to Tier-2 within overlapping accounts, but Tier-2's valuation premium is hard to defend and top-client financials do not support a growth rebound. It stays cautious on Tier-2 and prefers Infosys within Tier-1.",
+       "points": [
+        "Tier-2 at ~60% premium to Tier-1 on 1yr fwd P/E",
+        "CMP implies 8-20% USD revenue CAGR FY26-36",
+        "TCS / Infosys top vendor in just 5 / 4 of 17 overlapping clients",
+        "Mphasis now top vendor in 4 accounts; LTM gaining at BofA",
+        "ER&D order: Cyient > LTTS > KPIT > Tata Elxsi > Tata Tech"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "CLSA sales idea: Long INFO/Short WPRO, expecting 20% over 3 months as Infosys's P/E premium to Wipro expands.",
+      "source": "CLSA - Actionables from DMF positioning | Long INFO/Short WPRO | Auto Surprise",
+      "received": "08:48",
+      "detail": {
+       "summary": "A CLSA sales/trading desk view (not research) says Infosys rarely trades at a multiple similar to Wipro's, so its P/E premium should widen. The same note flags TCS among the most underweight names in DMF positioning.",
+       "points": [
+        "Expected return 20% over 3 months",
+        "Author has tracked IT since 2006",
+        "DMF most UW: BHARTI, TCS, HUVR",
+        "Charts available on request"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "BofA: IT services recovery likely from H2CY27 with stronger CY28 setup; 20%+ coding productivity is being absorbed by volumes, so AI is not shrinking TAM yet.",
+      "source": "BofA - BofA India Insight - Durables Year Ahead | Financials | IT Services | Autos | Econ (+1 more in Outlook)",
+      "received": "08:20",
+      "detail": {
+       "summary": "BofA's sales note says tech spend stays healthy, with hardware and security leading in CY27 and services recovering later. Human oversight of AI output creates new services work, and pricing pressure should ease as productivity gains normalize.",
+       "points": [
+        "Services recovery from H2CY27, stronger CY28",
+        "20%+ coding productivity absorbed by volumes",
+        "New AI value pools could add US$300bn+ by 2030",
+        "Hardware/security lead CY27 tech spend"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Macro & strategy",
+    "bullets": [
+     {
+      "text": "US proposes 25% Section 301 tariff on Indian exports, with some exemptions; comments due 5-Jan-27, hearings from 25-Jan-27.",
+      "source": "Kotak - [Kotak] Economy Tracker: Markets Update; US tariffs; IN SCBs' daily CRR maintenance; October INR REER; September FX intervention",
+      "received": "18:50",
+      "detail": {
+       "summary": "The US administration proposed a 25% tariff on Indian exports under Section 301, citing structural excess manufacturing capacity. Separately the RBI cut SCBs' minimum daily CRR maintenance to 90% from 99% from 1-Dec-26, while liquidity swung to a deficit.",
+       "points": [
+        "25% tariff proposed, with some exemptions",
+        "Comments due 5-Jan-27; hearings begin 25-Jan-27",
+        "Daily CRR maintenance cut to 90% from 99% from 1-Dec",
+        "Liquidity deficit Rs476 bn on 26-Nov vs Rs877 bn surplus",
+        "USD-INR 92.92; 10-year G-sec about 7.27%"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "MSCI Nov'26 rebalance implements Mon 30-Nov, ~+$1.9bn net India inflow; weight ups ADANIENS, JSTL, COAL, LENSKART; downs MRF, GRASIM, NTPC, REC.",
+      "source": "IIFL - Update: MSCI India Nov'26 Review | Adj: 30-Nov-26....Gentle reminder",
+      "received": "14:25",
+      "detail": {
+       "summary": "IIFL's Alt Desk reminds that MSCI's Nov'26 review changes take effect Monday 30-Nov-26. Inclusions are MEESHO, COFORGE, LICI and ADANIGR; PI is the only deletion. E2E and SGMART miss the small cap index due to long-term ASM.",
+       "points": [
+        "Rebalance ~+$1.9bn net inflow for India on 30-Nov",
+        "Weight ups: ADANIENS, JSTL, COAL, LENSKART",
+        "Weight downs: MRF, GRASIM, NTPC, REC",
+        "India EM weight ~12.9% to ~13.15%",
+        "Small cap index: 11 additions, 29 deletions"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "FIIs bought US$3.4bn last week, taking November to a record c.US$15.9bn; Nifty -0.7% WoW, Bull-Bear Index 87.9%, bullish 23 days straight.",
+      "source": "CLSA - CLSA: India strategy: Weekly wrap (+5 more in Outlook)",
+      "received": "03:07",
+      "detail": {
+       "summary": "The Nifty snapped its winning streak, falling 0.7% WoW, while FII buying stayed robust. Sentiment is firmly bullish, and IT led the week while metals lagged. Forward PE fell 20bps to 18.6x and the bond-earnings yield gap widened to 1.9ppts.",
+       "points": [
+        "FIIs +US$3.4bn in week; November +US$15.9bn, highest monthly ever",
+        "IT best sector, metals worst; Nifty lagged BSE-500 by 0.2ppts",
+        "Nifty 12-month forward PE 18.6x, 14.4% premium to 20-year average",
+        "10-year yield up 9bps to 7.3%; rupee -0.3% on week",
+        "Bull-Bear Index 87.9%, longest bullish streak since August 2024"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   },
+   {
+    "sector": "Other coverage-adjacent",
+    "bullets": [
+     {
+      "text": "Aluminium and copper ~30% off 1QFY27 peaks; CLSA sees PV/2W margin tailwind from 4QFY27, CV/tractors limited to c.200bps; OEMs already up 5-20% in three weeks.",
+      "source": "CLSA - CLSA: India Autos: Margin outlook set to improve",
+      "received": "12:38",
+      "detail": {
+       "summary": "Commodity headwinds are reversing, so the under-recovery should shrink substantially from Q4. 2W and PV makers get the main relief, while CV and tractors recover slower because steel stays near peak and natural rubber has softened little.",
+       "points": [
+        "Aluminium and copper corrected c.30% from 1QFY27 peaks",
+        "Price hike needed to offset inflation: 2Ws c.8% to c.5%",
+        "PVs: required pricing c.8% to c.5.5%; M&M has taken commensurate hikes",
+        "Entry-level PV players raised prices only c.3%",
+        "PV FY27-28 Ebitda had been cut 10-15% since Middle East crisis"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "C&W stocks down 15-30% in three months; CLSA sees worst priced in, 11%/23% upside in Polycab/RR Kabel, no downside in KEI, but Polycab 3Q optically weak.",
+      "source": "CLSA - CLSA: India cables & wires: Feeling the strain",
+      "received": "14:03",
+      "detail": {
+       "summary": "Falling copper and aluminium, high 3Q comps and Ultravolt's launch drove the correction. Assuming spot prices persist, FY28 PAT could be cut 9-11% and target multiple tapers to 29x from 35x, yet CLSA still sees upside and stays constructive.",
+       "points": [
+        "Copper/aluminium down 4%/13% in INR over three months",
+        "Spot scenario: FY28 PAT cut 9-11%; consensus EPS cuts 9-13%",
+        "Base case multiple 29x versus 35x earlier",
+        "CLSA metals team: CY27 copper US$12,628/T, aluminium US$3,113/T",
+        "Near-term news flow weak as Nov/Dec comps get tougher"
+       ],
+       "read": "body"
+      }
+     },
+     {
+      "text": "S&P downgrades Tata Motors-owned JLR to BB+ on weaker cash flow and rising debt; Royal Enfield to invest Rs10bn and TVS Rs20bn in Tamil Nadu.",
+      "source": "Kotak - Kotak Auto News: RE Rs10bn Tamil Nadu EV; TVS Rs20bn; S&P downgrades JLR to BB+",
+      "received": "08:47",
+      "detail": {
+       "summary": "Kotak's daily auto digest carries headlines only. S&P cut JLR to BB+ citing weaker cash flow and rising debt. Royal Enfield plans Rs10bn for EV expansion in Tamil Nadu and TVS Rs20bn with 1,000 jobs. Ather's Tarun Mehta says supply chain diversification could cost the industry up to 150bps of margin.",
+       "points": [
+        "JLR cut to BB+ by S&P on weaker cash flow",
+        "Royal Enfield Rs10bn Tamil Nadu EV investment",
+        "TVS Rs20bn Tamil Nadu, 1,000 jobs",
+        "Supply chain diversification up to 150bps margin cost (Ather)",
+        "PLI Auto disbursement Rs43.85bn this fiscal"
+       ],
+       "read": "body"
+      }
+     }
+    ]
+   }
+  ],
+  "quiet": [
+   "Mining"
+  ]
+ },
+ "global": {
+  "ai_semis": [
+   {
+    "text": "CLSA: AI confidence broken after the 'Jensen jump'; expects recalibration of US/EM AI earnings and capex, with consensus US$1.1tn 2027 hyperscaler capex increasingly debt funded.",
+    "source": "CLSA - Global Equity Strategy: TGIF - week #47"
+   },
+   {
+    "text": "BofA: China-linked share of global neocloud consumption could fall from ~14% in 2026 to 3% by 2030; worst-case TSMC revenue hit ~4%.",
+    "source": "BofA - APAC Signal-to-Noise: Navigating tighter tech constraints"
+   },
+   {
+    "text": "Nvidia expects physical AI revenue to exceed $25bn in fiscal 2027; Nvidia chip buyers reportedly told to rule out Chinese renters.",
+    "source": "Kotak - TECHNOLOGY NEWS WRAP NOVEMBER 27, 2026"
+   }
+  ],
+  "bellwethers": [
+   {
+    "name": "Accenture",
+    "reason": null
+   },
+   {
+    "name": "Cognizant",
+    "reason": null
+   }
+  ]
+ }
+}
